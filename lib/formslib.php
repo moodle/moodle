@@ -1,7 +1,21 @@
-<?php
+<?php // $Id$
 /**
  * formslib.php - library of classes for creating forms in Moodle, based on PEAR QuickForms.
- * THIS IS NOT YET PART OF THE MOODLE API, IT IS HERE FOR TESTING ONLY
+ *
+ * To use formslib then you will want to create a new file purpose_form.php eg. edit_form.php
+ * and you want to name your class something like {modulename}_{purpose}_form. Your class will
+ * extend moodleform overriding abstract classes definition and optionally defintion_after_data
+ * and validation.
+ *
+ * See examples of use of this library in course/edit.php and course/edit_form.php
+ *
+ * A few notes :
+ *      form defintion is used for both printing of form and processing and should be the same
+ *              for both or you may lose some submitted data which won't be let through.
+ *      you should be using setType for every form element except select, radio or checkbox
+ *              elements, these elements clean themselves.
+ *
+ *
  * @author  Jamie Pratt
  * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -15,11 +29,577 @@ require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
-if ($CFG->debug >= DEBUG_ALL){
-    PEAR::setErrorHandling(PEAR_ERROR_PRINT);
+require_once $CFG->libdir.'/uploadlib.php';
+
+/**
+ * Callback called when PEAR throws an error
+ *
+ * @param PEAR_Error $error
+ */
+function pear_handle_error($error){
+    echo '<strong>'.$error->GetMessage().'</strong> '.$error->getUserInfo();
+    echo '<br /> <strong>Backtrace </strong>:';
+    print_object($error->backtrace);
 }
 
-class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
+if ($CFG->debug >= DEBUG_ALL){
+    PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pear_handle_error');
+}
+
+
+/**
+ * Moodle specific wrapper that separates quickforms syntax from moodle code. You won't directly
+ * use this class you should write a class defintion which extends this class or a more specific
+ * subclass such a moodleform_mod for each form you want to display and/or process with formslib.
+ *
+ * You will write your own definition() method which performs the form set up.
+ */
+class moodleform {
+    var $_formname;       // form name
+    /**
+     * quickform object definition
+     *
+     * @var MoodleQuickForm
+     */
+    var $_form;
+    /**
+     * globals workaround
+     *
+     * @var array
+     */
+    var $_customdata;
+    /**
+     * file upload manager
+     *
+     * @var upload_manager
+     */
+    var $_upload_manager; //
+
+
+
+    /**
+     * The constructor function calls the abstract function definition() and it will then
+     * process and clean and attempt to validate incoming data.
+     *
+     * It will call your custom validate method to validate data and will also check any rules
+     * you have specified in definition using addRule
+     *
+     * The name of the form (id attribute of the form) is automatically generated depending on
+     * the name you gave the class extending moodleform. You should call your class something
+     * like
+     *
+     * @param string $action the action attribute for the form. If empty defaults to auto detect the
+     *                  current url.
+     * @param array $customdata if your form defintion method needs access to data such as $course
+     *               $cm, etc. to construct the form definition then pass it in this array. You can
+     *               use globals for somethings.
+     * @param string $method if you set this to anything other than 'post' then _GET and _POST will
+     *               be merged and used as incoming data to the form.
+     * @param string $target target frame for form submission. You will rarely use this. Don't use
+     *                  it if you don't need to as the target attribute is deprecated in xhtml
+     *                  strict.
+     * @param mixed $attributes you can pass a string of html attributes here or an array.
+     * @return moodleform
+     */
+    function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null) {
+        if (empty($action)){
+            $action = strip_querystring(qualified_me());
+        }
+
+        $this->_formname = get_class($this); // '_form' suffix kept in order to prevent collisions of form id and other element
+        $this->_customdata = $customdata;
+        $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
+        $this->set_upload_manager(new upload_manager());
+
+        $this->definition();
+
+        $this->_form->addElement('hidden', 'sesskey', null); // automatic sesskey protection
+        $this->_form->setDefault('sesskey', sesskey());
+        $this->_form->addElement('hidden', '_qf__'.$this->_formname, null);   // form submission marker
+        $this->_form->setDefault('_qf__'.$this->_formname, 1);
+        $this->_form->_setDefaultRuleMessages();
+
+        // we have to know all input types before processing submission ;-)
+        $this->_process_submission($method);
+
+        // update form definition based on final data
+        $this->definition_after_data();
+    }
+
+    /**
+     * To autofocus on first form element or first element with error.
+     *
+     * @param string $name if this is set then the focus is forced to a field with this name
+     *
+     * @return string  javascript to select form element with first error or
+     *                  first element if no errors. Use this as a parameter
+     *                  when calling print_header
+     */
+    function focus($name=NULL){
+        $form =& $this->_form;
+        $elkeys=array_keys($form->_elementIndex);
+        if (isset($form->_errors) &&  0 != count($form->_errors)){
+            $errorkeys = array_keys($form->_errors);
+            $elkeys = array_intersect($elkeys, $errorkeys);
+        }
+        $names=null;
+        while (!$names){
+            $el = array_shift($elkeys);
+            $names = $form->_getElNamesRecursive($el);
+        }
+        if (empty($name)) {
+            $name=array_shift($names);
+        }
+        $focus='forms[\''.$this->_form->getAttribute('id').'\'].elements[\''.$name.'\']';
+        return $focus;
+     }
+
+    /**
+     * Internal method. Alters submitted data to be suitable for quickforms processing.
+     * Must be called when the form is fully set up.
+     */
+    function _process_submission($method) {
+        $submission = array();
+        if ($method == 'post') {
+            if (!empty($_POST)) {
+                $submission = $_POST;
+            }
+        } else {
+            $submission = array_merge_recursive($_GET, $_POST); // emulate handling of parameters in xxxx_param()
+        }
+
+        // following trick is needed to enable proper sesskey checks when using GET forms
+        // the _qf__.$this->_formname serves as a marker that form was actually submitted
+        if (array_key_exists('_qf__'.$this->_formname, $submission) and $submission['_qf__'.$this->_formname] == 1) {
+            if (!confirm_sesskey()) {
+                error('Incorrect sesskey submitted, form not accepted!');
+            }
+            $files = $_FILES;
+        } else {
+            $submission = array();
+            $files = array();
+        }
+
+        $this->_form->updateSubmission($submission, $files);
+    }
+
+    /**
+     * Internal method. Validates all uploaded files.
+     */
+    function _validate_files() {
+        if (empty($_FILES)) {
+            // we do not need to do any checks because no files were submitted
+            // TODO: find out why server side required rule does not work for uploaded files;
+            //       testing is easily done by always returning true from this function and adding
+            //       $mform->addRule('soubor', get_string('required'), 'required', null, 'server');
+            //       and submitting form without selected file
+            return true;
+        }
+        $errors = array();
+        $mform =& $this->_form;
+
+        // check the files
+        $status = $this->_upload_manager->preprocess_files();
+
+        // now check that we really want each file
+        foreach ($_FILES as $elname=>$file) {
+            if ($mform->elementExists($elname) and $mform->getElementType($elname)=='file') {
+                $required = $mform->isElementRequired($elname);
+                if (!empty($this->_upload_manager->files[$elname]['uploadlog']) and empty($this->_upload_manager->files[$elname]['clear'])) {
+                    if (!$required and $file['error'] == UPLOAD_ERR_NO_FILE) {
+                        // file not uploaded and not required - ignore it
+                        continue;
+                    }
+                    $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
+                }
+            } else {
+                error('Incorrect upload attempt!');
+            }
+        }
+
+        // return errors if found
+        if ($status and 0 == count($errors)){
+            return true;
+        } else {
+            return $errors;
+        }
+    }
+
+    /**
+     * Load in existing data as form defaults. Usually new entry defaults are stored directly in
+     * form definition (new entry form); this function is used to load in data where values
+     * already exist and data is being edited (edit entry form).
+     *
+     * @param mixed $default_values object or array of default values
+     * @param bool $slased true if magic quotes applied to data values
+     */
+    function set_data($default_values, $slashed=false) {
+        if (is_object($default_values)) {
+            $default_values = (array)$default_values;
+        }
+        $filter = $slashed ? 'stripslashes' : NULL;
+        $this->_form->setDefaults($default_values, $filter);
+        //update form definition when data changed
+        $this->definition_after_data();
+    }
+
+    /**
+     * Set custom upload manager.
+     * Must be used BEFORE creating of file element!
+     *
+     * @param object $um - custom upload manager
+     */
+    function set_upload_manager($um=false) {
+        if ($um === false) {
+            $um = new upload_manager();
+        }
+        $this->_upload_manager = $um;
+
+        $this->_form->setMaxFileSize($um->config->maxbytes);
+    }
+
+    /**
+     * Check that form was submitted. Does not check validity of submitted data.
+     *
+     * @return bool true if form properly submitted
+     */
+    function is_submitted() {
+        return $this->_form->isSubmitted();
+    }
+
+    function no_submit_button_pressed(){
+        static $nosubmit = null; // one check is enough
+        if (!is_null($nosubmit)){
+            return $nosubmit;
+        }
+        $mform =& $this->_form;
+        $nosubmit = false;
+        if (!$this->is_submitted()){
+            return false;
+        }
+        foreach ($mform->_noSubmitButtons as $nosubmitbutton){
+            if (optional_param($nosubmitbutton, 0, PARAM_RAW)){
+                $nosubmit = true;
+                break;
+            }
+        }
+        return $nosubmit;
+    }
+
+
+    /**
+     * Check that form data is valid.
+     *
+     * @return bool true if form data valid
+     */
+    function is_validated() {
+        static $validated = null; // one validation is enough
+        $mform =& $this->_form;
+
+        if ($this->no_submit_button_pressed()){
+            return false;
+        } elseif ($validated === null) {
+            $internal_val = $mform->validate();
+            $moodle_val = $this->validation($mform->exportValues(null, true));
+            if ($moodle_val !== true) {
+                if ((is_array($moodle_val) && count($moodle_val)!==0)) {
+                    foreach ($moodle_val as $element=>$msg) {
+                        $mform->setElementError($element, $msg);
+                    }
+                    $moodle_val = false;
+                } else {
+                    $moodle_val = true;
+                }
+            }
+            $file_val = $this->_validate_files();
+            if ($file_val !== true) {
+                if (!empty($file_val)) {
+                    foreach ($file_val as $element=>$msg) {
+                        $mform->setElementError($element, $msg);
+                    }
+                }
+                $file_val = false;
+            }
+            $validated = ($internal_val and $moodle_val and $file_val);
+        }
+        return $validated;
+    }
+
+    /**
+     * Return true if a cancel button has been pressed resulting in the form being submitted.
+     *
+     * @return boolean true if a cancel button has been pressed
+     */
+    function is_cancelled(){
+        $mform =& $this->_form;
+        if ($mform->isSubmitted()){
+            foreach ($mform->_cancelButtons as $cancelbutton){
+                if (optional_param($cancelbutton, 0, PARAM_RAW)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * @param bool $slashed true means return data with addslashes applied
+     * @return object submitted data; NULL if not valid or not submitted
+     */
+    function get_data($slashed=true) {
+        $mform =& $this->_form;
+
+        if ($this->is_submitted() and $this->is_validated()) {
+            $data = $mform->exportValues(null, $slashed);
+            unset($data['sesskey']); // we do not need to return sesskey
+            unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
+            if (empty($data)) {
+                return NULL;
+            } else {
+                return (object)$data;
+            }
+        } else {
+            return NULL;
+        }
+    }
+
+    /**
+     * Save verified uploaded files into directory. Upload process can be customised from definition()
+     * method by creating instance of upload manager and storing it in $this->_upload_form
+     *
+     * @param string $destination where to store uploaded files
+     * @return bool success
+     */
+    function save_files($destination) {
+        if ($this->is_submitted() and $this->is_validated()) {
+            return $this->_upload_manager->save_files($destination);
+        }
+        return false;
+    }
+
+    /**
+     * If we're only handling one file (if inputname was given in the constructor)
+     * this will return the (possibly changed) filename of the file.
+     * @return mixed false in case of failure, string if ok
+     */
+    function get_new_filename() {
+        return $this->_upload_manager->get_new_filename();
+    }
+
+    /**
+     * Print html form.
+     */
+    function display() {
+        $this->_form->display();
+    }
+
+    /**
+     * Abstract method - always override!
+     *
+     * If you need special handling of uploaded files, create instance of $this->_upload_manager here.
+     */
+    function definition() {
+        error('Abstract form_definition() method in class '.get_class($this).' must be overriden, please fix the code.');
+    }
+
+    /**
+     * Dummy stub method - override if you need to setup the form depending on current
+     * values. This method is called after definition(), data submission and set_data().
+     * All form setup that is dependent on form values should go in here.
+     */
+    function definition_after_data(){
+    }
+
+    /**
+     * Dummy stub method - override if you needed to perform some extra validation.
+     * If there are errors return array of errors ("fieldname"=>"error message"),
+     * otherwise true if ok.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @return bool array of errors or true if ok
+     */
+    function validation($data) {
+        return true;
+    }
+
+
+
+
+
+    /**
+     * Method to add a repeating group of elements to a form.
+     *
+     * @param array $elementobjs Array of elements or groups of elements that are to be repeated
+     * @param integer $repeats no of times to repeat elements initially
+     * @param array $options Array of options to apply to elements. Array keys are element names.
+     *                      This is an array of arrays. The second sets of keys are the option types
+     *                      for the elements :
+     *                          'default' - default value is value
+     *                          'type' - PARAM_* constant is value
+     *                          'helpbutton' - helpbutton params array is value
+     *                          'disabledif' - last three moodleform::disabledIf()
+     *                                           params are value as an array
+     * @param string $repeathiddenname name for hidden element storing no of repeats in this form
+     * @param string $addfieldsname name for button to add more fields
+     * @param int $addfieldsno how many fields to add at a time
+     * @param string $addstring name of button, {no} is replaced by no of blanks that will be added.
+     * @return int no of repeats of element in this page
+     */
+    function repeat_elements($elementobjs, $repeats, $options, $repeathiddenname, $addfieldsname, $addfieldsno=5, $addstring=null){
+        if ($addstring===null){
+            $addstring = get_string('addfields', 'form', $addfieldsno);
+        } else {
+            $addstring = str_ireplace('{no}', $addfieldsno, $addstring);
+        }
+        $repeats = optional_param($repeathiddenname, $repeats, PARAM_INT);
+        $addfields = optional_param($addfieldsname, '', PARAM_TEXT);
+        if (!empty($addfields)){
+            $repeats += $addfieldsno;
+        }
+        $mform =& $this->_form;
+        $mform->registerNoSubmitButton($addfieldsname);
+        $mform->addElement('hidden', $repeathiddenname, $repeats);
+        //value not to be overridden by submitted value
+        $mform->setConstants(array($repeathiddenname=>$repeats));
+        for ($i=0; $i<$repeats; $i++) {
+            foreach ($elementobjs as $elementobj){
+                $elementclone = clone($elementobj);
+                $name = $elementclone->getName();
+                if (!empty($name)){
+                    $elementclone->setName($name."[$i]");
+                }
+                if (is_a($elementclone, 'HTML_QuickForm_header')){
+                    $value=$elementclone->_text;
+                    $elementclone->setValue(str_replace('{no}', ($i+1), $value));
+
+                } else {
+                    $value=$elementclone->getLabel();
+                    $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
+
+                }
+
+                $mform->addElement($elementclone);
+            }
+        }
+        for ($i=0; $i<$repeats; $i++) {
+            foreach ($options as $elementname => $elementoptions){
+                $pos=strpos($elementname, '[');
+                if ($pos!==FALSE){
+                    $realelementname = substr($elementname, 0, $pos+1)."[$i]";
+                    $realelementname .= substr($elementname, $pos+1);
+                }else {
+                    $realelementname = $elementname."[$i]";
+                }
+                foreach ($elementoptions as  $option => $params){
+
+                    switch ($option){
+                        case 'default' :
+                            $mform->setDefault($realelementname, $params);
+                            break;
+                        case 'helpbutton' :
+                            $mform->setHelpButton($realelementname, $params);
+                            break;
+                        case 'disabledif' :
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'disabledIf'), $params);
+                            break;
+                        case 'rule' :
+                            if (is_string($params)){
+                                $params = array(null, $params, null, 'client');
+                            }
+                            $params = array_merge(array($realelementname), $params);
+                            call_user_func_array(array(&$mform, 'addRule'), $params);
+                            break;
+
+                    }
+                }
+            }
+        }
+        $mform->addElement('submit', $addfieldsname, $addstring);
+
+        $mform->closeHeaderBefore($addfieldsname);
+
+        return $repeats;
+    }
+    /**
+     * Use this method to a cancel and submit button to the end of your form. Pass a param of false
+     * if you don't want a cancel button in your form. If you have a cancel button make sure you
+     * check for it being pressed using is_cancelled() and redirecting if it is true before trying to
+     * get data with get_data().
+     *
+     * @param boolean $cancel whether to show cancel button, default true
+     * @param boolean $revert whether to show revert button, default true
+     * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
+     */
+    function add_action_buttons($cancel = true, $submitlabel=null){
+        if (is_null($submitlabel)){
+            $submitlabel = get_string('savechanges');
+        }
+        $mform =& $this->_form;
+        if ($cancel){
+            //when two elements we need a group
+            $buttonarray=array();
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
+            $buttonarray[] = &$mform->createElement('cancel');
+            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+    		$mform->closeHeaderBefore('buttonar');
+        } else {
+            //no group needed
+            $mform->addElement('submit', 'submitbutton', $submitlabel);
+    		$mform->closeHeaderBefore('submitbutton');
+        }
+    }
+}
+
+/**
+ * You never extend this class directly. The class methods of this class are available from
+ * the private $this->_form property on moodleform and it's children. You generally only
+ * call methods on this class from within abstract methods that you override on moodleform such
+ * as definition and definition_after_data
+ *
+ */
+class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
+    var $_types = array();
+    var $_dependencies = array();
+    /**
+     * Array of buttons that if pressed do not result in the processing of the form.
+     *
+     * @var array
+     */
+    var $_noSubmitButtons=array();
+    /**
+     * Array of buttons that if pressed do not result in the processing of the form.
+     *
+     * @var array
+     */
+    var $_cancelButtons=array();
+
+    /**
+     * Array whose keys are element names. If the key exists this is a advanced element
+     *
+     * @var array
+     */
+    var $_advancedElements = array();
+
+    /**
+     * Whether to display advanced elements (on page load)
+     *
+     * @var boolean
+     */
+    var $_showAdvanced = null;
+
+    /**
+     * The form name is derrived from the class name of the wrapper minus the trailing form
+     * It is a name with words joined by underscores whereas the id attribute is words joined by
+     * underscores.
+     *
+     * @var unknown_type
+     */
+    var $_formName = '';
+
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
      * @param    string      $formName          Form's name.
@@ -30,218 +610,728 @@ class moodleform extends HTML_QuickForm_DHTMLRulesTableless{
      * @param    bool        $trackSubmit       (optional)Whether to track if the form was submitted by adding a special hidden field
      * @access   public
      */
-    function moodleform($formName='', $method='post', $action='', $target='', $attributes=null){
+    function MoodleQuickForm($formName, $method, $action, $target='', $attributes=null){
         global $CFG;
-        //we need to override the constructor, we don't call the parent constructor
-        //at all because it strips slashes depending on the magic quotes setting
-        //whereas Moodle already has added slashes whether magic quotes is on or not.
-        
-        //also added check for sesskey and added sesskey to all forms
-        //and told class to ask Moodle for the max upload file size       
-        HTML_Common::HTML_Common($attributes);
-        $method = (strtoupper($method) == 'GET') ? 'get' : 'post';
-        $action = ($action == '') ? $_SERVER['PHP_SELF'] : $action;
-        $target = empty($target) ? array() : array('target' => $target);
-        //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>$formName) + $target;
-        $this->updateAttributes($attributes);
-        //check for sesskey for this form 
-        //if it is not present then we don't accept any input
-        if (isset($_REQUEST['_qf__' . $formName])) {
-            $this->_submitValues = $this->_recursiveFilter('stripslashes', 'get' == $method? $_GET: $_POST);
-            foreach ($_FILES as $keyFirst => $valFirst) {
-                foreach ($valFirst as $keySecond => $valSecond) {
-                    if ('name' == $keySecond) {
-                        $this->_submitFiles[$keyFirst][$keySecond] = $this->_recursiveFilter('stripslashes', $valSecond);
-                    } else {
-                        $this->_submitFiles[$keyFirst][$keySecond] = $valSecond;
-                    }
-                }
-            }
 
-            $this->_flagSubmitted = count($this->_submitValues) > 0 || count($this->_submitFiles) > 0;
-        }
-        
-        //check sesskey
-        if ($this->_flagSubmitted){
-            confirm_sesskey($this->_submitValues['_qf__' . $formName]);
-        }
-        unset($this->_submitValues['_qf__' . $formName]);
-        //add sesskey to all forms
-        $this->addElement('hidden', '_qf__' . $formName, sesskey());
-        
-        if (preg_match('/^([0-9]+)([a-zA-Z]*)$/', get_max_upload_file_size(), $matches)) {
-            // see http://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
-            switch (strtoupper($matches['2'])) {
-                case 'G':
-                    $this->_maxFileSize = $matches['1'] * 1073741824;
-                    break;
-                case 'M':
-                    $this->_maxFileSize = $matches['1'] * 1048576;
-                    break;
-                case 'K':
-                    $this->_maxFileSize = $matches['1'] * 1024;
-                    break;
-                default:
-                    $this->_maxFileSize = $matches['1'];
-            }
-        }
-        //this is custom stuff for Moodle : 
+        static $formcounter = 1;
+
+        HTML_Common::HTML_Common($attributes);
+        $target = empty($target) ? array() : array('target' => $target);
+        $this->_formName = $formName;
+        //no 'name' atttribute for form in xhtml strict :
+        $attributes = array('action'=>$action, 'method'=>$method, 'id'=>'mform'.$formcounter) + $target;
+        $formcounter++;
+        $this->updateAttributes($attributes);
+
+        //this is custom stuff for Moodle :
         $oldclass=   $this->getAttribute('class');
         if (!empty($oldclass)){
             $this->updateAttributes(array('class'=>$oldclass.' mform'));
         }else {
             $this->updateAttributes(array('class'=>'mform'));
         }
-        $this->_helpImageURL="$CFG->wwwroot/lib/form/req.gif"; 
-        $this->_reqHTML = 
-            helpbutton('requiredelement', get_string('requiredelement', 'form'),'moodle',
-                 true, false, '', true, '<img alt="'.get_string('requiredelement', 'form').'" src="'.
-                    $this->_helpImageURL.'" />');
-        $this->setRequiredNote(get_string('denotesreq', 'form', $this->getReqHTML()));
+        $this->_reqHTML = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.get_string('requiredelement', 'form').'" src="'.$CFG->pixpath.'/req.gif'.'" />';
+        $this->_advancedHTML = '<img class="adv" title="'.get_string('advancedelement', 'form').'" alt="'.get_string('advancedelement', 'form').'" src="'.$CFG->pixpath.'/adv.gif'.'" />';
+        $this->setRequiredNote(get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').'" src="'.$CFG->pixpath.'/req.gif'.'" />'));
+        //(Help file doesn't add anything) helpbutton('requiredelement', get_string('requiredelement', 'form'), 'moodle', true, false, '', true));
     }
+
+    /**
+     * Use this method to indicate an element in a form is an advanced field. If items in a form
+     * are marked as advanced then 'Hide/Show Advanced' buttons will automatically be displayed in the
+     * form so the user can decide whether to display advanced form controls.
+     *
+     * If you set a header element to advanced then all elements it contains will also be set as advanced.
+     *
+     * @param string $elementName group or element name (not the element name of something inside a group).
+     * @param boolean $advanced default true sets the element to advanced. False removes advanced mark.
+     */
+    function setAdvanced($elementName, $advanced=true){
+        if ($advanced){
+            $this->_advancedElements[$elementName]='';
+        } elseif (isset($this->_advancedElements[$elementName])) {
+            unset($this->_advancedElements[$elementName]);
+        }
+        if ($advanced && $this->getElementType('mform_showadvanced_last')===false){
+            $this->setShowAdvanced();
+            $this->registerNoSubmitButton('mform_showadvanced');
+
+            $this->addElement('hidden', 'mform_showadvanced_last');
+        }
+    }
+    /**
+     * Set whether to show advanced elements in the form on first displaying form. Default is not to
+     * display advanced elements in the form until 'Show Advanced' is pressed.
+     *
+     * You can get the last state of the form and possibly save it for this user by using
+     * value 'mform_showadvanced_last' in submitted data.
+     *
+     * @param boolean $showadvancedNow
+     */
+    function setShowAdvanced($showadvancedNow = null){
+        if ($showadvancedNow === null){
+            if ($this->_showAdvanced !== null){
+                return;
+            } else { //if setShowAdvanced is called without any preference
+                     //make the default to not show advanced elements.
+                $showadvancedNow = get_user_preferences(
+                                moodle_strtolower($this->_formName.'_showadvanced', 0));
+            }
+        }
+        //value of hidden element
+        $hiddenLast = optional_param('mform_showadvanced_last', -1, PARAM_INT);
+        //value of button
+        $buttonPressed = optional_param('mform_showadvanced', 0, PARAM_RAW);
+        //toggle if button pressed or else stay the same
+        if ($hiddenLast == -1) {
+            $next = $showadvancedNow;
+        } elseif ($buttonPressed) { //toggle on button press
+            $next = !$hiddenLast;
+        } else {
+            $next = $hiddenLast;
+        }
+        $this->_showAdvanced = $next;
+        if ($showadvancedNow != $next){
+            set_user_preference($this->_formName.'_showadvanced', $next);
+        }
+        $this->setConstants(array('mform_showadvanced_last'=>$next));
+    }
+    function getShowAdvanced(){
+        return $this->_showAdvanced;
+    }
+
+
+   /**
+    * Accepts a renderer
+    *
+    * @param HTML_QuickForm_Renderer  An HTML_QuickForm_Renderer object
+    * @since 3.0
+    * @access public
+    * @return void
+    */
+    function accept(&$renderer)
+    {
+        if (method_exists($renderer, 'setAdvancedElements')){
+            //check for visible fieldsets where all elements are advanced
+            //and mark these headers as advanced as well.
+            //And mark all elements in a advanced header as advanced
+            $stopFields = $renderer->getStopFieldSetElements();
+            $lastHeader = null;
+            $lastHeaderAdvanced = false;
+            $anyAdvanced = false;
+            foreach (array_keys($this->_elements) as $elementIndex){
+                $element =& $this->_elements[$elementIndex];
+                if ($element->getType()=='header' || in_array($element->getName(), $stopFields)){
+                    if ($anyAdvanced && ($lastHeader!==null)){
+                        $this->setAdvanced($lastHeader->getName());
+                    }
+                    $lastHeaderAdvanced = false;
+                } elseif ($lastHeaderAdvanced) {
+                    $this->setAdvanced($element->getName());
+                }
+                if ($element->getType()=='header'){
+                    $lastHeader =& $element;
+                    $anyAdvanced = false;
+                    $lastHeaderAdvanced = isset($this->_advancedElements[$element->getName()]);
+                } elseif (isset($this->_advancedElements[$element->getName()])){
+                    $anyAdvanced = true;
+                }
+            }
+            $renderer->setAdvancedElements($this->_advancedElements);
+
+        }
+        parent::accept($renderer);
+    }
+
+
+
+    function closeHeaderBefore($elementName){
+        $renderer =& $this->defaultRenderer();
+        $renderer->addStopFieldsetElements($elementName);
+    }
+
+    /**
+     * Should be used for all elements of a form except for select, radio and checkboxes which
+     * clean their own data.
+     *
+     * @param string $elementname
+     * @param integer $paramtype use the constants PARAM_*.
+     *     *  PARAM_CLEAN is deprecated and you should try to use a more specific type.
+     *     *  PARAM_TEXT should be used for cleaning data that is expected to be plain text.
+     *          It will strip all html tags. But will still let tags for multilang support
+     *          through.
+     *     *  PARAM_RAW means no cleaning whatsoever, it is used mostly for data from the
+     *          html editor. Data from the editor is later cleaned before display using
+     *          format_text() function. PARAM_RAW can also be used for data that is validated
+     *          by some other way or printed by p() or s().
+     *     *  PARAM_INT should be used for integers.
+     *     *  PARAM_ACTION is an alias of PARAM_ALPHA and is used for hidden fields specifying
+     *          form actions.
+     */
+    function setType($elementname, $paramtype) {
+        $this->_types[$elementname] = $paramtype;
+    }
+
+    /**
+     * See description of setType above. This can be used to set several types at once.
+     *
+     * @param array $paramtypes
+     */
+    function setTypes($paramtypes) {
+        $this->_types = $paramtypes + $this->_types;
+    }
+
+    function updateSubmission($submission, $files) {
+        $this->_flagSubmitted = false;
+
+        if (empty($submission)) {
+            $this->_submitValues = array();
+        } else {
+            foreach ($submission as $key=>$s) {
+                if (array_key_exists($key, $this->_types)) {
+                    $submission[$key] = clean_param($s, $this->_types[$key]);
+                }
+            }
+            $this->_submitValues = $this->_recursiveFilter('stripslashes', $submission);
+            $this->_flagSubmitted = true;
+        }
+
+        if (empty($files)) {
+            $this->_submitFiles = array();
+        } else {
+            if (1 == get_magic_quotes_gpc()) {
+                foreach (array_keys($files) as $elname) {
+                    // dangerous characters in filenames are cleaned later in upload_manager
+                    $files[$elname]['name'] = stripslashes($files[$elname]['name']);
+                }
+            }
+            $this->_submitFiles = $files;
+            $this->_flagSubmitted = true;
+        }
+
+        // need to tell all elements that they need to update their value attribute.
+         foreach (array_keys($this->_elements) as $key) {
+             $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
+         }
+    }
+
     function getReqHTML(){
         return $this->_reqHTML;
     }
-    /**
-     * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
-     * @param    array       $buttons          An associative array representing help button to attach to 
-     *                                          to the form. keys of array correspond to names of elements in form.
-     * 
-     * @access   public
-    */
-    function setHelpButtons($buttons, $suppresscheck=false){
-        
-        foreach ($this->_elements as $no => $element){
-            if (array_key_exists($element->getName(), $buttons)){
 
-                if (method_exists($element, 'setHelpButton')){
-                    $this->_elements[$no]->setHelpButton($buttons[$element->getName()]);
-                }else{
-                    $a=new object();
-                    $a->name=$element->getName();
-                    $a->classname=get_class($element);
-                    print_error('nomethodforaddinghelpbutton', 'form', '', $a);
-                }
-                unset($buttons[$element->getName()]);
-            }
-            
-        }
-        if (count($buttons)&& !$suppresscheck){
-            print_error('nonexistentformelements', 'form', '', join(', ', array_keys($buttons)));
-        }
+    function getAdvancedHTML(){
+        return $this->_advancedHTML;
     }
-    function acceptGet(){
-        $names=func_get_args();
-        foreach ($names as $name){
-            //if no form data is submitted then the page has just beeen loaded
-            //so we get the page param value from $_GET
-            if (!$this->_flagSubmitted && isset($_GET[$name])){
-                $this->_submitValues[$name]=$_GET[$name];
-            }
-        }
-    }
-    function required_param($element, $paramtype){
-        $value = $this->getSubmitValue($element);
-        if (null !== $value) {
-            if (false === strpos($element, '[')) {
-                return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
-            } else {
-                $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
-                eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
-            }
-        }else{
-            //could print name of param but better not to for security?
-            print_error('missingrequiredfield', 'error');
-        }
-    }
-    function optional_param($element, $default, $paramtype){
-        $value = $this->getSubmitValue($element);
-        if (null === $value) {
-            return $default;
-        }
-        if (false === strpos($element, '[')) {
-            return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
-        } else {
-            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
-            eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
-        }
-    }
-    function clean_param($elementList, $paramtype){
-        $value = $this->getSubmitValue($element);
-        if (false === strpos($element, '[')) {
-            return $this->_submitValues[$element] = $this->_clean_param($value, $paramtype);
-        } else {
-            $idx  = "['" . str_replace(array(']', '['), array('', "']['"), $element) . "']";
-            eval("return \$this->_submitValues{$idx} = \$this->_clean_param(\$value, \$paramtype);");
-        }
-    }
-    function _clean_param($value, $paramtype){
-        //clean_param function in moodlelib expects vars with slashes
-        $value=$this->_recursiveFilter('addslashes', $value);
-        $value=clean_param($value, $paramtype);
-        return $this->_recursiveFilter('stripslashes', $value);
-    }   
 
-    function exportValue($element, $addslashes=true){
-        $unfiltered=parent::exportValue($element);
-        if ($addslashes){
-            return $this->_recursiveFilter('addslashes',$unfiltered);
-        } else {
-            return $unfiltered;
-        }
-    }
-    function exportValues($elementList= null, $addslashes=true){
-        $unfiltered=parent::exportValues($elementList);
-        if ($addslashes){
-            return $this->_recursiveFilter('addslashes',$unfiltered);
-        } else {
-            return $unfiltered;
-        }
-    }
     /**
-     * Initializes a default form value
+     * Initializes a default form value. Used to specify the default for a new entry where
+     * no data is loaded in using moodleform::set_data()
      *
      * @param     string   $elementname        element name
      * @param     mixed    $values             values for that element name
-     * @param     mixed    $filter             (optional) filter(s) to apply to default value
+     * @param     bool     $slashed            the default value is slashed
      * @access    public
      * @return    void
      */
-    function setDefault($elementName='', $defaultValue = null, $filter = null){
-        $this->setDefaults(array($elementName =>$defaultValue), $filter);
+    function setDefault($elementName, $defaultValue, $slashed=false){
+        $filter = $slashed ? 'stripslashes' : NULL;
+        $this->setDefaults(array($elementName=>$defaultValue), $filter);
     } // end func setDefault
     /**
-     * Returns 'safe' elements' values
+     * Add an array of buttons to the form
+     * @param    array       $buttons          An associative array representing help button to attach to
+     *                                          to the form. keys of array correspond to names of elements in form.
      *
-     * Unlike getSubmitValues(), this will return only the values 
-     * corresponding to the elements present in the form.
-     * This function also runs validate() and returns false if the form doesn't validate
-     * 
-     * @param   mixed   Array/string of element names, whose values we want. If not set then return all elements.
-     * @access  public
-     * @return  object   An object with property values set to elements' values
-     * @throws  HTML_QuickForm_Error
-     */
-    function data_submitted($elementList = null, $addslashes=true){
-        if (!$this->validate()){
-            return false;
-        }else{
-            return (object)$this->exportValues($elementList, $addslashes);
+     * @access   public
+    */
+    function setHelpButtons($buttons, $suppresscheck=false, $function='helpbutton'){
+
+        foreach ($buttons as $elementname => $button){
+            $this->setHelpButton($elementname, $button, $suppresscheck, $function);
         }
     }
+    /**
+     * Add a single button.
+     *
+     * @param string $elementname name of the element to add the item to
+     * @param array $button - arguments to pass to function $function
+     * @param boolean $suppresscheck - whether to throw an error if the element
+     *                                  doesn't exist.
+     * @param string $function - function to generate html from the arguments in $button
+     */
+    function setHelpButton($elementname, $button, $suppresscheck=false, $function='helpbutton'){
+        if (array_key_exists($elementname, $this->_elementIndex)){
+            //_elements has a numeric index, this code accesses the elements by name
+            $element=&$this->_elements[$this->_elementIndex[$elementname]];
+            if (method_exists($element, 'setHelpButton')){
+                $element->setHelpButton($button, $function);
+            }else{
+                $a=new object();
+                $a->name=$element->getName();
+                $a->classname=get_class($element);
+                print_error('nomethodforaddinghelpbutton', 'form', '', $a);
+            }
+        }elseif (!$suppresscheck){
+            print_error('nonexistentformelements', 'form', '', $elementname);
+        }
+    }
+
+    function exportValues($elementList= null, $addslashes=true){
+        $unfiltered = array();
+        if (null === $elementList) {
+            // iterate over all elements, calling their exportValue() methods
+            $emptyarray = array();
+            foreach (array_keys($this->_elements) as $key) {
+                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze){
+                    $value = $this->_elements[$key]->exportValue($emptyarray, true);
+                } else {
+                    $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+                }
+
+                if (is_array($value)) {
+                    // This shit throws a bogus warning in PHP 4.3.x
+                    $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $value);
+                }
+            }
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = array_map('trim', explode(',', $elementList));
+            }
+            foreach ($elementList as $elementName) {
+                $value = $this->exportValue($elementName);
+                if (PEAR::isError($value)) {
+                    return $value;
+                }
+                $unfiltered[$elementName] = $value;
+            }
+        }
+
+        if ($addslashes){
+            return $this->_recursiveFilter('addslashes', $unfiltered);
+        } else {
+            return $unfiltered;
+        }
+    }
+    /**
+     * Adds a validation rule for the given field
+     *
+     * If the element is in fact a group, it will be considered as a whole.
+     * To validate grouped elements as separated entities,
+     * use addGroupRule instead of addRule.
+     *
+     * @param    string     $element       Form element name
+     * @param    string     $message       Message to display for invalid data
+     * @param    string     $type          Rule type, use getRegisteredRules() to get types
+     * @param    string     $format        (optional)Required for extra rule data
+     * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    boolean    $reset         Client-side validation: reset the form element to its original value if there is an error?
+     * @param    boolean    $force         Force the rule to be applied, even if the target form element does not exist
+     * @since    1.0
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function addRule($element, $message, $type, $format=null, $validation='server', $reset = false, $force = false)
+    {
+        parent::addRule($element, $message, $type, $format, $validation, $reset, $force);
+        if ($validation == 'client') {
+            $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+        }
+
+    } // end func addRule
+    /**
+     * Adds a validation rule for the given group of elements
+     *
+     * Only groups with a name can be assigned a validation rule
+     * Use addGroupRule when you need to validate elements inside the group.
+     * Use addRule if you need to validate the group as a whole. In this case,
+     * the same rule will be applied to all elements in the group.
+     * Use addRule if you need to validate the group against a function.
+     *
+     * @param    string     $group         Form group name
+     * @param    mixed      $arg1          Array for multiple elements or error message string for one element
+     * @param    string     $type          (optional)Rule type use getRegisteredRules() to get types
+     * @param    string     $format        (optional)Required for extra rule data
+     * @param    int        $howmany       (optional)How many valid elements should be in the group
+     * @param    string     $validation    (optional)Where to perform validation: "server", "client"
+     * @param    bool       $reset         Client-side: whether to reset the element's value to its original state if validation failed.
+     * @since    2.5
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function addGroupRule($group, $arg1, $type='', $format=null, $howmany=0, $validation = 'server', $reset = false)
+    {
+        parent::addGroupRule($group, $arg1, $type, $format, $howmany, $validation, $reset);
+        if (is_array($arg1)) {
+             foreach ($arg1 as $rules) {
+                foreach ($rules as $rule) {
+                    $validation = (isset($rule[3]) && 'client' == $rule[3])? 'client': 'server';
+
+                    if ('client' == $validation) {
+                        $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+                    }
+                }
+            }
+        } elseif (is_string($arg1)) {
+
+            if ($validation == 'client') {
+                $this->updateAttributes(array('onsubmit' => 'try { var myValidator = validate_' . $this->_formName . '; } catch(e) { return true; } return myValidator(this);'));
+            }
+        }
+    } // end func addGroupRule
+
+    // }}}
+    /**
+     * Returns the client side validation script
+     *
+     * The code here was copied from HTML_QuickForm_DHTMLRulesTableless who copied it from  HTML_QuickForm
+     * and slightly modified to run rules per-element
+     * Needed to override this because of an error with client side validation of grouped elements.
+     *
+     * @access    public
+     * @return    string    Javascript to perform validation, empty string if no 'client' rules were added
+     */
+    function getValidationScript()
+    {
+        if (empty($this->_rules) || empty($this->_attributes['onsubmit'])) {
+            return '';
+        }
+
+        include_once('HTML/QuickForm/RuleRegistry.php');
+        $registry =& HTML_QuickForm_RuleRegistry::singleton();
+        $test = array();
+        $js_escape = array(
+            "\r"    => '\r',
+            "\n"    => '\n',
+            "\t"    => '\t',
+            "'"     => "\\'",
+            '"'     => '\"',
+            '\\'    => '\\\\'
+        );
+
+        foreach ($this->_rules as $elementName => $rules) {
+            foreach ($rules as $rule) {
+                if ('client' == $rule['validation']) {
+                    unset($element); //TODO: find out how to properly initialize it
+
+                    $dependent  = isset($rule['dependent']) && is_array($rule['dependent']);
+                    $rule['message'] = strtr($rule['message'], $js_escape);
+
+                    if (isset($rule['group'])) {
+                        $group    =& $this->getElement($rule['group']);
+                        // No JavaScript validation for frozen elements
+                        if ($group->isFrozen()) {
+                            continue 2;
+                        }
+                        $elements =& $group->getElements();
+                        foreach (array_keys($elements) as $key) {
+                            if ($elementName == $group->getElementName($key)) {
+                                $element =& $elements[$key];
+                                break;
+                            }
+                        }
+                    } elseif ($dependent) {
+                        $element   =  array();
+                        $element[] =& $this->getElement($elementName);
+                        foreach ($rule['dependent'] as $elName) {
+                            $element[] =& $this->getElement($elName);
+                        }
+                    } else {
+                        $element =& $this->getElement($elementName);
+                    }
+                    // No JavaScript validation for frozen elements
+                    if (is_object($element) && $element->isFrozen()) {
+                        continue 2;
+                    } elseif (is_array($element)) {
+                        foreach (array_keys($element) as $key) {
+                            if ($element[$key]->isFrozen()) {
+                                continue 3;
+                            }
+                        }
+                    }
+                    // Fix for bug displaying errors for elements in a group
+                    //$test[$elementName][] = $registry->getValidationScript($element, $elementName, $rule);
+                    $test[$elementName][0][] = $registry->getValidationScript($element, $elementName, $rule);
+                    $test[$elementName][1]=$element;
+                    //end of fix
+                }
+            }
+        }
+        $js = '
+<script type="text/javascript">
+//<![CDATA[
+
+var skipClientValidation = false;
+
+function qf_errorHandler(element, _qfMsg) {
+  div = element.parentNode;
+  if (_qfMsg != \'\') {
+    var errorSpan = document.getElementById(\'id_error_\'+element.name);
+    if (!errorSpan) {
+      errorSpan = document.createElement("span");
+      errorSpan.id = \'id_error_\'+element.name;
+      errorSpan.className = "error";
+      element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
+    }
+
+    while (errorSpan.firstChild) {
+      errorSpan.removeChild(errorSpan.firstChild);
+    }
+
+    errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+    errorSpan.appendChild(document.createElement("br"));
+
+    if (div.className.substr(div.className.length - 6, 6) != " error"
+        && div.className != "error") {
+      div.className += " error";
+    }
+
+    return false;
+  } else {
+    var errorSpan = document.getElementById(\'id_error_\'+element.name);
+    if (errorSpan) {
+      errorSpan.parentNode.removeChild(errorSpan);
+    }
+
+    if (div.className.substr(div.className.length - 6, 6) == " error") {
+      div.className = div.className.substr(0, div.className.length - 6);
+    } else if (div.className == "error") {
+      div.className = "";
+    }
+
+    return true;
+  }
+}';
+        $validateJS = '';
+        foreach ($test as $elementName => $jsandelement) {
+            // Fix for bug displaying errors for elements in a group
+            //unset($element);
+            list($jsArr,$element)=$jsandelement;
+            //end of fix
+            $js .= '
+function validate_' . $this->_formName . '_' . $elementName . '(element) {
+  var value = \'\';
+  var errFlag = new Array();
+  var _qfGroups = {};
+  var _qfMsg = \'\';
+  var frm = element.parentNode;
+  while (frm && frm.nodeName != "FORM") {
+    frm = frm.parentNode;
+  }
+' . join("\n", $jsArr) . '
+  return qf_errorHandler(element, _qfMsg);
+}
+';
+            $validateJS .= '
+  ret = validate_' . $this->_formName . '_' . $elementName.'(frm.elements[\''.$elementName.'\']) && ret;
+  if (!ret && !first_focus) {
+    first_focus = true;
+    frm.elements[\''.$elementName.'\'].focus();
+  }
+';
+  
+            // Fix for bug displaying errors for elements in a group
+            //unset($element);
+            //$element =& $this->getElement($elementName);
+            //end of fix
+            $valFunc = 'validate_' . $this->_formName . '_' . $elementName . '(this)';
+            $onBlur = $element->getAttribute('onBlur');
+            $onChange = $element->getAttribute('onChange');
+            $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
+                                             'onChange' => $onChange . $valFunc));
+        }
+//  do not rely on frm function parameter, because htmlarea breaks it when overloading the onsubmit method
+        $js .= '
+function validate_' . $this->_formName . '(frm) {
+  if (skipClientValidation) {
+     return true;
+  }
+  var ret = true;
+    
+  var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
+  var first_focus = false;
+' . $validateJS . ';
+  return ret;
+}
+//]]>
+</script>';
+        return $js;
+    } // end func getValidationScript
+    function _setDefaultRuleMessages(){
+        foreach ($this->_rules as $field => $rulesarr){
+            foreach ($rulesarr as $key => $rule){
+                if ($rule['message']===null){
+                    $a=new object();
+                    $a->format=$rule['format'];
+                    $str=get_string('err_'.$rule['type'], 'form', $a);
+                    if (strpos($str, '[[')!==0){
+                        $this->_rules[$field][$key]['message']=$str;
+                    }
+                }
+            }
+        }
+    }
+
+    function getLockOptionEndScript(){
+
+        $iname = $this->getAttribute('id').'items';
+        $js = '<script type="text/javascript">'."\n";
+        $js .= '//<![CDATA['."\n";
+        $js .= "var $iname = Array();\n";
+
+        foreach ($this->_dependencies as $dependentOn => $conditions){
+            $js .= "{$iname}['$dependentOn'] = Array();\n";
+            foreach ($conditions as $condition=>$values) {
+                $js .= "{$iname}['$dependentOn']['$condition'] = Array();\n";
+                foreach ($values as $value=>$dependents) {
+                    $js .= "{$iname}['$dependentOn']['$condition']['$value'] = Array();\n";
+                    $i = 0;
+                    foreach ($dependents as $dependent) {
+                        $elements = $this->_getElNamesRecursive($dependent);
+                        foreach($elements as $element) {
+                            if ($element == $dependentOn) {
+                                continue;
+                            }
+                            $js .= "{$iname}['$dependentOn']['$condition']['$value'][$i]='$element';\n";
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+        $js .="lockoptionsallsetup('".$this->getAttribute('id')."');\n";
+        $js .='//]]>'."\n";
+        $js .='</script>'."\n";
+        return $js;
+    }
+
+    function _getElNamesRecursive($element, $group=null){
+        if ($group==null){
+            $el = $this->getElement($element);
+        } else {
+            $el = &$element;
+        }
+        if (is_a($el, 'HTML_QuickForm_group')){
+            $group = $el;
+            $elsInGroup = $group->getElements();
+            $elNames = array();
+            foreach ($elsInGroup as $elInGroup){
+                $elNames = array_merge($elNames, $this->_getElNamesRecursive($elInGroup, $group));
+            }
+        }else{
+            if ($group != null){
+                $elNames = array($group->getElementName($el->getName()));
+            } elseif (is_a($el, 'HTML_QuickForm_header')) {
+                return null;
+            } elseif (is_a($el, 'HTML_QuickForm_hidden')) {
+                return null;
+            } elseif (method_exists($el, 'getPrivateName')) {
+                return array($el->getPrivateName());
+            } else {
+                $elNames = array($el->getName());
+            }
+        }
+        return $elNames;
+
+    }
+    /**
+     * Adds a dependency for $elementName which will be disabled if $condition is met.
+     * If $condition = 'notchecked' (default) then the condition is that the $dependentOn element
+     * is not checked. If $condition = 'checked' then the condition is that the $dependentOn element
+     * is checked. If $condition is something else then it is checked to see if the value
+     * of the $dependentOn element is equal to $condition.
+     *
+     * @param string $elementName the name of the element which will be disabled
+     * @param string $dependentOn the name of the element whose state will be checked for
+     *                            condition
+     * @param string $condition the condition to check
+     * @param mixed $value used in conjunction with condition.
+     */
+    function disabledIf($elementName, $dependentOn, $condition = 'notchecked', $value='1'){
+        if (!array_key_exists($dependentOn, $this->_dependencies)) {
+            $this->_dependencies[$dependentOn] = array();
+        }
+        if (!array_key_exists($condition, $this->_dependencies[$dependentOn])) {
+            $this->_dependencies[$dependentOn][$condition] = array();
+        }
+        if (!array_key_exists($value, $this->_dependencies[$dependentOn][$condition])) {
+            $this->_dependencies[$dependentOn][$condition][$value] = array();
+        }
+        $this->_dependencies[$dependentOn][$condition][$value][] = $elementName;
+    }
+
+    function registerNoSubmitButton($buttonname){
+        $this->_noSubmitButtons[]=$buttonname;
+    }
+
+    function isNoSubmitButton($buttonname){
+        return (array_search($buttonname, $this->_noSubmitButtons)!==FALSE);
+    }
+
+    function _registerCancelButton($addfieldsname){
+        $this->_cancelButtons[]=$addfieldsname;
+    }
+    /**
+     * Displays elements without HTML input tags.
+     * This method is different to freeze() in that it makes sure no hidden
+     * elements are included in the form. And a 'hardFrozen' element's submitted value is
+     * ignored.
+     *
+     * This function also removes all previously defined rules.
+     *
+     * @param    mixed   $elementList       array or string of element(s) to be frozen
+     * @since     1.0
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function hardFreeze($elementList=null)
+    {
+        if (!isset($elementList)) {
+            $this->_freezeAll = true;
+            $elementList = array();
+        } else {
+            if (!is_array($elementList)) {
+                $elementList = preg_split('/[ ]*,[ ]*/', $elementList);
+            }
+            $elementList = array_flip($elementList);
+        }
+
+        foreach (array_keys($this->_elements) as $key) {
+            $name = $this->_elements[$key]->getName();
+            if ($this->_freezeAll || isset($elementList[$name])) {
+                $this->_elements[$key]->freeze();
+                $this->_elements[$key]->setPersistantFreeze(false);
+                unset($elementList[$name]);
+
+                // remove all rules
+                $this->_rules[$name] = array();
+                // if field is required, remove the rule
+                $unset = array_search($name, $this->_required);
+                if ($unset !== false) {
+                    unset($this->_required[$unset]);
+                }
+            }
+        }
+
+        if (!empty($elementList)) {
+            return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
+        }
+        return true;
+    } // end func hardFreeze
+
+    // }}}
 }
 
+
 /**
- * A renderer for moodleform that only uses XHTML and CSS and no
+ * A renderer for MoodleQuickForm that only uses XHTML and CSS and no
  * table tags, extends PEAR class HTML_QuickForm_Renderer_Tableless
- * 
+ *
  * Stylesheet is part of standard theme and should be automatically included.
  *
  * @author      Jamie Pratt <me@jamiep.org>
  * @license    gpl license
  */
-class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
+class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
     /**
     * Element template array
@@ -249,10 +1339,6 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   private
     */
     var $_elementTemplates;
-
-//   uncomment templates below and edit formslib.php for
-//   ol li containers for form items.
-
     /**
     * Template used when opening a hidden fieldset
     * (i.e. a fieldset that is opened when there is no header element)
@@ -260,59 +1346,102 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
     * @access   private
     */
     var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\">";
-//    var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\">\n\t\t<ol>";
-//   /**
-//    * Header Template string
-//    * @var      string
-//    * @access   private
-//    */
-//    var $_headerTemplate = 
-//        "\n\t\t<legend>{header}</legend>\n\t\t<ol>";
-//    var $_headerTemplate = 
-//        "\n\t\t<legend>{header}</legend>\n\t\t<ol>";
    /**
+    * Header Template string
+    * @var      string
+    * @access   private
+    */
+    var $_headerTemplate =
+       "\n\t\t<legend>{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div>\n\t\t";
+
+   /**
+    * Template used when opening a fieldset
+    * @var      string
+    * @access   private
+    */
+    var $_openFieldsetTemplate = "\n\t<fieldset class=\"clearfix\" {id}>";
+
+    /**
     * Template used when closing a fieldset
     * @var      string
     * @access   private
     */
     var $_closeFieldsetTemplate = "\n\t\t</fieldset>";
-//    var $_closeFieldsetTemplate = "\n\t\t</ol>\n\t</fieldset>";
 
    /**
     * Required Note template string
     * @var      string
     * @access   private
     */
-    var $_requiredNoteTemplate = 
-        "\n\t\t<div class=\"fdescription\">{requiredNote}</div>";
-    function moodleform_renderer(){
+    var $_requiredNoteTemplate =
+        "\n\t\t<div class=\"fdescription required\">{requiredNote}</div>";
+
+    var $_advancedElements = array();
+
+    /**
+     * Whether to display advanced elements (on page load)
+     *
+     * @var integer 1 means show 0 means hide
+     */
+    var $_showAdvanced;
+
+    function MoodleQuickForm_Renderer(){
         // switch next two lines for ol li containers for form items.
-        //        $this->_elementTemplates=array('default'=>"\n\t\t<li class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"qfelement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></li>");
-        $this->_elementTemplates=array('default'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</div></div>",
-        'fieldset'=>"\n\t\t<div class=\"fitem\"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><fieldset class=\"felement<!-- BEGIN error --> error<!-- END error --> {type}\"><!-- BEGIN error --><span class=\"error\">{error}</span><br /><!-- END error -->{element}</fieldset></div>");
+        //        $this->_elementTemplates=array('default'=>"\n\t\t".'<li class="fitem"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class="qfelement<!-- BEGIN error --> error<!-- END error --> {type}"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></li>');
+        $this->_elementTemplates = array(
+        'default'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</label>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
+
+        'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
+
+        'static'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>');
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
+
+    function setAdvancedElements($elements){
+        $this->_advancedElements = $elements;
+    }
+
+    /**
+     * What to do when starting the form
+     *
+     * @param MoodleQuickForm $form
+     */
     function startForm(&$form){
-        $this->_reqHTML=$form->getReqHTML();
-        $this->_elementTemplates=str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
+        $this->_reqHTML = $form->getReqHTML();
+        $this->_elementTemplates = str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
+        $this->_advancedHTML = $form->getAdvancedHTML();
+        $this->_showAdvanced = $form->getShowAdvanced();
         parent::startForm($form);
     }
+
     function startGroup(&$group, $required, $error){
         if (method_exists($group, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$group->getElementTemplateType()];
         }else{
             $html = $this->_elementTemplates['default'];
-           
+
+        }
+        if ($this->_showAdvanced){
+            $advclass = ' advanced';
+        } else {
+            $advclass = ' advanced hide';
+        }
+        if (isset($this->_advancedElements[$group->getName()])){
+            $html =str_replace(' {advanced}', $advclass, $html);
+            $html =str_replace('{advancedimg}', $this->_advancedHTML, $html);
+        } else {
+            $html =str_replace(' {advanced}', '', $html);
+            $html =str_replace('{advancedimg}', '', $html);
         }
         if (method_exists($group, 'getHelpButton')){
             $html =str_replace('{help}', $group->getHelpButton(), $html);
         }else{
             $html =str_replace('{help}', '', $html);
-            
         }
+        $html =str_replace('{name}', $group->getName(), $html);
         $html =str_replace('{type}', 'fgroup', $html);
-        
+
         $this->_templates[$group->getName()]=$html;
         // Fix for bug in tableless quickforms that didn't allow you to stop a
         // fieldset before a group of elements.
@@ -325,72 +1454,156 @@ class moodleform_renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         parent::startGroup($group, $required, $error);
     }
+
     function renderElement(&$element, $required, $error){
-        if (method_exists($element, 'getElementTemplateType')){
-            $html = $this->_elementTemplates[$element->getElementTemplateType()];
-        }else{
-            $html = $this->_elementTemplates['default'];
-           
-        }
-        $html =str_replace('{type}', 'f'.$element->getType(), $html);
-        if (method_exists($element, 'getHelpButton')){
-            $html=str_replace('{help}', $element->getHelpButton(), $html);
-        }else{
-            $html=str_replace('{help}', '', $html);
-            
-        }
-        $this->_templates[$element->getName()]=$html;
+        //manipulate id of all elements before rendering
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
         } else {
             $id = $element->getName();
         }
-        $element->updateAttributes(array('id'=>'id_'.$id));
+        //strip qf_ prefix and replace '[' with '_' and strip ']'
+        $id = preg_replace(array('/^qf_|\]/', '/\[/'), array('', '_'), $id);
+        if (strpos($id, 'id_') !== 0){
+            $element->updateAttributes(array('id'=>'id_'.$id));
+        }
+
+        //adding stuff to place holders in template
+        if (method_exists($element, 'getElementTemplateType')){
+            $html = $this->_elementTemplates[$element->getElementTemplateType()];
+        }else{
+            $html = $this->_elementTemplates['default'];
+        }
+        if ($this->_showAdvanced){
+            $advclass = ' advanced';
+        } else {
+            $advclass = ' advanced hide';
+        }
+        if (isset($this->_advancedElements[$element->getName()])){
+            $html =str_replace(' {advanced}', $advclass, $html);
+        } else {
+            $html =str_replace(' {advanced}', '', $html);
+        }
+        if (isset($this->_advancedElements[$element->getName()])||$element->getName() == 'mform_showadvanced'){
+            $html =str_replace('{advancedimg}', $this->_advancedHTML, $html);
+        } else {
+            $html =str_replace('{advancedimg}', '', $html);
+        }
+        $html =str_replace('{type}', 'f'.$element->getType(), $html);
+        $html =str_replace('{name}', $element->getName(), $html);
+        if (method_exists($element, 'getHelpButton')){
+            $html = str_replace('{help}', $element->getHelpButton(), $html);
+        }else{
+            $html = str_replace('{help}', '', $html);
+
+        }
+
+        $this->_templates[$element->getName()] = $html;
+
         parent::renderElement($element, $required, $error);
     }
 
-    
+    function finishForm(&$form){
+        parent::finishForm($form);
+        // add a lockoptions script
+        if ('' != ($script = $form->getLockOptionEndScript())) {
+            $this->_html = $this->_html . "\n" . $script;
+        }
+    }
+   /**
+    * Called when visiting a header element
+    *
+    * @param    object     An HTML_QuickForm_header element being visited
+    * @access   public
+    * @return   void
+    */
+    function renderHeader(&$header)    {
+        $name = $header->getName();
+
+        $id = empty($name) ? '' : ' id="' . $name . '"';
+        $id = preg_replace(array('/\]/', '/\[/'), array('', '_'), $id);
+        if (is_null($header->_text)) {
+            $header_html = '';
+        } elseif (!empty($name) && isset($this->_templates[$name])) {
+            $header_html = str_replace('{header}', $header->toHtml(), $this->_templates[$name]);
+        } else {
+            $header_html = str_replace('{header}', $header->toHtml(), $this->_headerTemplate);
+        }
+
+        if (isset($this->_advancedElements[$name])){
+            $header_html =str_replace('{advancedimg}', $this->_advancedHTML, $header_html);
+        } else {
+            $header_html =str_replace('{advancedimg}', '', $header_html);
+        }
+        $elementName='mform_showadvanced';
+        if ($this->_showAdvanced==0){
+            $buttonlabel = get_string('showadvanced', 'form');
+        } else {
+            $buttonlabel = get_string('hideadvanced', 'form');
+        }
+
+        if (isset($this->_advancedElements[$name])){
+            $showtext="'".get_string('showadvanced', 'form')."'";
+            $hidetext="'".get_string('hideadvanced', 'form')."'";
+            //onclick returns false so if js is on then page is not submitted.
+            $onclick = 'return showAdvancedOnClick(this, '.$hidetext.', '.$showtext.');';
+            $button = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="submit" onclick="'.$onclick.'" />';
+            $header_html =str_replace('{button}', $button, $header_html);
+        } else {
+            $header_html =str_replace('{button}', '', $header_html);
+        }
+
+        if ($this->_fieldsetsOpen > 0) {
+            $this->_html .= $this->_closeFieldsetTemplate;
+            $this->_fieldsetsOpen--;
+        }
+
+        $openFieldsetTemplate = str_replace('{id}', $id, $this->_openFieldsetTemplate);
+        if ($this->_showAdvanced){
+            $advclass = ' class="advanced"';
+        } else {
+            $advclass = ' class="advanced hide"';
+        }
+        if (isset($this->_advancedElements[$name])){
+            $openFieldsetTemplate = str_replace('{advancedclass}', $advclass, $openFieldsetTemplate);
+        } else {
+            $openFieldsetTemplate = str_replace('{advancedclass}', '', $openFieldsetTemplate);
+        }
+        $this->_html .= $openFieldsetTemplate . $header_html;
+        $this->_fieldsetsOpen++;
+    } // end func renderHeader
+
+    function getStopFieldsetElements(){
+        return $this->_stopFieldsetElements;
+    }
 }
 
-/*class moodleform_filter{
-    var $paramtype;
-    var $default;
-    function moodleform_filter($paramtype, $default=NULL){
-        $this->paramtype=$paramtype;
-        $this->default=$default;
-    }
-    function required_param($value){
-        if (isset($value)) {
-            $param = $value;
-        } else {
-            error('A required parameter was missing');
-        }
-    
-        return $this->clean_param($param);
-    }
-    function optional_param($value){
-        if (!isset($value)) {
-           return $this->default;
-        }
-        return $this->clean_param($value);
-    }
 
-}    */
+$GLOBALS['_HTML_QuickForm_default_renderer'] =& new MoodleQuickForm_Renderer();
 
-$GLOBALS['_HTML_QuickForm_default_renderer']=& new moodleform_renderer();
-
-moodleform::registerElementType('checkbox', "$CFG->libdir/form/checkbox.php", 'moodleform_checkbox');
-moodleform::registerElementType('file', "$CFG->libdir/form/file.php", 'moodleform_file');
-moodleform::registerElementType('group', "$CFG->libdir/form/group.php", 'moodleform_group');
-moodleform::registerElementType('password', "$CFG->libdir/form/password.php", 'moodleform_password');
-moodleform::registerElementType('radio', "$CFG->libdir/form/radio.php", 'moodleform_radio');
-moodleform::registerElementType('select', "$CFG->libdir/form/select.php", 'moodleform_select');
-moodleform::registerElementType('text', "$CFG->libdir/form/text.php", 'moodleform_text');
-moodleform::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'moodleform_textarea');
-moodleform::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'moodleform_date_selector');
-moodleform::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'moodleform_htmleditor');
-moodleform::registerElementType('static', "$CFG->libdir/form/static.php", 'moodleform_static');
-moodleform::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'moodleform_hidden');
-
-
+MoodleQuickForm::registerElementType('checkbox', "$CFG->libdir/form/checkbox.php", 'MoodleQuickForm_checkbox');
+MoodleQuickForm::registerElementType('file', "$CFG->libdir/form/file.php", 'MoodleQuickForm_file');
+MoodleQuickForm::registerElementType('group', "$CFG->libdir/form/group.php", 'MoodleQuickForm_group');
+MoodleQuickForm::registerElementType('password', "$CFG->libdir/form/password.php", 'MoodleQuickForm_password');
+MoodleQuickForm::registerElementType('radio', "$CFG->libdir/form/radio.php", 'MoodleQuickForm_radio');
+MoodleQuickForm::registerElementType('select', "$CFG->libdir/form/select.php", 'MoodleQuickForm_select');
+MoodleQuickForm::registerElementType('text', "$CFG->libdir/form/text.php", 'MoodleQuickForm_text');
+MoodleQuickForm::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'MoodleQuickForm_textarea');
+MoodleQuickForm::registerElementType('date_selector', "$CFG->libdir/form/dateselector.php", 'MoodleQuickForm_date_selector');
+MoodleQuickForm::registerElementType('date_time_selector', "$CFG->libdir/form/datetimeselector.php", 'MoodleQuickForm_date_time_selector');
+MoodleQuickForm::registerElementType('htmleditor', "$CFG->libdir/form/htmleditor.php", 'MoodleQuickForm_htmleditor');
+MoodleQuickForm::registerElementType('format', "$CFG->libdir/form/format.php", 'MoodleQuickForm_format');
+MoodleQuickForm::registerElementType('static', "$CFG->libdir/form/static.php", 'MoodleQuickForm_static');
+MoodleQuickForm::registerElementType('hidden', "$CFG->libdir/form/hidden.php", 'MoodleQuickForm_hidden');
+MoodleQuickForm::registerElementType('modvisible', "$CFG->libdir/form/modvisible.php", 'MoodleQuickForm_modvisible');
+MoodleQuickForm::registerElementType('modgroupmode', "$CFG->libdir/form/modgroupmode.php", 'MoodleQuickForm_modgroupmode');
+MoodleQuickForm::registerElementType('selectyesno', "$CFG->libdir/form/selectyesno.php", 'MoodleQuickForm_selectyesno');
+MoodleQuickForm::registerElementType('modgrade', "$CFG->libdir/form/modgrade.php", 'MoodleQuickForm_modgrade');
+MoodleQuickForm::registerElementType('cancel', "$CFG->libdir/form/cancel.php", 'MoodleQuickForm_cancel');
+MoodleQuickForm::registerElementType('button', "$CFG->libdir/form/button.php", 'MoodleQuickForm_button');
+MoodleQuickForm::registerElementType('choosecoursefile', "$CFG->libdir/form/choosecoursefile.php", 'MoodleQuickForm_choosecoursefile');
+MoodleQuickForm::registerElementType('header', "$CFG->libdir/form/header.php", 'MoodleQuickForm_header');
+MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", 'MoodleQuickForm_submit');
+MoodleQuickForm::registerElementType('questioncategory', "$CFG->libdir/form/questioncategory.php", 'MoodleQuickForm_questioncategory');
+MoodleQuickForm::registerElementType('advcheckbox', "$CFG->libdir/form/advcheckbox.php", 'MoodleQuickForm_advcheckbox');
 ?>

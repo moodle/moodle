@@ -5,25 +5,25 @@ require_once "$CFG->libdir/formslib.php";
 
 /**
  * Class for a group of elements used to input a date.
- * 
- * Emulates moodle print_date_selector function 
- * 
+ *
+ * Emulates moodle print_date_selector function
+ *
  * @author Jamie Pratt <me@jamiep.org>
  * @access public
  */
-class moodleform_date_selector extends moodleform_group
+class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 {
     /**
     * Control the fieldnames for form elements
     *
-    * day => string day   fieldname
-    * month => string month  fieldname
-    * year => string year  fieldname
+    * startyear => integer start of range of years that can be selected
+    * stopyear => integer last year that can be selected
     * timezone => float/string timezone
     * applydst => apply users daylight savings adjustment?
+    * optional => if true, show a checkbox beside the date to turn it on (or off)
     */
     var $_options = array('startyear'=>1970, 'stopyear'=>2020,
-                    'timezone'=>99, 'applydst'=>true);
+                    'timezone'=>99, 'applydst'=>true, 'optional'=>false);
 
    /**
     * These complement separators, they are appended to the resultant HTML
@@ -34,14 +34,14 @@ class moodleform_date_selector extends moodleform_group
 
    /**
     * Class constructor
-    * 
+    *
     * @access   public
     * @param    string  Element's name
     * @param    mixed   Label(s) for an element
     * @param    array   Options to control the element's display
     * @param    mixed   Either a typical HTML attribute string or an associative array
     */
-    function moodleform_date_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
+    function MoodleQuickForm_date_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
@@ -76,32 +76,82 @@ class moodleform_date_selector extends moodleform_group
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
         }
-        $this->_elements[] =& moodleform::createElement('select', 'day', null, $days, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select','month', null, $months, $this->getAttributes(), true);
-        $this->_elements[] =& moodleform::createElement('select','year', null, $years, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'day', get_string('day', 'form'), $days, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'month', get_string('month', 'form'), $months, $this->getAttributes(), true);
+        $this->_elements[] =& MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
+        // If optional we add a checkbox which the user can use to turn if on
+        if($this->_options['optional']) {
+            $this->_elements[] =& MoodleQuickForm::createElement('checkbox', 'off', null, get_string('disable'), $this->getAttributes(), true);
+        }
+        foreach ($this->_elements as $element){
+            if (method_exists($element, 'setHiddenLabel')){
+                $element->setHiddenLabel(true);
+            }
+        }
 
     }
 
     // }}}
-    // {{{ setValue()
+    // {{{ onQuickFormEvent()
 
-    function setValue($value)
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @since     1.0
+     * @access    public
+     * @return    void
+     */
+    function onQuickFormEvent($event, $arg, &$caller)
     {
-        if (!($value)) {
-            $value = time();
+        switch ($event) {
+            case 'updateValue':
+                // constant values override both default and submitted ones
+                // default values are overriden by submitted
+                $value = $this->_findValue($caller->_constantValues);
+                if (null === $value) {
+                    // if no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case
+                    if ($caller->isSubmitted()) {
+                        $value = $this->_findValue($caller->_submitValues);
+                    } else {
+                        $value = $this->_findValue($caller->_defaultValues);
+                    }
+                }
+                $requestvalue=$value;
+                if ($value == 0) {
+                    $value = time();
+                }
+                if (!is_array($value)) {
+                    $currentdate = usergetdate($value);
+                    $value = array(
+                        'day' => $currentdate['mday'],
+                        'month' => $currentdate['mon'],
+                        'year' => $currentdate['year']);
+                    // If optional, default to off, unless a date was provided
+                     if($this->_options['optional']) {
+                        $value['off'] = ($requestvalue == 0) ? true : false;
+                    }
+                } else {
+                    $value['off'] = (isset($value['off'])) ? true : false;
+                }
+                if (null !== $value){
+                    $this->setValue($value);
+                }
+                break;
+            case 'createElement':
+                if($arg[2]['optional']) {
+                    $caller->disabledIf($arg[0], $arg[0].'[off]', 'checked');
+                }
+                return parent::onQuickFormEvent($event, $arg, $caller);
+                break;
+            default:
+                return parent::onQuickFormEvent($event, $arg, $caller);
         }
-        if (!is_array($value)) {
-            $currentdate = usergetdate($value);
-            $value = array(
-                'day' => $currentdate['mday'],
-                'month' => $currentdate['mon'],
-                'year' => $currentdate['year']);
-            
-        }
-        parent::setValue($value);
-    }
+    } // end func onQuickFormEvent
 
-    // }}}
     // {{{ toHtml()
 
     function toHtml()
@@ -122,16 +172,7 @@ class moodleform_date_selector extends moodleform_group
     }
 
     // }}}
-    // {{{ onQuickFormEvent()
 
-    function onQuickFormEvent($event, $arg, &$caller)
-    {
-        if ('updateValue' == $event) {
-            return HTML_QuickForm_element::onQuickFormEvent($event, $arg, $caller);
-        } else {
-            return parent::onQuickFormEvent($event, $arg, $caller);
-        }
-    }
     /**
      * Output a timestamp. Give it the name of the group.
      *
@@ -142,16 +183,33 @@ class moodleform_date_selector extends moodleform_group
     function exportValue(&$submitValues, $assoc = false)
     {
         $value = null;
-        $valuearray = $this->_elements[0]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[1]->exportValue($submitValues[$this->getName()], true);
-        $valuearray +=$this->_elements[2]->exportValue($submitValues[$this->getName()], true);
-        $value[$this->getName()]=make_timestamp($valuearray['year'],
-                               $valuearray['month'],
-                               $valuearray['day'],
-                               0,0,0,
-                               $this->_options['timezone'],
-                               $this->_options['applydst']);
-        return $value;
+        $valuearray = array();
+        foreach ($this->_elements as $element){
+            $thisexport = $element->exportValue($submitValues[$this->getName()], true);
+            if ($thisexport!=null){
+                $valuearray += $thisexport;
+            }
+        }
+        if (count($valuearray)){
+            if($this->_options['optional']) {
+                // If checkbox is on, the value is zero, so go no further
+                if(!empty($valuearray['off'])) {
+                    $value[$this->getName()]=0;
+                    return $value;
+                }
+            }
+
+            $value[$this->getName()]=make_timestamp($valuearray['year'],
+                                   $valuearray['month'],
+                                   $valuearray['day'],
+                                   0,0,0,
+                                   $this->_options['timezone'],
+                                   $this->_options['applydst']);
+
+            return $value;
+        } else {
+            return null;
+        }
     }
 
     // }}}
