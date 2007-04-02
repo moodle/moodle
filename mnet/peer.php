@@ -27,7 +27,7 @@ class mnet_peer {
 
     function bootstrap($wwwroot, $pubkey = null) {
 
-        if (substr($wwwroot, 0, -1) == '/') {
+        if (substr($wwwroot, -1, 1) == '/') {
             $wwwroot = substr($wwwroot, 0, -1);
         }
 
