@@ -148,18 +148,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
     function loginpage_hook() {
         global $SESSION, $CFG;
+	
+	// Prevent username from being shown on login page after logout
+	$CFG->nolastloggedin = true;
 
-        //TODO: fix the code
         return;
-
-    //  See http://moodle.org/mod/forum/discuss.php?d=39918#187611
-    //    if ($CFG->auth == 'shibboleth') {
-    //        if (!empty($SESSION->shibboleth_checked) ) {  // Just come from there
-    //            unset($SESSION->shibboleth_checked);
-    //        } else if (empty($_POST)) {                   // No incoming data, so redirect
-    //            redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
-    //        }
-    //    }
     }
 
     /**
