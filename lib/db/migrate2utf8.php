@@ -569,7 +569,7 @@ function migrate2utf8_post_subject($recordid){
         $newpost = new object;
         $newpost->id = $recordid;
         $newpost->subject = $result;
-        migrate2utf8_update_record('event',$newpost);
+        migrate2utf8_update_record('post',$newpost);
     }
 /// And finally, just return the converted field
     return $result;
@@ -607,7 +607,7 @@ function migrate2utf8_post_summary($recordid){
         $newpost = new object;
         $newpost->id = $recordid;
         $newpost->summary = $result;
-        migrate2utf8_update_record('event',$newpost);
+        migrate2utf8_update_record('post',$newpost);
     }
 /// And finally, just return the converted field
     return $result;
@@ -645,7 +645,7 @@ function migrate2utf8_post_content($recordid){
         $newpost = new object;
         $newpost->id = $recordid;
         $newpost->content = $result;
-        migrate2utf8_update_record('event',$newpost);
+        migrate2utf8_update_record('post',$newpost);
     }
 /// And finally, just return the converted field
     return $result;
