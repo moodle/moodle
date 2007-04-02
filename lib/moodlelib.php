@@ -1641,7 +1641,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         } else {
             $loginguest = '';
         }
-        if (empty($CFG->loginhttps) or $autologinguest) { //do not require https for guest logins
+        if (empty($CFG->loginhttps) or $loginguest) { //do not require https for guest logins
             redirect($CFG->wwwroot .'/login/index.php'. $loginguest);
         } else {
             $wwwroot = str_replace('http:','https:', $CFG->wwwroot);
