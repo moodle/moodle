@@ -1615,7 +1615,7 @@ function count_login_failures($mode, $username, $lastlogin) {
  * @param mixed $object The data to be printed
  */
 function print_object($object) {
-    echo '<pre>'.htmlspecialchars(print_r($object,true)).'</pre>';
+    echo '<pre class="notifytiny">' . htmlspecialchars(print_r($object,true)) . '</pre>';
 }
 
 function course_parent_visible($course = null) {
