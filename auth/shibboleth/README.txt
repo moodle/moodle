@@ -144,24 +144,27 @@ Example file:
 <?PHP
 
     // Set the zip code and the adress
-    if ($_SERVER[$pluginconfig->field_map_address] != '')
+    if ($_SERVER[$this->config->field_map_address] != '')
     {
         // $address contains something like 'SWITCH$Limmatquai 138$CH-8021 Zurich'
-        // We want to split this up to get:
+        // We want to split this up to get: 
         // institution, street, zipcode, city and country
-        $address = $_SERVER[$pluginconfig->field_map_address];
+        $address = $_SERVER[$this->config->field_map_address];
         list($institution, $street, $zip_city) = split('\$', $address);
         ereg(' (.+)',$zip_city, $regs);
         $city = $regs[1];
-
+        
         ereg('(.+)-',$zip_city, $regs);
         $country = $regs[1];
-
+        
         $result["address"] = $street;
         $result["city"] = $city;
         $result["country"] = $country;
         $result["department"] = $institution;
+        $result["description"] = "I am a Shibboleth user";
+	
     }
+
 ?>
 --
 
