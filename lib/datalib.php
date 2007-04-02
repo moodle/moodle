@@ -604,7 +604,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     if (!$limitfrom) {
         $limitfrom = 0;  
     }
-    
+
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
     foreach ($courses as $course) {
         if ($course->visible <= 0) {
@@ -663,19 +663,82 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
 
 /**
- * List of courses that a user is a member of.
+ * List of courses that a user has access to view. Note that for admins,
+ * this usually includes every course on the system.
  *
  * @uses $CFG
  * @param int $userid The user of interest
  * @param string $sort the sortorder in the course table
  * @param string $fields  the fields to return
+ * @param bool $doanything True if using the doanything flag
+ * @param int $limit Maximum number of records to return, or 0 for unlimited
  * @return array {@link $COURSE} of course objects
  */
-function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*', $doanything=false) {
+function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*', $doanything=false,$limit=0) {
+
+    global $USER;
+
+    if (!empty($USER->id) && ($USER->id == $userid)) {
+        if (!empty($USER->mycourses[$doanything])) {
+            return $USER->mycourses[$doanything];      // Just return the cached version
+        }
+    }
 
     $mycourses = array();
+    
+    // Fix fields to refer to the course table c
+    $fields=preg_replace('/([a-z0-9*]+)/','c.$1',$fields);
 
-    $rs = get_recordset('course', '', '', $sort, $fields);
+    // Attempt to filter the list of courses in order to reduce the number
+    // of queries in the next part.
+    
+    // Check root permissions
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+    if(has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
+        // User can view all courses, although there might be exceptions
+        // which we will filter later.
+        $rs = get_recordset('course c', '', '', $sort, $fields);        
+    } else {
+        // The only other context level above courses that applies to moodle/course:view 
+        // is category. So we consider:
+        // 1. All courses in which the user is assigned a role
+        // 2. All courses in categories in which the user is assigned a role
+        // 3. All courses which have overrides for moodle/course:view
+        // Remember that this is just a filter. We check each individual course later. 
+        // However for a typical student on a large system this can reduce the
+        // number of courses considered from around 2,000 to around 2, with corresponding
+        // reduction in the number of queries needed.
+        global $CFG;
+        $rs=get_recordset_sql(" 
+SELECT 
+    $fields 
+FROM 
+    {$CFG->prefix}role_assignments ra
+    INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
+    INNER JOIN {$CFG->prefix}course c ON x.instanceid=c.id AND x.contextlevel=50
+WHERE 
+    ra.userid=$userid
+UNION
+SELECT 
+    $fields 
+FROM 
+    {$CFG->prefix}role_assignments ra
+    INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
+    INNER JOIN {$CFG->prefix}course_categories a ON x.instanceid=a.id AND x.contextlevel=40
+    INNER JOIN {$CFG->prefix}course c ON c.category=a.id
+WHERE 
+    ra.userid=$userid
+UNION
+SELECT 
+    $fields 
+FROM 
+    {$CFG->prefix}role_capabilities ca
+    INNER JOIN {$CFG->prefix}context x ON x.id=ca.contextid AND x.contextlevel=50
+    INNER JOIN {$CFG->prefix}course c ON c.id=x.instanceid
+WHERE 
+    ca.contextid <> {$sitecontext->id} AND ca.capability='moodle/course:view'
+ORDER BY $sort");           
+    } 
 
     if ($rs && $rs->RecordCount() > 0) {
         while ($course = rs_fetch_next_record($rs)) {
@@ -688,9 +751,21 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
                     !has_capability('moodle/legacy:guest', $context, $userid, false) &&
                     ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
                     $mycourses[$course->id] = $course;
+
+                    // Only return a limited number of courses if limit is set
+                    if($limit>0) {
+                        $limit--;
+                        if($limit==0) {
+                            break;
+                        }
+                    }
                 }
             }
         }
+    }
+
+    if (!empty($USER->id) && ($USER->id == $userid)) {
+        $USER->mycourses[$doanything] = $mycourses;
     }
 
     return $mycourses;
