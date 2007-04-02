@@ -165,7 +165,14 @@ httpsrequired();
 
 
             update_user_login_times();
-            set_moodle_cookie($USER->username);
+            if (empty($CFG->nolastloggedin)) {
+                set_moodle_cookie($USER->username);
+            } else {
+                // do not store last logged in user in cookie
+                // auth plugins can temporarily override this from loginpage_hook()
+                // do not save $CFG->nolastloggedin in database!
+                set_moodle_cookie('nobody');
+            }
             set_login_session_preferences();
 
             /// This is what lets the user do anything on the site :-)
