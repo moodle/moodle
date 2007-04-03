@@ -214,10 +214,9 @@
 
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-//DONOTCOMMIT: TODO:
+//TODO:
 if (debugging()) {
-    echo '<p>[ <a href="../group/groupui/?id='. $courseid .'">AJAX groups</a>
-         | <a href="../group/index.php?id='. $courseid .'">New groups</a> - debugging.]</p>';
+    echo '<p>[ <a href="../group/index.php?id='. $courseid .'">New groups</a> - debugging. ]</p>';
 }
 
 /// Print out the complete form
