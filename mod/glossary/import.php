@@ -355,6 +355,12 @@
             echo $rejections;
             echo '</table><hr />';
         }
+    /// Print continue button, based on results
+        if ($importedentries) {
+            print_continue('view.php?id='.$id);
+        } else {
+            print_continue('import.php?id='.$id);
+        }
         print_box_end();
     } else {
         notify("Error while trying to read the file.");
