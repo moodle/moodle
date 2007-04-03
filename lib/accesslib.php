@@ -1766,7 +1766,6 @@ function validate_context($contextlevel, $instanceid) {
             return (boolean)count_records('course', 'id', $instanceid);
 
         case CONTEXT_GROUP:
-            //return (boolean)count_records('groups_groups', 'id', $instanceid); //TODO:DONOTCOMMIT:
             return groups_group_exists($instanceid);
 
         case CONTEXT_MODULE:
