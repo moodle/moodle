@@ -4981,7 +4981,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  * Provide an definition of error_get_last for PHP before 5.2.0. This simply 
  * returns NULL, since there is not way to get the right answer.
  */
-if (!version_compare(phpversion(), '5.2.0') >= 0) {
+if (!function_exists('error_get_last')) {
     // the eval is needed to prevent PHP 5.2+ from getting a parse error!
     eval('
         function error_get_last() {
