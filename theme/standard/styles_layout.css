@@ -2677,6 +2677,12 @@ body#user-index .rolesform {
 .datapreferences {
   text-align:center;
 }
+
+table.presets {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /***
  *** Modules: Forum
  ***/

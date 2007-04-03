@@ -105,7 +105,7 @@
             <?php
 
             }
-            $fullnav = str_replace('->', '&raquo;', "$course->shortname -> $fullnav");
+            $fullnav = str_replace('->', '&raquo;', format_string($course->shortname) . " -> $fullnav");
             echo '<div id="nav-bar">'.$fullnav.'</div>';
 
             if ($course->id == SITEID and $wdir != "/backupdata") {
