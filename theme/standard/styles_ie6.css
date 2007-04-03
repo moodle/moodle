@@ -45,3 +45,7 @@
 form.mform input {
   margin-left: -10px;
 }
+
+form.mform .fcheckbox input {
+  margin-left: 0px;
+}
