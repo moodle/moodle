@@ -550,6 +550,9 @@ form.mform div.error,form.mform fieldset.error {
   padding: 5px;
   color: inherit;
 }
+form.mform .fcheckbox input {
+  margin-left: 0px;
+}
 form#adminsettings div.htmlarea {
   clear: left;
   padding-top: 5px;
