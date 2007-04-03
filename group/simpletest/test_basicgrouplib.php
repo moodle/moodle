@@ -27,8 +27,6 @@ class basicgrouplib_test extends UnitTestCase {
 
     function __construct() {
        parent::UnitTestCase();
-
-       groups_create_role();   
     }
 
     function test_get_user() {
@@ -70,7 +68,7 @@ class basicgrouplib_test extends UnitTestCase {
         //...
         $this->assertTrue($groupids= groups_get_groups_for_user($this->userid, $this->courseid));
         //...        
-        $this->assertTrue(1 == groups_get_no_group_members($this->groupid)); //Utillib.
+        $this->assertTrue(1 == groups_count_group_members($this->groupid)); //Utillib.
     }
 
     function test_remove_member() {
