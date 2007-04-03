@@ -37,6 +37,7 @@ $string['invalidcourse'] = 'Invalid course';
 $string['invalidfieldname'] = '\"$a\" is not a valid field name';
 $string['invalidfiletype'] = '\"$a\" is not a valid file type';
 $string['invalidmd5'] = 'Invalid md5';
+$string['invalidrequest'] = 'Invalid request';
 $string['invalidrole'] = 'Invalid role';
 $string['invalidxmlfile'] = '\"$a\" is not a valid XML file';
 $string['loginasonecourse'] = 'You can not enter this course.<br /> You have to terminate the \"Login as\" session before entering any other course.';
