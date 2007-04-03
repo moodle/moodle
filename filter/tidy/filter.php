@@ -17,7 +17,7 @@
 * @param        string         text to be filtered
 */
 function tidy_filter($courseid, $text) {
-       
+    global $CFG;   
 /// Configuration for tidy. Feel free to tune for your needs, e.g. to allow
 /// proprietary markup.
     $tidyoptions = array(             
@@ -39,7 +39,11 @@ function tidy_filter($courseid, $text) {
     
 /// If enabled: run tidy over the entire string
     if (function_exists('tidy_repair_string')){
-        $text = tidy_repair_string($text, $tidyoptions);
+        if (empty($CFG->unicodedb)) {
+            $text = tidy_repair_string($text, $tidyoptions);
+        } else {
+            $text = tidy_repair_string($text, $tidyoptions, 'utf8');
+        }
     }
 
     return $text;
