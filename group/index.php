@@ -27,7 +27,6 @@ $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
 $action = groups_param_action();
 
-
 if ($groupid) {
     $groupingsforgroup = groups_get_groupings_for_group($groupid);
     if ($groupingsforgroup) {
@@ -176,7 +175,7 @@ if ($success) {
         $showcreategroupform_disabled = $disabled;
     }
     
-    if ($groupingid == -1) {
+    if ($groupingid == -1 && groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
         $printerfriendly_disabled = '';
     }
 
@@ -212,6 +211,8 @@ if ($success) {
         //NOTE, only show the pseudo-grouping if it has groups.
         $groupingids[] = GROUP_NOT_IN_GROUPING;
     }
+    
+    $sel_groupingid = -1;
 
     if ($groupingids) {    
         // Put the groupings into a hash and sort them
@@ -231,7 +232,10 @@ if ($success) {
             echo "<option value=\"$id\"$select>$name</option>\n";
             $count++;
         }
+    } else {
+        echo '<option>&nbsp;</option>';
     }
+
     echo '</select>'."\n";
 
     

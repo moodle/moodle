@@ -206,6 +206,13 @@ function groups_group_matches($courseid, $grp_name, $grp_description) {
     return groups_db_group_matches($courseid, $grp_name, $grp_description);
 }
 
+/**
+ * Determine if a course ID, and group name match a group in the database.
+ * @return mixed A group-like object with $group->id, or false.
+ */
+function groups_group_name_exists($courseid, $grp_name) {
+    return groups_db_group_name_exists($courseid, $grp_name);
+}
 
 /**
  * Determines if the user is a member of the given group.
