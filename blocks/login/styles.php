@@ -14,8 +14,9 @@
 .block_login .loginform .c1 {
   margin:0.3em 0.8em;
   text-align:right;
+  display:block;
 }
 
-.block_login .loginform div.btn {
+.block_login .loginform div.c1.btn {
   text-align:center;
 }
