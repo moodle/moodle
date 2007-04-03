@@ -60,20 +60,28 @@ if (!empty($group)) {
     $editform->set_data($group);
 }
 
+// Process delete action
+if ($delete) {
+    if (groups_delete_group($id)) {
+        redirect(groups_home_url($course->id, null, $groupingid, false));
+    } else {
+        print_error('erroreditgroup', 'group', groups_home_url($course->id));
+    }
+}
+
+$error = null;
+
 if ($editform->is_cancelled()) {
     redirect(groups_home_url($courseid, $id, $groupingid, false));
 } elseif ($data = $editform->get_data()) {
     $success = true;
-        
     // preprocess data
-    if ($delete) {
-        if ($success = groups_delete_group($id)) {
-            redirect(groups_home_url($course->id, null, $groupingid, false));
-        } else {
-            print_error('erroreditgroup', 'group', groups_home_url($course->id));
-        }
-    } elseif (empty($group)) { // New group
-        if (!$id = groups_create_group($course->id, $data)) {
+    if (empty($group)) { // New group
+        // First check if this group name doesn't already exist
+        if (groups_group_name_exists($courseid, $data->name)) {
+            $error = get_string('groupnameexists', 'group', $data->name);
+            $success = false;
+        } elseif (!$id = groups_create_group($course->id, $data)) {
             print_error('erroreditgroup');
         } else {
             $success = (bool)$id;
@@ -86,7 +94,11 @@ if ($editform->is_cancelled()) {
         $success = $success && groups_remove_group_from_grouping($id, $groupingid);
         $success = $success && groups_add_group_to_grouping($id, $newgrouping);
     } else { // Updating group
-        if (!groups_update_group($data, $course->id)) {
+        $group = groups_get_group($data->id);
+        if (groups_group_name_exists($courseid, $data->name) && $group->name != $data->name) {
+            $error = get_string('groupnameexists', 'group', $data->name);
+            $success = false;
+        } elseif (!groups_update_group($data, $course->id)) {
             print_error('groupnotupdated');
         }
     }
@@ -101,32 +113,36 @@ if ($editform->is_cancelled()) {
 
     if ($success) {
         redirect(groups_home_url($course->id, $id, $groupingid, false));
-    } else {
+    } elseif (empty($error)) {
         print_error('erroreditgroup', 'group', groups_home_url($course->id));
     }
-} else { // Prepare and output form
-    $strgroups = get_string('groups');
-    $strparticipants = get_string('participants');
-    
-    if ($id) {
-        $strheading = get_string('editgroupsettings', 'group');
-    } else {
-        $strheading = get_string('creategroup', 'group');
-    }
-    print_header("$course->shortname: ". $strheading,
-                 $course->fullname, 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-                 '-> <a href="' .format_string(groups_home_url($courseid, $id, $groupingid, false)) . "\">$strgroups</a>".
-                 "-> $strheading", '', '', true, '', user_login_string($course, $USER));
-    
-    print_heading($strheading);
-    echo '<div id="grouppicture">';
-    if ($id) {
-        print_group_picture($group, $course->id);
-    }
-    echo '</div>';
-    $editform->display();
-    print_footer($course);
+} 
+$strgroups = get_string('groups');
+$strparticipants = get_string('participants');
+
+if ($id) {
+    $strheading = get_string('editgroupsettings', 'group');
+} else {
+    $strheading = get_string('creategroup', 'group');
 }
+print_header("$course->shortname: ". $strheading,
+             $course->fullname, 
+             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
+             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
+             '-> <a href="' .format_string(groups_home_url($courseid, $id, $groupingid, false)) . "\">$strgroups</a>".
+             "-> $strheading", '', '', true, '', user_login_string($course, $USER));
+
+print_heading($strheading);
+
+if ($error) {
+    notify($error);
+}
+
+echo '<div id="grouppicture">';
+if ($id) {
+    print_group_picture($group, $course->id);
+}
+echo '</div>';
+$editform->display();
+print_footer($course);
 ?>

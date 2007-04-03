@@ -210,6 +210,24 @@ function groups_db_group_matches($courseid, $grp_name, $grp_description) {
     return $group;
 }
 
+/**
+ * Determine if a course ID, and group name match a group in the database.
+ * @return mixed A group-like object with $group->id, or false.
+ */
+function groups_db_group_name_exists($courseid, $grp_name) {
+    global $CFG;
+    $sql = "SELECT g.id, g.name
+        FROM {$CFG->prefix}groups g
+        INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid
+        WHERE g.name = '$grp_name'
+        AND cg.courseid = '$courseid'";
+    $records = get_records_sql($sql);
+    $group = false;
+    if ($records) {
+        $group = current($records);
+    } 
+    return $group;
+}
 
 /**
  * Determines if a specified user is a member of a specified group

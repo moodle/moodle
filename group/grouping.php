@@ -46,19 +46,21 @@ if (!empty($grouping)) {
     $editform->set_data($grouping);
 }
 
+// preprocess data
+if ($delete) {
+    if (groups_delete_grouping($id)) {
+        redirect(groups_home_url($course->id));
+    } else {
+        print_error('erroreditgrouping', 'group', groups_home_url($course->id));
+    }
+}
+
 if ($editform->is_cancelled()) {
     redirect(groups_home_url($courseid, false, $id, false));
 } elseif ($data = $editform->get_data()) {
     $success = true;
     
-    // preprocess data
-    if ($delete) {
-        if ($success = groups_delete_grouping($id)) {
-            redirect(groups_home_url($course->id));
-        } else {
-            print_error('erroreditgrouping', 'group', groups_home_url($course->id));
-        }
-    } elseif (empty($grouping)) { // New grouping
+    if (empty($grouping)) { // New grouping
         if (!$id = groups_create_grouping($course->id, $data)) {
             print_error('erroreditgrouping');
         } else {
