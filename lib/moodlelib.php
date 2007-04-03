@@ -1636,7 +1636,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
-        if ($autologinguest and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
+        if ($autologinguest and !empty($CFG->guestloginbutton) and !empty($CFG->autologinguests) and ($COURSE->id == SITEID or $COURSE->guest) ) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
