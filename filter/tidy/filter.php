@@ -39,7 +39,7 @@ function tidy_filter($courseid, $text) {
     
 /// If enabled: run tidy over the entire string
     if (function_exists('tidy_repair_string')){
-        $text = tidy_repair_string($text, $tidyoptions);
+        $text = tidy_repair_string($text, $tidyoptions, 'utf8');
     }
 
     return $text;
