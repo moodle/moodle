@@ -2549,6 +2549,20 @@ body#user-index .rolesform {
   text-align:center;
 }
 
+#user-policy .noticebox {
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:10px;
+  width:80%;
+  height:250px;
+}
+
+#user-policy #policyframe {
+  width:100%;
+  height:100%;
+}
+
 /***
  *** Modules: Assignment
  ***/

@@ -1,18 +1,18 @@
 <?php // $Id$
 
-    require_once("../config.php");
+    require_once('../config.php');
+    require_once($CFG->libdir.'/filelib.php');
 
-    $agree = optional_param('agree', 0, PARAM_INT);
+    $agree = optional_param('agree', 0, PARAM_BOOL);
 
     define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
 
-
-    if (empty($USER->id)) {
+    if (!isloggedin()) {
         require_login();
     }
 
-    if ($agree == 1 and confirm_sesskey()) {        // User has agreed
-        if ($USER->username != 'guest') {           // Don't remember guests
+    if ($agree and confirm_sesskey()) {    // User has agreed
+        if (!isguestuser()) {              // Don't remember guests
             if (!set_field('user', 'policyagreed', 1, 'id', $USER->id)) {
                 error('Could not save your agreement');
             }
@@ -37,14 +37,18 @@
 
     print_heading($strpolicyagreement);
 
-    echo '<center>';
-    echo '<iframe width="90%" height="70%" src="'.$CFG->sitepolicy.'">';
+    $mimetype = mimeinfo('type', $CFG->sitepolicy);
+    echo '<div class="noticebox">';
+    echo '<object id="policyframe" data="'.$CFG->sitepolicy.'" type="'.$mimetype.'">';
     echo link_to_popup_window ($CFG->sitepolicy, 'agreement', $strpolicyagreementclick,
                                500, 500, 'Popup window', 'none', true);
-    echo '</iframe>';
-    echo '</center>';
+    echo '</object></div>';
 
-    notice_yesno($strpolicyagree, "policy.php?agree=1&amp;sesskey=$USER->sesskey", $CFG->wwwroot);
+    $linkyes    = 'policy.php';
+    $optionsyes = array('agree'=>1, 'sesskey'=>sesskey());
+    $linkno     = $CFG->wwwroot.'/login/logout.php';
+    $optionsno  = array('sesskey'=>sesskey());
+    notice_yesno($strpolicyagree, $linkyes, $linkno, $optionsyes, $optionsno);
 
     print_footer();
 
