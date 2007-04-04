@@ -358,7 +358,6 @@ class quiz_report extends quiz_default_report {
         // Display the form with one part for each selected attempt
 
         echo '<form method="post" action="report.php">'.
-            '<fieldset class="invisiblefieldset">'.
             '<input type="hidden" name="mode" value="grading" />'.
             '<input type="hidden" name="q" value="'.$quiz->id.'">'.
             '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
@@ -396,7 +395,6 @@ class quiz_report extends quiz_default_report {
             echo '</div>';
         }
         echo '<div class="boxaligncenter"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
-            '</fieldset>'.
             '</form>';
 
         if ($usehtmleditor) {
