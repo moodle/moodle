@@ -21,9 +21,7 @@ class group_edit_form extends moodleform {
         $groupingid  = $this->_customdata['groupingid'];
         $newgrouping = $this->_customdata['newgrouping'];
         $courseid    = $this->_customdata['courseid'];
-       
 
-        $id = $group->id;
         $mform =& $this->_form;
         
         $mform->addElement('text','name', get_string('groupname', 'group'),'maxlength="254" size="50"');
@@ -38,12 +36,12 @@ class group_edit_form extends moodleform {
         $mform->setHelpButton('enrolmentkey', array('groupenrolmentkey', get_string('enrolmentkey', 'group')), true);
         $mform->setType('enrolmentkey', PARAM_RAW);
         
-        $options = array(get_string('no'), get_string('yes'));
-        $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
-        
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
         
         if (!empty($CFG->gdversion) and $maxbytes) {
+            $options = array(get_string('no'), get_string('yes'));
+            $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
+        
             $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
             $mform->addElement('file', 'imagefile', get_string('newpicture', 'group'));
             $mform->setHelpButton('imagefile', array ('picture', get_string('helppicture')), true);
