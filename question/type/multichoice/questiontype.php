@@ -310,20 +310,22 @@ class question_multichoice_qtype extends default_questiontype {
             $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
                  " alt=\"" . s($answer->answer) . '" />';
 
-            if ($options->readonly) {
-                // Means we need to display answer correctness.
-                if ($answer->fraction > 0) {
-                    $a->class = question_get_feedback_class(1);
-                }
-                $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen);
+            if ($options->correct_responses && $answer->fraction > 0) {
+                $a->class = question_get_feedback_class(1);
+            }
+            if (($options->feedback && $chosen) || $options->correct_responses) {
+                $a->feedbackimg = question_get_feedback_image($answer->fraction > 0 ? 1 : 0, $chosen && $options->feedback);
             }
 
             // Print the answer text
             $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
-            $a->feedback = (($options->feedback || $options->correct_responses) && $checked) ?
-               $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course) : '';
+            if (($options->feedback || $options->correct_responses) && $checked) {
+                $a->feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+            } else {
+                $a->feedback = '';
+            }
 
             $anss[] = clone($a);
         }

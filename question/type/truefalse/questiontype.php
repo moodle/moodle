@@ -165,14 +165,18 @@ class question_truefalse_qtype extends default_questiontype {
         $falsechecked = ($state->responses[''] == $falseanswer->id) ? ' checked="checked"' : '';
 
         // Work out visual feedback for answer correctness.
-        if ($truechecked) {
-            $trueclass = question_get_feedback_class($trueanswer->fraction);
-        } else if ($falsechecked) {
-            $falseclass = question_get_feedback_class($falseanswer->fraction);
+        if ($options->feedback) {
+            if ($truechecked) {
+                $trueclass = question_get_feedback_class($trueanswer->fraction);
+            } else if ($falsechecked) {
+                $falseclass = question_get_feedback_class($falseanswer->fraction);
+            }
         }
-        if (isset($answers[$state->responses['']])) {
-            $truefeedbackimg = question_get_feedback_image($trueanswer->fraction, !empty($truechecked));
-            $falsefeedbackimg = question_get_feedback_image($falseanswer->fraction, !empty($falsechecked));
+        if ($options->feedback || $options->correct_responses) {
+            if (isset($answers[$state->responses['']])) {
+                $truefeedbackimg = question_get_feedback_image($trueanswer->fraction, !empty($truechecked) && $options->feedback);
+                $falsefeedbackimg = question_get_feedback_image($falseanswer->fraction, !empty($falsechecked) && $options->feedback);
+            }
         }
 
         $inputname = ' name="'.$question->name_prefix.'" ';
