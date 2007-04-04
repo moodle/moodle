@@ -22,6 +22,7 @@ $string['blockperioddisabled'] = 'Don\'t block';
 $string['blockperiod'] = 'Time period for blocking';
 $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
+$string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all forums.  You will still need to turn feeds on manually in the settings for each forum.';
