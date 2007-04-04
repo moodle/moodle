@@ -301,9 +301,33 @@
         }
 
         /// Check to see if groups are being used in this workshop
+        /*
         setup_and_print_groups($course, groupmode($course, $cm), "view.php?id=$cm->id");
         $currentgroup = get_current_group($course->id);
-
+        */
+        
+        /// copied code from assignment module, if this is not the way to do this please change it
+        /// the above code does not work
+        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
+        /// and function groups_instance_print_group_selector() are missing.
+       
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+        $groupmode = groupmode($course, $cm);
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
+    
+        /// Now we need a menu for separategroups as well!
+        if ($groupmode == VISIBLEGROUPS || ($groupmode
+            && has_capability('moodle/site:accessallgroups', $context))) {
+        
+            //the following query really needs to change
+            if ($groups = groups_get_groups_names($course->id)) { //TODO:
+                print_box_start('groupmenu');
+                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
+                print_box_end(); // groupmenu
+            }
+        }
+        
         /// Print admin links
         echo "<table width=\"100%\"><tr><td>";
         echo "<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".

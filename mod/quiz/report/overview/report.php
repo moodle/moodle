@@ -67,6 +67,7 @@ class quiz_report extends quiz_default_report {
             }
         }
         
+        /* 
         // Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
             if (!$download) {
@@ -78,6 +79,29 @@ class quiz_report extends quiz_default_report {
             }
         } else {
             $currentgroup = false;
+        }
+        */
+        
+        /// copied code from assignment module, if this is not the way to do this please change it
+        /// the above code does not work
+        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
+        /// and function groups_instance_print_group_selector() are missing.
+       
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+        $groupmode = groupmode($course, $cm);
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
+    
+        /// Now we need a menu for separategroups as well!
+        if ($groupmode == VISIBLEGROUPS || ($groupmode
+            && has_capability('moodle/site:accessallgroups', $context))) {
+        
+            //the following query really needs to change
+            if ($groups = groups_get_groups_names($course->id)) { //TODO:
+                print_box_start('groupmenu');
+                print_group_menu($groups, $groupmode, $currentgroup, "report.php?id=$cm->id&amp;mode=overview");
+                print_box_end(); // groupmenu
+            }
         }
 
         // Set table options
@@ -300,8 +324,7 @@ class quiz_report extends quiz_default_report {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
                     groups_members_join_sql().
                     'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE ra.contextid ' . $contextlists . ' AND '. groups_members_where_sql($currentgroup) .' AND qa.preview = 0';
-                                
+                $where = ' WHERE ra.contextid ' . $contextlists . ' AND '. groups_members_where_sql($currentgroup) .' AND qa.preview = 0';            
             } else if (!empty($currentgroup) && !empty($noattempts)) {
                 // We want a particular group and we want to do something funky with attempts
                 // So join on groups_members and left join on attempts... 
@@ -403,7 +426,7 @@ class quiz_report extends quiz_default_report {
         if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
             if (!$download) {
                 $attempts = get_records_sql($select.$from.$where.$sort,
-                                        $table->get_page_start(), $table->get_page_size());
+                                        $table->get_page_start(), $table->get_page_size());                
             } else {
                 $attempts = get_records_sql($select.$from.$where.$sort);
             }
