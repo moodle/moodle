@@ -3298,6 +3298,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
+    } elseif(!ismember($currentgroup)) {
+        notify(get_string('cannotadddiscussion', 'forum'));
     }
 
 
