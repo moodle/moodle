@@ -995,14 +995,38 @@ class assignment_base {
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
         
         print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
-    
+
     ///Position swapped
+    /*
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
             $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
         } else {
             $currentgroup = false;
         }
-
+    */
+        
+        /// copied code from assignment module, if this is not the way to do this please change it
+        /// the above code does not work
+        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
+        /// and function groups_instance_print_group_selector() are missing.
+       
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+        $groupmode = groupmode($course, $cm);
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
+    
+        /// Now we need a menu for separategroups as well!
+        if ($groupmode == VISIBLEGROUPS || ($groupmode
+            && has_capability('moodle/site:accessallgroups', $context))) {
+        
+            //the following query really needs to change
+            if ($groups = groups_get_groups_names($course->id)) { //TODO:
+                print_box_start('groupmenu');
+                print_group_menu($groups, $groupmode, $currentgroup, 'submissions.php?id='.$this->cm->id);
+                print_box_end(); // groupmenu
+            }
+        }
+   
     /// Get all teachers and students
         if ($currentgroup) {
             $users = get_group_users($currentgroup);
