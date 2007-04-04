@@ -20,6 +20,11 @@ a:visited {
 a:hover {
   color: #779911;
 }
+a.dimmed:link,
+a.dimmed:visited {
+  color:#AAAAAA;
+}
+
 table.generaltable {
   background-color: #EEEEEE;
 }
