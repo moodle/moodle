@@ -4,7 +4,7 @@ class profile_define_menu extends profile_define_base {
 
     function define_form_specific(&$form) {
         /// Param 1 for menu type contains the options
-        $form->addElement('textarea', 'param1', get_string('profilemenuoptions', 'admin'));
+        $form->addElement('textarea', 'param1', get_string('profilemenuoptions', 'admin'), array('rows' => 6, 'cols' => 40));
         $form->setType('param1', PARAM_MULTILANG);
 
         /// Default data
