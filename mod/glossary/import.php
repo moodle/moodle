@@ -43,7 +43,7 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
-    $strimportentries = get_string('importentries', 'glossary');
+    $strimportentries = get_string('importentriesfromxml', 'glossary');
 
     print_header_simple(format_string($glossary->name), "",
         "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> " .
@@ -363,7 +363,7 @@
         }
         print_box_end();
     } else {
-        notify("Error while trying to read the file.");
+        notice(get_string('errorparsingxml', 'glossary'));
     }
 
 /// Finish the page
