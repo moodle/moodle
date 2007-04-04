@@ -93,8 +93,8 @@ function display() {
 
         $formatoptions->noclean = true;
         
-        if (trim(strip_tags($this->resource->summary))) {
-            echo format_text($this->resource->summary, FORMAT_MOODLE, $formatoptions, $this->course->id);
+        if (trim(strip_tags($this->resource->alltext))) {
+            echo format_text($this->resource->alltext, FORMAT_MOODLE, $formatoptions, $this->course->id);
         }
 
         parent::display_course_blocks_end();
