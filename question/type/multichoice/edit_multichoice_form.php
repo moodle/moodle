@@ -47,7 +47,7 @@ class question_edit_multichoice_form extends question_edit_form {
                             QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
         $repeatedoptions = array();
         $repeatedoptions['fraction']['default'] = 0;
-        $mform->setType('answer', PARAM_NOTAGS);
+        $mform->setType('answer', PARAM_RAW);
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_multichoice'));
 
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_multichoice'));
