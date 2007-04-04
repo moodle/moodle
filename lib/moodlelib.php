@@ -2451,7 +2451,7 @@ function get_user_fieldnames() {
  * @return object A {@link $USER} object
  * @todo Outline auth types and provide code example
  */
-function create_user_record($username, $password, $auth='') {
+function create_user_record($username, $password, $auth='manual') {
     global $CFG;
 
     //just in case check text case
@@ -2472,7 +2472,7 @@ function create_user_record($username, $password, $auth='') {
         }
     }
 
-    $newuser->auth = (empty($auth)) ? 'manual' : $auth;
+    $newuser->auth = $auth;
     $newuser->username = $username;
     
     // fix for MDL-8480
