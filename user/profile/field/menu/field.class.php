@@ -2,6 +2,7 @@
 
 class profile_field_menu extends profile_field_base {
     var $options;
+    var $selected;
 
     function profile_field_menu($fieldid) {
         //first call parent constructor
@@ -10,8 +11,11 @@ class profile_field_menu extends profile_field_base {
         /// Param 1 for menu type is the options
         $options = explode("\n", $this->field->param1);
         $this->options = array();
-        foreach($options as $option) {
-            $this->options[] = format_string($option);//multilang formatting
+        foreach($options as $key => $option) {
+            $this->options[$key] = format_string($option);//multilang formatting
+            if ($option == $this->field->defaultdata) {
+                $this->selected = $key;
+            }
         }
 
     }
@@ -19,6 +23,7 @@ class profile_field_menu extends profile_field_base {
     function display_field_add(&$mform) {
         /// Create the form field
         $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options);
+        $mform->setDefault($this->inputname, $this->selected);
     }
 
     /// Override base class method
