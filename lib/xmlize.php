@@ -54,6 +54,11 @@ function xmlize($data, $WHITE=1, $encoding='UTF-8') {
     xml_parser_free($parser);
 
     $i = 0;
+    
+    if (empty($vals)) {
+        // XML file is invalid or empty, return false
+        return false;
+    }
 
     $tagname = $vals[$i]['tag'];
     if ( isset ($vals[$i]['attributes'] ) )
