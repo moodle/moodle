@@ -32,7 +32,7 @@ class block_online_users extends block_base {
         if (isset($CFG->block_online_users_timetosee)) {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
-        $timefrom = time()-$timetoshowusers;
+        $timefrom = 100 * floor((time()-$timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
 
         // Get context so we can check capabilities.
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
@@ -72,9 +72,10 @@ class block_online_users extends block_base {
                       ul.userid = u.id
                       $courseselect
                       $timeselect
-                      $groupselect ";
-        
-        if ($pusers = get_records_sql($SQL, 0, 20)) {
+                      $groupselect
+                ORDER BY ul.timeaccess DESC";
+
+        if ($pusers = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
             foreach ($pusers as $puser) {
                 $puser->fullname = fullname($puser);
                 $users[$puser->id] = $puser;  
