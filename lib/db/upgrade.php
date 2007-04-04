@@ -667,6 +667,30 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
+
+    /// code to change lenghen tag field to 255, MDL-9095
+    if ($result && $oldversion < 2007040400) {
+
+    /// Define index text (not unique) to be dropped form tags
+        $table = new XMLDBTable('tags');
+        $index = new XMLDBIndex('text');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('text'));
+
+    /// Launch drop index text
+        $result = $result && drop_index($table, $index);
+           
+        $field = new XMLDBField('text');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
+
+    /// Launch change of type for field text
+        $result = $result && change_field_type($table, $field);
+        
+        $index = new XMLDBIndex('text');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('text'));
+
+    /// Launch add index text
+        $result = $result && add_index($table, $index);       
+    }
     return $result;
 
 }
