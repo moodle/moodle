@@ -40,7 +40,7 @@ class question_edit_shortanswer_form extends question_edit_form {
         $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
                             QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
         $repeatedoptions = array();
-        $mform->setType('answer', PARAM_NOTAGS);
+        $mform->setType('answer', PARAM_RAW);
         $repeatedoptions['fraction']['default'] = 0;
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmoreanswerblanks', 'qtype_shortanswer'));
 
