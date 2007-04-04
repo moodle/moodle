@@ -294,7 +294,7 @@ class question_match_qtype extends default_questiontype {
                         $correctresponse = 0;
                     }
 
-                    if ($options->correct_responses && $response) {
+                    if ($options->feedback && $response) {
                         $a->class = question_get_feedback_class($correctresponse);
                         $a->feedbackimg = question_get_feedback_image($correctresponse);
                     }
