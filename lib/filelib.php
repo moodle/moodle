@@ -264,7 +264,10 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
     if ($mimetype=='application/pdf' or mimeinfo('type', $filename)=='application/pdf') {
         //please note that it prevents opening of pdfs in browser when http referer disabled
         //or file linked from another site; browser caching of pdfs is now disabled too
-        if (empty($_SERVER['HTTP_REFERER']) or strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot)!==0) {
+        if (!empty($_SERVER['HTTP_RANGE'])) {
+            //already byteserving
+            $lifetime = 1; // >0 needed for byteserving    
+        } else if (empty($_SERVER['HTTP_REFERER']) or strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot)!==0) {
             $mimetype = 'application/x-forcedownload';
             $forcedownload = true;
             $lifetime = 0;
