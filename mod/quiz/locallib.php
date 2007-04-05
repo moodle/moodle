@@ -727,8 +727,10 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
     }
     foreach ($attempts as $attempt) {
         $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
-        $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
-        $alloptions->$field = $someoptions->$field && $attemptoptions->$field;
+        foreach ($fields as $field) {
+            $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
+            $alloptions->$field = $alloptions->$field && $attemptoptions->$field;
+        }
     }
     return array($someoptions, $alloptions);
 }
