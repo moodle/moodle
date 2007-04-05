@@ -892,7 +892,7 @@ class assignment_base {
         if ($this->usehtmleditor) { 
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
-            echo '<div align="right" class="format">';
+            echo '<div class="format">';
             choose_from_menu(format_text_menu(), "format", $submission->format, "");
             helpbutton("textformat", get_string("helpformatting"));
             echo '</div>';
