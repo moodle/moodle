@@ -529,12 +529,18 @@
         }
 
         if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM, SITEID), $USER->id, false)) {
-            $permissionsql =  '(p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+            $permissionsql =  'AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
         } else {
-            $permissionsql =  'p.publishstate = \'public\'';
+            $permissionsql =  'AND p.publishstate = \'public\'';
         }
-
-
+        
+        // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
+        // admins can see all blogs regardless of publish states, as described on the help page
+        if (has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            $permissionsql = ''; 
+        } else if ($filtertype=='user' && has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_USER, $filterselect))) {
+            $permissionsql = '';  
+        }
         /****************************************
          * depending on the type, there are 4   *
          * different possible sqls              *
@@ -554,7 +560,7 @@
                         .$CFG->prefix.'user u
                         WHERE p.userid = u.id '.$tagquerysql.'
                         AND u.deleted = 0
-                        AND '.$permissionsql.$typesql;
+                        '.$permissionsql.$typesql;
 
             break;
 
@@ -568,7 +574,7 @@
                         AND ra.contextid '.get_related_contexts_string($context).'
                         AND u.id = p.userid
                         AND u.deleted = 0
-                        AND '.$permissionsql.$typesql;
+                        '.$permissionsql.$typesql;
 
             break;
 
@@ -579,7 +585,7 @@
                         WHERE '.groups_members_where_sql($filterselect, 'p.userid').'
                         AND u.id = p.userid
                         AND u.deleted = 0
-                        AND '.$permissionsql.$typesql;
+                        '.$permissionsql.$typesql;
 
                         /*'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
@@ -588,7 +594,7 @@
                         AND m.groupid = '.$filterselect.'
                         AND u.deleted = 0
                         AND '.$permissionsql.$typesql;
-                        AND '.$permissionsql;
+                        '.$permissionsql;
                         */
             break;
 
@@ -599,7 +605,7 @@
                         WHERE p.userid = u.id '.$tagquerysql.'
                         AND u.id = '.$filterselect.'
                         AND u.deleted = 0
-                        AND '.$permissionsql.$typesql;
+                        '.$permissionsql.$typesql;
             break;
         }
 
