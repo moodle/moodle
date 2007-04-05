@@ -182,6 +182,7 @@ class auth_plugin_db extends auth_plugin_base {
         }
         $authdb->Close();
         return $result;
+
     }
 
 
@@ -390,6 +391,9 @@ class auth_plugin_db extends auth_plugin_base {
 
     function user_exists($username) {
 
+    /// Init result value
+        $result = false;
+
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->extencoding);
 
@@ -397,46 +401,40 @@ class auth_plugin_db extends auth_plugin_base {
 
         $rs = $authdb->Execute("SELECT * FROM {$this->config->table}
                                      WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."' ");
-        $authdb->Close();
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth');
-            return false;
+        } else if ( $rs->RecordCount() ) {
+            // user exists exterally
+            $result = $rs->RecordCount();
         }
 
-        if ( $rs->RecordCount() ) {
-            // user exists exterally
-            return $rs->RecordCount();
-        } else {
-            // user does not exist externally
-            return false;
-        }
+        $authdb->Close();
+        return $result;
     }
 
 
     function get_userlist() {
+
+    /// Init result value
+        $result = array();
 
         $authdb = $this->db_init();
 
         // fetch userlist
         $rs = $authdb->Execute("SELECT {$this->config->fielduser} AS username
                                 FROM   {$this->config->table} ");
-        $authdb->Close();
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth');
-            return false;
+        } else if ( $rs->RecordCount() ) {
+            while ($rec = rs_fetch_next_record($rs)) {
+                array_push($result, $rec->username);
+            }
         }
 
-        if ( $rs->RecordCount() ) {
-            $userlist = array();
-            while ($rec = rs_fetch_next_record($rs)) {
-                array_push($userlist, $rec->username);
-            }
-            return $userlist;
-        } else {
-            return array();
-        }
+        $authdb->Close();
+        return $result;
     }
 
     /**
