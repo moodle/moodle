@@ -2032,7 +2032,7 @@ function sync_metacourse($course) {
     }
 
     // Get a list of roles that should not be synced.
-    if ($CFG->nonmetacoursesyncroleids) {
+    if (!empty($CFG->nonmetacoursesyncroleids)) {
         $roleexclusions = 'ra.roleid NOT IN (' . $CFG->nonmetacoursesyncroleids . ') AND';
     } else { 
         $roleexclusions = '';
