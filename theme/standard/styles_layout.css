@@ -1784,6 +1784,14 @@ body#course-info .generalbox.info {
   padding:5px;
 }
 
+#my-index .coursebox .info {
+  float: none;
+}
+
+#my-index .name {
+  margin-left: 5px;
+}
+
 .categorylist {
   width:90%;
   margin-left:auto;
