@@ -1191,13 +1191,9 @@ function calendar_edit_event_allowed($event) {
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
     }
-
-    // editting userid account
-    if ($event->userid) {  
-        if ($event->userid == $USER->id) {
-            return (has_capability('moodle/calendar:manageownentries', $sitecontext));
-        }
-    } else if ($event->groupid) {
+    
+    // if groupid is set, it's definitely a group event
+    if ($event->groupid) {
         //TODO:check.
         if (! groups_group_exists($event->groupid)) {
             return false;
@@ -1207,10 +1203,15 @@ function calendar_edit_event_allowed($event) {
         // to edit group calendar too
         // there is no need to check membership, because if you have this capability
         // you will have a role in this group context
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid));  
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_GROUP, $event->groupid)); 
     } else if ($event->courseid) {
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid)); 
-    }
+    // if groupid is not set, but course is set,
+    // it's definiely a course event
+        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));  
+    } else if ($event->userid && $event->userid == $USER->id) {  
+    // if course is not set, but userid id set, it's a user event
+        return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+    } 
     return false;
 }
 
