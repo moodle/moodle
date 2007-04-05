@@ -166,6 +166,12 @@ class course_edit_form extends moodleform {
             $choices[0] = get_string('sitedefault');
         }
         $choices = $choices + $roles;
+        
+        // fix for MDL-9197
+        foreach ($choices as $choiceid => $choice) {
+            $choices[$choiceid] = format_string($choice);
+        }
+        
         $mform->addElement('select', 'defaultrole', get_string('defaultrole', 'role'), $choices);
         $mform->setDefault('defaultrole', 0);
 
