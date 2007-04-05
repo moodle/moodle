@@ -400,7 +400,7 @@ form.popupform label {
 }
 
 .groupmanagementtable select {
-  width:200px;
+  width: 18em;
 }
 
 img.icon {
@@ -3354,4 +3354,3 @@ wikiadminactions {
 .workshopkey {
   text-align:center;
 }
-
