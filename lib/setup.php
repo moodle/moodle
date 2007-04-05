@@ -187,6 +187,10 @@ $CFG->httpswwwroot = $CFG->wwwroot;
     }
     error_reporting($CFG->debug);
 
+/// For now, only needed under apache (and probably unstable in other contexts)
+    if (function_exists('apache_child_terminate')) {
+        register_shutdown_function('moodle_request_shutdown');
+    }
 
 /// Set a default enrolment configuration (see bug 1598)
     if (!isset($CFG->enrol)) {

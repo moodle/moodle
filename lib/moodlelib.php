@@ -6315,6 +6315,31 @@ function bounded_number($min, $value, $max) {
 }
 
 
+/*
+ * This function expects to called during shutdown
+ * should be set via register_shutdown_function()
+ * in lib/setup.php .
+ * 
+ * Right now we do it only if we are under apache, to
+ * make sure apache children that hog too much mem are
+ * killed.
+ * 
+ */
+function moodle_request_shutdown() {
+
+    // initially, we are only ever called under apache 
+    // but check just in case 
+    if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')) {
+        if (empty($CFG->apachemaxmem)) {
+            $CFG->apachemaxmem = 10000000; // default 10MiB
+        }
+        if (memory_get_usage() > (int)$CFG->apachemaxmem) {
+            trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
+            apache_child_terminate();
+        }
+    }
+}
+
 /**
  *** get_performance_info() pairs up with init_performance_info()
  *** loaded in setup.php. Returns an array with 'html' and 'txt' 
