@@ -289,8 +289,13 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'guest', get_string('opentoguests'), $choices);
         $mform->setHelpButton('guest', array('guestaccess', get_string('opentoguests')), true);
         $mform->setDefault('guest', 0);
-
-        if (!empty($course) && method_exists(enrolment_factory::factory($course->enrol), 'print_entry') && $course->enrol != 'manual') {
+        
+        // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
+        $enrol_object = $CFG;
+        if (!empty($course)) {
+            $enrol_oject = $course;
+        }
+        if (method_exists(enrolment_factory::factory($enrol_object->enrol), 'print_entry') && $enrol_object->enrol != 'manual'){
             $costgroup=array();
             $currencies = get_list_of_currencies();
             $costgroup[]= &MoodleQuickForm::createElement('text','cost', '', 'maxlength="6" size="6"');
