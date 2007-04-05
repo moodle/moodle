@@ -73,6 +73,7 @@ $string['manageroles'] = 'Manage roles';
 $string['metaassignerror'] = 'Can not assign this role to user \"$a\" because Manage metacourse capability is needed.';
 $string['metaunassignerror'] = 'Role of user \"$a\" was automatically reassigned, please unassign the role in child courses instead.';
 $string['nocapabilitiesincontext'] = 'No capabilities available in this context';
+$string['notset'] = 'Not set';
 $string['overrideroles'] = 'Override roles';
 $string['overrides'] = 'Overrides';
 $string['permissions'] = 'Permissions';
