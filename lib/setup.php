@@ -179,6 +179,10 @@ global $HTTPSPAGEREQUIRED;
 
     raise_memory_limit('64M');    // We should never NEED this much but just in case...
 
+/// For now, only needed under apache (and probably unstable in other contexts)
+    if (function_exists('apache_child_terminate')) {
+        register_shutdown_function('moodle_request_shutdown');
+    }
 
 /// If $CFG->unicodedb is not set, get it from database or calculate it because we need
 /// to know it to "set names" properly.
