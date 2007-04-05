@@ -234,6 +234,10 @@ global $HTTPSPAGEREQUIRED;
         $originaldatabasedebug = -1;
     }
 
+/// For now, only needed under apache (and probably unstable in other contexts)
+    if (function_exists('apache_child_terminate')) {
+        register_shutdown_function('moodle_request_shutdown');
+    }
 
 //// Defining the site
     if ($SITE = get_site()) {
