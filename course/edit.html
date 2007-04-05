@@ -156,6 +156,11 @@
             }
 
             $choices = $choices + $roles;
+            
+            // fix for MDL-9197
+            foreach ($choices as $choiceid => $choice) {
+                $choices[$choiceid] = format_string($choice);
+            }
 
             choose_from_menu ($choices, 'defaultrole', $form->defaultrole, '');
             helpbutton("coursedefaultrole", get_string("defaultrole"));
