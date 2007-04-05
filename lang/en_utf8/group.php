@@ -27,8 +27,8 @@ $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
 $string['groups'] = 'Groups';
 $string['group'] = 'Group';
-$string['groupsinselectedgrouping'] = 'Groups in grouping';  //'selected'
-$string['membersofselectedgroup'] = 'Members of group';
+$string['groupsinselectedgrouping'] = 'Groups in:'; //'selected grouping'
+$string['membersofselectedgroup'] = 'Members of:';
 
 $string['showgroupsingrouping'] = 'Show groups in grouping';
 $string['showmembersforgroup'] = 'Show members for group';
