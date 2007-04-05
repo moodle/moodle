@@ -399,6 +399,8 @@
 
         global $CFG, $USER;
 
+        $typesql = " AND p.module = 'blog' ";   
+        
         /// set the tag id for searching
         if ($tagid) {
             $tag = $tagid;
