@@ -835,6 +835,13 @@ body#mod-forum-index .generalbox .cell {
 }
 
 
+#thegroup, #thegrouping, #dummygrouping {
+  font-size: 0.8em;
+  letter-spacing: -0.01em;
+  display: block;
+}
+
+
 /***
  *** Phpinfo display
  ***/

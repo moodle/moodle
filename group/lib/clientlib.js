@@ -34,6 +34,7 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
                     for (var i=0; i<groups.length; i++) {
                         var optionEl = document.createElement("option");
                         optionEl.setAttribute("value", groups[i].id);
+                        optionEl.title = groups[i].name;
                         optionEl.innerHTML = groups[i].name;
                         groupsComboEl.appendChild(optionEl);
                     }
@@ -71,9 +72,16 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
 UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
     // Add the loader gif image.
     createLoaderImg("groupsloader", "groupslabel", this.wwwRoot);
+ 
+    // Update the label.
+    var selectEl = document.getElementById("groupings");
+    var spanEl = document.getElementById("thegrouping");
+    if (selectEl && selectEl.selectedIndex >= 0) {
+        spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
+    }
 
     // Clear the groups combo box.
-    var selectEl = document.getElementById("groups");
+    selectEl = document.getElementById("groups");
     if (selectEl) {
         while (selectEl.firstChild) {
             selectEl.removeChild(selectEl.firstChild);
@@ -129,6 +137,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
                     for (var i=0; i<members.length; i++) {
                         var optionEl = document.createElement("option");
                         optionEl.setAttribute("value", members[i].id);
+                        optionEl.title = members[i].name;
                         optionEl.innerHTML = members[i].name;
                         selectEl.appendChild(optionEl);
                     }
@@ -156,9 +165,16 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
 UpdatableMembersCombo.prototype.refreshMembers = function (groupId) {
     // Add the loader gif image.
     createLoaderImg("membersloader", "memberslabel", this.wwwRoot);
-    var selectEl = document.getElementById("members");
+ 
+    // Update the label.
+    var selectEl = document.getElementById("groups");
+    var spanEl = document.getElementById("thegroup");
+    if (selectEl && selectEl.selectedIndex >= 0) {
+        spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
+    }
 
     // Clear the members combo box.
+    selectEl = document.getElementById("members");
     if (selectEl) {
         while (selectEl.firstChild) {
             selectEl.removeChild(selectEl.firstChild);

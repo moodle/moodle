@@ -199,12 +199,14 @@ if ($success) {
 <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
 */ 
-    echo '<table cellpadding="10" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">'."\n";
+    echo '<table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">'."\n";
     echo '<tr>'."\n";
     echo '<td class="generalboxcontent">'."\n";
-    echo '<p><label for="groupings">' .  get_string('groupings', 'group') . '</label></p>'."\n";
+    echo '<p><label for="groupings">' .  get_string('groupings', 'group') . '<span id="dummygrouping">&nbsp;</span></label></p>'."\n";
     echo '<select name="grouping" id="groupings" size="15" class="select"';
-    echo ' onchange="groupsCombo.refreshGroups(this.options[this.selectedIndex].value);">';
+    echo ' onchange="groupsCombo.refreshGroups(this.options[this.selectedIndex].value);"';
+    //NOTE: onclick/onmouseout is for long names in IE6 (Firefox/IE7 display OPTION title).
+    echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
     $groupingids = groups_get_groupings($courseid);
     if (groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
@@ -229,7 +231,7 @@ if ($success) {
                 $select = ' selected="selected"';
                 $sel_groupingid = $id;
             }
-            echo "<option value=\"$id\"$select>$name</option>\n";
+            echo "<option value=\"$id\"$select title=\"$name\">$name</option>\n";
             $count++;
         }
     } else {
@@ -264,8 +266,9 @@ if ($success) {
     echo '<p><input type="submit" ' . $printerfriendly_disabled . ' name="act_printerfriendly" id="printerfriendly" value="'
             . get_string('printerfriendly', 'group') . '" /></p>'."\n";
     echo "</td>\n<td>\n";
-    echo '<p><label for="groups" id="groupslabel">' .get_string('groupsinselectedgrouping', 'group') . '</label></p>'."\n";
-    echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);">'."\n";
+    echo '<p><label for="groups"><span id="groupslabel">'.get_string('groupsinselectedgrouping', 'group').' </span><span id="thegrouping">'.get_string('grouping', 'group').'</span></label></p>'."\n";
+    echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
+    echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
     if (GROUP_NOT_IN_GROUPING == $sel_groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid); //$sel_groupingid
@@ -284,7 +287,7 @@ if ($success) {
                 $select = ' selected="selected"';
                 $sel_groupid = $group->id;
             }
-            echo "<option value=\"{$group->id}\"$select>{$group->name}</option>\n";
+            echo "<option value=\"{$group->id}\"$select title=\"{$group->name}\">{$group->name}</option>\n";
             $count++;
         }
     } else { 
@@ -318,8 +321,10 @@ if ($success) {
     
     echo '</td>'."\n";
     echo '<td>'."\n";
-    echo '<p><label for="members" id="memberslabel">' . get_string('membersofselectedgroup', 'group') . '</label></p>'."\n";
-    echo '<select name="user[]" id="members" size="15" multiple="multiple" class="select">'."\n";
+    echo '<p><label for="members"><span id="memberslabel">'.get_string('membersofselectedgroup', 'group').' </span><span id="thegroup">'.get_string('group', 'group').'</span></label></p>'."\n";
+    //NOTE: the SELECT was, multiple="multiple" name="user[]" - not used and breaks onclick.
+    echo '<select name="user" id="members" size="15" class="select"'."\n";
+    echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
     
     if (isset($sel_groupid)) {
         $userids = groups_get_members($sel_groupid);
@@ -331,7 +336,7 @@ if ($success) {
             echo '<option>&nbsp;</option>';
         } else {
             foreach ($user_names as $user) {
-                echo "<option value=\"{$user->id}\">{$user->name}</option>\n";
+                echo "<option value=\"{$user->id}\" title=\"{$user->name}\">{$user->name}</option>\n";
             }
         }
     } else { 
