@@ -216,6 +216,7 @@ class assignment_upload extends assignment_base {
 
         $output .= '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
+        $output .= '<div>';
         $output .= '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         $output .= '<input type="hidden" name="action" value="uploadresponse" />';
         $output .= '<input type="hidden" name="mode" value="'.$mode.'" />';
@@ -224,6 +225,7 @@ class assignment_upload extends assignment_base {
         require_once($CFG->libdir.'/uploadlib.php');
         $output .= upload_print_form_fragment(1,array('newfile'),null,false,null,0,0,true);
         $output .= '<input type="submit" name="save" value="'.get_string('uploadthisfile').'" />';
+        $output .= '</div>';
         $output .= '</form>';
 
         if ($forcerefresh) {
@@ -329,7 +331,7 @@ class assignment_upload extends assignment_base {
                         $ffurl   = "$CFG->wwwroot/file.php?file=/$filearea/$file";
 
 
-                        $output .= '<a href="'.$ffurl.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
+                        $output .= '<a href="'.$ffurl.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.$file.'</a>';
 
                         if ($candelete) {
                             $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=$file&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
