@@ -3174,9 +3174,20 @@ body#question-preview .quemodname, body#question-preview .controls {
   margin:20px;
 }
 
+#mod-resource-view .resourcepdf {
+  width: 100%;
+  padding-top: 15px;
+  text-align: center
+  }
+
 .resourcecontent object {
     height:480px; 
     width:600px;
+}
+
+.resourcepdf object{
+    height: 800px;
+    width: 800px;
 }
 
 .mod-resource .modified {

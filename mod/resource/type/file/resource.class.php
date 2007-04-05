@@ -216,7 +216,6 @@ function display() {
     $formatoptions->noclean = true;
     
     if ($resource->options == "frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
-        
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
@@ -243,7 +242,10 @@ function display() {
 
         } else if ($mimetype == "text/html") {    // It's a web page
             $resourcetype = "html";
-        } 
+        } else if ($mimetype == 'application/pdf' || $mimetype = 'application/x-pdf') {
+            $resourcetype = "pdf";
+            $embedded = true;
+        }
     }
 
     $isteamspeak = (stripos($resource->reference, 'teamspeak://') === 0);
@@ -325,7 +327,6 @@ function display() {
 
 
     /// Check whether this is supposed to be a popup, but was called directly
-
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
 
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
@@ -385,6 +386,7 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty( $frameset ) and ($frameset == "top") ) {
+        
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         $options = new object();
@@ -401,7 +403,6 @@ function display() {
 
 
     /// Display the actual resource
-
     if ($embedded) {       // Display resource embedded in page
         $strdirectlink = get_string("directlink", "resource");
 
@@ -518,8 +519,7 @@ function display() {
             echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
             echo '</object>';
             echo '</div>';
-        }  else if ($resourcetype == "flash") {
-
+        }  else if ($resourcetype == "flash") { 
             echo '<div class="resourcecontent resourceswf">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">';
             echo "<param name=\"movie\" value=\"$fullurl\" />";
@@ -538,6 +538,12 @@ function display() {
             echo '<!--[if !IE]>-->';
             echo '</object>';
             echo '<!--<![endif]-->';
+            echo '</object>';
+            echo '</div>';
+        } elseif ($resourcetype == 'pdf') {
+            echo '<div class="resourcepdf">';
+            echo '<object data="' . $fullurl . '" type="application/pdf">';
+            echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . $resource->summary . '</a>';
             echo '</object>';
             echo '</div>';
         }
