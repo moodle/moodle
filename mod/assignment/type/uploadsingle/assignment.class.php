@@ -138,6 +138,7 @@ class assignment_uploadsingle extends assignment_base {
                     }
                 } else {
                     $newsubmission = $this->prepare_new_submission($USER->id);
+                    $newsubmission->timemodified = time();
                     $newsubmission->numfiles = 1;
                     if (insert_record('assignment_submissions', $newsubmission)) {
                         add_to_log($this->course->id, 'assignment', 'upload', 
