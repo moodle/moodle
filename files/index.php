@@ -208,8 +208,10 @@
                 upload_print_form_fragment(1,array('userfile'),null,false,null,$upload_max_filesize,0,false);
                 echo " </td></tr></table>";
                 echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />";
+                echo "</div>";
                 echo "</form>";
                 echo "<form action=\"index.php\" method=\"get\">";
+                echo "<div>";             
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
