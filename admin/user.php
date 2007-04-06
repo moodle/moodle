@@ -63,6 +63,12 @@
     $strsearch = get_string('search');
     $strshowallusers = get_string('showallusers');
 
+    if (empty($CFG->loginhttps)) {
+        $securewwwroot = $CFG->wwwroot;
+    } else {
+        $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
+    }
+
     admin_externalpage_print_header($adminroot);
 
     if ($confirmuser and confirm_sesskey()) {
@@ -297,11 +303,6 @@
         }
 
         $mainadmin = get_admin();
-        if(empty($CFG->loginhttps)) {
-            $securewwwroot = $CFG->wwwroot;
-        } else {
-            $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
-        }
 
         $table->head = array ("$firstname / $lastname", $email, $city, $country, $lastaccess, "", "", "");
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
@@ -408,7 +409,7 @@
     echo "</td></tr></table>";
 
     if (has_capability('moodle/user:create', $sitecontext)) {
-        print_heading('<a href="../user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
+        print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
     }
     if (!empty($table)) {
         print_table($table);
@@ -416,7 +417,7 @@
                          "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                          "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=".urlencode(stripslashes($search))."&amp;");
         if (has_capability('moodle/user:create', $sitecontext)) {
-            print_heading('<a href="../user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
+            print_heading('<a href="'.$securewwwroot.'/user/editadvanced.php?id=-1">'.get_string('addnewuser').'</a>');
         }
     }
 
