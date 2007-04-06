@@ -1,6 +1,6 @@
 /*******************************************************************
  styles_layout.css
-  
+
  This CSS file contains all layout definitions like positioning,
  floats, margins, padding, borders etc.
 
@@ -49,7 +49,7 @@ h6.main {
 
 #layout-table #left-column,
 #layout-table #middle-column,
-#layout-table #right-column 
+#layout-table #right-column
 {
   vertical-align:top;
 }
@@ -71,15 +71,15 @@ h6.main {
 
 .clearfix:after {
   /* content: "<!-- -->";  */
-  content: "."; 
-  display: block; 
-  height: 0; 
-  clear: both; 
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
   visibility: hidden;
 }
 
 .clearfix {
-  /* display: inline-bl¶ock */
+  /* display: inline-block */
   min-width: 0;
 }
 
@@ -119,16 +119,16 @@ img.grouppicture,
   text-align: center;
   padding: 10px;
 }
-  
+
 .notifysuccess {
   text-align:center;
   padding: 10px;
-}   
+}
 
 .notifytiny {
   text-align:left;
   padding: 0px;
-}   
+}
 
 .generalbox {
   border-width:1px;
@@ -246,7 +246,7 @@ table.formtable tbody .htmlarea th
 
 .unread {
   padding-right:2px;
-} 
+}
 
 .cell {
   vertical-align: top;
@@ -351,6 +351,10 @@ form.mform div.fdescription {
   min-height: 1.5em;
 }
 
+form.mform .fdescription.required {
+  text-align:right;
+}
+
 form.mform input, form.mform select {
   width: auto;
 }
@@ -376,7 +380,7 @@ form.mform div.error,form.mform fieldset.error {
 }
 
 .mform label .req, .mform label .adv {
-  cursor: help;  
+  cursor: help;
 }
 
 
@@ -490,20 +494,20 @@ table.navbar {
 /***
  *** Admin
  ***/
- 
+
 body#admin-index .c0 {
   vertical-align: top;
-} 
+}
 
 body#admin-index .c1 {
   vertical-align: middle;
-} 
+}
 
 body#admin-modules table.generaltable td.cell,
 body#admin-modules .generaltablecell {
   padding-top: 2px;
   padding-bottom: 2px;
-} 
+}
 
 body#admin-blocks table#blocks,
 body#admin-blocks table#incompatible {
@@ -518,7 +522,7 @@ body#admin-blocks table#incompatible td.cell {
   padding: 4px;
   text-align: center;
   vertical-align: middle;
-} 
+}
 
 body#admin-blocks table#blocks td.c0,
 body#admin-blocks table#blocks th.c0,
@@ -527,7 +531,7 @@ body#admin-blocks table#incompatible th.c0 {
   text-align: left;
 }
 
-body#admin-blocks 
+body#admin-blocks
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
@@ -673,11 +677,11 @@ body#admin-roles-manage table.generalbox {
 /***
  *** Blocks
  ***/
- 
+
 /*Accessibility: Skip block link, for screen reader users. */
 a.skip-block, .skip-block {
   display:block;
-  width:2em; 
+  width:2em;
   height:1px;
 }
 .sideblock .skip-block {
@@ -697,7 +701,7 @@ ul.list, ul.list li, ol.list, ol.list li {
   padding:0;
   margin:0;
   text-indent:0;
-} 
+}
 
 .sideblock .content h3,
 .sideblock .content h2 {
@@ -960,7 +964,7 @@ table.minicalendar th {
 
 #calendar .maincalendar .eventlist .topic {
   padding: 5px;
-  border-style:solid; 
+  border-style:solid;
   border-width: 0px;
   border-bottom-color: #EEEEEE;
   border-bottom-width: 1px;
@@ -1036,7 +1040,7 @@ table.minicalendar th {
 .minicalendar .today {
   border:2px solid;
 }
-  
+
 .cal_popup_bg {
   padding:0px;
   margin:0px;
@@ -1092,7 +1096,7 @@ span.current {
 /***
  *** Course
  ***/
- 
+
 .activitydate, .activityhead {
   text-align:center;
 }
@@ -1137,23 +1141,23 @@ span.current {
 #course-view .section .weekdates {
 }
 
-#course-view ul.section, 
-#site-index ul.section, 
-#course-view ul.section li, 
-#site-index ul.section li { 
+#course-view ul.section,
+#site-index ul.section,
+#course-view ul.section li,
+#site-index ul.section li {
   margin: 0;
   padding: 0;
   text-indent: 0;
   list-style: none;
 }
 
-#course-view ul.section li.activity ul li, 
-#site-index ul.section li.activity ul li { 
-  list-style: disc; 
+#course-view ul.section li.activity ul li,
+#site-index ul.section li.activity ul li {
+  list-style: disc;
 }
 
 /*Accessibility: No-tables course format. */
-#course-view ul.weekscss, .weekscss li { 
+#course-view ul.weekscss, .weekscss li {
   margin: 0;
   padding: 0;
   text-indent: 0;
@@ -1191,7 +1195,7 @@ span.current {
   border-style:solid;
   border-width:1px;
 }
-.weekscss .content, 
+.weekscss .content,
 .weekscss .side {
   padding: 5px;
 }
@@ -1217,7 +1221,7 @@ span.current {
 
 body#course-view .unread {
   margin-left: 3em;
-} 
+}
 
 body#course-view .sideblock.drag .header {
   cursor: move;
@@ -1256,7 +1260,7 @@ body#course-user .section h2 {
 .headingblock, h2.headingblock {
   border-width:1px;
   border-style:solid;
-  padding:5px; 
+  padding:5px;
   margin:0%;
 }
 
@@ -1354,7 +1358,7 @@ body#grade-index .grades .weighted {
   padding:15px;
 }
 
-.loginform .c1, 
+.loginform .c1,
 .logintable .c1 {
   text-align: left;
 }
@@ -1581,7 +1585,7 @@ body#message-messages {
   display:block;
   padding:0px 1px 0px 0px;
 }
-  
+
 .tabrow td.selected {
   border-width: 0px;
 }
@@ -1595,7 +1599,7 @@ body#message-messages {
   margin-bottom:5px;
   border-width: 1px;
   border-style: solid;
-  border-collapse: separate;  
+  border-collapse: separate;
 }
 
 .userinfobox .left {
@@ -1621,7 +1625,7 @@ body#message-messages {
 
 .userinfobox .username {
   padding-bottom: 20px;
-}  
+}
 
 
 table.userinfobox {
@@ -1852,7 +1856,7 @@ body#mod-forum-search .introcontent {
   border-width: 2px;
 }
 #mod-forum-index .unread img,
-#mod-forum-view .unread img 
+#mod-forum-view .unread img
 {
   margin-left: 5px;
 }
@@ -2083,7 +2087,7 @@ body#mod-quiz-report .controls {
  ***/
 
 .ims-nav-bar {
-  position: relative; 
+  position: relative;
   padding:0.1em;
 }
 
