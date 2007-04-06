@@ -277,7 +277,7 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('visible', array('courseavailability', get_string('availability')), true);
         $mform->setDefault('visible', 1);
 
-        $mform->addElement('text', 'password', get_string('enrolmentkey'), 'size="25"');
+        $mform->addElement('passwordreveal', 'password', get_string('enrolmentkey'), 'size="25"');
         $mform->setHelpButton('password', array('enrolmentkey', get_string('enrolmentkey')), true);
         $mform->setDefault('password', '');
         $mform->setType('password', PARAM_RAW);

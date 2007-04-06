@@ -32,7 +32,7 @@ class user_editadvanced_form extends moodleform {
         $mform->setHelpButton('auth', array('authchange', get_string('chooseauthmethod','auth')));
         $mform->setAdvanced('auth');
 
-        $mform->addElement('text', 'newpassword', get_string('newpassword'), 'size="20"');
+        $mform->addElement('passwordreveal', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->setType('newpassword', PARAM_RAW);
         //TODO: add missing help - empty means no change
 
