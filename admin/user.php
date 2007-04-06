@@ -86,6 +86,11 @@
         admin_externalpage_setup('editusers', $adminroot);
     }
 
+    if (empty($CFG->loginhttps)) {
+        $securewwwroot = $CFG->wwwroot;
+    } else {
+        $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
+    }
 
     if ($newuser) {                 // Create a new user
 
@@ -111,7 +116,7 @@
             }
         }
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
+        redirect("$securewwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
 
     } else {                        // List all users for editing
 
@@ -330,7 +335,7 @@
                 }
 
                 if (has_capability('moodle/user:update', $sitecontext)) {
-                    $editbutton = "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
+                    $editbutton = "<a href=\"$securewwwroot/user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>";
                     if ($user->confirmed == 0) {
                         $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string('confirm') . "</a>";
                     } else {
