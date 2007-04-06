@@ -1346,6 +1346,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
+                        echo "</li>\n";
                         continue;
                     }
                     echo '<a title="'.$strmovefull.'"'.
