@@ -6511,6 +6511,8 @@ function fullclone($thing) {
  */
 function moodle_request_shutdown() {
 
+    global $CFG;
+
     // initially, we are only ever called under apache 
     // but check just in case 
     if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')) {
