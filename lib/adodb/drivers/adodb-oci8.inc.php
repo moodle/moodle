@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.93 10 Oct 2006 (c) 2000-2006 John Lim. All rights reserved.
+  version V4.94 23 Jan 2007 (c) 2000-2007 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -211,22 +211,22 @@ NATSOFT.DOMAIN =
  		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
 		if ($mode==1) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCIPLogon($argUsername,$argPassword, $argDatabasename)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCIPLogon($argUsername,$argPassword, $argDatabasename, $this->charSet)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename)
 				;
 			if ($this->_connectionID && $this->autoRollback)  OCIrollback($this->_connectionID);
 		} else if ($mode==2) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCINLogon($argUsername,$argPassword, $argDatabasename)
+				OCINLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCINLogon($argUsername,$argPassword, $argDatabasename, $this->charSet);
+				OCINLogon($argUsername,$argPassword, $argDatabasename);
 				
 		} else {
 			$this->_connectionID = ($this->charSet) ? 
-				OCILogon($argUsername,$argPassword, $argDatabasename)
+				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet);
+				OCILogon($argUsername,$argPassword, $argDatabasename);
 		}
 		if (!$this->_connectionID) return false;
 		if ($this->_initdate) {
@@ -434,10 +434,10 @@ NATSOFT.DOMAIN =
 	{
 		if ($this->_errorMsg !== false) return $this->_errorMsg;
 
-		if (is_resource($this->_stmt)) $arr = @OCIerror($this->_stmt);
+		if (is_resource($this->_stmt)) $arr = @OCIError($this->_stmt);
 		if (empty($arr)) {
-			$arr = @OCIerror($this->_connectionID);
-			if ($arr === false) $arr = @OCIError();
+			if (is_resource($this->_connectionID)) $arr = @OCIError($this->_connectionID);
+			else $arr = @OCIError();
 			if ($arr === false) return '';
 		}
 		$this->_errorMsg = $arr['message'];
@@ -783,8 +783,17 @@ NATSOFT.DOMAIN =
 	
 		$stmt = OCIParse($this->_connectionID,$sql);
 
-		if (!$stmt) return false;
-
+		if (!$stmt) {
+			$this->_errorMsg = false;
+			$this->_errorCode = false;
+			$arr = @OCIError($this->_connectionID);
+			if ($arr === false) return false;
+		
+			$this->_errorMsg = $arr['message'];
+			$this->_errorCode = $arr['code'];
+			return false;
+		}
+		
 		$BINDNUM += 1;
 		
 		$sttype = @OCIStatementType($stmt);
@@ -1374,10 +1383,11 @@ class ADORecordset_oci8 extends ADORecordSet {
 			$arr =& $this->GetArray($nrows);
 			return $arr;
 		}
+		$arr = array();
 		for ($i=1; $i < $offset; $i++) 
-			if (!@OCIFetch($this->_queryID)) return array();
+			if (!@OCIFetch($this->_queryID)) return $arr;
 			
-		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return array();
+		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return $arr;;
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nrows != $cnt) {

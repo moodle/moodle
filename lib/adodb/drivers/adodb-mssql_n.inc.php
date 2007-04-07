@@ -1,4 +1,6 @@
-<?php  /// $Id $
+<?php  
+
+/// $Id $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -7,7 +9,7 @@
 // ADOdb  - Database Abstraction Library for PHP                         //
 //          http://adodb.sourceforge.net/                                //
 //                                                                       //
-// Copyright (C) 2000-2006 John Lim (jlim\@natsoft.com.my)               //
+// Copyright (C) 2000-2007 John Lim (jlim\@natsoft.com.my)               //
 //          All rights reserved.                                         //
 //          Released under both BSD license and LGPL library license.    //
 //          Whenever there is any discrepancy between the two licenses,  //

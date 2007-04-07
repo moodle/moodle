@@ -1,4 +1,4 @@
-Description of ADODB v4.93 library import into Moodle
+Description of ADODB v4.94 library import into Moodle
 
 Removed:
  * contrib/
@@ -19,7 +19,7 @@ Our changes:
        working properly. Simplified logic (now that we are FETCH_ASSOC). Work in progress
        for the annoying http://tracker.moodle.org/browse/MDL-6877.
        Once fixed by adodb guys, we'll return to their official distro.
- * removed bogus "_connec" from first line of adodb-postgres64.inc.php
 
 skodak
-11 October 2006
+
+$Id$

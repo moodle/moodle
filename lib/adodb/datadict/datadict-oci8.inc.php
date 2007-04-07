@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -196,6 +196,14 @@ end;
 			$seqname = $this->seqPrefix.$tabname;
 			$trigname = $this->trigPrefix.$seqname;
 		}
+		
+		if (strlen($seqname) > 30) {
+			$seqname = $this->seqPrefix.uniqid('');
+		} // end if
+		if (strlen($trigname) > 30) {
+			$trigname = $this->trigPrefix.uniqid('');
+		} // end if
+
 		if (isset($tableoptions['REPLACE'])) $sql[] = "DROP SEQUENCE $seqname";
 		$seqCache = '';
 		if (isset($tableoptions['SEQUENCE_CACHE'])){$seqCache = $tableoptions['SEQUENCE_CACHE'];}
