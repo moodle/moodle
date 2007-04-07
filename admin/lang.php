@@ -468,8 +468,10 @@
                 echo '</td></tr>';
             }
             echo '</table>';
-            echo '</div>'; 
-            echo '</form>'; 
+            if ($editable) {
+                echo '</div>'; 
+                echo '</form>'; 
+            }
 
         } else {
             // no $currentfile specified
@@ -526,10 +528,12 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
         $value = lang_fix_value_before_save($value);
         if ($id == "string" and $value != ""){
             if ((!$local) || (lang_fix_value_from_file($packstrings[$stringname]) <> lang_fix_value_from_file($value))) {
+                // Either we are saving the master language pack
+                // or we are saving local language pack and the strings differ.
                 fwrite($f,"\$string['$stringname'] = '$value';\n");
-                if (LANG_KEEP_ORPHANS && isset($orphans[$stringname])) {
-                    unset($orphans[$stringname]);
-                }
+            }
+            if (LANG_KEEP_ORPHANS && isset($orphans[$stringname])) {
+                unset($orphans[$stringname]);
             }
         }
     }
@@ -560,6 +564,7 @@ function lang_fix_value_from_file($value='') {
     $value = trim($value);                             // Delete leading/trailing white space
     $value = str_replace("\\","",$value);              // Delete all slashes
     $value = str_replace("%%","%",$value);
+    $value = str_replace("&","&amp;",$value);          // Fixes MDL-9248
     $value = str_replace("<","&lt;",$value);
     $value = str_replace(">","&gt;",$value);
     $value = str_replace('"',"&quot;",$value);
