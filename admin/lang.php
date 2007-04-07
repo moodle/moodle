@@ -455,7 +455,7 @@
                     echo $missingnext . '</td>';
 
                 } else {
-                    echo '<td bgcolor="'.$cellcolour.'" valign="top">'.$value.'</td>';
+                    echo '<td '.$cellcolour.' valign="top">'.$value.'</td>';
                 }
                 echo '</tr>'."\n";
             }
