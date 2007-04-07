@@ -234,7 +234,7 @@
                             print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
                         }
                     }
-                    echo "wtf</td></tr>\n";
+                    echo "</td></tr>\n";
                     break;
                 case LESSON_TRUEFALSE:
                 case LESSON_MULTICHOICE:
