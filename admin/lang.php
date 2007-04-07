@@ -191,7 +191,7 @@
     
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
+                echo "<a href=\"$CFG->wwwroot/$CFG->admin/langdoc.php?sesskey=$USER->sesskey&amp;currentfile=help/$file\">" .get_string("filemissing", "", "$currentlang/help/$file") . "</a>" . "<br />\n";
                 $somethingfound = true;
                 continue;
             }
@@ -202,7 +202,7 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/docs/$file")."</font></p>";
+                echo "<a href=\"$CFG->wwwroot/$CFG->admin/langdoc.php?sesskey=$USER->sesskey&amp;currentfile=docs/$file\">" .get_string("filemissing", "", "$currentlang/docs/$file") . "</a>" . "<br />\n";
                 $somethingfound = true;
                 continue;
             }
