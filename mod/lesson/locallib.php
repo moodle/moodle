@@ -1258,7 +1258,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
  * @param int $userid User id.
  * @return int Will return the page id of a branch table or end of lesson
  **/
-function lesson_unseen_branch_jump($lesson, $userid) {
+function lesson_unseen_branch_jump($lessonid, $userid) {
     if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
         $retakes = 0;
     }

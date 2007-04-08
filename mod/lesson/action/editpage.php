@@ -130,15 +130,15 @@
             } else {
                 echo "<input name=\"layout\" type=\"checkbox\" value=\"1\" />";
             }
-            echo get_string("arrangebuttonshorizontally", "lesson")."<center>\n";
+            echo get_string("arrangebuttonshorizontally", "lesson")."\n";
             echo "<br />";
             if ($page->display) {
-                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
+                echo "<input name=\"display\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
             } else {
-                echo "<center><input name=\"display\" type=\"checkbox\" value=\"1\" />";
+                echo "<input name=\"display\" type=\"checkbox\" value=\"1\" />";
             }                
-            echo get_string("displayinleftmenu", "lesson")."<center>\n";
-            echo "</td></tr>\n";
+            echo get_string("displayinleftmenu", "lesson")."\n";
+            echo "</center></td></tr>\n";
             echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
             break;
         case LESSON_CLUSTER :
@@ -157,7 +157,7 @@
             echo "<tr><td>";
         break;             
     }
-    // xhtml bug here 
+
     echo "</td></tr>\n";
     // get the answers in a set order, the id order
 
