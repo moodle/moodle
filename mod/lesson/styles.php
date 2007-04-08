@@ -173,49 +173,15 @@
   border-left: 2px solid #4a4a4a;
 }
 
-
-/***
- ***  Use these to override lessonbutton class
- ***  Or just comment out all of lessonbutton class definitions and start from scratch below
- ***/
-
-/* for previous branch buttons only */
-.mod-lesson .previousbutton {
-}
-
-/* for next branch buttons only */
-.mod-lesson .nextbutton {
-}
-
-/* All other branch buttons */
-.mod-lesson .standardbutton {
-}
-
-/* Next classes are for branch table buttons when displayed horizontally */
-.mod-lesson .prevhorizontal,
-.mod-lesson .prevhorizontal div,
-.mod-lesson .nexthorizontal,
-.mod-lesson .nexthorizontal div,
-.mod-lesson .standardhorizontal,
-.mod-lesson .standardhorizontal div {
+/* Branch table buttons when displayed horizontally */
+.mod-lesson .branchbuttoncontainer.horizontal div,
+.mod-lesson .branchbuttoncontainer.horizontal form {
     display: inline;
 }
 
-/* Next classes are for branch table buttons when displayed vertically */
-.mod-lesson .prevvertical .lessonbutton,
-.mod-lesson .nextvertical .lessonbutton,
-.mod-lesson .standardvertical .lessonbutton {
+/* Branch table buttons when displayed vertically */
+.mod-lesson .branchbuttoncontainer.vertical .lessonbutton {
     padding: 5px;
-}
-
-/*  branchbuttoncontainer wraps around branch table buttons */
-.mod-lesson .branchbuttoncontainer {
-    text-align: center;
-    padding: 13px 3px 3px 3px;
-}
-
-.mod-lesson .branchbuttoncontainer form {
-    display: inline;
 }
 
 /***

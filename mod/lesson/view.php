@@ -524,16 +524,14 @@
         
         // get the answers in a set order, the id order
         if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
-            echo "<form id=\"answerform\" method =\"post\" action=\"lesson.php\" autocomplete=\"off\">";
-            echo '<fieldset class="invisiblefieldset">';
-            echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-            echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
-            echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
-            echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
-            if (!$lesson->slideshow) {
-                if ($page->qtype != LESSON_BRANCHTABLE) {
-                    print_simple_box_start("center");
-                }                    
+            if ($page->qtype != LESSON_BRANCHTABLE) {  // To fix XHTML problem (BT have their own forms)
+                echo "<form id=\"answerform\" method =\"post\" action=\"lesson.php\" autocomplete=\"off\">";
+                echo '<fieldset class="invisiblefieldset">';
+                echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
+                echo "<input type=\"hidden\" name=\"action\" value=\"continue\" />";
+                echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
+                echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
+                print_simple_box_start("center");
                 echo '<table width="100%">';
             }
             // default format text options
@@ -672,20 +670,9 @@
                 case LESSON_BRANCHTABLE :                  
                     $options = new stdClass;
                     $options->para = false;
-                    $buttons = array('next' => array(), 'prev' => array(), 'other' => array());
-                /// seperate out next and previous jumps from the other jumps 
+                    $buttons = array();
                     $i = 0;
                     foreach ($answers as $answer) {
-                        if ($answer->jumpto == LESSON_NEXTPAGE) {
-                            $type  = 'next';
-                            $class = 'nextbutton';
-                        } else if ($answer->jumpto == LESSON_PREVIOUSPAGE) {
-                            $type  = 'prev';
-                            $class = 'prevbutton';
-                        } else {
-                            $type  = 'other';
-                            $class = 'standardbutton';
-                        }
                         // Each button must have its own form inorder for it to work with JavaScript turned off
                         $button  = "<form id=\"answerform$i\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/lesson.php\">\n".
                                    '<div>'.
@@ -694,11 +681,11 @@
                                    "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />\n".
                                    "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n".
                                    "<input type=\"hidden\" name=\"jumpto\" value=\"$answer->jumpto\" />\n".
-                                   lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', $class, '', '', true).
+                                   lesson_print_submit_link(strip_tags(format_text($answer->answer, FORMAT_MOODLE, $options)), "answerform$i", '', '', '', '', true).
                                    '</div>'.
                                    '</form>';
                         
-                        $buttons[$type][] = $button;
+                        $buttons[] = $button;
                         $i++;
                     }
                     
@@ -709,10 +696,8 @@
                         $orientation = 'vertical';
                     }
                     
-                    $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer\">\n    " .
-                                      "<div class=\"prev$orientation\">".implode("\n", $buttons['prev']).'</div>'.
-                                      "<div class=\"next$orientation\">".implode("\n", $buttons['other']).'</div>'.
-                                      "<div class=\"standard$orientation\">".implode("\n", $buttons['next']).'</div>'.
+                    $fullbuttonhtml = "\n<div class=\"branchbuttoncontainer $orientation\">\n" .
+                                      implode("\n", $buttons).
                                       "\n</div>\n";
                 
                     if ($lesson->slideshow) {
@@ -722,13 +707,7 @@
                         echo '</div><!--end slideshow div-->';
                         echo $fullbuttonhtml;
                     } else {
-                        echo '<tr><td></td></tr></table>'; // ends the answers table
-                        // When buttons are horizontal and inside the table, the button then line wraps when clicked in FF.
-                        //  Seems like the border-collapse might be the problem?  Easiest fix is to move the buttons outside
-                        //  of the table.
-                        print_simple_box_start('center');
                         echo $fullbuttonhtml;
-                        print_simple_box_end();
                     }
                     
                     break;
@@ -750,11 +729,13 @@
                     print_simple_box_end();
                 break;
             }
-            echo '</fieldset>';
-            echo "</form>\n"; 
+            if ($page->qtype != LESSON_BRANCHTABLE) {  // To fix XHTML problem (BT have their own forms)
+                echo '</fieldset>';
+                echo "</form>\n"; 
+            }
         } else {
             // a page without answers - find the next (logical) page
-            echo "<form id=\"pageform\" method =\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
+            echo "<form id=\"pageform\" method=\"post\" action=\"$CFG->wwwroot/mod/lesson/view.php\">\n";
             echo '<div>';
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             if ($lesson->nextpagedefault) {
