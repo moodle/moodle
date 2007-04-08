@@ -551,7 +551,7 @@ class XMLDBoci8po extends XMLDBgenerator {
      * return if such name is currently in use (true) or no (false)
      * (invoked from getNameForObject()
      */
-    function isNameInUse($object_name, $type) {
+    function isNameInUse($object_name, $type, $table_name) {
         switch($type) {
             case 'ix':
             case 'uix':

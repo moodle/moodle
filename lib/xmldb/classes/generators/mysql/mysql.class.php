@@ -259,6 +259,37 @@ class XMLDBmysql extends XMLDBGenerator {
     }
 
     /**
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
+     * return if such name is currently in use (true) or no (false)
+     * (invoked from getNameForObject()
+     */
+    function isNameInUse($object_name, $type, $table_name) {
+
+    /// Calculate the real table name
+        $xmldb_table = new XMLDBTable($table_name);
+        $tname = $this->getTableName($xmldb_table);
+        
+        switch($type) {
+            case 'ix':
+            case 'uix':
+            /// Fetch all the indexes in the table
+                if ($indexes = get_records_sql("SHOW INDEX FROM $tname")) {
+                    foreach ($indexes as $index) {
+                    /// Normalize array keys
+                        $index = array_change_key_case((array)$index, CASE_LOWER);
+                    /// Check if the name is being used
+                        if (strtolower($object_name) == $index['key_name']) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+        }
+        return false; //No name in use found
+    }
+
+
+    /**
      * Returns an array of reserved words (lowercase) for this DB
      */
     function getReservedWords() {
