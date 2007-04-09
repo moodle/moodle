@@ -265,6 +265,8 @@ class XMLDBmysql extends XMLDBGenerator {
      */
     function isNameInUse($object_name, $type, $table_name) {
 
+        global $db;
+
     /// Calculate the real table name
         $xmldb_table = new XMLDBTable($table_name);
         $tname = $this->getTableName($xmldb_table);
@@ -272,13 +274,17 @@ class XMLDBmysql extends XMLDBGenerator {
         switch($type) {
             case 'ix':
             case 'uix':
-            /// Fetch all the indexes in the table
-                if ($indexes = get_records_sql("SHOW INDEX FROM $tname")) {
-                    foreach ($indexes as $index) {
+            /// First of all, check table exists
+                $metatables = $db->MetaTables();
+                $metatables = array_flip($metatables);
+                $metatables = array_change_key_case($metatables, CASE_LOWER);
+                if (array_key_exists($tname,  $metatables)) {
+                /// Fetch all the indexes in the table
+                    if ($indexes = $db->MetaIndexes($tname)) {
                     /// Normalize array keys
-                        $index = array_change_key_case((array)$index, CASE_LOWER);
-                    /// Check if the name is being used
-                        if (strtolower($object_name) == $index['key_name']) {
+                        $indexes = array_change_key_case($indexes, CASE_LOWER);
+                    /// Look for existing index in array
+                        if (array_key_exists(strtolower($object_name), $indexes)) {
                             return true;
                         }
                     }
