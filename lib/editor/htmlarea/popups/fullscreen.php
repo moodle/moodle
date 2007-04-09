@@ -30,7 +30,7 @@ for (var i = 0; i < scripts.length; ++i) {
     // document.write("<scr" + "ipt type=" + "\"script/javascript\"");
     // document.write(" src=\"../" + script.src + "\"></scr" + "ipt>");
     var new_script = document.createElement("script");
-    if (/^http:/i.test(script.src)) {
+    if (/^https?:/i.test(script.src)) {
       new_script.src = script.src;
     } else {
       new_script.src = "../" + script.src;
