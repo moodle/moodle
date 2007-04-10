@@ -67,8 +67,11 @@ if ($um->preprocess_files() && confirm_sesskey()) {
         @apache_child_terminate();
     }
 
-    //Fix mac/dos newlines
     $text = my_file_get_contents($filename);
+    //trim utf-8 bom
+    $textlib = new textlib();
+    $text = $textlib->trim_utf8_bom($text);
+    //Fix mac/dos newlines
     $text = preg_replace('!\r\n?!',"\n",$text);
     $fp = fopen($filename, "w");
     fwrite($fp,$text);
