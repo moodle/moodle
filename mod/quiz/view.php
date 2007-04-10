@@ -15,15 +15,12 @@
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
             error("There is no coursemodule with id $id");
         }
-
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
-
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
             error("There is no quiz with id $q");

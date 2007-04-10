@@ -35,15 +35,12 @@
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
             error("There is no coursemodule with id $id");
         }
-
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
-
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
             error("There is no quiz with id $q");
@@ -57,7 +54,7 @@
     }
 
     require_login($course->id, false, $cm);
-    $isteacher = has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
+    $ispreviewing = has_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id));
     
     $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course); // course context
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -76,7 +73,7 @@
 
     $strattemptnum = get_string('attempt', 'quiz', $attemptnumber);
     $strquizzes = get_string("modulenameplural", "quiz");
-    $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
+    $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
 
 /// Print the page header
     if (!empty($popup)) {
@@ -96,7 +93,7 @@
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
     /// Print the quiz name heading and tabs for teacher
-    if (has_capability('mod/quiz:preview', $context)) {
+    if ($ispreviewing) {
         $currenttab = 'preview';
         include('tabs.php');
     } else {
@@ -124,7 +121,7 @@
 
 /// Check subnet access
     if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
-        if ($isteacher) {
+        if ($ispreviewing) {
             notify(get_string('subnetnotice', 'quiz'));
         } else {
             error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
@@ -192,7 +189,7 @@
 
 /// Load attempt or create a new attempt if there is no unfinished one
 
-    if (has_capability('mod/quiz:preview', $context) and $forcenew) { // teacher wants a new preview
+    if ($ispreviewing and $forcenew) { // teacher wants a new preview
         // so we set a finish time on the current attempt (if any).
         // It will then automatically be deleted below
         set_field('quiz_attempts', 'timefinish', $timestamp, 'quiz', $quiz->id, 'userid', $USER->id);
@@ -205,7 +202,7 @@
     if (!$attempt) {
         // Check if this is a preview request from a teacher
         // in which case the previous previews should be deleted
-        if (has_capability('mod/quiz:preview', $context)) {
+        if ($ispreviewing) {
             if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
              AND userid = '$USER->id'")) {
                 delete_records('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id);
@@ -220,7 +217,7 @@
         // Start a new attempt and initialize the question sessions
         $attempt = quiz_create_attempt($quiz, $attemptnumber);
         // If this is an attempt by a teacher mark it as a preview
-        if (has_capability('mod/quiz:preview', $context)) {
+        if ($ispreviewing) {
             $attempt->preview = 1;
         }
         // Save the attempt
@@ -228,7 +225,7 @@
             error('Could not create new attempt');
         }
         // make log entries
-        if ($isteacher) {
+        if ($ispreviewing) {
             add_to_log($course->id, 'quiz', 'preview',
                            "attempt.php?id=$cm->id",
                            "$quiz->id", $cm->id);
@@ -408,7 +405,7 @@
 
     // check the quiz times
     if ($timestamp < $quiz->timeopen || ($quiz->timeclose and $timestamp > $quiz->timeclose)) {
-        if ($isteacher) {
+        if ($ispreviewing) {
             notify(get_string('notavailabletostudents', 'quiz'));
         } else {
             notice(get_string('notavailable', 'quiz'), "view.php?id={$cm->id}");
@@ -422,7 +419,7 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
 /// Print the preview heading
-    if (has_capability('mod/quiz:preview', $context)) {
+    if ($ispreviewing) {
         print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
@@ -524,9 +521,8 @@
     echo '</div>';
     echo "</form>\n";
 
-
     $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
-    if ($isteacher) {
+    if ($ispreviewing) {
         // For teachers ignore the quiz closing time
         $secondsleft = 999999999999;
     }
