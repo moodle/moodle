@@ -496,14 +496,20 @@
             break;
 
             case 'group':
-
                 $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
+                        .$CFG->prefix.'groups_members m, '.$CFG->prefix.'user u
+                        WHERE p.userid = m.userid '.$tagquerysql.'
+                        AND u.id = p.userid
+                        AND m.groupid = '.$filterselect.'
+                        AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+                
+                /*$SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .groups_members_from_sql().', '.$CFG->prefix.'user u
                         WHERE '.groups_members_where_sql($filterselect, 'p.userid').'
                         AND u.id = p.userid
                         AND u.deleted = 0
                         '.$permissionsql.$typesql;
-
+                */
             break;
 
             case 'user':

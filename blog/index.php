@@ -84,7 +84,8 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_GROUP_LEVEL) {
             error('Group blogs is not enabled');
         }
-        if (!$group = get_record('groups','id',$groupid)) {
+        // fix for MDL-9268
+        if (!$group = get_record('groups','id',$filterselect)) {
             error('Incorrect group id specified');
         }
         if (!$course = get_record('course', 'id', $group->courseid)) {
