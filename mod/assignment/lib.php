@@ -1394,20 +1394,7 @@ class assignment_base {
 
         $user = get_record('user', 'id', $submission->userid);
 
-        if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
-            if ($groups = user_group($this->course->id, $user->id)) {  // Try to find groups
-                $teachers = array();
-                foreach ($groups as $group) {
-                    $teachers = array_merge($teachers, get_group_teachers($this->course->id, $group->id));
-                }
-            } else {
-                $teachers = get_group_teachers($this->course->id, 0);   // Works even if not in group
-            }
-        } else {
-            $teachers = get_course_teachers($this->course->id);
-        }
-
-        if ($teachers) {
+        if ($teachers = $this->get_graders($user)) {
 
             $strassignments = get_string('modulenameplural', 'assignment');
             $strassignment  = get_string('modulename', 'assignment');
@@ -1415,7 +1402,7 @@ class assignment_base {
 
             foreach ($teachers as $teacher) {
                 $info = new object();
-                $info->username = fullname($user);
+                $info->username = fullname($user, true);
                 $info->assignment = format_string($this->assignment->name,true);
                 $info->url = $CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id;
 
@@ -1429,14 +1416,56 @@ class assignment_base {
     }
 
     /**
+     * Returns a list of teachers that should be grading given submission
+     */
+    function get_graders($user) {
+        //potential graders
+        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', $fields='', $sort='', $limitfrom='', 
+                                               $limitnum='', $groups='', $exceptions='', $doanything=false, $view=false);
+        $graders = array();
+        if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
+            if ($groups = user_group($this->course->id, $user->id)) {  // Try to find all groups
+                foreach ($groups as $group) {
+                    foreach ($potgraders as $t) {
+                        if ($t->id == $user->id) {
+                            continue; // do not send self
+                        }
+                        if (groups_is_member($group->id, $t->id)) {
+                            $graders[$t->id] = $t;
+                        }
+                    }
+                }
+            } else {
+                // user not in group, try to find graders without group
+                foreach ($potgraders as $t) {
+                    if ($t->id == $user->id) {
+                        continue; // do not send self
+                    }
+                    if (!user_group($this->course->id, $t->id)) { //ugly hack
+                        $graders[$t->id] = $t;
+                    }
+                }
+            }
+        } else {
+            foreach ($potgraders as $t) {
+                if ($t->id == $user->id) {
+                    continue; // do not send self
+                }
+                $graders[$t->id] = $t;
+            }
+        }
+        return $graders;
+    }
+
+    /**
      * Creates the text content for emails to teachers
      *
      * @param $info object The info used by the 'emailteachermail' language string
      * @return string
      */
     function email_teachers_text($info) {
-        $posttext  = $this->course->shortname.' -> '.$this->strassignments.' -> '.
-                     format_string($this->assignment->name, true)."\n";
+        $posttext  = format_string($this->course->shortname).' -> '.$this->strassignments.' -> '.
+                     format_string($this->assignment->name)."\n";
         $posttext .= '---------------------------------------------------------------------'."\n";
         $posttext .= get_string("emailteachermail", "assignment", $info)."\n";
         $posttext .= "\n---------------------------------------------------------------------\n";
@@ -1452,9 +1481,9 @@ class assignment_base {
     function email_teachers_html($info) {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
-                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$this->course->shortname.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.format_string($this->course->shortname).'</a> ->'.
                      '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$this->course->id.'">'.$this->strassignments.'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->cm->id.'">'.format_string($this->assignment->name,true).'</a></font></p>';
+                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->cm->id.'">'.format_string($this->assignment->name).'</a></font></p>';
         $posthtml .= '<hr /><font face="sans-serif">';
         $posthtml .= '<p>'.get_string('emailteachermailhtml', 'assignment', $info).'</p>';
         $posthtml .= '</font><hr />';
