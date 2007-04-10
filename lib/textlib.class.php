@@ -322,5 +322,15 @@ class textlib {
         return $result;
     }
 
+    /**
+     * Removes the BOM from unicode string - see http://unicode.org/faq/utf_bom.html
+     */
+    function trim_utf8_bom($str) {
+        $bom = "\xef\xbb\xbf";
+        if (strpos($str, $bom) === 0) {
+            return substr($str, strlen($bom));
+        }
+        return $str;
+    }
 }
 ?>
