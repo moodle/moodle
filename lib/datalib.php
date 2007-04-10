@@ -700,7 +700,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
     
     // Check root permissions
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
-    if(has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
+    if (has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
         // User can view all courses, although there might be exceptions
         // which we will filter later.
         $rs = get_recordset('course c', '', '', $sort, $fields);        
@@ -763,6 +763,56 @@ ORDER BY $sort");
                         $limit--;
                         if($limit==0) {
                             break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// MDL-9238, course in sub categories are not shown
+    // if the user has course:view at system level, then he can view all course
+    // skip this part
+    if (!has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
+        
+        // get all course categories with an assignment
+        $SQL = "SELECT a.id, a.id FROM {$CFG->prefix}role_assignments ra
+                INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
+                INNER JOIN {$CFG->prefix}course_categories a ON x.instanceid=a.id AND x.contextlevel=40
+                WHERE ra.userid=$userid";
+        
+        if ($mcoursecats = get_records_sql($SQL)) {          
+            foreach ($mcoursecats as $mcoursecat) {
+                
+                // run the sql to get the path, find all courses in each sub (sub) categories
+                $pathsql = "SELECT $fields 
+                            FROM {$CFG->prefix}course_categories cc,
+                                 {$CFG->prefix}course c
+                            WHERE cc.path LIKE '%".$mcoursecat->id."/%'
+                            AND c.category = cc.id";
+
+                if ($scourses = get_records_sql($pathsql)) {                   
+                    
+                    // add each course in sub category, if correct permissions are set
+                    // and if the course is not added to my courses list yet
+                    foreach ($scourses as $scourse) {
+                        $context = get_context_instance(CONTEXT_COURSE, $scourse->id);                        
+                        if (!isset($mycourses[$scourse->id]) &&
+                            has_capability('moodle/course:view', $context, $userid, $doanything) && 
+                            !has_capability('moodle/legacy:guest', $context, $userid, false) &&
+                            ($scourse->visible || 
+                             has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
+                                // add it to my course array
+                            $mycourses[$scourse->id] = $scourse;
+                        }
+                        
+                        // Only return a limited number of courses if limit is set
+                        if($limit>0) {
+                            $limit--;
+                            if($limit==0) {
+                                // breaks the 2 foreach loops
+                                break 2;
+                            }
                         }
                     }
                 }
