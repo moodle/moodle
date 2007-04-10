@@ -1,57 +1,57 @@
 <?php  // $Id$
 /**
-* Library of functions used by the quiz module.
-*
-* This contains functions that are called from within the quiz module only
-* Functions that are also called by core Moodle are in {@link lib.php}
-* This script also loads the code in {@link questionlib.php} which holds
-* the module-indpendent code for handling questions and which in turn
-* initialises all the questiontype classes.
-* @version $Id$
-* @author Martin Dougiamas and many others. This has recently been completely
-*         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
-*         the Serving Mathematics project
-*         {@link http://maths.york.ac.uk/serving_maths}
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package quiz
-*/
+ * Library of functions used by the quiz module.
+ *
+ * This contains functions that are called from within the quiz module only
+ * Functions that are also called by core Moodle are in {@link lib.php}
+ * This script also loads the code in {@link questionlib.php} which holds
+ * the module-indpendent code for handling questions and which in turn
+ * initialises all the questiontype classes.
+ * @version $Id$
+ * @author Martin Dougiamas and many others. This has recently been completely
+ *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
+ *         the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package quiz
+ */
 
 /**
-* Include those library functions that are also used by core Moodle or other modules
-*/
-require_once("$CFG->dirroot/mod/quiz/lib.php");
-//require_once($CFG->libdir.'/questionlib.php');
-require_once("{$CFG->dirroot}/question/editlib.php");
+ * Include those library functions that are also used by core Moodle or other modules
+ */
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
-/// CONSTANTS ///////////////////////////////////////////////////////////////////
+/// Constants ///////////////////////////////////////////////////////////////////
 
 /**#@+
-* Options determining how the grades from individual attempts are combined to give
-* the overall grade for a user
-*/
+ * Options determining how the grades from individual attempts are combined to give
+ * the overall grade for a user
+ */
 define("QUIZ_GRADEHIGHEST", "1");
 define("QUIZ_GRADEAVERAGE", "2");
 define("QUIZ_ATTEMPTFIRST", "3");
 define("QUIZ_ATTEMPTLAST",  "4");
-$QUIZ_GRADE_METHOD = array ( QUIZ_GRADEHIGHEST => get_string("gradehighest", "quiz"),
-                             QUIZ_GRADEAVERAGE => get_string("gradeaverage", "quiz"),
-                             QUIZ_ATTEMPTFIRST => get_string("attemptfirst", "quiz"),
-                             QUIZ_ATTEMPTLAST  => get_string("attemptlast", "quiz"));
+$QUIZ_GRADE_METHOD = array(
+        QUIZ_GRADEHIGHEST => get_string("gradehighest", "quiz"),
+        QUIZ_GRADEAVERAGE => get_string("gradeaverage", "quiz"),
+        QUIZ_ATTEMPTFIRST => get_string("attemptfirst", "quiz"),
+        QUIZ_ATTEMPTLAST  => get_string("attemptlast", "quiz")
+);
 /**#@-*/
 
-
-/// FUNCTIONS RELATED TO ATTEMPTS /////////////////////////////////////////
+/// Functions related to attempts /////////////////////////////////////////
 
 /**
-* Creates an object to represent a new attempt at a quiz
-*
-* Creates an attempt object to represent an attempt at the quiz by the current
-* user starting at the current time. The ->id field is not set. The object is
-* NOT written to the database.
-* @return object                The newly created attempt object.
-* @param object $quiz           The quiz to create an attempt for.
-* @param integer $attemptnumber The sequence number for the attempt.
-*/
+ * Creates an object to represent a new attempt at a quiz
+ *
+ * Creates an attempt object to represent an attempt at the quiz by the current
+ * user starting at the current time. The ->id field is not set. The object is
+ * NOT written to the database.
+ * @return object                The newly created attempt object.
+ * @param object $quiz           The quiz to create an attempt for.
+ * @param integer $attemptnumber The sequence number for the attempt.
+ */
 function quiz_create_attempt($quiz, $attemptnumber) {
     global $USER, $CFG;
 
@@ -117,52 +117,51 @@ function quiz_get_user_attempts($quizid, $userid, $status = 'finished') {
     }
 }
 
-
-/// FUNCTIONS TO DO WITH QUIZ LAYOUT AND PAGES ////////////////////////////////
+/// Functions to do with quiz layout and pages ////////////////////////////////
 
 /**
-* Returns a comma separated list of question ids for the current page
-*
-* @return string         Comma separated list of question ids
-* @param string $layout  The string representing the quiz layout. Each page is represented as a
-*                        comma separated list of question ids and 0 indicating page breaks.
-*                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
-* @param integer $page   The number of the current page.
-*/
+ * Returns a comma separated list of question ids for the current page
+ *
+ * @return string         Comma separated list of question ids
+ * @param string $layout  The string representing the quiz layout. Each page is represented as a
+ *                        comma separated list of question ids and 0 indicating page breaks.
+ *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
+ * @param integer $page   The number of the current page.
+ */
 function quiz_questions_on_page($layout, $page) {
     $pages = explode(',0', $layout);
     return trim($pages[$page], ',');
 }
 
 /**
-* Returns a comma separated list of question ids for the quiz
-*
-* @return string         Comma separated list of question ids
-* @param string $layout  The string representing the quiz layout. Each page is represented as a
-*                        comma separated list of question ids and 0 indicating page breaks.
-*                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
-*/
+ * Returns a comma separated list of question ids for the quiz
+ *
+ * @return string         Comma separated list of question ids
+ * @param string $layout  The string representing the quiz layout. Each page is represented as a
+ *                        comma separated list of question ids and 0 indicating page breaks.
+ *                        So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
+ */
 function quiz_questions_in_quiz($layout) {
     return str_replace(',0', '', $layout);
 }
 
 /**
-* Returns the number of pages in the quiz layout
-*
-* @return integer         Comma separated list of question ids
-* @param string $layout  The string representing the quiz layout.
-*/
+ * Returns the number of pages in the quiz layout
+ *
+ * @return integer         Comma separated list of question ids
+ * @param string $layout  The string representing the quiz layout.
+ */
 function quiz_number_of_pages($layout) {
     return substr_count($layout, ',0');
 }
 
 /**
-* Returns the first question number for the current quiz page
-*
-* @return integer  The number of the first question
-* @param string $quizlayout The string representing the layout for the whole quiz
-* @param string $pagelayout The string representing the layout for the current page
-*/
+ * Returns the first question number for the current quiz page
+ *
+ * @return integer  The number of the first question
+ * @param string $quizlayout The string representing the layout for the whole quiz
+ * @param string $pagelayout The string representing the layout for the current page
+ */
 function quiz_first_questionnumber($quizlayout, $pagelayout) {
     // this works by finding all the questions from the quizlayout that
     // come before the current page and then adding up their lengths.
@@ -178,13 +177,13 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
 }
 
 /**
-* Re-paginates the quiz layout
-*
-* @return string         The new layout string
-* @param string $layout  The string representing the quiz layout.
-* @param integer $perpage The number of questions per page
-* @param boolean $shuffle Should the questions be reordered randomly?
-*/
+ * Re-paginates the quiz layout
+ *
+ * @return string         The new layout string
+ * @param string $layout  The string representing the quiz layout.
+ * @param integer $perpage The number of questions per page
+ * @param boolean $shuffle Should the questions be reordered randomly?
+ */
 function quiz_repaginate($layout, $perpage, $shuffle=false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
     $questions = explode(',', $layout);
@@ -206,11 +205,11 @@ function quiz_repaginate($layout, $perpage, $shuffle=false) {
 }
 
 /**
-* Print navigation panel for quiz attempt and review pages
-*
-* @param integer $page     The number of the current page (counting from 0).
-* @param integer $pages    The total number of pages.
-*/
+ * Print navigation panel for quiz attempt and review pages
+ *
+ * @param integer $page     The number of the current page (counting from 0).
+ * @param integer $pages    The total number of pages.
+ */
 function quiz_print_navigation_panel($page, $pages) {
     //$page++;
     echo '<div class="pagingbar">';
@@ -238,18 +237,17 @@ function quiz_print_navigation_panel($page, $pages) {
     echo '</div>';
 }
 
-
-/// FUNCTIONS TO DO WITH QUIZ GRADES //////////////////////////////////////////
+/// Functions to do with quiz grades //////////////////////////////////////////
 
 /**
-* Creates an array of maximum grades for a quiz
-*
-* The grades are extracted from the quiz_question_instances table.
-* @return array        Array of grades indexed by question id
-*                      These are the maximum possible grades that
-*                      students can achieve for each of the questions
-* @param integer $quiz The quiz object
-*/
+ * Creates an array of maximum grades for a quiz
+ *
+ * The grades are extracted from the quiz_question_instances table.
+ * @return array        Array of grades indexed by question id
+ *                      These are the maximum possible grades that
+ *                      students can achieve for each of the questions
+ * @param integer $quiz The quiz object
+ */
 function quiz_get_all_question_grades($quiz) {
     global $CFG;
 
@@ -442,12 +440,12 @@ function quiz_save_best_grade($quiz, $userid = null) {
 }
 
 /**
-* Calculate the overall grade for a quiz given a number of attempts by a particular user.
-*
-* @return float          The overall grade
-* @param object $quiz    The quiz for which the best grade is to be calculated
-* @param array $attempts An array of all the attempts of the user at the quiz
-*/
+ * Calculate the overall grade for a quiz given a number of attempts by a particular user.
+ *
+ * @return float          The overall grade
+ * @param object $quiz    The quiz for which the best grade is to be calculated
+ * @param array $attempts An array of all the attempts of the user at the quiz
+ */
 function quiz_calculate_best_grade($quiz, $attempts) {
 
     switch ($quiz->grademethod) {
@@ -486,14 +484,14 @@ function quiz_calculate_best_grade($quiz, $attempts) {
 }
 
 /**
-* Return the attempt with the best grade for a quiz
-*
-* Which attempt is the best depends on $quiz->grademethod. If the grade
-* method is GRADEAVERAGE then this function simply returns the last attempt.
-* @return object         The attempt with the best grade
-* @param object $quiz    The quiz for which the best grade is to be calculated
-* @param array $attempts An array of all the attempts of the user at the quiz
-*/
+ * Return the attempt with the best grade for a quiz
+ *
+ * Which attempt is the best depends on $quiz->grademethod. If the grade
+ * method is GRADEAVERAGE then this function simply returns the last attempt.
+ * @return object         The attempt with the best grade
+ * @param object $quiz    The quiz for which the best grade is to be calculated
+ * @param array $attempts An array of all the attempts of the user at the quiz
+ */
 function quiz_calculate_best_attempt($quiz, $attempts) {
 
     switch ($quiz->grademethod) {
@@ -524,14 +522,13 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
     }
 }
 
-
-/// OTHER QUIZ FUNCTIONS ////////////////////////////////////////////////////
+/// Other quiz functions ////////////////////////////////////////////////////
 
 /**
-* Print a box with quiz start and due dates
-*
-* @param object $quiz
-*/
+ * Print a box with quiz start and due dates
+ *
+ * @param object $quiz
+ */
 function quiz_view_dates($quiz) {
     if (!$quiz->timeopen && !$quiz->timeclose) {
         return;
@@ -551,10 +548,9 @@ function quiz_view_dates($quiz) {
     print_simple_box_end();
 }
 
-
 /**
-* Parse field names used for the replace options on question edit forms
-*/
+ * Parse field names used for the replace options on question edit forms
+ */
 function quiz_parse_fieldname($name, $nameprefix='question') {
     $reg = array();
     if (preg_match("/$nameprefix(\\d+)(\w+)/", $name, $reg)) {
@@ -564,16 +560,15 @@ function quiz_parse_fieldname($name, $nameprefix='question') {
     }
 }
 
-
 /**
-* Upgrade states for an attempt to Moodle 1.5 model
-*
-* Any state that does not yet have its timestamp set to nonzero has not yet been upgraded from Moodle 1.4
-* The reason these are still around is that for large sites it would have taken too long to
-* upgrade all states at once. This function sets the timestamp field and creates an entry in the
-* question_sessions table.
-* @param object $attempt  The attempt whose states need upgrading
-*/
+ * Upgrade states for an attempt to Moodle 1.5 model
+ *
+ * Any state that does not yet have its timestamp set to nonzero has not yet been upgraded from Moodle 1.4
+ * The reason these are still around is that for large sites it would have taken too long to
+ * upgrade all states at once. This function sets the timestamp field and creates an entry in the
+ * question_sessions table.
+ * @param object $attempt  The attempt whose states need upgrading
+ */
 function quiz_upgrade_states($attempt) {
     global $CFG;
     // The old quiz model only allowed a single response per quiz attempt so that there will be
@@ -612,7 +607,6 @@ function quiz_get_question_review($quiz, $question) {
             <img src=\"../../pix/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /></a>";
 }
 
-
 /**
  * Determine render options
  *
@@ -647,7 +641,6 @@ function quiz_get_renderoptions($reviewoptions, $state) {
 
     return $options;
 }
-
 
 /**
  * Determine review options
