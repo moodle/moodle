@@ -88,7 +88,6 @@ function scorm_update_instance($scorm) {
                 $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
                 $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
             }
-            mtrace($scorm->md5hash);
         } else {
             $scorm->parse = 0;
         }
