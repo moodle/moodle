@@ -14,6 +14,11 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
+    // remember the current time as the time any responses were submitted
+    // (so as to make sure students don't get penalized for slow processing on this page)
+    $timestamp = time();
+
+    // Get submitted parameters.
     $id = optional_param('id', 0, PARAM_INT);               // Course Module ID
     $q = optional_param('q', 0, PARAM_INT);                 // or quiz ID
     $page = optional_param('page', 0, PARAM_INT);
@@ -21,15 +26,6 @@
     $finishattempt = optional_param('finishattempt', 0, PARAM_BOOL);
     $timeup = optional_param('timeup', 0, PARAM_BOOL); // True if form was submitted by timer.
     $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Teacher has requested new preview
-
-    // remember the current time as the time any responses were submitted
-    // (so as to make sure students don't get penalized for slow processing on this page)
-    $timestamp = time();
-
-    // We treat automatically closed attempts just like normally closed attempts
-    if ($timeup) {
-        $finishattempt = 1;
-    }
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
@@ -53,18 +49,23 @@
         }
     }
 
+    // We treat automatically closed attempts just like normally closed attempts
+    if ($timeup) {
+        $finishattempt = 1;
+    }
+
     require_login($course->id, false, $cm);
-    $ispreviewing = has_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id));
-    
+
     $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course); // course context
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+    $ispreviewing = has_capability('mod/quiz:preview', $context);
+
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
         redirect('edit.php?quizid=' . $quiz->id);
     }
 
-// Get number for the next or unfinished attempt
+    // Get number for the next or unfinished attempt
     if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
      "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
      "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
@@ -75,36 +76,7 @@
     $strquizzes = get_string("modulenameplural", "quiz");
     $popup = $quiz->popup && !$ispreviewing; // Controls whether this is shown in a javascript-protected window.
 
-/// Print the page header
-    if (!empty($popup)) {
-        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
-        include('protect_js.php');
-    } else {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
-                    : "";
-        print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($quiz->name)."</a> -> $strattemptnum",
-                  "", "", true, $strupdatemodule);
-    }
-
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-
-    /// Print the quiz name heading and tabs for teacher
-    if ($ispreviewing) {
-        $currenttab = 'preview';
-        include('tabs.php');
-    } else {
-        if ($quiz->attempts != 1) {
-            print_heading(format_string($quiz->name).' - '.$strattemptnum);
-        } else {
-            print_heading(format_string($quiz->name));
-        }
-    }
-
-/// Check availability
+    // Check availability
     if (isguestuser()) {
         print_heading(get_string('guestsno', 'quiz'));
         if (empty($popup)) {
@@ -119,7 +91,7 @@
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
-/// Check subnet access
+    // Check subnet access
     if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
         if ($ispreviewing) {
             notify(get_string('subnetnotice', 'quiz'));
@@ -128,7 +100,7 @@
         }
     }
 
-/// Check password access
+    // Check password access
     if ($quiz->password and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
 
@@ -187,7 +159,7 @@
         }
     }
 
-/// Load attempt or create a new attempt if there is no unfinished one
+    // Load attempt or create a new attempt if there is no unfinished one
 
     if ($ispreviewing and $forcenew) { // teacher wants a new preview
         // so we set a finish time on the current attempt (if any).
@@ -243,7 +215,8 @@
         }
     }
     if (!$attempt->timestart) { // shouldn't really happen, just for robustness
-        $attempt->timestart = time();
+        debugging('timestart was not set for this attempt. That should be impossible.', DEBUG_DEVELOPER);
+        $attempt->timestart = $timestamp - 1;
     }
 
 /// Load all the questions and states needed by this script
@@ -346,7 +319,7 @@
     // We have now finished processing form data
     }
 
-/// Finish attempt if requested
+    // Finish attempt if requested
     if ($finishattempt) {
 
         // Set the attempt to be finished
@@ -391,7 +364,7 @@
                            "$quiz->id", $cm->id);
     }
 
-/// Update the quiz attempt and the overall grade for the quiz
+    // Update the quiz attempt and the overall grade for the quiz
     if ($responses || $finishattempt) {
         if (!update_record('quiz_attempts', $attempt)) {
             error('Failed to save the current quiz attempt!');
@@ -418,21 +391,45 @@
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
-/// Print the preview heading
+    // Print the page header
+    if (!empty($popup)) {
+        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
+        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
+        include('protect_js.php');
+    } else {
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
+                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
+                    : "";
+        print_header_simple(format_string($quiz->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
+                  <a href=\"view.php?id=$cm->id\">".format_string($quiz->name)."</a> -> $strattemptnum",
+                  "", "", true, $strupdatemodule);
+    }
+
+    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+
+    // Print the quiz name heading and tabs for teacher, etc.
     if ($ispreviewing) {
+        $currenttab = 'preview';
+        include('tabs.php');
+
         print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
-        echo '<div class="boxaligncenter">';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
-        echo '</div>';
         if ($quiz->popup) {
             notify(get_string('popupnotice', 'quiz'));
         }
+    } else {
+        if ($quiz->attempts != 1) {
+            print_heading(format_string($quiz->name).' - '.$strattemptnum);
+        } else {
+            print_heading(format_string($quiz->name));
+        }
     }
 
-/// Start the form
+    // Start the form
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
@@ -455,14 +452,14 @@
     echo '<div>';
     echo '<input type="hidden" name="q" value="' . s($quiz->id) . "\" />\n";
 
-/// Print the navigation panel if required
+    // Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1) {
         ?>
         <script type="text/javascript">
         //<![CDATA[
         function navigate(page) {
-            var ourForm = document.getElementById('responseform'); 
+            var ourForm = document.getElementById('responseform');
             ourForm.page.value=page;
             if (ourForm.onsubmit) {
                 ourForm.onsubmit();
@@ -495,8 +492,7 @@
         $number += $questions[$i]->length;
     }
 
-/// Print the submit buttons
-
+    // Print the submit buttons
     $strconfirmattempt = addslashes(get_string("confirmclose", "quiz"));
     $onclick = "return confirm('$strconfirmattempt')";
     echo "<div class=\"submitbtns mdl-align\">\n";
@@ -528,7 +524,7 @@
     }
     // If time limit is set include floating timer.
     // MDL-7495, no timer for users with disability
-    
+
     if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context)) {
 
         $timesincestart = time() - $attempt->timestart;
