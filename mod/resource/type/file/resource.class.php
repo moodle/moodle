@@ -242,7 +242,7 @@ function display() {
 
         } else if ($mimetype == "text/html") {    // It's a web page
             $resourcetype = "html";
-        } else if ($mimetype == 'application/pdf' || $mimetype = 'application/x-pdf') {
+        } else if ($mimetype == 'application/pdf' || $mimetype == 'application/x-pdf') {
             $resourcetype = "pdf";
             $embedded = true;
         }
