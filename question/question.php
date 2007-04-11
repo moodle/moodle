@@ -21,6 +21,7 @@
     require_once(dirname(__FILE__) . '/../config.php');
     require_once('editlib.php'); // NOTE - is this correct? This is just about editing screens?
     require_once($CFG->libdir . '/filelib.php');
+    require_once($CFG->libdir . '/formslib.php');
 
     $id = optional_param('id', 0, PARAM_INT); // question id
 
@@ -88,7 +89,7 @@
         error("Could not find question type: '$qtype'");
     }
 
-    if (!file_exists("type/$qtype/editquestion.php")) {
+    if ($QTYPES[$question->qtype]->create_editing_form('question2.php', $question, $category->course) !== null) {
         redirect(str_ireplace('question.php', 'question2.php', me()));
     }
 
