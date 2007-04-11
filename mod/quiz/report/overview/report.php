@@ -89,6 +89,9 @@ class quiz_report extends quiz_default_report {
         $detailedmarks = optional_param('detailedmarks', 0, PARAM_INT);
         $pagesize = optional_param('pagesize', 10, PARAM_INT);
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+        if ($pagesize < 1) {
+            $pagesize = 10;
+        }
 
         // Now check if asked download of data
         if ($download) {
@@ -146,7 +149,9 @@ class quiz_report extends quiz_default_report {
 
             $table->define_columns($tablecolumns);
             $table->define_headers($tableheaders);
-            $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?mode=overview&amp;id='.$cm->id);
+            $table->define_baseurl($CFG->wwwroot.'/mod/quiz/report.php?mode=overview&amp;id=' .
+                $cm->id . '&amp;noattempts=' . $noattempts . '&amp;detailedmarks=' . $detailedmarks .
+                '&amp;pagesize=' . $pagesize);
 
             $table->sortable(true);
             $table->collapsible(true);
@@ -333,10 +338,6 @@ class quiz_report extends quiz_default_report {
                 $sort = ' ORDER BY uniqueid';
             }
             
-            // Now it is time to page the data
-            if (!isset($pagesize)  || ((int)$pagesize < 1) ) {
-                $pagesize = 10;
-            }
             $table->pagesize($pagesize, $total);
         }
 
@@ -507,7 +508,7 @@ class quiz_report extends quiz_default_report {
         }
         // Print display options
         echo '<div class="controls">';
-        echo '<form id="options" name="options" action="report.php" method="post">';
+        echo '<form id="options" name="options" action="report.php" method="get">';
         echo '<p>'.get_string('displayoptions', 'quiz').': </p>';
         echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
         echo '<input type="hidden" name="q" value="'.$quiz->id.'" />';
@@ -517,7 +518,7 @@ class quiz_report extends quiz_default_report {
         echo '<table id="overview-options" align="center">';
         echo '<tr align="left">';
         echo '<td><label for="pagesize">'.get_string('pagesize', 'quiz').'</label></td>';
-        echo '<td><input type="text" id="pagesize" name="pagesize" size="1" value="'.$pagesize.'" /></td>';
+        echo '<td><input type="text" id="pagesize" name="pagesize" size="3" value="'.$pagesize.'" /></td>';
         echo '</tr>';
         echo '<tr align="left">';
         echo '<td colspan="2">';
