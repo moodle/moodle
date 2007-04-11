@@ -673,15 +673,16 @@ class auth_plugin_mnet extends auth_plugin_base {
             ORDER BY
                 h.name ASC";
 
-        $resultset = get_records_sql($query);
         $id_providers       = array();
         $service_providers  = array();
-        foreach($resultset as $hostservice) {
-            if(!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
-                $service_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
-            }
-            if(!empty($hostservice->idpsubscribe) && !empty($hostservice->sppublish)) {
-                $id_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
+        if ($resultset = get_records_sql($query)) {
+            foreach($resultset as $hostservice) {
+                if(!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
+                    $service_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
+                }
+                if(!empty($hostservice->idpsubscribe) && !empty($hostservice->sppublish)) {
+                    $id_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
+                }
             }
         }
 
