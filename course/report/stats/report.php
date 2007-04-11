@@ -175,6 +175,13 @@
                             $rolesdata[$roleid] = 0;
                         }
                     }
+                    else {
+                        foreach (array_keys($roles) as $r) {
+                            if (!array_key_exists($r, $rolesdata)) {
+                                $rolesdata[$r] = 0;
+                            }
+                        }
+                    }
                     krsort($rolesdata); 
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {

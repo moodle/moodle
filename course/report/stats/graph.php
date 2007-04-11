@@ -103,6 +103,16 @@
                 $times[$stat->timeend] = userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone);
             }
         }
+        foreach (array_keys($times) as $t) {
+            foreach ($data as $roleid => $stuff) {
+                if (!array_key_exists($t, $stuff)) {
+                    $data[$roleid][$t] = 0;
+                }
+            }
+        }
+        foreach ($data as $role => $stuff) {
+            ksort($data[$role]);
+        }
         $nonzeroroleid = 0;
         foreach (array_keys($data) as $roleid) {
             if ($roleid == 0) {
