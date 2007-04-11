@@ -68,7 +68,7 @@
     if (!empty($categoryid)) {
         $validcats = question_category_options( $course->id, true, false );
         if (!array_key_exists( $categoryid, $validcats)) {
-            print_error( "Category id ($categoryid) is not permitted." );
+            print_error( 'invalidcategory','quiz' );
         }
     }
 
