@@ -64,6 +64,14 @@
     // ensure the files area exists for this course
     make_upload_directory( "$course->id" );
 
+    // check category is valid
+    if (!empty($categoryid)) {
+        $validcats = question_category_options( $course->id, true, false );
+        if (!array_key_exists( $categoryid, $validcats)) {
+            print_error( "Category id ($categoryid) is not permitted." );
+        }
+    }
+
     /// Header
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
