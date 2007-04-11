@@ -263,7 +263,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         echo '<td>' . format_string($question->name) . '</td>';
         echo "<td align=\"center\">";
-        print_question_icon($question, $canedit);
+        print_question_icon($question);
         echo "</td>";
         echo '<td align="left">';
         if ($question->qtype == 'description') {

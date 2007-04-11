@@ -311,7 +311,7 @@ class quiz_report extends quiz_default_report {
             $question = get_record('question', 'id', $qid);
             $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, $format_options, $quiz->course).'</div>';
-            $qicon = print_question_icon($question, false, true);
+            $qicon = print_question_icon($question, true);
             $qreview = quiz_get_question_review($quiz, $question);
             $qtext = format_text($question->questiontext, $question->questiontextformat, $format_options, $quiz->course);
             $qquestion = $qname."\n".$qtext."\n";

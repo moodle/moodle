@@ -1258,23 +1258,15 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 * Print the icon for the question type
 *
 * @param object $question  The question object for which the icon is required
-* @param boolean $editlink If true then the icon is a link to the question
-*                          edit page.
 * @param boolean $return   If true the functions returns the link as a string
 */
-function print_question_icon($question, $editlink=true, $return = false) {
+function print_question_icon($question, $return = false) {
     global $QTYPES, $CFG;
 
     $namestr = $QTYPES[$question->qtype]->menu_name();
-    $html = '<img src="'.$CFG->wwwroot.'/question/type/'.
-            $question->qtype.'/icon.gif" alt="'.
-            $namestr.'" title="'.$namestr.'" />';
-
-    if ($editlink) {
-        $html =  "<a href=\"$CFG->wwwroot/question/question.php?id=$question->id\" title=\""
-                .$question->qtype."\">".
-                $html."</a>\n";
-    }
+    $html = '<img src="' . $CFG->wwwroot . '/question/type/' .
+            $question->qtype . '/icon.gif" alt="' .
+            $namestr . '" title="' . $namestr . '" />';
     if ($return) {
         return $html;
     } else {

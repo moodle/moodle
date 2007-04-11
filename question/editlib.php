@@ -156,14 +156,13 @@ function question_category_form_checkbox($name, $checked) {
 * @param int $page        The number of the page to be displayed
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
+* @param boolean $showquestiontext whether the text of each question should be shown in the list
 */
 function question_list($course, $categoryid, $quizid=0,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC',
         $showquestiontext = false) {
     global $QTYPE_MENU, $USER, $CFG, $THEME;
     
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
     $qtypemenu = $QTYPE_MENU;
     if ($rqp_types = get_records('question_rqp_types')) {
         foreach($rqp_types as $type) {
@@ -204,10 +203,17 @@ function question_list($course, $categoryid, $quizid=0,
         return;
     }
 
-    if (!$category = get_record("question_categories", "id", "$categoryid")) {
-        notify("Category not found!");
+    if (!$category = get_record('question_categories', 'id', $categoryid)) {
+        notify('Category not found!');
         return;
     }
+    $canedit = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course));
+    $editingquiz = false;
+    if ($quizid) {
+        $cm = get_coursemodule_from_instance('quiz', $quizid);
+        $editingquiz = has_capability('mod/quiz:manage', get_context_instance(CONTEXT_MODULE, $cm->id));
+    }
+    
     echo '<div class="boxaligncenter">';
     $formatoptions = new stdClass;
     $formatoptions->noclean = true;
@@ -215,23 +221,23 @@ function question_list($course, $categoryid, $quizid=0,
 
     echo '<table><tr>';
 
-    // check if editing of this category is allowed
-    if (has_capability('moodle/question:managecategory', $context)) {
+    // check if editing questions in this category is allowed
+    if ($canedit) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
         popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
                     "", "choose", "", "", false, "self");
         echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
-        echo '</td></tr>';
+        echo '</td>';
     }
     else {
-        echo '<tr><td>';
+        echo '<td>';
         print_string("publishedit","quiz");
-        echo '</td></tr>';
+        echo '</td>';
     }
 
-    echo '</table>';
+    echo '</tr></table>';
     echo '</div>';
 
     $categorylist = ($recurse) ? question_categorylist($category->id) : $category->id;
@@ -260,8 +266,6 @@ function question_list($course, $categoryid, $quizid=0,
 
     print_paging_bar($totalnumber, $page, $perpage,
                 "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
-
-    $canedit = has_capability('moodle/question:manage', $context);
 
     echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
@@ -298,7 +302,7 @@ function question_list($course, $categoryid, $quizid=0,
         echo "<tr>\n<td style=\"white-space:nowrap;\" $nameclass>\n";
         
         // add to quiz
-        if ($quizid && has_capability('mod/quiz:manage', $context)) {
+        if ($editingquiz) {
             echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
@@ -309,7 +313,7 @@ function question_list($course, $categoryid, $quizid=0,
                 src=\"$CFG->pixpath/t/preview.gif\" alt=\"$strpreview\" /></a>&nbsp;";
         
         // edit, hide, delete question, using question capabilities, not quiz capabilieies
-        if (has_capability('moodle/question:manage', $context)) {
+        if ($canedit) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$question->id\"><img
                     src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
@@ -326,7 +330,7 @@ function question_list($course, $categoryid, $quizid=0,
 
         echo "<td $nameclass>" . format_string($question->name) . "</td>\n";
         echo "<td $nameclass style='text-align: right'>\n";
-        print_question_icon($question, $canedit);
+        print_question_icon($question);
         echo "</td>\n";
         echo "</tr>\n";
         if($showquestiontext){
@@ -364,12 +368,12 @@ function question_list($course, $categoryid, $quizid=0,
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
 
-    if ($quizid && has_capability('mod/quiz:manage', $context)) {
+    if ($editingquiz) {
         echo "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
         echo '</td><td>';
     }
     // print delete and move selected question
-    if (has_capability('moodle/question:manage', $context)) {
+    if ($canedit) {
         echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
         echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
         question_category_select_menu($course->id, false, true, $category->id);
@@ -377,7 +381,7 @@ function question_list($course, $categoryid, $quizid=0,
     echo "</td></tr></table>";
 
     // add random question
-    if ($quizid && has_capability('mod/quiz:manage', $context)) {
+    if ($editingquiz) {
         for ($i = 1;$i <= min(10, $totalnumber); $i++) {
             $randomcount[$i] = $i;
         }
