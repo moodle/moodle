@@ -695,7 +695,7 @@ class auth_plugin_mnet extends auth_plugin_base {
     function process_config($config) {
         // set to defaults if undefined
         if (!isset ($config->rpc_negotiation_timeout)) {
-            $config->host = '30';
+            $config->rpc_negotiation_timeout = '30';
         }
         if (!isset ($config->auto_add_remote_users)) {
             $config->auto_add_remote_users = '0';
