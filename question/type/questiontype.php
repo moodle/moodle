@@ -597,7 +597,7 @@ class default_questiontype {
         }
 
         $generalfeedback = '';
-        if ($isgraded && $options->generalfeedback) {
+        if ($options->generalfeedback) {
             $generalfeedback = $this->format_text($question->generalfeedback,
                     $question->questiontextformat, $cmoptions);
         }
