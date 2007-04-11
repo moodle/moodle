@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070322" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070411" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -135,8 +135,9 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="module"/>
         <FIELD NAME="module" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="course" NEXT="instance"/>
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="section"/>
-        <FIELD NAME="section" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="instance" NEXT="added"/>
-        <FIELD NAME="added" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="section" NEXT="score"/>
+        <FIELD NAME="section" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="instance" NEXT="idnumber"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="customizable idnumber" PREVIOUS="section" NEXT="added"/>
+        <FIELD NAME="added" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="idnumber" NEXT="score"/>
         <FIELD NAME="score" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="added" NEXT="indent"/>
         <FIELD NAME="indent" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="score" NEXT="visible"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="indent" NEXT="visibleold"/>
@@ -150,7 +151,8 @@
         <INDEX NAME="visible" UNIQUE="false" FIELDS="visible" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="visible" NEXT="module"/>
         <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="course" NEXT="instance"/>
-        <INDEX NAME="instance" UNIQUE="false" FIELDS="instance" PREVIOUS="module"/>
+        <INDEX NAME="instance" UNIQUE="false" FIELDS="instance" PREVIOUS="module" NEXT="idnumber"/>
+        <INDEX NAME="idnumber" UNIQUE="true" FIELDS="idnumber" COMMENT="Default comment for the index, please edit me" PREVIOUS="instance"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules" NEXT="course_request">

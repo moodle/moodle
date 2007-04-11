@@ -2037,6 +2037,9 @@ function set_coursemodule_groupmode($id, $groupmode) {
     return set_field("course_modules", "groupmode", $groupmode, "id", $id);
 }
 
+function set_coursemodule_idnumber($id, $idnumber) {
+    return set_field("course_modules", "idnumber", $idnumber, "id", $id);  
+}
 /**
 * $prevstateoverrides = true will set the visibility of the course module
 * to what is defined in visibleold. This enables us to remember the current

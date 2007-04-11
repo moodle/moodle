@@ -691,6 +691,27 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index text
         $result = $result && add_index($table, $index);       
     }
+    
+    if ($result && $oldversion < 2007041100) {
+
+    /// Define field idnumber to be added to course_modules
+        $table = new XMLDBTable('course_modules');
+        $field = new XMLDBField('idnumber');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null, 'section');
+    
+    /// Launch add field idnumber
+        $result = $result && add_field($table, $field);
+    
+    /// Define index idnumber (unique) to be added to course_modules
+        $table = new XMLDBTable('course_modules');
+        $index = new XMLDBIndex('idnumber');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('idnumber'));
+
+    /// Launch add index idnumber
+        $result = $result && add_index($table, $index);
+
+    }
+
     return $result;
 
 }

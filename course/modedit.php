@@ -183,7 +183,6 @@
 
         if (!empty($fromform->update)) {
 
-
             if (isset($fromform->name)) {
                 if (trim($fromform->name) == '') {
                     unset($fromform->name);
@@ -205,7 +204,11 @@
             if (isset($fromform->groupmode)) {
                 set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
             }
-
+            
+            // set cm id number
+            if (isset($fromform->idnumber)) {
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->idnumber);  
+            }
 
             add_to_log($course->id, "course", "update mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -262,7 +265,12 @@
             }
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-
+            
+            // set cm idnumber
+            if (isset($fromform->idnumber)) {
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->idnumber);  
+            }
+            
             add_to_log($course->id, "course", "add mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
                        "$fromform->modulename $fromform->instance");

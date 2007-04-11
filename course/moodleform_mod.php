@@ -68,7 +68,8 @@ class moodleform_mod extends moodleform {
             $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
         }
         $mform->addElement('modvisible', 'visible', get_string('visible'));
-
+        $mform->addElement('text', 'idnumber', get_string('idnumber'));
+        $mform->setDefault('idnumber', $this->_cm->idnumber);
         $this->standard_hidden_coursemodule_elements();
     }
 
@@ -112,7 +113,7 @@ class moodleform_mod extends moodleform {
      * @return unknown
      */
     function standard_coursemodule_elements_settings(){
-        return ($this->modgroupmode_settings() + $this->modvisible_settings());
+        return ($this->modgroupmode_settings() + $this->modvisible_settings() + $this->modidnumber_settings());
     }
     /**
      * This is called from modedit.php to load the default for the groupmode element.
@@ -123,6 +124,16 @@ class moodleform_mod extends moodleform {
     function modgroupmode_settings(){
         global $COURSE;
         return array('groupmode'=>groupmode($COURSE, $this->_cm));
+    }
+    /**
+     * This is called from modedit.php to load the default for the groupmode element.
+     *
+     * @param object $course
+     * @param object $cm
+     */
+    function modidnumber_settings() {
+        global $COURSE;
+        return array('idnumber'=>$this->_cm->idnumber);
     }
     /**
      *  This is called from modedit.php to set the default for modvisible form element.
