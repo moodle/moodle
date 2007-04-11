@@ -1006,7 +1006,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function prelogout_hook() {
         global $MNET, $CFG, $USER;
-        if ($USER->auth != 'mnet') {
+        if (!is_enabled_auth('mnet')) {
             return;
         }
 
