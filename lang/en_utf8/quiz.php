@@ -248,6 +248,7 @@ $string['incorrect'] = 'Incorrect';
 $string['indivresp'] = 'Responses of Individuals to Each Item';
 $string['info'] = 'Info';
 $string['introduction'] = 'Introduction';
+$string['invalidcategory'] = 'Category ID is invalid';
 $string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
 $string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
 $string['invalidsource'] = 'The source is not accepted as valid.';
