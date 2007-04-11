@@ -1617,7 +1617,9 @@ function data_user_can_add_entry($data, $currentgroup=false, $groupmode='') {
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            return (ismember($currentgroup));
+            
+            $result = groups_is_member($currentgroup);
+            return $result;
         } else {
             return true;
         }
