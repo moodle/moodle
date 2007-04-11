@@ -115,7 +115,7 @@ function forum_add_instance($forum) {
         $discussion->name     = $forum->name;
         $discussion->intro    = $forum->intro;
         $discussion->assessed = $forum->assessed;
-        $discussion->format   = $forum->format;
+        $discussion->format   = $forum->type;
         $discussion->mailnow  = false;
 
         if (! forum_add_discussion($discussion, $discussion->intro)) {

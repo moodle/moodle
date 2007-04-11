@@ -9,6 +9,7 @@ $string['browserepository'] = 'Browse repository';
 $string['choose'] = 'Choose';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['chooseparameter'] = 'Choose parameter';
+$string['clicktoopen'] = 'To open this document, click on this link: ';
 $string['configallowlocalfiles'] = 'When creating a new file resource, allow links to files on a local file system such as a CD drive or a hard drive. This may be useful in a classroom where all students have access to a common network drive or where files on a CD need to be accessed. Use of this feature may require changes to your browser\'s security settings.';
 $string['configautofilerenamesettings'] = 'Automatically update references to files and directories when renamed in file manager.';
 $string['configblockdeletingfilesettings'] = 'Block deleting of files and directories referenced by resources. Please note that images and other files referenced from html are not protected.';
