@@ -49,7 +49,6 @@
 
     /// If data submitted, process and store
     if (($form = data_submitted()) && confirm_sesskey()) {
-        echo 'a';
         $hostlist = preg_split("/[\s,]+/", $form->hostlist);
         foreach($hostlist as $host) {
             list($address, $mask) = explode('/', $host.'/');
