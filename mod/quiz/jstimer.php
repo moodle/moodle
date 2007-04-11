@@ -47,8 +47,8 @@ var ec_quiz_finish = ec_page_start + <?php echo ($timerstartvalue * 1000); ?>;
 <script type="text/javascript">
 //<![CDATA[
 
-var timerbox = xGetElementById('timer');
-var theTimer = xGetElementById('QuizTimer');
+var timerbox = document.getElementById('timer');
+var theTimer = document.getElementById('QuizTimer');
 var theTop = 100;
 var old = theTop;
 

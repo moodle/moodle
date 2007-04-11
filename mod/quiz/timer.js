@@ -7,16 +7,12 @@
 function countdown_clock(theTimer) {
     var timeout_id = null;
 
-    // @EC PF : current client time
-    var ec_now_epoch = new Date().getTime();
-
-    // @EC PF : time left according to client
-    quizTimerValue = Math.floor( (ec_quiz_finish - ec_now_epoch) /1000 );
+    quizTimerValue = Math.floor((ec_quiz_finish - new Date().getTime())/1000);
 
     if(quizTimerValue <= 0) {
         clearTimeout(timeout_id);
-        var ourForm = document.forms['responseform'];
-        ourForm.timeup.value = 1;
+        document.getElementById('timeup').value = 1;
+        var ourForm = document.getElementById('responseform');
         if (ourForm.onsubmit) { 
             ourForm.onsubmit();
         }
@@ -25,14 +21,11 @@ function countdown_clock(theTimer) {
     }
 
     now = quizTimerValue;
-    var hours = Math.floor( now / 3600 );
-    parseInt(hours);
-    now = now - (hours * 3600);
-    var minutes = Math.floor(now / 60);
-    parseInt(minutes);
-    now = now - (minutes * 60);
+    var hours = Math.floor(now/3600);
+    now = now - (hours*3600);
+    var minutes = Math.floor(now/60);
+    now = now - (minutes*60);
     var seconds = now;
-    parseInt(seconds);
 
     var t = "" + hours;
     t += ((minutes < 10) ? ":0" : ":") + minutes;
@@ -45,12 +38,11 @@ function countdown_clock(theTimer) {
         var col = '#' + 'ff' + hexascii.charAt(seconds) + '0' + hexascii.charAt(seconds) + 0;
         theTimer.style.backgroundColor = col;
     }
-    document.forms['clock'].time.value = t.toString();
+    document.getElementById('time').value = t.toString();
     timeout_id = setTimeout("countdown_clock(theTimer)", 1000);
 }
 
 function movecounter(timerbox) {
-
     var pos;
 
     if (window.innerHeight) {
@@ -58,7 +50,7 @@ function movecounter(timerbox) {
     } else if (document.documentElement && document.documentElement.scrollTop) {
         pos = document.documentElement.scrollTop
     } else if (document.body) {
-          pos = document.body.scrollTop
+        pos = document.body.scrollTop
     }
 
     if (pos < theTop) {
@@ -71,13 +63,4 @@ function movecounter(timerbox) {
     }
     old = pos;
     temp = setTimeout('movecounter(timerbox)',100);
-}
-
-function xGetElementById(e)
-{
-  if(typeof(e)!='string') return e;
-  if(document.getElementById) e=document.getElementById(e);
-  else if(document.all) e=document.all[e];
-  else e=null;
-  return e;
 }

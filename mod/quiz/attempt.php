@@ -436,13 +436,12 @@
     }
 
 /// Start the form
+    echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
         <script type="text/javascript">
-        //<![CDATA[
-            document.write("<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n");
-        //]]>
+            // Do nothing.
         </script>
         <noscript>
         <div>
@@ -450,8 +449,6 @@
         </div>
         </noscript>
         <?php
-    } else {
-        echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
     }
 
     // Add a hidden field with the quiz id
@@ -509,7 +506,7 @@
         echo "<input type=\"submit\" name=\"markall\" value=\"".get_string("markall", "quiz")."\" />\n";
     }
     echo "<input type=\"submit\" name=\"finishattempt\" value=\"".get_string("finishattempt", "quiz")."\" onclick=\"$onclick\" />\n";
-    echo '<input type="hidden" name="timeup" value="0" />';
+    echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
 
     echo "</div>";
 
@@ -524,17 +521,15 @@
     echo '</div>';
     echo "</form>\n";
 
-
     $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
     if ($isteacher) {
         // For teachers ignore the quiz closing time
         $secondsleft = 999999999999;
     }
+    
     // If time limit is set include floating timer.
     // MDL-7495, no timer for users with disability
-    
-    if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context)) {
-
+    if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context, NULL, false)) {
         $timesincestart = time() - $attempt->timestart;
         $timerstartvalue = min($quiz->timelimit*60 - $timesincestart, $secondsleft);
         if ($timerstartvalue <= 0) {
