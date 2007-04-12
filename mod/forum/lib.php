@@ -384,8 +384,8 @@ function forum_cron() {
                 }
 
                 if ($groupmode) {    // Look for a reason not to send this email
-                    if (!empty($group->id)) {
-                        if (!ismember($group->id, $userto->id)) {
+                    if (!empty($discussion->groupid)) {
+                        if (!ismember($discussion->groupid, $userto->id)) {
                             if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
                                 continue;
                             }
