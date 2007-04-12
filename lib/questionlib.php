@@ -1428,8 +1428,32 @@ function question_hash($question) {
 
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
+/**
+ * Get the HTML that needs to be included in the head tag when the
+ * questions in $questionlist are printed in the gives states.
+ *
+ * @param array $questionlist a list of questionids of the questions what will appear on this page.
+ * @param array $questions an array of question objects, whose keys are question ids.
+ *      Must contain all the questions in $questionlist
+ * @param array $states an array of question state objects, whose keys are question ids.
+ *      Must contain the state of all the questions in $questionlist
+ *
+ * @return string some HTML code that can go inside the head tag.
+ */
+function get_html_head_contributions(&$questionlist, &$questions, &$states) {
+    global $QTYPES;
 
- /**
+    $contributions = array();
+    foreach ($questionlist as $questionid) {
+        $question = $questions[$questionid];
+        $contributions = array_merge($contributions,
+                $QTYPES[$question->qtype]->get_html_head_contributions(
+                $question, $states[$questionid]));
+    }
+    return implode("\n", array_unique($contributions));
+}
+
+/**
  * Prints a question
  *
  * Simply calls the question type specific print_question() method.
@@ -1446,10 +1470,10 @@ function print_question(&$question, &$state, $number, $cmoptions, $options=null)
      $cmoptions, $options);
 }
 /**
-* Saves question options
-*
-* Simply calls the question type specific save_question_options() method.
-*/
+ * Saves question options
+ *
+ * Simply calls the question type specific save_question_options() method.
+ */
 function save_question_options($question) {
     global $QTYPES;
 

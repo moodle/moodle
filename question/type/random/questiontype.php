@@ -218,6 +218,12 @@ class random_qtype extends default_questiontype {
          ->get_actual_response($wrappedquestion, $state);
     }
 
+    function get_html_head_contributions(&$question, &$state) {
+        global $QTYPES;
+        $wrappedquestion = &$state->options->question;
+        return $QTYPES[$wrappedquestion->qtype]
+                ->get_html_head_contributions($wrappedquestion, $state);
+    }
 
     function print_question(&$question, &$state, &$number, $cmoptions, $options) {
         global $QTYPES;

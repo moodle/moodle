@@ -99,6 +99,22 @@ class default_questiontype {
     }
 
     /**
+     * @return string the full path of the folder this plugin's files live in.
+     */
+    function plugin_dir() {
+        global $CFG;
+        return $CFG->dirroot . '/question/type/' . $this->name();
+    }
+
+    /**
+     * @return string the URL of the folder this plugin's files live in.
+     */
+    function plugin_baseurl() {
+        global $CFG;
+        return $CFG->wwwroot . '/question/type/' . $this->name();
+    }
+
+    /**
      * This method should be overriden if you want to include a special heading or some other
      * html on a question editing page besides the question editing form.
      *
@@ -542,32 +558,84 @@ class default_questiontype {
     }
 
     /**
-    * Prints the question including the number, grading details, content,
-    * feedback and interactions
-    *
-    * This function prints the question including the question number,
-    * grading details, content for the question, any feedback for the previously
-    * submitted responses and the interactions. The default implementation calls
-    * various other methods to print each of these parts and most question types
-    * will just override those methods.
-    * @param object $question The question to be rendered. Question type
-    *                         specific information is included. The
-    *                         maximum possible grade is in ->maxgrade. The name
-    *                         prefix for any named elements is in ->name_prefix.
-    * @param object $state    The state to render the question in. The grading
-    *                         information is in ->grade, ->raw_grade and
-    *                         ->penalty. The current responses are in
-    *                         ->responses. This is an associative array (or the
-    *                         empty string or null in the case of no responses
-    *                         submitted). The last graded state is in
-    *                         ->last_graded (hence the most recently graded
-    *                         responses are in ->last_graded->responses). The
-    *                         question type specific information is also
-    *                         included.
-    * @param integer $number  The number for this question.
-    * @param object $cmoptions
-    * @param object $options  An object describing the rendering options.
-    */
+     * If this question type requires extra CSS or JavaScript to function,
+     * then this method will return an array of <link ...> tags that reference
+     * those stylesheets. This function will also call require_js()
+     * from ajaxlib.php, to get any necessary JavaScript linked in too.
+     * 
+     * The two parameters match the first two parameters of print_question.
+     * 
+     * @param object $question The question object.
+     * @param object $state    The state object.
+     * 
+     * @return an array of bits of HTML to add to the head of pages where 
+     * this question is print_question-ed in the body. The array should use
+     * integer array keys, which have no significance.
+     */
+    function get_html_head_contributions(&$question, &$state) {
+        // By default, we link to any of the files styles.css, styles.php,
+        // script.js or script.php that exist in the plugin folder.
+        // Core question types should not use this mechanism. Their styles
+        // should be included in the standard theme.
+        
+        // We only do this once 
+        // for this question type, no matter how often this method is called.
+        static $already_done = false;
+        if ($already_done) {
+            return array();
+        }
+        $already_done = true;
+        
+        $plugindir = $this->plugin_dir();
+        $baseurl = $this->plugin_baseurl();
+        $stylesheets = array();
+        if (file_exists($plugindir . '/styles.css')) {
+            $stylesheets[] = 'styles.css';
+        }
+        if (file_exists($plugindir . '/styles.php')) {
+            $stylesheets[] = 'styles.php';
+        }
+        if (file_exists($plugindir . '/script.js')) {
+            require_js($baseurl . '/script.js');
+        }
+        if (file_exists($plugindir . '/script.php')) {
+            require_js($baseurl . '/script.php');
+        }
+        $contributions = array();
+        foreach ($stylesheets as $stylesheet) {
+            $contributions[] = '<link rel="stylesheet" type="text/css" href="' .
+                    $baseurl . '/' . $stylesheet . '" />"';
+        }
+        return $contributions;
+    }
+    
+    /**
+     * Prints the question including the number, grading details, content,
+     * feedback and interactions
+     *
+     * This function prints the question including the question number,
+     * grading details, content for the question, any feedback for the previously
+     * submitted responses and the interactions. The default implementation calls
+     * various other methods to print each of these parts and most question types
+     * will just override those methods.
+     * @param object $question The question to be rendered. Question type
+     *                         specific information is included. The
+     *                         maximum possible grade is in ->maxgrade. The name
+     *                         prefix for any named elements is in ->name_prefix.
+     * @param object $state    The state to render the question in. The grading
+     *                         information is in ->grade, ->raw_grade and
+     *                         ->penalty. The current responses are in
+     *                         ->responses. This is an associative array (or the
+     *                         empty string or null in the case of no responses
+     *                         submitted). The last graded state is in
+     *                         ->last_graded (hence the most recently graded
+     *                         responses are in ->last_graded->responses). The
+     *                         question type specific information is also
+     *                         included.
+     * @param integer $number  The number for this question.
+     * @param object $cmoptions
+     * @param object $options  An object describing the rendering options.
+     */
     function print_question(&$question, &$state, $number, $cmoptions, $options) {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.

@@ -392,9 +392,11 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
     // Print the page header
+    $pagequestions = explode(',', $pagelist);
+    $headtags = get_html_head_contributions($pagequestions, $questions, $states);
     if (!empty($popup)) {
         define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
+        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, '');
         include('protect_js.php');
     } else {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
@@ -403,7 +405,7 @@
         print_header_simple(format_string($quiz->name), "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
                   <a href=\"view.php?id=$cm->id\">".format_string($quiz->name)."</a> -> $strattemptnum",
-                  "", "", true, $strupdatemodule);
+                  "", $headtags, true, $strupdatemodule);
     }
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
@@ -475,7 +477,6 @@
     // Add a hidden field with questionids
     echo '<input type="hidden" name="questionids" value="'.$pagelist."\" />\n";
 
-    $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         $options = quiz_get_renderoptions($quiz->review, $states[$i]);
