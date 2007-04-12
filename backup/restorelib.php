@@ -4684,6 +4684,9 @@
                         case "TRACKFORUMS": 
                             $this->info->tempuser->trackforums = $this->getContents();
                             break;
+                        case "MNETHOSTURL": 
+                            $this->info->tempuser->mnethosturl = $this->getContents();
+                            break;
                         case "TIMEMODIFIED": 
                             $this->info->tempuser->timemodified = $this->getContents();
                             break;
