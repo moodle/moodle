@@ -1,6 +1,6 @@
 /*******************************************************************
  styles_fonts.css
-  
+
  This CSS file contains all font definitions like family, size,
  weight, text-align, letter-spacing etc.
 
@@ -101,7 +101,8 @@ h4 {
 }
 
 .notifytiny {
-  font-size: 0.5em;
+  line-height : 100%;
+  font-size: 0.7em;
 }
 
 .pagingbar .title {
@@ -549,7 +550,7 @@ body#grade-index .grades .header {
   font-size:0.9em;
 }
 
-.message .note, 
+.message .note,
 .message .pix {
   font-size:0.8em;
 }
@@ -653,7 +654,7 @@ body#user-index #longtimenosee {
 }
 
 #mod-chat-view #chatcurrentusers .chatuserdetails {
-  font-size: 0.6em;   
+  font-size: 0.6em;
 }
 /***
  *** Modules: Choice
@@ -662,7 +663,7 @@ body#user-index #longtimenosee {
 #mod-choice-index .cell {
   font-size:0.8em;
 }
-  
+
 /***
  *** Modules: Forum
  ***/
@@ -851,21 +852,21 @@ body#mod-forum-index .generalbox .cell {
 .phpinfo .center {
   text-align: center;
 }
-.phpinfo .e, .v, .h { 
-  border: 1px solid #000000; 
-  font-size: 0.8em; 
+.phpinfo .e, .v, .h {
+  border: 1px solid #000000;
+  font-size: 0.8em;
   vertical-align: baseline;
 }
 .phpinfo .e {
-  background-color: #ccccff; 
-  font-weight: bold; 
+  background-color: #ccccff;
+  font-weight: bold;
   color: #000000;
 }
 .phpinfo .h {
-  background-color: #9999cc; 
+  background-color: #9999cc;
   font-weight: bold; color: #000000;
 }
 .phpinfo .v {
-  background-color: #cccccc; 
+  background-color: #cccccc;
   color: #000000;
 }
