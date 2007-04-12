@@ -4283,7 +4283,7 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
         $days[$i] = $i;
     }
     for ($i=1; $i<=12; $i++) {
-        $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
+        $months[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
     }
     for ($i=1970; $i<=2020; $i++) {
         $years[$i] = $i;
