@@ -6517,7 +6517,7 @@ function moodle_request_shutdown() {
     // but check just in case 
     if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')) {
         if (empty($CFG->apachemaxmem)) {
-            $CFG->apachemaxmem = 10000000; // default 10MiB
+            $CFG->apachemaxmem = 25000000; // default 25MiB
         }
         if (memory_get_usage() > (int)$CFG->apachemaxmem) {
             trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
