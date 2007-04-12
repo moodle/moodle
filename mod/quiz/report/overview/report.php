@@ -271,7 +271,7 @@ class quiz_report extends quiz_default_report {
                 // We don't care about group, and we to do something funky with attempts
                 // So do a left join on attempts
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = " WHERE ra.contextid $contextlists";
+                $where = " WHERE ra.contextid $contextlists AND qa.preview = 0";
                 if (empty($noattempts)) {
                     $where .= ' AND qa.userid IS NOT NULL'; // show ONLY students with attempts;
                 } else if ($noattempts == 1) {
