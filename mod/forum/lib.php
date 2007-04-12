@@ -743,7 +743,16 @@ function forum_cron() {
 }
 
 /**
- * TODO document
+ * Builds and returns the body of the email notification in plain text.
+ *
+ * @param object $course
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $userfrom
+ * @param object $userto
+ * @param boolean $bare
+ * @return string The email body in plain text format.
  */
 function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
@@ -804,7 +813,15 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 }
 
 /**
- * TODO document
+ * Builds and returns the body of the email notification in html format.
+ *
+ * @param object $course
+ * @param object $forum
+ * @param object $discussion
+ * @param object $post
+ * @param object $userfrom
+ * @param object $userto
+ * @return string The email text in HTML format
  */
 function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
     global $CFG;
@@ -845,8 +862,15 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 
     return $posthtml;
 }
+
+
 /**
- * TODO document
+ * 
+ * @param object $course
+ * @param object $user
+ * @param object $mod TODO this is not used in this function, refactor
+ * @param object $forum
+ * @return object A standard object with 2 variables: info (number of posts for this user) and time (last modified)
  */
 function forum_user_outline($course, $user, $mod, $forum) {
 
