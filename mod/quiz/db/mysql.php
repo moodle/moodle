@@ -837,7 +837,7 @@ function quiz_upgrade($oldversion) {
                 //If the course doesn't exist, orphan category found!
                 //Process it with question_delete_course(). It will do all the hard work.
                 if (!record_exists('course', 'id', $course->id)) {
-                    require_once("$CFG->libdir/questionlib.php ");
+                    require_once("$CFG->libdir/questionlib.php");
                     $success = $success && question_delete_course($course);
                 }
             }
