@@ -210,8 +210,11 @@ function scorm_get_sco($id,$what=SCO_ALL) {
         $sco = ($what == SCO_DATA) ? new stdClass() : $sco;
         if (($what != SCO_ONLY) && ($scodatas = get_records('scorm_scoes_data','scoid',$id))) {
             foreach ($scodatas as $scodata) {
-                $sco->{$scodata->name} = $scodata->value;
+                $sco->{$scodata->name} = $scodata->value;		
             }
+		}
+        elseif (($what != SCO_ONLY) && (!($scodatas = get_records('scorm_scoes_data','scoid',$id)))){
+                $sco->parameters = ''; 
         }
         return $sco;
     } else {
