@@ -205,20 +205,24 @@ function scorm_external_link($link) {
 * @param integer $id The sco ID
 * @return mixed (false if sco id does not exists)
 */
+
 function scorm_get_sco($id,$what=SCO_ALL) {
     if ($sco = get_record('scorm_scoes','id',$id)) {
         $sco = ($what == SCO_DATA) ? new stdClass() : $sco;
         if (($what != SCO_ONLY) && ($scodatas = get_records('scorm_scoes_data','scoid',$id))) {
             foreach ($scodatas as $scodata) {
-                $sco->{$scodata->name} = $scodata->value;
+                $sco->{$scodata->name} = $scodata->value;		
             }
-        }
+		}
+        elseif (($what != SCO_ONLY) && (!($scodatas = get_records('scorm_scoes_data','scoid',$id)))){		
+                $sco->parameters = ''; 
+            }
+       
         return $sco;
     } else {
         return false;
     }
 }
-
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
