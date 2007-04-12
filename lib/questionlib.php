@@ -1228,6 +1228,9 @@ function question_isgradingevent($event) {
 *                           for incorrect earlier responses are subtracted.
 */
 function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cmoptions) {
+    // TODO. Quiz dependancy. The fact that the attempt that is passed in here
+    // is from quiz_attempts, and we use things like $cmoptions->timelimit.
+    
     // deal with penalty
     if ($cmoptions->penaltyscheme) {
             $state->grade = $state->raw_grade - $state->sumpenalty;
@@ -1239,7 +1242,9 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
     // deal with timelimit
     if ($cmoptions->timelimit) {
         // We allow for 5% uncertainty in the following test
-        if (($state->timestamp - $attempt->timestart) > ($cmoptions->timelimit * 63)) {
+        if (($state->timestamp - $attempt->timestart) > ($cmoptions->timelimit * 63) &&
+                !has_capability('mod/quiz:ignoretimelimits', get_context_instance(CONTEXT_MODULE, get_coursemodule_from_instance('quiz', $cmoptions->id)->id), $attempt->userid, false)) {
+echo "<p>Frog: ''.</p>"; // DONOTCOMMIT
             $state->grade = 0;
         }
     }
