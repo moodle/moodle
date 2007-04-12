@@ -273,8 +273,12 @@ if ($act == 'updfeed') {
             if (file_exists($CFG->dirroot .'/blog/lib.php')) {
                 //Blog module is installed - provide "blog this" link
                 print '<td align="right">'."\n";
-                print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
-                print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $userid .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
+                
+                /// MDL-9291, blog this feature needs further discussion/implementation
+                /// temporarily disabling for now.
+                
+                // print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
+                //print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $USER->id .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
             } else {
                 print '<td>&nbsp;';
             }
