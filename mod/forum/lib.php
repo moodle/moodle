@@ -3396,7 +3396,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
- * Sort out some defaults
+ // Sort out some defaults
 
     if ((!$maxdiscussions) && ($displayformat == 'plain')) {
         $displayformat = 'header';  // Abbreviate display by default
