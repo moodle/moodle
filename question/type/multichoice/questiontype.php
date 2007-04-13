@@ -1,20 +1,13 @@
 <?php  // $Id$
-
-///////////////////
-/// MULTICHOICE ///
-///////////////////
-
-/// QUESTION TYPE CLASS //////////////////
-
-///
-/// This class contains some special features in order to make the
-/// question type embeddable within a multianswer (cloze) question
-///
 /**
+ * The questiontype class for the multiple choice question type.
+ *
+ * Note, This class contains some special features in order to make the
+ * question type embeddable within a multianswer (cloze) question
+ *
  * @package questionbank
  * @subpackage questiontypes
-*/
-
+ */
 class question_multichoice_qtype extends default_questiontype {
 
     function name() {
@@ -107,6 +100,7 @@ class question_multichoice_qtype extends default_questiontype {
         }
         $options->answers = implode(",",$answers);
         $options->single = $question->single;
+        $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
         $options->correctfeedback = trim($question->correctfeedback);
         $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
@@ -285,7 +279,6 @@ class question_multichoice_qtype extends default_questiontype {
         // Print each answer in a separate row
         foreach ($state->options->order as $key => $aid) {
             $answer = &$answers[$aid];
-            $qnumchar = chr(ord('a') + $key);
             $checked = '';
             $chosen = false;
 
@@ -322,7 +315,8 @@ class question_multichoice_qtype extends default_questiontype {
             }
 
             // Print the answer text
-            $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+            $a->text = format_text($this->number_in_style($key, $question->options->answernumbering) . $answer->answer,
+                    FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
             if (($options->feedback || $options->correct_responses) && $checked) {
@@ -555,11 +549,37 @@ class question_multichoice_qtype extends default_questiontype {
         return implode(',', $order).':'.implode(',', $responses);
     }
 
-}
-//// END OF CLASS ////
+    /**
+     * @return array of the numbering styles supported. For each one, there
+     *      should be a lang string answernumberingxxx in teh qtype_multichoice
+     *      language file, and a case in the switch statement in number_in_style,
+     *      and it should be listed in the definition of this column in install.xml.
+     */
+    function get_numbering_styles() {
+        return array('abc', 'ABC', '123', 'none');
+    }
 
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
+    /**
+     * @param int $num The number, starting at 0.
+     * @param string $style The style to render the number in. One of the ones returned by $numberingoptions.
+     * @return string the number $num in the requested style.
+     */
+    function number_in_style($num, $style) {
+        switch($style) {
+            case 'abc':
+                return chr(ord('a') + $num) . '. ';
+            case 'ABC':
+                return chr(ord('A') + $num) . '. ';
+            case '123':
+                return ($num + 1) . '. ';
+            case 'none':
+                return '';
+            default:
+                return 'ERR';
+        }
+    }
+}
+
+// Register this question type with the question bank.
 question_register_questiontype(new question_multichoice_qtype());
 ?>

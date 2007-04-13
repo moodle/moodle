@@ -34,6 +34,15 @@ function xmldb_qtype_multichoice_upgrade($oldversion=0) {
                 'qtype', DESCRIPTION, 'defaultgrade', 1);
     }
 
+    // Add a field so that question authors can choose whether and how the 
+    // Choices are numbered.
+    if ($result && $oldversion < 2007041300) {
+        $table = new XMLDBTable('question_multichoice');
+        $field = new XMLDBField('answernumbering');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('abc', 'ABC', '123', 'none'), 'abc', 'incorrectfeedback');
+        $result = $result && add_field($table, $field);
+    }
+
     return $result;
 }
 
