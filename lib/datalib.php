@@ -925,10 +925,9 @@ function get_categories($parent='none', $sort='sortorder ASC') {
         $categories = get_records('course_categories', 'parent', $parent, $sort);
     }
     if ($categories) {  /// Remove unavailable categories from the list
-        $creator = has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID));
         foreach ($categories as $key => $category) {
             if (!$category->visible) {
-                if (!$creator) {
+                if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
                     unset($categories[$key]);
                 }
             }

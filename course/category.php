@@ -135,6 +135,10 @@
 
         if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
+            // user must have category update in both cats to perform this
+            require_capability('moodle/category:update', $context);
+            require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto)); 
+            
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
                 error("Error finding the category");
             }
@@ -152,6 +156,7 @@
     /// Hide or show a course
 
         if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
+            require_capability('moodle/course:visibility', $context);
             if (!empty($hide)) {
                 $course = get_record("course", "id", $hide);
                 $visible = 0;
@@ -170,7 +175,7 @@
     /// Move a course up or down
 
         if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
-
+            require_capability('moodle/category:update', $context);
             $movecourse = NULL;
             $swapcourse = NULL;
 
@@ -400,8 +405,17 @@
 
         if ($abletomovecourses) {
             echo '<tr><td colspan="3" align="right">';
-            echo '<br />';
+            echo '<br />';    
             unset($displaylist[$category->id]);
+
+            // loop and unset categories the user can't move into
+            
+            foreach ($displaylist as $did=>$dlist) {
+                if (!has_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $did))) {
+                    unset($displaylist[$did]);  
+                }
+            }
+            
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo '</td></tr>';
