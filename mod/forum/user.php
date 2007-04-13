@@ -71,7 +71,7 @@
     echo '<div class="user-content">';
     
     if ($course->id == SITEID) {
-        if (!empty($CFG->forceloginforprofiles) || isloggedin()) {
+        if (empty($CFG->forceloginforprofiles) || isloggedin()) {
             // Search throughout the whole site.
             $searchcourse = 0;
         } else {
