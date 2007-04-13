@@ -130,8 +130,7 @@
 
 /// Editing functions
 
-    if ($adminediting) {
-
+    if ($creatorediting) {
     /// Move a specified course to a new category
 
         if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
