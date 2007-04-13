@@ -1338,7 +1338,7 @@ function calendar_print_month_selector($name, $selected) {
     $months = array();
 
     for ($i=1; $i<=12; $i++) {
-        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), '%B');
+        $months[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), '%B');
     }
 
     choose_from_menu($months, $name, $selected, '');

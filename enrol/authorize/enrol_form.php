@@ -59,7 +59,7 @@ class enrol_authorize_form extends moodleform
 
             $monthsmenu = array('' => get_string('choose'));
             for ($i = 1; $i <= 12; $i++) {
-                $monthsmenu[$i] = userdate(gmmktime(12, 0, 0, $i, 1, 2000), "%B");
+                $monthsmenu[$i] = userdate(gmmktime(12, 0, 0, $i, 15, 2000), "%B");
             }
             $yearsmenu = array('' => get_string('choose'));
             $nowdate = getdate();

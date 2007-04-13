@@ -71,7 +71,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
             $days[$i] = $i;
         }
         for ($i=1; $i<=12; $i++) {
-            $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
+            $months[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
         }
         for ($i=$this->_options['startyear']; $i<=$this->_options['stopyear']; $i++) {
             $years[$i] = $i;
