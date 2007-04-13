@@ -1242,9 +1242,12 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
     // deal with timelimit
     if ($cmoptions->timelimit) {
         // We allow for 5% uncertainty in the following test
-        if (($state->timestamp - $attempt->timestart) > ($cmoptions->timelimit * 63) &&
-                !has_capability('mod/quiz:ignoretimelimits', get_context_instance(CONTEXT_MODULE, get_coursemodule_from_instance('quiz', $cmoptions->id)->id), $attempt->userid, false)) {
-            $state->grade = 0;
+        if ($state->timestamp - $attempt->timestart > $cmoptions->timelimit * 63) {
+            $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
+            if (!has_capability('mod/quiz:ignoretimelimits', get_context_instance(CONTEXT_MODULE, $cm->id),
+                    $attempt->userid, false)) {
+                $state->grade = 0;
+            }
         }
     }
 
