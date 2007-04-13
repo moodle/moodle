@@ -255,7 +255,7 @@ function wiki_link_regex_callback( $uu ) {
    $href = trim($href);
 
    /* create _no_ WikiLinks */
-   if ( false ):
+   if ( false ){
      // interwiki links
      if ( strpos($href, ":") &&
           !strpos($href, "//") &&
@@ -275,7 +275,7 @@ function wiki_link_regex_callback( $uu ) {
          EWIKI_SCRIPT . urlencode($href) /*.EWIKI_ADDPARAMDELIM.'edit'*/ .
          ' ">?</a>';
      }
-   endif;
+   }
 
    // convert normal URLs
    foreach ( $ewiki_idf_url as $find ) {

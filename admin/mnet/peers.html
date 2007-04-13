@@ -48,13 +48,13 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
         <td class="cell c1"><a href="peers.php?step=update&amp;hostid=<?php echo $host->id; ?>"><?php echo $host->wwwroot; ?></a></td>
         <td class="cell c2" nowrap="nowrap"><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
         <td class="cell c3">
-<?php   if ($host->id != $CFG->mnet_all_hosts_id): ?>
+<?php   if ($host->id != $CFG->mnet_all_hosts_id){ ?>
             <form method="post" action="delete.php">
                 <input type="hidden" name="hostid" value="<?php echo $host->id; ?>" />
                 <input type="hidden" name="step" value="verify" />
                 <input type="submit" name="submit" value="<?php print_string('delete'); ?>"/>
             </form>
-<?php   endif; ?>
+<?php   } ?>
         </td>
     </tr>
 <?php
