@@ -1044,6 +1044,20 @@ body#admin-modules table.generaltable td.c0
   float: none;
 }
 
+#trustedhosts .generaltable {
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+}
+
+#trustedhosts .standard {
+  width: auto;
+}
+
+#mnetconfig table {
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /***
  *** Blocks

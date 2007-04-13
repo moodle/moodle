@@ -44,12 +44,12 @@
     <td align="left" colspan="2">enrol_flatfilemapping:</td>
 </tr>
 
-<?php foreach ($frm->enrol_flatfilemapping as $id => $record):
+<?php foreach ($frm->enrol_flatfilemapping as $id => $record) {
         list($name, $mapping) = $record; ?>
 <tr valign="top">
     <td align="right"><?php echo htmlspecialchars($name, ENT_COMPAT, 'UTF-8'); ?></td>
     <td><input type="text" size="20" name="enrol_flatfilemapping_<?php echo $id; ?>" value="<?php echo htmlspecialchars($mapping, ENT_COMPAT, 'UTF-8'); ?>" /></td>
 </tr>
-<?php endforeach; ?>
+<?php } ?>
 
 </table>

@@ -1,10 +1,11 @@
 
 <form id="assignform" method="post" action="">
+<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
 <input type="hidden" name="host" value="<?php p($mnet_peer->id) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
-  <table align="center" border="0" cellpadding="5" cellspacing="0">
+  <table class="generaltable" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
           <?php print_string('existingusers', 'role', count($mnetenrolledusers)); ?>
@@ -99,4 +100,5 @@
       <td valign="top"></td>
     </tr>
   </table>
+  </div>
 </form>

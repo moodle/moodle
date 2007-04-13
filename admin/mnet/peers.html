@@ -5,36 +5,38 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     print_box(get_string('mnetdisabled','mnet'));
 }
 ?>
-<center>
-<form  method="post" action="peers.php">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
-<input type="hidden" name="updateregisterall" value="1" />
-<table cellspacing="0" cellpadding="5"  width="500" id="hosts" class="generaltable generalbox" >
-    <tr>
-        <th class="header c0" nowrap="nowrap" colspan="2"><?php print_string('registerallhosts', 'mnet'); ?></th>
-    </tr>
-    <tr>
-        <td class="cell c1" colspan="2"><?php print_string('registerallhostsexplain', 'mnet'); ?></td>
-    </tr>
-    <tr>
-        <td class="cell c1"><input type="checkbox" name="registerallhosts" <?php if (!empty($CFG->mnet_register_allhosts)) echo 'checked="checked" '; ?>/></td>
-        <td class="cell c1"> <?php print_string('registerallhosts', 'mnet'); ?> </td>
-    </tr>
-    <tr>
-        <td align="right" colspan="2"><input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" /></td>
-    </tr>
-</table>
-</form>
-<table cellspacing="0" cellpadding="5" id="hosts" class="generaltable generalbox" >
-    <tr>
-        <th class="header c0" nowrap="nowrap"><?php print_string('site'); ?></th>
-        <th class="header c1" nowrap="nowrap"><?php print_string('system','mnet'); ?></th>
-        <th class="header c2" nowrap="nowrap"><?php print_string('last_connect_time', 'mnet'); ?></th>
-        <th class="header c3" nowrap="nowrap"></th>
-    </tr>
+<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->
+    <form  method="post" action="peers.php">
+        <div>
+            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+            <input type="hidden" name="updateregisterall" value="1" />
+            <table cellspacing="0" cellpadding="5" class="generaltable generalbox" >
+                <tr>
+                    <th class="header c0" colspan="2"><?php print_string('registerallhosts', 'mnet'); ?></th>
+                </tr>
+                <tr>
+                    <td class="cell c1" colspan="2"><?php print_string('registerallhostsexplain', 'mnet'); ?></td>
+                </tr>
+                <tr>
+                    <td class="cell c1"><input type="checkbox" name="registerallhosts" <?php if (!empty($CFG->mnet_register_allhosts)) echo 'checked="checked" '; ?>/></td>
+                    <td class="cell c1"> <?php print_string('registerallhosts', 'mnet'); ?> </td>
+                </tr>
+                <tr>
+                    <td align="right" colspan="2"><input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" /></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    <table cellspacing="0" cellpadding="5" class="generaltable generalbox standard" >
+        <tr>
+            <th class="header c0"><?php print_string('site'); ?></th>
+            <th class="header c1"><?php print_string('system','mnet'); ?></th>
+            <th class="header c2"><?php print_string('last_connect_time', 'mnet'); ?></th>
+            <th class="header c3"></th>
+        </tr>
 <?php
 
-    foreach($hosts as $host):
+    foreach($hosts as $host) {
 
         if ($host->last_connect_time == 0) {
             $last_connect = get_string('never');
@@ -46,43 +48,46 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     <tr>
         <td class="cell c0"><a href="peers.php?step=update&amp;hostid=<?php echo $host->id; ?>"><?php echo $host->name; ?></a></td>
         <td class="cell c1"><a href="peers.php?step=update&amp;hostid=<?php echo $host->id; ?>"><?php echo $host->wwwroot; ?></a></td>
-        <td class="cell c2" nowrap="nowrap"><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
+        <td class="cell c2"><?php if ($host->id != $CFG->mnet_all_hosts_id) echo $last_connect; ?></td>
         <td class="cell c3">
 <?php   if ($host->id != $CFG->mnet_all_hosts_id){ ?>
             <form method="post" action="delete.php">
+                <div>
                 <input type="hidden" name="hostid" value="<?php echo $host->id; ?>" />
                 <input type="hidden" name="step" value="verify" />
                 <input type="submit" name="submit" value="<?php print_string('delete'); ?>"/>
+                </div>
             </form>
 <?php   } ?>
         </td>
     </tr>
 <?php
-    endforeach;
+    }
 ?>
-    <tr>
-        <td class="cell c4" colspan="4">&nbsp;</td>
-    </tr>
+    </table>
     <form method="post" action="peers.php">
-    <tr>
-        <th class="header c4" nowrap="nowrap" colspan="4">
-            <?php print_string('addnewhost', 'mnet'); ?>
-            <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
-            <input type="hidden" name="step" value="input" />
-        </th>
-    </tr>
-    <tr>
-        <td class="cell c0"></td>
-        <td class="cell c1"><input type="text" name="wwwroot" value="" /></td>
-        <td class="cell c2"></td>
-        <td class="cell c3"></td>
-    </tr>
-    <tr>
-        <td class="cell c4" align="right" colspan="4"><input type="submit" value="<?php print_string('addhost','mnet'); ?>" /></td>
-    </tr>
+        <table cellspacing="0" cellpadding="5" class="generaltable generalbox standard" >
+            
+            <tr>
+                <th class="header c4" colspan="4">
+                    <?php print_string('addnewhost', 'mnet'); ?>
+                    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+                    <input type="hidden" name="step" value="input" />
+                </th>
+            </tr>
+            <tr>
+                <td class="cell c0"></td>
+                <td class="cell c1"><input type="text" name="wwwroot" value="" /></td>
+                <td class="cell c2"></td>
+                <td class="cell c3"></td>
+            </tr>
+            <tr>
+                <td class="cell c4" align="right" colspan="4"><input type="submit" value="<?php print_string('addhost','mnet'); ?>" /></td>
+            </tr>
+        
+        </table>
     </form>
-</table>
-</center>
+</div>
 <?php
 admin_externalpage_print_footer($adminroot);
 ?>

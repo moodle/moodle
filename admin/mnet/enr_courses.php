@@ -29,9 +29,10 @@
     print_box('<strong>' . s($host->name) . ' </strong><br />'
               . get_string("enrolcourses_desc", "mnet"));
 
-    echo "<hr />";
+    echo '<hr />';
 
-    print ('<table align="center" >');
+    echo '<div id="trustedhosts"><!-- See theme/standard/styles_layout.css #trustedhosts .generaltable for rules -->'
+           . '<table class="generaltable">';
 
     $icon  = "<img src=\"$CFG->pixpath/i/course.gif\"".
     " class=\"icon\" alt=\"".get_string("course")."\" />";
@@ -39,7 +40,7 @@
     foreach ($courses as $course) {
         $link = $CFG->wwwroot . '/admin/mnet/enr_course_enrol.php?'
             . "host={$mnethost}&amp;courseid={$course->id}&amp;sesskey={$USER->sesskey}";
-        print ('<tr>'
+        echo '<tr>'
                . "<td>$icon</td>"
                . "<td><a href=\"$link\">".format_string($course->fullname). "</a></td>"
                . '</tr><tr>'
@@ -48,9 +49,9 @@
                . '</tr><tr>'
                . '<td></td>'
                . "<td align=\"left\" >{$course->summary}</td>"
-               . '</tr>');
+               . '</tr>';
     }
-    print ('</table>');
+    echo '</table></div>';
 
     admin_externalpage_print_footer($adminroot);
 

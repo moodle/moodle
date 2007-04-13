@@ -19,6 +19,7 @@ print_tabs(array($tabs), 'mnetdetails');
 print_simple_box_start("center", "");
 ?>
 <form method="post" action="peers.php">
+<div>
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 <input type="hidden" name="step" value="commit" />
 <input type="hidden" name="last_connect_time" value="<?php echo $mnet_peer->last_connect_time; ?>" />
@@ -126,6 +127,7 @@ if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address){
     <td><input type="submit" value="<?php print_string("savechanges"); ?>" /></td>
 </tr>
 </table>
+</div>
 </form>
 <?php
 print_simple_box_end();
