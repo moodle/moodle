@@ -19,6 +19,7 @@ print_tabs(array($tabs), 'mnetdetails');
 print_simple_box_start("center", "");
 ?>
 <form method="post" action="peers.php">
+<div>
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 <input type="hidden" name="step" value="commit" />
 <input type="hidden" name="last_connect_time" value="<?php echo $mnet_peer->last_connect_time; ?>" />
@@ -74,7 +75,7 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0) {
 </tr>
 <?php
 
-if(!empty($currentkey)):
+if(!empty($currentkey)) {
 ?>
     <tr>
         <td align="right" valign="top"></td>
@@ -85,18 +86,18 @@ if(!empty($currentkey)):
         <td valign="top"><pre style="font-size: 8px;"><?php echo $currentkey;?></pre></td>
     </tr>
 <?php
-endif;
+}
 
-if (isset($mnet_peer->id) && $mnet_peer->id > 0):
+if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
 ?>
     <tr>
         <td align="right" valign="top"><?php print_string('last_connect_time', 'mnet'); ?>:</td>
         <td valign="top"><?php echo ($mnet_peer->last_connect_time == 0)? get_string('never','mnet') : date('H:i:s d/m/Y',$mnet_peer->last_connect_time);?></td>
     </tr>
 <?php
-endif;
+}
 
-if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0):
+if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0){
 ?>
     <tr>
         <td align="right" valign="top"><?php print_string('deleted'); ?>:</td>
@@ -106,9 +107,9 @@ if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0):
         </td>
     </tr>
 <?php
-endif;
+}
 
-if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address):
+if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address){
 ?>
     <tr>
         <td align="right" valign="top"><?php print_string('ipaddress', 'mnet');
@@ -119,13 +120,14 @@ if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address):
     </tr>
 
 <?php
-endif;
+}
 ?>
 <tr>
     <td></td>
     <td><input type="submit" value="<?php print_string("savechanges"); ?>" /></td>
 </tr>
 </table>
+</div>
 </form>
 <?php
 print_simple_box_end();

@@ -16,21 +16,22 @@ print_simple_box_start("center", "");
 ?>
 
 <form method="post" action="mnet_services.php">
+<div>
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 <input type="hidden" name="step" value="<?php echo $mnet_peer->nextstep; ?>" />
 <input type="hidden" name="hostid" value="<?php echo ($mnet_peer->id)?  $mnet_peer->id : '0' ; ?>" />
 <table cellpadding="9" cellspacing="0" >
 <?php 
-    foreach($myservices as $name => $versions):
+    foreach($myservices as $name => $versions) {
     $version = current($versions);
 ?>
 <tr>
     <td align="left" valign="top" colspan="2">
     <h3><?php echo get_string($name.'_name', $version['parent_type'].'_'.$version['parent'] , $mnet_peer->name); ?></h3>
-    <p><?php echo get_string($name.'_description', $version['parent_type'].'_'.$version['parent'], $mnet_peer->name); ?></p>
+    <?php echo get_string($name.'_description', $version['parent_type'].'_'.$version['parent'], $mnet_peer->name); ?>
 <?php
         $breakstring = '';
-        foreach($versions as $version):
+        foreach($versions as $version){
             if (count($versions) > 1) {
                 $versionstring = '('.get_string('version','mnet') .' '.$version['apiversion'].')';
             } else {
@@ -40,16 +41,37 @@ print_simple_box_start("center", "");
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
-    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/><?php print_string('publish','mnet'); ?><?php echo $versionstring; if (!empty($version['hostsubscribes'])) echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_publish'])) print_string("enabled_for_all",'mnet',!empty($version['I_publish']));  ?><br />
-    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked="checked" ': '' ; ?>/><?php print_string('subscribe','mnet'); ?><?php echo $versionstring; if (!empty($version['hostpublishes'])) echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> '; if (!empty($version['allhosts_subscribe'])) print_string("enabled_for_all",'mnet',!empty($version['I_subscribe'])); ?><br />
-<?php
+    <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/>
+<?php 
+            print_string('publish','mnet');
+            echo $versionstring; 
+            if (!empty($version['hostsubscribes'])) { 
+                echo '<a href="#" title="'.get_string('issubscribed','mnet', $mnet_peer->name).'">&radic;</a> '; 
+            }
+            if (!empty($version['allhosts_publish'])) { 
+                print_string("enabled_for_all",'mnet',!empty($version['I_publish']));
+            } 
+            echo '<br />';
+?>
+    <input type="checkbox" name="subscribe[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_subscribe']))? 'checked="checked" ': '' ; ?>/>
+<?php 
+            print_string('subscribe','mnet');
+            echo $versionstring; 
+            if (!empty($version['hostpublishes'])) { 
+                echo '<a href="#" title="'.get_string('ispublished','mnet', $mnet_peer->name).'">&radic;</a> ';
+            } 
+            if (!empty($version['allhosts_subscribe'])) {
+                print_string("enabled_for_all",'mnet',!empty($version['I_subscribe']));
+            }
+            
+            echo '<br />';  
             $breakstring = '. . . . . . . . . . . . . . . . . . . . . . . . <br>';
-        endforeach;
+        } // end foreach
 ?>
     </td>
 </tr>
 <?php
-    endforeach;
+    } // end foreach
 ?>
 <tr>
     <td align="left" valign="top" colspan="2">
@@ -70,6 +92,7 @@ print_simple_box_start("center", "");
     </td>
 </tr>
 </table>
+</div>
 </form>
 <?php
 print_simple_box_end();

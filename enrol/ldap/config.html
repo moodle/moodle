@@ -216,13 +216,13 @@ if (!isset($frm->enrol_ldap_template)) {
                 <th><?php print_string('enrol_ldap_contexts', 'enrol_ldap'); ?></th>
                 <th><?php print_string('enrol_ldap_memberattribute', 'enrol_ldap'); ?></th>
             </tr>
-<?php foreach ($roles as $role): ?>
+<?php foreach ($roles as $role) { ?>
             <tr>
                 <td><?php echo htmlspecialchars($role->name, ENT_COMPAT, 'UTF-8'); ?></td> 
                 <td><input type="text" size="30" name="enrol_ldap_contexts_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_contexts_role'.$role->id}); ?>" /></td> 
                 <td><input type="text" size="30" name="enrol_ldap_memberattribute_role<?php echo $role->id; ?>" value="<?php echo htmlspecialchars($frm->{'enrol_ldap_memberattribute_role'.$role->id}); ?>" /></td> 
             </tr>
-<?php endforeach; ?>
+<?php } ?>
         </table>
     </td>
 </tr>
