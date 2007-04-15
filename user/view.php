@@ -209,7 +209,7 @@
             $countries = get_list_of_countries();
             $location .= $countries[$user->country];
         }
-        print_row(get_string("location").":", $location);
+        print_row(get_string("city").":", $location);
     }
 
     if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
@@ -327,7 +327,7 @@
 /// printing roles
     
     if ($rolestring = get_user_roles_in_context($id, $coursecontext->id)) {
-        print_row(get_string('roles').':', $rolestring);
+        print_row(get_string('roles').':', format_string($rolestring, false));
     }
 
 /// Printing groups
