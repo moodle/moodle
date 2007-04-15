@@ -285,7 +285,7 @@
                     echo '<input type="hidden" name="confirmupgrade" value="1" />';
                     echo '<input type="hidden" name="confirmrelease" value="1" />';
                     echo '</div>';
-                    echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="0" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                    echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
                     echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
                     echo '</form>';
                 }
