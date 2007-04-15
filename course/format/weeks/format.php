@@ -2,7 +2,6 @@
       // Display the whole course as "weeks" made of of modules
       // Included from "view.php"
 
-    require_once("$CFG->dirroot/mod/forum/lib.php");
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
 
     $week = optional_param('week', -1, PARAM_INT);
@@ -32,10 +31,6 @@
         } else {
             $displaysection = course_set_display($course->id, 0);
         }
-    }
-
-    if ($course->newsitems) {
-        $news = forum_get_course_forum($course->id, 'news');
     }
 
     $streditsummary  = get_string('editsummary');

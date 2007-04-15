@@ -25,7 +25,7 @@ class block_news_items extends block_base {
         if ($COURSE->newsitems) {   // Create a nice listing of recent postings
 
             require_once($CFG->dirroot.'/mod/forum/lib.php');   // We'll need this
-           
+
             $text = '';
 
             if (!$forum = forum_get_course_forum($COURSE->id, 'news')) {
