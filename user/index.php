@@ -7,7 +7,7 @@
 
     define('USER_SMALL_CLASS', 20);   // Below this is considered small
     define('USER_LARGE_CLASS', 200);  // Above this is considered large
-    define('DEFAULT_PAGE_SIZE', 20);
+    define('DEFAULT_PAGE_SIZE', 2);
     define('SHOW_ALL_PAGE_SIZE', 5000);
 
     $group        = optional_param('group', -1, PARAM_INT);                   // Group to show
@@ -625,11 +625,12 @@
         echo '<input type="text" name="search" value="'.$search.'" />&nbsp;<input type="submit" value="'.get_string('search').'" /></div></form>'."\n";
     }
 
+    $perpageurl = preg_replace('/&amp;perpage=\d*/','', $baseurl);
     if ($perpage == SHOW_ALL_PAGE_SIZE) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
+        echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.DEFAULT_PAGE_SIZE.'">'.get_string('showperpage', '', DEFAULT_PAGE_SIZE).'</a></div>';
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
-        echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
+        echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
     }
 
     print_footer($course);
