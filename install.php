@@ -1024,7 +1024,7 @@ function check_memory_limit() {
     if ((int)str_replace('M', '', get_memory_limit()) >= 40) {
         return true;
     }
-return false;
+
     /// Otherwise, see if we can change it ourselves
     @ini_set('memory_limit', '40M');
     return ((int)str_replace('M', '', get_memory_limit()) >= 40);
