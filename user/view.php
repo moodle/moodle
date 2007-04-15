@@ -209,7 +209,7 @@
             $countries = get_list_of_countries();
             $location .= $countries[$user->country];
         }
-        print_row(get_string("location").":", $location);
+        print_row(get_string("city").":", $location);
     }
 
     if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
