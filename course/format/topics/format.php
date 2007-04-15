@@ -7,10 +7,8 @@
       // Included from "view.php"
       
 
-    require_once($CFG->dirroot.'/mod/forum/lib.php');
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
   
-    
     $topic = optional_param('topic', -1, PARAM_INT);
 
     // Bounds for block widths

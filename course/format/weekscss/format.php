@@ -25,8 +25,6 @@
  */
 //TODO (nfreear): Accessibility: evaluation, lang/en_utf8/moodle.php: $string['formatweekscss']
 
-    require_once("$CFG->dirroot/mod/forum/lib.php");
-
     $week = optional_param('week', -1, PARAM_INT);
 
     if ($week != -1) {
@@ -37,10 +35,6 @@
         } else {
             $displaysection = course_set_display($course->id, 0);
         }
-    }
-
-    if ($course->newsitems) {
-        $news = forum_get_course_forum($course->id, 'news');
     }
 
     $streditsummary  = get_string('editsummary');

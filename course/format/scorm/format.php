@@ -2,7 +2,6 @@
       // format.php - course format featuring single activity
       //              included from view.php
 
-    require_once("$CFG->dirroot/mod/forum/lib.php");
     $module = $course->format;
     require_once($CFG->dirroot.'/mod/'.$module.'/locallib.php');
 
