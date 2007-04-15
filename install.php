@@ -1020,14 +1020,14 @@ function get_memory_limit() {
 
 function check_memory_limit() {
 
-    /// if limit is already 16M or more then we don't care if we can change it or not
-    if ((int)str_replace('M', '', get_memory_limit()) >= 16) {
+    /// if limit is already 40 or more then we don't care if we can change it or not
+    if ((int)str_replace('M', '', get_memory_limit()) >= 40) {
         return true;
     }
-
+return false;
     /// Otherwise, see if we can change it ourselves
-    @ini_set('memory_limit', '16M');
-    return ((int)str_replace('M', '', get_memory_limit()) >= 16);
+    @ini_set('memory_limit', '40M');
+    return ((int)str_replace('M', '', get_memory_limit()) >= 40);
 }
 
 //==========================================================================//
