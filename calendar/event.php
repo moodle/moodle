@@ -58,6 +58,8 @@
     $cal_m = optional_param('cal_m');
     $cal_d = optional_param('cal_d');
 
+    $focus = '';
+
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
@@ -78,6 +80,8 @@
 
     // If a course has been supplied in the URL, change the filters to show that one
     if($urlcourse > 0 && record_exists('course', 'id', $urlcourse)) {
+        require_login($urlcourse, false);
+
         if($urlcourse == SITEID) {
             // If coming from the site page, show all courses
             $SESSION->cal_courses_shown = calendar_get_default_courses(true);
@@ -247,7 +251,6 @@
             $title='';
         break;
     }
-    if(empty($focus)) $focus = '';
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
@@ -263,6 +266,7 @@
     } else {
         $course = $site;
     }
+    require_login($course, false);
 
     print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
                  'eventform.name', '', true, '', user_login_string($site));
@@ -593,7 +597,7 @@ function calendar_add_event_allowed($event) {
         return false;  
     }
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     // if user has manageentries at site level, always return true
     if (has_capability('moodle/calendar:manageentries', $sitecontext)) {
         return true;
@@ -620,8 +624,10 @@ function calendar_add_event_allowed($event) {
             //there is no 'break;' intentionally
 
         case 'site':
+            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
+
         default:
-            return false; // should already return true above if having moodle/calendar:manageentries
+            return false;
     }
 }
 
@@ -631,7 +637,7 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->user = true; // User events always allowed
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
-    $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID));
+    $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
 
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer))) {
         $course = get_record('course', 'id', $SESSION->cal_course_referer);
