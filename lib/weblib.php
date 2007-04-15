@@ -1662,6 +1662,7 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
     switch ($format) {
         case FORMAT_PLAIN:
+        case FORMAT_MARKDOWN:
             return $text;
 
         default:
