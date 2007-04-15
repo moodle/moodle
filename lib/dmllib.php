@@ -2397,7 +2397,7 @@ function rcache_unset_table ($table) {
     if (isset($MCACHE)) {
         // at least as long as content keys to ensure they expire
         // before the dirty flag 
-        $MCACHE->set($tablekey, true, $CFG->rcachettl);
+        $MCACHE->set($table, true, $CFG->rcachettl);
     }
     return true;
 }
