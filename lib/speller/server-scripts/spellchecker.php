@@ -2,6 +2,10 @@
     include_once("../../../config.php");
     require_login();
 
+if (empty($CFG->aspellpath)) {
+    error('Spellchecker not configured');
+}
+
 header('Content-type: text/html; charset=utf-8');
 
 // Speller pages script http://spellerpages.sourceforge.net/
@@ -35,9 +39,8 @@ function check_language($cmd) {
 
     global $CFG;
 
-    error_reporting(E_ALL); // for debug, final version shouldn't have this...
     clearstatcache();
-    $current_lang = current_language();
+    $current_lang = str_replace('_utf8', '', current_language());
     $output = '';
 
     if(!($handle = popen($cmd .' dump dicts', 'r'))) {
