@@ -296,10 +296,12 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
                     : "";
-        print_header_simple($streditingquiz, '',
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
-                 " -> $streditingquiz", "", "",
+        $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+        $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
+        $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs, $course);
+           
+        print_header_simple($streditingquiz, '', $navigation, "", "",
                  true, $strupdatemodule);
 
         $currenttab = 'edit';
@@ -333,11 +335,13 @@
     $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
         ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
         : "";
-    print_header_simple($streditingquiz, '',
-             "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-             " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name).'</a>'.
-             " -> $streditingquiz",
-             "", "", true, $strupdatemodule);
+      
+    $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+    $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
+    $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 
     $currenttab = 'edit';
     $mode = 'editq';

@@ -30,7 +30,11 @@
                    </div>
                  </form>";
     }
-    print_header_simple($strquizzes, '', $strquizzes,
+    
+    $crumbs[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple($strquizzes, '', $navigation,
                  '', '', true, $streditquestions, navmenu($course));
 
 // Get all the appropriate data

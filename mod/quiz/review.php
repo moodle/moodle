@@ -98,10 +98,14 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
-        print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                  -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreview",
-                 "", "", true, $strupdatemodule);
+                    
+        $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strreview, 'link' => '', 'type' => 'title');
+        
+        $navigation = build_navigation($crumbs, $course);
+               
+        print_header_simple(format_string($quiz->name), "", $navigation, "", "", true, $strupdatemodule);
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
