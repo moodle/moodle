@@ -52,10 +52,12 @@
     // print header
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
-    $navigation = "<a href=\"index.php?id=$course->id\">$strmodulenameplural</a> -> ".get_string("review", "quiz");
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
-    }
+    
+    $crumbs[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
+    $crumbs[] = array('name' => get_string("review", "quiz"), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($crumbs, $course);
+    
+
     $button = update_module_button($cm->id, $course->id, $strmodulename);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
     print '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib

@@ -36,10 +36,10 @@
 
     $title = format_string($course->shortname) . ": $strmodulenameplural";
     $heading = $course->fullname;
-    $navigation = $strmodulenameplural;
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
-    }
+    
+    $crumbs[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+    
     print_header($title, $heading, $navigation, "", "", true, "", navmenu($course));
 
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";

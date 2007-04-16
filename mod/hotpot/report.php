@@ -401,9 +401,10 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
 
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
+    
+    $crumbs[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
+    $crumbs[] = array('name' => $hotpot->name, 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
 
-    $navigation = "<a href=index.php?id=$course->id>$strmodulenameplural</a> -> ";
-    $navigation .= "<a href=\"view.php?id=$cm->id\">$hotpot->name</a> -> ";
 
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {
@@ -412,16 +413,17 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
         } else {
             $module = "hotpot";
         }
-        $navigation .= get_string("report$mode", $module);
+
+        $crumbs[] = array('name' => get_string("report$mode", $module), 'link' => '', 'type' => 'title');
+        
 
     } else {
-        $navigation .= get_string("report", "quiz");
-    }
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
-    }
-    $button = update_module_button($cm->id, $course->id, $strmodulename);
 
+        $crumbs[] = array('name' => get_string("report", "quiz"), 'link' => '', 'type' => 'title');
+    }
+
+    $button = update_module_button($cm->id, $course->id, $strmodulename);
+    $navigation = build_navigation($crumbs, $course);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
 
     print_heading($hotpot->name);
