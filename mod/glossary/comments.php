@@ -42,8 +42,12 @@
     $strcomments = get_string("comments", "glossary");
     $straddcomment = get_string("addcomment", "glossary");
 
-    print_header_simple(strip_tags("$strcomments: $entry->concept"), "",
-        "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>".format_string($glossary->name,true)."</a> -> $strcomments",
+    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($glossary->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strcomments, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple(strip_tags("$strcomments: $entry->concept"), "", $navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 

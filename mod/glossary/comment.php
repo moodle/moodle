@@ -222,9 +222,15 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $strglossaries = get_string('modulenameplural', 'glossary');
     $strglossary   = get_string('modulename', 'glossary');
     $strcomments   = get_string('comments', 'glossary');
+    
+    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($glossary->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strcomments, 'link' => "comments.php?id=$cm->id&amp;eid=$entry->id", 'type' => 'title');
+    $crumbs[] = array('name' => $straction, 'link' => '', 'type' => 'action');
+    
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header_simple(format_string($glossary->name), '',
-        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> <a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$strcomments</a> -> " . $straction,
+    print_header_simple(format_string($glossary->name), '', $navigation,
         '', '', true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 /// print original glossary entry for any comment action (add, update, delete)

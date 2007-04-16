@@ -49,8 +49,12 @@
 
         $CFG->framename = "newwindow";
         if ($course->id != SITEID) {
-            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname,
-            "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
+        	$crumbs[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
+            $crumbs[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
+            
+            $navigation = build_navigation($crumbs, $course);
+            
+            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname, $navigation, "", "", true, "&nbsp;", "&nbsp;");
         } else {
             print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname,
             "$strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");

@@ -45,10 +45,13 @@
     $strsearch = get_string("search");
     $strimportentries = get_string('importentriesfromxml', 'glossary');
 
-    print_header_simple(format_string($glossary->name), "",
-        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> " .
-        "<a href=\"view.php?id=$id\">" .format_string($glossary->name) . "</a> -> " .
-        $strimportentries,
+    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strimportentries, 'link' => '', 'type' => 'title');
+   
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple(format_string($glossary->name), "", $navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
 

@@ -39,8 +39,12 @@
 
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
-    print_header_simple(format_string($glossary->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
+    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+
+$navigation = build_navigation($crumbs, $course);
+
+    print_header_simple(format_string($glossary->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 

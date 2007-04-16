@@ -51,10 +51,15 @@
     $strmodulename = get_string("modulename", "glossary");
     $strdisplayformats = get_string("displayformats","glossary");
 
-    print_header("$strmodulename: $strconfiguration", $site->fullname,
-                  "<a href=\"../../$CFG->admin/index.php\">$stradmin</a> -> ".
-                  "<a href=\"../../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                  "<a href=\"../../$CFG->admin/modules.php\">$strmanagemodules</a> -> <a href=\"../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey\">$strmodulename</a> -> $strdisplayformats");
+    $crumbs[] = array('name' => $stradmin, 'link' => "../../$CFG->admin/index.php", 'type' => 'core');
+    $crumbs[] = array('name' => $strconfiguration, 'link' => "../../$CFG->admin/configure.php", 'type' => 'core');
+    $crumbs[] = array('name' => $strmanagemodules, 'link' => "../../$CFG->admin/modules.php", 'type' => 'core');
+    $crumbs[] = array('name' => $strmodulename, 'link' => "../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey", 'type' => 'core');
+    $crumbs[] = array('name' => $strdisplayformats, 'link' => '', 'type' => 'core');
+
+    $navigation = build_navigation($crumbs);
+
+    print_header("$strmodulename: $strconfiguration", $site->fullname, $navigation);
 
     print_heading($strmodulename . ': ' . get_string("displayformats","glossary"));
 
