@@ -966,10 +966,10 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     if ($mins)  $omins  = $mins .' '. $sm;
     if ($secs)  $osecs  = $secs .' '. $ss;
 
-    if ($years)  return $oyears .' '. $odays;
-    if ($days)  return $odays .' '. $ohours;
-    if ($hours) return $ohours .' '. $omins;
-    if ($mins)  return $omins .' '. $osecs;
+    if ($years) return trim($oyears .' '. $odays);
+    if ($days)  return trim($odays .' '. $ohours);
+    if ($hours) return trim($ohours .' '. $omins);
+    if ($mins)  return trim($omins .' '. $osecs);
     if ($secs)  return $osecs;
     return get_string('now');
 }
