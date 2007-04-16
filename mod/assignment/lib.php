@@ -831,7 +831,7 @@ class assignment_base {
             $users = get_course_users($course->id);
         }
 
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture,
+        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment, 
                           s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
@@ -1096,7 +1096,7 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $select = 'SELECT u.id, u.id, u.firstname, u.lastname, u.picture, 
+        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, 
                           s.id AS submissionid, s.grade, s.submissioncomment, 
                           s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
