@@ -14,13 +14,13 @@ function display() {
     parent::display();
 
 /// Set up some shorthand variables
-    $cm = $this->cm;     
+    $cm = $this->cm;
     $course = $this->course;
-    $resource = $this->resource; 
+    $resource = $this->resource;
 
     require_once($CFG->libdir.'/filelib.php');
 
-    $subdir = optional_param('subdir','', PARAM_PATH); 
+    $subdir = optional_param('subdir','', PARAM_PATH);
     $resource->reference = clean_param($resource->reference, PARAM_PATH);
 
     $formatoptions = new object();
@@ -46,17 +46,20 @@ function display() {
         $count = 0;
         $subnav = "<a href=\"view.php?id={$cm->id}\">".format_string($resource->name,true)."</a>";
         $backsub = '';
+        $this->crumbs[] = array('name' => format_string($resource->name,true), 'link' => "view.php?id={$cm->id}", 'type' => 'activity');
+        
         foreach ($subs as $sub) {
             $count++;
             if ($count < $countsubs) {
                 $backsub .= "/$sub";
-                $subnav  .= " -> <a href=\"view.php?id={$cm->id}&amp;subdir=$backsub\">$sub</a>";
+                
+                $this->crumbs[] = array('name' => $sub, 'link' => "view.php?id={$cm->id}", 'type' => 'title');
             } else {
-                $subnav .= " -> $sub";
+                $this->crumbs[] = array('name' => $sub, 'link' => '', 'type' => 'title');
             }
         }
     } else {
-        $subnav = format_string($resource->name);
+        $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activity');        
     }
 
     $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
@@ -67,7 +70,8 @@ function display() {
         $editfiles = print_single_button("$CFG->wwwroot/files/index.php", $options, get_string("editfiles"), 'get', '', true);
         $update = $editfiles.$update;
     }
-    print_header($pagetitle, $course->fullname, "$this->navigation $subnav",
+    $this->navigation = build_navigation($this->crumbs, $this->course);
+    print_header($pagetitle, $course->fullname, $this->navigation,
             "", "", true, $update,
             navmenu($course, $cm));
 
@@ -150,16 +154,31 @@ function setup($form) {
     global $CFG;
 
     parent::setup($form);
-    
+
     $rawdirs = get_directory_list("$CFG->dataroot/{$this->course->id}", array($CFG->moddata, 'backupdata'), true, true, false);
     $dirs = array();
     foreach ($rawdirs as $rawdir) {
         $dirs[$rawdir] = $rawdir;
     }
-    
+
     include("$CFG->dirroot/mod/resource/type/directory/directory.html");
 
     parent::setup_end();
+}
+
+function setup_elements(&$mform) {
+    global $CFG;
+
+    $rawdirs = get_directory_list($CFG->dataroot.'/'.$this->course->id, array($CFG->moddata, 'backupdata'), true, true, false);
+    $dirs = array();
+    $dirs[0]=get_string('maindirectory', 'resource');
+    foreach ($rawdirs as $rawdir) {
+        $dirs[$rawdir] = $rawdir;
+    }
+
+    $mform->addElement('select', 'reference', get_string('resourcetypedirectory', 'resource'), $dirs);
+    $mform->setDefault('windowpopup', 0);
+
 }
 
 

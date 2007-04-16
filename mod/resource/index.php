@@ -26,8 +26,12 @@
     $strname = get_string("name");
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
+    
+  
+    $crumbs[] = array('name' => $strresources, 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header("$course->shortname: $strresources", $course->fullname, "$navigation $strresources", 
+    print_header("$course->shortname: $strresources", $course->fullname, $navigation, 
                  "", "", true, "", navmenu($course));
 
     if (! $resources = get_all_instances_in_course("resource", $course)) {

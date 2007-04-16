@@ -54,13 +54,7 @@
 
 /// Instantiate a resource_ims object and modify its navigation
     $resource_obj = new resource_ims ($cmid);
-    if ($resource_obj->course->id != SITEID) {
-        $resource_obj->navigation = "<a $CFG->frametarget href=\"$CFG->wwwroot/course/view.php?id={$course->id}\">{$course->shortname}</a> -> ".
-                                    "<a $CFG->frametarget href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
-    } else {
-        $resource_obj->navigation = "<a $CFG->frametarget href=\"$CFG->wwwroot/mod/resource/index.php?id={$course->id}\">$resource_obj->strresources</a> -> ";
-    }
-
+    
 /// Print the header of the page
     $pagetitle = strip_tags($course->shortname.': '.
                      format_string($resource->name)).': '.
@@ -69,8 +63,11 @@
     if ($inpopup) {
         print_header($pagetitle, $course->fullname);
     } else {
-        print_header($pagetitle, $course->fullname, 
-                     $resource_obj->navigation.format_string($resource->name).' -> '.$strdeploy,
+    	
+        $resource_obj->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+        $resource_obj->crumbs[] = array('name' => $strdeploy, 'link' => '', 'type' => 'action');
+        $navigation = build_navigation($resource_obj->crumbs, $resource_obj->course);
+        print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, 
                      update_module_button($cm->id, $course->id, $resource_obj->strresource));
     }

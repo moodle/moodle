@@ -371,7 +371,11 @@ class resource_ims extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle, $course->fullname.' : '.$resource->name);
             } else {
-                print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+            	
+                $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+                $this->navigation = build_navigation($this->crumbs, $this->course);
+                 
+                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
             }
             print_simple_box_start('center', '60%');
             echo '<p align="center">'.$errortext.'</p>';
@@ -469,7 +473,9 @@ class resource_ims extends resource_base {
                 //print_header($pagetitle, $course->fullname.' : '.$resource->name);
                 print_header();
             } else {
-                print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+            	$this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+                $this->navigation = build_navigation($this->crumbs, $this->course);
+                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);
