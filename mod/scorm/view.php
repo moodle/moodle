@@ -43,18 +43,15 @@
     $strscorm  = get_string("modulename", "scorm");
 
     if ($course->id != SITEID) { 
-        $navigation = "<a $CFG->frametarget href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM activity with the least id is the course  
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $navigation .= "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
+                $crumbs[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
             }       
         }
-    } else {
-        $navigation = "<a $CFG->frametarget href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
-
     $pagetitle = strip_tags($course->shortname.': '.format_string($scorm->name));
 
     add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id");
@@ -66,8 +63,10 @@
     //
     // Print the page header
     //
-    print_header($pagetitle, $course->fullname,
-                 "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
+    $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
     if (empty($cm->visible) and !has_capability('moodle/course:manageactivities', $context)) {

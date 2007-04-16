@@ -57,36 +57,38 @@
 
 /// Print the page header
     if (empty($noheader)) {
-        if ($course->id != SITEID) {
-            $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-        } else {
-            $navigation = '';
-        }
 
         $strscorms = get_string('modulenameplural', 'scorm');
         $strscorm  = get_string('modulename', 'scorm');
         $strreport  = get_string('report', 'scorm');
         $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
+        
+        $crumbs[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        
         if (empty($b)) {
             if (empty($a)) {
-                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
-                             "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
-                              -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a> -> $strreport",
+                $navigation = build_navigation($crumbs, $course);
+                print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
                              '', '', true);
             } else {
+                
+                $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
+                $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
+                $navigation = build_navigation($crumbs, $course);
+                    
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
-                             "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
-                              -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
-                              -> <a href=\"report.php?id=$cm->id\">$strreport</a> -> $strattempt $attempt - ".fullname($userdata),
-                             '', '', true);
+                             $navigation, '', '', true);
             }
         } else {
-            print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
-                     "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
-                      -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>
-                      -> <a href=\"report.php?id=$cm->id\">$strreport</a>
-                      -> <a href=\"report.php?a=$a&user=$user&attempt=$attempt\">$strattempt $attempt - ".fullname($userdata)."</a> -> $sco->title",
+            
+            $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
+            $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
+            $crumbs[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
+            $navigation = build_navigation($crumbs, $course);
+            
+            print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
                      '', '', true);
         }
         print_heading(format_string($scorm->name));
