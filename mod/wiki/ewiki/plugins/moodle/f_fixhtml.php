@@ -98,6 +98,7 @@ function ewiki_html_tag_balancer(&$html) {
 
             #-- cdata
             if($tname=='![cdata[') {
+            	$tname = strtoupper($tname); // Needs to be uppercase for XHTML compliance
                 // LEAVE THE POOR THING ALONE!
             }
             #-- standalone tag
