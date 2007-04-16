@@ -2,7 +2,7 @@
 
 class profile_field_text extends profile_field_base {
 
-    function display_field_add(&$mform) {
+    function edit_field_add(&$mform) {
         $size = $this->field->param1;
         $maxlength = $this->field->param2;
 

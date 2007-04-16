@@ -2,35 +2,68 @@
 
 class profile_field_menu extends profile_field_base {
     var $options;
-    var $selected;
+    var $datakey;
 
-    function profile_field_menu($fieldid) {
+    /**
+     * Constructor method.
+     * Pulls out the options for the menu from the database and sets the
+     * the corresponding key for the data if it exists
+     */
+    function profile_field_menu($fieldid, $userid) {
         //first call parent constructor
-        $this->profile_field_base($fieldid);
+        $this->profile_field_base($fieldid, $userid);
 
         /// Param 1 for menu type is the options
         $options = explode("\n", $this->field->param1);
         $this->options = array();
         foreach($options as $key => $option) {
             $this->options[$key] = format_string($option);//multilang formatting
-            if ($option == $this->field->defaultdata) {
-                $this->selected = $key;
-            }
         }
 
+        /// Set the data key
+        if ($this->data !== NULL) {
+            $this->datakey = (int)array_search($this->data, $this->options);
+        }
     }
 
-    function display_field_add(&$mform) {
-        /// Create the form field
+    /**
+     * Create the code snippet for this field instance
+     * Overwrites the base class method
+     * @param   object   moodleform instance
+     */
+    function edit_field_add(&$mform) {
         $mform->addElement('select', $this->inputname, format_string($this->field->name), $this->options);
-        $mform->setDefault($this->inputname, $this->selected);
     }
 
-    /// Override base class method
-    function display_field_default(&$mform) {
+    /**
+     * Set the default value for this field instance
+     * Overwrites the base class method
+     */
+    function edit_field_set_default(&$mform) {
         $defaultkey = (int)array_search($field->defaultdata, $this->options);
         $mform->setDefault($this->inputname, $defaultkey);
     }
+
+    /**
+     * The data from the form returns the key. This should be converted to the
+     * respective option string to be saved in database
+     * Overwrites base class accessor method
+     * @param   integer   the key returned from the select input in the form
+     */
+    function edit_save_data_preprocess($key) {
+        return isset($this->options[$key]) ? $this->options[$key] : NULL;
+    }
+
+    /**
+     * When passing the user object to the form class for the edit profile page
+     * we should load the key for the saved data
+     * Overwrites the base class method
+     * @param   object   user object
+     */
+    function edit_load_user_data(&$user) {
+        $user->{$this->inputname} = $this->datakey;
+    }
+
 }
 
 ?>
