@@ -51,10 +51,10 @@ $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je tre
 
 <p>Ovo možda prouzrokuje Moodlu da kasnije ima problema sa memorijom, posebno ako imate mnogo dozvoljenih modula i /ili mnogo korisnika.</p>
 
-<p>Preporučujemo Vam da konfigurišete PHP sa  visokim ograničenjem ako je moguće, kao 16M. Čineći ovo tamo je nekoliko načina pa možete pokušati: </p><ol>
+<p>Preporučujemo Vam da konfigurišete PHP sa  visokim ograničenjem ako je moguće, kao 40M. Čineći ovo tamo je nekoliko načina pa možete pokušati: </p><ol>
 <li>Ako ste, opet kompajlisati PHP sa <i>--dostupnim-memorijskim-ograničenjem</i>. Ovo će dozvoliti Moodle da postavi memorijsko ograničenje sam za sebe.</li>
-<li>Ako imate pristup na Vašu php.ini datoteku, možete promijeniti <b>memorijsko_ograničenje</b> podešavanje u nešto kao ovo 16M. Ako nemate pristup možete pitati svog administratora da to uradi za Vas.</li>
-<li>Na nekim PHP serverima možete kreirati  a.ht pristupnu datoteku u Moodle direktoriju koji se sadrži na ovoj liniji:<br /><blockquote>php_vrijednost memorijskog_ograničenja 16M</blockquote></li>
+<li>Ako imate pristup na Vašu php.ini datoteku, možete promijeniti <b>memorijsko_ograničenje</b> podešavanje u nešto kao ovo 40M. Ako nemate pristup možete pitati svog administratora da to uradi za Vas.</li>
+<li>Na nekim PHP serverima možete kreirati  a.ht pristupnu datoteku u Moodle direktoriju koji se sadrži na ovoj liniji:<br /><blockquote>php_vrijednost memorijskog_ograničenja 40M</blockquote></li>
 <br />Kakogod, na istom serveru ovo izbjegavajte <b>sve</b> PHP stranice za rad (vidjet ćete grešku prilkom pregleda stranice) ćete na njima morati izbrisati .htpristupnu datoteku. </li></ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP neće biti propisno konfigurisan sa MySQL ekstenzijom tako da može komunicirati sa  MySQL.  Molimo Vas da provjerite svoju php.ini datoteku ili opet kompajlišite PHP.';
 $string['name'] = 'Ime';

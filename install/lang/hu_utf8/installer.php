@@ -153,13 +153,13 @@ $string['memorylimit'] = 'Memóriakorlát';
 $string['memorylimiterror'] = 'A PHP memóriakorlátja túl alacsonyra van állítva... ez a későbbiekben gondot okozhat.';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg $a.</p>
 <p>Ez a Moodle számára a későbbiekben gondot okozhat, különösen akkor, ha sok modulja és/vagy sok felhasználója van bekapcsolva.</p>
-<p>Ha lehet, állítsa be a PHP magasabb korláttal, pl. 16M-tal. Többféleképpen próbálkozhat:</p>
+<p>Ha lehet, állítsa be a PHP magasabb korláttal, pl. 40M-tal. Többféleképpen próbálkozhat:</p>
 <ol>
 <li>Ha lehet, fordítsa újra a PHP-t <i>--enable-memory-limit</i>-tel. Így a Moodle maga állíthatja be a memóriakorlátot.</li>
 <li>Ha elérhető a php.ini állomány, módosítsa a <b>memory_limit</b> 
-beállítást pl. 16M-ra. Ha nem éri el az állományt, kérje meg a rendszeradminisztrátort a módosítás elvégzésére.</li>
+beállítást pl. 40M-ra. Ha nem éri el az állományt, kérje meg a rendszeradminisztrátort a módosítás elvégzésére.</li>
 <li>Egyes PHP-szervereken létrehozhat egy  .htaccess állományt a Moodle-könyvtárban az alábbi sorral:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Vannak szerverek, ahol ez <b>az összes</b> PHP-oldal működését megakadályozza  
 (az oldalak hibát jeleznek), ezért el kell távolítania a .htaccess állományt.</p></li>
 </ol>';

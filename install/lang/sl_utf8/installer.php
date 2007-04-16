@@ -137,17 +137,17 @@ $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem s
 <p>To lahko povzroči, da bo imel Moodle pozneje težave s pomnilnikom. Še posebej,
    če imate vključenih veliko modulov oziroma veliko uporabnikov.</p>
 
-<p>Priporočamo, da konfigurirate PHP z višjo omejitvijo, če je možno npr. 16M.  
+<p>Priporočamo, da konfigurirate PHP z višjo omejitvijo, če je možno npr. 40M.  
    To lahko poskusite storiti na več načinov:</p>
 <ol>
 <li>Če lahko, ponovno prevedite PHP z <i>--enable-memory-limit</i>.  
     To bo omogočilo, da bo Moodle sam nastavil omejitev pomnilnik zase.</li>
 <li>Če imate dostop do vaše datoteke php.ini, lahko spremenite vrednost <b>memory_limit</b> 
-    v tej datoteki na, recimo, 16M.  Če nimate dostopa, boste morda 
+    v tej datoteki na, recimo, 40M.  Če nimate dostopa, boste morda 
     lahko prosili vašega skrbnika, da to naredi za vas.</li>
 <li>Na nekaterih strežnikih PHP lahko ustvarite datoteko .htaccess v imeniku Moodle, 
     ki naj vsebuje to vrstico:
-    <p><blockquote>php_value memory_limit 16M</blockquote></p>
+    <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Vendar lahko to prepreči delovanje <b>vseh</b> PHP strani 
     (ob prikazu strani boste videli napake) in boste morali odstraniti datoteko .htaccess.</p></li>
 </ol>';

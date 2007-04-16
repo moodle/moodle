@@ -121,15 +121,15 @@ $string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga $a da.</p>
 
 <p>Aurrerago honek Moodleri arazoak sor diezaizkioke, bereziki modulo edo/eta erabiltzaile asko badituzu.</p>
 
-<p>PHP muga altuenarekin konfiguratzea aholkatzen dizugu, ad. 16M.
+<p>PHP muga altuenarekin konfiguratzea aholkatzen dizugu, ad. 40M.
 Hori egiteko modu asko daude:</p>
 <ol>
 <li>Ahal baduzu, PHP <i>--enable-memory-limit</i>-ekin berriz konpilatu.
 Horrek Moodlek berak memoria-muga ezartzea ahalbidetzen du.</li>
 <li>php.ini fitxategirako sarbidea baduzu,<b>memory_limit</b> ezarpena alda dezakezu
-16Mra, adibidez. Sarbiderik ez baduzu, zure administratzaileari egin dezala eska diezaiokezu.</li>
+40Mra, adibidez. Sarbiderik ez baduzu, zure administratzaileari egin dezala eska diezaiokezu.</li>
 <li>PHP zerbitzari batzuetan Moodleren direktorioan beheko lerro hau daukan .htaccess fitxategia sor dezakezu:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Hala ere, zerbitzari batzuetan horrek PHP orri <b>GUZTIEK</b> ez funtzionatzea ekar dezake
 (orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
 </ol>';

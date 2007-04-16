@@ -163,15 +163,15 @@ $string['memorylimithelp'] = '<p>El límite de memoria PHP en su servidor es act
 
 <p>Esto puede ocasionar que Moodle tenga problemas de memoria más adelante, especialmente si usted tiene activados muchos módulos y/o muchos usuarios.</p>
 
-<p>Recomendamos que configure PHP con el límite más alto posible, e.g. 16M.
+<p>Recomendamos que configure PHP con el límite más alto posible, e.g. 40M.
 Hay varias formas de hacer esto:</p>
 <ol>
 <li>Si puede hacerlo, recompile PHP con <i>--enable-memory-limit</i>.
 Esto hace que Moodle fije por sí mismo el límite de memoria.</li>
 <li>Si usted tiene acceso al archivo php.ini, puede cambiar el ajuste <b>memory_limit</b>
-a, digamos, 16M. Si no lo tiene, pida a su administrador que lo haga por usted.</li>
+a, digamos, 40M. Si no lo tiene, pida a su administrador que lo haga por usted.</li>
 <li>En algunos servidores PHP usted puede crear en el directorio Moodle un archivo .htaccess que contenga esta línea:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Sin embargo, en algunos servidores esto hace que <b>todas</b> las páginas PHP dejen de funcionar
 (podrá ver los errores cuando mire las páginas) de modo que tendrá que eliminar el archivo .htaccess.</p></li>
 </ol>';
