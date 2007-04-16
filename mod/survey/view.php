@@ -37,8 +37,11 @@
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurvey = get_string("modulename", "survey");
 
-    print_header_simple(format_string($survey->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name), "", "", true,
+    $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');;
+    $crumbs[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinistance');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple(format_string($survey->name), "", $navigation, "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this survey

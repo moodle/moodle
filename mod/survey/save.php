@@ -31,6 +31,16 @@
 
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
 
+    $strsurveys = get_string("modulenameplural", "survey");
+    $strsurveysaved = get_string("surveysaved", "survey");
+    $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple("$strsurveysaved", "", $navigation, "");
+
+
     if (survey_already_done($survey->id, $USER->id)) {
         notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);
         exit;
@@ -84,13 +94,6 @@
     }
 
 // Print the page and finish up.
-
-    $strsurveys = get_string("modulenameplural", "survey");
-    $strsurveysaved = get_string("surveysaved", "survey");
-
-    print_header_simple("$strsurveysaved", "",
-        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name)." -> $strsurveysaved", "");
-
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");
 

@@ -20,8 +20,11 @@
     $strstatus = get_string("status");
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
-
-    print_header_simple("$strsurveys", "", "$strsurveys", 
+    
+    $crumbs[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple("$strsurveys", "", $navigation, 
                  "", "", true, "", navmenu($course));
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {
