@@ -154,12 +154,12 @@ $string['memorylimiterror'] = 'De PHP-geheugenlimiet staat eerder laag ingesteld
 $string['memorylimithelp'] = '<p>De PHP-geheugenlimiet van je server is ingesteld op $a.</p>
 <p>Hierdoor kan Moodle geheugenproblemen krijgen, vooral als je veel modules installeert en/of veel gebruikers hebt.</p>
 
-<p>We raden je aan PHP met een hogere geheugenlimiet te configureren indien mogelijk, bijvoorbeeld 16Mb. Er zijn verschillende mogelijkheden om dat te doen. Je kunt proberen:
+<p>We raden je aan PHP met een hogere geheugenlimiet te configureren indien mogelijk, bijvoorbeeld 40Mb. Er zijn verschillende mogelijkheden om dat te doen. Je kunt proberen:
 <ol>
 <li>Indien je kunt PHP hercompileren met <i>--enable-memory-limit</i>.
 Hierdoor kan Moodle zelf zijn geheugenlimiet instellen.
-<li>Als je toegang hebt tot het php.ini-bestand, kun je de <b>memory_limit</b>-instelling veranderen naar bv 16Mb. Als je geen toegang hebt kun je je systeembeheerder vragen dit voor je te wijzigen.</li>
-<li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 16M</blockquote></p>
+<li>Als je toegang hebt tot het php.ini-bestand, kun je de <b>memory_limit</b>-instelling veranderen naar bv 40Mb. Als je geen toegang hebt kun je je systeembeheerder vragen dit voor je te wijzigen.</li>
+<li>Op sommige PHP-servers kun je een .htaccess-bestand maken in de Moodle-map met volgende lijn: <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Opgelet: op sommige servers zal dit verhinderen dat <b>alle</b> PHP-bestanden uitgevoerd worden. (je zult foutmeldingen zien wanneer je naar php-pagina\'s kijkt) Je zult dan het .htaccess-bestand moeten verwijderen.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Vereist veld ontbreekt';

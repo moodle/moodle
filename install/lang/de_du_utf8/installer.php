@@ -94,11 +94,11 @@ $string['iconvrecommended'] = 'Die Installation der ICONV Bibliothek wird zur Le
 $string['mbstringrecommended'] = 'Die Installation der Bibliothek MBSTRING wird zur Leistungsverbesserung dringend empfohlen. Dies ist besonders wichtig, wenn du Sprachen mit anderen als lateinischen Zeichensätzen verwendest.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für deinen Server ist zur Zeit auf $a eingestellt. </p>
 <p>Dies wird vermutlich zu Problemen führen, wenn du Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwendst. </p>
-<p>Wir empfehlen die Einstellung zu erhöhen. Empfohlen werden 16M oder mehr. Dies kannst du auf verschiedene Arten machen:</p>
+<p>Wir empfehlen die Einstellung zu erhöhen. Empfohlen werden 40M oder mehr. Dies kannst du auf verschiedene Arten machen:</p>
 <ol>
 <li>Wenn du PHP neu kompilieren kannst, nimm die Einstellung <i>--enable-memory-limit</i>. Dann kann Moodle die Einstellung selber vornehmen.
-<li>Wenn du Zugriff auf die Datei php.ini hast, kannst du die Einstellung <b>memory_limit</b> selber auf z.B. 16M anpassen. Wenn du selber keinen Zugriff hast, fragst du den Server-Admin, dies für dich zu tun.
-<li>Auf einigen PHP-Servern kannst du eine .htaccess-Datei im Moodle-Verzeichnis einrichten. Trage darin die folgende Zeile ein: <p><blockquote>php_value memory_limit 16M</blockquote></p>
+<li>Wenn du Zugriff auf die Datei php.ini hast, kannst du die Einstellung <b>memory_limit</b> selber auf z.B. 40M anpassen. Wenn du selber keinen Zugriff hast, fragst du den Server-Admin, dies für dich zu tun.
+<li>Auf einigen PHP-Servern kannst du eine .htaccess-Datei im Moodle-Verzeichnis einrichten. Trage darin die folgende Zeile ein: <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Achtung: auf einigen Servern hindert diese Einstellung <b>alle</b> PHP-Seiten und du erhältst Fehlermeldungen. Entferne dann den Eintrag in der .htaccess-Datei wieder.</p></li>
 </ol>';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die MSSQL-Erweiterung mit SQL*Server zu kommunizieren. Bitte prüfe die Datei php.ini oder kompiliere PHP neu.';

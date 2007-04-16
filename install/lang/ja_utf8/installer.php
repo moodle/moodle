@@ -156,13 +156,13 @@ $string['memorylimit'] = 'Memory Limit';
 $string['memorylimiterror'] = 'PHPのmemory limitが低すぎます ... 後で問題が発生する可能性があります。';
 $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $a に設定されています。</p>
 <p>この設定では、Moodleのメモリーに関わるトラブルが発生します。 特に多くのモジュールを使用したり、多くのユーザがMoodleを使用する場合に、トラブルが発生します。</p>
-<p>可能でしたら、PHPのメモリー制限上限を16M以上に設定されることをお勧めします。この設定を実現するために、いくつかの方法があります:
+<p>可能でしたら、PHPのメモリー制限上限を40M以上に設定されることをお勧めします。この設定を実現するために、いくつかの方法があります:
 <ol>
 <li>コンパイル可能な場合は、PHPを<i>--enable-memory-limit</i>オプションでコンパイルしてください。
 これにより、Moodle自身がメモリー制限を設定することが可能になります。
-<li>php.iniファイルにアクセスできる場合は、<b>memory_limit</b>設定を16Mのように変更することができます。php.iniファイルにアクセスできない場合は、管理者に変更を依頼してください。
+<li>php.iniファイルにアクセスできる場合は、<b>memory_limit</b>設定を40Mのように変更することができます。php.iniファイルにアクセスできない場合は、管理者に変更を依頼してください。
 <li>いくつかのPHPサーバでは、下記の行を含む.htaccessファイルをMoodleディレクトリに作成することができます:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合は、.htaccessファイルを削除してください。</p>
 </ol>';
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';

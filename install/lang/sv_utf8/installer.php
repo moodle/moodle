@@ -113,10 +113,10 @@ $string['memorylimit'] = 'Minnesbegränsning';
 $string['memorylimiterror'] = 'Minnesbegränsningen för PHP på Din server är f n inställt till ett ganska lågt värde... Detta kan leda till problem senare.';
 $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f n inställt till $a.</p>
 <p>Detta kan förorsaka att Moodle får minnesproblem senare, särskilt om Du har aktiverat många moduler och/eller har många användare.</p>
-<p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 16M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
+<p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 40M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
 <li>Om Du har möjlighet till det så kan Du kompilera om PHP med<i>--enable-memory-limit </i>Detta gör det möjligt för Moodle att ställa in minnesbegränsningen själv. </li>
-<li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
-<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
+<li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 40M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
+<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 40M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
 $string['moodledocslink'] = 'Moodle Docs för den här sidan';

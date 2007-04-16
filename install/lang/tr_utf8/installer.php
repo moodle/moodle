@@ -167,19 +167,19 @@ $string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek limiti şu anda $a o
 varsa bu durum daha sonra bazı bellek sorunlarına sebep olabilir.</p>
 
 <p>Mümkünse size PHP\'e daha yüksek limitli bir bellek ayarı yapmanızı,
-örneğin, 16M, öneriyoruz. İşte bunu yapabilmeniz için size bir kaç yol:</p>
+örneğin, 40M, öneriyoruz. İşte bunu yapabilmeniz için size bir kaç yol:</p>
 
 <ol>
 <li>Bunu yapmaya yetkiliyseniz, PHP\'yi <i>--enable-memory-limit</i> ile yeniden derleyin.
 Bu, Moodle\'nın kendi kendine bellek limitini ayarlasına izin verecek.</li>
 
-<li>php.ini dosyasına erişim hakkınız varsa, <b>memory_limit</b> ayarını 16M gibi
+<li>php.ini dosyasına erişim hakkınız varsa, <b>memory_limit</b> ayarını 40M gibi
 bir ayarla değiştirin. Erişim hakkınız yoksa, bunu sistem yöneticinizden sizin
 için yapmasını isteyin.</li>
 
 <li>Bazı PHP sunucularında Moodle klasörü içinde şu ayarı içeren bir
 .htaccess dosyası oluşturabilirsiniz:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Ancak, bazı sunucularda bu durum çalışan <b>bütün</b> PHP sayfalarını engelleyecektir.
 (sayfanız altına baktığınızda bazı hatalar göreceksiniz)
 Böyle bir durumda .htaccess dosyasını silmeniz gerekiyor.</p></li>

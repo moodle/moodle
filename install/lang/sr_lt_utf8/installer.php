@@ -120,11 +120,11 @@ $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je tre
 
 <p>Ovo može da prouzrokuje kasnije memorijske probleme Vašeg Moodle sistema, posebno ako imate mnogo dozvoljenih modula i/ili mnogo korisnika.</p>
 
-<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 16M. Postoji nekoliko načina da se to uradi. Pokušajte:</p><ol>
+<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 40M. Postoji nekoliko načina da se to uradi. Pokušajte:</p><ol>
 <li>Ako možete, rekompajlirajte PHP sa <i>--enable-memory-limit</i>. Ovo će dozvoliti Moodle sistemu da postavi memorijsko ograničenje sam za sebe.</li>
-<li>Ako imate pristup Vašoj php.ini datoteci, možete promeniti <b>memory_limit</b> podešavanje u recimo 16M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi za Vas.</li>
+<li>Ako imate pristup Vašoj php.ini datoteci, možete promeniti <b>memory_limit</b> podešavanje u recimo 40M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi za Vas.</li>
 <li>Na nekim PHP serverima možete kreirati .htaccess datoteku u Moodle direktorijumu koja sadrži red:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Kakogod, na nekim serverima će to sprečiti prikazivanje <b>svih</b> PHP stranica (biće Vam prikazana poruka o grešci umesto svake stranice), pa ćete sa njih morati ukloniti .htaccess datoteku.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Nedostaje neko obavezno polje';

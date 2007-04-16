@@ -125,14 +125,14 @@ $string['memorylimithelp'] = '<p>Limit paměti pro PHP skripty je na vašem serv
 
 <p>To může později způsobovat Moodlu problémy, zvláště při větším množství modulů a/nebo uživatelů.</p>
 
-<p>Je-li to možné, doporučujeme vám nastavit v PHP vyšší limit, např. 16M. Můžete to provést několika způsoby:
+<p>Je-li to možné, doporučujeme vám nastavit v PHP vyšší limit, např. 40M. Můžete to provést několika způsoby:
 <ol>
 <li>Můžete-li, překompilujte PHP s volbou <i>--enable-memory-limit</i>.
 Moodle si tak bude sám moci nastavit potřebný limit.</li>
 <li>Máte-li přístup k souboru php.ini, změňte nastavení <b>memory_limit</b>
-na hodnotu blízkou 16M. Nemáte-li taková práva, požádejte správce vašeho webového serveru, aby toto nastavení provedl on.</li>
+na hodnotu blízkou 40M. Nemáte-li taková práva, požádejte správce vašeho webového serveru, aby toto nastavení provedl on.</li>
 <li>Na některých serverech můžete v kořenovém adresáři Moodlu vytvořit soubor .htaccess s následujícím řádkem:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Bohužel, v některých případech tím vyřadíte z provozu <b>všechny</b> PHP stránky (při jejich prohlížení uvidíte chybová hlášení), takže budete muset soubor .htaccess zase odstranit.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Chybí některé z povinných polí';

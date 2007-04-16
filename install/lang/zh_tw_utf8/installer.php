@@ -117,14 +117,14 @@ $string['memorylimithelp'] = '<p>您伺服器的記憶體限制目前設為$a。
 
 <p>這可能會影響往後moodle運作時記憶體的使用，尤其是您有許多模組和(或)使用者的時候</p>
 
-<p>我們建議您在php中的記憶體儘量設定較高的記憶體使用，如16MB，有幾種方式可以進行:</p>
+<p>我們建議您在php中的記憶體儘量設定較高的記憶體使用，如40MB，有幾種方式可以進行:</p>
 <ol>
 <li>如果您可以重新編譯PHP請使用 <i>--enable-memory-limit</i>。
 這可以讓MOODLE 自行設定記憶體上限。</li>
 <li>如果您可以存取php.ini，您可以變更 <b>memory_limit</b>
-將它設為16M或更高。如果您無法存取，可洽您的系統管理員，幫您調整設定。</li>
+將它設為40M或更高。如果您無法存取，可洽您的系統管理員，幫您調整設定。</li>
 <li>在一些PHP 伺服器中您可以在MOODL目錄建立一個 .htaccess 檔案，檔案內容包含:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>但是，在一些伺服器上，這樣的設定會使<b>所有</b> PHP 頁面無法正常動作(瀏覽時會發生錯誤)，此時您必須移除 .htaccess 檔案。</p></li>
 </ol>';
 $string['missingrequiredfield'] = '缺少部份必填欄位';
