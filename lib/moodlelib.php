@@ -3838,6 +3838,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
  * @todo Finish documenting this function
  */
 function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
+    global $CFG;
 
     if (!$maxsize = get_max_upload_file_size($sitebytes, $coursebytes, $modulebytes)) {
         return array();
@@ -3847,6 +3848,11 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
 
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
+
+    // Allow maxbytes to be selected if it falls outside the above boundaries
+    if( isset($CFG->maxbytes) && !in_array($CFG->maxbytes, $sizelist) ){
+            $sizelist[] = $CFG->maxbytes;
+    }
 
     foreach ($sizelist as $sizebytes) {
        if ($sizebytes < $maxsize) {

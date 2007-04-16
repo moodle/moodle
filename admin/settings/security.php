@@ -8,7 +8,12 @@ $temp->add(new admin_setting_configcheckbox('protectusernames', get_string('prot
 $temp->add(new admin_setting_configcheckbox('forcelogin', get_string('forcelogin', 'admin'), get_string('configforcelogin', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', get_string('forceloginforprofiles', 'admin'), get_string('configforceloginforprofiles', 'admin'), 1));
 $temp->add(new admin_setting_configcheckbox('opentogoogle', get_string('opentogoogle', 'admin'), get_string('configopentogoogle', 'admin'), 0));
-$temp->add(new admin_setting_configtext('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), 0, PARAM_INT));
+
+$max_upload_choices = get_max_upload_sizes();
+// maxbytes set to 0 will allow the maxium server lmit for uploads
+$max_upload_choices[0] = get_string('serverlimit', 'admin');
+$temp->add(new admin_setting_configselect('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
+
 $temp->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin'), 1));
 $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin'), 0));
