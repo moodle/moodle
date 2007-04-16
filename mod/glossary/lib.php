@@ -1476,7 +1476,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<div class="boxaligncenter">';
     echo '<table class="glossarycomment" cellspacing="0">';
     echo '<tr valign="top">';
-    echo '<tr><td class="left picture">';
+    echo '<td class="left picture">';
     print_user_picture($user->id, $course->id, $user->picture);
     echo '</td>';
     echo '<td class="entryheader">';

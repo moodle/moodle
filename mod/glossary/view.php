@@ -407,6 +407,7 @@
                 $ratings->allow = true;
             }
             $formsent = 1;
+
             echo "<form method=\"post\" action=\"rate.php\">";
             echo "<div>";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
@@ -496,15 +497,16 @@
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }
-        echo "</div>";
-        echo "</div>";
+        echo "</div>";    
+    }
+    if ($entriesshown ) {
         echo "</form>";
     } else if (!empty($formsent)) {
         // close the form properly if not  used
         echo "</div>";
         echo "</form>";  
     }
-
+    
     if ( $paging ) {
         echo '<hr />';
         echo '<div class="paging">';
