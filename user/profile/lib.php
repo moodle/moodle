@@ -53,7 +53,8 @@ class profile_field_base {
      * Display the data for this field
      */
     function display_data() {
-        return s(format_string($this->data));
+        $options->para = false;
+        return format_text($this->data, FORMAT_MOODLE, $options);
     }
     
     /**
