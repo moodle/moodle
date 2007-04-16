@@ -28,9 +28,12 @@
     $strexercise  = get_string("modulename", "exercise");
     $strupload      = get_string("upload");
 
-    print_header_simple(format_string($exercise->name)." : $strupload", "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strupload",
+    $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strupload, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple(format_string($exercise->name)." : $strupload", "", $navigation,
                   "", "", true);
 
     // check that this is not a "rapid" second submission, caused by using the back button

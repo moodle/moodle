@@ -23,8 +23,11 @@
     $strgrade = get_string("grade");
     $strdeadline = get_string("deadline", "exercise");
     $strsubmitted = get_string("submitted", "assignment");
-
-    print_header_simple("$strexercises", "", "$strexercises", "", "", true, "", navmenu($course));
+    
+    $crumbs[] = array('name' => $strexercises, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple("$strexercises", "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $exercises = get_all_instances_in_course("exercise", $course)) {
         notice("There are no exercises", "../../course/view.php?id=$course->id");

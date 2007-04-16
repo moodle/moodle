@@ -50,9 +50,12 @@
     $strsubmissions = get_string("submissions", "exercise");
 
     // ... print the header and...
-    print_header_simple(format_string($exercise->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strsubmissions",
+    $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strsubmissions, 'link' => '', 'type' => 'title');
+    
+    $navigation = build_navigation($crumbs, $course);
+    print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true);
 
 

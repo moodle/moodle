@@ -62,9 +62,13 @@
     $strassessments = get_string("assessments", "exercise");
 
     // ... print the header and...
-    print_header_simple(format_string($exercise->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strassessments",
+    $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strassessments, 'link' => '', 'type' => 'title');
+    
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true);
 
     //...get the action
