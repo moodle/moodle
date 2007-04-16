@@ -42,6 +42,16 @@ class user_edit_form extends moodleform {
         $mform =& $this->_form;
         $userid = $mform->getElementValue('id');
 
+        // if language does not exist, use site default lang
+        if ($langsel = $mform->getElementValue('lang')) {
+            $lang = reset($langsel);
+            if (!file_exists($CFG->dataroot.'/lang/'.$lang) and 
+              !file_exists($CFG->dirroot .'/lang/'.$lang)) {
+                $lang_el =& $mform->getElement('lang');
+                $lang_el->setValue($CFG->lang);
+            }
+        }
+
         if ($user = get_record('user', 'id', $userid)) {
 
             // print picture
