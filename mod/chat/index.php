@@ -22,7 +22,10 @@
 
 /// Print the header
 
-    print_header_simple($strchats, '', $strchats, '', '', true, '', navmenu($course));
+    $crumbs[] = array('name' => $strchats, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple($strchats, '', $navigation, '', '', true, '', navmenu($course));
 
 /// Get all the appropriate data
 

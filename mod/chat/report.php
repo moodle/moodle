@@ -38,11 +38,14 @@
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
-
-        print_header_simple(format_string($chat->name).": $strchatreport", '',
-                     "<a href=\"index.php?id=$course->id\">$strchats</a> ->
-                     <a href=\"view.php?id=$cm->id\">".format_string($chat->name,true)."</a> ->
-                     <a href=\"report.php?id=$cm->id\">$strchatreport</a>",
+        
+        $crumbs[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strchatreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
+        
+        $navigation = build_navigation($crumbs, $course);
+        
+        print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                       '', '', true, '', navmenu($course, $cm));
 
     /// Check to see if groups are being used here
@@ -92,10 +95,13 @@
 
 
 /// Print the Sessions display
-
-    print_header_simple(format_string($chat->name).": $strchatreport", '',
-                 "<a href=\"index.php?id=$course->id\">$strchats</a> ->
-                 <a href=\"view.php?id=$cm->id\">".format_string($chat->name,true)."</a> -> $strchatreport",
+    $crumbs[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strchatreport, 'link' => '', 'type' => 'title');
+    
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                   '', '', true, '', navmenu($course, $cm));
 
     print_heading(format_string($chat->name).': '.get_string('sessions', 'chat'));
