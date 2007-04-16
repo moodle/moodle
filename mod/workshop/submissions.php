@@ -51,9 +51,12 @@
     $strsubmissions = get_string("submissions", "workshop");
 
     // ... print the header and...
-    print_header_simple(format_string($workshop->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strsubmissions",
+    $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strsubmissions, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true);
 
     //...get the action or set up an suitable default

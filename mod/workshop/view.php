@@ -69,9 +69,14 @@
     }
 
     // ...display header...
-    print_header_simple(format_string($workshop->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> $straction",
+    $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    if ($straction) {
+        $crumbs[] = array('name' => $straction, 'link' => '', 'type' => 'title');
+    }
+    $navigation = build_navigation($crumbs, $course);    
+    
+    print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
 

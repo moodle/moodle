@@ -58,11 +58,13 @@
     /// top frame with the navigation bar and the assessment form
 
     if ($frameset == "top") {
-
+        $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strassess, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs, $course);
+        
         // removed <base target="_parent" /> as it does not validate
-        print_header_simple(format_string($workshop->name), "",
-                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                      <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassess",
+        print_header_simple(format_string($workshop->name), "", $navigation,
                       "", '', true);
 
         // show assessment but don't allow changes

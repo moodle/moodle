@@ -61,9 +61,12 @@
     if ($frameset == "top") {
         // removed <base target="_parent" />
         // because it does not validate MDL-7861
-        print_header_simple(format_string($workshop->name), "",
-                     "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                      <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassess",
+        $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strassess, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs, $course);
+        
+        print_header_simple(format_string($workshop->name), "",$navigation,
                       "", '', true);
 
         // there can be an assessment record (for teacher submissions), if there isn't...

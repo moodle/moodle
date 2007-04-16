@@ -22,8 +22,11 @@
     $strinfo = get_string("grade")."/".$strinfo = get_string("phase", "workshop");
     $strdeadline = get_string("deadline", "workshop");
     $strsubmitted = get_string("submitted", "assignment");
-
-    print_header_simple("$strworkshops", "", "$strworkshops", "", "", true, "", navmenu($course));
+    
+    $crumbs[] = array('name' => $strworkshops, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple("$strworkshops", "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $workshops = get_all_instances_in_course("workshop", $course)) {
         notice("There are no workshops", "../../course/view.php?id=$course->id");

@@ -65,19 +65,18 @@
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $navigation = "";
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    }
-
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");
     $strassessments = get_string("assessments", "workshop");
 
     // ... print the header and...
-    print_header_simple(format_string($workshop->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassessments",
+    
+    $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strassessments, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true);
 
     /*************** add comment to assessment (by author, assessor or teacher) ***************************/
