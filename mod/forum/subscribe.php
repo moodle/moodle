@@ -50,18 +50,15 @@
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http','https', $wwwroot);
         }
-
+        
         $strforums = get_string('modulenameplural', 'forum');
-        if ($course->id != SITEID) {
-            print_header($course->shortname, $course->fullname,
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
-        } else {
-            print_header($course->shortname, $course->fullname,
-                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>", '', '', true, "", navmenu($course, $cm));
-        }
+        $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+    
+        $navigation = build_navigation($crumbs, $course, $cm);
+        
+        print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
+        
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);

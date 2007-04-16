@@ -53,21 +53,19 @@
         }
 
         $strforums = get_string('modulenameplural', 'forum');
+
         if (!get_referer()) {   // No referer - probably coming in via email  See MDL-9052
             require_login();
         }
-        if ($course->id != SITEID) {
-            print_header($course->shortname, $course->fullname,
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name, true)."</a>",
-                  '', '', true, "", navmenu($course, $cm));
-        } else {
-            print_header($course->shortname, $course->fullname,
-                 "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                  <a href=\"view.php?f=$forum->id\">".format_string($forum->name)."</a>",
-                  '', '', true, "", navmenu($course, $cm));
-        }
+        
+        $crumbs[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
+        
+        $navigation = build_navigation($crumbs, $course);
+        
+        
+        print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
+
         notice_yesno(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, get_referer(false));
         print_footer($course);
@@ -404,11 +402,15 @@
 
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
-            print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "",
-                         "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> ->
-                          <a href=\"view.php?f=$forum->id\">".format_string($forum->name, true)."</a> ->
-                          <a href=\"discuss.php?d=$discussion->id\">".format_string($post->subject, true)."</a> -> ".
-                          get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
+            
+            $crumbs[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+            $crumbs[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+            $crumbs[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+            $crumbs[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
+            
+            $navigation = build_navigation($crumbs, $course);
+            
+            print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
 
             print_heading(get_string('pruneheading', 'forum'));
             echo '<center>';
@@ -623,24 +625,25 @@
                                                        get_string("addanewdiscussion", "forum");
     }
 
+    $strforums = get_string("modulenameplural", "forum");
+
+
+    $crumbs[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
 
 
     if ($post->parent) {
-        $navtail = ' -> <a href="discuss.php?d='.$discussion->id.'">'.format_string($toppost->subject, true).'</a> -> '.
-                    get_string('editing', 'forum');
-    } else {
-        $navtail = ' -> '.format_string($toppost->subject);
+        $crumbs[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'action');            
+    } else {  	
+        $crumbs[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'action');
     }
 
     if (empty($post->edit)) {
         $post->edit = '';
     }
 
-    $strforums = get_string("modulenameplural", "forum");
-
-
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">".format_string($forum->name, true).'</a> ';
-
+    
     if (empty($discussion->name)) {
         if (empty($discussion)) {
             $discussion = new object;
@@ -660,19 +663,14 @@
 
     $forcefocus = empty($reply) ? NULL : 'message';
 
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: $strdiscussionname ".
-                      format_string($toppost->subject), $course->fullname,
-                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      $navmiddle $navtail", $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
 
-    } else {
-        print_header("$course->shortname: $strdiscussionname ".
-                      format_string($toppost->subject), $course->fullname,
-                     "$navmiddle $navtail", $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
+    $navigation = build_navigation($crumbs, $course);
+     
+    print_header("$course->shortname: $strdiscussionname ".
+                  format_string($toppost->subject), $course->fullname,
+                  $navigation, $mform_post->focus($forcefocus), "", true, "", navmenu($course, $cm));
 
-    }
-
+   
 // checkup
     if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post)) {
         error("You cannot reply to this post");

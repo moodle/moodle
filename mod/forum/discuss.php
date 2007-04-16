@@ -97,6 +97,11 @@
 
     unset($SESSION->fromdiscussion);
 
+    $crumbs[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($forum->name,true), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => format_string($discussion->name,true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+    
+
     if ($mode) {
         set_user_preference('forum_displaymode', $mode);
     }
@@ -107,10 +112,8 @@
         if (abs($displaymode) == 1) {  // If flat AND parent, then force nested display this time
             $displaymode = 3;
         }
-        $navtail = '';
     } else {
         $parent = $discussion->firstpost;
-        $navtail = '-> '.format_string($discussion->name);
     }
     
     if (!forum_user_can_view_post($parent, $course, $cm, $forum, $discussion)) {
@@ -131,31 +134,12 @@
     }
 
 
-    if (empty($navtail)) {
-        $navtail = "-> <a href=\"discuss.php?d=$discussion->id\">".
-                    format_string($discussion->name,true)."</a> -> ".
-                    format_string($post->subject);
-    }
-    if ($forum->type == 'single') {
-        $navforum = '';
-    } else {
-        $navforum = "<a href=\"../forum/view.php?f=$forum->id\">".
-                     format_string($forum->name,true)."</a> ";
-    }
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".
-                  get_string("forums", "forum").'</a> -> '.$navforum;
-
     $searchform = forum_search_form($course);
-
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
-                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      $navmiddle $navtail", "", "", true, $searchform, navmenu($course, $cm));
-    } else {
-        print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
-                     "$navmiddle $navtail", "", "", true, $searchform, navmenu($course, $cm));
-    }
-
+    
+    $navigation = build_navigation($crumbs, $course); 
+    print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
+                     $navigation, "", "", true, $searchform, navmenu($course, $cm));
+    
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion

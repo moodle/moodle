@@ -36,17 +36,20 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-       <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a> -> $strsubscribers";
+    $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strsubscribers, 'link' => '', 'type' => 'title');
+
+    $navigation = build_navigation($crumbs, $course);
 
     if (has_capability('mod/forum:managesubscriptions', $context)) {
-        print_header_simple("$strsubscribers", "", "$navigation",
+        print_header_simple("$strsubscribers", "", $navigation,
             "", "", true, forum_update_subscriptions_button($course->id, $id));
         if ($edit != -1) {
             $USER->subscriptionsediting = $edit;
         }
     } else {
-        print_header_simple("$strsubscribers", "", "$navigation", "", "", true, '');
+        print_header_simple("$strsubscribers", "", $navigation, "", "", true, '');
         unset($USER->subscriptionsediting);
     }
 

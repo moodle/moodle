@@ -39,17 +39,16 @@
     $strmode         = get_string($mode, 'forum');
     $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: $fullname: $strmode", $course->fullname,
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> ->
-                  <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
-                  $strforumposts -> $strmode");
-    } else {
-        print_header("$course->shortname: $fullname: $strmode", $course->fullname,
-                 "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
-                  $strforumposts -> $strmode");
-    }
+    // TODO: add new cookie tail here!
+    $crumbs[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'core');
+    $crumbs[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'title');
+    $crumbs[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
+    $crumbs[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
+    
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header("$course->shortname: $fullname: $strmode", $course->fullname,$navigation);
+    
 
     $currenttab = $mode;
     $showroles = 1;

@@ -97,9 +97,14 @@
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
+    $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    
     if (!$search || $showform) {
-        print_header_simple("$strsearch", "",
-                 "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", 'search.words',
+    
+        $crumns[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs, $course);
+        
+        print_header_simple("$strsearch", "", $navigation, 'search.words',
                   "", "", "&nbsp;", navmenu($course));
 
         forum_print_big_search_form($course);
@@ -114,13 +119,13 @@
 
     $searchform = forum_search_form($course, $search);
 
+    $crumbs[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
+    $navigation = build_navigation($crumbs, $course);
+
 
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
-
-        print_header_simple("$strsearchresults", "",
-                "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-                <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search, true), 'search.words',
-                "", "", "&nbsp;", navmenu($course));
+        print_header_simple("$strsearchresults", "", $navigation, 'search.words', "", "", "&nbsp;", navmenu($course));
         print_heading(get_string("nopostscontaining", "forum", $search));
 
         if (!$individualparams) {
@@ -132,11 +137,9 @@
         print_footer($course);
         exit;
     }
-
-    print_header_simple("$strsearchresults", "",
-            "<a href=\"index.php?id=$course->id\">$strforums</a> ->
-            <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search, true), '',
-            "", "",  $searchform, navmenu($course));
+    
+    
+    print_header_simple("$strsearchresults", "", $navigation, '', "", "",  $searchform, navmenu($course));
 
     echo '<div class="reportlink">';
     echo '<a href="search.php?id='.$course->id.

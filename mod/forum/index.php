@@ -451,15 +451,11 @@
 
 
     /// Output the page
-
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: $strforums", $course->fullname,
-                    "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
+    $crumbs[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
+    
+    print_header("$course->shortname: $strforums", $course->fullname,
+                    build_navigation($crumbs, $course),
                     "", "", true, $searchform, navmenu($course));
-    } else {
-        print_header("$course->shortname: $strforums", $course->fullname, "$strforums",
-                    "", "", true, $searchform, navmenu($course));
-    }
 
     if (!isguest()) {
         print_box_start('subscription');

@@ -50,7 +50,6 @@
             $cm->course = $course->id;
             $buttontext = "";
         }
-
     } else {
         error('Must specify a course module or a forum ID');
     }
@@ -65,9 +64,13 @@
 
 
 /// Print header.
-    $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
+    $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+    
+    $navigation = build_navigation($crumbs, $course, $cm);
+    
     print_header_simple(format_string($forum->name), "",
-                 "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
+                 $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
 
 /// Some capability checks.
