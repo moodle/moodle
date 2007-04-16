@@ -17,29 +17,29 @@
     
 <div id="page">
 
-<?php if ($home) {  // This is what gets printed on the home page only  
+<?php //Accessibility: 'headermain' is now H1, see theme/standard/styles_layout.css: .headermain
+      if ($home) {  // This is what gets printed on the home page only
 ?>
-    <div id="header-home">
-        <div class="headermain"><?php echo $heading ?></div>
+    <div id="header-home" class="clearfix">
+        <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
-    <div id="header">
-        <div class="headermain"><?php echo $heading ?></div>
+    <div id="header" class="clearfix">
+        <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
-<?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <table class="navbar"><tr><td>
+<?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
+      if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
+    <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    </td></tr></table>
+    </div>   
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  
 ?>
         <hr size="1" noshade="noshade" />
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
     <!-- END OF HEADER -->
     <div id="content">
