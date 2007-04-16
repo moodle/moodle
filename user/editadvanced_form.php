@@ -55,6 +55,16 @@ class user_editadvanced_form extends moodleform {
         $userid = $mform->getElementValue('id');
         $user = get_record('user', 'id', $userid);
 
+        // if language does not exist, use site default lang
+        if ($langsel = $mform->getElementValue('lang')) {
+            $lang = reset($langsel);
+            if (!file_exists($CFG->dataroot.'/lang/'.$lang) and 
+              !file_exists($CFG->dirroot .'/lang/'.$lang)) {
+                $lang_el =& $mform->getElement('lang');
+                $lang_el->setValue($CFG->lang);
+            }
+        }
+
         // user can not change own auth method
         if ($userid == $USER->id) {
             $mform->hardFreeze('auth');
