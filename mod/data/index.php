@@ -41,8 +41,11 @@
     $strtopic = get_string('topic');
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
+    
+    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header_simple($strdata, '', $strdata, '', '', true, "", navmenu($course));
+    print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
 
     if (! $datas = get_all_instances_in_course("data", $course)) {
         notice("There are no databases", "$CFG->wwwroot/course/view.php?id=$course->id");

@@ -68,8 +68,12 @@
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
         $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
-        print_header_simple(format_string($data->name), "",
-                 "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
+        
+        $crumbs[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+        $navigation = build_navigation($crumbs, $course);
+        
+        print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -109,7 +113,11 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
 
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
+    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');
 

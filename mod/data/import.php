@@ -75,7 +75,12 @@
 
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
-    print_header_simple($data->name, "", "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name", "", "", true, "", navmenu($course));
+    
+    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple($data->name, "", $navigation, "", "", true, "", navmenu($course));
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab

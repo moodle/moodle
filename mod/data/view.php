@@ -89,9 +89,13 @@
 /// If it's hidden then it's don't show anything.  :)
     if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
-        $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
+        
+        $crumbs[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+        $navigation = build_navigation($crumbs, $course);
+        
         print_header_simple(format_string($data->name), "",
-                 "$navigation ".format_string($data->name), "", "", true, '', navmenu($course, $cm));
+                 $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
 

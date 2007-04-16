@@ -1571,8 +1571,12 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     global $CFG, $displaynoticegood, $displaynoticebad;
 
     $strdata = get_string('modulenameplural','data');
-
-    print_header_simple($data->name, '', "<a href='index.php?id=$course->id'>$strdata</a> -> $data->name",
+    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => $data->name, 'link' => '', 'type' => 'activityinstance');
+    
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple($data->name, '', $navigation,
             '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
             navmenu($course, $cm));
 
