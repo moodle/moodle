@@ -75,9 +75,12 @@
         $entry->format = $defaultformat;
     }
 
-    print_header_simple(format_string($journal->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($journal->name,true)."</a> -> $stredit", "",
+    $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $stredit, 'link' => '', 'type' => 'action');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple(format_string($journal->name), "", $navigation, "",
                   "", true, "", navmenu($course, $cm));
 
     echo "<center>\n";

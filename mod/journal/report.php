@@ -38,9 +38,12 @@
     $strentries = get_string("entries", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    print_header_simple("$strjournals", "",
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($journal->name,true)."</a> -> $strentries", "", "", true);
+    $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strentries, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple("$strjournals", "", $navigation, "", "", true);
 
 
 /// Check to see if groups are being used in this journal
