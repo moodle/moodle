@@ -35,8 +35,13 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    print_header_simple("$strimportquestions", " $strimportquestions",
-                 "<a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>-> $strimportquestions");
+    $crumbs[] = array('name' => $strlesson, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($lesson->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $crumbs[] = array('name' => $strimportquestions, 'link' => '', 'type' => 'title');
+            
+    $navigation = build_navigation($crumbs, $course);
+
+    print_header_simple("$strimportquestions", " $strimportquestions", $navigation);
 
     if ($form = data_submitted()) {   /// Filename
 

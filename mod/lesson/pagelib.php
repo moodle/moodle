@@ -76,29 +76,13 @@ class page_lesson extends page_generic_activity {
             $title = "{$this->courserecord->shortname}: $activityname";
         }
 
-    /// Build the breadcrumb
-        $breadcrumbs = array();
-        if ($this->courserecord->id != SITEID) {
-           $breadcrumbs[$this->courserecord->shortname] = "$CFG->wwwroot/course/view.php?id={$this->courserecord->id}";
+        $crumbs[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
+    
+        if (!empty($morebreadcrumbs)) {
+            $breadcrumbs = array_merge($crumbs, $morebreadcrumbs);
         }
-        $breadcrumbs[get_string('modulenameplural', 'lesson')] = "$CFG->wwwroot/mod/lesson/index.php?id={$this->courserecord->id}";
-
-        if (empty($morebreadcrumbs)) {
-            $breadcrumbs[$activityname] = '';
-        } else {
-            $breadcrumbs[$activityname] = "$CFG->wwwroot/mod/lesson/view.php?id={$this->modulerecord->id}&amp;pageid=$this->lessonpageid";
-            $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
-        }
-        // Convert to breadcrumb string
-        $urls = array();
-        foreach($breadcrumbs as $text => $href) {
-            if (empty($href)) {
-                $urls[] = $text;
-            } else {
-                $urls[] = '<a href="'.$href.'">'.$text.'</a>';
-            }
-        }
-        $breadcrumb = implode(' -> ', $urls);
+ 
 
     /// Build the buttons
         if (has_capability('mod/lesson:edit', $context)) {
@@ -148,7 +132,9 @@ class page_lesson extends page_generic_activity {
             $meta = '';
         // }
 
-        print_header($title, $this->courserecord->fullname, $breadcrumb, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
+        $navigation = build_navigation($crumbs, $this->courserecord);
+
+        print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
 
         if (has_capability('mod/lesson:manage', $context)) {
             print_heading_with_help($activityname, 'overview', 'lesson');

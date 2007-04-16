@@ -30,13 +30,11 @@
 
 /// Print the header
 
-    if ($course->id != SITEID) {
-        $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } else {
-        $navigation = '';
-    }
+    $crumbs[] = array('name' => $strlessons, 'link' => '', 'type' => 'activity');
+    
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header("$course->shortname: $strlessons", $course->fullname, "$navigation $strlessons", "", "", true, "", navmenu($course));
+    print_header("$course->shortname: $strlessons", $course->fullname, $navigation, "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 
