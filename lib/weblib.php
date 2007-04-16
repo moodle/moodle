@@ -2127,12 +2127,15 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 /// Add the required JavaScript Libraries
     $meta .= "\n".require_js();
 
-
-    if ($navigation == 'home') {
-        $home = true;
-        $navigation = '';
-    } else {
+    if(is_newnav($navigation)){
         $home = false;
+    } else {
+        if ($navigation == 'home') {
+            $home = true;
+            $navigation = '';
+        } else {
+            $home = false;
+        }
     }
 
 /// This is another ugly hack to make navigation elements available to print_footer later
@@ -2362,7 +2365,12 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
         $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
-    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $shortname.' '. $navigation, $focus, $meta,
+    // If old style nav prepend course short name otherwise leave $navigation object alone 
+    if (!is_newnav($navigation)) {
+        $navigation = $shortname.' '.$navigation;
+    }
+
+    $output = print_header($COURSE->shortname .': '. $title, $COURSE->fullname .' '. $heading, $navigation, $focus, $meta,
                            $cache, $button, $menu, $usexml, $bodytags, true);
 
     if ($return) {
@@ -2855,6 +2863,17 @@ function print_navigation ($navigation, $separator=0, $return=false) {
     }
 
     if ($navigation) {
+
+        if (is_newnav($navigation)) { 
+            if ($return) {
+                return($navigation['breadcrumbs']);
+            } else {
+                echo $navigation['breadcrumbs'];
+                return;
+            }
+        } else {
+            debugging('Navigation needs to be updated to use build_navigation()', DEBUG_DEVELOPER);
+        }
         
         if (!is_array($navigation)) {
             $ar = explode('->', $navigation);

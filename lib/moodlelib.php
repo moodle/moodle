@@ -6925,5 +6925,78 @@ function setup_lang_from_browser() {
     return;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * This function will build the navigation string to be used by print_header
+ * and others
+ * @uses $CFG 
+ * @uses $THEME
+ * @param $extrabreadcrumbs - array of associative arrays, keys: name, link, type
+ * @param $course - possibily the site course.
+ * @return $navigation as an object so it can be differentiated from old style 
+ * navigation strings.
+ */
+function build_navigation($extrabreadcrumbs, $course = false) {
+    global $CFG, $THEME;
+    
+    $navigation = '';
+    check_theme_arrows();
+
+    //Site name
+    if ($site = get_site()) {
+        $breadcrumbs[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
+    }
+
+    
+    if ($course) {
+        if ($course->id != SITEID) {
+            //Course
+            $breadcrumbs[] = array('name' => format_string($course->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$course->id",'type' => 'course');
+        }       
+    }
+
+    //Merge in extra bread crumbs
+    $breadcrumbs = array_merge($breadcrumbs, $extrabreadcrumbs);
+           
+    //Construct an unordered list from $breadcrumbs
+    $navigation = "<ul>\n";
+    $countcrumb = count($breadcrumbs);
+   
+    for($i=0;$i<$countcrumb;$i++) {
+   
+        // Check the link type to see if this link should appear in the trail
+        if ($breadcrumbs[$i]['type'] == 'activity' && $i+1 < $countcrumb && ($CFG->hideactivitytypecrumb == 2  || ($CFG->hideactivitytypecrumb == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
+            continue;
+        }
+        $navigation .= '<li class="first">';
+        if ($i > 0) {
+            $navigation .= '<span class="sep"> '.$THEME->rarrow.' </span>';
+        }
+        if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
+            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$breadcrumbs[$i]['link']}\">";
+        }
+        $navigation .= "{$breadcrumbs[$i]['name']}";
+        if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
+            $navigation .= "</a>";
+        }
+               
+        $navigation .= "</li>";
+    }
+    
+    $navigation .= "</ul>";
+
+    return(array('newnav' => true, 'breadcrumbs' => $navigation)); 
+
+}
+
+function is_newnav($navigation) {
+    if (is_array($navigation) && $navigation['newnav']) {
+        return(true);
+    } else {
+        return(false);
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
