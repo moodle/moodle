@@ -3,6 +3,7 @@
 //  Display profile for a particular user
     
     require_once("../config.php");
+    require_once($CFG->dirroot.'/user/profile/lib.php');
     $id      = optional_param('id',     0,      PARAM_INT);   // user id
     $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
     $enable  = optional_param('enable', '');                  // enable email
@@ -293,6 +294,10 @@
     if ($user->msn && !isset($hiddenfields['msnid'])) {
         print_row(get_string('msnid').':', s($user->msn));
     }
+
+    /// Print the Custom User Fields
+    profile_display_fields($user->id);
+
 
     if ($mycourses = get_my_courses($user->id,'visible DESC,sortorder ASC', '*', false, 21)) {
         $shown=0;

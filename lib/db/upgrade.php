@@ -712,6 +712,36 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    /* Changes to the custom profile menu type - store values rather than indices.
+       We could do all this with one tricky SQL statement but it's a one-off so no
+       harm in using PHP loops */
+    if ($result && $oldversion < 2007041600) {
+    
+    /// Get the menu fields
+        if ($fields = get_records('user_info_field', 'datatype', 'menu')) {
+            foreach ($fields as $field) {
+
+            /// Get user data for the menu field
+                if ($data = get_records('user_info_data', 'fieldid', $field->id)) {
+
+                /// Get the menu options
+                    $options = explode("\n", $this->field->param1);
+                    foreach ($data as $d) {
+                        $key = array_search($d->data, $options);
+                        
+                    /// If the data is an integer and is not one of the options,
+                    /// set the respective option value
+                        if (is_int($d->data) and (($key === NULL) or ($key === false)) and isset($options[$d->data])) {
+                                $d->data = $options[$d->data];
+                                $result = $result && update_record('user_info_data', $d);
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+
     return $result;
 
 }
