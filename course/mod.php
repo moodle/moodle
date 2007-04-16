@@ -646,8 +646,7 @@
         } else {
             $pageheading = get_string("addinganew", "moodle", $fullmodulename);
         }
-        $strnav = '';
-
+        
         $CFG->pagepath = 'mod/'.$module->name;
         if (!empty($type)) {
             $CFG->pagepath .= '/' . $type;
@@ -672,10 +671,12 @@
     } else {
         $focuscursor = "form.name";
     }
-
-    print_header_simple($streditinga, '',
-     "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
-     $strnav $streditinga", $focuscursor, "", false);
+    
+    $crumbs[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => $streditinga, 'link' => '', 'type' => 'action');
+    $navigation = build_navigation($crumbs, $course);
+    
+    print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
 
     if (!empty($cm->id)) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
