@@ -396,36 +396,21 @@ class page_course extends page_base {
         foreach($replacements as $search => $replace) {
             $title = str_replace($search, $replace, $title);
         }
-
-        if($this->courserecord->id == SITEID) {
-            $breadcrumbs = array();
-        }
-        else {
-            $breadcrumbs = array($this->courserecord->shortname => $CFG->wwwroot.'/course/view.php?id='.$this->courserecord->id);
-        }
-
+    
+        $crumbs = array();
+        
         if(!empty($morebreadcrumbs)) {
-            $breadcrumbs = array_merge($breadcrumbs, $morebreadcrumbs);
+            $crumbs = array_merge($crumbs, $morebreadcrumbs);
         }
 
-        $total     = count($breadcrumbs);
-        $current   = 1;
-        $crumbtext = '';
-        foreach($breadcrumbs as $text => $href) {
-            if($current++ == $total) {
-                $crumbtext .= ' '.$text;
-            }
-            else {
-                $crumbtext .= ' <a href="'.$href.'">'.$text.'</a> ->';
-            }
-        }
+        $navigation = build_navigation($crumbs, $this->courserecord);
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
         $buttons = switchroles_form($this->courserecord->id) . update_course_icon($this->courserecord->id );
         $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
 
-        print_header($title, $this->courserecord->fullname, $crumbtext,
+        print_header($title, $this->courserecord->fullname, $navigation,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
 
         echo '<div class="accesshide"><a href="#startofcontent">'.get_string('skiptomaincontent').'</a></div>';
@@ -625,6 +610,44 @@ class page_generic_activity extends page_base {
     function blocks_default_position() {
         return BLOCK_POS_LEFT;
     }
+    
+    function print_header($title, $morebreadcrumbs = NULL, $bodytags = '', $meta = '') {
+        global $USER, $CFG;
+    
+        $this->init_full();
+        $replacements = array(
+            '%fullname%' => format_string($this->activityrecord->name)
+        );
+        foreach ($replacements as $search => $replace) {
+            $title = str_replace($search, $replace, $title);
+        }
+    
+   
+        $crumbs[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
+    
+        if (!empty($morebreadcrumbs)) {
+            $breadcrumbs = array_merge($crumbs, $morebreadcrumbs);
+        }
+              
+        if (empty($morebreadcrumbs) && $this->user_allowed_editing()) {
+            $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
+            if (!empty($CFG->showblocksonmodpages)) {
+                $buttons .= '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
+                    '<input type="hidden" name="id" value="'.$this->modulerecord->id.'" />'.
+                    '<input type="hidden" name="edit" value="'.($this->user_is_editing()?'off':'on').'" />'.
+                    '<input type="submit" value="'.get_string($this->user_is_editing()?'blockseditoff':'blocksediton').'" /></form></td>';
+            }
+            $buttons .= '</tr></table>';
+        } else {
+            $buttons = '&nbsp;';
+        }
+        
+        $navigation = build_navigation($crumbs, $this->courserecord);
+        
+        print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
+    }
+    
 }
 
 ?>
