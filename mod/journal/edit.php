@@ -94,7 +94,7 @@
     if ($usehtmleditor) {
         use_html_editor("text");
     }
-
+    echo "</center>\n";
     print_footer($course);
 
 ?>

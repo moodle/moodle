@@ -407,6 +407,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
     if ($entry) {
         echo "&nbsp;&nbsp;<font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font>";
     }
+    echo "</td>";
     echo "</tr>";
 
     echo "\n<tr><td width=\"100%\">";
@@ -424,6 +425,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
+        echo "</td>";
         echo "<td>".get_string("feedback").":";
         choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
         if ($entry->timemarked) {
@@ -502,6 +504,7 @@ function journal_print_feedback($course, $entry, $grades) {
     echo '<td class="entryheader">';
     echo '<span class="author">'.fullname($teacher).'</span>';
     echo '&nbsp;&nbsp;<span class="time">'.userdate($entry->timemarked).'</span>';
+    echo '</td>';
     echo '</tr>';
 
     echo '<tr>';
