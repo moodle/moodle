@@ -51,14 +51,14 @@ $string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveris on hetkel $a.</p
 <p>See võib hiljem tekitada Moodlel mälu probleeme
 </p>
 
-<p>Me soovitame ,et sa konfigureeriksid PHP-d kõrgema limiidi peale, näiteks 16M. On mitmeid viise selle tegemiseks:</p>
+<p>Me soovitame ,et sa konfigureeriksid PHP-d kõrgema limiidi peale, näiteks 40M. On mitmeid viise selle tegemiseks:</p>
 <ol>
 <li>kui võimalik siis kompileeri PHP uuesti <i>--enable-memory-limit</i>.
 
 See lubab Moodlel ise määrata mälu limiiti.</li>
 <li>Kui sul on läbipäaas oma php.ini failile siis saa saad muuta  <b>mälu limiiti</b> sealt. Kui sul ei ole läbipääsu siis sa võid administraatorilt abi paluda
 </li>
-<li>Mõnedel PHP serveritel sa saad tekitada  .htaccess faili oma Moodle kataloogi mis sisaldaks seda koodi:<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<li>Mõnedel PHP serveritel sa saad tekitada  .htaccess faili oma Moodle kataloogi mis sisaldaks seda koodi:<p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Kuigi mõnedel serveritel ei pruugi see töödata 
 (Sa näed vigu kui vaatad lehti) Siis sa pead eemaldama selle .htaccess faili.</p></li>
 </ol>';

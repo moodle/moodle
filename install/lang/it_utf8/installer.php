@@ -86,14 +86,14 @@ $string['memorylimit'] = 'Limite memoria';
 $string['memorylimiterror'] = 'Il limite di memoria del PHP è impostato a un valore basso ... potrebbero verificarsi probremi in futuro.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata a PHP attualmente è $a.</p>
 <p>Questo può dare problemi a Moodle in futuro, specialmente se avete molti moduli abilitati e molti utenti.</p>
-<p>Vi raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 16M.
+<p>Vi raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
 Ci sono diversi modi che potete provare:
 <ol>
 <li>Se possibile, ricompilare il PHP con l\'opzione <i>--enable-memory-limit</i>.
 Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
-<li>Se avete accesso al file php.ini, è possibile modificare l\'impostazione <b>memory_limit</b> a un valore tipo 16M. Se non avete l\'accesso potete chiedere al vostro amministratore di sistema di farlo.</li>
+<li>Se avete accesso al file php.ini, è possibile modificare l\'impostazione <b>memory_limit</b> a un valore tipo 40M. Se non avete l\'accesso potete chiedere al vostro amministratore di sistema di farlo.</li>
 <li>Su alcuni server PHP è possibile creare un file .htaccess nella Directory di Moodle che contenga questa linea:
-<blockquote>php_value memory_limit 16M</blockquote>
+<blockquote>php_value memory_limit 40M</blockquote>
 <p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
 $string['missingrequiredfield'] = 'Mancano alcuni campi richiesti';
 $string['moodledocslink'] = 'Documentazione di Moodle per questa pagina';

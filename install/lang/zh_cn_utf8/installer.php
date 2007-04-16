@@ -155,12 +155,12 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 
 <p>这会使Moodle在将来运行是碰到内存问题，特别是您安装了很多模块并且/或者有很多用户。</p>
 
-<p>我们建议可能的话把限制设定的高一些，譬如16M。有几种方法可以做到这一点:</p>
+<p>我们建议可能的话把限制设定的高一些，譬如40M。有几种方法可以做到这一点:</p>
 <ol>
 <li>如果可以，重新编译PHP并使用<i>--enable-memory-limit</i>选项。这允许Moodle自己设定内存限制。</li>
-<li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值如16M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
+<li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值如40M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
 <li>在一些PHP服务器上，您可以在Moodle目录中创建一个.htaccess文件并包含如下内容:
-<blockquote>php_value memory_limit 16M</blockquote>
+<blockquote>php_value memory_limit 40M</blockquote>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
 $string['missingrequiredfield'] = '缺少了必需的字段';

@@ -168,17 +168,17 @@ $string['memorylimithelp'] = '<p>Ang memory limit ng PHP para sa server mo ay ka
 <p>Maaaring magdulot ito ng mga problemang pangmemorya sa Moodle sa mga susunod na panahon, lalo na
    kung marami kang binuhay na modyul at/o marami kang tagagamit.</p>
 
-<p>Iminumungkahi namin na isaayos mo ang PHP na may mas mataas na limit kung maaari, tulad ng 16M.
+<p>Iminumungkahi namin na isaayos mo ang PHP na may mas mataas na limit kung maaari, tulad ng 40M.
     May iba\'t-ibang paraan na magagawa kayo upang ito ay maiisakatuparan:</p>
 <ol>
 <li>Kunga maaari mong gawin, muling ikompayl ang PHP na may <i>--enable-memory-limit</i>.  
      Pahihintulutan nito ang Moodle na itakda ang memory limit sa sarili nito.</li>
 <li>Kung mapapasok mo ang iyong sakong php.ini, mababago mo ang <b>memory_limit</b> 
-    na kaayusan doon at gawin itong mga 16M.  Kung wala kang karapatang pasukin ito
+    na kaayusan doon at gawin itong mga 40M.  Kung wala kang karapatang pasukin ito
     baka puwede mong hilingin sa administrador na gawin ito para sa iyo.</li>
 <li>Sa ilang PHP serve maaari kang lumikha ng isang sakong .htaccess sa bugsok ng Moodle
     na naglalaman ng linyang ito:
-    <p><blockquote>php_value memory_limit 16M</blockquote></p>
+    <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Subali\'t sa ilang server ay pipigilin nito ang paggana ng <b>lahat</b> ng pahinang PHP 
     (makakakita ka ng mga error kapag tumingin ka sa mga pahina) kaya\'t kakailanganin mong tanggalin ang sakong .htaccess.</p></li>
 </ol>';
