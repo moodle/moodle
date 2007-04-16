@@ -15,9 +15,10 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
+    $crumbs[] = array('name' => $strchoices, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header_simple("$strchoices", "",
-                 "$strchoices", "", "", true, "", navmenu($course));
+    print_header_simple("$strchoices", "", $navigation, "", "", true, "", navmenu($course));
 
 
     if (! $choices = get_all_instances_in_course("choice", $course)) {

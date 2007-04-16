@@ -39,9 +39,14 @@
     }
         
     if ($download <> "xls" and $download <> "txt" and $download <> "ods") {
-        print_header_simple(format_string($choice->name).": $strresponses", "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "", '', true,
+    	
+        $crumbs[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');
+
+        $navigation = build_navigation($crumbs, $course);    
+    
+        print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
     }
 

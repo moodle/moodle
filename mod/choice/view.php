@@ -52,10 +52,12 @@
 
 
 /// Display the choice and possibly results
+    $crumbs[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($choice->name), 'link' => '', 'type' => 'activityinstance');
+    
+    $navigation = build_navigation($crumbs, $course);
 
-
-    print_header_simple(format_string($choice->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($choice->name), "", "", true,
+    print_header_simple(format_string($choice->name), "", $navigation, "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
