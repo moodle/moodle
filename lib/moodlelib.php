@@ -6521,7 +6521,7 @@ function moodle_request_shutdown() {
         }
         if (memory_get_usage() > (int)$CFG->apachemaxmem) {
             trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
-            apache_child_terminate();
+            @apache_child_terminate();
         }
     }
 }
