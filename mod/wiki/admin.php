@@ -114,10 +114,13 @@
           default: break;
        }
     }
+    $crumbs[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $crumbs[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
+    $crumbs[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');
+    
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header_simple("$wiki_entry->pagename", "",
-                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$id\">".format_string($wiki->name,true)."</a> ->".
-                get_string("administration","wiki"),
+    print_header_simple("$wiki_entry->pagename", "", $navigation,
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
