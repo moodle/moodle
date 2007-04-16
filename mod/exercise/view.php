@@ -126,7 +126,7 @@
                 }
             }
         }
-        echo "</table><br clear=\"all\" />\n";
+        echo "</table></center><br clear=\"all\" />\n";
         if ($exercise->showleaguetable) {
             exercise_print_league_table($exercise);
         }
@@ -195,7 +195,7 @@
         // show student's assessment (linked to the teacher's exercise/submission
         print_heading(get_string("yourassessment", "exercise"));
         exercise_list_teacher_submissions($exercise, $USER);
-        echo "<hr size=\"1\" noshade>";
+        echo "<hr size=\"1\" noshade=\"noshade\" />";
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
             print_heading(get_string("yoursubmission", "exercise"));
             print_simple_box_start("center");
@@ -229,11 +229,11 @@
         // always allow student to resubmit
         if (exercise_test_for_resubmission($exercise, $USER)) {
             // if resubmission requested print upload form
-            echo "<hr size=\"1\" noshade>";
+            echo "<hr size=\"1\" noshade=\"noshade\" />";
             print_heading(get_string("pleasesubmityourwork", "exercise").":");
             exercise_print_upload_form($exercise);
         }
-        echo "<hr size=\"1\" noshade>";
+        echo "<hr size=\"1\" noshade=\"noshade\" />";
     }
 
 
@@ -295,15 +295,15 @@
             // may resubmit if allowed
             else {
                 exercise_list_teacher_submissions($exercise, $USER);
-                echo "<hr size=\"1\" noshade>";
+                echo "<hr size=\"1\" noshade=\"noshade\" />";
                 print_heading(get_string("yoursubmission", "exercise"));
                 exercise_list_user_submissions($exercise, $USER);
                 if (exercise_test_for_resubmission($exercise, $USER)) {
                     // if resubmission requested print upload form
-                    echo "<hr size=\"1\" noshade>";
+                    echo "<hr size=\"1\" noshade=\"noshade\" />";
                     print_heading(get_string("pleasesubmityourwork", "exercise").":");
                     exercise_print_upload_form($exercise);
-                    echo "<hr size=\"1\" noshade>";
+                    echo "<hr size=\"1\" noshade=\"noshade\" />";
                 }
             }
         }
@@ -322,7 +322,7 @@
         // list previous submissions from this user
         exercise_list_user_submissions($exercise, $USER);
 
-        echo "<hr size=\"1\" NOSHADE>";
+        echo "<hr size=\"1\" noshade=\"noshade\" />";
 
         // print upload form
         print_heading(get_string("submitexercisedescription", "exercise").":");
@@ -378,10 +378,10 @@
                 case 1: // set up assignment
                     if (isteacheredit($course->id)) {
                         echo "<p><b><a href=\"assessments.php?id=$cm->id&amp;action=editelements\">".
-                            get_string("amendassessmentelements", "exercise")."</a></b> \n";
+                            get_string("amendassessmentelements", "exercise")."</a></b></p> \n";
                         helpbutton("elements", get_string("amendassessmentelements", "exercise"), "exercise");
                         echo "<p><b><a href=\"view.php?id=$cm->id&amp;action=submitassignment\">".
-                            get_string("submitexercisedescription", "exercise")."</a></b> \n";
+                            get_string("submitexercisedescription", "exercise")."</a></b></p> \n";
                         helpbutton("submissionofdescriptions", get_string("submitexercisedescription", "exercise"), "exercise");
                     }
                     break;
@@ -391,7 +391,7 @@
                     // the submissions
                     echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "exercise",
-                          exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
+                          exercise_count_unassessed_student_submissions($exercise))."</a></b></p> \n";
                     helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"),
                             "exercise");
                     break;
@@ -399,7 +399,7 @@
                 case 3: // show final grades
                     echo "<p><b><a href=\"submissions.php?id=$cm->id&amp;action=listforassessmentstudent\">".
                           get_string("studentsubmissionsforassessment", "exercise",
-                          exercise_count_unassessed_student_submissions($exercise))."</a></b> \n";
+                          exercise_count_unassessed_student_submissions($exercise))."</a></b></p> \n";
                     helpbutton("grading", get_string("studentsubmissionsforassessment", "exercise"),
                             "exercise");
                     print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=displayfinalgrades\">".
@@ -407,6 +407,7 @@
         }
         print_heading("<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
             get_string("administration")."</a>");
+       echo "</center>\n";
     }
 
 

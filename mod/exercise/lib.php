@@ -101,7 +101,7 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
         $javascript = "";
     }
 
-    $output = "<select name=$name $javascript>\n";
+    $output = "<select name=\"$name\" $javascript>\n";
     if ($nothing) {
         $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {

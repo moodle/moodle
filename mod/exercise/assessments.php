@@ -302,7 +302,7 @@
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
+                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></p></td>\n";
                     echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
@@ -321,7 +321,7 @@
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
+                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></p></td>\n";
                     echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
@@ -332,7 +332,7 @@
                     if ($elements[$i]->weight == '') { // not set
                         $elements[$i]->weight = 11; // unity
                     }
-                    echo "</tr>\n";
+                    echo "</td></tr>\n";
                     echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "exercise").
                         ":</b></td><td>\n";
                     exercise_choose_from_menu($EXERCISE_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
@@ -348,7 +348,7 @@
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
+                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></p></td>\n";
                     echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
@@ -366,7 +366,7 @@
                     echo "</tr>\n";
                 }
                 echo "</center></table><br />\n";
-                echo "<p><center><b>".get_string("gradetable","exercise")."</b></center>\n";
+                echo "<p><center><b>".get_string("gradetable","exercise")."</b></p></center>\n";
                 echo "<center><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
                     get_string("numberofnegativeresponses", "exercise");
                 echo "</td><td>". get_string("suggestedgrade", "exercise")."</td></tr>\n";
@@ -392,7 +392,7 @@
                     $iplus1 = $i+1;
                     echo "<tr valign=\"top\">\n";
 
-                    echo "  <td align=\"right\"><p><b>". get_string("criterion","exercise")." $iplus1:</b></td>\n";
+                    echo "  <td align=\"right\"><p><b>". get_string("criterion","exercise")." $iplus1:</b></p></td>\n";
                     echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
@@ -418,7 +418,7 @@
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
                     echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
+                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></p></td>\n";
                     echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
                     echo "  </td></tr>\n";
@@ -434,7 +434,7 @@
                             $rubrics[$i][$j] = "";
                         }
                         echo "<tr valign=\"top\">\n";
-                        echo "  <td align=\"right\"><p><b>". get_string("grade")." $j:</b></td>\n";
+                        echo "  <td align=\"right\"><p><b>". get_string("grade")." $j:</b></p></td>\n";
                         echo "<td><textarea name=\"rubric[$i][$j]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
                             $rubrics[$i][$j]."</textarea>\n";
                         echo "  </td></tr>\n";
@@ -992,7 +992,7 @@
                     error("Could not insert exercise element!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $exercise->grade;
-                echo "<p><b>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</b>\n";
+                echo "<p><b>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</b></p>\n";
                 break;
 
             case 3: // criteria grading
