@@ -22,8 +22,10 @@
     $strsubmitted = get_string("submitted", "assignment");
     $strgrade = get_string("grade");
 
+    $crumbs[] = array('name' => $strassignments, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($crumbs, $course);
 
-    print_header_simple($strassignments, "", $strassignments, "", "", true, "", navmenu($course));
+    print_header_simple($strassignments, "", $navigation, "", "", true, "", navmenu($course));
 
     if (! $assignments = get_all_instances_in_course("assignment", $course)) {
         notice(get_string('noassignments', 'assignment'), "../../course/view.php?id=$course->id");

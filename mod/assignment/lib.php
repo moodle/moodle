@@ -76,20 +76,18 @@ class assignment_base {
             $this->strassignments = get_string('modulenameplural', 'assignment');
             $this->strsubmissions = get_string('submissions', 'assignment');
             $this->strlastmodified = get_string('lastmodified');
-
-            if ($this->course->id != SITEID) {
-                $this->navigation = "<a $CFG->frametarget href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
-                                    "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
-            } else {
-                $this->navigation = "<a $CFG->frametarget href=\"index.php?id={$this->course->id}\">$this->strassignments</a> ->";
-            }
-
+            
+            $this->navigation[] = array('name' => $this->strassignments, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
+                      
             $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
 
             // visibility
             $context = get_context_instance(CONTEXT_MODULE, $cmid);
             if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                 $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
+                $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
+                $navigation = build_navigation($this->navigation, $this->course);
+                
                 print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment", 
                              "", "", true, '', navmenu($this->course, $this->cm));
                 notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
@@ -143,14 +141,17 @@ class assignment_base {
 
         global $CFG;
 
+        
         if ($subpage) {
-            $extranav = '<a '.$CFG->frametarget.' href="view.php?id='.$this->cm->id.'">'.
-                          format_string($this->assignment->name,true).'</a> -> '.$subpage;
+            $this->navigation[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?id={$this->cm->id}", 'type' => 'activityinstance');
+            $this->navigation[] = array('name' => $subpage, 'link' => '', 'type' => 'title');
         } else {
-            $extranav = ' '.format_string($this->assignment->name,true);
+            $this->navigation[] = array('name' => format_string($this->assignment->name,true), 'link' => '', 'type' => 'activityinstance');
         }
+        
+        $navigation = build_navigation($this->navigation, $this->course);
 
-        print_header($this->pagetitle, $this->course->fullname, $this->navigation.$extranav, '', '', 
+        print_header($this->pagetitle, $this->course->fullname, $navigation, '', '', 
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment), 
                      navmenu($this->course, $this->cm));
 
@@ -358,7 +359,7 @@ class assignment_base {
         $strname    = get_string('name');
         $strassignments = get_string('modulenameplural', 'assignment');
         $strheading = empty($form->name) ? get_string("type$form->assignmenttype",'assignment') : s(format_string(stripslashes($form->name),true));
-
+        
         print_header($this->course->shortname.': '.$strheading, $this->course->fullname,
                 "<a href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname} </a> -> ".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id={$this->course->id}\">$strassignments</a> -> $strheading");
@@ -994,8 +995,13 @@ class assignment_base {
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
         
-        print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
-
+        $crumbs[] = array('name' => $this->strassignments, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?a={$this->assignment->id}", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $this->strsubmissions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs, $course);
+        
+        print_header_simple(format_string($this->assignment->name,true), "", $navigation, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+    
     ///Position swapped
     /*
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
