@@ -73,15 +73,14 @@
 
     if ($confirmuser and confirm_sesskey()) {
         if (!$user = get_record('user', 'id', $confirmuser)) {
-            error("No such user!");
+            error("No such user!", '', true);
         }
 
-        $confirmeduser = new object();
-        $confirmeduser->id = $confirmuser;
-        $confirmeduser->confirmed = 1;
-        $confirmeduser->timemodified = time();
+        $auth = get_auth_plugin($user->auth);
 
-        if (update_record('user', $confirmeduser)) {
+        $result = $auth->user_confirm(addslashes($user->username), addslashes($user->secret));
+
+        if ($result == AUTH_CONFIRM_OK or $result == AUTH_CONFIRM_ALREADY) {
             notify(get_string('userconfirmed', '', fullname($user, true)) );
         } else {
             notify(get_string('usernotconfirmed', '', fullname($user, true)));
@@ -94,12 +93,12 @@
         }
 
         if (!$user = get_record('user', 'id', $delete)) {
-            error("No such user!");
+            error("No such user!", '', true);
         }
 
         $primaryadmin = get_admin();
         if ($user->id == $primaryadmin->id) {
-            error("You are not allowed to delete the primary admin user!");
+            error("You are not allowed to delete the primary admin user!", '', true);
         }
 
         if ($confirm != md5($delete)) {
@@ -133,7 +132,7 @@
             error('You are not permitted to modify the MNET access control list.');
         }
         if (!$user = get_record('user', 'id', $acl)) {
-            error("No such user.");
+            error("No such user.", '', true);
         }
         if (!is_mnet_remote_user($user)) {
             error('Users in the MNET access control list must be remote MNET users.');
@@ -149,12 +148,12 @@
             $aclrecord->username = $user->username;
             $aclrecord->accessctrl = $accessctrl;
             if (!insert_record('mnet_sso_access_control', $aclrecord)) {
-                error("Database error - Couldn't modify the MNET access control list.");
+                error("Database error - Couldn't modify the MNET access control list.", '', true);
             }
         } else {
             $aclrecord->accessctrl = $accessctrl;
             if (!update_record('mnet_sso_access_control', $aclrecord)) {
-                error("Database error - Couldn't modify the MNET access control list.");
+                error("Database error - Couldn't modify the MNET access control list.", '', true);
             }
         }
         $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
