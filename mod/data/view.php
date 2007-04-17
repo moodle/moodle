@@ -394,7 +394,7 @@
                 }
             }
             elseif ($search) {
-                $searchselect = ' AND (dc.content LIKE "%'.$search.'%") ';
+                $searchselect = ' AND (c1.content ' . sql_ilike() . " '%$search%') "; //Be case-insensitive
             } else {
                 $searchselect = ' ';
             } 
@@ -416,7 +416,7 @@
                 }
             }
             else {
-                $searchselect = ' AND (c.content LIKE "%'.$search.'%") ';
+                $searchselect = ' AND (c.content ' . sql_ilike() . " '%$search%') "; //Be case-insensitive
             }
 
             
