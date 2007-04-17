@@ -312,7 +312,7 @@
                      AND c1.recordid = r.id ';
         $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC ';
         if ($search) {
-            $searchselect = " AND (c1.content LIKE '%$search%') ";
+            $searchselect = ' AND (c1.content ' . sql_ilike() . " '%$search%') "; //Be case-insensitive
         } else {
             $searchselect = ' ';
         }
@@ -325,7 +325,7 @@
                      AND r.userid = u.id
                      AND r.dataid = '.$data->id;
         $sortorder = ' ORDER BY r.id ASC ';
-        $searchselect = " AND (c.content LIKE '%$search%') ";
+        $searchselect = ' AND (c.content ' . sql_ilike() . " '%$search%') "; //Be case-insensitive
 
     } else {
         $what = ' DISTINCT r.id, r.approved, r.timecreated, r.userid, u.firstname, u.lastname ';
