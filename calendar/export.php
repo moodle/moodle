@@ -90,10 +90,6 @@ list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
 list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
 $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
-echo '<div class="filters">';
-echo calendar_filter_controls('export', $getvars);
-echo '</div>';
-
 echo '<div class="minicalendarblock">';
 echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
 echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
