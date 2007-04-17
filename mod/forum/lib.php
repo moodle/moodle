@@ -3471,7 +3471,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
-    } elseif(!ismember($currentgroup)) {
+    } else if (!isguestuser() and isloggedin() and $forum->type != 'news' and $groupmode == SEPARATEGROUPS and !ismember($currentgroup)) {
         notify(get_string('cannotadddiscussion', 'forum'));
     }
 
