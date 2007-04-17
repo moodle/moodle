@@ -543,7 +543,7 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
         $url = substr($url, strlen($CFG->wwwroot));
     }
 
-    $link = '<a title="'. s($title) .'" href="'. $CFG->wwwroot . $url .'" '.
+    $link = '<a title="'. s(strip_tags($title)) .'" href="'. $CFG->wwwroot . $url .'" '.
            "onclick=\"this.target='$name'; return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>";
     if ($return) {
         return $link;
@@ -4876,7 +4876,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         if ($imagetext) {
             $linkobject .= $imagetext;
         } else {
-            $linkobject .= '<img class="iconhelp" alt="'.$tooltip.'" src="'.
+            $linkobject .= '<img class="iconhelp" alt="'.s(strip_tags($tooltip)).'" src="'.
                    	$CFG->pixpath .'/help.gif" />';
         }
     } else {
