@@ -2,8 +2,6 @@
       // format.php - course format featuring social forum
       //              included from view.php
 
-    require_once($CFG->dirroot.'/mod/forum/lib.php');
-
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
     $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;

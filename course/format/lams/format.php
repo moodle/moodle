@@ -3,7 +3,6 @@
 // The main difference is that news forum is replaced by LAMS learner
 // interface.
 
-require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->dirroot.'/mod/lams/constants.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
 
