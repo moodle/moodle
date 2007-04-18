@@ -224,6 +224,14 @@ class profile_field_base {
     }
 
     /**
+     * Check if the field data is considered empty
+     * return boolean
+     */
+    function is_empty() {
+        return ( ($this->data != '0') and empty($this->data));
+    }
+
+    /**
      * Check if the field is required on the edit profile page
      * @return   boolean
      */
@@ -332,7 +340,7 @@ function profile_display_fields($userid) {
                     require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id, $userid);
-                    if ($formfield->is_visible() and ($formfield->data !== NULL)) {
+                    if ($formfield->is_visible() and !$formfield->is_empty()) {
                         print_row(s($formfield->field->name.':'), $formfield->display_data());
                     }
                 }
