@@ -72,6 +72,14 @@ class default_questiontype {
     }
 
     /**
+     * @return whether the question_answers.answer field needs to have 
+     * restore_decode_content_links_worker called on it.
+     */
+    function has_html_answers() {
+        return false;
+    }
+
+    /**
     * Saves or updates a question after editing by a teacher
     *
     * Given some question info and some data about the answers

@@ -589,6 +589,35 @@ class question_match_qtype extends default_questiontype {
         return $answer_field;
     }
 
+    /**
+     * Decode links in question type specific tables.
+     * @return bool success or failure.
+     */ 
+    function decode_content_links_caller($questionids, $restore, &$i) {
+        // Decode links in the question_match_sub table.
+        if ($subquestions = get_records_list('question_match_sub', 'question',
+                implode(',',  $questionids), '', 'id, questiontext')) {
+
+            foreach ($subquestions as $subquestion) {
+                $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);
+                if ($questiontext != $subquestion->questiontext) {
+                    $subquestion->questiontext = addslashes($questiontext);
+                    if (!update_record('question_match_sub', $subquestion)) {
+                        $status = false;
+                    }
+                }
+
+                // Do some output.
+                if (++$i % 5 == 0 && !defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if ($i % 100 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+        }
+    }
 }
 //// END OF CLASS ////
 

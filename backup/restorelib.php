@@ -70,6 +70,8 @@
         if (!defined('RESTORE_SILENTLY')) {
             echo "<ul>";
         }
+
+        // Restore links in modules.
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
             if (isset($info->restore) && $info->restore == 1) {
@@ -85,12 +87,22 @@
                 }
             }
         }
+
+        // TODO: process all html text also in blocks too
+
+        // Restore links in questions.
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<li>' . get_string('from') . ' ' . get_string('questions', 'quiz');
+        }
+        $status = question_decode_content_links_caller($restore);
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '</li>';
+        }
+
         if (!defined('RESTORE_SILENTLY')) {
             echo "</ul>";
         }
-        
-        // TODO: process all html text also in blocks too
-        
+
         return $status;
     }
     

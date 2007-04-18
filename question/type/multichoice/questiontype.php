@@ -17,6 +17,10 @@ class question_multichoice_qtype extends default_questiontype {
         return 'multichoice';
     }
 
+    function has_html_answers() {
+        return true;
+    }
+
     function get_question_options(&$question) {
         // Get additional information from database
         // and attach it to the question object
@@ -543,6 +547,41 @@ class question_multichoice_qtype extends default_questiontype {
         return implode(',', $order).':'.implode(',', $responses);
     }
 
+    /**
+     * Decode links in question type specific tables.
+     * @return bool success or failure.
+     */ 
+    function decode_content_links_caller($questionids, $restore, &$i) {
+        // Decode links in the question_multichoice table.
+        if ($multichoices = get_records_list('question_multichoice', 'question',
+                implode(',',  $questionids), '', 'id, correctfeedback, partiallycorrectfeedback, incorrectfeedback')) {
+
+            foreach ($multichoices as $multichoice) {
+                $correctfeedback = restore_decode_content_links_worker($multichoice->correctfeedback, $restore);
+                $partiallycorrectfeedback = restore_decode_content_links_worker($multichoice->partiallycorrectfeedback, $restore);
+                $incorrectfeedback = restore_decode_content_links_worker($multichoice->incorrectfeedback, $restore);
+                if ($correctfeedback != $multichoice->correctfeedback ||
+                        $partiallycorrectfeedback != $multichoice->partiallycorrectfeedback ||
+                        $incorrectfeedback != $multichoice->incorrectfeedback) {
+                    $subquestion->correctfeedback = addslashes($correctfeedback);
+                    $subquestion->partiallycorrectfeedback = addslashes($partiallycorrectfeedback);
+                    $subquestion->incorrectfeedback = addslashes($incorrectfeedback);
+                    if (!update_record('question_multichoice', $multichoice)) {
+                        $status = false;
+                    }
+                }
+
+                // Do some output.
+                if (++$i % 5 == 0 && !defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if ($i % 100 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+        }
+    }
 }
 //// END OF CLASS ////
 
