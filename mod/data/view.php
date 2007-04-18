@@ -375,7 +375,7 @@
             $sortcontent = $sortfield->get_sort_field();
             $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.' ';
+            $what = ' DISTINCT r.id, r.approved, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content c1, '.$CFG->prefix.'user u ';
             $where =  'WHERE c.recordid = r.id
@@ -383,7 +383,7 @@
                          AND r.dataid = '.$data->id.'
                          AND r.userid = u.id
                          AND c1.recordid = r.id ';
-            $sortorder = ' ORDER BY '.$sortcontentfull.' '.$order.' , r.id ASC ';
+            $sortorder = ' ORDER BY _order '.$order.' , r.id ASC ';
             $searchselect = '';
             
             if (!empty($advanced)) {                                                                                           //If advanced box is checked.
