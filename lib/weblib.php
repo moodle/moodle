@@ -1658,7 +1658,9 @@ function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
  */
 function clean_text($text, $format=FORMAT_MOODLE) {
 
-    global $ALLOWED_TAGS;
+    if (empty($text) or is_numeric($text)) {
+       return (string)$text; 
+    }
 
     switch ($format) {
         case FORMAT_PLAIN:
@@ -1667,22 +1669,44 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
         default:
 
-        /// Fix non standard entity notations
-            $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
-            $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
+            if (!empty($CFG->enablehtmlpurifier)) {
+                $text = purify_html($text);
+            } else {
+            /// Fix non standard entity notations
+                $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
+                $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
+    
+            /// Remove tags that are not allowed
+                $text = strip_tags($text, $ALLOWED_TAGS);
+    
+            /// Clean up embedded scripts and , using kses
+                $text = cleanAttributes($text);
+            }
 
-        /// Remove tags that are not allowed
-            $text = strip_tags($text, $ALLOWED_TAGS);
-
-        /// Clean up embedded scripts and , using kses
-            $text = cleanAttributes($text);
-
-        /// Remove script events
+        /// Remove potential script events - some extra protection for undiscovered bugs in our code
             $text = eregi_replace("([^a-z])language([[:space:]]*)=", "\\1Xlanguage=", $text);
             $text = eregi_replace("([^a-z])on([a-z]+)([[:space:]]*)=", "\\1Xon\\2=", $text);
 
             return $text;
     }
+}
+
+/**
+ * KSES replacement cleaning function - uses HTML Purifier.
+ */
+function purify_html($text) {
+    global $CFG;
+
+    static $purifier = false;
+    if (!$purifier) {
+        require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.auto.php';
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('Core', 'AcceptFullDocuments', false);
+        //$config->set('HTML', 'Strict', true);
+        $config->set('URI', 'AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
+        $purifier = new HTMLPurifier($config);
+    }
+    return $purifier->purify($text);
 }
 
 /**
@@ -5032,13 +5056,9 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 
     $message = clean_text($message);
 
-    $url = html_entity_decode($url);
-    $url = str_replace(array("\n", "\r"), '', $url); // some more cleaning
-    $encodedurl = htmlentities($url);
-    $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
-    $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
-    $url = html_entity_decode($encodedurl);
-    $surl = addslashes($url);
+    $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
+    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
+    $url = str_replace('&amp;', '&', $encodedurl);
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
 /// Currenly only works in PHP 5.2+
@@ -5081,7 +5101,7 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
         @header('Location: '.$url);
         //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo '<script type="text/javascript">'. "\n" .'//<![CDATA['. "\n". "location.replace('$surl');". "\n". '//]]>'. "\n". '</script>';   // To cope with Mozilla bug
+        echo '<script type="text/javascript">'. "\n" .'//<![CDATA['. "\n". "location.replace('".addslashes_js($url)."');". "\n". '//]]>'. "\n". '</script>';   // To cope with Mozilla bug
         die;
     }
 
@@ -5104,7 +5124,7 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 //<![CDATA[
 
   function redirect() {
-      document.location.replace('<?php echo $surl ?>');
+      document.location.replace('<?php echo addslashes_js($url) ?>');
   }
   setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
 //]]>

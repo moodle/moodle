@@ -1,0 +1,23 @@
+<?php
+
+require_once 'HTMLPurifier/ChildDef/Required.php';
+
+/**
+ * Definition that allows a set of elements, and allows no children.
+ * @note This is a hack to reuse code from HTMLPurifier_ChildDef_Required,
+ *       really, one shouldn't inherit from the other.  Only altered behavior
+ *       is to overload a returned false with an array.  Thus, it will never
+ *       return false.
+ */
+class HTMLPurifier_ChildDef_Optional extends HTMLPurifier_ChildDef_Required
+{
+    var $allow_empty = true;
+    var $type = 'optional';
+    function validateChildren($tokens_of_children, $config, &$context) {
+        $result = parent::validateChildren($tokens_of_children, $config, $context);
+        if ($result === false) return array();
+        return $result;
+    }
+}
+
+?>
