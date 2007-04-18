@@ -72,6 +72,14 @@ class default_questiontype {
     }
 
     /**
+     * @return whether the question_answers.answer field needs to have 
+     * restore_decode_content_links_worker called on it.
+     */
+    function has_html_answers() {
+        return false;
+    }
+
+    /**
      * Return an instance of the question editing form definition. This looks for a
      * class called edit_{$this->name()}_question_form in the file
      * {$CFG->docroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
