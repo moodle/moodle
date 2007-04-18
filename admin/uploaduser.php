@@ -268,7 +268,6 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                             //This can be used to obtain a list of userids for existing users
                             notify("$olduser->id ".get_string('usernotaddedregistered', 'error', $username));
                             $userserrors++;
-                            continue;
                         }
 
                     } else { // new user
