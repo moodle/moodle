@@ -388,8 +388,8 @@ function forum_cron() {
                 $groupmode = false;
                 if (!empty($cm->id)) {
                     if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
-                        if (! groups_group_exists($discussion->groupid)) { // Can't find group //TODO:
-                            continue;                           // Be safe and don't send it to anyone
+                        if (!$group = get_record('groups', 'id', $discussion->groupid)) { // Can't find group
+                            continue; // Be safe and don't send it to anyone
                         }
                     }
                 }
