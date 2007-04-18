@@ -2823,4 +2823,35 @@ function upgrade_language_pack($lang='') {
     return false;
 }
 
+/**
+ * Based on find_new_settings{@link ()}  in upgradesettings.php
+ * Looks to find any admin settings that have not been initialized. Returns 1 if it finds any.
+ *
+ * @param string &$node The node at which to start searching. 
+ * @return int Returns 1 if any settings haven't been initialised, 0 if they all have
+ */
+function any_new_admin_settings(&$node) {
+
+    if (is_a($node, 'admin_category')) {
+        $entries = array_keys($node->children);
+        foreach ($entries as $entry) {
+            if( any_new_admin_settings($node->children[$entry]) ){
+                return 1;
+            }
+        }
+    }
+
+    if (is_a($node, 'admin_settingpage')) {
+        foreach ($node->settings as $setting) {
+            if ($setting->get_setting() === NULL) {
+                return 1;
+            }
+        }
+    }
+
+
+    return 0;
+
+}
+
 ?>

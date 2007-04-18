@@ -522,11 +522,17 @@
         }
     }
 
+    $adminroot = admin_get_root();
+
+/// Check if there are any new admin settings which have still yet to be set
+    if( any_new_admin_settings( $adminroot ) ){
+        redirect('upgradesettings.php');
+    }
+
 /// Everything should now be set up, and the user is an admin
 
 /// Print default admin page with notifications.
 
-    $adminroot = admin_get_root();
     admin_externalpage_setup('adminnotifications', $adminroot);
     admin_externalpage_print_header($adminroot);
 
