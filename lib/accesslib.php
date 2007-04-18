@@ -741,7 +741,8 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
     }
 
     if ($capability) {
-        $capsearch = " AND rc.capability = '$capability' ";
+        // the doanything may override the requested capability
+        $capsearch = " AND (rc.capability = '$capability' OR rc.capability = 'moodle/site:doanything') ";
     } else {
         $capsearch ="";
     }
