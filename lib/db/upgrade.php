@@ -741,7 +741,70 @@ function xmldb_main_upgrade($oldversion=0) {
         }
         
     }
+    
+    if ($result && $oldversion < 2007041800) {
 
+    /// Define table events_handlers to be created
+        $table = new XMLDBTable('events_handlers');
+
+    /// Adding fields to table events_handlers
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('eventname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('handlermodule', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('handlerfile', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('handlerfunction', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+
+    /// Adding keys to table events_handlers
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table events_handlers
+        $table->addIndexInfo('eventname', XMLDB_INDEX_NOTUNIQUE, array('eventname'));
+
+    /// Launch create table for events_handlers
+        $result = $result && create_table($table);
+    
+    /// Define table events_queue to be created
+        $table = new XMLDBTable('events_queue');
+
+    /// Adding fields to table events_queue
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('eventdata', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('schedule', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('stackdump', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table events_queue
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Launch create table for events_queue
+        $result = $result && create_table($table);
+    
+    /// Define table events_queue_handlers to be created
+        $table = new XMLDBTable('events_queue_handlers');
+
+    /// Adding fields to table events_queue_handlers
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('queuedeventid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('handlerid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('status', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
+        $table->addFieldInfo('errormessage', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table events_queue_handlers
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('queuedeventid', XMLDB_KEY_FOREIGN, array('queuedeventid'), 'events_queue', array('id'));
+        $table->addKeyInfo('handlerid', XMLDB_KEY_FOREIGN, array('handlerid'), 'events_handlers', array('id'));
+
+    /// Launch create table for events_queue_handlers
+        $result = $result && create_table($table);
+
+    }
+    
+    
+    
+    
     return $result;
 
 }
