@@ -63,6 +63,8 @@ function mnet_get_public_key($uri) {
     curl_setopt($ch, CURLOPT_USERAGENT, 'Moodle');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $rq);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
     $res = xmlrpc_decode(curl_exec($ch));
     curl_close($ch);

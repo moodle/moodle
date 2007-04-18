@@ -186,6 +186,8 @@ class mnet_xmlrpc_client {
         curl_setopt($ch, CURLOPT_USERAGENT, 'Moodle');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $rq);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
         $timestamp_send    = time();
         $this->rawresponse = curl_exec($ch);
