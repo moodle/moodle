@@ -34,10 +34,35 @@
         $adminediting = false;
     }
 
+    $stradministration = get_string('administration');
+    $strcategories = get_string('categories');
+    $strcategory = get_string('category');
+    $strcourses = get_string('courses');
+    $stredit = get_string('edit');
+    $strdelete = get_string('delete');
+    $straction = get_string('action');
+
+
+/// If data for a new category was submitted, then add it
+    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
+        if (!empty($form->addcategory)) {
+            unset($newcategory);
+            $newcategory->name = stripslashes_safe($form->addcategory);
+            $newcategory->sortorder = 999;
+            if (!insert_record('course_categories', $newcategory)) {
+                notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
+            } else {
+                notify(get_string('categoryadded', '', format_string($newcategory->name)));
+            }
+        }
+    }
 
 /// Unless it's an editing admin, just print the regular listing of courses/categories
 
     if (!$adminediting) {
+
+      /// Print form for creating new categories
+
         $countcategories = count_records('course_categories');
 
         if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
@@ -47,6 +72,7 @@
                           $strcategories, '', '', true, update_categories_button());
             print_heading($strcategories);
             print_box_start('categorybox');
+            print_category_create_form();            
             print_whole_category_list();
             print_box_end();
             print_course_search();
@@ -55,6 +81,7 @@
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
                          '', '', true, update_categories_button());
             print_box_start('courseboxes');
+            print_category_create_form();
             print_courses(0);
             print_box_end();
         }
@@ -75,46 +102,21 @@
         exit;
     }
 
-/// From now on is all the admin functions
-
-
-    require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('coursemgmt', $adminroot);
-
+/// From now on is all the admin/course creator functions
 
 /// Print headings
-
-    $stradministration = get_string('administration');
-    $strcategories = get_string('categories');
-    $strcategory = get_string('category');
-    $strcourses = get_string('courses');
-    $stredit = get_string('edit');
-    $strdelete = get_string('delete');
-    $straction = get_string('action');
-    $straddnewcategory = get_string('addnewcategory');
-
-
-
-    admin_externalpage_print_header($adminroot);
-
+    
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        require_once($CFG->libdir.'/adminlib.php');
+        $adminroot = admin_get_root();
+        admin_externalpage_setup('coursemgmt', $adminroot);    
+        admin_externalpage_print_header($adminroot);
+    } else {
+        print_header("$site->shortname: $strcategories", $strcourses, 
+                  $strcategories, '', '', true, update_categories_button());    
+    }      
+    
     print_heading($strcategories);
-
-
-/// If data for a new category was submitted, then add it
-    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
-        if (!empty($form->addcategory)) {
-            unset($newcategory);
-            $newcategory->name = stripslashes_safe($form->addcategory);
-            $newcategory->sortorder = 999;
-            if (!insert_record('course_categories', $newcategory)) {
-                notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
-            } else {
-                notify(get_string('categoryadded', '', format_string($newcategory->name)));
-            }
-        }
-    }
-
 
 /// Delete a category if necessary
 
@@ -156,7 +158,11 @@
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
 
-                admin_externalpage_print_footer($adminroot);
+                if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+                    admin_externalpage_print_footer($adminroot);
+                } else {
+                    print_footer();  
+                }
                 exit();
             }
         }
@@ -279,17 +285,7 @@
     fix_course_sortorder();
 
 /// Print form for creating new categories
-    if (has_capability('moodle/category:create', $context)) {
-        echo '<div class="addcategory">';
-        echo '<form id="addform" action="index.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
-        echo '<input type="text" size="30" alt="'.$straddnewcategory.'" name="addcategory" />';
-        echo '<input type="submit" value="'.$straddnewcategory.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '</fieldset>';
-        echo '</form>';
-        echo '</div>';
-    }
+    print_category_create_form();
 
 /// Print out the categories with all the knobs
 
@@ -304,7 +300,7 @@
     $displaylist[0] = get_string('top');
     make_categories_list($displaylist, $parentlist, '');
 
-    echo '<table class="generalbox editcourse"><tr class="header">';
+    echo '<table class="generalbox editcourse boxaligncenter"><tr class="header">';
     echo '<th class="header" scope="col">'.$strcategories.'</th>';
     echo '<th class="header" scope="col">'.$strcourses.'</th>';
     echo '<th class="header" scope="col">'.$stredit.'</th>';
@@ -322,16 +318,20 @@
         $options['category'] = $category->id;
         print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
     }
-
-    print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
-
+    
+    if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
+        print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
+    }
     // admin page does not allow custom buttons in the navigation bar
     echo '<div class="singlebutton">';
     echo update_categories_button();
     echo '</div></div>';
 
-    admin_externalpage_print_footer($adminroot);
-
+    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        admin_externalpage_print_footer($adminroot);
+    } else {
+        print_footer();
+    }
 
 
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
@@ -427,5 +427,21 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     }
 }
 
-
+/** prints the add new category text input field and form */
+function print_category_create_form() {
+    
+    $straddnewcategory = get_string('addnewcategory');
+    
+    if (has_capability('moodle/category:create', get_context_instance(CONTEXT_SYSTEM))) {
+        echo '<div class="addcategory">';
+        echo '<form id="addform" action="index.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
+        echo '<input type="text" size="30" alt="'.$straddnewcategory.'" name="addcategory" />';
+        echo '<input type="submit" value="'.$straddnewcategory.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '</fieldset>';
+        echo '</form>';
+        echo '</div>';
+    }
+}
 ?>
