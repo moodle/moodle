@@ -1658,6 +1658,8 @@ function trusttext_prepare_edit(&$text, &$format, $usehtmleditor, $context) {
  */
 function clean_text($text, $format=FORMAT_MOODLE) {
 
+    global $ALLOWED_TAGS, $CFG;
+
     if (empty($text) or is_numeric($text)) {
        return (string)$text; 
     }
