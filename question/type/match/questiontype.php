@@ -610,6 +610,8 @@ class question_match_qtype extends default_questiontype {
      * @return bool success or failure.
      */ 
     function decode_content_links_caller($questionids, $restore, &$i) {
+        $status = true;
+
         // Decode links in the question_match_sub table.
         if ($subquestions = get_records_list('question_match_sub', 'question',
                 implode(',',  $questionids), '', 'id, questiontext')) {
@@ -633,6 +635,8 @@ class question_match_qtype extends default_questiontype {
                 }
             }
         }
+
+        return $status;
     }
 }
 //// END OF CLASS ////
