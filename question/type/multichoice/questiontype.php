@@ -558,6 +558,8 @@ class question_multichoice_qtype extends default_questiontype {
      * @return bool success or failure.
      */ 
     function decode_content_links_caller($questionids, $restore, &$i) {
+        $status = true;
+
         // Decode links in the question_multichoice table.
         if ($multichoices = get_records_list('question_multichoice', 'question',
                 implode(',',  $questionids), '', 'id, correctfeedback, partiallycorrectfeedback, incorrectfeedback')) {
@@ -587,6 +589,8 @@ class question_multichoice_qtype extends default_questiontype {
                 }
             }
         }
+
+        return $status;
     }
 
     /**
