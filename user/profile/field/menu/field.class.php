@@ -9,7 +9,7 @@ class profile_field_menu extends profile_field_base {
      * Pulls out the options for the menu from the database and sets the
      * the corresponding key for the data if it exists
      */
-    function profile_field_menu($fieldid, $userid) {
+    function profile_field_menu($fieldid=0, $userid=0) {
         //first call parent constructor
         $this->profile_field_base($fieldid, $userid);
 
@@ -40,7 +40,7 @@ class profile_field_menu extends profile_field_base {
      * Overwrites the base class method
      */
     function edit_field_set_default(&$mform) {
-        $defaultkey = (int)array_search($field->defaultdata, $this->options);
+        $defaultkey = (int)array_search($this->field->defaultdata, $this->options);
         $mform->setDefault($this->inputname, $defaultkey);
     }
 
