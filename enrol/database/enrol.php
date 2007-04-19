@@ -92,16 +92,16 @@ function setup_enrolments(&$user) {
                     $course = get_record('course', $CFG->enrol_localcoursefield, $coursefield);
                     if (!is_object($course)) {
                         if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
-                            print "Course $extcourse does not exist, skipping\n";
+                            print "Course $coursefield does not exist, skipping\n";
                             continue; // next foreach course
                         }
                         // ok, now then let's create it!
-                        print "Creating Course $extcourse...";
+                        print "Creating Course $coursefield...";
                         // prepare any course properties we actually have
                         $course = new StdClass;
-                        $course->{$CFG->enrol_localcoursefield} = $extcourse;
-                        $course->fullname  = $extcourse;
-                        $course->shortname = $extcourse;
+                        $course->{$CFG->enrol_localcoursefield} = $coursefield;
+                        $course->fullname  = $coursefield;
+                        $course->shortname = $coursefield;
                         if ($newcourseid = $this->create_course($course, true)
                             and $course = get_record( 'course', 'id', $newcourseid)) {
                             // we are skipping fix_course_sortorder()
