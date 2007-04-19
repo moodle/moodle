@@ -14,36 +14,41 @@
 
     // get values from form
     $param = new stdClass();
-    $id = required_param('id',PARAM_INT);   // course id
-    $param->moveup = optional_param('moveup',0,PARAM_INT);
-    $param->movedown = optional_param('movedown',0,PARAM_INT);
-    $param->hide = optional_param('hide',0,PARAM_INT);
-    $param->delete = optional_param('delete',0,PARAM_INT);
-    $param->confirm = optional_param('confirm',0,PARAM_INT);
-    $param->cancel = optional_param('cancel','',PARAM_ALPHA);
-    $param->move = optional_param('move',0,PARAM_INT);
-    $param->moveto = optional_param('moveto',0,PARAM_INT);
-    $param->publish = optional_param('publish',0,PARAM_INT);
-    $param->addcategory = optional_param('addcategory','',PARAM_NOTAGS);
-    $param->edit = optional_param('edit',0,PARAM_INT);
-    $param->updateid = optional_param('updateid',0,PARAM_INT);
-    $param->page = optional_param('page',1,PARAM_INT);
+
+    $id = required_param('id', PARAM_INT);   // course id
+    $param->page = optional_param('page', 1, PARAM_INT);
+
+    $param->moveup = optional_param('moveup', 0, PARAM_INT);
+    $param->movedown = optional_param('movedown', 0, PARAM_INT);
+    $param->left = optional_param('left', 0, PARAM_INT);
+    $param->right = optional_param('right', 0, PARAM_INT);
+    $param->hide = optional_param('hide', 0, PARAM_INT);
+    $param->delete = optional_param('delete', 0, PARAM_INT);
+    $param->confirm = optional_param('confirm', 0, PARAM_INT);
+    $param->cancel = optional_param('cancel', '', PARAM_ALPHA);
+    $param->move = optional_param('move', 0, PARAM_INT);
+    $param->moveto = optional_param('moveto', 0, PARAM_INT);
+    $param->publish = optional_param('publish', 0, PARAM_INT);
+    $param->addcategory = optional_param('addcategory', '', PARAM_NOTAGS);
+    $param->edit = optional_param('edit', 0, PARAM_INT);
+    $param->updateid = optional_param('updateid', 0, PARAM_INT);
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
     }
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $id);
-    
+
     require_login($course->id, false);
     require_capability('moodle/question:managecategory', $context);
 
-    $qcobject = new question_category_object();
-    $qcobject->set_course($course);
+    $qcobject = new question_category_object($param->page);
 
-    // Page header
-    // TODO: generalise this to any activity
-    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+    if ($qcobject->editlist->process_actions($param->left, $param->right, $param->moveup, $param->movedown)) {
+            //processing of these actions is handled in the method and page redirects.
+    } else if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        // Page header
+        // TODO: generalise this to any activity
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
             ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
             : "";
@@ -72,10 +77,6 @@
             } else {
                 $qcobject->delete_category($param->delete);
             }
-        } else if (!empty($param->moveup)) {
-            $qcobject->move_category_up_down('up', $param->moveup);
-        } else if (!empty($param->movedown)) {
-            $qcobject->move_category_up_down('down', $param->movedown);
         } else if (!empty($param->hide)) {
             $qcobject->publish_category(false, $param->hide);
         } else if (!empty($param->move)) {
@@ -102,7 +103,7 @@
     }
 
     // display the user interface
-    $qcobject->display_user_interface($param->page);
+    $qcobject->display_user_interface();
 
     print_footer($course);
 ?>

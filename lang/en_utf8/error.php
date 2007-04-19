@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // error.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -40,6 +40,14 @@ $string['invalidmd5'] = 'Invalid md5';
 $string['invalidrequest'] = 'Invalid request';
 $string['invalidrole'] = 'Invalid role';
 $string['invalidxmlfile'] = '\"$a\" is not a valid XML file';
+$string['listnopeers'] = 'No peers of item found.';
+$string['listnoitem'] = 'Item not found.';
+$string['listnochildren'] = 'No children of item found.';
+$string['listupdatefail'] = 'DB operation failed when editing list hierarchy.';
+$string['listcantmoveup'] = 'Failed to move the item up, it is the first of it\'s peers.';
+$string['listcantmovedown'] = 'Failed to move item down, it is the last of it\'s peers.';
+$string['listcantmoveleft'] = 'Failed to move item left, it has no parent.';
+$string['listcantmoveright'] = 'Failed to move item right, their is no peer to make it a child of. Move it below another peer and then you can move it right.';
 $string['loginasonecourse'] = 'You can not enter this course.<br /> You have to terminate the \"Login as\" session before entering any other course.';
 $string['loginasnoenrol'] = 'You can not use enrol or unenrol when in course \"Login as\" session.';
 $string['missingfield'] = 'Field \"$a\" is missing';

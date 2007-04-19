@@ -1,0 +1,606 @@
+<?php // $Id$
+
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// NOTICE OF COPYRIGHT                                                   //
+//                                                                       //
+// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
+//          http://moodle.com                                            //
+//                                                                       //
+// Copyright (C) 2007       Jamie Pratt  http://jamiep.org               //
+//                                                                       //
+// This program is free software; you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation; either version 2 of the License, or     //
+// (at your option) any later version.                                   //
+//                                                                       //
+// This program is distributed in the hope that it will be useful,       //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
+// GNU General Public License for more details:                          //
+//                                                                       //
+//          http://www.gnu.org/copyleft/gpl.html                         //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Classes for displaying and editing a nested list of items.
+ *
+ * Handles functionality for :
+ *
+ *    Construction of nested list from db records with some key pointing to a parent id.
+ *    Display of list with or without editing icons with optional pagination.
+ *    Reordering of items works across pages.
+ *    Processing of editing actions on list.
+ *
+ * @author Jamie Pratt
+ * @version  $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ */
+
+
+class moodle_list{
+    var $attributes;
+    var $listitemclassname = 'list_item';
+    /**
+     * An array of $listitemclassname objects.
+     *
+     * @var array
+     */
+    var $items = array();
+    /**
+     * ol / ul
+     *
+     * @var string
+     */
+    var $type;
+    /**
+     *
+     * @var list_item or derived class
+     */
+    var $parentitem;
+    var $table;
+    var $fieldnamesparent = 'parent';
+    var $sortby = 'parent, sortorder, name';
+    /**
+     * Records from db, only used in top level list.
+     *
+     * @var array
+     */
+    var $records = array();
+
+    var $editable;
+
+    /**
+     * Key is child id, value is parent.
+     *
+     * @var array
+     */
+    var $childparent;
+
+//------------------------------------------------------
+//vars used for pagination.
+    var $page = 0;// 0 means no pagination
+    var $firstitem = 1;
+    var $lastitem = 999999;
+    var $topcount;
+    var $pagecount;
+//------------------------------------------------------
+    var $pageurl;
+    var $pageparams = array();
+
+    var $str;
+    /**
+     * Constructor function
+     *
+     * @param string $type
+     * @param string $attributes
+     * @param boolean $editable
+     * @param integer $page if 0 no pagination.
+     * @return moodle_list
+     */
+    function moodle_list($type='ul', $attributes='', $editable = false, $page = 0){
+        $this->editable = $editable;
+        $this->attributes = $attributes;
+        $this->type = $type;
+        $this->page = $page;
+        $this->pageurl = strip_querystring(qualified_me());//default
+        if (!empty($this->page)){
+            $this->add_page_params(array('page' => $this->page));
+        }
+    }
+    /**
+     * Add an array of params to the params for this page.
+     *
+     * @param unknown_type $params
+     */
+    function add_page_params($params){
+        $this->pageparams = $params + $this->pageparams;
+    }
+
+    /**
+     * Get url and query string for an action on this page (get_url() + sesskey)
+     *
+     * @param array $overrideparams an array of params which override $this->pageparams
+     * @return string
+     */
+    function get_action_url($overrideparams = array()){
+        global $USER;
+
+        $arr = array();
+        $paramarray = $overrideparams + $this->pageparams + array('sesskey'=>$USER->sesskey);
+        foreach ($paramarray as $key => $val){
+           $arr[] = urlencode($key)."=".urlencode($val);
+        }
+        $params = implode($arr, "&amp;");
+
+        return $this->pageurl.'?'.$params;
+    }
+
+    /**
+     * Get url and query string for this page
+     *
+     * @param array $overrideparams an array of params which override $this->pageparams
+     * @return string
+     */
+    function get_url($overrideparams = array()){
+
+        $arr = array();
+        $paramarray = $overrideparams + $this->pageparams;
+        foreach ($paramarray as $key => $val){
+           $arr[] = urlencode($key)."=".urlencode($val);
+        }
+        $params = implode($arr, "&amp;");
+
+        return $this->pageurl.'?'.$params;
+    }
+
+    /**
+     * Returns html string.
+     *
+     * @param integer $indent depth of indentation.
+     */
+    function to_html($indent=0, $extraargs=array()){
+        if (count($this->items)){
+            $tabs = str_repeat("\t", $indent);
+            $html = $tabs.'<'.$this->type.((!empty($this->attributes))?(' '.$this->attributes):'').">\n";
+            $first = true;
+            $itemiter = 1;
+            $lastitem = '';
+
+            foreach ($this->items as $item){
+                $last = (count($this->items) == $itemiter);
+                if ($itemiter >= $this->firstitem && $itemiter <= $this->lastitem ){
+                    if ($this->editable){
+                        $item->set_icon_html($first, $last, $lastitem);
+                    }
+                    $html .= "$tabs\t<li".((!empty($item->attributes))?(' '.$item->attributes):'').">";
+                    $html .= $item->to_html($indent+1, $extraargs);
+                    $html .= "</li>\n";
+                }
+                $first = false;
+                $lastitem = $item;
+                $itemiter++;
+            }
+            $html .= $tabs."</".$this->type.">\n";
+        } else {
+            $html = '';
+        }
+        return $html;
+    }
+
+    /**
+     * Recurse down the tree and find an item by it's id.
+     *
+     * @param integer $id
+     * @return list_item *copy* or null if item is not found
+     */
+    function find_item($id, $suppresserror = false){
+        if (isset($this->items)){
+            foreach ($this->items as $key => $child){
+                if ($child->id == $id){
+                    return $this->items[$key];
+                }
+            }
+            foreach (array_keys($this->items) as $key){
+                $thischild =& $this->items[$key];
+                $ref = $thischild->children->find_item($id, true);//error always reported at top level
+                if ($ref !== null){
+                    return $ref;
+                }
+            }
+        }
+
+        if (!$suppresserror){
+            print_error('listnoitem');
+        }
+        return null;
+    }
+
+
+
+    function add_item(&$item){
+        $this->items[] =& $item;
+    }
+
+    function set_parent(&$parent){
+        $this->parentitem =& $parent;
+    }
+
+
+    /**
+     * Produces a hierarchical tree of list items from a flat array of records.
+     * 'parent' field is expected to point to a parent record.
+     * records are already sorted.
+     * If the parent field doesn't point to another record in the array then this is
+     * a top level list
+     *
+     * @param array $records
+     * @param string $listitemclassname
+     * @param integer $itemsperpage no of top level items.
+     */
+    function list_from_records($itemsperpage = 25){
+        $this->get_records();
+        $records = $this->records;
+        $page = $this->page;
+        if (!empty($page)) {
+            $this->firstitem = ($page-1) * $itemsperpage + 1;
+            $this->lastitem = $this->firstitem + $itemsperpage - 1;
+        }
+        $itemiter = 1;
+        //make a simple array which is easier to search
+        $this->childparent = array();
+        foreach ($records as $record){
+            $this->childparent[$record->id] = $record->parent;
+        }
+        //create top level list items and they're responsible for creating their children
+        foreach ($records as $record){
+            if (!array_key_exists($record->parent, $this->childparent)){
+                //if this record is not a child of another record then
+
+                //make list item for top level for all items
+                //we need the info about the top level items for reordering peers.
+                $newlistitem =& new $this->listitemclassname($record, $this);
+                if ($itemiter >= $this->firstitem && $itemiter <= $this->lastitem ){
+                    //but don't recurse down the tree for items that are not on this page
+                    $newlistitem->create_children($records, $this->childparent, $record->id);
+                }
+                $itemiter++;
+            }
+        }
+        $this->topcount = $itemiter - 1;
+        $this->pagecount = (integer) ceil( $this->topcount / QUESTION_PAGE_LENGTH );
+    }
+
+    /**
+     * Should be overriden to return an array of records of list items.
+     *
+     */
+    function get_records() {
+    }
+
+    /**
+     * display list of page numbers for navigation
+     */
+    function display_page_numbers() {
+        if (!empty($this->page) && ($this->pagecount>1)){
+            echo "<div class=\"paging\">".get_string('page').":\n";
+            foreach (range(1,$this->pagecount) as $currentpage) {
+                if ($this->page == $currentpage) {
+                    echo " $currentpage \n";
+                }
+                else {
+                    echo "<a href=\"".$this->get_url(array('page'=>$currentpage))."\">";
+                    echo " $currentpage </a>\n";
+                }
+            }
+            echo "</div>";
+        }
+    }
+
+    /**
+     * Returns an array of ids of peers of an item.
+     *
+     * @param    int itemid - if given, restrict records to those with this parent id.
+     * @return   array peer ids
+     */
+    function get_items_peers($itemid) {
+        $itemref = $this->find_item($itemid);
+        $peerids = $itemref->parentlist->get_child_ids();
+        return $peerids;
+    }
+
+    /**
+     * Returns an array of ids of child items.
+     *
+     * @return   array peer ids
+     */
+    function get_child_ids() {
+        $childids = array();
+        foreach ($this->items as $child){
+           $childids[] = $child->id;
+        }
+        return $childids;
+    }
+
+    /**
+     * Move a record up or down
+     *
+     * @param string $direction up / down
+     * @param integer $id
+     */
+    function move_item_up_down($direction, $id) {
+        $peers = $this->get_items_peers($id);
+        $itemkey = array_search($id, $peers);
+        switch ($direction) {
+            case 'down' :
+                if (isset($peers[$itemkey+1])){
+                    $olditem = $peers[$itemkey+1];
+                    $peers[$itemkey+1] = $id;
+                    $peers[$itemkey] = $olditem;
+                } else {
+                    print_error('listcantmoveup');
+
+                }
+                break;
+
+            case 'up' :
+                if (isset($peers[$itemkey-1])){
+                    $olditem = $peers[$itemkey-1];
+                    $peers[$itemkey-1] = $id;
+                    $peers[$itemkey] = $olditem;
+                } else {
+                    print_error('listcantmovedown');
+                }
+                break;
+        }
+        $this->reorder_peers($peers);
+    }
+    function reorder_peers($peers){
+        foreach ($peers as $key => $peer) {
+            if (! set_field("{$this->table}", "sortorder", $key, "id", $peer)) {
+                print_error('listupdatefail');
+            }
+        }
+    }
+    function move_item_left($id) {
+        $item = $this->find_item($id);
+        if (!isset($item->parentlist->parentitem->parentlist)){
+            print_error('listcantmoveleft');
+        } else {
+            $newpeers = $this->get_items_peers($item->parentlist->parentitem->id);
+            if (isset($item->parentlist->parentitem->parentlist->parentitem)){
+                $newparent = $item->parentlist->parentitem->parentlist->parentitem->id;
+            } else {
+                $newparent = 0; // top level item
+            }
+            if (!set_field("{$this->table}", "parent", $newparent, "id", $item->id)) {
+                print_error('listupdatefail');
+            } else {
+                $oldparentkey = array_search($item->parentlist->parentitem->id, $newpeers);
+                $neworder = array_merge(array_slice($newpeers, 0, $oldparentkey+1), array($item->id), array_slice($newpeers, $oldparentkey+1));
+                $this->reorder_peers($neworder);
+            }
+        }
+    }
+    /**
+     * Make item with id $id the child of the peer that is just above it in the sort order.
+     *
+     * @param integer $id
+     */
+    function move_item_right($id) {
+        $peers = $this->get_items_peers($id);
+        $itemkey = array_search($id, $peers);
+        if (!isset($peers[$itemkey-1])){
+            print_error('listcantmoveright');
+        } else {
+            if (!set_field("{$this->table}", "parent", $peers[$itemkey-1], "id", $peers[$itemkey])) {
+                print_error('listupdatefail');
+            } else {
+                $newparent = $this->find_item($peers[$itemkey-1]);
+                if (isset($newparent->children)){
+                    $newpeers = $newparent->children->get_child_ids();
+                }
+                if ($newpeers){
+                    $newpeers[] = $peers[$itemkey];
+                    $this->reorder_peers($newpeers);
+                }
+            }
+        }
+    }
+
+    /**
+     * process any actions.
+     *
+     * @param integer $left id of item to move left
+     * @param integer $right id of item to move right
+     * @param integer $moveup id of item to move up
+     * @param integer $movedown id of item to move down
+     * @return unknown
+     */
+    function process_actions($left, $right, $moveup, $movedown){
+        if (!empty($left)) {
+            $this->move_item_left($left);
+        } else if (!empty($right)) {
+            $this->move_item_right($right);
+        } else if (!empty($moveup)) {
+            $this->move_item_up_down('up', $moveup);
+            if ($moveup == $this->items[$this->firstitem -1]->id){//redirect to page that item has been moved to.
+                $this->page --;
+                $this->add_page_params(array('page'=>$this->page));
+            }
+        } else if (!empty($movedown)) {
+            $this->move_item_up_down('down', $movedown);
+            if ($movedown == $this->items[$this->lastitem -1]->id){//redirect to page that item has been moved to.
+                $this->page ++;
+                $this->add_page_params(array('page'=>$this->page));
+            }
+        } else {
+            return false;
+        }
+
+        redirect($this->get_url());
+    }
+}
+
+class list_item{
+    /**
+     * id of record, used if list is editable
+     *
+     * @var integer
+     */
+    var $id;
+    /**
+     * name of this item, used if list is editable
+     *
+     * @var string
+     */
+    var $name;
+    /**
+     * The object or string representing this item.
+     *
+     * @var mixed
+     */
+    var $item;
+    var $fieldnamesname = 'name';
+    var $attributes;
+    var $iconhtml = '';
+    /**
+     *
+     * @var moodle_list
+     */
+    var $parentlist;
+    /**
+     * Set if there are any children of this listitem.
+     *
+     * @var moodle_list
+     */
+    var $children;
+    /**
+     * Constructor
+     *
+     * @param mixed $item fragment of html for list item or record
+     * @param string $attributes attributes for li tag
+     * @return list_item
+     */
+    function list_item($item, &$parent, $attributes=''){
+        $this->item = $item;
+        if (is_object($this->item)) {
+            $this->id = $this->item->id;
+            $this->name = $this->item->{$this->fieldnamesname};
+        }
+        $this->set_parent($parent);
+        $this->attributes = $attributes;
+        $parentlistclass = get_class($parent);
+        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page);
+        $this->children->add_page_params($parent->pageparams);
+        $this->children->pageurl = $parent->pageurl;
+        $this->children->set_parent($this);
+    }
+    /**
+     * Output the html just for this item. Called by to_html which adds html for children.
+     *
+     */
+    function item_html($extraargs = array()){
+        if (is_string($this->item)){
+            $html = $this->item;
+        } elseif (is_object($this->item)) {
+            //for debug purposes only. You should create a sub class to
+            //properly handle the record
+            $html = join(', ', (array)$this->item);
+        }
+        return $html;
+    }
+    /**
+     * Returns html
+     *
+     * @param integer $indent
+     * @param array $extraargs any extra data that is needed to print the list item
+     *                            may be used by sub class.
+     * @return string html
+     */
+    function to_html($indent=0, $extraargs = array()){
+        $tabs = str_repeat("\t", $indent);
+
+        if (isset($this->children)){
+            $childrenhtml = $this->children->to_html($indent+1, $extraargs);
+        } else {
+            $childrenhtml = '';
+        }
+        return $this->item_html($extraargs).$this->iconhtml.(($childrenhtml !='')?("\n".$childrenhtml):'');
+    }
+
+    function set_icon_html($first, $last, &$lastitem){
+        global $CFG;
+        $strmoveup = get_string('moveup');
+        $strmovedown = get_string('movedown');
+        $pixpath = $CFG->pixpath;
+        $icons = '&nbsp;';
+        if (!empty($this->parentlist->page)) {
+            $pagelink="&amp;page={$this->parentlist->page}";
+        } else {
+            $pagelink="";
+        }
+        if (isset($this->parentlist->parentitem)) {
+            $parentitem =& $this->parentlist->parentitem;
+            if (isset($parentitem->parentlist->parentitem)){
+                $action = get_string('makechildof', 'question', $parentitem->parentlist->parentitem->name);
+            } else {
+                $action = get_string('maketoplevelitem', 'question');
+            }
+            $icons .= '<a title="' . $action .'" href="'.$this->parentlist->get_action_url().'&amp;left=' . $this->id .'">
+                <img src="' . $pixpath . '/t/left.gif" class="iconsmall" alt="' . $action. '" /></a> ';
+        } else {
+            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+        }
+
+        if (!$first) {
+            $icons .= '<a title="' . $strmoveup .'" href="'.$this->parentlist->get_action_url().'&amp;moveup=' . $this->id .'">
+                <img src="' . $pixpath . '/t/up.gif" class="iconsmall" alt="' . $strmoveup. '" /></a> ';
+        } else {
+            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+        }
+
+        if (!$last) {
+            $icons .= '<a title="' . $strmovedown .'" href="'.$this->parentlist->get_action_url().'&amp;movedown=' . $this->id .'">
+                 <img src="' . $pixpath . '/t/down.gif" class="iconsmall" alt="' .$strmovedown. '" /></a> ';
+        } else {
+            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+        }
+
+        if (!empty($lastitem)) {
+            $makechildof = get_string('makechildof', 'question', $lastitem->name);
+            $icons .= '<a title="' . $makechildof .'" href="'.$this->parentlist->get_action_url().'&amp;right=' . $this->id .'">
+                <img src="' . $pixpath . '/t/right.gif" class="iconsmall" alt="' . $makechildof. '" /></a> ';
+        } else {
+            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+        }
+
+        $this->iconhtml = $icons;
+    }
+    /**
+     * Recurse down tree creating list_items, called from moodle_list::list_from_records
+     *
+     * @param array $records
+     * @param array $children
+     * @param integer $thisrecordid
+     */
+    function create_children(&$records, &$children, $thisrecordid){
+        //keys where value is $thisrecordid
+        $thischildren = array_keys($children, $thisrecordid);
+        if (count($thischildren)){
+            foreach ($thischildren as $child){
+                $thisclass = get_class($this);
+                $newlistitem =& new $thisclass($records[$child], $this->children, $this->attributes);
+                $newlistitem->create_children($records, $children, $records[$child]->id);
+            }
+        }
+    }
+    function set_parent(&$parent){
+        $this->parentlist =& $parent;
+        $parent->add_item($this);
+    }
+
+}
+?>
