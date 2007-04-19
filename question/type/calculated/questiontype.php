@@ -917,7 +917,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             }
             $text .="</table>";
         }else{
-             $text .=get_string('no shareable wild card', 'qtype_calculated'); //"<b>NO SHAREABLE DATASETS IN THIS CATEGORY</b>";
+             $text .=get_string('nosharedwildcard', 'qtype_calculated'); 
         }
         return  $text ;
     }    

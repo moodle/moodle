@@ -64,8 +64,14 @@ class question_edit_calculated_form extends question_edit_form {
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));*/
 //------------------------------------------------------------------------------------------
         $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $mform->addElement('hidden', 'initialcategory', 1);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
-        $mform->insertElementBefore($mform->createElement('static','list',$label,$html2),'questiontext');
+        $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
+        $addfieldsname='updatecategory';
+        $addstring='Update the category';
+                $mform->registerNoSubmitButton($addfieldsname);
+ 
+        $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
 
         $mform->addElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated'));
 
@@ -158,8 +164,24 @@ class question_edit_calculated_form extends question_edit_form {
         }
         $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
         $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
-        $question = (object)((array)$question + $default_values);
-
+        /* set the wild cards category display given that on loading the category element is 
+        unselected when processing this function but have a valid value when processing the 
+        update category button. The value can be obtain by
+         $qu->category =$this->_form->_elements[$this->_form->_elementIndex['category']]->_values[0];
+         but is coded using existing functions
+        */        
+         $qu = new stdClass;
+         $el = new stdClass;
+         /* no need to call elementExists() here */ 
+         $el=$this->_form->getElement('category');  
+         if($value =$el->getSelected()) {
+            $qu->category =$value[0];
+        }else {
+            $qu->category=$question->category;// on load  $question->category is set by question.php
+        }    
+        $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
+       $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2 ;
+               $question = (object)((array)$question + $default_values);
 
         parent::set_data($question);
     }
