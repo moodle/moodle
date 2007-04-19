@@ -6267,9 +6267,9 @@
             }
             if (!$status = restore_decode_content_links($restore)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not refresh events for activities!");
+                    notify("Could not decode content links!");
                 } else {
-                    $errorstr = "Could not refresh events for activities!";
+                    $errorstr = "Could not decode content links!";
                     return false;
                 }
             }
