@@ -756,6 +756,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Adding keys to table events_handlers
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('eventname-handlermodule', XMLDB_KEY_UNIQUE, array('eventname', 'handlermodule'));
 
     /// Adding indexes to table events_handlers
         $table->addIndexInfo('eventname', XMLDB_INDEX_NOTUNIQUE, array('eventname'));

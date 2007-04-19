@@ -114,6 +114,8 @@ function upgrade_plugins($type, $dir, $return) {
                     if (!update_capabilities($type.'/'.$plug)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
                     }
+                    events_update_definition($type.'/'.$plug);
+                    
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
                     notify('Installing '. $plugin->name .' FAILED!');
@@ -151,6 +153,7 @@ function upgrade_plugins($type, $dir, $return) {
                     if (!update_capabilities($type.'/'.$plug)) {
                         error('Could not update '.$plugin->name.' capabilities!');
                     }
+                    events_update_definition($type.'/'.$plug);
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
                     notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
@@ -303,6 +306,7 @@ function upgrade_activity_modules($return) {
                 if (!update_capabilities('mod/'.$module->name)) {
                     error('Could not update '.$module->name.' capabilities!');
                 }
+                events_update_definition('mod/'.$module->name);
 
                 $updated_modules = true;
 
@@ -337,6 +341,8 @@ function upgrade_activity_modules($return) {
                     if (!update_capabilities('mod/'.$module->name)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
                     }
+                    
+                    events_update_definition('mod/'.$module->name);
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {

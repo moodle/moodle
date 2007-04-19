@@ -1270,6 +1270,8 @@ function upgrade_blocks_plugins($continueto) {
                     if (!update_capabilities($component)) {
                         error('Could not update '.$block->name.' capabilities!');
                     }
+                    
+                    events_update_definition($component);
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                 } else {
                     notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
@@ -1326,6 +1328,8 @@ function upgrade_blocks_plugins($continueto) {
                     if (!update_capabilities($component)) {
                         notify('Could not set up '.$block->name.' capabilities!');
                     }
+                    
+                    events_update_definition($component);
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
                 } else {
