@@ -177,11 +177,8 @@ function useredit_shared_definition(&$mform) {
         $mform->setDefault('timezone', '99');
     }
 
-    $choices = array();
-    if ($choices = get_list_of_languages()) {
-        $mform->addElement('select', 'lang', get_string('preferredlanguage'), $choices);
-        $mform->setDefault('lang', $CFG->lang);
-    }
+    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_list_of_languages());
+    $mform->setDefault('lang', $CFG->lang);
 
     if (!empty($CFG->allowuserthemes)) {
         $choices = array();
