@@ -14,6 +14,7 @@
 
     //initialize variables
     $errormsg = '';
+    $errorcode = 0;
 
 /// Check for timed out sessions
     if (!empty($SESSION->has_timed_out)) {
@@ -81,9 +82,6 @@ httpsrequired();
 
     $loginsite = get_string("loginsite");
 
-    $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
-
-
     if ($user !== false or $frm !== false) {
         // some auth plugin already supplied these
 
@@ -102,11 +100,11 @@ httpsrequired();
         if ($user) {
             $frm->username = $user->username;
         } else {
-            $frm = data_submitted($loginurl);
+            $frm = data_submitted();
         }
 
     } else {
-        $frm = data_submitted($loginurl);
+        $frm = data_submitted();
     }
 
 /// Check if the user has actually submitted login data to us
@@ -114,6 +112,7 @@ httpsrequired();
     if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    // Login without cookie when test requested
 
         $errormsg = get_string("cookiesnotenabled");
+        $errorcode = 1;
 
     } else if ($frm) {                             // Login WITH cookies
 
@@ -123,6 +122,8 @@ httpsrequired();
             $string = eregi_replace("[^(-\.[:alnum:])]", "", $frm->username);
             if (strcmp($frm->username, $string)) {
                 $errormsg = get_string('username').': '.get_string("alphanumerical");
+                $errorcode = 2;
+
                 $user = null;
             }
         }
@@ -244,6 +245,7 @@ httpsrequired();
         } else {
             if (empty($errormsg)) {
                 $errormsg = get_string("invalidlogin");
+                $errorcode = 3;
             }
 
             // TODO: if the user failed to authenticate, check if the username corresponds to a remote mnet user
@@ -255,8 +257,11 @@ httpsrequired();
         }
     }
 
-    
-/// We need to show a login form
+/// Detect problems with timedout sessions
+    if ($session_has_timed_out and !data_submitted()) {
+        $errormsg = get_string('sessionerroruser', 'error');
+        $errorcode = 4;
+    }
 
 /// First, let's remember where the user was trying to get to before they got here
 
@@ -269,16 +274,24 @@ httpsrequired();
             ? $_SERVER["HTTP_REFERER"] : NULL;
     }
 
-    if (!empty($loginurl)) {   // We don't want the standard forms, go elsewhere
+/// Redirect to alternative login URL if needed
+    if (!empty($CFG->alternateloginurl)) {
+        $loginurl = $CFG->alternateloginurl;
+
+        if ($errorcode) {
+            if (strpos($loginurl, '?') === false) {
+                $loginurl .= '?';
+            } else {
+                $loginurl .= '&';
+            }
+            $loginurl .= 'errorcode='.$errorcode; 
+        }
+
         redirect($loginurl);
     }
     
 
 /// Generate the login page with forms
-
-    if ($session_has_timed_out) {
-        $errormsg = get_string('sessionerroruser', 'error');
-    }
 
     if (get_moodle_cookie() == '') {   
         set_moodle_cookie('nobody');   // To help search for cookies
