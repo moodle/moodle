@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070418" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070420" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1195,7 +1195,8 @@
         <FIELD NAME="handlerfunction" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized string or array describing function, suitable to be passed to call_user_func()" PREVIOUS="handlerfile"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="eventname-handlermodule"/>
+        <KEY NAME="eventname-handlermodule" TYPE="unique" FIELDS="eventname, handlermodule" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="eventname" UNIQUE="false" FIELDS="eventname"/>
