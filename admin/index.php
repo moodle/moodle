@@ -326,6 +326,9 @@
                     } else if (!update_capabilities()) {
                         error('Had trouble upgrading the core capabilities for the Roles System');
                     }
+                    // update core events
+                    events_update_definition();
+                    
                     require_once($CFG->libdir.'/statslib.php');
                     if (!stats_upgrade_for_roles_wrapper()) {
                         notify('Couldn\'t upgrade the stats tables to use the new roles system');
