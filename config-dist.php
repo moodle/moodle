@@ -281,7 +281,12 @@ $CFG->admin = 'admin';
 //     $CFG->allowvisiblecoursesinhiddencategories = true;
 // 
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
-
+// 
+// special magic evil developer only wanting to edit the xmldb files manually
+// uncomment these if you're lazy like Penny
+// $CFG->xmldbdisablecommentchecking = true;
+// $CFG->xmldbdisablenextprevchecking = true;
+//
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================

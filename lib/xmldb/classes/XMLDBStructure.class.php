@@ -330,6 +330,8 @@ class XMLDBStructure extends XMLDBObject {
      */
     function arr2XMLDBStructure($xmlarr) {
 
+        global $CFG;
+
         $result = true;
 
     /// Debug the structure
@@ -354,6 +356,8 @@ class XMLDBStructure extends XMLDBObject {
         }
         if (isset($xmlarr['XMLDB']['@']['COMMENT'])) {
             $this->comment = trim($xmlarr['XMLDB']['@']['COMMENT']);
+        } else if (!empty($CFG->xmldbdisablecommentchecking)) {
+            $this->comment = '';
         } else {
             $this->errormsg = 'Missing COMMENT attribute';
             $this->debug($this->errormsg);

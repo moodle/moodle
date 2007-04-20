@@ -194,6 +194,10 @@ class XMLDBObject {
      * have a consistent info in their previous/next fields
      */
     function checkPreviousNextValues(&$arr) {
+        global $CFG;
+        if (!empty($CFG->xmldbdisablenextprevchecking)) {
+            return true;
+        }
         $result = true;
     /// Check that only one element has the previous not set
         if ($arr) {
@@ -271,7 +275,11 @@ class XMLDBObject {
      * the previous/next rules
      */
     function orderElements($arr) {
+        global $CFG;
         $result = true;
+        if (!empty($CFG->xmldbdisablenextprevchecking)) {
+            return $arr;
+        }
     /// Create a new array
         $newarr = array();
         if (!empty($arr)) {
