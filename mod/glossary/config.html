@@ -3,6 +3,7 @@
     $no  = get_string("no");
 ?>
 <form method="post" action="module.php" id="form">
+<div>
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 
 <table cellpadding="9" cellspacing="0" >
@@ -230,7 +231,7 @@
         }
         $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=visible\"><img class=\"iconsmall\" src=\"../pix/t/" . $vicon . "\" alt=\"$vtitle\" /></a>";
 
-        echo '<td align="center" nowrap="nowrap">' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
+        echo '<td align="center">' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
         echo '</tr>';
     }
     print_simple_box_end();
@@ -244,5 +245,5 @@
         <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
-
+</div>
 </form>

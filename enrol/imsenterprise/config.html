@@ -21,7 +21,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('mailadmins', 'enrol_imsenterprise') ?>:</td>
     <td style="width:10px">
-        <input type="checkbox" value="1" name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     
@@ -35,7 +35,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('createnewusers', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_createnewusers" <?php if ($frm->enrol_createnewusers) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_createnewusers" <?php if ($frm->enrol_createnewusers) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('createnewusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
@@ -45,7 +45,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('deleteusers', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_imsdeleteusers" <?php if ($frm->enrol_imsdeleteusers) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_imsdeleteusers" <?php if ($frm->enrol_imsdeleteusers) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('deleteusers', 'More detail about this option', 'enrol/imsenterprise'); ?>
@@ -55,7 +55,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('fixcaseusernames', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_fixcaseusernames" <?php if ($frm->enrol_fixcaseusernames) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_fixcaseusernames" <?php if ($frm->enrol_fixcaseusernames) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     
@@ -65,7 +65,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('fixcasepersonalnames', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_fixcasepersonalnames" <?php if ($frm->enrol_fixcasepersonalnames) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_fixcasepersonalnames" <?php if ($frm->enrol_fixcasepersonalnames) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     
@@ -75,7 +75,7 @@
 <tr valign="top">
     <td align="right"><?php  print_string('sourcedidfallback', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_imssourcedidfallback" <?php if ($frm->enrol_imssourcedidfallback) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_imssourcedidfallback" <?php if ($frm->enrol_imssourcedidfallback) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('sourceddidfallback', 'More detail about this option', 'enrol/imsenterprise'); ?>    
@@ -87,7 +87,7 @@ Photo processing is deactivated until we hear from Moodle dev forum about modifi
 <tr valign="top">
     <td align="right"><?php  print_string('processphoto', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_processphoto" <?php if ($frm->enrol_processphoto) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_processphoto" <?php if ($frm->enrol_processphoto) echo "checked=\"checked\"" ?> />
     </td>
     <td>
         <?php  print_string('processphotowarning', 'enrol_imsenterprise') ?>
@@ -145,7 +145,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 <tr valign="top">
     <td align="right"><?php  print_string('createnewcourses', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_createnewcourses" <?php if ($frm->enrol_createnewcourses) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_createnewcourses" <?php if ($frm->enrol_createnewcourses) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('createnewcourses', 'More detail about this option', 'enrol/imsenterprise'); ?>
@@ -155,7 +155,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 <tr valign="top">
     <td align="right"><?php  print_string('createnewcategories', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_createnewcategories" <?php if ($frm->enrol_createnewcategories) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_createnewcategories" <?php if ($frm->enrol_createnewcategories) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('categorisation', 'More detail about this option', 'enrol/imsenterprise'); ?>
@@ -165,7 +165,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 <tr valign="top">
     <td align="right"><?php  print_string('allowunenrol', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_imsunenrol" <?php if ($frm->enrol_imsunenrol) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_imsunenrol" <?php if ($frm->enrol_imsunenrol) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('unenrol', 'More detail about this option', 'enrol/imsenterprise'); ?>
@@ -187,7 +187,7 @@ foreach($this->imsroles as $imsrolenum=>$imsrolename){
 <tr valign="top">
     <td align="right"><?php  print_string('usecapitafix', 'enrol_imsenterprise') ?>:</td>
     <td>
-        <input type="checkbox" value="1" name="enrol_imscapitafix" <?php if ($frm->enrol_imscapitafix) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value="1" name="enrol_imscapitafix" <?php if ($frm->enrol_imscapitafix) echo "checked=\"checked\"" ?> />
     </td>
     <td>
     <?php helpbutton('capita', 'More detail about this option', 'enrol/imsenterprise'); ?>

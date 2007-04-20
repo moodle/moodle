@@ -97,10 +97,10 @@
         if (!$USER->screenreader) {
             echo "<td align=\"center\">";
             if ($screenshotpath) {
-                $screenshot = "<li><a target=\"$theme\" href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
-                echo "<iframe name=\"$theme\" src=\"$screenshotpath\" height=\"200\" width=\"400\"></iframe></td>";
+                $screenshot = "<li><a href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
+                echo "<object type=\"text/html\" data=\"$screenshotpath\" height=\"200\" width=\"400\">$theme</object></td>";
             } else {
-                echo "<iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"200\" width=\"400\"></iframe></td>";
+                echo "<object type=\"text/html\" data=\"preview.php?preview=$theme\" height=\"200\" width=\"400\">$theme</object></td>";
             }
         }
 
@@ -119,7 +119,7 @@
         if ($screenshot or $readme) {
             echo '<ul>';      
             if (!$USER->screenreader) {
-                echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></li>";
+                echo "<li><a href=\"preview.php?preview=$theme\">$strpreview</a></li>";
             }
             echo $screenshot.$readme;
             echo '</ul>';

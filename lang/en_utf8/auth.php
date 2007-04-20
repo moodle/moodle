@@ -244,7 +244,7 @@ $string['auth_nonedescription'] = 'Users can sign in and create valid accounts i
 $string['auth_nonetitle'] = 'No authentication';
 
 // PAM plugin
-$string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> in order to use this module.';
+$string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\">PHP4 PAM Authentication</a> in order to use this module.';
 $string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
 
 $string['auth_passwordisexpired'] = 'Your password is expired. Do you want change your password now?';
@@ -266,7 +266,7 @@ $string['auth_pop3host_key'] = 'Host';
 
 // RADIUS plugin
 $string['auth_radiustitle'] = 'RADIUS server';
-$string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wikipedia.org/wiki/RADIUS\" target=\"_blank\">RADIUS</a> server to check whether a given username and password is valid.';
+$string['auth_radiusdescription'] = 'This method uses a <a href=\"http://en.wikipedia.org/wiki/RADIUS\">RADIUS</a> server to check whether a given username and password is valid.';
 $string['auth_radiushost'] = 'Address of the RADIUS server';
 $string['auth_radiusnasport'] = 'Port to use to connect';
 $string['auth_radiussecret'] = 'Shared secret';
@@ -276,7 +276,7 @@ $string['auth_radiushost_key'] = 'Host';
 $string['auth_radiussecret_key'] = 'Secret';
 
 // Shibboleth plugin
-$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>.<br/>Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\">Shibboleth</a>.<br/>Be sure to read the <a href=\"../auth/shibboleth/README.txt\">README</a> for Shibboleth on how to set up your Moodle with Shibboleth';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_shibboleth_login'] = 'Shibboleth Login';
 $string['auth_shibboleth_manual_login'] = 'Manual Login';
@@ -285,7 +285,7 @@ $string['auth_shib_only_description'] = 'Check this option if a Shibboleth authe
 $string['auth_shib_username_description'] = 'Name of the webserver Shibboleth environment variable that shall be used as Moodle username';
 $string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
 $string['auth_shib_convert_data'] = 'Data modification API';
-$string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> for further instructions.';
+$string['auth_shib_convert_data_description'] = 'You can use this API to further modify the data provided by Shibboleth. Read the <a href=\"../auth/shibboleth/README.txt\">README</a> for further instructions.';
 $string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section. The instructions must include a link to \"<b>$a</b>\" that users click when they want to log in.';
 $string['auth_shib_convert_data_warning'] = 'The file does not exist or is not readable by the webserver process!';
 $string['auth_shib_changepasswordurl'] = 'Password-change URL';

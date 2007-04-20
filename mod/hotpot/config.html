@@ -1,6 +1,6 @@
 <form method="post" action="module.php" id="form">
 <input type="hidden" name="sesskey" value="<?PHP print isset($USER->sesskey) ? $USER->sesskey : '' ?>" />
-
+<div>
 <table cellpadding="9" cellspacing="0">
     <tr valign="top">
         <td align="right">hotpot_showtimes:</td>
@@ -21,5 +21,5 @@
         <td colspan="3" align="center"><input type="submit" value="<?PHP print_string("savechanges") ?>" /></td>
     </tr>
 </table>
-
+</div>
 </form>

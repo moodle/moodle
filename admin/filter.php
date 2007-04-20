@@ -74,21 +74,21 @@
     admin_externalpage_print_header($adminroot);
     print_heading( $filtername );
 
-    print_simple_box("<center>".get_string("configwarning", "admin")."</center>", "center", "50%");
+    print_simple_box(get_string("configwarning", "admin"), "center", "50%");
     echo "<br />";
 
     print_simple_box_start("center",'');
 
     ?>
     <form action="filter.php?filter=<?php echo urlencode($param->filter); ?>" method="post">
+    <div style="text-align: center">
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 
     <?php include "$CFG->dirroot/$param->filter/filterconfig.html"; ?>
 
-    <center>
         <input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" />
         <input type="submit" name="reset" value="<?php echo print_string('resettodefaults'); ?>" />
-    </center>
+    </div>
     </form>
 
     <?php

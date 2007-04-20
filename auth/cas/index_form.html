@@ -1,11 +1,11 @@
-<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center">
+<table width="90%" border="0" cellspacing="10" cellpadding="5" >
   <tr>
 <?php if ($show_instructions) { ?>
     <td width="50%" class="headingblock">
-      <p align="center"><b><font size="3"><?php  print_string("returningtosite") ?></font></b></p>
+      <p><b><?php  print_string("returningtosite") ?></b></p>
     </td>
     <td width="50%" class="headingblock">
-      <p align="center"><b><font size="3"><?php  print_string("firsttime") ?></font></b></p>
+      <p><b><?php  print_string("firsttime") ?></b></p>
     </td>
 <?php } ?>
   </tr>
@@ -16,7 +16,8 @@
          <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
       </p>
       <form action="index.php" method="post" id="login">
-        <table border="0" align="center" style="font-size: small">
+        <div>
+        <table border="0" style="font-size: small">
         <tr>
           <td width="100%">
             <input type="hidden" name="username" id="username" value="cas" />
@@ -25,14 +26,17 @@
           </td>
         </tr>
         </table>
+        </div>
       </form>
 <?php if ($CFG->guestloginbutton) {  ?>
       <hr width="80%" />
       <p><?php print_string("someallowguest") ?>:</p>
         <form action="index.php" method="post" id="guestlogin">
+          <div>
           <input type="hidden" name="username" value="guest" />
           <input type="hidden" name="password" value="guest" />
           <input type="submit" value="<?php print_string("loginguest") ?>" />
+          </div>
         </form>
 <?php } ?>
 
@@ -43,7 +47,7 @@
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p>
         <form action="<?php p($changepassword) ?>" method="get" id="changepassword">
-          <input type="submit" value="<?php p($changebuttonname) ?>" />
+          <div><input type="submit" value="<?php p($changebuttonname) ?>" /></div>
         </form>
 <?php } ?>
 
@@ -55,11 +59,9 @@
               case "email":
                  print_string("loginsteps", "", "signup.php");
 ?>
-                 <div align="center">
                    <form action="signup.php" method="get" id="signup">
-                   <input type="submit" value="<?php print_string("startsignup") ?>" />
+                       <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                    </form>
-                 </div>
 <?php            break;
                case "none":
                  print_string("loginstepsnone");
@@ -70,11 +72,9 @@
                  if (!empty($authplugin->config->user_create) and method_exists($authplugin, 'user_create')) {
 ?>
 
-                 <div align="center">
                     <form action="signup.php" method="get" id="signup">
-                    <input type="submit" value="<?php print_string("startsignup") ?>" />
+                       <div><input type="submit" value="<?php print_string("startsignup") ?>" /></div>
                     </form>
-                 </div>
 
 <?php            }
           }

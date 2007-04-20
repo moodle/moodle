@@ -1,6 +1,6 @@
 <div style="text-align:center;">
   <label for="block_search_text">Search label</label>
-  <input type="text" name="block_search_text" value="<?php 
+  <input id="block_search_text" type="text" name="block_search_text" value="<?php 
     if(isset($CFG->block_search_text)) {
         p($CFG->block_search_text);
     } else {
@@ -8,7 +8,7 @@
     } ?>"/><br/>
   
   <label for="block_search_button">Button label</label>
-  <input type="text" name="block_search_button" value="<?php 
+  <input id="block_search_button" type="text" name="block_search_button" value="<?php 
     if(isset($CFG->block_search_button)) {
         p($CFG->block_search_button);
     } else {

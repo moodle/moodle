@@ -1,23 +1,24 @@
 <form method="post" action="module.php" id="form">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
+<div>
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
 
 <table cellpadding="9" cellspacing="0">
 <tr valign="top">
-    <td align="right">server_url:</td>
+    <th>server_url:</th>
     <td> <input name="lams_serverurl" type="text" size="50" value="<?php if (isset($CFG->lams_serverurl)) p($CFG->lams_serverurl) ?>" /></td>
     <td>
     <?php print_string('serverurl', 'lams') ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">server_id:</td>
+    <th>server_id:</th>
     <td> <input name="lams_serverid" type="text" size="50" value="<?php if (isset($CFG->lams_serverid)) p($CFG->lams_serverid) ?>" />    </td>
     <td>
     <?php print_string('serverid', 'lams') ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right">server_key:</td>
+    <th>server_key:</th>
     <td> <input name="lams_serverkey" type="text" size="50" value="<?php if (isset($CFG->lams_serverkey)) p($CFG->lams_serverkey) ?>" />    </td>
     <td>
     <?php print_string('serverkey', 'lams') ?>
@@ -25,9 +26,9 @@
 </tr>
 
 <tr>
-    <td colspan="3" align="center">
-    <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+    <td colspan="3">
+    <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 </table>
-
+</div>
 </form>

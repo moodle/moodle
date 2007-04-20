@@ -63,6 +63,7 @@ admin_externalpage_print_header($adminroot);
 
 // choose an authentication method
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
+echo "<div>\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".$USER->sesskey."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
@@ -75,7 +76,8 @@ print_simple_box_end();
 echo "<hr />\n";
 $authplugin->config_form($frm, $err, $user_fields);
 print_simple_box_end();
-echo '<center><p><input type="submit" value="' . get_string("savechanges") . "\" /></p></center>\n";
+echo '<p style="text-align: center"><input type="submit" value="' . get_string("savechanges") . "\" /></p>\n";
+echo "</div>\n";
 echo "</form>\n";
 
 admin_externalpage_print_footer($adminroot);
@@ -146,7 +148,7 @@ function print_auth_lock_options ($auth, $user_fields, $helptext, $retrieveopts,
             echo '</td><td>';
 
             echo "<input id=\"lockconfig_{$varname}\" name=\"lockconfig_{$varname}\" type=\"text\" size=\"30\" value=\"{$pluginconfig->$varname}\" />";
-            echo '<div align="right">';
+            echo '<div style="text-align: right">';
             echo '<label for="menulockconfig_field_updatelocal_'.$field.'">'.get_string('auth_updatelocal', 'auth') . '</label>&nbsp;';
             choose_from_menu($updatelocaloptions, "lockconfig_field_updatelocal_{$field}", $pluginconfig->{"field_updatelocal_$field"}, "");
             echo '<br />';

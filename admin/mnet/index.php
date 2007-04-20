@@ -112,8 +112,8 @@
                 <tr valign="top">
                     <td align="right"><?php print_string('net', 'mnet'); ?>:</td>
                     <td><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
-                        <input type="radio" name="mode" value="off" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('off', 'mnet'); ?> <br />
-                        <input type="radio" name="mode" value="strict" <?php echo ("strict" == $CFG->mnet_dispatcher_mode)? 'checked="true"' : '' ?> /> <?php print_string('on', 'mnet'); ?><br />
+                        <input type="radio" name="mode" value="off" <?php echo ("off" == $CFG->mnet_dispatcher_mode)? 'checked="checked"' : '' ?> /> <?php print_string('off', 'mnet'); ?> <br />
+                        <input type="radio" name="mode" value="strict" <?php echo ("strict" == $CFG->mnet_dispatcher_mode)? 'checked="checked"' : '' ?> /> <?php print_string('on', 'mnet'); ?><br />
                         <input type="submit" name="submit" value="<?php print_string('savechanges'); ?>" />
                     </td>
                 </tr>

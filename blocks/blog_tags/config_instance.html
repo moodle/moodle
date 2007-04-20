@@ -13,30 +13,30 @@
     }
 ?>
 
-<table cellpadding="9" cellspacing="0">
+<table cellpadding="9" cellspacing="0" class="blockconfigtable">
 
-<tr valign=top>
-<td align=right><?php print_string("blocktitle","blog") ?>:</td>
+<tr valign="top">
+<td align="right"><?php print_string("blocktitle","blog") ?>:</td>
 <td><input type="text" name="title" size="50" value="<?php p($this->config->title) ?>" /></td>
 </tr>
 
-<tr valign=top>
-<td align=right><?php print_string("numberoftags","blog") ?>:</td>
+<tr valign="top">
+<td align="right"><?php print_string("numberoftags","blog") ?>:</td>
 <td><?php choose_from_menu($numberoftags,"numberoftags",$this->config->numberoftags) ?></td>
 </tr>
 
-<tr valign=top>
-<td align=right><?php print_string("timewithin","blog") ?>:</td>
+<tr valign="top">
+<td align="right"><?php print_string("timewithin","blog") ?>:</td>
 <td><?php choose_from_menu($timewithin,"timewithin",$this->config->timewithin) ?></td>
 </tr>
 
-<tr valign=top>
-<td align=right><?php print_string("tagsort","blog") ?>:</td>
+<tr valign="top">
+<td align="right"><?php print_string("tagsort","blog") ?>:</td>
 <td><?php choose_from_menu($sort,"sort",$this->config->sort) ?></td>
 </tr>
 
 <tr>
-    <td colspan="2" align="center"><input type="submit" value="<?php print_string("savechanges") ?>"></td>
+    <td colspan="2" align="center"><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 
 </table>
