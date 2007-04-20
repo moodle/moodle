@@ -1515,11 +1515,13 @@ function add_indented_names($categories) {
  * are included. Optionally, only categories the current user may edit can be included. 
  *
  * @param integer $courseid the id of the course to get the categories for.
- * @param integer $published if true, include publised categories from other courses.
- * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
+ * @param boolean $published if true, include publised categories from other courses.
+ * @param boolean $only_editable if true, exclude categories this user is not allowed to edit.
  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
+ * @param boolean $display display the menu only if true, otherwise just return the data
+ * @return array the valid categories
  */
-function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
+function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "", $display=true) {
     global $CFG;
     
     // get sql fragment for published
@@ -1536,19 +1538,23 @@ function question_category_select_menu($courseid, $published = false, $only_edit
 
     $categories = add_indented_names($categories);
 
-    echo "<select name=\"category\">\n";
-    foreach ($categories as $category) {
-        $cid = $category->id;
-        $cname = question_category_coursename($category, $courseid);
-        $seltxt = "";
-        if ($cid==$selected) {
-            $seltxt = "selected=\"selected\"";
+    if ($display) {
+        echo "<select name=\"category\">\n";
+        foreach ($categories as $category) {
+            $cid = $category->id;
+            $cname = question_category_coursename($category, $courseid);
+            $seltxt = "";
+            if ($cid==$selected) {
+                $seltxt = "selected=\"selected\"";
+            }
+            if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
+                echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";
+            }
         }
-        if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
-            echo "    <option value=\"$cid\" $seltxt>$cname</option>\n";
-        }
-    }
-    echo "</select>\n";
+        echo "</select>\n";
+    } 
+
+    return $categories;
 }
 
 /**
