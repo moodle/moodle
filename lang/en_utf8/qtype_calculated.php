@@ -20,6 +20,7 @@ $string['nodataset'] = 'nothing - it is not a wild card';
 $string['nosharedwildcard'] = 'No shared wild card in this category';
 $string['possiblehdr']='Possible wild cards present only in the question text';
 $string['tolerance'] = 'Tolerance &plusmn;';
+$string['updatecategory'] = 'Update the category';
 $string['usedinquestion']='Used in Question';
 $string['youmustenteramultiplierhere'] = 'You must enter a multiplier here.';
 ?>

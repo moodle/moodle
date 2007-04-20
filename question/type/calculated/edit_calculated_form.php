@@ -68,7 +68,7 @@ class question_edit_calculated_form extends question_edit_form {
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
         $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
         $addfieldsname='updatecategory';
-        $addstring='Update the category';
+        $addstring=get_string("updatecategory", "qtype_calculated");
                 $mform->registerNoSubmitButton($addfieldsname);
  
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
