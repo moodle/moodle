@@ -108,7 +108,7 @@
 //  Start the survey form
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
-    echo "<form method=\"post\" action=\"save.php\">";
+    echo "<form method=\"post\" action=\"save.php\" id=\"surveyform\">";
     echo '<div>';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
 
@@ -169,7 +169,7 @@ function checkform() {
 
     var error=false;
 
-    with (getElementById('form')) {
+    with (document.getElementById('surveyform')) {
     <?php
        if (!empty($checklist)) {
            foreach ($checklist as $question => $default) {
@@ -182,7 +182,7 @@ function checkform() {
     if (error) {
         alert("<?php print_string("questionsnotanswered", "survey") ?>");
     } else {
-        getElementById('form').submit();
+        document.getElementById('surveyform').submit();
     }
 }
 
