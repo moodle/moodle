@@ -1219,6 +1219,8 @@ a.skip-block, .skip-block {
 
 .blockconfigtable {
   margin-top: 0;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .blockconfigtable td.label {

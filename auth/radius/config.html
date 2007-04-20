@@ -3,8 +3,8 @@
 // TODO: this generates broken file errors, needs safer test -JH
 
 // Is Auth/RADIUS really there?
-if ((!include_once('Auth/RADIUS.php')) or (!class_exists(Auth_RADIUS_PAP))) {
-    print '<p align="center"><font color="red"><strong>Warning: The Auth_RADIUS module does not seem to be present. Please ensure it is installed and enabled.</strong></font></p>';
+if (!defined('Auth_RADIUS_PAP') or !class_exists(Auth_RADIUS_PAP) or !include_once('Auth/RADIUS.php')) {
+    print '<p style="text-align:center; color: red"><strong>Warning: The Auth_RADIUS module does not seem to be present. Please ensure it is installed and enabled.</strong></p>';
 }
 
 // set to defaults if undefined
@@ -22,7 +22,7 @@ if (!isset($config->changepasswordurl)) {
 }
 
 ?>
-<table cellspacing="0" cellpadding="5" border="0" align="center">
+<table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top">
     <td align="right"><?php print_string('auth_radiushost_key', 'auth') ?>: </td>

@@ -1,12 +1,12 @@
 <h1>Installing Moodle</h1>
-<h2>Dont panic! <img src="http://moodle.org/pix/s/smiley.gif" /></h2>
+<h2>Don't panic! <img src="http://moodle.org/pix/s/smiley.gif" alt="don't panic!" /></h2>
 <blockquote>
   <p>This guide explains how to install Moodle for the first time.  For some of these steps it goes into a lot of detail to try and cover the majority of possible
      web server setups, so this document may look long and complicated.  Don't panic, once you know how to do it you can install Moodle in minutes!</p>
   <p>If you have problems please read this document carefully - most common issues are answered in here.
      If you still have trouble, you can seek help from 
-   <a target="_blank" href="http://moodle.org/help">Moodle Help</a></p>
-  <p>Another option is to contact a <a target="_blank" href="http://moodle.com/hosting/">web hosting company</a>
+   <a href="http://moodle.org/help">Moodle Help</a></p>
+  <p>Another option is to contact a <a href="http://moodle.com/hosting/">web hosting company</a>
      who can completely maintain Moodle for you, so that you can ignore all this and get straight into educating!
 </p>
   <p>&nbsp;  </p>
@@ -34,13 +34,13 @@
     and on Windows XP, Mac OS X and Netware 6 operating systems</p>
   <p>The requirements for Moodle are as follows:</p>
   <ol>
-    <li>Web server software. Most people use <a href="http://www.apache.org/" target="_blank">Apache</a>, 
+    <li>Web server software. Most people use <a href="http://www.apache.org/" >Apache</a>, 
       but Moodle should work fine under any web server that supports PHP, such 
       as IIS on Windows platforms.</li>
-    <li><a href="http://www.php.net/" target="_blank">PHP</a> scripting language (version 4.1.0 
+    <li><a href="http://www.php.net/">PHP</a> scripting language (version 4.1.0 
       or later). PHP 5 is supported as of Moodle 1.4. </li>
-    <li>a working database server: <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
-      or <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> are 
+    <li>a working database server: <a href="http://www.mysql.com/">MySQL</a> 
+      or <a href="http://www.postgresql.org/">PostgreSQL</a> are 
       completely supported and recommended for use with Moodle. </li>
   </ol>
   <p>Most web hosts support all of this by default. If you are signed up with 
@@ -53,7 +53,7 @@
 <h3 class="sectionheading"><a name="downloading"></a>2. Download and copy files into place </h3>
 <blockquote>
   <p>There are two ways to get Moodle, as a compressed package and via CVS. These 
-    are explained in detail on the download page: <a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a></p>
+    are explained in detail on the download page: <a href="http://moodle.org/download/">http://moodle.org/download/</a></p>
   <p>After downloading and unpacking the archive, or checking out the files via 
     CVS, you will be left with a directory called &quot;moodle&quot;, containing 
     a number of files and folders.</p>
@@ -70,7 +70,7 @@
     you oriented:</p>
   <blockquote>
     <table><tr>
-      <td width="130" valign="top">config.php</td>
+      <td valign="top">config.php</td>
       <td valign="top">-</td>
       <td valign="top">
         contains basic settings. This file does not come with Moodle - you will create it. </td>
@@ -264,10 +264,10 @@ php_value post_max_size 2M
       unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
       '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
       TYPE=MyISAM</p>
-    <p><font color="#006600">SUCCESS</font></p>
+    <p style="color: #006600">SUCCESS</p>
   </blockquote>
-  <p>...and so on, followed by: <font color="#006600">Main databases set up 
-      successfully.</font> </p>
+  <p>...and so on, followed by: <span style="color: #006600">Main databases set up 
+      successfully.</span> </p>
   <blockquote>
     <p class="style3">If you don't see these, then there must have been some problem with the database 
         or the configuration settings you defined in config.php. Check that PHP isn't 
@@ -288,7 +288,7 @@ php_value post_max_size 2M
       This is easy to fix: just turn off the &quot;secureforms&quot; setting, then 
       try to continue again.</p>
   </blockquote>
-  <p>Next you will see more  pages that print lots of status messages as they set up all the tables required by the various Moodle module. As before, they should all be <font color="#006600">green</font>.</p>
+  <p>Next you will see more  pages that print lots of status messages as they set up all the tables required by the various Moodle module. As before, they should all be <span style="color:#006600">green</span>.</p>
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; link.</p>
   <p>The next page is a form where you can define parameters for your Moodle site 
     and the front page, such as the name, format, description and so on. Fill 
@@ -357,7 +357,7 @@ php_value post_max_size 2M
     regularly.</p>
   <p><b>On Windows systems</b></p>
   <blockquote>
-    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
+    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
   </blockquote>
   <p><strong>On web hosting services</strong></p>
   <blockquote>
@@ -419,6 +419,6 @@ php_value post_max_size 2M
   <p>See the &quot;<a href="http://docs.moodle.org/en/Teacher_documentation">Teacher Documentation</a>&quot; for more details 
     on course-building.</p>
   <p>&nbsp;</p>
-  <p align="center"><strong>Happy exploring and happy Moodling!</strong></p>
-  <p align="center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/" target="_blank">donating</a> to help us cover our costs! </strong></p>
+  <p style="text-align:center"><strong>Happy exploring and happy Moodling!</strong></p>
+  <p style="test-align:center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/">donating</a> to help us cover our costs! </strong></p>
 </blockquote>
