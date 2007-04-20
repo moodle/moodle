@@ -69,7 +69,7 @@
 
     // check category is valid
     if (!empty($categoryid)) {
-        $validcats = question_category_options( $course->id, true, false );
+        $validcats = question_category_select_menu( $course->id, true, false, 0, false );
         if (!array_key_exists( $categoryid, $validcats)) {
             print_error( 'invalidcategory','quiz' );
         }
