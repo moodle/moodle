@@ -87,6 +87,7 @@ class auth_plugin_base {
     /**
      * Returns the URL for changing the users' passwords, or empty if the default
      * URL can be used. This method is used if can_change_password() returns true.
+     * This method is called only when user is logged in, it may use global $USER.
      *
      * @return string
      */

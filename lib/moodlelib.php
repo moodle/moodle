@@ -1665,9 +1665,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
-            if ($userauth->change_password_url()) {
+            if ($changeurl = $userauth->change_password_url()) {
                 //use plugin custom url
-                redirect($userauth->change_password_url());
+                redirect($changeurl);
             } else {
                 //use moodle internal method
                 if (empty($CFG->loginhttps)) {

@@ -356,7 +356,7 @@
     $userauth = get_auth_plugin($user->auth);
 
     $passwordchangeurl = false;
-    if ($userauth->can_change_password()) {
+    if ($currentuser and $userauth->can_change_password() and !isguest()) { //TODO: add proper capability for password changing
         if ($userauth->change_password_url()) {
             $passwordchangeurl = $userauth->change_password_url();
         } else {
@@ -371,7 +371,10 @@
 //  Print other functions
     echo '<div class="buttons">';
 
-    if ($currentuser and $passwordchangeurl and !isguest()) { //TODO: add proper capability for password changing
+    if ($passwordchangeurl) {
+        if (!empty($USER->realuser)) {
+            $passwordchangeurl = ''; // do not use actual change password url - might contain sensitive data
+        }
         echo "<form action=\"$passwordchangeurl\" method=\"get\">";
         echo "<div>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";

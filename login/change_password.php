@@ -43,9 +43,9 @@
         error(get_string('nopasswordchange', 'auth'));
     }
 
-    if ($userauth->change_password_url()) {
+    if ($changeurl = $userauth->change_password_url()) {
         // this internal scrip not used
-        redirect($userauth->change_password_url());
+        redirect($changeurl);
     }
 
     $mform = new login_change_password_form();

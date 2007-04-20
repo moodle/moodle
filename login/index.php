@@ -25,6 +25,7 @@
 
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists('user', 'username', 'guest')) {
+        $guest = new object();
         $guest->auth        = 'manual'; 
         $guest->username    = 'guest'; 
         $guest->password    = hash_internal_user_password('guest');
@@ -177,25 +178,19 @@ httpsrequired();
 
             /// This is what lets the user do anything on the site :-)
             load_all_capabilities();
-
-            //Select password change url
             $userauth = get_auth_plugin($USER->auth);
-            if ($userauth->can_change_password()) {
-                if ($userauth->change_password_url()) {
-                    $passwordchangeurl = $userauth->change_password_url();
-                } else {
-                    $passwordchangeurl = $CFG->httpswwwroot.'/login/change_password.php';
-                }
-            } else {
-                $passwordchangeurl = '';
-            }
 
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
-                if ($passwordchangeurl != '') {
-                    redirect($passwordchangeurl);
+                //Select password change url
+                if ($userauth->can_change_password()) {
+                    if ($changeurl = $userauth->change_password_url()) {
+                        redirect($changeurl);
+                    } else {
+                        redirect($CFG->httpswwwroot.'/login/change_password.php');
+                    }
                 } else {
-                    error(get_strin('nopasswordchangeforced', 'auth'));
+                    error(get_string('nopasswordchangeforced', 'auth'));
                 }
             }
 
