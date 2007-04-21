@@ -11,33 +11,33 @@ class login_signup_form extends moodleform {
         $mform->addElement('header', '', get_string('createuserandpass'), '');
 
 
-        $mform->addElement('text', 'username', get_string('username'), 'size="12"');
+        $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
         $mform->setType('username', PARAM_NOTAGS);
         $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
 
-        $mform->addElement('password', 'password', get_string('password'), 'size="12"');
+        $mform->addElement('password', 'password', get_string('password'), 'maxlength="32" size="12"');
         $mform->setType('password', PARAM_RAW);
         $mform->addRule('password', get_string('missingpassword'), 'required', null, 'server');
 
         $mform->addElement('header', '', get_string('supplyinfo'),'');
 
-        $mform->addElement('text', 'email', get_string('email'), 'size="25"');
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
         $mform->setType('email', PARAM_NOTAGS);
         $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
-        $mform->addElement('text', 'email2', get_string('emailagain'), 'size="25"');
+        $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
         $mform->setType('email2', PARAM_NOTAGS);
         $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
 
-        $mform->addElement('text', 'firstname', get_string('firstname'), 'size="25"');
+        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="25"');
         $mform->setType('firstname', PARAM_TEXT);
         $mform->addRule('firstname', get_string('missingfirstname'), 'required', null, 'server');
 
-        $mform->addElement('text', 'lastname', get_string('lastname'), 'size="25"');
+        $mform->addElement('text', 'lastname', get_string('lastname'), 'maxlength="100" size="25"');
         $mform->setType('lastname', PARAM_TEXT);
         $mform->addRule('lastname', get_string('missinglastname'), 'required', null, 'server');
 
-        $mform->addElement('text', 'city', get_string('city'), 'size="20"');
+        $mform->addElement('text', 'city', get_string('city'), 'maxlength="20" size="20"');
         $mform->setType('city', PARAM_TEXT);
         $mform->addRule('city', get_string('missingcity'), 'required', null, 'server');
 
