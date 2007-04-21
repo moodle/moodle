@@ -356,7 +356,7 @@
     $userauth = get_auth_plugin($user->auth);
 
     $passwordchangeurl = false;
-    if ($currentuser and $userauth->can_change_password() and !isguest()) { //TODO: add proper capability for password changing
+    if (/*$currentuser and */$userauth->can_change_password() and !isguest()) { //TODO: add proper capability for password changing
         if ($userauth->change_password_url()) {
             $passwordchangeurl = $userauth->change_password_url();
         } else {
@@ -372,12 +372,26 @@
     echo '<div class="buttons">';
 
     if ($passwordchangeurl) {
+        $params = array('id'=>$course->id);
+
         if (!empty($USER->realuser)) {
             $passwordchangeurl = ''; // do not use actual change password url - might contain sensitive data
+        } else {
+            $parts = explode('?', $passwordchangeurl);
+            $passwordchangeurl = reset($parts);
+            $after = next($parts);
+            preg_match_all('/([^&=]+)=([^&=]+)/', $after, $matches);
+            if (count($matches)) {
+                foreach($matches[0] as $key=>$match) {
+                    $params[$matches[1][$key]] = $matches[2][$key];
+                }
+            }
         }
         echo "<form action=\"$passwordchangeurl\" method=\"get\">";
         echo "<div>";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+        foreach($params as $key=>$value) {
+            echo '<input type="hidden" name="'.$key.'" value="'.s($value).'" />';
+        }
         if (!empty($USER->realuser)) {
             // changing of password when "Logged in as" is not allowed
             echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" disabled=\"disabled\" />";
