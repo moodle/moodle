@@ -1105,6 +1105,7 @@ $string['phone'] = 'Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pleaseclose'] = 'Please close this window now.';
 $string['pluginsetup'] = 'Setting up plugin tables';
+$string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';
 $string['policyagreement'] = 'Site Policy Agreement';
 $string['policyagreementclick'] = 'Click here to read the Site Policy Agreement';
