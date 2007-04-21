@@ -278,6 +278,11 @@ httpsrequired();
     if (!empty($CFG->alternateloginurl)) {
         $loginurl = $CFG->alternateloginurl;
 
+        if (strpos($SESSION->wantsurl, $loginurl) === 0) {
+            //we do not want to return to alternate url
+            $SESSION->wantsurl = NULL;
+        }
+
         if ($errorcode) {
             if (strpos($loginurl, '?') === false) {
                 $loginurl .= '?';
