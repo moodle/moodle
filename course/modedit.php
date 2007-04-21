@@ -92,6 +92,7 @@
 
         $form->coursemodule = $cm->id;
         $form->section      = $cm->section;     // The section ID
+        $form->cmidnumber   = $cm->idnumber;    // The cm IDnumber
         $form->course       = $course->id;
         $form->module       = $module->id;
         $form->modulename   = $module->name;
@@ -207,8 +208,8 @@
             }
             
             // set cm id number
-            if (isset($fromform->idnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->idnumber);  
+            if (isset($fromform->cmidnumber)) {
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);  
             }
 
             add_to_log($course->id, "course", "update mod",
@@ -268,8 +269,8 @@
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
             
             // set cm idnumber
-            if (isset($fromform->idnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->idnumber);  
+            if (isset($fromform->cmidnumber)) {
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);  
             }
             
             add_to_log($course->id, "course", "add mod",
