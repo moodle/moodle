@@ -91,6 +91,7 @@
         // TODO: process all html text also in blocks too
 
         // Restore links in questions.
+        require_once("$CFG->dirroot/question/restorelib.php");
         if (!defined('RESTORE_SILENTLY')) {
             echo '<li>' . get_string('from') . ' ' . get_string('questions', 'quiz');
         }
