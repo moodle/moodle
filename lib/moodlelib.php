@@ -3683,7 +3683,7 @@ function email_is_not_allowed($email) {
             if (!$allowedpattern) {
                 continue;
             }
-            if (strpos(strrev($email), strrev($allowedpattern)) === 0) { // Match!   (bug 5250)
+            if (strpos(strrev($email), strrev('@'.$allowedpattern)) === 0) { // Match!   (bug 5250)
                 return false;
             }
         }
@@ -3696,7 +3696,7 @@ function email_is_not_allowed($email) {
             if (!$deniedpattern) {
                 continue;
             }
-            if (strpos(strrev($email), strrev($deniedpattern)) === 0) { // Match!   (bug 5250)
+            if (strpos(strrev($email), strrev('@'.$deniedpattern)) === 0) { // Match!   (bug 5250)
                 return get_string('emailnotallowed', '', $CFG->denyemailaddresses);
             }
         }
