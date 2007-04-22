@@ -198,7 +198,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         global $CFG;
         if ($this->config->passtype === 'internal') {
-            update_internal_user_password($user, $newpassword);
+            return update_internal_user_password($user, $newpassword);
         } else {
             // we should have never been called!
             return false;
