@@ -576,7 +576,7 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool
      */
     function is_internal() {
-        return false;
+        return ($this->config->passtype == 'internal');
     }
 
     /**
@@ -603,6 +603,15 @@ class auth_plugin_db extends auth_plugin_base {
             // use custom url
             return $this->config->changepasswordurl;
         }
+    }
+
+    /**
+     * Returns true if plugin allows resetting of internal password.
+     *
+     * @return bool
+     */
+    function can_reset_password() {
+        return ($this->config->passtype == 'internal');
     }
 
     /**
