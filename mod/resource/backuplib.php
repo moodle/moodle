@@ -113,6 +113,10 @@
         $buscar="/(".$base."\/mod\/resource\/view.php\?id\=)([0-9]+)/";
         $result= preg_replace($buscar,'$@RESOURCEVIEWBYID*$2@$',$result);
 
+        //Link to resource view by resourceid
+        $buscar="/(".$base."\/mod\/resource\/view.php\?r\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@RESOURCEVIEWBYR*$2@$',$result);
+
         return $result;
     }
 

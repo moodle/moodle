@@ -167,6 +167,31 @@
             }
         }
 
+        //Link to resource view by resourceid
+
+        $searchstring='/\$@(RESOURCEVIEWBYR)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$result,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (forum id)
+                $rec = backup_getid($restore->backup_unique_code,"resource",$old_id);
+                //Personalize the searchstring
+                $searchstring='/\$@(RESOURCEVIEWBYR)\*('.$old_id.')@\$/';
+                //If it is a link to this course, update the link to its new location
+                if($rec->new_id) {
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/resource/view.php?r='.$rec->new_id,$result);
+                } else {
+                    //It's a foreign link so leave it as original
+                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/resource/view.php?r='.$old_id,$result);
+                }
+            }
+        }
+
         return $result;
     }
 
