@@ -26,7 +26,7 @@ admin_externalpage_print_header($adminroot);
         <th class="header c0" colspan="2"><?php print_string('testtrustedhosts', 'mnet'); ?></th>
     </tr>
 <?php 
-    if (!empty($test_ip_address)):
+    if (!empty($test_ip_address)){
 ?>
     <tr>
         <td class="cell c1" colspan="2">
@@ -42,13 +42,13 @@ admin_externalpage_print_header($adminroot);
         </td>
     </tr>
 <?php
-    else:
+   } else {
 ?>
     <tr>
         <td class="cell c1" colspan="2"><?php print_string('testtrustedhostsexplain', 'mnet'); ?></td>
     </tr>
 <?php
-    endif;
+   } 
 ?>
     <tr>
         <td class="cell c1" colspan="2">
