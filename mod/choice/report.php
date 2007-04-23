@@ -44,7 +44,7 @@
         $crumbs[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $crumbs[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');
 
-        $navigation = build_navigation($crumbs, $course);    
+        $navigation = build_navigation($crumbs);    
     
         print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));

@@ -423,7 +423,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     }
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
 
     print_heading($hotpot->name);

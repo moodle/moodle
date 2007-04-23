@@ -18,7 +18,7 @@
     $strtopic = get_string("topic");
     
     $crumbs[] = array('name' => $strjournals, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple("$strjournals", "", $navigation, 
                  "", "", true, "", navmenu($course));

@@ -31,7 +31,7 @@
     $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strupload, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple(format_string($exercise->name)." : $strupload", "", $navigation,
                   "", "", true);

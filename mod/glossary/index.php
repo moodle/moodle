@@ -28,7 +28,7 @@
 
 /// Print the header
     $crumbs[] = array('name' => $strglossarys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple("$strglossarys", "", $navigation, "", "", true, "", navmenu($course));
 

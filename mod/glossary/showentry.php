@@ -52,7 +52,7 @@
         	$crumbs[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
             $crumbs[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
             
-            $navigation = build_navigation($crumbs, $course);
+            $navigation = build_navigation($crumbs);
             
             print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname, $navigation, "", "", true, "&nbsp;", "&nbsp;");
         } else {

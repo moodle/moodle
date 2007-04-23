@@ -299,7 +299,7 @@
         $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
         $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
         $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
            
         print_header_simple($streditingquiz, '', $navigation, "", "",
                  true, $strupdatemodule);
@@ -339,7 +339,7 @@
     $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
     $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
     $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 

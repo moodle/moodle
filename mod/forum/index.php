@@ -454,7 +454,7 @@
     $crumbs[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
     
     print_header("$course->shortname: $strforums", $course->fullname,
-                    build_navigation($crumbs, $course),
+                    build_navigation($crumbs),
                     "", "", true, $searchform, navmenu($course));
 
     if (!isguest()) {

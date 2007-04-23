@@ -36,7 +36,7 @@
     $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple("$strsurveysaved", "", $navigation, "");
 

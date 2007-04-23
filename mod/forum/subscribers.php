@@ -40,7 +40,7 @@
     $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strsubscribers, 'link' => '', 'type' => 'title');
 
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     if (has_capability('mod/forum:managesubscriptions', $context)) {
         print_header_simple("$strsubscribers", "", $navigation,

@@ -48,7 +48,7 @@
     $crumbs[] = array('name' => format_string($mod->name,true), 'link' => "$CFG->wwwroot/mod/$modname/view.php?id=$cm->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strimportppt, 'link' => '', 'type' => 'title');
             
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple("$strimportppt", " $strimportppt", $navigation);
 

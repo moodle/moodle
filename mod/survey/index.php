@@ -22,7 +22,7 @@
     $strnotdone  = get_string("notdone", "survey");
     
     $crumbs[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple("$strsurveys", "", $navigation, 
                  "", "", true, "", navmenu($course));

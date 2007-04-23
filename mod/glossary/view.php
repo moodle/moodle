@@ -232,14 +232,14 @@
         require_capability('mod/glossary:approve', $context);
         
         $crumbs[] = array('name' => $strwaitingapproval, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true, 
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
         print_heading($strwaitingapproval);
     } else { /// Print standard header
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true, 
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
     }

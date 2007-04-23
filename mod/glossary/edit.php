@@ -196,7 +196,7 @@ $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id"
 $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
 $crumbs[] = array('name' => $stredit, 'link' => '', 'type' => 'title');
 
-$navigation = build_navigation($crumbs, $course);
+$navigation = build_navigation($crumbs);
 
 print_header_simple(format_string($glossary->name), "", $navigation, "",
               "", true, "", navmenu($course, $cm));

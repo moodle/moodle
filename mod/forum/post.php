@@ -61,7 +61,7 @@
         $crumbs[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
         $crumbs[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
         
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         
         print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
@@ -408,7 +408,7 @@
             $crumbs[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
             $crumbs[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
             
-            $navigation = build_navigation($crumbs, $course);
+            $navigation = build_navigation($crumbs);
             
             print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
 
@@ -664,7 +664,7 @@
     $forcefocus = empty($reply) ? NULL : 'message';
 
 
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
      
     print_header("$course->shortname: $strdiscussionname ".
                   format_string($toppost->subject), $course->fullname,

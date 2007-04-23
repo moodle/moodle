@@ -45,7 +45,7 @@
     $crumbs[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
     $crumbs[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header("$course->shortname: $fullname: $strmode", $course->fullname,$navigation);
     

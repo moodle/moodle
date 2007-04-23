@@ -136,7 +136,7 @@
 
     $searchform = forum_search_form($course);
     
-    $navigation = build_navigation($crumbs, $course); 
+    $navigation = build_navigation($crumbs); 
     print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
                      $navigation, "", "", true, $searchform, navmenu($course, $cm));
     

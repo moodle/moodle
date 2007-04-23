@@ -6933,12 +6933,11 @@ function setup_lang_from_browser() {
  * @uses $CFG 
  * @uses $THEME
  * @param $extrabreadcrumbs - array of associative arrays, keys: name, link, type
- * @param $course - possibily the site course.
  * @return $navigation as an object so it can be differentiated from old style 
  * navigation strings.
  */
-function build_navigation($extrabreadcrumbs, $course = false) {
-    global $CFG, $THEME;
+function build_navigation($extrabreadcrumbs) {
+    global $CFG, $THEME, $COURSE;
     
     $navigation = '';
     check_theme_arrows();
@@ -6949,10 +6948,10 @@ function build_navigation($extrabreadcrumbs, $course = false) {
     }
 
     
-    if ($course) {
-        if ($course->id != SITEID) {
+    if ($COURSE) {
+        if ($COURSE->id != SITEID) {
             //Course
-            $breadcrumbs[] = array('name' => format_string($course->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$course->id",'type' => 'course');
+            $breadcrumbs[] = array('name' => format_string($COURSE->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",'type' => 'course');
         }       
     }
 

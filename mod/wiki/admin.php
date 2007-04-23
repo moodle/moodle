@@ -118,7 +118,7 @@
     $crumbs[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
     $crumbs[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple("$wiki_entry->pagename", "", $navigation,
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),

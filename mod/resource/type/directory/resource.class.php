@@ -70,7 +70,7 @@ function display() {
         $editfiles = print_single_button("$CFG->wwwroot/files/index.php", $options, get_string("editfiles"), 'get', '', true);
         $update = $editfiles.$update;
     }
-    $this->navigation = build_navigation($this->crumbs, $this->course);
+    $this->navigation = build_navigation($this->crumbs);
     print_header($pagetitle, $course->fullname, $this->navigation,
             "", "", true, $update,
             navmenu($course, $cm));

@@ -111,7 +111,7 @@ function display() {
 
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
             $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'title');
-            $this->navigation = build_navigation($this->crumbs, $this->course);
+            $this->navigation = build_navigation($this->crumbs);
             
             print_header($pagetitle, $course->fullname, $this->navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),

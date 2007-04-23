@@ -24,7 +24,7 @@
     $strsubmitted = get_string("submitted", "assignment");
     
     $crumbs[] = array('name' => $strworkshops, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple("$strworkshops", "", $navigation, "", "", true, "", navmenu($course));
 

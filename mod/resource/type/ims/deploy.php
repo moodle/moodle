@@ -66,7 +66,7 @@
     	
         $resource_obj->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
         $resource_obj->crumbs[] = array('name' => $strdeploy, 'link' => '', 'type' => 'action');
-        $navigation = build_navigation($resource_obj->crumbs, $resource_obj->course);
+        $navigation = build_navigation($resource_obj->crumbs);
         print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, 
                      update_module_button($cm->id, $course->id, $resource_obj->strresource));

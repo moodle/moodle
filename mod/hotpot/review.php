@@ -55,7 +55,7 @@
     
     $crumbs[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
     $crumbs[] = array('name' => get_string("review", "quiz"), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);

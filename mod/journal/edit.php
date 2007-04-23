@@ -78,7 +78,7 @@
     $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $stredit, 'link' => '', 'type' => 'action');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple(format_string($journal->name), "", $navigation, "",
                   "", true, "", navmenu($course, $cm));

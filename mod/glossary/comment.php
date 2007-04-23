@@ -228,7 +228,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $crumbs[] = array('name' => $strcomments, 'link' => "comments.php?id=$cm->id&amp;eid=$entry->id", 'type' => 'title');
     $crumbs[] = array('name' => $straction, 'link' => '', 'type' => 'action');
     
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple(format_string($glossary->name), '', $navigation,
         '', '', true, update_module_button($cm->id, $course->id, $strglossary),

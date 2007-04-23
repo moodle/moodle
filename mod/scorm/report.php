@@ -69,14 +69,14 @@
         
         if (empty($b)) {
             if (empty($a)) {
-                $navigation = build_navigation($crumbs, $course);
+                $navigation = build_navigation($crumbs);
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
                              '', '', true);
             } else {
                 
                 $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
                 $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
-                $navigation = build_navigation($crumbs, $course);
+                $navigation = build_navigation($crumbs);
                     
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                              $navigation, '', '', true);
@@ -86,7 +86,7 @@
             $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
             $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
             $crumbs[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
-            $navigation = build_navigation($crumbs, $course);
+            $navigation = build_navigation($crumbs);
             
             print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
                      '', '', true);

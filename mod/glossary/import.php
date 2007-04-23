@@ -49,7 +49,7 @@
     $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strimportentries, 'link' => '', 'type' => 'title');
    
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple(format_string($glossary->name), "", $navigation,
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),

@@ -86,7 +86,7 @@ class assignment_base {
             if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                 $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
                 $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
-                $navigation = build_navigation($this->navigation, $this->course);
+                $navigation = build_navigation($this->navigation);
                 
                 print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment", 
                              "", "", true, '', navmenu($this->course, $this->cm));
@@ -149,7 +149,7 @@ class assignment_base {
             $this->navigation[] = array('name' => format_string($this->assignment->name,true), 'link' => '', 'type' => 'activityinstance');
         }
         
-        $navigation = build_navigation($this->navigation, $this->course);
+        $navigation = build_navigation($this->navigation);
 
         print_header($this->pagetitle, $this->course->fullname, $navigation, '', '', 
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment), 
@@ -998,7 +998,7 @@ class assignment_base {
         $crumbs[] = array('name' => $this->strassignments, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $crumbs[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?a={$this->assignment->id}", 'type' => 'activityinstance');
         $crumbs[] = array('name' => $this->strsubmissions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         print_header_simple(format_string($this->assignment->name,true), "", $navigation, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
     

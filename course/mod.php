@@ -674,7 +674,7 @@
     
     $crumbs[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => $streditinga, 'link' => '', 'type' => 'action');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
 

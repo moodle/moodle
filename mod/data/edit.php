@@ -71,7 +71,7 @@
         
         $crumbs[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
@@ -115,7 +115,7 @@
 
     $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),

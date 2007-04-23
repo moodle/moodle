@@ -102,7 +102,7 @@
     if (!$search || $showform) {
     
         $crumns[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         print_header_simple("$strsearch", "", $navigation, 'search.words',
                   "", "", "&nbsp;", navmenu($course));
@@ -121,7 +121,7 @@
 
     $crumbs[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
 
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {

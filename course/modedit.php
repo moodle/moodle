@@ -305,7 +305,7 @@
         }
         $crumbs[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');
         
-        $navigation = build_navigation($crumbs, $course);
+        $navigation = build_navigation($crumbs);
         
         print_header_simple($streditinga, '', $navigation, $mform->focus(), "", false);
 

@@ -64,7 +64,7 @@
     // Print the page header
     //
     $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));

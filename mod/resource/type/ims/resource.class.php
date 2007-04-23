@@ -373,7 +373,7 @@ class resource_ims extends resource_base {
             } else {
             	
                 $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->crumbs, $this->course);
+                $this->navigation = build_navigation($this->crumbs);
                  
                 print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
             }
@@ -474,7 +474,7 @@ class resource_ims extends resource_base {
                 print_header();
             } else {
             	$this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->crumbs, $this->course);
+                $this->navigation = build_navigation($this->crumbs);
                 print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }
         /// content - this produces everything else

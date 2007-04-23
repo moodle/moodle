@@ -23,7 +23,7 @@
     $strgrade = get_string("grade");
 
     $crumbs[] = array('name' => $strassignments, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple($strassignments, "", $navigation, "", "", true, "", navmenu($course));
 

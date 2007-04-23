@@ -49,7 +49,7 @@
     // ...display header...
     $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($exercise->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strexercise), navmenu($course, $cm));

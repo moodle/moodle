@@ -54,7 +54,7 @@
     $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $crumbs[] = array('name' => $strsubmissions, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true);

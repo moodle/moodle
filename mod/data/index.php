@@ -43,7 +43,7 @@
     $strdata = get_string('modulename','data');
     
     $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
 

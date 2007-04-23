@@ -39,7 +39,7 @@
 
     $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');;
     $crumbs[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinistance');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple(format_string($survey->name), "", $navigation, "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));

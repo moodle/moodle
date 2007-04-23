@@ -403,7 +403,7 @@ class page_course extends page_base {
             $crumbs = array_merge($crumbs, $morebreadcrumbs);
         }
 
-        $navigation = build_navigation($crumbs, $this->courserecord);
+        $navigation = build_navigation($crumbs);
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
@@ -643,7 +643,7 @@ class page_generic_activity extends page_base {
             $buttons = '&nbsp;';
         }
         
-        $navigation = build_navigation($crumbs, $this->courserecord);
+        $navigation = build_navigation($crumbs);
         
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
     }

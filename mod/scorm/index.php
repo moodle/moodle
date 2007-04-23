@@ -26,7 +26,7 @@
     $strlastmodified = get_string("lastmodified");
     
     $crumbs[] = array('name' => $strscorms, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header_simple("$strscorms", "", $navigation,
                  "", "", true, "", navmenu($course));

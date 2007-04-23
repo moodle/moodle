@@ -55,7 +55,7 @@
         $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
     
-        $navigation = build_navigation($crumbs, $course, $cm);
+        $navigation = build_navigation($crumbs);
         
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
         

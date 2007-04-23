@@ -38,7 +38,7 @@
     $heading = $course->fullname;
     
     $crumbs[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header($title, $heading, $navigation, "", "", true, "", navmenu($course));
 

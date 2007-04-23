@@ -132,7 +132,7 @@ class page_lesson extends page_generic_activity {
             $meta = '';
         // }
 
-        $navigation = build_navigation($crumbs, $this->courserecord);
+        $navigation = build_navigation($crumbs);
 
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
 

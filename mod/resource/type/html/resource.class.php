@@ -72,7 +72,7 @@ function display() {
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
         $inpopup = optional_param('inpopup', '', PARAM_BOOL);
         
-        // fix for MDL-9021, thanks Etienne Rozé
+        // fix for MDL-9021, thanks Etienne Roz
         add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
         if ($resource->popup) {
@@ -85,7 +85,7 @@ function display() {
             } else {                           /// Make a page and a pop-up window
 
                 $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->crumbs, $this->course);
+                $this->navigation = build_navigation($this->crumbs);
                 
                 print_header($pagetitle, $course->fullname, $this->navigation,
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
@@ -114,7 +114,7 @@ function display() {
         } else {    /// not a popup at all
 
             $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-            $this->navigation = build_navigation($this->crumbs, $this->course);
+            $this->navigation = build_navigation($this->crumbs);
             
             print_header($pagetitle, $course->fullname, $this->navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),

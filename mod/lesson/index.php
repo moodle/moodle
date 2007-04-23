@@ -32,7 +32,7 @@
 
     $crumbs[] = array('name' => $strlessons, 'link' => '', 'type' => 'activity');
     
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
 
     print_header("$course->shortname: $strlessons", $course->fullname, $navigation, "", "", true, "", navmenu($course));
 

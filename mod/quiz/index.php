@@ -32,7 +32,7 @@
     }
     
     $crumbs[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs, $course);
+    $navigation = build_navigation($crumbs);
     
     print_header_simple($strquizzes, '', $navigation,
                  '', '', true, $streditquestions, navmenu($course));

@@ -74,7 +74,7 @@
     if ($straction) {
         $crumbs[] = array('name' => $straction, 'link' => '', 'type' => 'title');
     }
-    $navigation = build_navigation($crumbs, $course);    
+    $navigation = build_navigation($crumbs);    
     
     print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
