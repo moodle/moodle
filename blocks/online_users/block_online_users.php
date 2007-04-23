@@ -1,4 +1,4 @@
-<?PHP //$Id$
+<?php //$Id$
 
 /**
  * This block needs to be reworked.
@@ -74,9 +74,29 @@ class block_online_users extends block_base {
                       $timeselect
                       $groupselect
                 ORDER BY ul.timeaccess DESC";
-
+        
+        
+        
+        $pcontext = get_related_contexts_string($context);
+    
         if ($pusers = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
             foreach ($pusers as $puser) {
+                
+                // if current user can't view hidden role assignment in this context and 
+                // user has a hidden role assigned at this context or any parent contexts,
+                // ignore this user
+                
+                $SQL = "SELECT id,id FROM {$CFG->prefix}role_assignments
+                        WHERE userid = $puser->id
+                        AND contextid $pcontext
+                        AND hidden = 1";
+                
+                if (!has_capability('moodle/role:viewhiddenassigns', $context) && record_exists_sql($SQL)) {
+                    // can't see this user as the current user has no capability
+                    // and this user has a hidden assignment at this context or higher
+                    continue;  
+                }
+              
                 $puser->fullname = fullname($puser);
                 $users[$puser->id] = $puser;  
             }
