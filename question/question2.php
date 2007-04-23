@@ -68,7 +68,7 @@ if ($wizardnow!==''){
         $mform = $QTYPES[$question->qtype]->next_wizard_form('question2.php', $question, $wizardnow);
     }
 } else {
-    $mform = $QTYPES[$question->qtype]->create_editing_form('question2.php', $question, $category->course);
+    $mform = $QTYPES[$question->qtype]->create_editing_form('question2.php', $question);
 }
 
 if ($mform === null) {

@@ -89,14 +89,14 @@
         error("Could not find question type: '$qtype'");
     }
 
-    if ($QTYPES[$question->qtype]->create_editing_form('question2.php', $question, $category->course) !== null) {
+    require_login($course->id, false);
+
+    if ($QTYPES[$question->qtype]->create_editing_form('question2.php', $question) !== null) {
         redirect(str_ireplace('question.php', 'question2.php', me()));
     }
 
-    require_login($course->id, false);
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/question:manage', $coursecontext);
-
 
     if ($form = data_submitted() and confirm_sesskey()) {
 
