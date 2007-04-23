@@ -1056,6 +1056,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 }
             }
         }
+
+        // Fix for MDL-9524. If you don't do this, then $element may be left as a reference to one of the fields in
+        // the form, and then that form field gets corrupted by the code that follows.
+        unset($element);
+
         $js = '
 <script type="text/javascript">
 //<![CDATA[
