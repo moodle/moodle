@@ -19,6 +19,9 @@ class question_edit_multianswer_form extends question_edit_form {
         parent::definition();
         $mform =& $this->_form;
         $mform->addRule('questiontext', null, 'required', null, 'client');
+        
+        // Remove meaningless defaultgrade field.
+        $mform->removeElement('defaultgrade');
     }
     function set_data($question) {
         if (isset($question->id) and $question->id and $question->qtype and $question->questiontext) {
