@@ -27,6 +27,10 @@ class question_edit_truefalse_form extends question_edit_form {
 
         $mform->addElement('htmleditor', 'feedbackfalse', get_string('feedbackfalse', 'qtype_truefalse'));
         $mform->setType('feedbackfalse', PARAM_RAW);
+
+        // Fix penalty factor at 1.
+        $mform->setDefault('penalty', 1);
+        $mform->freeze('penalty');
     }
 
     function set_data($question) {
