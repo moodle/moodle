@@ -595,16 +595,17 @@ function quiz_upgrade_states($attempt) {
     }
 }
 
-// ULPGc ecastro
-function quiz_get_question_review($quiz, $question) {
-// returns a question icon
-    $qnum = $question->id;
+/**
+ * @param object $quiz the quiz
+ * @param object $question the question
+ * @return the HTML for a preview question icon.
+ */
+function quiz_question_preview_button($quiz, $question) {
+    global $CFG;
     $strpreview = get_string('previewquestion', 'quiz');
-    $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
-    $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-    return "<a title=\"$strpreview\" href=\"javascript:void(0)\" onclick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " .
-            QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
-            <img src=\"../../pix/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /></a>";
+    return link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quiz->id, 'questionpreview',
+            "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
+            0, 0, $strpreview, QUESTION_PREVIEW_POPUP_OPTIONS, true);
 }
 
 /**

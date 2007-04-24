@@ -50,9 +50,12 @@
         unset($SESSION->quizpreview);
         // Redirect to ourselves but with continue=1; prevents refreshing the page
         // from restarting an attempt (needed so that random questions don't change)
-        $quizid = $quizid ? '&amp;quizid=' . $quizid : '';
-        redirect($CFG->wwwroot . '/question/preview.php?id=' . $id . $quizid .
-         '&amp;continue=1');
+        $url = $CFG->wwwroot . '/question/preview.php?id=' . $id;
+        if ($quizid) {
+            $url .= '&amp;quizid=' . $quizid;
+        }
+        $url .= '&amp;continue=1';
+        redirect($url);
     }
 
     if (empty($quizid)) {
@@ -178,7 +181,9 @@
     }
 
     $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);
-    print_header($strpreview);
+    $questionlist = array($id);
+    $headtags = get_html_head_contributions($questionlist, $questions, $states[$historylength]);
+    print_header($strpreview, '', '', '', $headtags);
     print_heading($strpreview);
 
     if (!empty($quizid)) {
