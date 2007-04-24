@@ -29,6 +29,12 @@
 
     admin_externalpage_print_header($adminroot);
 
+    //reset and diagnose lang cache permissions
+    @unlink($CFG->dataroot.'/cache/languages');
+    if (file_exists($CFG->dataroot.'/cache/languages')) {
+        notify('Language cache can not be deleted, please check permissions in dataroot.');
+    }
+    get_list_of_languages(true); //refresh lang cache
 
     switch ($mode){
 
@@ -56,7 +62,7 @@
                         break;
 
                         case INSTALLED:
-                            @unlink($CFG->dataroot.'/cache/languages');
+                            get_list_of_languages(true); //refresh lang cache
                             redirect('langimport.php', get_string('langpackupdated','admin',$pack), -1, $adminroot);
                         break;
 
@@ -103,14 +109,14 @@
                 if (file_exists($dest2)){
                     $rm2 = remove_dir($dest2);
                 }
+                get_list_of_languages(true); //refresh lang cache
                 //delete the direcotries
                 if ($rm1 or $rm2) {
-                    redirect('langimport.php', get_string('langpackremoved','admin'));
+                    redirect('langimport.php', get_string('langpackremoved','admin'), 3, $adminroot);
                 } else {    //nothing deleted, possibly due to permission error
                     error('An error has occurred, language pack is not completely uninstalled, please check file permissions');
                 }
             }
-            @unlink($CFG->dataroot.'/cache/languages');
         break;
 
         case UPDATE_ALL_LANG:    //1 click update for all updatable language packs
@@ -120,8 +126,7 @@
             $source = 'http://download.moodle.org/lang16/languages.md5';
             $md5array = array();
             $updated = 0;    //any packs updated?
-            unset($CFG->langlist);   // ignore admin's langlist
-            $alllangs = array_keys(get_list_of_languages());
+            $alllangs = array_keys(get_list_of_languages(false, true)); //get all available langs
             $lang16 = array();   //all the Moodle 1.6 unicode lang packs (updated and not updated)
             $packs = array();    //all the packs that needs updating
 
@@ -247,8 +252,7 @@
             echo '<form id="uninstallform" action="langimport.php?mode=4" method="post">';
             echo '<fieldset class="invisiblefieldset">';
             echo '<input name="sesskey" type="hidden" value="'.sesskey().'" />';
-            unset($CFG->langlist);   // ignore admin's langlist
-            $installedlangs = get_list_of_languages();
+            $installedlangs = get_list_of_languages(false, true);
 
             /// display installed langs here
 

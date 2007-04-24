@@ -4531,10 +4531,10 @@ function get_strings($array, $module='') {
 /**
  * Returns a list of language codes and their full names
  * hides the _local files from everyone.
- * @uses $CFG
+ * @param bool refreshcache force refreshing of lang cache
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
-function get_list_of_languages() {
+function get_list_of_languages($refreshcache=false, $forceall=false) {
 
     global $CFG;
 
@@ -4542,9 +4542,8 @@ function get_list_of_languages() {
 
     $filetocheck = 'langconfig.php';
 
-    if ( (!defined('FULLME') || FULLME !== 'cron')
-         && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
-        // read from cache
+    if (!$refreshcache && !$forceall && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
+/// read available langs from cache
 
         $lines = file($CFG->dataroot .'/cache/languages');
         foreach ($lines as $line) {
@@ -4557,7 +4556,8 @@ function get_list_of_languages() {
         return $languages;
     }
 
-    if (!empty($CFG->langlist)) {       // use admin's list of languages
+    if (!$forceall && !empty($CFG->langlist)) {
+/// return only languages allowed in langlist admin setting
 
         $langlist = explode(',', $CFG->langlist);
         // fix short lang names first - non existing langs are skipped anyway...
@@ -4594,7 +4594,9 @@ function get_list_of_languages() {
                 unset($string);
             }
         }
+
     } else {
+/// return all languages available in system
     /// Fetch langs from moodle/lang directory
         $langdirs = get_list_of_plugins('lang');
     /// Fetch langs from moodledata/lang directory
@@ -4632,12 +4634,19 @@ function get_list_of_languages() {
         }
     }
 
-    if ( defined('FULLME') && FULLME === 'cron' && !empty($CFG->langcache)) {
-        if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
-            foreach ($languages as $key => $value) {
-                fwrite($file, "$key $value\n");
+    if ($refreshcache && !empty($CFG->langcache)) {
+        if ($forceall) {
+            // we have a list of all langs only, just delete old cache
+            @unlink($CFG->dataroot.'/cache/languages');
+
+        } else {
+            // store the list of allowed languages
+            if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
+                foreach ($languages as $key => $value) {
+                    fwrite($file, "$key $value\n");
+                }
+                fclose($file);
             }
-            fclose($file);
         }
     }
 

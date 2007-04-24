@@ -82,7 +82,7 @@
     if (!$mode) {
         print_box_start();
         $currlang = current_language();
-        $langs = get_list_of_languages();
+        $langs = get_list_of_languages(false, true);
         popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", false, 'self', $strcurrentlanguage.':');
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
