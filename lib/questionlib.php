@@ -10,7 +10,6 @@
  * TODO: separate those functions which form part of the API
  *       from the helper functions.
  *
- * @version $Id$
  * @author Martin Dougiamas and many others. This has recently been completely
  *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
  *         the Serving Mathematics project
