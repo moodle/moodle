@@ -137,7 +137,7 @@
 
     if (!empty($CFG->langcache)) {
         mtrace('Updating languages cache');
-        get_list_of_languages();
+        get_list_of_languages(true);
     }
 
     mtrace('Removing expired enrolments ...', '');     // See MDL-8785
