@@ -275,11 +275,8 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
         echo '</td><td align="center">';
 
         $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
-        $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
         if ($question->qtype != 'random') {
-            echo "<a title=\"$strpreview\" href=\"javascript:void(0)\" onclick=\"openpopup('/question/preview.php?id=$qnum$quiz_id','questionpreview', " . 
-                    QUESTION_PREVIEW_POPUP_OPTIONS . ", false)\">
-                    <img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" /></a>";
+            quiz_question_preview_button($quiz, $question);
         }
         if ($canedit) {
             echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$qnum$context\">
