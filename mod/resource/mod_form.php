@@ -37,7 +37,8 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'summary', get_string('summary'));
         $mform->setType('summary', PARAM_RAW);
         $mform->setHelpButton('summary', array('summary', get_string('summary'), 'resource'));
-        $mform->addRule('summary', get_string('required'), 'required', null, 'client');
+        // summary should be optional again MDL-9485
+        //$mform->addRule('summary', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('header', 'typedesc', get_string('resourcetype'.$type,'resource'));
         $this->_resinstance->setup_elements($mform);
