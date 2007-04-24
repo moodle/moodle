@@ -1,4 +1,4 @@
-<!-- $Id: edit.html,v 1.1 2006/03/12 18:39:59 skodak Exp $ //-->
+<!-- $Id: edit.html,v 1.2 2007/04/24 19:20:52 stronk7 Exp $ //-->
 
 <form name="chaptereditform" method="post" action="edit.php">
 <table align="center" cellpadding="5">
@@ -44,7 +44,7 @@
         </font>
     </td>
     <td align="center">
-        <?php print_textarea($usehtmleditor, 20, 60, 630, 400, 'content', $chapter->content); ?>
+        <?php print_textarea($usehtmleditor, 20, 60, 630, 400, 'content', $chapter->content, $course->id); ?>
     </td>
 </tr>
 </table>
