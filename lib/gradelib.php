@@ -90,15 +90,17 @@ function grade_create_item($params)
 /**
 * For a given set of items, create a category to group them together (if one doesn't yet exist).
 * Modules may want to do this when they are created. However, the ultimate control is in the gradebook interface itself.
-* 
+*
+* @param int $courseid
 * @param string $fullname The name of the new category
 * @param array $items An array of grade_items to group under the new category
 * @param string $aggregation
 * @return mixed New grade_category id if successful
 */
-function grade_create_category($fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN)
+function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN)
 {
     $params = new stdClass();
+    $params->courseid = $courseid;
     $params->fullname = $fullname;
     $params->items = $items;
     $params->aggregation = $aggregation;
@@ -130,6 +132,21 @@ function grade_is_locked($itemtype, $itemmodule, $iteminstance, $userid=NULL)
 } 
 
 /**
+ * Checks whether the given variable name is defined as a variable within the given object.
+ * @todo Move to moodlelib.php
+ * @note This will NOT work with stdClass objects, which have no class variables.
+ * @param string $var The variable name
+ * @param object $object The object to check
+ * @return boolean
+ */
+function in_object_vars($var, $object)
+{
+    $class_vars = get_class_vars(get_class($object));
+    $class_vars = array_keys($class_vars);
+    return in_array($var, $class_vars);
+}
+
+/**
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
  */
@@ -137,9 +154,30 @@ class grade_item
 {
     /**
      * The table name
-     * @var string $tablename
+     * @var string $table
      */
-    var $tablename = 'grade_items';
+    var $table = 'grade_items';
+
+    /**
+     * Array of class variables that are not part of the DB table fields
+     * @var array $nonfields
+     */
+    var $nonfields = array('table', 'nonfields', 'required_fields');
+
+    /**
+     * Array of required fields (keys) and their default values (values).
+     * @var array $required_fields
+     */
+    var $required_fields = array('gradetype'   => 0,
+                                 'grademax'    => 100.00000,
+                                 'grademin'    => 0.00000,
+                                 'gradepass'   => 0.00000,
+                                 'multfactor'  => 1.00000,
+                                 'plusfactor'  => 0.00000,
+                                 'sortorder'   => 0,
+                                 'hidden'      => 0,
+                                 'locked'      => 0,
+                                 'needsupdate' => 0);
 
     /**
      * The grade_item PK.
@@ -189,6 +227,12 @@ class grade_item
      */
     var $itemnumber;
     
+    /**
+     * Info and notes about this item.
+     * @var string $iteminfo
+     */
+    var $iteminfo;
+
     /**
      * The type of grade (0 = value, 1 = scale, 2 = text)
      * @var int $gradetype
@@ -281,23 +325,53 @@ class grade_item
     {
         if (!empty($params) && (is_array($params) || is_object($params))) {
             foreach ($params as $param => $value) {
-                if (method_exists($this, $param)) {
+                if (in_object_vars($param, $this)) {
                     $this->$param = $value;
                 }
             }
+
+            $this->set_defaults();
         } 
     }
 
     /**
-     * Records this object in the Database.
+     * Replaces NULL values with defaults defined in the DB, for required fields.
+     * This should use the DB table METADATA, but to start with I am hard-coding it.
+     *
+     * @return void
+     */
+    function set_defaults()
+    {
+        foreach ($this->required_fields as $field => $default) {
+            if (is_null($this->$field)) {
+                $this->$field = $default;
+            }
+        }
+    }
+
+    /**
+     * Records this object in the Database, sets its id to the returned value, and returns that value.
      * @return int PK ID if successful, false otherwise
      */
     function insert()
     {
-        return insert_record($this->table, $this, true);
+        $this->set_defaults();
+        $this->id = insert_record($this->table, $this, true);
+        return $this->id;
     }
    
-
+    
+    /**
+     * Updates this object in the Database, based on its object variables. ID must be set.
+     *
+     * @return boolean
+     */
+    function update()
+    {
+        $this->set_defaults();
+        return update_record($this->table, $this);
+    }
+    
     /**
      * Deletes this object from the database.
      */
@@ -365,7 +439,7 @@ class grade_item
         $wheresql = '';
         
         foreach ($variables as $var => $value) {
-            if (!empty($value)) {
+            if (!empty($value) && !in_array($var, $this->nonfields)) {
                 $wheresql .= " $var = '$value' AND ";
             }
         }
@@ -432,10 +506,25 @@ class grade_category
 {
     /**
      * The table name
-     * @var string $tablename
+     * @var string $table
      */
-    var $tablename = 'grade_categories';
+    var $table = 'grade_categories';
     
+    /**
+     * Array of class variables that are not part of the DB table fields
+     * @var array $nonfields
+     */
+    var $nonfields = array('table', 'nonfields', 'required_fields');
+
+    /**
+     * Array of required fields (keys) and their default values (values).
+     * @var array $required_fields
+     */
+    var $required_fields = array('aggregation' => 0,
+                                 'keephigh'    => 0,
+                                 'fullname'    => null,
+                                 'droplow'     => 0,
+                                 'hidden'      => 0);
     /**
      * The grade_category PK.
      * @var int $id The grade_category PK
@@ -498,22 +587,52 @@ class grade_category
     {
         if (!empty($params) && (is_array($params) || is_object($params))) {
             foreach ($params as $param => $value) {
-                if (method_exists($this, $param)) {
+                if (in_object_vars($param, $this)) {
                     $this->$param = $value;
                 }
             }
+
+            $this->set_defaults();
         } 
     }
 
     /**
-     * Records this object in the Database.
+     * Replaces NULL values with defaults defined in the DB, for required fields.
+     * This should use the DB table METADATA, but to start with I am hard-coding it.
+     *
+     * @return void
+     */
+    function set_defaults()
+    {
+        foreach ($this->required_fields as $field => $default) {
+            if (is_null($this->$field)) {
+                $this->$field = $default;
+            }
+        }
+    }
+    
+    
+    /**
+     * Records this object in the Database, sets its id to the returned value, and returns that value.
      * @return int PK ID if successful, false otherwise
      */
     function insert()
     {
-        return insert_record($this->table, $this, true);
+        $this->set_defaults();
+        $this->id = insert_record($this->table, $this, true);
+        return $this->id;
     }
    
+    /**
+     * Updates this object in the Database, based on its object variables. ID must be set.
+     *
+     * @return boolean
+     */
+    function update()
+    {
+        $this->set_defaults();
+        return update_record($this->table, $this);
+    }
 
     /**
      * Deletes this object from the database.
