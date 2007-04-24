@@ -3817,7 +3817,9 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $str .= '</textarea>'."\n";
 
 	if ($usehtmleditor) {
-		$str .= editorshortcutshelpbutton();
+        // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
+		$str .= '<script type="text/javascript">document.write(\''.
+            str_replace('\'','\\\'',editorshortcutshelpbutton()).'\'); </script>';
 	}
 
     if ($return) {
