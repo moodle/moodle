@@ -5066,9 +5066,9 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     $url = str_replace('&amp;', '&', $encodedurl);
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
-/// Currenly only works in PHP 5.2+
+/// Currenly only works in PHP 5.2+; we do not want strict PHP5 errors
     $error = error_get_last();
-    $errorprinted = debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && !empty($error);
+    $errorprinted = debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && !empty($error) && ($error['type'] & DEBUG_DEVELOPER);
     if ($errorprinted) {
         $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
     }
