@@ -78,50 +78,6 @@
 
     add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
 
-/// Print the page header
-
-    $strquizzes = get_string("modulenameplural", "quiz");
-    $strreview  = get_string("review", "quiz");
-    $strscore  = get_string("score", "quiz");
-    $strgrade  = get_string("grade");
-    $strbestgrade  = get_string("bestgrade", "quiz");
-    $strtimetaken     = get_string("timetaken", "quiz");
-    $strtimecompleted = get_string("completedon", "quiz");
-    $stroverdue = get_string("overdue", "quiz");
-
-    if (!empty($popup)) {
-        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
-        /// Include Javascript protection for this page
-        include('protect_js.php');
-    } else {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
-                    : "";
-                    
-        $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $crumbs[] = array('name' => $strreview, 'link' => '', 'type' => 'title');
-        
-        $navigation = build_navigation($crumbs);
-               
-        print_header_simple(format_string($quiz->name), "", $navigation, "", "", true, $strupdatemodule);
-    }
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-
-/// Print heading and tabs if this is part of a preview
-    if (has_capability('mod/quiz:preview', $context)) {
-        if ($attempt->userid == $USER->id) { // this is the report on a preview
-            $currenttab = 'preview';
-        } else {
-            $currenttab = 'reports';
-            $mode = '';
-        }
-        include('tabs.php');
-    } else {
-        print_heading(format_string($quiz->name));
-    }
-
 /// Load all the questions and states needed by this script
 
     // load the questions needed by page
@@ -144,6 +100,52 @@
     // creating new sessions where required
     if (!$states = get_question_states($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
+    }
+
+/// Print the page header
+
+    $strquizzes = get_string("modulenameplural", "quiz");
+    $strreview  = get_string("review", "quiz");
+    $strscore  = get_string("score", "quiz");
+    $strgrade  = get_string("grade");
+    $strbestgrade  = get_string("bestgrade", "quiz");
+    $strtimetaken     = get_string("timetaken", "quiz");
+    $strtimecompleted = get_string("completedon", "quiz");
+    $stroverdue = get_string("overdue", "quiz");
+
+    $pagequestions = explode(',', $pagelist);
+    $headtags = get_html_head_contributions($pagequestions, $questions, $states);
+    if (!empty($popup)) {
+        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
+        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, '');
+        /// Include Javascript protection for this page
+        include('protect_js.php');
+    } else {
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
+                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
+                    : "";
+                    
+        $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $crumbs[] = array('name' => $strreview, 'link' => '', 'type' => 'title');
+        
+        $navigation = build_navigation($crumbs);
+               
+        print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
+    }
+    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+
+/// Print heading and tabs if this is part of a preview
+    if (has_capability('mod/quiz:preview', $context)) {
+        if ($attempt->userid == $USER->id) { // this is the report on a preview
+            $currenttab = 'preview';
+        } else {
+            $currenttab = 'reports';
+            $mode = '';
+        }
+        include('tabs.php');
+    } else {
+        print_heading(format_string($quiz->name));
     }
 
 /// Print infobox
@@ -239,7 +241,6 @@
 
 /// Print all the questions
 
-    $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
         if (!isset($questions[$i])) {
