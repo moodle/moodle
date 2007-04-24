@@ -4532,9 +4532,10 @@ function get_strings($array, $module='') {
  * Returns a list of language codes and their full names
  * hides the _local files from everyone.
  * @param bool refreshcache force refreshing of lang cache
+ * @param bool returnall ignore langlist, return all languages available
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
  */
-function get_list_of_languages($refreshcache=false, $forceall=false) {
+function get_list_of_languages($refreshcache=false, $returnall=false) {
 
     global $CFG;
 
@@ -4542,7 +4543,7 @@ function get_list_of_languages($refreshcache=false, $forceall=false) {
 
     $filetocheck = 'langconfig.php';
 
-    if (!$refreshcache && !$forceall && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
+    if (!$refreshcache && !$returnall && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
 /// read available langs from cache
 
         $lines = file($CFG->dataroot .'/cache/languages');
@@ -4556,7 +4557,7 @@ function get_list_of_languages($refreshcache=false, $forceall=false) {
         return $languages;
     }
 
-    if (!$forceall && !empty($CFG->langlist)) {
+    if (!$returnall && !empty($CFG->langlist)) {
 /// return only languages allowed in langlist admin setting
 
         $langlist = explode(',', $CFG->langlist);
@@ -4635,7 +4636,7 @@ function get_list_of_languages($refreshcache=false, $forceall=false) {
     }
 
     if ($refreshcache && !empty($CFG->langcache)) {
-        if ($forceall) {
+        if ($returnall) {
             // we have a list of all langs only, just delete old cache
             @unlink($CFG->dataroot.'/cache/languages');
 

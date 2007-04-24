@@ -2131,6 +2131,18 @@ class admin_setting_special_editorhidebuttons extends admin_setting {
 
 }
 
+class admin_setting_langlist extends admin_setting_configtext {
+    function admin_setting_langlist() {
+        parent::admin_setting_configtext('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), '', PARAM_NOTAGS);
+    }
+
+    function write_setting($data) {
+        $return = parent::write_setting($data);
+        get_list_of_languages(true);//refresh the list
+        return $return;
+    }
+}
+
 class admin_setting_backupselect extends admin_setting_configselect {
 
     function admin_setting_backupselect($name, $visiblename, $description, $default, $choices) {
