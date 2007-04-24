@@ -704,7 +704,7 @@
             $session->newest = backup_todb($res_info['#']['NEWEST']['0']['#']);
             $session->newgraded = backup_todb($res_info['#']['NEWGRADED']['0']['#']);
             $session->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
-            
+
             if ($res_info['#']['MANUALCOMMENT']['0']['#']) {
                 $session->manualcomment = backup_todb($res_info['#']['MANUALCOMMENT']['0']['#']);
             } else { // pre 1.7 backups
