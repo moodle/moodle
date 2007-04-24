@@ -4532,6 +4532,13 @@ function get_list_of_languages() {
     if (!empty($CFG->langlist)) {       // use admin's list of languages
 
         $langlist = explode(',', $CFG->langlist);
+        // fix short lang names first - non existing langs are skipped anyway...
+        foreach ($langlist as $lang) {
+            if (strpos($lang, '_utf8') === false) {
+                $langlist[] = $lang.'_utf8';
+            }
+        }
+        // find existing langs from langlist
         foreach ($langlist as $lang) {
             $lang = trim($lang);   //Just trim spaces to be a bit more permissive
             if (strstr($lang, '_local')!==false) {
