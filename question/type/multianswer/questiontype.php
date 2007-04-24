@@ -16,7 +16,7 @@
 /**
  * @package questionbank
  * @subpackage questiontypes
-*/
+ */
 class embedded_cloze_qtype extends default_questiontype {
 
     function name() {

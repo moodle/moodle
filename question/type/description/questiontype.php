@@ -13,7 +13,7 @@
 /**
  * @package questionbank
  * @subpackage questiontypes
-*/
+ */
 class description_qtype extends default_questiontype {
 
     function name() {

@@ -8,7 +8,7 @@
 /**
  * @package questionbank
  * @subpackage questiontypes
-*/
+ */
 class question_essay_qtype extends default_questiontype {
 
     function name() {

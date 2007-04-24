@@ -1,13 +1,12 @@
 <?php  // $Id$
 
-
 ///////////////////////////////////////////////////////////////
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
 ///////////////////////////////////////////////////////////////
 /**
  * @package questionbank
  * @subpackage questiontypes
-*/
+ */
 
 require_once($CFG->libdir.'/filelib.php');
 
