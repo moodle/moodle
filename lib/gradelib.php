@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Library of functions for Gradebook
+ * Library of functions for gradebook
  *
  * @author Moodle HQ developers
  * @version  $Id$
@@ -32,8 +32,13 @@
  * @package moodlecore
  */
 
+define('GRADE_AGGREGATE_MEAN', 0);
+define('GRADE_AGGREGATE_MEDIAN', 1);
+define('GRADE_AGGREGATE_SUM', 2);
+define('GRADE_AGGREGATE_MODE', 3);
+
 /**
-* Extracts from the Gradebook all the Grade Items attached to the calling object. 
+* Extracts from the gradebook all the grade items attached to the calling object. 
 * For example, an assignment may want to retrieve all the grade_items for itself, 
 * and get three outcome scales in return. This will affect the grading interface.
 *
@@ -42,18 +47,28 @@
 *       itemtype 'mod', all grade_items for this courseif AND for the 'mod'
 *       type will be returned, etc...
 * 
-* @param int $courseid The id of the course to which the Grade Items belong
+* @param int $courseid The id of the course to which the grade items belong
 * @param string $itemname The name of the grade item
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
 * @param int $iteminstance id of the item module
 * @param int $itemnumber Can be used to distinguish multiple grades for an activity
-* @param int $idnumber Grade Item Primary Key
-* @return array An array of Grade Items
+* @param int $idnumber grade item Primary Key
+* @return array An array of grade items
 */
 function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $idnumber=NULL)
 {
+    $grade_item = new grade_item();
+    $grade_item->courseid = $courseid;
+    $grade_item->itemname = $itemname;
+    $grade_item->itemtype = $itemtype;
+    $grade_item->itemmodule = $itemmodule;
+    $grade_item->iteminstance = $iteminstance;
+    $grade_item->itemnumber = $itemnumber;
+    $grade_item->id = $idnumber;
 
+    $grade_items = $grade_item->get_records_select();
+    return $grade_items;
 }
 
 
@@ -68,22 +83,28 @@ function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=
 */
 function grade_create_item($params)
 {
-    $grade_item = new Grade_Item($params);
-    return $grade_item->record();
+    $grade_item = new grade_item($params);
+    return $grade_item->insert();
 }
 
 /**
 * For a given set of items, create a category to group them together (if one doesn't yet exist).
 * Modules may want to do this when they are created. However, the ultimate control is in the gradebook interface itself.
 * 
-* @param string $fullname The name of the new Category
-* @param array $items An array of grade_items to group under the new Category
+* @param string $fullname The name of the new category
+* @param array $items An array of grade_items to group under the new category
 * @param string $aggregation
 * @return mixed New grade_category id if successful
 */
-function grade_create_category()
+function grade_create_category($fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN)
 {
+    $params = new stdClass();
+    $params->fullname = $fullname;
+    $params->items = $items;
+    $params->aggregation = $aggregation;
 
+    $grade_category = new grade_category($params);
+    return $grade_category->insert();
 }
 
 
@@ -100,14 +121,19 @@ function grade_create_category()
 */
 function grade_is_locked($itemtype, $itemmodule, $iteminstance, $userid=NULL)
 {
-
+    $grade_item = grade_item::get_record(true, 'itemtype', $itemtype, 'itemmodule', $itemmodule, 'iteminstance', $iteminstance);
+    if ($grade_item) {
+        return $grade_item->locked;
+    } else {
+        return null;
+     }
 } 
 
 /**
- * Class representing a Grade Item. It is responsible for handling its DB representation,
+ * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
  */
-class Grade_Item
+class grade_item
 {
     /**
      * The table name
@@ -116,25 +142,25 @@ class Grade_Item
     var $tablename = 'grade_items';
 
     /**
-     * The Grade_Item PK.
-     * @var int $id The Grade_Item PK
+     * The grade_item PK.
+     * @var int $id The grade_item PK
      */
     var $id;
     
     /**
-     * The course this Grade_Item belongs to.
+     * The course this grade_item belongs to.
      * @var int $courseid
      */
     var $courseid;
     
     /**
-     * The Category this Grade_Item belongs to (optional).
+     * The category this grade_item belongs to (optional).
      * @var int $categoryid 
      */
     var $categoryid;
     
     /**
-     * The name of this Grade_Item (pushed by the module).
+     * The name of this grade_item (pushed by the module).
      * @var string $itemname
      */
     var $itemname;
@@ -194,7 +220,7 @@ class Grade_Item
     var $outcome;
     
     /**
-     * Grade required to pass. (grademin < gradepass <= grademax)
+     * grade required to pass. (grademin < gradepass <= grademax)
      * @var float $gradepass
      */
     var $gradepass;
@@ -218,13 +244,13 @@ class Grade_Item
     var $sortorder;
     
     /**
-     * Date until which to hide this Grade_Item. If null, 0 or false, Grade_Item is not hidden. Hiding prevents viewing.
+     * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
     var $hidden;
     
     /**
-     * Date until which to lock this Grade_Item. If null, 0 or false, Grade_Item is not locked. Locking prevents updating.
+     * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
      * @var int $locked
      */
     var $locked;
@@ -236,34 +262,125 @@ class Grade_Item
     var $needsupdate;
     
     /**
-     * The first time this Grade_Item was created
+     * The first time this grade_item was created
      * @var int $timecreated
      */
     var $timecreated;
     
     /**
-     * The last time this Grade_Item was modified
+     * The last time this grade_item was modified
      * @var int $timemodified
      */
     var $timemodified;
     
     /**
      * Constructor
-     */
-    function Grade_Item()
+     * @param object $params an object with named parameters for this grade item.
+     */     
+    function grade_item($params=NULL) 
     {
-        global $CFG;
-        $this->tablename = $CFG->prefix . $this->tablename;
+        if (!empty($params) && (is_array($params) || is_object($params))) {
+            foreach ($params as $param => $value) {
+                if (method_exists($this, $param)) {
+                    $this->$param = $value;
+                }
+            }
+        } 
     }
 
     /**
-     * Inserts the Grade Item object as a new record in the grade_items table.
+     * Records this object in the Database.
+     * @return int PK ID if successful, false otherwise
      */
-    function record()
+    function insert()
     {
-        
+        return insert_record($this->table, $this, true);
+    }
+   
+
+    /**
+     * Deletes this object from the database.
+     */
+    function delete()
+    {
+        return delete_records($this->table, 'id', $this->id);
     }
 
+
+    /**
+     * Finds and returns a grade_item object based on its ID number.
+     * 
+     * @param int $id
+     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
+     * @return object grade_item object or false if none found.
+     */
+    function get_by_id($id, $static=false)
+    {
+        if ($static) {
+            return grade_item::get_record(true, 'id', $id);
+        } else {
+            return $this->get_record(false, 'id', $id);
+        }
+    }
+    
+
+    /**
+     * Finds and returns a grade_item object based on 1-3 field values.
+     *
+     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
+     * @param string $field1
+     * @param string $value1
+     * @param string $field2
+     * @param string $value2
+     * @param string $field3
+     * @param string $value3
+     * @param string $fields
+     * @return object grade_item object or false if none found.
+     */
+    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
+    { 
+        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_item::$table
+        if ($grade_item = get_record('grade_items', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+            if ($static) {
+                $grade_item = new grade_item($grade_item);
+                return $grade_item;
+            } else {
+                foreach ($grade_item as $param => $value) {
+                    $this->$param = $value;
+                }
+                return $this;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Uses the variables of this object to retrieve all matching objects from the DB.
+     * @return array $objects
+     */
+    function get_records_select()
+    {
+        $variables = get_object_vars($this);
+        $wheresql = '';
+        
+        foreach ($variables as $var => $value) {
+            if (!empty($value)) {
+                $wheresql .= " $var = '$value' AND ";
+            }
+        }
+        
+        // Trim trailing AND
+        $wheresql = substr($wheresql, 0, strrpos($wheresql, 'AND'));
+
+        return get_records_select($this->table, $wheresql);
+    }
+    
+    /**
+     * Returns the raw value for this grade item (as imported by module or other source).
+     * 
+     * @return mixed grades_Raw object if found, or false.
+     */
     function get_raw()
     {
         $grade_raw = get_record('grade_grades_raw', 'itemid', $this->id);
@@ -271,13 +388,14 @@ class Grade_Item
     }
 
     /**
-     * Returns the raw value for this grade item (as imported by module or other source).
+     * Returns the final value for this grade item. 
      * 
-     * @return mixed Grades_Raw object if found, or false.
+     * @return mixed grades_Final object if found, or false.
      */
     function get_final()
     {
-
+        $grade_final = get_record('grade_grades_final', 'itemid', $this->id);
+        return $grade_final; 
     }
 
     /**
@@ -295,14 +413,14 @@ class Grade_Item
     }
     
     /**
-    * Returns the Grade_Category object this Grade_Item belongs to (if any).
+    * Returns the grade_category object this grade_item belongs to (if any).
     * 
-    * @return mixed Grade_Category object if applicable, NULL otherwise
+    * @return mixed grade_category object if applicable, NULL otherwise
     */
     function get_category()
     {
         if (!empty($this->categoryid)) {
-            $grade_category = new Grade_Category($this->category_id);
+            $grade_category = new grade_category($this->category_id);
             return $grade_category;
         } else {
             return null;
@@ -310,75 +428,73 @@ class Grade_Item
     }
 }
 
-class Grade_Category
+class grade_category
 {
     /**
      * The table name
      * @var string $tablename
      */
     var $tablename = 'grade_categories';
+    
     /**
-     * The Grade_Category PK.
-     * @var int $id The Grade_Category PK
+     * The grade_category PK.
+     * @var int $id The grade_category PK
      */
     var $id;
+    
     /**
-     * The course this Category belongs to.
+     * The course this category belongs to.
      * @var int $courseid
      */
     var $courseid;
+    
     /**
-     * The Category this Category belongs to (optional).
+     * The category this category belongs to (optional).
      * @var int $categoryid 
      */
     var $categoryid;
+    
     /**
-     * The name of this Category.
+     * The name of this category.
      * @var string $fullname
      */
     var $fullname;
+    
     /**
      * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
      * @var int $aggregation 
      */
     var $aggregation;
+    
     /**
      * Keep only the X highest items.
      * @var int $keephigh
      */
     var $keephigh;
+    
     /**
      * Drop the X lowest items.
      * @var int $droplow
      */
     var $droplow;
+    
     /**
-     * Multiply total grade by this number.
-     * @var float $multfactor
-     */
-    var $multfactor;
-    /**
-     * Add this to total grade.
-     * @var float $plusfactor
-     */
-    var $plusfactor;
-    /**
-     * What final grade needs to be achieved to pass this item?
-     * @var float $gradepass
-     */
-    var $gradepass;
-    /**
-     * Date until which to hide this Category. If null, 0 or false, Category is not hidden.
+     * Date until which to hide this category. If null, 0 or false, category is not hidden.
      * @var int $hidden
      */
     var $hidden;
     
+    /**
+     * Array of grade_items or grade_categories nested exactly 1 level below this category
+     * @var array $children
+     */
+    var $children;
     
     /**
      * Constructor
      * @param object $params an object with named parameters for this category.
      */     
-    function Grade_Category($params=NULL) 
+    function grade_category($params=NULL) 
     {
         if (!empty($params) && (is_array($params) || is_object($params))) {
             foreach ($params as $param => $value) {
@@ -388,18 +504,36 @@ class Grade_Category
             }
         } 
     }
-    
+
     /**
-     * Finds and returns a Grade_Category object based on its ID number.
+     * Records this object in the Database.
+     * @return int PK ID if successful, false otherwise
+     */
+    function insert()
+    {
+        return insert_record($this->table, $this, true);
+    }
+   
+
+    /**
+     * Deletes this object from the database.
+     */
+    function delete()
+    {
+        return delete_records($this->table, 'id', $this->id);
+    }
+
+    /**
+     * Finds and returns a grade_category object based on its ID number.
      * 
      * @param int $id
      * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @return object Grade_Category object or false if none found.
+     * @return object grade_category object or false if none found.
      */
     function get_by_id($id, $static=false)
     {
         if ($static) {
-            return Grade_Category::get_record(true, 'id', $id);
+            return grade_category::get_record(true, 'id', $id);
         } else {
             return $this->get_record(false, 'id', $id);
         }
@@ -407,7 +541,7 @@ class Grade_Category
     
 
     /**
-     * Finds and returns a Grade_Category object based on 1-3 field values.
+     * Finds and returns a grade_category object based on 1-3 field values.
      *
      * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
@@ -417,12 +551,14 @@ class Grade_Category
      * @param string $field3
      * @param string $value3
      * @param string $fields
-     * @return object Grade_Category object or false if none found.
+     * @return object grade_category object or false if none found.
      */
     function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
     { 
+        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_category::$table
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if ($static) {
+                $grade_category = new grade_category($grade_category);
                 return $grade_category;
             } else {
                 foreach ($grade_category as $param => $value) {
