@@ -365,7 +365,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
             echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
             echo "<tr>";
             $count = 0;
+            $columncount = array(); // number of votes in each column
             foreach ($useranswer as $optionid => $userlist) {
+                $columncount[$optionid] = 0; // init counters
                 if ($optionid) {
                     echo "<th class=\"col$count header\" style=\"width:$tablewidth%\" scope=\"col\">";
                 } else if ($choice->showunanswered) {
@@ -398,6 +400,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     // hide admin/editting teacher (users with editting privilages)
                     // show users without? I could be wrong.
                     if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) { // make sure admins and hidden teachers are not shown in not answered yet column.
+                        $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
                             echo '<td class="attemptcell"><input type="checkbox" name="attemptid[]" value="'. $answers[$user->id]->id. '" /></td>';
@@ -423,18 +426,9 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                     continue;
                 }
                 echo "<td align=\"center\" class=\"count\">";
-                $countanswers = get_records("choice_answers", "optionid", $optionid);
-                $countans = 0;
-                if (!empty($countanswers)) {
-                    foreach ($countanswers as $ca) { //only return enrolled users.
-                        if (has_capability('mod/choice:choose', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-                           $countans = $countans+1;
-                        }
-                    }
-                }
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
-                    echo $countans;
+                    echo $columncount[$optionid];
                     echo "<br/>";
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
