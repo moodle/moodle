@@ -35,7 +35,7 @@ class question_edit_form extends moodleform {
     /**
      * Build the form definition.
      *
-     * This adds all the form files that the default question type supports.
+     * This adds all the form fields that the default question type supports.
      * If your question type does not support all these fields, then you can
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
@@ -136,6 +136,16 @@ class question_edit_form extends moodleform {
         if (empty($question->image)){
             unset($question->image);
         }
+
+        // Set any options.
+        $extra_question_fields = $QTYPES[$question->qtype]->extra_question_fields();
+        if (is_array($extra_question_fields)) {
+            array_shift($extra_question_fields);
+            foreach ($extra_question_fields as $field) {
+                $question->$field = $question->options->$field;
+            }
+        }
+        
         parent::set_data($question);
     }
 

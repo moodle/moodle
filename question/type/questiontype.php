@@ -83,6 +83,29 @@ class default_questiontype {
     }
 
     /**
+     * If your question type has a table that extends the question table, and
+     * you want the base class to automatically save, backup and restore the extra fields,
+     * override this method to return an array wherer the first element is the table name,
+     * and the subsequent entries are the column names (apart from id and questionid).
+     *
+     * @return mixed array as above, or null to tell the base class to do nothing.
+     */
+    function extra_question_fields() {
+        return null;
+    }
+
+    /**
+     * If your question type has a table that extends the question_answers table,
+     * make this method return an array wherer the first element is the table name,
+     * and the subsequent entries are the column names (apart from id and answerid).
+     *
+     * @return mixed array as above, or null to tell the base class to do nothing.
+     */
+    function extra_answer_fields() {
+        return null;
+    }
+
+    /**
      * Return an instance of the question editing form definition. This looks for a
      * class called edit_{$this->name()}_question_form in the file
      * {$CFG->docroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
@@ -132,14 +155,16 @@ class default_questiontype {
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
         $name = $this->name();
-        $strheading = get_string('editing' . $name, 'qtype_' . $name);
+        $langmodule = 'qtype_' . $name;
+        $strheading = get_string('editing' . $name, $langmodule);
         if ($strheading[0] == '[') {
             // Legacy behavior, if the string was not in the proper qtype_name
             // language file, look it up in the quiz one.
-            $strheading = get_string('editing' . $name, 'quiz');
+            $langmodule = 'quiz';
+            $strheading = get_string('editing' . $name, $langmodule);
         }
 
-        print_heading_with_help($strheading, $name, 'quiz');
+        print_heading_with_help($strheading, $name, $langmodule);
         $mform->display();
     }
 
@@ -267,6 +292,39 @@ class default_questiontype {
     *                          it is not a standard question object.
     */
     function save_question_options($question) {
+        $extra_question_fields = $this->extra_question_fields();
+
+        if (is_array($extra_question_fields)) {
+            $question_extension_table = array_shift($extra_question_fields);
+            
+            $function = 'update_record';
+            $options = get_record($question_extension_table, 'questionid', $question->id);
+            if (!$options) {
+                $function = 'insert_record';
+                $options = new stdClass;
+                $options->questionid = $question->id;
+            }
+            foreach ($extra_question_fields as $field) {
+                if (!isset($question->$field)) {
+                    $result = new stdClass;
+                    $result->error = "No data for field $field when saving " .
+                            $this->name() . ' question id ' . $question->id;
+                    return $result;
+                }
+                $options->$field = $question->$field;
+            }
+            
+            if (!$function($question_extension_table, $options)) {
+                $result = new stdClass;
+                $result->error = 'Could not save question options for ' .
+                        $this->name() . ' question id ' . $question->id;
+                return $result;
+            }
+        }
+
+        $extra_answer_fields = $this->extra_answer_fields();
+        // TODO save the answers, with any extra data.
+        
         return null;
     }
 
@@ -303,11 +361,44 @@ class default_questiontype {
     *                         specific information (it is passed by reference).
     */
     function get_question_options(&$question) {
+        global $CFG;
+
         if (!isset($question->options)) {
             $question->options = new object;
         }
-        // The default implementation attaches all answers for this question
-        $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
+
+        $extra_question_fields = $this->extra_question_fields();
+        if (is_array($extra_question_fields)) {
+            $question_extension_table = array_shift($extra_question_fields);
+            $extra_data = get_record($question_extension_table, 'questionid', $question->id, '', '', '', '', implode(', ', $extra_question_fields));
+            if ($extra_data) {
+                foreach ($extra_question_fields as $field) {
+                    $question->options->$field = $extra_data->$field;
+                }
+            } else {
+                notify("Failed to load question options from the table $question_extension_table for questionid " .
+                        $question->id);
+                return false;
+            }
+        }
+
+        $extra_answer_fields = $this->extra_answer_fields();
+        if (is_array($extra_answer_fields)) {
+            $answer_extension_table = array_shift($extra_answer_fields);
+            $question->options->answers = get_records_sql('
+                    SELECT qa.*, qax.' . implode(', qax.', $extra_answer_fields) . '
+                    FROM ' . $CFG->prefix . 'question_answers qa, ' . $CFG->prefix . '$answer_extension_table qax
+                    WHERE qa.questionid = ' . $question->id . ' AND qax.answerid = qa.id');
+            if (!$question->options->answers) {
+                notify("Failed to load question answers from the table $answer_extension_table for questionid " .
+                        $question->id);
+                return false;
+            }
+        } else {
+            // Don't check for success or failure becuase some question types do not use the answers table.
+            $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
+        }
+
         return true;
     }
 
@@ -330,10 +421,25 @@ class default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        /// The default question type does not have any tables of its own
-        // therefore there is nothing to delete
+        global $CFG;
+        $success = true;
 
-        return true;
+        $extra_question_fields = $this->extra_question_fields();
+        if (is_array($extra_question_fields)) {
+            $question_extension_table = array_shift($extra_question_fields);
+            $success = $success && delete_records($question_extension_table, 'questionid', $questionid);
+        }
+
+        $extra_answer_fields = $this->extra_answer_fields();
+        if (is_array($extra_answer_fields)) {
+            $answer_extension_table = array_shift($extra_answer_fields);
+            $success = $success && delete_records_select($answer_extension_table,
+                    "answerid IN (SELECT qa.id FROM {$CFG->prefix}question_answers qa WHERE qa.question = $questionid)");
+        }
+
+        $success = $success && delete_records('question_answers', 'question', $questionid);
+
+        return $success;
     }
 
     /**
@@ -673,7 +779,7 @@ class default_questiontype {
         }
 
         $generalfeedback = '';
-        if ($options->generalfeedback) {
+        if ($isgraded && $options->generalfeedback) {
             $generalfeedback = $this->format_text($question->generalfeedback,
                     $question->questiontextformat, $cmoptions);
         }
