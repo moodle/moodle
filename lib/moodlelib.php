@@ -6914,9 +6914,14 @@ function setup_lang_from_browser() {
     }
     krsort($langs, SORT_NUMERIC);
 
+    $langlist = get_list_of_languages();
+
 /// Look for such langs under standard locations
     foreach ($langs as $lang) {
-        $lang = clean_param($lang.'_utf8', PARAM_SAFEDIR); // clean it properly for include
+        $lang = strtolower(clean_param($lang.'_utf8', PARAM_SAFEDIR)); // clean it properly for include
+        if (!array_key_exists($lang, $langlist)) {
+            continue; // language not allowed, try next one
+        }
         if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang; /// Lang exists, set it in session 
             break; /// We have finished. Go out
