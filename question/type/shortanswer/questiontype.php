@@ -11,9 +11,9 @@
 /// question type embeddable within a multianswer (cloze) question
 ///
 /**
-* @package questionbank
-* @subpackage questiontypes
-*/
+ * @package questionbank
+ * @subpackage questiontypes
+ */
 require_once("$CFG->dirroot/question/type/questiontype.php");
 
 class question_shortanswer_qtype extends default_questiontype {
@@ -135,9 +135,9 @@ class question_shortanswer_qtype extends default_questiontype {
 
         /// Print question text and media
 
-        $questiontext =  format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
+        $questiontext = format_text($question->questiontext,
+                $question->questiontextformat,
+                $formatoptions, $cmoptions->course);
         $image = get_question_image($question, $cmoptions->course);
 
         /// Print input controls

@@ -74,7 +74,7 @@ class qformat_blackboard extends qformat_default {
     $this->process_matching($xml, $questions);
 
     return $questions;
-  }
+}
 
 //----------------------------------------
 // Process True / False Questions
@@ -271,7 +271,6 @@ function process_fib($xml, &$questions) {
     else {
         return;
     }
-    
 
     for ($i = 0; $i < sizeof ($fibquestions); $i++) {
         $question = $this->defaultquestion();
@@ -312,7 +311,7 @@ function process_fib($xml, &$questions) {
         }        
          
         $questions[] = $question;
-      } 
+    }
 }
 
 //----------------------------------------

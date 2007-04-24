@@ -120,7 +120,7 @@ class qformat_webct_modified_calculated_qtype extends question_calculated_qtype 
             }
             $datasetdef->itemcount = $item->itemnumber - 1;
 
-            //  Retrieve ->options
+            // Retrieve ->options
             if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)
                     && $datasetdata->min <= $datasetdata->max) {
                 if (is_numeric($datasetdata->dec)) {

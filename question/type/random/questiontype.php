@@ -8,7 +8,7 @@
 /**
  * @package questionbank
  * @subpackage questiontypes
-*/
+ */
 class random_qtype extends default_questiontype {
 
     // Carries questions available as randoms sorted by category
