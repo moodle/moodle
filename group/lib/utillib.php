@@ -178,7 +178,7 @@ function groups_groups_to_groupids($groups) {
  * @param $groupids Array of group IDs.
  * @param $courseid Default false, or the course ID for backwards compatibility.
  * @param $alldata Default false, or get complete record for group.
- * @return array Array of group objects, with basic or all data.
+ * @return array Array of group objects INDEXED by group ID, with basic or all data.
  */
 function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
     if (! $groupids) {
@@ -186,7 +186,7 @@ function groups_groupids_to_groups($groupids, $courseid=false, $alldata=false) {
     }
     $groups = array();
     foreach ($groupids as $id) {
-        $groups[] = groups_get_group_settings($id, $courseid, $alldata);
+        $groups[$id] = groups_get_group_settings($id, $courseid, $alldata);
     }
     return $groups;
 }
