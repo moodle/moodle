@@ -63,11 +63,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if ($question->options->units = get_records('question_numerical_units',
                                          'question', $question->id, 'id ASC')) {
             $question->options->units  = array_values($question->options->units);
-            usort($question->options->units, create_function('$a, $b', // make sure the default unit is at index 0
-             'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-             'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-            array_walk($question->options->units, create_function('$val',
-             '$val->multiplier = (float)$val->multiplier;'));
         } else {
             $question->options->units = array();
         }
@@ -75,22 +70,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function get_default_numerical_unit(&$question) {
-        $unit = new stdClass;
-        $unit->unit = '';
-        $unit->multiplier = 1.0;
-        if (!isset($question->options->units[0])) {
-            // do nothing
-        } else if (1.0 === (float)$question->options->units[0]->multiplier) {
-            $unit->unit = $question->options->units[0]->unit;
-        } else {
-            foreach ($question->options->units as $u) {
-                if (1.0 === (float)$unit->multiplier) {
-                    $unit->unit = $u->unit;
-                    break;
+        if (isset($question->options->units[0])) {
+            foreach ($question->options->units as $unit) {
+                if (abs($unit->multiplier - 1.0) < '1.0e-' . ini_get('precision')) {
+                    return $unit;
                 }
             }
         }
-        return $unit;
+        return false;
     }
 
     /**
@@ -196,53 +183,28 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function save_numerical_units($question) {
-        if (!$oldunits = get_records('question_numerical_units', 'question', $question->id, 'id ASC')) {
-            $oldunits = array();
-        }
+        $result = new stdClass;
 
-        // Set the units
+        // Delete the units previously saved for this question.
+        delete_records('question_numerical_units', 'question', $question->id);
+
+        // Save the new units.
         $units = array();
-        $keys  = array();
-        $oldunits = array_values($oldunits);
-        usort($oldunits, create_function('$a, $b', // make sure the default unit is at index 0
-                'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-                'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-        foreach ($oldunits as $unit) {
-            $units[] = clone($unit);
-        }
-        $n = isset($question->multiplier) ? count($question->multiplier) : 0;
-        for ($i = 0; $i < $n; $i++) {
+        foreach ($question->multiplier as $i => $multiplier) {
             // Discard any unit which doesn't specify the unit or the multiplier
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])) {
+                $units[$i] = new stdClass;
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
-            } else {
-                unset($units[$i]);
+                if (! insert_record('question_numerical_units', $units[$i])) {
+                    $result->error = 'Unable to save unit ' . $units[$i]->unit . ' to the Databse';
+                    return $result;
+                }
             }
         }
         unset($question->multiplier, $question->unit);
 
-        /// Save units
-        $result = new stdClass;
-        for ($i = 0; $i < $n; $i++) {
-            if (!isset($units[$i]) && isset($oldunits[$i])) { // Delete if it hasn't been resubmitted
-                delete_records('question_numerical_units', 'id', $oldunits[$i]->id);
-            } else if ($oldunits != $units) { // answer has changed or is new
-                if (isset($oldunits[$i]->id)) { // answer has changed
-                    $units[$i]->id = $oldunits[$i]->id;
-                    if (! update_record('question_numerical_units', $units[$i])) {
-                        $result->error = "Could not update question_numerical_unit $units[$i]->unit";
-                        return $result;
-                    }
-                } else if (isset($units[$i])) { // answer is new
-                    if (! insert_record('question_numerical_units', $units[$i])) {
-                        $result->error = "Unable to insert new unit $units[$i]->unit";
-                        return $result;
-                    }
-                }
-            }
-        }
         $result->units = &$units;
         return $result;
     }
@@ -371,7 +333,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $max = $answer->answer + $tolerance;
                 $min = $answer->answer - $tolerance;
                 break;
-           case '3': case 'geometric':
+            case '3': case 'geometric':
                 $quotient = 1 + abs($tolerance);
                 $max = $answer->answer * $quotient;
                 $min = $answer->answer / $quotient;
