@@ -110,6 +110,9 @@ class login_signup_form extends moodleform {
 
         }
 
+        if (!check_password_policy($data['password'], $errmsg)) {
+            $errors['password'] = $errmsg;
+        }
 
         if (0 == count($errors)){
             return true;

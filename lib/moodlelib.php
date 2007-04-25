@@ -2852,9 +2852,49 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
     return $user;
 }
 
+/**
+ * @uses $CFG
+ * @param string $password the password to be checked agains the password policy
+ * @param string $errmsg the error message to display when the password doesn't comply with the policy.
+ * @return bool true if the password is valid according to the policy. false otherwise.
+ */
+function check_password_policy($password, &$errmsg) {
+    global $CFG;
+
+    if (empty($CFG->passwordpolicy)) {
+        return true;
+    }
+
+    $textlib = new textlib();
+    $errmsg = '';
+    if ($textlib->strlen($password) < $CFG->minpasswordlength) {
+        $errmsg = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);
+
+    } else if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
+        $errmsg = get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits);
+
+    } else if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
+        $errmsg = get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower);
+
+    } else if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
+        $errmsg = get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper);
+
+    } else if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
+        $errmsg = get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
+
+    } else if ($password == 'admin' or $password == 'password') {
+        $errmsg = get_string('unsafepassword');
+    }
+
+    if ($errmsg == '') {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
-/*
+/**
  * When logging in, this function is run to set certain preferences
  * for the current SESSION
  */

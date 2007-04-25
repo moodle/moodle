@@ -109,6 +109,13 @@ class user_editadvanced_form extends moodleform {
         $user = get_record('user', 'id', $usernew->id);
         $err = array();
 
+        if (!empty($usernew->newpassword)) {
+            $errmsg = '';//prevent eclipse warning
+            if (!check_password_policy($usernew->newpassword, $errmsg)) {
+                $err['newpassword'] = $errmsg;
+            }
+        }
+
         if (empty($usernew->username)) {
             //might be only whitespace
             $err['username'] = get_string('required');
