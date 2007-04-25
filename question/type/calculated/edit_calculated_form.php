@@ -27,9 +27,16 @@ class question_edit_calculated_form extends question_edit_form {
     function definition_inner(&$mform) {
         global $QTYPES;
         $this->qtypeobj =& $QTYPES[$this->qtype()];
+        $label = get_string("sharedwildcards", "qtype_datasetdependent");
+        $mform->addElement('hidden', 'initialcategory', 1);
+        $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
+        $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
+        $addfieldsname='updatecategory';
+        $addstring=get_string("updatecategory", "qtype_calculated");
+                $mform->registerNoSubmitButton($addfieldsname);
+ 
+        $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
 
-//------------------------------------------------------------------------------------------
-/*      //not working now datasetdependent code cannot handle multiple answer formulas and not needed ??
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
 
@@ -61,50 +68,9 @@ class question_edit_calculated_form extends question_edit_form {
             $count = 0;
         }
         $repeatsatstart = $count + 1;
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));*/
-//------------------------------------------------------------------------------------------
-        $label = get_string("sharedwildcards", "qtype_datasetdependent");
-        $mform->addElement('hidden', 'initialcategory', 1);
-        $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
-        $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
-        $addfieldsname='updatecategory';
-        $addstring=get_string("updatecategory", "qtype_calculated");
-                $mform->registerNoSubmitButton($addfieldsname);
- 
-        $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));
 
-        $mform->addElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated'));
-
-        $mform->addElement('text', 'answers[0]', get_string('correctanswerformula', 'quiz'));
-        $mform->setType('answers[0]', PARAM_NOTAGS);
-
-/*        $creategrades = get_grade_options();
-        $gradeoptions = $creategrades->gradeoptions;
-        $mform->addElement('select', 'fraction[0]', get_string('grade'), $gradeoptions);
-        $mform->setDefault('fraction[0]', 0);*/
-        $mform->addElement('hidden', 'fraction[0]', 1);
-      //  $mform->setConstants(array('fraction[0]'=>PARAM_INT));
-
-        $tolgrp = array();
-        $tolgrp[] =& $mform->createElement('text', 'tolerance[0]', get_string('tolerance', 'qtype_calculated'));
-        $mform->setType('tolerance[0]', PARAM_NUMBER);
-        $mform->setDefault('tolerance[0]', 0.01);
-        $tolgrp[] =& $mform->createElement('select', 'tolerancetype[0]', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
-        $mform->addGroup($tolgrp, 'tolgrp', get_string('tolerance', 'qtype_calculated'), null, false);
-
-        $anslengrp = array();
-        $anslengrp[] =&  $mform->createElement('select', 'correctanswerlength[0]', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
-        $mform->setDefault('correctanswerlength[0]', 2);
-
-        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
-        $anslengrp[] =&  $mform->createElement('select', 'correctanswerformat[0]', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
-        $mform->addGroup($anslengrp, 'anslengrp', get_string('correctanswershows', 'qtype_calculated'), null, false);
-
-        $mform->addElement('htmleditor', 'feedback[0]', get_string('feedback', 'quiz'));
-        $mform->setType('feedback', PARAM_RAW);
-
-//------------------------------------------------------------------------------------------
-        $repeated = array();
+       $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
@@ -150,7 +116,7 @@ class question_edit_calculated_form extends question_edit_form {
             }
             $units  = array_values($question->options->units);
             // make sure the default unit is at index 0
-            usort($units, create_function('$a, $b', // make sure the default unit is at index 0
+            usort($units, create_function('$a, $b', 
             'if (1.0 === (float)$a->multiplier) { return -1; } else '.
             'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
             if (count($units)) {
@@ -194,22 +160,21 @@ class question_edit_calculated_form extends question_edit_form {
         $errors = array();
         $answers = $data['answers'];
         $answercount = 0;
-        //check grades
-        /*$totalfraction = 0;
-        $maxfraction = -1; */
+        $maxgrade = false;
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer){
-            $mandatorydatasets += $this->qtypeobj->find_dataset_names($data['questiontext']);
+            $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
         }      
-        if (count($possibledatasets) == 0 && count($mandatorydatasets )==0){
-            $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
+        if ( count($mandatorydatasets )==0){
+          //  $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
             foreach ($answers as $key => $answer){
                 $errors['answers['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
             }      
         }  
         foreach ($answers as $key => $answer){
             //check no of choices
+            // the * for everykind of answer not actually implemented
             $trimmedanswer = trim($answer);
             if (($trimmedanswer!='')||$answercount==0){
                 $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
@@ -224,6 +189,9 @@ class question_edit_calculated_form extends question_edit_form {
                 }
                 if (!is_numeric($data['tolerance'][$key])){
                     $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                }
+                if ($data['fraction'][$key] == 1) {
+                   $maxgrade = true;
                 }
 
                 $answercount++;
@@ -275,6 +243,9 @@ class question_edit_calculated_form extends question_edit_form {
         }
         if ($answercount==0){
             $errors['answers[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
+        }
+        if ($maxgrade == false) {
+            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
         }
 
         return $errors;
