@@ -198,6 +198,7 @@ $string['filloutoneanswer'] = 'You must provide at least one possible answer. An
 $string['filloutthreequestions'] = 'You must provide at least three questions with matching answers. You can provide extra wrong answers by giving an answer with a blank question. Entries where both the question and the answer are blank will be ignored.';
 $string['fillouttwochoices'] = 'You must fill out at least two choices.  Choices left blank will not be used.';
 $string['finishattempt'] = 'Submit all and finish';
+$string['finishreview'] = 'Finish review';
 $string['forceregeneration'] = 'force regeneration';
 $string['formatnotfound'] = 'Import/export format $a not found';
 $string['formatnotimplemented'] = 'This format has not been correctly implemented, please post a bug report';
