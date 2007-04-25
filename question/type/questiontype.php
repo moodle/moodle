@@ -1325,58 +1325,6 @@ class default_questiontype {
     }
 
     /**
-     * Print the start of the question editing form, including the question category,
-     * questionname, questiontext, image, defaultgrade, penalty and generalfeedback fields.
-     *
-     * Three of the fields, image, defaultgrade, penalty, are optional, and
-     * can be removed from the from using the $hidefields argument.
-     *
-     * @param object $question The question object that the form we are printing is for.
-     * @param array $err Array of optional error messages to display by each field.
-     *          Used when the form is being redisplayed after validation failed.
-     * @param object $course The course object for the course this question belongs to.
-     * @param boolean $usehtmleditor Whether the html editor should be used.
-     * @param array $hidefields An array which may contain the strings,
-     *          'image', 'defaultgrade' or 'penalty' to remove the corresponding field.
-     */
-    function print_question_form_start($question, $err, $course, $usehtmleditor, $hidefields = array()) {
-        global $CFG;
-
-        // If you edit this function, you also need to edit random/editquestion.html.
-
-        if (!in_array('image', $hidefields)) {
-            make_upload_directory("$course->id");    // Just in case
-            $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
-            foreach ($coursefiles as $filename) {
-                if (mimeinfo("icon", $filename) == "image.gif") {
-                    $images["$filename"] = $filename;
-                }
-            }
-        }
-
-        include('editquestionstart.html');
-    }
-
-    /**
-     * Print the end of the question editing form, including the submit, copy,
-     * and cancel button, and the standard hidden fields like the sesskey and
-     * the question type.
-     *
-     * @param object $question The question object that the form we are printing is for.
-     * @param string $submitscript Extra attributes, for example 'onsubmit="myfunction"',
-     *          that is added to the HTML of the submit button.
-     * @param string $hiddenfields Extra hidden fields (actually any HTML)
-     *          to be added at the end of the form.
-     */
-    function print_question_form_end($question, $submitscript = '', $hiddenfields = '') {
-        global $USER;
-
-        // If you edit this function, you also need to edit random/editquestion.html.
-
-        include('editquestionend.html');
-    }
-
-    /**
      * Call format_text from weblib.php with the options appropriate to question types.
      *
      * @param string $text the text to format.
