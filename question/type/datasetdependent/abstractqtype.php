@@ -80,42 +80,6 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
-     $options) {
-        // Substitute variables in questiontext before giving the data to the
-        // virtual type for printing
-        $virtualqtype = $this->get_virtual_qtype();
-        $unit = $virtualqtype->get_default_numerical_unit($question);
-        foreach ($question->options->answers as $answer) {
-            $answer->answer = $this->substitute_variables($answer->answer,
-             $state->options->dataset);
-        }
-        $question->questiontext = $this->substitute_variables(
-         $question->questiontext, $state->options->dataset);
-        $virtualqtype->print_question_formulation_and_controls($question,
-         $state, $cmoptions, $options);
-    }
-
-    function grade_responses(&$question, &$state, $cmoptions) {
-        // Forward the grading to the virtual qtype
-        foreach ($question->options->answers as $answer) {
-            $answer->answer = $this->substitute_variables($answer->answer,
-             $state->options->dataset);
-        }
-        $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->grade_responses($question, $state, $cmoptions) ;
-    }
-
-    // ULPGC ecastro
-    function check_response(&$question, &$state) {
-        // Forward the checking to the virtual qtype
-        foreach ($question->options->answers as $answer) {
-            $answer->answer = $this->substitute_variables($answer->answer,
-             $state->options->dataset);
-        }
-        $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->check_response($question, $state) ;
-    }
 
     function substitute_variables($str, $dataset) {
         foreach ($dataset as $name => $value) {
