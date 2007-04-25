@@ -1160,11 +1160,30 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
     if (!question_isgradingevent($action->event)) {
         // Grade the response but don't update the overall grade
-        $QTYPES[$question->qtype]->grade_responses(
-         $question, $state, $cmoptions);
-        // Don't allow the processing to change the event type
-        $state->event = $action->event;
+        $QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions);
+        
+        // Temporary hack because question types are not given enough control over what is going
+        // on. Used by Opaque questions.
+        // TODO fix this code properly.
+        if (!empty($state->believeevent)) {
+            // If the state was graded we need to ...
+            if (question_state_is_graded($state)) {
+                question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
 
+                // update the attempt grade
+                $attempt->sumgrades -= (float)$state->last_graded->grade;
+                $attempt->sumgrades += (float)$state->grade;
+    
+                // and update the last_graded field.
+                unset($state->last_graded);
+                $state->last_graded = clone($state);
+                unset($state->last_graded->changed);
+            }
+        } else {
+            // Don't allow the processing to change the event type
+            $state->event = $action->event;
+        }
+        
     } else { // grading event
 
         // Unless the attempt is closing, we want to work out if the current responses
@@ -1177,19 +1196,19 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         // If we did not find a duplicate or if the attempt is closing, perform grading
         if ((!$sameresponses and QUESTION_EVENTDUPLICATE != $state->event) or
                 QUESTION_EVENTCLOSE == $action->event) {
-            // Decrease sumgrades by previous grade and then later add new grade
-            $attempt->sumgrades -= (float)$state->last_graded->grade;
 
-            $QTYPES[$question->qtype]->grade_responses(
-             $question, $state, $cmoptions);
+            $QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
             question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
-
-            $attempt->sumgrades += (float)$state->grade;
         }
 
-        // If the state was graded we need to update the last_graded field.
+        // If the state was graded we need to ...
         if (question_state_is_graded($state)) {
+            // update the attempt grade
+            $attempt->sumgrades -= (float)$state->last_graded->grade;
+            $attempt->sumgrades += (float)$state->grade;
+
+            // and update the last_graded field.
             unset($state->last_graded);
             $state->last_graded = clone($state);
             unset($state->last_graded->changed);
@@ -1232,8 +1251,8 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
     
     // deal with penalty
     if ($cmoptions->penaltyscheme) {
-            $state->grade = $state->raw_grade - $state->sumpenalty;
-            $state->sumpenalty += (float) $state->penalty;
+        $state->grade = $state->raw_grade - $state->sumpenalty;
+        $state->sumpenalty += (float) $state->penalty;
     } else {
         $state->grade = $state->raw_grade;
     }
