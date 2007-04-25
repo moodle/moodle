@@ -40,7 +40,7 @@
         global $CFG;
         include_once("$CFG->dirroot/mod/quiz/lib.php");
 
-        //Create missing categories and reasign orphaned questions.
+        // Create missing categories and reasign orphaned questions.
         fix_orphaned_questions($course);
         
         // First, all categories from this course.

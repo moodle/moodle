@@ -301,7 +301,6 @@
         }
 
         // Print a button to start/continue an attempt, if appropriate.
-
         if (!$quiz->questions) {
             print_heading(get_string("noquestions", "quiz"));
 
