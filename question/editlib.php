@@ -303,7 +303,7 @@ function question_list($course, $categoryid, $quizid=0,
         
         // add to quiz
         if ($editingquiz) {
-            echo "<a title=\"$straddtoquiz\" href=\"$CFG->wwwroot/question/edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
         
@@ -318,10 +318,10 @@ function question_list($course, $categoryid, $quizid=0,
                     src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
-                echo "<a title=\"$strrestore\" href=\"$CFG->wwwroot/question/edit.php?courseid=$course->id&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
+                echo "<a title=\"$strrestore\" href=\"edit.php?courseid=$course->id&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
                         src=\"$CFG->pixpath/t/restore.gif\" alt=\"$strrestore\" /></a>";
             } else {
-                echo "<a title=\"$strdelete\" href=\"$CFG->wwwroot/question/edit.php?courseid=$course->id&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
+                echo "<a title=\"$strdelete\" href=\"edit.php?courseid=$course->id&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
                         src=\"$CFG->pixpath/t/delete.gif\" alt=\"$strdelete\" /></a>";
             }
         }
