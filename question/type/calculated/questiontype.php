@@ -263,7 +263,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetitem->definition=$datasetdef->id ;
                     $datasetitem->itemnumber = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
-             //   echo "<pre>loaded qo";print_r($datasetitem);echo "</pre>";
                     if (!insert_record('question_dataset_items', $datasetitem)) {
                         error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                     }
@@ -360,12 +359,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
-      /*  $numericalquestion->options = clone($question->options);
-        foreach ($question->options->answers as $key => $answer) {
-            $numericalquestion->options->answers[$key] = clone($answer);
-        }*/
         foreach ($numericalquestion->options->answers as $key => $answer) {
-        //    $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
           $answer = fullclone($numericalquestion->options->answers[$key]);
             $correctanswer = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
@@ -378,33 +372,16 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
     function grade_responses(&$question, &$state, $cmoptions) {
-        // Forward the grading to the virtual qtype but not actually..
-         echo "calculated question type question grade_reponse <pre>";print_r($question);
-
+        // Forward the grading to the virtual qtype 
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
-    /*      echo "calculated1question type question grade_reponse <pre>";print_r($numericalquestion);
-        $numericalquestion->options = clone($question->options);
-          echo "calculated2 question type question grade_reponse <pre>";print_r($numericalquestion);
-        foreach ($question->options->answers as $key => $answer) {
-            $numericalquestion->options->answers[$key] = clone($answer);
-        }
-        */
-           echo "calculated3question type question grade_reponse <pre>";print_r($numericalquestion);
        foreach ($numericalquestion->options->answers as $key => $answer) {
             $answer = $numericalquestion->options->answers[$key]->answer; // for PHP 4.x
-           echo "calculated3aquestion type question grade_reponse answer $key<pre>";print_r($answer);
-           echo "calculated3aquestion type question grade_reponse numerical<pre>";print_r($numericalquestion);
           $numericalquestion->options->answers[$key]->answer = $this->substitute_variables($answer,
              $state->options->dataset);
-            echo "calculated3aquestion type question grade_reponse answer after<pre>";print_r($answer);
-           echo "calculated3aquestion type question grade_reponse numerical after<pre>";print_r($numericalquestion);
        }
-          echo "calculated4question type question grade_reponse <pre>";print_r($numericalquestion);
          $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->grade_responses($numericalquestion, $state, $cmoptions) ;
-      
-      //  return parent::grade_responses($numericalquestion, $state, $cmoptions);
     }
 
     function response_summary($question, $state, $length=80) {
@@ -426,12 +403,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-                                   echo "calculated numrericalquestion check_reponse <pre>";print_r($numericalquestion);
-                                   echo "calculated numrericalquestion <pre>";print_r($state);
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->check_response($numericalquestion, $state) ;
-
-   //     return parent::check_response($numericalquestion, $state);
     }
 
     // ULPGC ecastro
