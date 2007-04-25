@@ -199,6 +199,7 @@ class qformat_examview extends qformat_default {
         $choices = array('T' => 1, 'Y' => 1, 'F' => 0, 'N' => 0 );
         $answer = trim($qrec['answer'][0]['#']);
         $question->answer = $choices[$answer];
+        $question->correctanswer = $question->answer;
         if ($question->answer == 1) {
             $question->feedbacktrue = 'Correct';
             $question->feedbackfalse = 'Incorrect';
