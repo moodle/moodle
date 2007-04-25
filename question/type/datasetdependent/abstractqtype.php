@@ -418,116 +418,6 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
 
 
-/*
-
-    function save_question($question, &$form, $course) {
-        // For dataset dependent questions a wizard is used for editing
-        // questions. Therefore saving the question is delayed until
-        // we're through with the whole wizard.
-        global $SESSION;
-        $this->validate_form($form);
-
-        // See where we're coming from
-        switch($form->wizardpage) {
-            case 'question':
-                unset($SESSION->datasetdependent); // delete any remaining data
-                                                   // from previous wizards
-                if (empty($form->id)) {
-                    $SESSION->datasetdependent->question = $form;
-                    $question = $this->create_runtime_question($question, $form);
-                } else {
-                    $question = parent::save_question($question, $form, $course);
-                }
-                break;
-            case 'datasetdefinitions':
-                $SESSION->datasetdependent->datasetdefinitions = $form;
-                if (empty($form->id)) {
-                    $question = $this->create_runtime_question($question, $SESSION->datasetdependent->question);
-                } else {
-                    $this->save_dataset_definitions($form);
-                    $this->get_question_options($question);
-                    //unset($SESSION->datasetdependent->datasetdefinitions);
-                }
-                //$this->get_question_options($question);
-                break;
-            case 'datasets':
-                if (!empty($form->addbutton) && isset($SESSION->datasetdependent->question)) {
-                    echo "saving";
-                    $question = parent::save_question($question, $SESSION->datasetdependent->question, $course);
-                    $SESSION->datasetdependent->datasetdefinitions->id = $question->id;
-                    $this->save_dataset_definitions($SESSION->datasetdependent->datasetdefinitions);
-                    //$this->get_dataset_definitions($question);
-                    unset($SESSION->datasetdependent);
-                }
-                dump($question);
-                if (empty($question->id)) {
-                    $question = $this->create_runtime_question($question, $SESSION->datasetdependent->question);
-                } else {
-                    $this->get_question_options($question);
-                }
-
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-        return $question;
-    }
-
-*/
-
-/*
-    function create_runtime_question($question, $form) {
-        $question->name               = trim($form->name);
-        $question->questiontext       = trim($form->questiontext);
-        $question->questiontextformat = $form->questiontextformat;
-        $question->parent             = isset($form->parent)? $form->parent : 0;
-        $question->length = $this->actual_number_of_questions($question);
-        $question->penalty = isset($form->penalty) ? $form->penalty : 0;
-
-        if (empty($form->image)) {
-            $question->image = "";
-        } else {
-            $question->image = $form->image;
-        }
-
-        if (empty($question->name)) {
-            $question->name = strip_tags($question->questiontext);
-            if (empty($question->name)) {
-                $question->name = '-';
-            }
-        }
-
-        if ($question->penalty > 1 or $question->penalty < 0) {
-            $question->errors['penalty'] = get_string('invalidpenalty', 'quiz');
-        }
-
-        if (isset($form->defaultgrade)) {
-            $question->defaultgrade = $form->defaultgrade;
-        }
-        return $question;
-    }
-*/
-
-/*
-    function validate_form($form) {
-        switch($form->wizardpage) {
-            case 'question':
-                error('Validation for the wizardpage "question" needs to be ' .
-                      'defined in the inheriting questiontype.');
-            case 'datasetdefinitions':
-                // Nothing to validate
-                $SESSION->datasetdependent->datasetdefinitions = $form;
-                break;
-            case 'datasets':
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-        return true;
-    }
-*/
 /// Dataset functionality
     function pick_question_dataset($question, $datasetitem) {
         // Select a dataset in the following format:
@@ -552,7 +442,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function create_virtual_qtype() {
-        error("No vitrual question type for question type ".$this->name());
+        error("No virtual question type for question type ".$this->name());
     }
 
     function get_virtual_qtype() {
