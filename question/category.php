@@ -79,8 +79,6 @@
             }
         } else if (!empty($param->hide)) {
             $qcobject->publish_category(false, $param->hide);
-        } else if (!empty($param->move)) {
-            $qcobject->move_category($param->move, $param->moveto);
         } else if (!empty($param->publish)) {
             $qcobject->publish_category(true, $param->publish);
         } else if (!empty($param->addcategory)) {

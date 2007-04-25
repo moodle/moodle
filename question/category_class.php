@@ -104,6 +104,9 @@ class question_category_object {
     var $categories;
     var $categorystrings;
     var $defaultcategory;
+//------------------------------------------------------
+    var $pageurl;
+    var $pageparams = array();
 
     /**
      * Constructor
@@ -139,12 +142,60 @@ class question_category_object {
         $this->pixpath = $CFG->pixpath;
 
         $this->editlist = new question_category_list('ul', '', true, $page);
-        $this->editlist->add_page_params(array('id'=>$COURSE->id));
+
+        $this->add_page_params(array('id'=>$COURSE->id));
+        $this->pageurl = strip_querystring(qualified_me());//default
+        
         $this->initialize();
 
     }
+    
+    /**
+     * Add an array of params to the params for this page.
+     *
+     * @param unknown_type $params
+     */
+    function add_page_params($params){
+        $this->pageparams = $params + $this->pageparams;
+        $this->editlist->add_page_params($params);
+    }
+    
+    /**
+     * Get url and query string for an action on this page (get_url() + sesskey)
+     *
+     * @param array $overrideparams an array of params which override $this->pageparams
+     * @return string
+     */
+    function get_action_url($overrideparams = array()){
+        global $USER;
 
+        $arr = array();
+        $paramarray = $overrideparams + $this->pageparams + array('sesskey'=>$USER->sesskey);
+        foreach ($paramarray as $key => $val){
+           $arr[] = urlencode($key)."=".urlencode($val);
+        }
+        $params = implode($arr, "&amp;");
 
+        return $this->pageurl.'?'.$params;
+    }
+
+    /**
+     * Get url and query string for this page
+     *
+     * @param array $overrideparams an array of params which override $this->pageparams
+     * @return string
+     */
+    function get_url($overrideparams = array()){
+
+        $arr = array();
+        $paramarray = $overrideparams + $this->pageparams;
+        foreach ($paramarray as $key => $val){
+           $arr[] = urlencode($key)."=".urlencode($val);
+        }
+        $params = implode($arr, "&amp;");
+
+        return $this->pageurl.'?'.$params;
+    }
 
     /**
      * Displays the user interface
@@ -483,80 +534,11 @@ class question_category_object {
         /// Finally delete the category itself
         if (delete_records("question_categories", "id", $category->id)) {
             notify(get_string("categorydeleted", "quiz", format_string($category->name)), 'notifysuccess');
+            redirect($this->get_url());//always redirect after successful action
         }
     }
 
-    /**
-     * Moves a category up or down in the display order
-     *
-     * @param    string direction  up|down
-     * @param    int categoryid id of category to move
-     */
-    function move_category_up_down ($direction, $categoryid) {
-    /// Move a category up or down
-        $swapcategory = NULL;
-        $movecategory = NULL;
 
-        if ($direction == 'up') {
-            if ($movecategory = get_record("question_categories", "id", $categoryid)) {
-                $categories = $this->get_question_categories("$movecategory->parent", 'parent, sortorder, name');
-
-                foreach ($categories as $category) {
-                    if ($category->id == $movecategory->id) {
-                        break;
-                    }
-                    $swapcategory = $category;
-                }
-            }
-        }
-        if ($direction == 'down') {
-            if ($movecategory = get_record("question_categories", "id", $categoryid)) {
-                $categories = $this->get_question_categories("$movecategory->parent", 'parent, sortorder, name');
-                $choosenext = false;
-                foreach ($categories as $category) {
-                    if ($choosenext) {
-                        $swapcategory = $category;
-                        break;
-                    }
-                    if ($category->id == $movecategory->id) {
-                        $choosenext = true;
-                    }
-                }
-            }
-        }
-        if ($swapcategory and $movecategory) {        // Renumber everything for robustness
-            $count=0;
-            foreach ($categories as $category) {
-                $count++;
-                if ($category->id == $swapcategory->id) {
-                    $category = $movecategory;
-                } else if ($category->id == $movecategory->id) {
-                    $category = $swapcategory;
-                }
-                if (! set_field("question_categories", "sortorder", $count, "id", $category->id)) {
-                    notify("Could not update that category!");
-                }
-            }
-        }
-    }
-
-    /**
-     * Changes the parent of a category
-     *
-     * @param    int categoryid
-     * @param    int parentid
-     */
-    function move_category($categoryid, $parentid) {
-    /// Move a category to a new parent
-
-        if ($tempcat = get_record("question_categories", "id", $categoryid)) {
-            if ($tempcat->parent != $parentid) {
-                if (! set_field("question_categories", "parent", $parentid, "id", $tempcat->id)) {
-                    notify("Could not update that category!");
-                }
-            }
-        }
-    }
 
     /**
      * Changes the published status of a category
@@ -572,7 +554,10 @@ class question_category_object {
         if ($tempcat) {
             if (! set_field("question_categories", "publish", $publish, "id", $tempcat->id)) {
                 notify("Could not update that category!");
+            } else {
+                redirect($this->get_url());//always redirect after successful action
             }
+                
         }
     }
 
@@ -610,6 +595,7 @@ class question_category_object {
             error("Could not insert the new question category '$newcategory'", "category.php?id={$newcourse}");
         } else {
             notify(get_string("categoryadded", "quiz", $newcategory), 'notifysuccess');
+            redirect($this->get_url());//always redirect after successful action
         }
     }
 
@@ -639,6 +625,7 @@ class question_category_object {
             error("Could not update the category '$updatename'", "category.php?id={$courseid}");
         } else {
             notify(get_string("categoryupdated", 'quiz'), 'notifysuccess');
+            redirect($this->get_url());
         }
     }
 }
