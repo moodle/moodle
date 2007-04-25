@@ -110,7 +110,7 @@
             echo "<br />\n";
 
             echo "<form id=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" onclick=\"this.autocomplete='off'\">\n";
-            echo '<fieldset class="invisiblefieldset">';
+            echo '<fieldset class="invisiblefieldset" style="display: block">';
             print_simple_box_start("center");
 
             echo "<div class=\"boxaligncenter\">\n";
@@ -307,7 +307,7 @@
         foreach($questionidarray as $i) {
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
-                $actions[$i]->event = QUESTION_EVENTSAVE;
+                $actions[$i]->event = QUESTION_EVENTOPEN;
             }
             $actions[$i]->timestamp = $timestamp;
             question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
@@ -325,40 +325,35 @@
         // Set the attempt to be finished
         $attempt->timefinish = $timestamp;
 
-        // Find all the questions for this attempt for which the newest
-        // state is not also the newest graded state
-        if ($closequestions = get_records_select('question_sessions',
-         "attemptid = $attempt->uniqueid AND newest != newgraded", '', 'questionid, questionid')) {
-
-            // load all the questions
-            $closequestionlist = implode(',', array_keys($closequestions));
-            $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-                   "  FROM {$CFG->prefix}question q,".
-                   "       {$CFG->prefix}quiz_question_instances i".
-                   " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-                   "   AND q.id IN ($closequestionlist)";
-            if (!$closequestions = get_records_sql($sql)) {
-                error('Questions missing');
-            }
-
-            // Load the question type specific information
-            if (!get_question_options($closequestions)) {
-                error('Could not load question options');
-            }
-
-            // Restore the question sessions
-            if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
-                error('Could not restore question sessions');
-            }
-
-            foreach($closequestions as $key => $question) {
-                $action->event = QUESTION_EVENTCLOSE;
-                $action->responses = $closestates[$key]->responses;
-                $action->timestamp = $closestates[$key]->timestamp;
-                question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-                save_question_session($question, $closestates[$key]);
-            }
+        // load all the questions
+        $closequestionlist = quiz_questions_in_quiz($attempt->layout);
+        $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+               "  FROM {$CFG->prefix}question q,".
+               "       {$CFG->prefix}quiz_question_instances i".
+               " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
+               "   AND q.id IN ($closequestionlist)";
+        if (!$closequestions = get_records_sql($sql)) {
+            error('Questions missing');
         }
+
+        // Load the question type specific information
+        if (!get_question_options($closequestions)) {
+            error('Could not load question options');
+        }
+
+        // Restore the question sessions
+        if (!$closestates = get_question_states($closequestions, $quiz, $attempt)) {
+            error('Could not restore question sessions');
+        }
+
+        foreach($closequestions as $key => $question) {
+            $action->event = QUESTION_EVENTCLOSE;
+            $action->responses = $closestates[$key]->responses;
+            $action->timestamp = $closestates[$key]->timestamp;
+            question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
+            save_question_session($question, $closestates[$key]);
+        }
+
         add_to_log($course->id, 'quiz', 'close attempt',
                            "review.php?attempt=$attempt->id",
                            "$quiz->id", $cm->id);
@@ -386,7 +381,7 @@
     }
 
     if ($finishattempt) {
-        redirect('review.php?attempt='.$attempt->id);
+        redirect('review.php?attempt='.$attempt->id, 0);
     }
 
 /// Print the quiz page ////////////////////////////////////////////////////////
@@ -434,6 +429,7 @@
         }
     }
 
+    // Start the form
     echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
@@ -470,7 +466,7 @@
         //]]>
         </script>
         <?php
-        echo '<input type="hidden" name="page" value="'.$page."\" />\n";
+        echo '<input type="hidden" id="page" name="page" value="'.$page."\" />\n";
         quiz_print_navigation_panel($page, $numpages);
         echo "<br />\n";
     }
@@ -522,7 +518,7 @@
         // For teachers ignore the quiz closing time
         $secondsleft = 999999999999;
     }
-    
+
     // If time limit is set include floating timer.
     // MDL-7495, no timer for users with disability
     if ($quiz->timelimit > 0 && !has_capability('mod/quiz:ignoretimelimits', $context, NULL, false)) {
@@ -544,5 +540,4 @@
     if (empty($popup)) {
         print_footer($course);
     }
-
 ?>
