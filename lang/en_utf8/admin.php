@@ -350,6 +350,7 @@ $string['langimport'] = 'Language import utility';
 $string['langimportsuccess'] = 'Language pack successfully upgraded';
 $string['langlist'] = 'Languages on language menu';
 $string['langmenu'] = 'Display language menu';
+$string['langnoeditenglish'] = 'Can\'t overwrite the base english language pack. Please switch lang directory to make local changes';
 $string['langpackremoved'] = 'Language pack was uninstalled';
 $string['langpacks'] = 'Language packs';
 $string['langpackupdated'] = 'Language pack $a was successfully installed';
