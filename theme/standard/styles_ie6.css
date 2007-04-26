@@ -3,47 +3,48 @@
  */
 
 .tabtree {
-    height: 100%;
+  height: 100%;
 }
 
 .tabrow0 {
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 .tabrow0 li {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 .tabrow0 li.first {
-    margin-left: -4px;
-    margin-right: -4px;
+  margin-left: -4px;
+  margin-right: -4px;
 }
 
 .tabrow0 li.last a {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .tabrow0 li.onerow {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .tabrow0 a {
-    padding: 0 0 0 13px;
+  padding: 0 0 0 13px;
 }
 
 .tabrow0 a span {
-    padding: 12px 1em 4px 0;
+  padding: 12px 1em 4px 0;
 }
 
 .tabrow0 div,
 .tabrow0 ul {
-   top: 2.7em;
-   padding: 0.2em 0;
+  top: 2.7em;
+  padding: 0.2em 0;
 }
 
 /*fix for misalignment of text fields in ie */
 form.mform input {
   margin-left: -10px;
+  margin-right: 10px;
 }
 
 form.mform .fcheckbox input {
