@@ -40,10 +40,33 @@ require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
 
 class gradelib_test extends UnitTestCase {
-    
+   
+    /**
+     * Each database table receives a number of test entries. These are saved as
+     * arrays of stcClass objects available to this class. This means that
+     * every test has access to these test data. The order of the following array is 
+     * crucial, because of the interrelationships between objects.
+     */
+    var $tables = array('grade_categories',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_history');
+
     var $grade_items = array();
     var $grade_categories = array();
+    var $grade_calculations = array();
+    var $grade_grades_raw = array();
+    var $grade_grades_final = array();
+    var $grade_grades_text = array();
+    var $grade_outcomes = array();
+    var $grade_history = array();
+
     var $courseid = 1;
+    var $userid = 1;
 
     /**
      * Create temporary entries in the database for these tests.
@@ -52,6 +75,31 @@ class gradelib_test extends UnitTestCase {
      * data have to be artificially inseminated (:-) in the DB.
      */
     function setUp() 
+    {
+        foreach ($this->tables as $table) {
+            $function = "load_$table";
+            $this->$function();
+        } 
+    }
+    
+    /**
+     * Delete temporary entries from the database
+     */
+    function tearDown() 
+    {
+        foreach ($this->tables as $table) {
+            foreach ($this->$table as $object) {
+                delete_records($table, 'id', $object->id);
+            }
+
+            // If data has been entered in DB for any table, unset corresponding array
+            if (count($this->$table) > 0) {
+                unset ($this->$table);
+            }
+        } 
+    }
+    
+    function load_grade_categories()
     {
         $grade_category = new stdClass();
         
@@ -66,12 +114,15 @@ class gradelib_test extends UnitTestCase {
         
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
             $this->grade_categories[] = $grade_category;
-        }
+        } 
+    }
 
+    function load_grade_items()
+    {
         $grade_item = new stdClass();
 
         $grade_item->courseid = $this->courseid;
-        $grade_item->categoryid = $grade_category->id;
+        $grade_item->categoryid = $this->grade_categories[0]->id;
         $grade_item->itemname = 'unittestgradeitem1';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
@@ -79,7 +130,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
-        
+
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
             $this->grade_items[] = $grade_item;
         }
@@ -103,7 +154,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item = new stdClass();
 
         $grade_item->courseid = $this->courseid;
-        $grade_item->categoryid = $grade_category->id;
+        $grade_item->categoryid = $this->grade_categories[0]->id;
         $grade_item->itemname = 'unittestgradeitem3';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'forum';
@@ -111,31 +162,54 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
-        
-        // $grade_item->set_calculation('MEAN([unittestgradeitem1],[unittestgradeitem2])');
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
             $this->grade_items[] = $grade_item;
-        }
+        } 
     }
 
-
-    /**
-     * Delete temporary entries from the database
-     */
-    function tearDown() 
+    function load_grade_calculations()
     {
-        foreach ($this->grade_items as $grade_item) {
-            delete_records('grade_items', 'id', $grade_item->id);
-        }
-
-        foreach ($this->grade_categories as $grade_category) {
-            delete_records('grade_categories', 'id', $grade_category->id);
-        }
-        unset($this->grade_items);
-        unset($this->grade_categories);
+        $grade_calculation = new stdClass();
+        $grade_calculation->itemid = $this->grade_items[0]->id;
+        $grade_calculation->calculation = 'MEAN([unittestgradeitem2], [unittestgradeitem3])';
+        $grade_calculation->timecreated = mktime();
+        $grade_calculation->timemodified = mktime();
+        
+        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
+            $this->grade_calculations[] = $grade_calculation;
+            $this->grade_items[0]->calculation = $grade_calculation;
+        } 
     }
 
+    function load_grade_grades_raw()
+    {
+
+    }
+
+    function load_grade_grades_final()
+    {
+
+    }
+    
+    function load_grade_grades_text()
+    {
+
+    }
+    
+    function load_grade_outcomes()
+    {
+
+    }
+
+    function load_grade_history()
+    {
+
+    }
+
+/** 
+ * TESTS BEGIN HERE
+ */
     function test_grade_get_items()
     {
         $grade_items = grade_get_items($this->courseid);
@@ -307,7 +381,19 @@ class gradelib_test extends UnitTestCase {
 
     function test_grade_item_get_calculation()
     {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $grade_calculation = $grade_item->get_calculation();
+        $this->assertEqual($this->grade_calculations[0]->id, $grade_calculation->id);
+    }
 
+    function test_grade_item_set_calculation()
+    {
+        $grade_item = new grade_item($this->grade_items[1]);
+        $calculation = 'SUM([unittestgradeitem1], [unittestgradeitem3])';
+        $grade_item->set_calculation($calculation);
+        $new_calculation = $grade_item->get_calculation();
+
+        $this->assertEqual($calculation, $new_calculation->calculation);
     }
 
     function test_grade_item_get_category()

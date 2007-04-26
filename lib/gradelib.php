@@ -317,9 +317,7 @@ class grade_item extends grade_object
                     $this->$param = $value;
                 }
             }
-
             $this->set_defaults();
-            $this->set_calculation();
         } 
     }
 
@@ -397,15 +395,24 @@ class grade_item extends grade_object
 
     /**
      * Returns this object's calculation.
+     * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
      * @return mixed $calculation A string if found, false otherwise.
      */
-    function get_calculation()
+    function get_calculation($fetch = false)
     {
-        $grade_calculation = get_record('grade_calculations', 'itemid', $this->id);
-        if ($grade_calculation) {
-            return $grade_calculation->calculation;
-        } else {
+        if (!$fetch) {
+            return $this->calculation;
+        } 
+        
+        $grade_calculation = grade_calculation::get_record(true, 'itemid', $this->id);
+        
+        if (empty($grade_calculation)) { // There is no calculation in DB
+            return false;
+        } elseif ($grade_calculation->calculation != $this->calculation->calculation) { // The object's calculation is not in sync with the DB (new value??)
+            $this->calculation = $grade_calculation;
             return $grade_calculation;
+        } else { // The object's calculation is already in sync with the database
+            return $this->calculation;
         }
     }
 
@@ -419,10 +426,32 @@ class grade_item extends grade_object
      */
     function set_calculation($calculation = null)
     {
-        if (empty($calculation)) {
-            $this->calculation = new grade_calculation();
-        } else {
+        if (empty($calculation)) { // We are setting this item object's calculation variable from the DB
+            $grade_calculation = $this->get_calculation(true);
+            if (empty($grade_calculation)) {
+                return false;
+            } else {
+                $this->calculation = $grade_calculation;
+            }
+        } else { // We are updating or creating the calculation entry in the DB
+            $grade_calculation = $this->get_calculation();
+            
+            if (empty($grade_calculation)) { // Creating
+                $grade_calculation = new grade_calculation();
+                $grade_calculation->calculation = $calculation;
+                $grade_calculation->itemid = $this->id;
 
+                if ($grade_calculation->insert()) {
+                    $this->calculation = $grade_calculation;
+                    return true;
+                } else {
+                    return false;
+                }                
+            } else { // Updating
+                $grade_calculation->calculation = $calculation;
+                $this->calculation = $grade_calculation;
+                return $grade_calculation->update();
+            }
         }
     }
     
@@ -621,6 +650,37 @@ class grade_calculation extends grade_object
 
     }
 
+
+    /**
+     * Finds and returns a grade_calculation object based on 1-3 field values.
+     *
+     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
+     * @param string $field1
+     * @param string $value1
+     * @param string $field2
+     * @param string $value2
+     * @param string $field3
+     * @param string $value3
+     * @param string $fields
+     * @return object grade_calculation object or false if none found.
+     */
+    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
+    { 
+        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_calculation::$table
+        if ($grade_calculation = get_record('grade_calculations', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+            if ($static) {
+                $grade_calculation = new grade_calculation($grade_calculation);
+                return $grade_calculation;
+            } else {
+                foreach ($grade_calculation as $param => $value) {
+                    $this->$param = $value;
+                }
+                return $this;
+            }
+        } else {
+            return false;
+        }
+    }
     
 }
 
