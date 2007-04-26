@@ -24,7 +24,10 @@
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
 
-    if (isguest()) { //TODO: add proper capability to edit own profile
+    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+
+    if (isguestuser()) {
         print_error('guestnoeditprofile');
     }
 
@@ -38,9 +41,12 @@
     }
 
     // check access control
-    if ($user->id != $USER->id) {
+    if ($user->id == $USER->id) {
+        //editing own profile
+        require_capability('moodle/user:editownprofile', $systemcontext);
+
+    } else {
         // teachers, parents, etc.
-        $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
         require_capability('moodle/user:editprofile', $personalcontext);
         // no editing of guest user account
         if (isguestuser($user->id)) {

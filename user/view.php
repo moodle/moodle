@@ -31,11 +31,12 @@
     }
 
     if ($course->id == SITEID) {
-        $coursecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);   // SYSTEM context
+        $coursecontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
     } else {
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
     
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         // do not force parents to enrol
@@ -356,10 +357,8 @@
     $userauth = get_auth_plugin($user->auth);
 
     $passwordchangeurl = false;
-    if (/*$currentuser and */$userauth->can_change_password() and !isguest()) { //TODO: add proper capability for password changing
-        if ($userauth->change_password_url()) {
-            $passwordchangeurl = $userauth->change_password_url();
-        } else {
+    if ($currentuser and $userauth->can_change_password() and !isguestuser() and has_capability('moodle/user:changeownpassword', $systemcontext)) {
+        if (!$passwordchangeurl = $userauth->change_password_url()) {
             if (empty($CFG->loginhttps)) {
                 $passwordchangeurl = "$CFG->wwwroot/login/change_password.php";
             } else {

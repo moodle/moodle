@@ -3575,7 +3575,7 @@ function reset_password_and_mail($user) {
     $from = get_admin();
 
     $userauth = get_auth_plugin($user->auth);
-    if (!$userauth->can_reset_password()) {
+    if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
         trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
         return false;
     }
@@ -3676,15 +3676,23 @@ function send_password_change_info($user) {
 
     $site = get_site();
     $from = get_admin();
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     $data = new object();
     $data->firstname = $user->firstname;
     $data->sitename = format_string($site->fullname);
     $data->admin = fullname($from).' ('. $from->email .')';
 
-     $userauth = get_auth_plugin($user->auth);
+    $userauth = get_auth_plugin($user->auth);
+
+    if (!is_enabled_auth($user->auth) or $user->auth == 'nologin') {
+        $message = get_string('emailpasswordchangeinfodisabled', '', $data);
+        $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
+        return email_to_user($user, $from, $subject, $message);
+    }
+
     if ($userauth->can_change_password() and $userauth->change_password_url()) {
-        // we have some external url for password cahnging
+        // we have some external url for password changing
         $data->link .= $userauth->change_password_url();
 
     } else {
@@ -3692,7 +3700,7 @@ function send_password_change_info($user) {
         $data->link = '';
     }
 
-    if (!empty($data->link)) {
+    if (!empty($data->link) and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
         $message = get_string('emailpasswordchangeinfo', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
     } else {

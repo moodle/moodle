@@ -102,16 +102,19 @@
         }
 
         $edittype = 'none';
-        if (is_mnet_remote_user($user)) {
+        if (isguestuser($user)) {
+            // guest account can not be edited
+
+        } else if (is_mnet_remote_user($user)) {
             // cannot edit remote users
 
-        } else if (isguest() or !isloggedin()) {
-            // can not edit guest like accounts - TODO: add capability to edit own profile
-            
+        } else if (isguestuser() or !isloggedin()) {
+            // guests and not logged in can not edit own profile
+
         } else if ($USER->id == $user->id) {
             if (has_capability('moodle/user:update', $systemcontext)) {
                 $edittype = 'advanced';
-            } else {
+            } else if (has_capability('moodle/user:editownprofile', $systemcontext)) {
                 $edittype = 'normal';
             }
 

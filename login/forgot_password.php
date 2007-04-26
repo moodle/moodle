@@ -12,7 +12,7 @@ $p_username = optional_param('s', false, PARAM_RAW);
 
 httpsrequired();
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 // setup text strings
 $strforgotten = get_string('passwordforgotten');
@@ -41,10 +41,12 @@ if ($p_secret !== false) {
         // make sure that url relates to a valid user
 
         // check this isn't guest user
-        // TODO: add change password capability so that we can prevent participants to change password
-        if (has_capability('moodle/legacy:guest', $sitecontext, $user->id, false)) {
+        if (isguestuser($user)) {
             error('You cannot reset the guest password');
         }
+
+        // make sure user is allowed to change password
+        require_capability('moodle/user:changeownpassword', $systemcontext, $user->id);
 
         // override email stop and mail new password
         $user->emailstop = 0;
@@ -97,9 +99,14 @@ if ($mform->is_cancelled()) {
     if ($user and !empty($user->confirmed)) {
 
         $userauth = get_auth_plugin($user->auth);
+        if (has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
+            // send email (make sure mail block is off)
+            $user->mailstop = 0;
+        }
 
-        if ($userauth->can_reset_password()) {
-            // reset internal password and notify user
+        if ($userauth->can_reset_password() and is_enabled_auth($user->auth)
+          and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
+            // send reset password confirmation
 
             // set 'secret' string
             $user->secret = random_string(15);
@@ -107,15 +114,11 @@ if ($mform->is_cancelled()) {
                 error('error setting user secret string');
             }
 
-            // send email (make sure mail block is off)
-            $user->mailstop = 0;
             if (!send_password_change_confirmation_email($user)) {
                 error('error sending password change confirmation email');
             }
 
         } else {
-            // send email (make sure mail block is off)
-            $user->mailstop = 0;
             if (!send_password_change_info($user)) {
                 error('error sending password change confirmation email');
             }

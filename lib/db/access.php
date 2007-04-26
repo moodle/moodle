@@ -719,12 +719,34 @@ $moodle_capabilities = array(
 	  	 
 	    'riskbitmask' => RISK_SPAM, 	 
 	  	 
-	    'captype' => 'read', 	 
+	    'captype' => 'write', 	 
 	    'contextlevel' => CONTEXT_USER, 	 
 	    'legacy' => array( 	 
 	       'admin' => CAP_ALLOW 	 
 	    ) 	 
 	),
+
+    'moodle/user:editownprofile' => array(      
+
+        'captype' => 'write',     
+        'contextlevel' => CONTEXT_SYSTEM,      
+        'legacy' => array(   
+            'guest' => CAP_PROHIBIT,
+            'user' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )    
+    ),
+
+    'moodle/user:changeownpassword' => array(      
+
+        'captype' => 'write',     
+        'contextlevel' => CONTEXT_SYSTEM,      
+        'legacy' => array(   
+            'guest' => CAP_PROHIBIT,
+            'user' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )    
+    ),
 
     // The next 3 might make no sense for some roles, e.g teacher, etc.
     // since the next level up is site. These are more for the parent role

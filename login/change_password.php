@@ -14,13 +14,17 @@
         error('No such course!');
     }
 
-    // require proper login; guest can not change password
-    // TODO: add change password capability so that we can prevent participants from changing password
-    if (empty($USER->id) or isguestuser() or has_capability('moodle/legacy:guest', $systemcontext, $USER->id, false)) {
+    // require proper login; guest user can not change password
+    if (empty($USER->id) or isguestuser()) {
         if (empty($SESSION->wantsurl)) {
             $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
         }
         redirect($CFG->httpswwwroot.'/login/index.php');
+    }
+
+    // do not require change own password cap if change forced
+    if (!get_user_preferences('auth_forcepasswordchange', false)) {
+        require_capability('moodle/user:changeownpassword', $systemcontext);
     }
 
     // do not allow "Logged in as" users to change any passwords

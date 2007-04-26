@@ -500,6 +500,14 @@ line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
 $a->admin';
+$string['emailpasswordchangeinfodisabled'] = 'Hi $a->firstname,
+
+Someone (probably you) has requested a new password for your
+account on \'$a->sitename\'.
+
+Unfortunately your account on this site is disabled and can not be reset, 
+please contact the site administrator,
+$a->admin';
 $string['emailpasswordchangeinfofail'] = 'Hi $a->firstname,
 
 Someone (probably you) has requested a new password for your
