@@ -1000,7 +1000,24 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);        
     }
 
-    
+    if ($result && $oldversion < 2007042600) {
+
+        /// Define field timecreated to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('timecreated');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'hidden');
+
+        /// Launch add field timecreated
+        $result = $result && add_field($table, $field);
+
+        /// Define field timemodified to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('timemodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'timecreated');
+
+        /// Launch add field timemodified
+        $result = $result && add_field($table, $field);
+    }
     
     return $result;
 
