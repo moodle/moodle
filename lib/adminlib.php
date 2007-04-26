@@ -1427,6 +1427,32 @@ class admin_setting_configtext extends admin_setting {
 
 }
 
+class admin_setting_configpasswordreveal extends admin_setting_configtext {
+
+    function admin_setting_configpasswordreveal($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
+        parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
+    }
+
+    function output_html() {
+        if ($this->get_setting() === NULL) {
+            $current = $this->defaultsetting;
+        } else {
+            $current = $this->get_setting();
+        }
+            $id = 'id_s_'.$this->name;
+            $reveal = get_string('revealpassword', 'form');
+            $revealjs = '<script type="text/javascript">
+//<![CDATA[
+document.write(\'<div class="reveal"><input id="'.$id.'reveal" value="1" type="checkbox" onclick="revealPassword(\\\''.$id.'\\\')"/><label for="'.$id.'reveal">'.addslashes_js($reveal).'<\/label><\/div>\');
+//]]>
+</script>';
+        return format_admin_setting($this->name, $this->visiblename,
+                '<input type="password" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.s($current).'" />'.$revealjs,
+                $this->description);
+    }
+    
+}
+
 class admin_setting_configcheckbox extends admin_setting {
 
     function admin_setting_configcheckbox($name, $visiblename, $description, $defaultsetting) {

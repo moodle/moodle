@@ -978,6 +978,7 @@ body#admin-modules table.generaltable td.c0
   float: none;
 }
 
+
 /* #adminsettings .admin-configtime .form-select {
   display: inline;
   float: none;
@@ -992,6 +993,16 @@ body#admin-modules table.generaltable td.c0
   clear: both;
   margin: 0 1em 0 160px;
   padding: 0.3em 0 1.5em 0;
+}
+
+#adminsettings .form-item .reveal input {
+  margin-left:5px;
+  margin-right:3px;
+}
+
+#adminsettings .form-item .reveal label {
+  width: auto;
+  text-align: left;
 }
 
 .environmentbox {
