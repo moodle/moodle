@@ -113,7 +113,7 @@
 /// Print link to roles
 
     if (has_capability('moodle/role:assign', $context)) { 
-        echo '<div class="rolelink" align="right"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
+        echo '<div class="rolelink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
          $context->id.'">'.get_string('assignroles','role').'</a></div>';
     }
 /// Print the category selector
@@ -278,17 +278,17 @@
         $strrequireskey     = get_string("requireskey");
 
 
-        echo '<form id="movecourses" action="category.php" method="post">';
+        echo '<form id="movecourses" action="category.php" method="post"><div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
-        echo '<th scope="col">'.$strcourses.'</th>';
+        echo '<table border="0" cellspacing="2" cellpadding="4" class="generalbox boxaligncenter"><tr>';
+        echo '<th class="header" scope="col">'.$strcourses.'</th>';
         if ($creatorediting) {
-            echo '<th scope="col">'.$stredit.'</th>';
+            echo '<th class="header" scope="col">'.$stredit.'</th>';
             if ($adminediting) {
-                echo '<th scope="col">'.$strselect.'</th>';
+                echo '<th class="header" scope="col">'.$strselect.'</th>';
             }
         } else {
-            echo '<th scope="col">&nbsp;</th>';
+            echo '<th class="header" scope="col">&nbsp;</th>';
         }
         echo '</tr>';
 
@@ -422,7 +422,7 @@
         }
 
         echo '</table>';
-        echo '</form>';
+        echo '</div></form>';
         echo '<br />';
     }
     
@@ -443,13 +443,13 @@
 
     if (has_capability('moodle/category:update', $context)) {           /// Print form to rename the category
         $strrename= get_string('rename');
-        echo '<form id="renameform" action="category.php" method="post">';
+        echo '<form id="renameform" action="category.php" method="post"><div>';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
         echo '<input type="text" size="30" name="rename" value="'.format_string($category->name).'" alt="'.$strrename.'" />';
         echo '<input type="submit" value="'.$strrename.'" />';
-        echo "</form>";
-        echo "<br />";
+        echo '</div></form>';
+        echo '<br />';
     }
     
     print_course_search();
