@@ -1019,6 +1019,16 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
     
+    if ($result && $oldversion < 2007042601) {
+
+    /// Changing nullability of field usermodified on table grade_calculations to null
+        $table = new XMLDBTable('grade_calculations');
+        $field = new XMLDBField('usermodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'timemodified');
+
+        /// Launch change of nullability for field usermodified
+        $result = $result && change_field_notnull($table, $field);
+    }
     return $result;
 
 }
