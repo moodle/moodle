@@ -75,7 +75,8 @@
          *    @access protected
          */
         function &_createBrowser() {
-            return new SimpleBrowser();
+            $browser = &new SimpleBrowser();
+            return $browser;
         }
         
         /**
@@ -85,7 +86,8 @@
          *    @access protected
          */
         function &_createParser(&$reporter) {
-            return new SimpleTestXmlParser($reporter);
+            $parser = &new SimpleTestXmlParser($reporter);
+            return $parser;
         }
         
         /**

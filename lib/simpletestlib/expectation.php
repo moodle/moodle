@@ -30,7 +30,6 @@
          *    @param string $message    Customised message on failure.
          */
         function SimpleExpectation($message = '%s') {
-            $this->_dumper = &new SimpleDumper();
             $this->_message = $message;
         }
         
@@ -58,12 +57,14 @@
         /**
          *    Overlays the generated message onto the stored user
          *    message. An additional message can be interjected.
-         *    @param mixed $compare      Comparison value.
-         *    @return string             Description of success
-         *                               or failure.
+         *    @param mixed $compare        Comparison value.
+         *    @param SimpleDumper $dumper  For formatting the results.
+         *    @return string               Description of success
+         *                                 or failure.
          *    @access public
          */
-        function overlayMessage($compare) {
+        function overlayMessage($compare, $dumper) {
+            $this->_dumper = $dumper;
             return sprintf($this->_message, $this->testMessage($compare));
         }
         
@@ -89,6 +90,96 @@
         function isExpectation($expectation) {
             return is_object($expectation) &&
                     SimpleTestCompatibility::isA($expectation, 'SimpleExpectation');
+        }
+    }
+
+    /**
+     *    A wildcard expectation always matches.
+     *    @package SimpleTest
+     *    @subpackage MockObjects
+     */
+    class AnythingExpectation extends SimpleExpectation {
+
+        /**
+         *    Tests the expectation. Always true.
+         *    @param mixed $compare  Ignored.
+         *    @return boolean        True.
+         *    @access public
+         */
+        function test($compare) {
+            return true;
+        }
+
+        /**
+         *    Returns a human readable test message.
+         *    @param mixed $compare      Comparison value.
+         *    @return string             Description of success
+         *                               or failure.
+         *    @access public
+         */
+        function testMessage($compare) {
+            $dumper = &$this->_getDumper();
+            return 'Anything always matches [' . $dumper->describeValue($compare) . ']';
+        }
+    }
+
+    /**
+     *    An expectation that passes on boolean true.
+     *    @package SimpleTest
+     *    @subpackage MockObjects
+     */
+    class TrueExpectation extends SimpleExpectation {
+
+        /**
+         *    Tests the expectation.
+         *    @param mixed $compare  Should be true.
+         *    @return boolean        True on match.
+         *    @access public
+         */
+        function test($compare) {
+            return (boolean)$compare;
+        }
+
+        /**
+         *    Returns a human readable test message.
+         *    @param mixed $compare      Comparison value.
+         *    @return string             Description of success
+         *                               or failure.
+         *    @access public
+         */
+        function testMessage($compare) {
+            $dumper = &$this->_getDumper();
+            return 'Expected true, got [' . $dumper->describeValue($compare) . ']';
+        }
+    }
+    
+    /**
+     *    An expectation that passes on boolean false.
+     *    @package SimpleTest
+     *    @subpackage MockObjects
+     */
+    class FalseExpectation extends SimpleExpectation {
+
+        /**
+         *    Tests the expectation.
+         *    @param mixed $compare  Should be false.
+         *    @return boolean        True on match.
+         *    @access public
+         */
+        function test($compare) {
+            return ! (boolean)$compare;
+        }
+
+        /**
+         *    Returns a human readable test message.
+         *    @param mixed $compare      Comparison value.
+         *    @return string             Description of success
+         *                               or failure.
+         *    @access public
+         */
+        function testMessage($compare) {
+            $dumper = &$this->_getDumper();
+            return 'Expected false, got [' . $dumper->describeValue($compare) . ']';
         }
     }
     
@@ -471,8 +562,8 @@
         /**
          *    Describes a pattern match including the string
          *    found and it's position.
-     *    @package SimpleTest
-     *    @subpackage UnitTester
+         *    @package SimpleTest
+         *    @subpackage UnitTester
          *    @param string $pattern        Regex to match against.
          *    @param string $subject        Subject to search.
          *    @access protected
@@ -480,7 +571,7 @@
         function _describePatternMatch($pattern, $subject) {
             preg_match($pattern, $subject, $matches);
             $position = strpos($subject, $matches[0]);
-            $dumper = &$this->_getDumper();
+            $dumper = $this->_getDumper();
             return "Pattern [$pattern] detected at character [$position] in [" .
                     $dumper->describeValue($subject) . "] as [" .
                     $matches[0] . "] in region [" .

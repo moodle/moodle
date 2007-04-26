@@ -894,6 +894,17 @@
                     $form->submitButton(new SimpleById($id), $additional));
             return ($success ? $this->getContent() : $success);
         }
+        
+        /**
+         *    Tests to see if a submit button exists with this
+         *    label.
+         *    @param string $label    Button label.
+         *    @return boolean         True if present.
+         *    @access public
+         */
+        function isSubmit($label) {
+            return (boolean)$this->_page->getFormBySubmit(new SimpleByLabel($label));
+        }
 
         /**
          *    Clicks the submit image by some kind of label. Usually
@@ -962,6 +973,17 @@
                     $form->submitImage(new SimpleById($id), $x, $y, $additional));
             return ($success ? $this->getContent() : $success);
         }
+        
+        /**
+         *    Tests to see if an image exists with this
+         *    title or alt text.
+         *    @param string $label    Image text.
+         *    @return boolean         True if present.
+         *    @access public
+         */
+        function isImage($label) {
+            return (boolean)$this->_page->getFormByImage(new SimpleByLabel($label));
+        }
 
         /**
          *    Submits a form by the ID.
@@ -981,6 +1003,27 @@
         }
 
         /**
+         *    Finds a URL by label. Will find the first link
+         *    found with this link text by default, or a later
+         *    one if an index is given. The match ignores case and
+         *    white space issues.
+         *    @param string $label     Text between the anchor tags.
+         *    @param integer $index    Link position counting from zero.
+         *    @return string/boolean   URL on success.
+         *    @access public
+         */
+        function getLink($label, $index = 0) {
+            $urls = $this->_page->getUrlsByLabel($label);
+            if (count($urls) == 0) {
+                return false;
+            }
+            if (count($urls) < $index + 1) {
+                return false;
+            }
+            return $urls[$index];
+        }
+
+        /**
          *    Follows a link by label. Will click the first link
          *    found with this link text by default, or a later
          *    one if an index is given. The match ignores case and
@@ -991,25 +1034,22 @@
          *    @access public
          */
         function clickLink($label, $index = 0) {
-            $urls = $this->_page->getUrlsByLabel($label);
-            if (count($urls) == 0) {
+            $url = $this->getLink($label, $index);
+            if ($url === false) {
                 return false;
             }
-            if (count($urls) < $index + 1) {
-                return false;
-            }
-            $this->_load($urls[$index], new SimpleGetEncoding());
+            $this->_load($url, new SimpleGetEncoding());
             return $this->getContent();
         }
-
+        
         /**
-         *    Tests to see if a link is present by label.
-         *    @param string $label     Text of value attribute.
-         *    @return boolean          True if link present.
+         *    Finds a link by id attribute.
+         *    @param string $id        ID attribute value.
+         *    @return string/boolean   URL on success.
          *    @access public
          */
-        function isLink($label) {
-            return (count($this->_page->getUrlsByLabel($label)) > 0);
+        function getLinkById($id) {
+            return $this->_page->getUrlById($id);
         }
 
         /**
@@ -1019,21 +1059,11 @@
          *    @access public
          */
         function clickLinkById($id) {
-            if (! ($url = $this->_page->getUrlById($id))) {
+            if (! ($url = $this->getLinkById($id))) {
                 return false;
             }
             $this->_load($url, new SimpleGetEncoding());
             return $this->getContent();
-        }
-
-        /**
-         *    Tests to see if a link is present by ID attribute.
-         *    @param string $id     Text of id attribute.
-         *    @return boolean       True if link present.
-         *    @access public
-         */
-        function isLinkById($id) {
-            return (boolean)$this->_page->getUrlById($id);
         }
 
         /**
@@ -1052,6 +1082,16 @@
                 $raw = $this->clickImage($label);
             }
             return $raw;
+        }
+
+        /**
+         *    Tests to see if a click target exists.
+         *    @param string $label    Visible text or alt text.
+         *    @return boolean         True if target present.
+         *    @access public
+         */
+        function isClickable($label) {
+            return $this->isSubmit($label) || ($this->getLink($label) !== false) || $this->isImage($label);
         }
     }
 ?>

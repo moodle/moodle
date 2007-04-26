@@ -149,8 +149,7 @@
         }
 
         /**
-         *    Deals with PHP 4 throwing an error or PHP 5
-         *    throwing an exception.
+         *    Deals with PHP 4 throwing an error.
          *    @param string $message    Text of error formatted by
          *                              the test case.
          *    @access public
@@ -158,6 +157,23 @@
         function paintError($message) {
             $this->_exceptions++;
         }
+
+        /**
+         *    Deals with PHP 5 throwing an exception.
+         *    @param Exception $exception    The actual exception thrown.
+         *    @access public
+         */
+        function paintException($exception) {
+            $this->_exceptions++;
+        }
+		
+		/**
+		 *    Prints the message for skipping tests.
+         *    @param string $message    Text of skip condition.
+         *    @access public
+         */
+		function paintSkip($message) {
+		}
 
         /**
          *    Accessor for the number of passes so far.
@@ -236,6 +252,16 @@
             $this->_test_stack = array();
             $this->_size = null;
             $this->_progress = 0;
+        }
+        
+        /**
+         *    Gets the formatter for variables and other small
+         *    generic data items.
+         *    @return SimpleDumper          Formatter.
+         *    @access public
+         */
+        function getDumper() {
+            return new SimpleDumper();
         }
 
         /**
@@ -393,7 +419,7 @@
         var $_reporter;
 
         /**
-         *    Mediates between teh reporter and the test case.
+         *    Mediates between the reporter and the test case.
          *    @param SimpleScorer $reporter       Reporter to receive events.
          */
         function SimpleReporterDecorator(&$reporter) {
@@ -442,6 +468,16 @@
          */
         function &createInvoker(&$invoker) {
             return $this->_reporter->createInvoker($invoker);
+        }
+        
+        /**
+         *    Gets the formatter for variables and other small
+         *    generic data items.
+         *    @return SimpleDumper          Formatter.
+         *    @access public
+         */
+        function getDumper() {
+            return $this->_reporter->getDumper();
         }
 
         /**
@@ -526,6 +562,24 @@
         function paintError($message) {
             $this->_reporter->paintError($message);
         }
+
+        /**
+         *    Chains to the wrapped reporter.
+         *    @param Exception $exception        Exception to show.
+         *    @access public
+         */
+        function paintException($exception) {
+            $this->_reporter->paintException($exception);
+        }
+		
+		/**
+		 *    Prints the message for skipping tests.
+         *    @param string $message    Text of skip condition.
+         *    @access public
+         */
+		function paintSkip($message) {
+            $this->_reporter->paintSkip($message);
+		}
 
         /**
          *    Chains to the wrapped reporter.
@@ -635,6 +689,16 @@
             }
             return $invoker;
         }
+        
+        /**
+         *    Gets the formatter for variables and other small
+         *    generic data items.
+         *    @return SimpleDumper          Formatter.
+         *    @access public
+         */
+        function getDumper() {
+            return new SimpleDumper();
+        }
 
         /**
          *    Paints the start of a group test.
@@ -736,6 +800,28 @@
                 $this->_reporters[$i]->paintError($message);
             }
         }
+		
+        /**
+         *    Chains to the wrapped reporter.
+         *    @param Exception $exception    Exception to display.
+         *    @access public
+         */
+        function paintException($exception) {
+            for ($i = 0; $i < count($this->_reporters); $i++) {
+                $this->_reporters[$i]->paintException($exception);
+            }
+        }
+
+		/**
+		 *    Prints the message for skipping tests.
+         *    @param string $message    Text of skip condition.
+         *    @access public
+         */
+		function paintSkip($message) {
+            for ($i = 0; $i < count($this->_reporters); $i++) {
+                $this->_reporters[$i]->paintSkip($message);
+            }
+		}
 
         /**
          *    Chains to the wrapped reporter.

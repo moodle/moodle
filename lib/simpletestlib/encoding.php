@@ -37,7 +37,7 @@
          *    @access public
          */
         function asRequest() {
-            return $this->_key . '=' . urlencode($this->_value);
+            return urlencode($this->_key) . '=' . urlencode($this->_value);
         }
         
         /**

@@ -70,6 +70,9 @@
             if (is_array($first) && is_array($second)) {
                 return SimpleTestCompatibility::_isArrayOfIdenticalTypes($first, $second);
             }
+            if ($first !== $second) {
+                return false;
+            }
             return true;
         }
         
@@ -105,8 +108,7 @@
          *    @static
          */
         function isReference(&$first, &$second) {
-            if (version_compare(phpversion(), '5', '>=')
-	    	    && is_object($first)) {
+            if (version_compare(phpversion(), '5', '>=') && is_object($first)) {
 	    	    return ($first === $second);
 	        }
 	        if (is_object($first) && is_object($second)) {
@@ -133,9 +135,6 @@
          *    @static
          */
         function isA($object, $class) {
-            if (function_exists('is_a')) {
-                return is_a($object, $class);
-            }
             if (version_compare(phpversion(), '5') >= 0) {
                 if (! class_exists($class, false)) {
                     if (function_exists('interface_exists')) {
@@ -146,6 +145,9 @@
                 }
                 eval("\$is_a = \$object instanceof $class;");
                 return $is_a;
+            }
+            if (function_exists('is_a')) {
+                return is_a($object, $class);
             }
             return ((strtolower($class) == get_class($object))
                     or (is_subclass_of($object, $class)));
@@ -166,19 +168,6 @@
             } elseif (function_exists('set_socket_timeout')) {
                 set_socket_timeout($handle, $timeout, 0);
             }
-        }
-        
-        /**
-         *    Gets the current stack trace topmost first.
-         *    @return array        List of stack frames.
-         *    @access public
-         *    @static
-         */
-        function getStackTrace() {
-            if (function_exists('debug_backtrace')) {
-                return array_reverse(debug_backtrace());
-            }
-            return array();
         }
     }
 ?>

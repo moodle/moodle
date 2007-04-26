@@ -58,7 +58,7 @@
          *    @public
          */
         function assertNotNull($value, $message = "%s") {
-            parent::assertTrue(isset($value), $message);
+            parent::assert(new TrueExpectation(), isset($value), $message);
         }
         
         /**
@@ -68,7 +68,7 @@
          *    @public
          */
         function assertNull($value, $message = "%s") {
-            parent::assertTrue(!isset($value), $message);
+            parent::assert(new TrueExpectation(), !isset($value), $message);
         }
         
         /**
@@ -86,7 +86,8 @@
                     "[" . $dumper->describeValue($first) .
                             "] and [" . $dumper->describeValue($second) .
                             "] should reference the same object");
-            return $this->assertTrue(
+            return $this->assert(
+					new TrueExpectation(),
                     SimpleTestCompatibility::isReference($first, $second),
                     $message);
         }
@@ -106,7 +107,8 @@
                     "[" . $dumper->describeValue($first) .
                             "] and [" . $dumper->describeValue($second) .
                             "] should not be the same object");
-            return $this->assertFalse(
+            return $this->assert(
+					new falseExpectation(),
                     SimpleTestCompatibility::isReference($first, $second),
                     $message);
         }
@@ -119,7 +121,7 @@
          *    @public
          */
         function assertTrue($condition, $message = "%s") {
-            parent::assertTrue($condition, $message);
+            parent::assert(new TrueExpectation(), $condition, $message);
         }
         
         /**
@@ -130,7 +132,7 @@
          *    @public
          */
         function assertFalse($condition, $message = "%s") {
-            parent::assertTrue(!$condition, $message);
+            parent::assert(new FalseExpectation(), $condition, $message);
         }
         
         /**
@@ -152,7 +154,7 @@
          *    @public
          */
         function assertType($value, $type, $message = "%s") {
-            parent::assertTrue(gettype($value) == strtolower($type), $message);
+            parent::assert(new TrueExpectation(), gettype($value) == strtolower($type), $message);
         }
         
         /**

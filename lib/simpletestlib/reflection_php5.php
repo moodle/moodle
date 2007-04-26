@@ -8,8 +8,8 @@
 
     /**
      *    Version specific reflection API.
-	 *    @package SimpleTest
-	 *    @subpackage UnitTester
+     *    @package SimpleTest
+     *    @subpackage UnitTester
      */
     class SimpleReflection {
         var $_interface;
@@ -193,12 +193,17 @@
          *    @access public
          */
         function getSignature($name) {
-        	if ($name == '__get') {
-        		return 'function __get($key)';
-        	}
         	if ($name == '__set') {
         		return 'function __set($key, $value)';
         	}
+        	if ($name == '__call') {
+        		return 'function __call($method, $arguments)';
+        	}
+            if (version_compare(phpversion(), '5.1.0', '>=')) {
+                if (in_array($name, array('__get', '__isset', $name == '__unset'))) {
+                    return "function {$name}(\$key)";
+                }
+            }
         	if (! is_callable(array($this->_interface, $name))) {
         		return "function $name()";
         	}
@@ -217,31 +222,31 @@
          *    @access private
          */
         function _getFullSignature($name) {
-	        $interface = new ReflectionClass($this->_interface);
-	        $method = $interface->getMethod($name);
-	        $reference = $method->returnsReference() ? '&' : '';
-        	return "function $reference$name(" .
-            		implode(', ', $this->_getParameterSignatures($method)) .
-            		")";
+            $interface = new ReflectionClass($this->_interface);
+            $method = $interface->getMethod($name);
+            $reference = $method->returnsReference() ? '&' : '';
+            return "function $reference$name(" .
+                    implode(', ', $this->_getParameterSignatures($method)) .
+                    ")";
         }
 
         /**
          *    Gets the source code for each parameter.
          *    @param ReflectionMethod $method   Method object from
-         *										reflection API
+         *					                    reflection API
          *    @return array                     List of strings, each
          *                                      a snippet of code.
          *    @access private
          */
         function _getParameterSignatures($method) {
-        	$signatures = array();
+            $signatures = array();
             foreach ($method->getParameters() as $parameter) {
                 $type = $parameter->getClass();
             	$signatures[] =
-					(! is_null($type) ? $type->getName() . ' ' : '') .
-            			($parameter->isPassedByReference() ? '&' : '') .
-            			'$' . $this->_suppressSpurious($parameter->getName()) .
-            			($this->_isOptional($parameter) ? ' = null' : '');
+                        (! is_null($type) ? $type->getName() . ' ' : '') .
+                        ($parameter->isPassedByReference() ? '&' : '') .
+                        '$' . $this->_suppressSpurious($parameter->getName()) .
+                        ($this->_isOptional($parameter) ? ' = null' : '');
             }
             return $signatures;
         }

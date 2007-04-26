@@ -120,8 +120,8 @@
             } else {
                 return "Field expectation [" . $dumper->describeValue($this->_value) .
                         "] fails with [" .
-                        $this->_dumper->describeValue($compare) . "] " .
-                        $this->_dumper->describeDifference($this->_value, $compare);
+                        $dumper->describeValue($compare) . "] " .
+                        $dumper->describeDifference($this->_value, $compare);
             }
         }
     }
@@ -242,7 +242,7 @@
          */
         function testMessage($compare) {
             if (SimpleExpectation::isExpectation($this->_expected_value)) {
-                $message = $this->_expected_value->testMessage($compare);
+                $message = $this->_expected_value->overlayMessage($compare, $this->_getDumper());
             } else {
                 $message = $this->_expected_header .
                         ($this->_expected_value ? ': ' . $this->_expected_value : '');
@@ -784,7 +784,7 @@
          *    @param string $expiry        Expiry date.
          *    @access public
          */
-        function setCookie($name, $value, $host = false, $path = "/", $expiry = false) {
+        function setCookie($name, $value, $host = false, $path = '/', $expiry = false) {
             $this->_browser->setCookie($name, $value, $host, $path, $expiry);
         }
         
@@ -841,6 +841,18 @@
         }
         
         /**
+         *    Checks for a click target.
+         *    @param string $label        Visible text or alt text.
+         *    @return boolean             True if click target.
+         *    @access public
+         */    
+        function assertClickable($label, $message = '%s') {
+            return $this->assertTrue(
+                    $this->_browser->isClickable($label),
+                    sprintf($message, "Click target [$label] should exist"));
+        }
+        
+        /**
          *    Clicks the submit button by label. The owning
          *    form will be submitted by this.
          *    @param string $label    Button label. An unlabeled
@@ -878,6 +890,18 @@
         function clickSubmitById($id, $additional = false) {
             return $this->_failOnError(
                     $this->_browser->clickSubmitById($id, $additional));
+        }
+        
+        /**
+         *    Checks for a valid button label.
+         *    @param string $label        Visible text.
+         *    @return boolean             True if click target.
+         *    @access public
+         */    
+        function assertSubmit($label, $message = '%s') {
+            return $this->assertTrue(
+                    $this->_browser->isSubmit($label),
+                    sprintf($message, "Submit button [$label] should exist"));
         }
         
         /**
@@ -934,6 +958,18 @@
         }
         
         /**
+         *    Checks for a valid image with atht alt text or title.
+         *    @param string $label        Visible text.
+         *    @return boolean             True if click target.
+         *    @access public
+         */    
+        function assertImage($label, $message = '%s') {
+            return $this->assertTrue(
+                    $this->_browser->isImage($label),
+                    sprintf($message, "Image with text [$label] should exist"));
+        }
+        
+        /**
          *    Submits a form by the ID.
          *    @param string $id       Form ID. No button information
          *                            is submitted this way.
@@ -969,52 +1005,24 @@
         }
         
         /**
-         *    Will trigger a pass if the two parameters have
-         *    the same value only. Otherwise a fail. This
-         *    is for testing hand extracted text, etc.
-         *    @param mixed $first          Value to compare.
-         *    @param mixed $second         Value to compare.
-         *    @param string $message       Message to display.
-         *    @return boolean              True on pass
-         *    @access public
-         */
-        function assertEqual($first, $second, $message = "%s") {
-            return $this->assert(
-                    new EqualExpectation($first),
-                    $second,
-                    $message);
-        }
-        
-        /**
-         *    Will trigger a pass if the two parameters have
-         *    a different value. Otherwise a fail. This
-         *    is for testing hand extracted text, etc.
-         *    @param mixed $first           Value to compare.
-         *    @param mixed $second          Value to compare.
-         *    @param string $message        Message to display.
-         *    @return boolean               True on pass
-         *    @access public
-         */
-        function assertNotEqual($first, $second, $message = "%s") {
-            return $this->assert(
-                    new NotEqualExpectation($first),
-                    $second,
-                    $message);
-        }
-        
-        /**
          *    Tests for the presence of a link label. Match is
          *    case insensitive with normalised space.
          *    @param string $label     Text between the anchor tags.
+         *    @param mixed $expected   Expected URL or expectation object.
          *    @param string $message   Message to display. Default
          *                             can be embedded with %s.
          *    @return boolean          True if link present.
          *    @access public
          */
-        function assertLink($label, $message = "%s") {
-            return $this->assertTrue(
-                    $this->_browser->isLink($label),
-                    sprintf($message, "Link [$label] should exist"));
+        function assertLink($label, $expected = true, $message = '%s') {
+            $url = $this->_browser->getLink($label);
+            if ($expected === true) {
+                return $this->assertTrue($url !== false, sprintf($message, "Link [$label] should exist"));
+            }
+            if (! SimpleExpectation::isExpectation($expected)) {
+                $expected = new IdenticalExpectation($expected);
+            }
+            return $this->assert($expected, $url->asString(), sprintf($message, "Link [$label] should match"));
         }
 
         /**
@@ -1027,24 +1035,30 @@
          *    @return boolean                 True if link missing.
          *    @access public
          */
-        function assertNoLink($label, $message = "%s") {
-            return $this->assertFalse(
-                    $this->_browser->isLink($label),
+        function assertNoLink($label, $message = '%s') {
+            return $this->assertTrue(
+                    $this->_browser->getLink($label) === false,
                     sprintf($message, "Link [$label] should not exist"));
         }
         
         /**
          *    Tests for the presence of a link id attribute.
          *    @param string $id        Id attribute value.
+         *    @param mixed $expected   Expected URL or expectation object.
          *    @param string $message   Message to display. Default
          *                             can be embedded with %s.
          *    @return boolean          True if link present.
          *    @access public
          */
-        function assertLinkById($id, $message = "%s") {
-            return $this->assertTrue(
-                    $this->_browser->isLinkById($id),
-                    sprintf($message, "Link ID [$id] should exist"));
+        function assertLinkById($id, $expected = true, $message = '%s') {
+            $url = $this->_browser->getLinkById($id);
+            if ($expected === true) {
+                return $this->assertTrue($url !== false, sprintf($message, "Link ID [$id] should exist"));
+            }
+            if (! SimpleExpectation::isExpectation($expected)) {
+                $expected = new IdenticalExpectation($expected);
+            }
+            return $this->assert($expected, $url->asString(), sprintf($message, "Link ID [$id] should match"));
         }
 
         /**
@@ -1056,9 +1070,9 @@
          *    @return boolean          True if link missing.
          *    @access public
          */
-        function assertNoLinkById($id, $message = "%s") {
-            return $this->assertFalse(
-                    $this->_browser->isLinkById($id),
+        function assertNoLinkById($id, $message = '%s') {
+            return $this->assertTrue(
+                    $this->_browser->getLinkById($id) === false,
                     sprintf($message, "Link ID [$id] should not exist"));
         }
         
@@ -1313,9 +1327,9 @@
         
         /**
          *    Tests the text between the title tags.
-         *    @param string $title      Expected title.
-         *    @param string $message    Message to display.
-         *    @return boolean           True if pass.
+         *    @param string/SimpleExpectation $title    Expected title.
+         *    @param string $message                    Message to display.
+         *    @return boolean                           True if pass.
          *    @access public
          */
         function assertTitle($title = false, $message = '%s') {
@@ -1450,6 +1464,78 @@
             return $this->assertTrue(
                     $this->getCookie($name) === false,
                     sprintf($message, "Not expecting cookie [$name]"));
+        }
+
+        /**
+         *    Called from within the test methods to register
+         *    passes and failures.
+         *    @param boolean $result    Pass on true.
+         *    @param string $message    Message to display describing
+         *                              the test state.
+         *    @return boolean           True on pass
+         *    @access public
+         */
+        function assertTrue($result, $message = false) {
+            return $this->assert(new TrueExpectation(), $result, $message);
+        }
+
+        /**
+         *    Will be true on false and vice versa. False
+         *    is the PHP definition of false, so that null,
+         *    empty strings, zero and an empty array all count
+         *    as false.
+         *    @param boolean $result    Pass on false.
+         *    @param string $message    Message to display.
+         *    @return boolean           True on pass
+         *    @access public
+         */
+        function assertFalse($result, $message = '%s') {
+            return $this->assert(new FalseExpectation(), $result, $message);
+        }
+        
+        /**
+         *    Will trigger a pass if the two parameters have
+         *    the same value only. Otherwise a fail. This
+         *    is for testing hand extracted text, etc.
+         *    @param mixed $first          Value to compare.
+         *    @param mixed $second         Value to compare.
+         *    @param string $message       Message to display.
+         *    @return boolean              True on pass
+         *    @access public
+         */
+        function assertEqual($first, $second, $message = '%s') {
+            return $this->assert(
+                    new EqualExpectation($first),
+                    $second,
+                    $message);
+        }
+        
+        /**
+         *    Will trigger a pass if the two parameters have
+         *    a different value. Otherwise a fail. This
+         *    is for testing hand extracted text, etc.
+         *    @param mixed $first           Value to compare.
+         *    @param mixed $second          Value to compare.
+         *    @param string $message        Message to display.
+         *    @return boolean               True on pass
+         *    @access public
+         */
+        function assertNotEqual($first, $second, $message = '%s') {
+            return $this->assert(
+                    new NotEqualExpectation($first),
+                    $second,
+                    $message);
+        }
+
+        /**
+         *    Uses a stack trace to find the line of an assertion.
+         *    @return string           Line number of first assert*
+         *                             method embedded in format string.
+         *    @access public
+         */
+        function getAssertionLine() {
+            $trace = new SimpleStackTrace(array('assert', 'click', 'pass', 'fail'));
+            return $trace->traceMethod();
         }
     }
 ?>

@@ -38,7 +38,7 @@
          *    @public
          */
         function assert($condition, $message = false) {
-            parent::assertTrue($condition, $message);
+            parent::assert(new TrueExpectation(), $condition, $message);
         }
         
         /**

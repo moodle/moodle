@@ -17,10 +17,8 @@
     /**#@-*/
 
     /**
-     *    Static global directives and options. I hate this
-     *    class. It's a mixture of reference hacks, configuration
-     *    and previous design screw-ups that I have to maintain
-     *    to keep backward compatibility.
+     *    Registry and test context. Includes a few
+     *    global options that I'm slowly getting rid of.
      *	  @package	SimpleTest
      */
     class SimpleTest {
@@ -59,8 +57,8 @@
          *    missing abstract declarations. This cannot
          *    be done whilst loading classes wiithout forcing
          *    a particular order on the class declarations and
-         *    the ignore() calls. It's nice to havethe ignore()
-         *    calls at the top of teh file.
+         *    the ignore() calls. It's just nice to have the ignore()
+         *    calls at the top of the file before the actual declarations.
          *    @param array $classes     Class names of interest.
          *    @static
          *    @access public
@@ -157,30 +155,6 @@
         }
 
         /**
-         *    Sets the current test case instance. This
-         *    global instance can be used by the mock objects
-         *    to send message to the test cases.
-         *    @param SimpleTestCase $test        Test case to register.
-         *    @access public
-         *    @static
-         */
-        function setCurrent(&$test) {
-            $registry = &SimpleTest::_getRegistry();
-            $registry['CurrentTestCase'] = &$test;
-        }
-
-        /**
-         *    Accessor for current test instance.
-         *    @return SimpleTEstCase        Currently running test.
-         *    @access public
-         *    @static
-         */
-        function &getCurrent() {
-            $registry = &SimpleTest::_getRegistry();
-            return $registry['CurrentTestCase'];
-        }
-
-        /**
          *    Accessor for global registry of options.
          *    @return hash           All stored values.
          *    @access private
@@ -192,6 +166,21 @@
                 $registry = SimpleTest::_getDefaults();
             }
             return $registry;
+        }
+
+        /**
+         *    Accessor for the context of the current
+         *    test run.
+         *    @return SimpleTestContext    Current test run.
+         *    @access public
+         *    @static
+         */
+        function &getContext() {
+            static $context = false;
+            if (! $context) {
+                $context = new SimpleTestContext();
+            }
+            return $context;
         }
 
         /**
@@ -208,6 +197,168 @@
                     'DefaultProxy' => false,
                     'DefaultProxyUsername' => false,
                     'DefaultProxyPassword' => false);
+        }
+    }
+
+    /**
+     *    Container for all components for a specific
+     *    test run. Makes things like error queues
+     *    available to PHP event handlers, and also
+     *    gets around some nasty reference issues in
+     *    the mocks.
+     *	  @package	SimpleTest
+     */
+    class SimpleTestContext {
+        var $_test;
+        var $_reporter;
+        var $_resources;
+
+        /**
+         *    Clears down the current context.
+         *    @access public
+         */
+        function clear() {
+            $this->_resources = array();
+        }
+
+        /**
+         *    Sets the current test case instance. This
+         *    global instance can be used by the mock objects
+         *    to send message to the test cases.
+         *    @param SimpleTestCase $test        Test case to register.
+         *    @access public
+         */
+        function setTest(&$test) {
+            $this->clear();
+            $this->_test = &$test;
+        }
+
+        /**
+         *    Accessor for currently running test case.
+         *    @return SimpleTestCase    Current test.
+         *    @acess pubic
+         */
+        function &getTest() {
+            return $this->_test;
+        }
+
+        /**
+         *    Sets the current reporter. This
+         *    global instance can be used by the mock objects
+         *    to send messages.
+         *    @param SimpleReporter $reporter     Reporter to register.
+         *    @access public
+         */
+        function setReporter(&$reporter) {
+            $this->clear();
+            $this->_reporter = &$reporter;
+        }
+
+        /**
+         *    Accessor for current reporter.
+         *    @return SimpleReporter    Current reporter.
+         *    @acess pubic
+         */
+        function &getReporter() {
+            return $this->_reporter;
+        }
+
+        /**
+         *    Accessor for the Singleton resource.
+         *    @return object       Global resource.
+         *    @access public
+         *    @static
+         */
+        function &get($resource) {
+            if (! isset($this->_resources[$resource])) {
+                $this->_resources[$resource] = &new $resource();
+            }
+            return $this->_resources[$resource];
+        }
+    }
+
+    /**
+     *    Interrogates the stack trace to recover the
+     *    failure point.
+	 *	  @package SimpleTest
+	 *	  @subpackage UnitTester
+     */
+    class SimpleStackTrace {
+        var $_prefixes;
+
+        /**
+         *    Stashes the list of target prefixes.
+         *    @param array $prefixes      List of method prefixes
+         *                                to search for.
+         */
+        function SimpleStackTrace($prefixes) {
+            $this->_prefixes = $prefixes;
+        }
+
+        /**
+         *    Extracts the last method name that was not within
+         *    Simpletest itself. Captures a stack trace if none given.
+         *    @param array $stack      List of stack frames.
+         *    @return string           Snippet of test report with line
+         *                             number and file.
+         *    @access public
+         */
+        function traceMethod($stack = false) {
+            $stack = $stack ? $stack : $this->_captureTrace();
+            foreach ($stack as $frame) {
+                if ($this->_frameLiesWithinSimpleTestFolder($frame)) {
+                    continue;
+                }
+                if ($this->_frameMatchesPrefix($frame)) {
+                    return ' at [' . $frame['file'] . ' line ' . $frame['line'] . ']';
+                }
+            }
+            return '';
+        }
+
+        /**
+         *    Test to see if error is generated by SimpleTest itself.
+         *    @param array $frame     PHP stack frame.
+         *    @return boolean         True if a SimpleTest file.
+         *    @access private
+         */
+        function _frameLiesWithinSimpleTestFolder($frame) {
+            if (isset($frame['file'])) {
+                $path = substr(SIMPLE_TEST, 0, -1);
+                if (strpos($frame['file'], $path) === 0) {
+                    if (dirname($frame['file']) == $path) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         *    Tries to determine if the method call is an assert, etc.
+         *    @param array $frame     PHP stack frame.
+         *    @return boolean         True if matches a target.
+         *    @access private
+         */
+        function _frameMatchesPrefix($frame) {
+            foreach ($this->_prefixes as $prefix) {
+                if (strncmp($frame['function'], $prefix, strlen($prefix)) == 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         *    Grabs a current stack trace.
+         *    @return array        Fulle trace.
+         *    @access private
+         */
+        function _captureTrace() {
+            if (function_exists('debug_backtrace')) {
+                return array_reverse(debug_backtrace());
+            }
+            return array();
         }
     }
 

@@ -37,17 +37,44 @@
         }
 
         /**
+         *    Called from within the test methods to register
+         *    passes and failures.
+         *    @param boolean $result    Pass on true.
+         *    @param string $message    Message to display describing
+         *                              the test state.
+         *    @return boolean           True on pass
+         *    @access public
+         */
+        function assertTrue($result, $message = false) {
+            return $this->assert(new TrueExpectation(), $result, $message);
+        }
+
+        /**
+         *    Will be true on false and vice versa. False
+         *    is the PHP definition of false, so that null,
+         *    empty strings, zero and an empty array all count
+         *    as false.
+         *    @param boolean $result    Pass on false.
+         *    @param string $message    Message to display.
+         *    @return boolean           True on pass
+         *    @access public
+         */
+        function assertFalse($result, $message = '%s') {
+            return $this->assert(new FalseExpectation(), $result, $message);
+        }
+
+        /**
          *    Will be true if the value is null.
          *    @param null $value       Supposedly null value.
          *    @param string $message   Message to display.
          *    @return boolean                        True on pass
          *    @access public
          */
-        function assertNull($value, $message = "%s") {
+        function assertNull($value, $message = '%s') {
             $dumper = &new SimpleDumper();
             $message = sprintf(
                     $message,
-                    "[" . $dumper->describeValue($value) . "] should be null");
+                    '[' . $dumper->describeValue($value) . '] should be null');
             return $this->assertTrue(! isset($value), $message);
         }
 
@@ -58,11 +85,11 @@
          *    @return boolean               True on pass.
          *    @access public
          */
-        function assertNotNull($value, $message = "%s") {
+        function assertNotNull($value, $message = '%s') {
             $dumper = &new SimpleDumper();
             $message = sprintf(
                     $message,
-                    "[" . $dumper->describeValue($value) . "] should not be null");
+                    '[' . $dumper->describeValue($value) . '] should not be null');
             return $this->assertTrue(isset($value), $message);
         }
 
@@ -76,7 +103,7 @@
          *    @return boolean              True on pass.
          *    @access public
          */
-        function assertIsA($object, $type, $message = "%s") {
+        function assertIsA($object, $type, $message = '%s') {
             return $this->assert(
                     new IsAExpectation($type),
                     $object,
@@ -93,7 +120,7 @@
          *    @return boolean              True on pass.
          *    @access public
          */
-        function assertNotA($object, $type, $message = "%s") {
+        function assertNotA($object, $type, $message = '%s') {
             return $this->assert(
                     new NotAExpectation($type),
                     $object,
@@ -109,7 +136,7 @@
          *    @return boolean              True on pass
          *    @access public
          */
-        function assertEqual($first, $second, $message = "%s") {
+        function assertEqual($first, $second, $message = '%s') {
             return $this->assert(
                     new EqualExpectation($first),
                     $second,
@@ -125,7 +152,7 @@
          *    @return boolean               True on pass
          *    @access public
          */
-        function assertNotEqual($first, $second, $message = "%s") {
+        function assertNotEqual($first, $second, $message = '%s') {
             return $this->assert(
                     new NotEqualExpectation($first),
                     $second,
@@ -142,7 +169,7 @@
          *    @return boolean              True on pass
          *    @access public
          */
-        function assertWithinMargin($first, $second, $margin, $message = "%s") {
+        function assertWithinMargin($first, $second, $margin, $message = '%s') {
             return $this->assert(
                     new WithinMarginExpectation($first, $margin),
                     $second,
@@ -159,7 +186,7 @@
          *    @return boolean              True on pass
          *    @access public
          */
-        function assertOutsideMargin($first, $second, $margin, $message = "%s") {
+        function assertOutsideMargin($first, $second, $margin, $message = '%s') {
             return $this->assert(
                     new OutsideMarginExpectation($first, $margin),
                     $second,
@@ -175,7 +202,7 @@
          *    @return boolean               True on pass
          *    @access public
          */
-        function assertIdentical($first, $second, $message = "%s") {
+        function assertIdentical($first, $second, $message = '%s') {
             return $this->assert(
                     new IdenticalExpectation($first),
                     $second,
@@ -191,7 +218,7 @@
          *    @return boolean               True on pass
          *    @access public
          */
-        function assertNotIdentical($first, $second, $message = "%s") {
+        function assertNotIdentical($first, $second, $message = '%s') {
             return $this->assert(
                     new NotIdenticalExpectation($first),
                     $second,
@@ -207,13 +234,13 @@
          *    @return boolean               True on pass
          *    @access public
          */
-        function assertReference(&$first, &$second, $message = "%s") {
+        function assertReference(&$first, &$second, $message = '%s') {
             $dumper = &new SimpleDumper();
             $message = sprintf(
                     $message,
-                    "[" . $dumper->describeValue($first) .
-                            "] and [" . $dumper->describeValue($second) .
-                            "] should reference the same object");
+                    '[' . $dumper->describeValue($first) .
+                            '] and [' . $dumper->describeValue($second) .
+                            '] should reference the same object');
             return $this->assertTrue(
                     SimpleTestCompatibility::isReference($first, $second),
                     $message);
@@ -229,13 +256,13 @@
          *    @return boolean               True on pass
          *    @access public
          */
-        function assertClone(&$first, &$second, $message = "%s") {
+        function assertClone(&$first, &$second, $message = '%s') {
             $dumper = &new SimpleDumper();
             $message = sprintf(
                     $message,
-                    "[" . $dumper->describeValue($first) .
-                            "] and [" . $dumper->describeValue($second) .
-                            "] should not be the same object");
+                    '[' . $dumper->describeValue($first) .
+                            '] and [' . $dumper->describeValue($second) .
+                            '] should not be the same object');
             $identical = &new IdenticalExpectation($first);
             return $this->assertTrue(
                     $identical->test($second) &&
@@ -268,7 +295,7 @@
          *    @return boolean           True on pass
          *    @access public
          */
-        function assertPattern($pattern, $subject, $message = "%s") {
+        function assertPattern($pattern, $subject, $message = '%s') {
             return $this->assert(
                     new PatternExpectation($pattern),
                     $subject,
@@ -278,7 +305,7 @@
         /**
          *	  @deprecated
          */
-        function assertWantedPattern($pattern, $subject, $message = "%s") {
+        function assertWantedPattern($pattern, $subject, $message = '%s') {
         	return $this->assertPattern($pattern, $subject, $message);
         }
 
@@ -292,7 +319,7 @@
          *    @return boolean           True on pass
          *    @access public
          */
-        function assertNoPattern($pattern, $subject, $message = "%s") {
+        function assertNoPattern($pattern, $subject, $message = '%s') {
             return $this->assert(
                     new NoPatternExpectation($pattern),
                     $subject,
@@ -302,50 +329,63 @@
         /**
          *	  @deprecated
          */
-        function assertNoUnwantedPattern($pattern, $subject, $message = "%s") {
+        function assertNoUnwantedPattern($pattern, $subject, $message = '%s') {
         	return $this->assertNoPattern($pattern, $subject, $message);
         }
 
         /**
-         *    Confirms that no errors have occoured so
-         *    far in the test method.
-         *    @param string $message    Message to display.
-         *    @return boolean           True on pass
-         *    @access public
+         *    @deprecated
          */
-        function assertNoErrors($message = "%s") {
-            $queue = &SimpleErrorQueue::instance();
-            return $this->assertTrue(
-                    $queue->isEmpty(),
-                    sprintf($message, "Should be no errors"));
+        function swallowErrors() {
+            $context = &SimpleTest::getContext();
+            $queue = &$context->get('SimpleErrorQueue');
+            $queue->clear();
         }
 
         /**
-         *    Confirms that an error has occoured and
-         *    optionally that the error text matches exactly.
-         *    @param string $expected   Expected error text or
-         *                              false for no check.
-         *    @param string $message    Message to display.
-         *    @return boolean           True on pass
+         *    @deprecated
+         */
+        function assertNoErrors($message = '%s') {
+            $context = &SimpleTest::getContext();
+            $queue = &$context->get('SimpleErrorQueue');
+            return $queue->assertNoErrors($message);
+        }
+
+        /**
+         *    @deprecated
+         */
+        function assertError($expected = false, $message = '%s') {
+            $context = &SimpleTest::getContext();
+            $queue = &$context->get('SimpleErrorQueue');
+            return $queue->assertError($this->_coerceExpectation($expected), $message);
+        }
+
+        /**
+         *    Prepares for an error. If the error mismatches it
+         *    passes through, otherwise it is swallowed. Any
+         *    left over errors trigger failures.
+         *    @param SimpleExpectation/string $expected   The error to match.
+         *    @param string $message                      Message on failure.
          *    @access public
          */
-        function assertError($expected = false, $message = "%s") {
-            $queue = &SimpleErrorQueue::instance();
-            if ($queue->isEmpty()) {
-                $this->fail(sprintf($message, "Expected error not found"));
-                return;
-            }
-            list($severity, $content, $file, $line, $globals) = $queue->extract();
-            $severity = SimpleErrorQueue::getSeverityAsString($severity);
-            if (! $expected) {
-                return $this->pass(
-                        "Captured a PHP error of [$content] severity [$severity] in [$file] line [$line] -> %s");
-            }
-            $expected = $this->_coerceToExpectation($expected);
-            return $this->assert(
-                    $expected,
-                    $content,
-                    "Expected PHP error [$content] severity [$severity] in [$file] line [$line] -> %s");
+        function expectError($expected = false, $message = '%s') {
+            $context = &SimpleTest::getContext();
+            $queue = &$context->get('SimpleErrorQueue');
+            $queue->expectError($this->_coerceExpectation($expected), $message);
+        }
+
+        /**
+         *    Prepares for an exception. If the error mismatches it
+         *    passes through, otherwise it is swallowed. Any
+         *    left over errors trigger failures.
+         *    @param SimpleExpectation/Exception $expected  The error to match.
+         *    @param string $message                        Message on failure.
+         *    @access public
+         */
+        function expectException($expected = false, $message = '%s') {
+            $context = &SimpleTest::getContext();
+            $queue = &$context->get('SimpleExceptionTrap');
+            $queue->expectException($expected, $message . $this->getAssertionLine());
         }
 
         /**
@@ -356,17 +396,23 @@
          *    @return SimpleExpectation   Expectation object.
          *    @access private
          */
-        function _coerceToExpectation($expected) {
+        function _coerceExpectation($expected) {
+            if ($expected == false) {
+                return new AnythingExpectation();
+            }
             if (SimpleTestCompatibility::isA($expected, 'SimpleExpectation')) {
                 return $expected;
             }
+			if(is_string($expected)) {
+				$expected = str_replace('%', '%%', $expected);
+			}
             return new EqualExpectation($expected);
         }
 
         /**
          *    @deprecated
          */
-        function assertErrorPattern($pattern, $message = "%s") {
+        function assertErrorPattern($pattern, $message = '%s') {
             return $this->assertError(new PatternExpectation($pattern), $message);
         }
     }

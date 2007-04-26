@@ -5,6 +5,28 @@ written with earlier versions will fail with the newest ones. The most
 dramatic changes are in the alpha releases. Here is a list of possible
 problems and their fixes...
 
+No method _getTest() on mocks
+-----------------------------
+This has finally been removed. It was a pretty esoteric
+flex point anyway. It was there to allow the mocks to
+work with other test tools, but no one does this anyway.
+
+No method assertError(), assertNoErrors(), swallowErrors()
+----------------------------------------------------------
+These have been deprecated in 1.0.1beta in favour of
+expectError() and expectException(). assertNoErrors() is
+redundant if you use expectError() as failures are now reporterted
+immediately.
+
+No method TestCase::signal()
+----------------------------
+This has been deprecated in favour of triggering an error or
+throwing an exception. Deprecated as of 1.0.1beta.
+
+No method TestCase::sendMessage()
+---------------------------------
+This has been deprecated as of 1.0.1beta.
+
 Failure to connect now emits failures
 -------------------------------------
 It used to be that you would have to use the
@@ -46,7 +68,7 @@ No method addPartialMockCode()
 ------------------------------
 The ability to insert arbitrary partial mock code
 has been removed. This was a low value feature
-causing needless complications.It was removed
+causing needless complications. It was removed
 in the 1.0.1beta release.
 
 No method setMockBaseClass()
@@ -139,7 +161,7 @@ My custom test case ignored by tally()
 The _assertTrue method has had it's signature changed due to a bug
 in the PHP 5.0.1 release. You must now use getTest() from within
 that method to get the test case. Mock compatibility with other
-unit testers is now deprecated as of 1.0.1alpha as PEAR::PHUnit2
+unit testers is now deprecated as of 1.0.1alpha as PEAR::PHPUnit2
 should soon have mock support of it's own.
 
 Broken code extending SimpleRunner

@@ -507,8 +507,8 @@
          *    @access public
          */
         function normalisePath($path) {
-            $path = preg_replace('|/[^/]+/\.\./|', '/', $path);
-            return preg_replace('|/\./|', '/', $path);
+            $path = preg_replace('|/\./|', '/', $path);
+            return preg_replace('|/[^/]+/\.\./|', '/', $path);
         }
         
         /**

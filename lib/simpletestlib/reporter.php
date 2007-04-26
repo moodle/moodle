@@ -40,6 +40,7 @@
          */
         function paintHeader($test_name) {
             $this->sendNoCacheHeaders();
+            print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
             print "<html>\n<head>\n<title>$test_name</title>\n";
             print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" .
                     $this->_character_set . "\">\n";
@@ -74,7 +75,9 @@
          *    @access protected
          */
         function _getCss() {
-            return ".fail { color: red; } pre { background-color: lightgray; }";
+            return ".fail { background-color: inherit; color: red; }" .
+                    ".pass { background-color: inherit; color: green; }" .
+                    " pre { background-color: lightgray; color: inherit; }";
         }
 
         /**
@@ -115,10 +118,9 @@
         }
 
         /**
-         *    Paints a PHP error or exception.
+         *    Paints a PHP error.
          *    @param string $message        Message is ignored.
          *    @access public
-         *    @abstract
          */
         function paintError($message) {
             parent::paintError($message);
@@ -128,6 +130,38 @@
             print implode(" -&gt; ", $breadcrumb);
             print " -&gt; <strong>" . $this->_htmlEntities($message) . "</strong><br />\n";
         }
+
+        /**
+         *    Paints a PHP exception.
+         *    @param Exception $exception        Exception to display.
+         *    @access public
+         */
+        function paintException($exception) {
+            parent::paintException($exception);
+            print "<span class=\"fail\">Exception</span>: ";
+            $breadcrumb = $this->getTestList();
+            array_shift($breadcrumb);
+            print implode(" -&gt; ", $breadcrumb);
+            $message = 'Unexpected exception of type [' . get_class($exception) .
+                    '] with message ['. $exception->getMessage() .
+                    '] in ['. $exception->getFile() .
+                    ' line ' . $exception->getLine() . ']';
+            print " -&gt; <strong>" . $this->_htmlEntities($message) . "</strong><br />\n";
+        }
+		
+		/**
+		 *    Prints the message for skipping tests.
+         *    @param string $message    Text of skip condition.
+         *    @access public
+         */
+		function paintSkip($message) {
+            parent::paintSkip($message);
+            print "<span class=\"pass\">Skipped</span>: ";
+            $breadcrumb = $this->getTestList();
+            array_shift($breadcrumb);
+            print implode(" -&gt; ", $breadcrumb);
+            print " -&gt; " . $this->_htmlEntities($message) . "<br />\n";
+		}
 
         /**
          *    Paints formatted text such as dumped variables.
@@ -218,7 +252,7 @@
 
         /**
          *    Paints a PHP error or exception.
-         *    @param string $message        Message is ignored.
+         *    @param string $message        Message to be shown.
          *    @access public
          *    @abstract
          */
@@ -226,6 +260,31 @@
             parent::paintError($message);
             print "Exception " . $this->getExceptionCount() . "!\n$message\n";
         }
+
+        /**
+         *    Paints a PHP error or exception.
+         *    @param Exception $exception      Exception to describe.
+         *    @access public
+         *    @abstract
+         */
+        function paintException($exception) {
+            parent::paintException($exception);
+            $message = 'Unexpected exception of type [' . get_class($exception) .
+                    '] with message ['. $exception->getMessage() .
+                    '] in ['. $exception->getFile() .
+                    ' line ' . $exception->getLine() . ']';
+            print "Exception " . $this->getExceptionCount() . "!\n$message\n";
+        }
+		
+		/**
+		 *    Prints the message for skipping tests.
+         *    @param string $message    Text of skip condition.
+         *    @access public
+         */
+		function paintSkip($message) {
+            parent::paintSkip($message);
+            print "Skip: $message\n";
+		}
 
         /**
          *    Paints formatted text such as dumped variables.

@@ -23,7 +23,9 @@
         var $_namespace;
 
         /**
-         *    Does nothing yet.
+         *    Sets up indentation and namespace.
+         *    @param string $namespace        Namespace to add to each tag.
+         *    @param string $indent           Indenting to add on each nesting.
          *    @access public
          */
         function XmlReporter($namespace = false, $indent = '  ') {
@@ -140,8 +142,8 @@
         }
 
         /**
-         *    Increments the pass count.
-         *    @param string $message        Message is ignored.
+		 *    Paints pass as XML.
+         *    @param string $message        Message to encode.
          *    @access public
          */
         function paintPass($message) {
@@ -153,8 +155,8 @@
         }
 
         /**
-         *    Increments the fail count.
-         *    @param string $message        Message is ignored.
+		 *    Paints failure as XML.
+         *    @param string $message        Message to encode.
          *    @access public
          */
         function paintFail($message) {
@@ -166,10 +168,9 @@
         }
 
         /**
-         *    Paints a PHP error or exception.
-         *    @param string $message        Message is ignored.
+		 *    Paints error as XML.
+         *    @param string $message        Message to encode.
          *    @access public
-         *    @abstract
          */
         function paintError($message) {
             parent::paintError($message);
@@ -177,6 +178,36 @@
             print "<" . $this->_namespace . "exception>";
             print $this->toParsedXml($message);
             print "</" . $this->_namespace . "exception>\n";
+        }
+
+        /**
+		 *    Paints exception as XML.
+         *    @param Exception $exception    Exception to encode.
+         *    @access public
+         */
+        function paintException($exception) {
+            parent::paintException($exception);
+            print $this->_getIndent(1);
+            print "<" . $this->_namespace . "exception>";
+            $message = 'Unexpected exception of type [' . get_class($exception) .
+                    '] with message ['. $exception->getMessage() .
+                    '] in ['. $exception->getFile() .
+                    ' line ' . $exception->getLine() . ']';
+            print $this->toParsedXml($message);
+            print "</" . $this->_namespace . "exception>\n";
+        }
+
+        /**
+         *    Paints the skipping message and tag.
+         *    @param string $message        Text to display in skip tag.
+         *    @access public
+         */
+        function paintSkip($message) {
+            parent::paintSkip($message);
+            print $this->_getIndent(1);
+            print "<" . $this->_namespace . "skip>";
+            print $this->toParsedXml($message);
+            print "</" . $this->_namespace . "skip>\n";
         }
 
         /**
@@ -531,7 +562,7 @@
          */
         function _isLeaf($tag) {
             return in_array($tag, array(
-                    'NAME', 'PASS', 'FAIL', 'EXCEPTION', 'MESSAGE', 'FORMATTED', 'SIGNAL'));
+                    'NAME', 'PASS', 'FAIL', 'EXCEPTION', 'SKIP', 'MESSAGE', 'FORMATTED', 'SIGNAL'));
         }
 
         /**
@@ -578,6 +609,8 @@
                 $this->_listener->paintFail($this->_content);
             } elseif ($tag == 'EXCEPTION') {
                 $this->_listener->paintError($this->_content);
+            } elseif ($tag == 'SKIP') {
+                $this->_listener->paintSkip($this->_content);
             } elseif ($tag == 'SIGNAL') {
                 $this->_listener->paintSignal(
                         $this->_attributes['TYPE'],
