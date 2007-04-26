@@ -98,7 +98,10 @@ class gradelib_test extends UnitTestCase {
             }
         } 
     }
-    
+   
+    /**
+     * Load grade_category data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_categories()
     {
         $grade_category = new stdClass();
@@ -117,6 +120,9 @@ class gradelib_test extends UnitTestCase {
         } 
     }
 
+    /**
+     * Load grade_item data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_items()
     {
         $grade_item = new stdClass();
@@ -168,6 +174,9 @@ class gradelib_test extends UnitTestCase {
         } 
     }
 
+    /**
+     * Load grade_calculation data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_calculations()
     {
         $grade_calculation = new stdClass();
@@ -182,26 +191,59 @@ class gradelib_test extends UnitTestCase {
         } 
     }
 
+    /**
+     * Load grade_grades_raw data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_grades_raw()
     {
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[0]->id;
+        $grade_raw->userid = $this->userid;
+        $grade_raw->gradevalue = 78;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
 
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
     }
 
+    /**
+     * Load grade_grades_final data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_grades_final()
     {
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[0]->id;
+        $grade_final->userid = $this->userid;
+        $grade_final->gradevalue = 83;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
 
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
     }
     
+    /**
+     * Load grade_grades_text data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_grades_text()
     {
-
+        
     }
     
+    /**
+     * Load grade_outcome data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_outcomes()
     {
 
     }
 
+    /**
+     * Load grade_history data into the database, and adds the corresponding objects to this class' variable.
+     */
     function load_grade_history()
     {
 
@@ -210,6 +252,9 @@ class gradelib_test extends UnitTestCase {
 /** 
  * TESTS BEGIN HERE
  */
+
+// API FUNCTIONS
+
     function test_grade_get_items()
     {
         $grade_items = grade_get_items($this->courseid);
@@ -260,6 +305,8 @@ class gradelib_test extends UnitTestCase {
         $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance)); 
     }
 
+// GRADE_ITEM OBJECT
+
     function test_grade_item_construct()
     { 
         $params = new stdClass();
@@ -276,24 +323,7 @@ class gradelib_test extends UnitTestCase {
 
         $this->assertEqual($params->courseid, $grade_item->courseid);
         $this->assertEqual($params->categoryid, $grade_item->categoryid);
-        $this->assertEqual($params->itemname, $grade_item->itemname);
-        $this->assertEqual($params->itemtype, $grade_item->itemtype);
         $this->assertEqual($params->itemmodule, $grade_item->itemmodule);
-        $this->assertEqual($params->iteminstance, $grade_item->iteminstance);
-        $this->assertEqual($params->iteminfo, $grade_item->iteminfo);
-
-        $params = $this->grade_items[0];
-
-        $grade_item = new grade_item($params);
-
-        $this->assertEqual($params->id, $grade_item->id);
-        $this->assertEqual($params->courseid, $grade_item->courseid);
-        $this->assertEqual($params->categoryid, $grade_item->categoryid);
-        $this->assertEqual($params->itemname, $grade_item->itemname);
-        $this->assertEqual($params->itemtype, $grade_item->itemtype);
-        $this->assertEqual($params->itemmodule, $grade_item->itemmodule);
-        $this->assertEqual($params->iteminstance, $grade_item->iteminstance);
-        $this->assertEqual($params->iteminfo, $grade_item->iteminfo); 
     }
 
     function test_grade_item_insert()
@@ -401,6 +431,8 @@ class gradelib_test extends UnitTestCase {
 
     }
 
+// GRADE_CATEGORY OBJECT
+
     function test_grade_category_construct()
     {
 
@@ -430,6 +462,9 @@ class gradelib_test extends UnitTestCase {
     {
 
     } 
+
+// GRADE_CALCULATION OBJECT
+
 }
 
 ?>
