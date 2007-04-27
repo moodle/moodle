@@ -829,6 +829,18 @@ $moodle_capabilities = array(
         )
     ),
 
+    // Configure the installed question types.
+    'moodle/question:config' => array(
+
+        'riskbitmask' => RISK_CONFIG,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:doclinks' => array(
 
         'captype' => 'read',
