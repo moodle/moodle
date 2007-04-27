@@ -1239,7 +1239,9 @@ function calendar_get_default_courses($ignoreref = false) {
     // find all course this student can view
     if ($allcourses = get_my_courses($USER->id, 'visible DESC, sortorder ASC', '*', true)) {
         foreach ($allcourses as $courseid => $acourse) {
-            $context = get_context_instance(CONTEXT_COURSE, $courseid);
+            if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
+                continue;
+            }
             // let's try to see if there is any direct assignments on this context
             // one can have multiple assignments
             // just use anyone that has something, or else use empty string
