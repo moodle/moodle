@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 2007       Jamie Pratt  http://jamiep.org               //
+// Copyright (C) 1999-2004  Martin Dougiamas  http://dougiamas.com       //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
