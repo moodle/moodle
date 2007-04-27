@@ -32,6 +32,7 @@ class question_edit_form extends moodleform {
         $this->question = $question;
         parent::moodleform($submiturl);
     }
+
     /**
      * Build the form definition.
      *
@@ -139,13 +140,15 @@ class question_edit_form extends moodleform {
 
         // Set any options.
         $extra_question_fields = $QTYPES[$question->qtype]->extra_question_fields();
-        if (is_array($extra_question_fields)) {
+        if (is_array($extra_question_fields) && !empty($question->options)) {
             array_shift($extra_question_fields);
             foreach ($extra_question_fields as $field) {
-                $question->$field = $question->options->$field;
+                if (!empty($question->options->$field)) {
+                    $question->$field = $question->options->$field;
+                }
             }
         }
-        
+
         parent::set_data($question);
     }
 
