@@ -27,19 +27,12 @@
  * An abstract object that holds methods and attributes common to all grade_* objects defined here.
  * @abstract
  */
-class grade_object
-{
-    /**
-     * The table name
-     * @var string $table
-     */
-    var $table = null;
-    
+class grade_object {
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields');
+    var $nonfields = array('nonfields', 'required_fields');
 
     /**
      * Array of required fields (keys) and their default values (values).
@@ -64,37 +57,23 @@ class grade_object
      * @var int $timemodified
      */
     var $timemodified;
-
-    /**
-     * Finds and returns a grade_object based on its ID number.
-     * 
-     * @abstract
-     * @param int $id
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @return object grade_object or false if none found.
-     */
-    function get_by_id($id, $static=false)
-    {
-        // Implemented in child objects 
-    }
     
-
     /**
-     * Finds and returns a grade_object based on 1-3 field values.
-     *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_object or false if none found.
-     */
-    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
-        // Implemented in child objects 
+     * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
+     * @param object $params an object with named parameters for this grade item.
+     * @param boolean $fetch Whether to fetch corresponding row from DB or not.
+     */       
+    function grade_object($params=NULL, $fetch = true) {
+        if (!empty($params) && (is_array($params) || is_object($params))) {
+            $this->assign_to_this($params);
+            
+            if ($fetch) {
+                $records = $this->fetch_all_using_this();
+                if ($records && count($records) > 0) {
+                    $this->assign_to_this(current($records));
+                }
+            }
+        } 
     }
     
     /**
@@ -102,9 +81,7 @@ class grade_object
      *
      * @return boolean
      */
-    function update()
-    {
-        $this->set_defaults();
+    function update() {
         $result = update_record($this->table, $this);
         if ($result) {
             $this->timemodified = mktime();
@@ -115,35 +92,26 @@ class grade_object
     /**
      * Deletes this object from the database.
      */
-    function delete()
-    {
+    function delete() {
         return delete_records($this->table, 'id', $this->id);
-    }
-    
-    /**
-     * Replaces NULL values with defaults defined in the DB, for required fields.
-     * This should use the DB table METADATA, but to start with I am hard-coding it.
-     *
-     * @return void
-     */
-    function set_defaults()
-    {
-        foreach ($this->required_fields as $field => $default) {
-            if (is_null($this->$field)) {
-                $this->$field = $default;
-            }
-        }
     }
     
     /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * @return int PK ID if successful, false otherwise
      */
-    function insert()
-    {
-        $this->set_defaults();
+    function insert() {
         $this->set_timecreated();
-        $this->id = insert_record($this->table, $this, true);
+        $clone = $this;
+
+        // Unset non-set fields
+        foreach ($clone as $var => $val) {
+            if (empty($val)) {
+                unset($clone->$var);
+            }
+        }
+
+        $this->id = insert_record($this->table, $clone, true);
         return $this->id;
     }
     
@@ -151,8 +119,7 @@ class grade_object
      * Uses the variables of this object to retrieve all matching objects from the DB.
      * @return array $objects
      */
-    function get_records_select()
-    {
+    function fetch_all_using_this() {
         $variables = get_object_vars($this);
         $wheresql = '';
         
@@ -178,8 +145,7 @@ class grade_object
      * @param boolean $override Whether to override an existing value for this field in the DB.
      * @return boolean True if successful, false otherwise.
      */
-    function set_timecreated($timestamp = null, $override = false)
-    {
+    function set_timecreated($timestamp = null, $override = false) {
         if (empty($timestamp)) {
             $timestamp = mktime();
         }
@@ -200,5 +166,18 @@ class grade_object
         }
         return $this->timecreated;
     }
+    
+    /**
+     * Given an associated array or object, cycles through each key/variable
+     * and assigns the value to the corresponding variable in this object.
+     */
+    function assign_to_this($params) {
+        foreach ($params as $param => $value) {
+            if (in_object_vars($param, $this)) {
+                $this->$param = $value;
+            }
+        } 
+    }
+
 }
 ?>

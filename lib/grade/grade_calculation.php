@@ -29,13 +29,18 @@ require_once('grade_object.php');
  * A calculation string used to compute the value displayed by a grade_item.
  * There can be only one grade_calculation per grade_item (one-to-one).
  */
-class grade_calculation extends grade_object
-{
+class grade_calculation extends grade_object {
     /**
-     * The table name
+     * DB Table (used by grade_object).
      * @var string $table
      */
     var $table = 'grade_calculations';
+
+    /**
+     * Array of class variables that are not part of the DB table fields
+     * @var array $nonfields
+     */
+    var $nonfields = array('table', 'nonfields');
     
     /**
      * A reference to the grade_item this calculation belongs to.
@@ -55,15 +60,6 @@ class grade_calculation extends grade_object
      */
     var $usermodified;
 
-    /**
-     * Constructor.
-     * @param object $params Object or array of variables=>values to assign to this object upon creation
-     */
-    function grade_calculation($params = null)
-    {
-
-    }
-
 
     /**
      * Finds and returns a grade_calculation object based on 1-3 field values.
@@ -78,11 +74,9 @@ class grade_calculation extends grade_object
      * @param string $fields
      * @return object grade_calculation object or false if none found.
      */
-    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
-        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_calculation::$table
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_calculation = get_record('grade_calculations', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if ($static) {
+            if (!isset($this)) {
                 $grade_calculation = new grade_calculation($grade_calculation);
                 return $grade_calculation;
             } else {
@@ -95,6 +89,5 @@ class grade_calculation extends grade_object
             return false;
         }
     }
-    
 }
 ?>

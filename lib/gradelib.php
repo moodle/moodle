@@ -37,9 +37,9 @@ define('GRADE_AGGREGATE_MEDIAN', 1);
 define('GRADE_AGGREGATE_SUM', 2);
 define('GRADE_AGGREGATE_MODE', 3);
 
-require_once($CFG->libdir . '/gradebook/grade_category.php');
-require_once($CFG->libdir . '/gradebook/grade_item.php');
-require_once($CFG->libdir . '/gradebook/grade_calculation.php');
+require_once($CFG->libdir . '/grade/grade_category.php');
+require_once($CFG->libdir . '/grade/grade_item.php');
+require_once($CFG->libdir . '/grade/grade_calculation.php');
 
 /**
 * Extracts from the gradebook all the grade items attached to the calling object. 
@@ -60,18 +60,9 @@ require_once($CFG->libdir . '/gradebook/grade_calculation.php');
 * @param int $idnumber grade item Primary Key
 * @return array An array of grade items
 */
-function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $idnumber=NULL)
-{
-    $grade_item = new grade_item();
-    $grade_item->courseid = $courseid;
-    $grade_item->itemname = $itemname;
-    $grade_item->itemtype = $itemtype;
-    $grade_item->itemmodule = $itemmodule;
-    $grade_item->iteminstance = $iteminstance;
-    $grade_item->itemnumber = $itemnumber;
-    $grade_item->id = $idnumber;
-
-    $grade_items = $grade_item->get_records_select();
+function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $idnumber=NULL) {
+    $grade_item = new grade_item(compact('courseid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber', 'idnumber'), false);
+    $grade_items = $grade_item->fetch_all_using_this();
     return $grade_items;
 }
 
@@ -85,8 +76,7 @@ function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=
 * @param 
 * @return mixed New grade_item id if successful
 */
-function grade_create_item($params)
-{
+function grade_create_item($params) {
     $grade_item = new grade_item($params);
     return $grade_item->insert();
 }
@@ -101,15 +91,8 @@ function grade_create_item($params)
 * @param string $aggregation
 * @return mixed New grade_category id if successful
 */
-function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN)
-{
-    $params = new stdClass();
-    $params->courseid = $courseid;
-    $params->fullname = $fullname;
-    $params->items = $items;
-    $params->aggregation = $aggregation;
-
-    $grade_category = new grade_category($params);
+function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN) {
+    $grade_category = new grade_category(compact('courseid', 'fullname', 'items', 'aggregation'));
     return $grade_category->insert();
 }
 
@@ -118,21 +101,21 @@ function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_
 * Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
 * This is a combination of the actual settings in the grade tables and a check on moodle/course:editgradeswhenlocked.
 * If it's locked to the current use then the module can print a nice message or prevent editing in the module.
-* 
+* If no $userid is given, the method will always return the grade_item's locked state.
+* If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
+* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will 
+* return the locked state of the specific grade.
+*
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
 * @param int $iteminstance id of the item module
+* @param int $itemnumber Optional number of the item to check
 * @param int $userid ID of the user who owns the grade
 * @return boolean Whether the grade is locked or not
 */
-function grade_is_locked($itemtype, $itemmodule, $iteminstance, $userid=NULL)
-{
-    $grade_item = grade_item::get_record(true, 'itemtype', $itemtype, 'itemmodule', $itemmodule, 'iteminstance', $iteminstance);
-    if ($grade_item) {
-        return $grade_item->locked;
-    } else {
-        return null;
-     }
+function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL, $userid=NULL) {
+    $grade_item = new grade_item(compact('itemtype', 'itemmodule', 'iteminstance', 'itemnumber'));
+    return $grade_item->is_locked($userid);
 } 
 
 ?>

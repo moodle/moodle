@@ -29,34 +29,18 @@ require_once('grade_object.php');
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
  */
-class grade_item extends grade_object
-{
+class grade_item extends grade_object {
     /**
-     * The table name
+     * DB Table (used by grade_object).
      * @var string $table
      */
     var $table = 'grade_items';
-
+    
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields', 'calculation');
-
-    /**
-     * Array of required fields (keys) and their default values (values).
-     * @var array $required_fields
-     */
-    var $required_fields = array('gradetype'   => 0,
-                                 'grademax'    => 100.00000,
-                                 'grademin'    => 0.00000,
-                                 'gradepass'   => 0.00000,
-                                 'multfactor'  => 1.00000,
-                                 'plusfactor'  => 0.00000,
-                                 'sortorder'   => 0,
-                                 'hidden'      => 0,
-                                 'locked'      => 0,
-                                 'needsupdate' => 0);
+    var $nonfields = array('table', 'nonfields', 'calculation');
   
     /**
      * The course this grade_item belongs to.
@@ -170,7 +154,7 @@ class grade_item extends grade_object
      * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
      * @var int $locked
      */
-    var $locked;
+    var $locked = false;
     
     /**
      * If set, the whole column will be recalculated, then this flag will be switched off.
@@ -185,43 +169,8 @@ class grade_item extends grade_object
     var $calculation;
 
     /**
-     * Constructor
-     * @param object $params an object with named parameters for this grade item.
-     */       
-    function grade_item($params=NULL) 
-    {
-        if (!empty($params) && (is_array($params) || is_object($params))) {
-            foreach ($params as $param => $value) {
-                if (in_object_vars($param, $this)) {
-                    $this->$param = $value;
-                }
-            }
-            $this->set_defaults();
-        } 
-    }
-
-
-    /**
-     * Finds and returns a grade_item object based on its ID number.
-     * 
-     * @param int $id
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @return object grade_item object or false if none found.
-     */
-    function get_by_id($id, $static=false)
-    {
-        if ($static) {
-            return grade_item::get_record(true, 'id', $id);
-        } else {
-            return $this->get_record(false, 'id', $id);
-        }
-    }
-    
-
-    /**
      * Finds and returns a grade_item object based on 1-3 field values.
      *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
      * @param string $value1
      * @param string $field2
@@ -231,11 +180,9 @@ class grade_item extends grade_object
      * @param string $fields
      * @return object grade_item object or false if none found.
      */
-    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
-        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_item::$table
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_item = get_record('grade_items', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if ($static) {
+            if (!isset($this)) {
                 $grade_item = new grade_item($grade_item);
                 return $grade_item;
             } else {
@@ -255,8 +202,7 @@ class grade_item extends grade_object
      * 
      * @return mixed grades_Raw object if found, or false.
      */
-    function get_raw()
-    {
+    function get_raw() {
         $grade_raw = get_record('grade_grades_raw', 'itemid', $this->id);
         return $grade_raw; 
     }
@@ -266,8 +212,7 @@ class grade_item extends grade_object
      * 
      * @return mixed grades_Final object if found, or false.
      */
-    function get_final()
-    {
+    function get_final() {
         $grade_final = get_record('grade_grades_final', 'itemid', $this->id);
         return $grade_final; 
     }
@@ -277,13 +222,12 @@ class grade_item extends grade_object
      * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
      * @return mixed $calculation A string if found, false otherwise.
      */
-    function get_calculation($fetch = false)
-    {
+    function get_calculation($fetch = false) {
         if (!$fetch) {
             return $this->calculation;
         } 
         
-        $grade_calculation = grade_calculation::get_record(true, 'itemid', $this->id);
+        $grade_calculation = grade_calculation::fetch(true, 'itemid', $this->id);
         
         if (empty($grade_calculation)) { // There is no calculation in DB
             return false;
@@ -303,8 +247,7 @@ class grade_item extends grade_object
      * @param string $calculation
      * @return boolean
      */
-    function set_calculation($calculation = null)
-    {
+    function set_calculation($calculation = null) {
         if (empty($calculation)) { // We are setting this item object's calculation variable from the DB
             $grade_calculation = $this->get_calculation(true);
             if (empty($grade_calculation)) {
@@ -328,6 +271,7 @@ class grade_item extends grade_object
                 }                
             } else { // Updating
                 $grade_calculation->calculation = $calculation;
+                $grade_calculation = new grade_calculation($grade_calculation);
                 $this->calculation = $grade_calculation;
                 return $grade_calculation->update();
             }
@@ -339,13 +283,29 @@ class grade_item extends grade_object
     * 
     * @return mixed grade_category object if applicable, NULL otherwise
     */
-    function get_category()
-    {
+    function get_category() {
         if (!empty($this->categoryid)) {
             $grade_category = new grade_category($this->category_id);
             return $grade_category;
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Returns the locked state of this grade_item (if the grade_item is locked OR no specific
+     * $userid is given) or the locked state of a specific grade within this item if a specific
+     * $userid is given and the grade_item is unlocked.
+     *
+     * @param int $userid
+     * @return boolean Locked state
+     */
+    function is_locked($userid=NULL) {
+        if ($this->locked || empty($userid)) {
+            return $this->locked; // This could be true or false (false only if no $userid given)
+        } else {
+            $final = $this->get_final($userid);
+            return $final->locked;
         }
     }
 }

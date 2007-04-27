@@ -25,10 +25,9 @@
 
 require_once('grade_object.php');
 
-class grade_category extends grade_object
-{
+class grade_category extends grade_object {
     /**
-     * The table name
+     * DB Table (used by grade_object).
      * @var string $table
      */
     var $table = 'grade_categories';
@@ -37,17 +36,8 @@ class grade_category extends grade_object
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields');
+    var $nonfields = array('table', 'nonfields');
 
-    /**
-     * Array of required fields (keys) and their default values (values).
-     * @var array $required_fields
-     */
-    var $required_fields = array('aggregation' => 0,
-                                 'keephigh'    => 0,
-                                 'fullname'    => null,
-                                 'droplow'     => 0,
-                                 'hidden'      => 0);
     
     /**
      * The course this category belongs to.
@@ -96,46 +86,11 @@ class grade_category extends grade_object
      * @var array $children
      */
     var $children;
-    
-    /**
-     * Constructor
-     * @param object $params an object with named parameters for this category.
-     */     
-    function grade_category($params=NULL) 
-    {
-        if (!empty($params) && (is_array($params) || is_object($params))) {
-            foreach ($params as $param => $value) {
-                if (in_object_vars($param, $this)) {
-                    $this->$param = $value;
-                }
-            }
 
-            $this->set_defaults();
-        } 
-    }
-
-
-    /**
-     * Finds and returns a grade_category object based on its ID number.
-     * 
-     * @param int $id
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @return object grade_category object or false if none found.
-     */
-    function get_by_id($id, $static=false)
-    {
-        if ($static) {
-            return grade_category::get_record(true, 'id', $id);
-        } else {
-            return $this->get_record(false, 'id', $id);
-        }
-    }
-    
 
     /**
      * Finds and returns a grade_category object based on 1-3 field values.
      *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
      * @param string $value1
      * @param string $field2
@@ -145,11 +100,10 @@ class grade_category extends grade_object
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function get_record($static=false, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
     { 
-        // In Moodle 2.0 (PHP5) we can replace table names with the static class var grade_category::$table
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if ($static) {
+            if (!isset($this)) {
                 $grade_category = new grade_category($grade_category);
                 return $grade_category;
             } else {
