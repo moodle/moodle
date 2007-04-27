@@ -403,7 +403,7 @@
         
         $navigation = build_navigation($crumbs);
         
-        print_header_simple(format_string($quiz->name), "", $navigation, "", "", true, $strupdatemodule);
+        print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
     }
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
