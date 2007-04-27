@@ -506,6 +506,8 @@ $string['riskspamshort'] = 'Spam risk';
 $string['riskxss'] = 'Users could add files and texts that allow cross-site scripting (XSS)';
 $string['riskxssshort'] = 'XSS risk';
 $string['runclamavonupload'] = 'Use clam AV on uploaded files';
+$string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this quetsion type, so this should not cause you any problems.';
+$string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&rid=797 before continuing with the upgrade.';
 $string['savechanges'] = 'Save Changes';
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search Results';
