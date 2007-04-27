@@ -7067,5 +7067,19 @@ function is_newnav($navigation) {
     }
 }
 
+/**
+ * Checks whether the given variable name is defined as a variable within the given object.
+ * @note This will NOT work with stdClass objects, which have no class variables.
+ * @param string $var The variable name
+ * @param object $object The object to check
+ * @return boolean
+ */
+function in_object_vars($var, $object)
+{
+    $class_vars = get_class_vars(get_class($object));
+    $class_vars = array_keys($class_vars);
+    return in_array($var, $class_vars);
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
