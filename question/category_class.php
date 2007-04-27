@@ -143,7 +143,7 @@ class question_category_object {
 
         $this->editlist = new question_category_list('ul', '', true, $page);
 
-        $this->add_page_params(array('id'=>$COURSE->id));
+        $this->add_page_params(array('id'=>$COURSE->id, 'page' => $this->page));
         $this->pageurl = strip_querystring(qualified_me());//default
         
         $this->initialize();
