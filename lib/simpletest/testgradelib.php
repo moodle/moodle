@@ -679,8 +679,6 @@ class gradelib_test extends UnitTestCase {
 
 // SCENARIOS: define use cases here by defining tests and implementing code until the tests pass.
 
-    /**
-     *
 }
 
 ?>
