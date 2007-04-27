@@ -191,11 +191,11 @@ class mod_quiz_mod_form extends moodleform_mod {
 		$mform->setAdvanced('popup', $CFG->quiz_fix_popup);
         $mform->setDefault('popup', $CFG->quiz_popup);
 
-        $mform->addElement('passwordreveal', 'password', get_string("requirepassword", "quiz"));
-		$mform->setType('password', PARAM_TEXT);
-		$mform->setHelpButton('password', array("requirepassword", get_string("requirepassword", "quiz"), "quiz"));
-		$mform->setAdvanced('password', $CFG->quiz_fix_password);
-        $mform->setDefault('password', $CFG->quiz_password);
+        $mform->addElement('passwordreveal', 'quizpassword', get_string("requirepassword", "quiz"));
+		$mform->setType('quizpassword', PARAM_TEXT);
+		$mform->setHelpButton('quizpassword', array("requirepassword", get_string("requirepassword", "quiz"), "quiz"));
+		$mform->setAdvanced('quizpassword', $CFG->quiz_fix_password);
+        $mform->setDefault('quizpassword', $CFG->quiz_password);
 
 		$mform->addElement('text', 'subnet', get_string("requiresubnet", "quiz"));
 		$mform->setType('subnet', PARAM_TEXT);
@@ -284,6 +284,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (isset($default_values['optionflags'])){
             $default_values['adaptive'] = $default_values['optionflags'] & QUESTION_ADAPTIVE;
             unset($default_values['optionflags']);
+        }
+
+        // Password field - different in form to stop browsers that remember passwords
+        // getting confused.
+		if (isset($default_values['password'])) {
+            $default_values['quizpassword'] = $default_values['password'];
+            unset($default_values['password']);
         }
 	}
 

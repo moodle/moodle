@@ -485,6 +485,11 @@ function quiz_process_options(&$quiz) {
     }
     $quiz->timelimit = round($quiz->timelimit);
 
+    // Password field - different in form to stop browsers that remember passwords
+    // getting confused.
+    $quiz->password = $quiz->quizpassword;
+    unset($quiz->quizpassword);
+
     // Quiz feedback
     if (isset($quiz->feedbacktext)) {
         // Clean up the boundary text.
