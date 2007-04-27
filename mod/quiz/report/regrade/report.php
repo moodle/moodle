@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/tablelib.php');
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {
-        global $CFG, $SESSION, $db, $QTYPES;
+        global $CFG;
 
         // Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");

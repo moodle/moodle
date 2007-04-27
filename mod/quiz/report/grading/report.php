@@ -28,7 +28,6 @@ class quiz_report extends quiz_default_report {
      * Displays the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $SESSION, $USER, $db, $QTYPES;
 
         $action = optional_param('action', 'viewquestions', PARAM_ALPHA);
         $questionid = optional_param('questionid', 0, PARAM_INT);
