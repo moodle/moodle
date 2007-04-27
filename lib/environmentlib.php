@@ -177,6 +177,12 @@ function print_moodle_environment($result, $environment_results) {
                         $stringtouse = 'environmentrecommendversion';
                     }
             /// We are checking installed & enabled things
+                } else if ($environment_result->getPart() == 'custom_check') {
+                    if ($environment_result->getLevel() == 'required') {
+                        $stringtouse = 'environmentrequirecustomcheck';
+                    } else {
+                        $stringtouse = 'environmentrecommendcustomcheck';
+                    }
                 } else {
                     if ($environment_result->getLevel() == 'required') {
                         $stringtouse = 'environmentrequireinstall';
@@ -505,7 +511,6 @@ function environment_custom_checks($version) {
     /// Check for extension name
         if (isset($check['@']['file']) && isset($check['@']['function'])) {
             $file = $CFG->dirroot . '/' . $check['@']['file'];
-            echo $file;
             $function = $check['@']['function'];
             if (is_readable($file)) {
                 include_once($file);
