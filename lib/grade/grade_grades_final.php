@@ -25,12 +25,12 @@
 
 require_once('grade_object.php');
 
-class grade_category extends grade_object {
+class grade_grades_final extends grade_object {
     /**
      * DB Table (used by grade_object).
      * @var string $table
      */
-    var $table = 'grade_categories';
+    var $table = 'grade_grades_final';
     
     /**
      * Array of class variables that are not part of the DB table fields
@@ -39,89 +39,53 @@ class grade_category extends grade_object {
     var $nonfields = array('table', 'nonfields');
     
     /**
-     * The course this category belongs to.
-     * @var int $courseid
+     * The id of the grade_item this final grade belongs to.
+     * @var int $itemid
      */
-    var $courseid;
+    var $itemid;
     
     /**
-     * The category this category belongs to (optional).
-     * @var int $parent 
+     * The id of the user this final grade belongs to.
+     * @var int $userid
      */
-    var $parent;
-   
-    /**
-     * The number of parents this category has.
-     * @var int $depth
-     */
-    var $depth = 0;
-
-    /**
-     * Shows the hierarchical path for this category as /1/2/3 (like course_categories), the last number being
-     * this category's autoincrement ID number.
-     * @var string $path
-     */
-    var $path;
-
-    /**
-     * The name of this category.
-     * @var string $fullname
-     */
-    var $fullname;
+    var $userid;
     
     /**
-     * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
-     * @var int $aggregation 
-     */
-    var $aggregation;
-    
-    /**
-     * Keep only the X highest items.
-     * @var int $keephigh
-     */
-    var $keephigh;
-    
-    /**
-     * Drop the X lowest items.
-     * @var int $droplow
-     */
-    var $droplow;
-    
-    /**
-     * Date until which to hide this category. If null, 0 or false, category is not hidden.
+     * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
     var $hidden;
     
     /**
-     * Array of grade_items or grade_categories nested exactly 1 level below this category
-     * @var array $children
+     * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
+     * @var int $locked
      */
-    var $children;
+    var $locked = false;
+    
+    /**
+     * 0 if not exported, > 1 is the last exported date.
+     * @var int $exported
+     */
+    var $exported;
+
+    /**
+     * The userid of the person who last modified this grade.
+     * @var int $usermodified
+     */
+    var $usermodified;
 
     /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
      * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
      */
-    function grade_category($params=NULL, $fetch=true) {
+    function grade_grades_final($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
     }
 
-    
-    /**
-     * Builds this category's path string based on its parents (if any) and its own id number.
-     * This is typically done just before inserting this object in the DB for the first time,
-     * or when a new parent is added or changed.
-     * @todo implement
-     */
-    function build_path() {
-    
-    }
-
 
     /**
-     * Finds and returns a grade_category object based on 1-3 field values.
+     * Finds and returns a grade_grades_final object based on 1-3 field values.
      *
      * @param string $field1
      * @param string $value1
@@ -132,14 +96,13 @@ class grade_category extends grade_object {
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
-        if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+        if ($object = get_record('grade_grades_final', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (!isset($this)) {
-                $grade_category = new grade_category($grade_category);
-                return $grade_category;
+                $object = new grade_grades_final($object);
+                return $object;
             } else {
-                foreach ($grade_category as $param => $value) {
+                foreach ($object as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;

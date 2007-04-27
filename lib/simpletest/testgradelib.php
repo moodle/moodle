@@ -39,6 +39,14 @@ require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
 
+/**
+ * A cleanup of the tables is a good idea before we start, in case the last unit test
+ * crashed before running its tearDown method.
+ */
+delete_records_select('grade_categories', 'fullname LIKE "%unittest%"');
+delete_records_select('grade_items', 'itemname LIKE "%unittest%"');
+delete_records_select('grade_calculation', 'calculation LIKE "%unittest%"');
+
 class gradelib_test extends UnitTestCase {
    
     /**
@@ -74,8 +82,7 @@ class gradelib_test extends UnitTestCase {
      * (meaning they should run on a brand new site). This means several items of
      * data have to be artificially inseminated (:-) in the DB.
      */
-    function setUp() 
-    {
+    function setUp() {
         foreach ($this->tables as $table) {
             $function = "load_$table";
             $this->$function();
@@ -85,8 +92,7 @@ class gradelib_test extends UnitTestCase {
     /**
      * Delete temporary entries from the database
      */
-    function tearDown() 
-    {
+    function tearDown() {
         foreach ($this->tables as $table) {
             foreach ($this->$table as $object) {
                 delete_records($table, 'id', $object->id);
@@ -102,8 +108,7 @@ class gradelib_test extends UnitTestCase {
     /**
      * Load grade_category data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_categories()
-    {
+    function load_grade_categories() {
         $grade_category = new stdClass();
         
         $grade_category->fullname    = 'unittestcategory1';
@@ -123,8 +128,7 @@ class gradelib_test extends UnitTestCase {
     /**
      * Load grade_item data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_items()
-    {
+    function load_grade_items() {
         $grade_item = new stdClass();
 
         $grade_item->courseid = $this->courseid;
@@ -133,6 +137,8 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminstance = 1;
+        $grade_item->grademax = 137;
+        $grade_item->itemnumber = 1;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -148,6 +154,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemtype = 'import';
         $grade_item->itemmodule = 'assignment';
         $grade_item->iteminstance = 2;
+        $grade_item->itemnumber = null;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->locked = mktime() + 240000;
         $grade_item->timecreated = mktime();
@@ -165,6 +172,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
+        $grade_item->itemnumber = 3;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -177,11 +185,11 @@ class gradelib_test extends UnitTestCase {
     /**
      * Load grade_calculation data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_calculations()
-    {
+    function load_grade_calculations() {
+        // Calculation for grade_item 1
         $grade_calculation = new stdClass();
         $grade_calculation->itemid = $this->grade_items[0]->id;
-        $grade_calculation->calculation = 'MEAN([unittestgradeitem2], [unittestgradeitem3])';
+        $grade_calculation->calculation = '[unittestgradeitem1] * 1.4 - 3';
         $grade_calculation->timecreated = mktime();
         $grade_calculation->timemodified = mktime();
         
@@ -189,17 +197,134 @@ class gradelib_test extends UnitTestCase {
             $this->grade_calculations[] = $grade_calculation;
             $this->grade_items[0]->calculation = $grade_calculation;
         } 
+        
+        // Calculation for grade_item 2
+        $grade_calculation = new stdClass();
+        $grade_calculation->itemid = $this->grade_items[1]->id;
+        $grade_calculation->calculation = '[unittestgradeitem2] + 3';
+        $grade_calculation->timecreated = mktime();
+        $grade_calculation->timemodified = mktime();
+        
+        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
+            $this->grade_calculations[] = $grade_calculation;
+            $this->grade_items[1]->calculation = $grade_calculation;
+        } 
+        
+        // Calculation for grade_item 3
+        $grade_calculation = new stdClass();
+        $grade_calculation->itemid = $this->grade_items[2]->id;
+        $grade_calculation->calculation = '[unittestgradeitem3] / 2 + 40';
+        $grade_calculation->timecreated = mktime();
+        $grade_calculation->timemodified = mktime();
+        
+        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
+            $this->grade_calculations[] = $grade_calculation;
+            $this->grade_items[2]->calculation = $grade_calculation;
+        } 
     }
 
     /**
      * Load grade_grades_raw data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_grades_raw()
-    {
+    function load_grade_grades_raw() {
+        // Grades for grade_item 1
+
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[0]->id;
-        $grade_raw->userid = $this->userid;
+        $grade_raw->userid = 1;
+        $grade_raw->gradevalue = 72;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[0]->id;
+        $grade_raw->userid = 2;
         $grade_raw->gradevalue = 78;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[0]->id;
+        $grade_raw->userid = 3;
+        $grade_raw->gradevalue = 68;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+
+        // Grades for grade_item 2
+
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[1]->id;
+        $grade_raw->userid = 1;
+        $grade_raw->gradevalue = 66;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[1]->id;
+        $grade_raw->userid = 2;
+        $grade_raw->gradevalue = 84;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[1]->id;
+        $grade_raw->userid = 3;
+        $grade_raw->gradevalue = 91;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+
+        // Grades for grade_item 3
+
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[2]->id;
+        $grade_raw->userid = 1;
+        $grade_raw->gradevalue = 61;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[2]->id;
+        $grade_raw->userid = 2;
+        $grade_raw->gradevalue = 81;
+        $grade_raw->timecreated = mktime();
+        $grade_raw->timemodified = mktime();
+
+        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
+            $this->grade_grades_raw[] = $grade_raw;
+        }
+        
+        $grade_raw = new stdClass();
+        $grade_raw->itemid = $this->grade_items[2]->id;
+        $grade_raw->userid = 3;
+        $grade_raw->gradevalue = 49;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -211,14 +336,115 @@ class gradelib_test extends UnitTestCase {
     /**
      * Load grade_grades_final data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_grades_final()
-    {
+    function load_grade_grades_final() {
+        // Grades for grade_item 1
+
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[0]->id;
-        $grade_final->userid = $this->userid;
-        $grade_final->gradevalue = 83;
+        $grade_final->userid = 1;
+        $grade_final->gradevalue = 97.8;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
+        
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[0]->id;
+        $grade_final->userid = 2;
+        $grade_final->gradevalue = 106.2;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        }
+
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[0]->id;
+        $grade_final->userid = 3;
+        $grade_final->gradevalue = 92.2;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = false; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
+        
+        // Grades for grade_item 2
+
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[1]->id;
+        $grade_final->userid = 1;
+        $grade_final->gradevalue = 69;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
+        
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[1]->id;
+        $grade_final->userid = 2;
+        $grade_final->gradevalue = 87;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        }
+
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[1]->id;
+        $grade_final->userid = 3;
+        $grade_final->gradevalue = 94;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = false; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
+        
+        // Grades for grade_item 3
+
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[2]->id;
+        $grade_final->userid = 1;
+        $grade_final->gradevalue = 70.5;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        } 
+        
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[2]->id;
+        $grade_final->userid = 2;
+        $grade_final->gradevalue = 80.5;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[] = $grade_final;
+        }
+
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[2]->id;
+        $grade_final->userid = 3;
+        $grade_final->gradevalue = 64.5;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = false; 
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
             $this->grade_grades_final[] = $grade_final;
@@ -228,24 +454,21 @@ class gradelib_test extends UnitTestCase {
     /**
      * Load grade_grades_text data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_grades_text()
-    {
+    function load_grade_grades_text() {
         
     }
     
     /**
      * Load grade_outcome data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_outcomes()
-    {
+    function load_grade_outcomes() {
 
     }
 
     /**
      * Load grade_history data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_history()
-    {
+    function load_grade_history() {
 
     }
 
@@ -255,16 +478,14 @@ class gradelib_test extends UnitTestCase {
 
 // API FUNCTIONS
 
-    function test_grade_get_items()
-    {
+    function test_grade_get_items() {
         $grade_items = grade_get_items($this->courseid);
 
         $this->assertTrue(is_array($grade_items)); 
         $this->assertEqual(count($grade_items), 3);
     }
-
-    function test_grade_create_item()
-    {
+    
+    function test_grade_create_item() {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
@@ -284,8 +505,7 @@ class gradelib_test extends UnitTestCase {
         $this->grade_items[] = $params;
     }
 
-    function test_grade_create_category()
-    {
+    function test_grade_create_category() {
         $grade_category = new stdClass();
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
@@ -297,18 +517,16 @@ class gradelib_test extends UnitTestCase {
         $this->grade_categories[] = $grade_category;
     }
 
-    function test_grade_is_locked()
-    {
+    function test_grade_is_locked() {
         $grade_item = $this->grade_items[0];
-        $this->assertFalse(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance));
+        $this->assertFalse(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
         $grade_item = $this->grade_items[1];
-        $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance)); 
+        $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
     }
 
 // GRADE_ITEM OBJECT
 
-    function test_grade_item_construct()
-    { 
+    function test_grade_item_construct() { 
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
@@ -326,8 +544,7 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual($params->itemmodule, $grade_item->itemmodule);
     }
 
-    function test_grade_item_insert()
-    {
+    function test_grade_item_insert() {
         $grade_item = new grade_item();
 
         $grade_item->courseid = $this->courseid;
@@ -346,15 +563,13 @@ class gradelib_test extends UnitTestCase {
         $this->grade_items[] = $grade_item; 
     }
 
-    function test_grade_item_delete()
-    {
+    function test_grade_item_delete() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue($grade_item->delete());
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
     }
 
-    function test_grade_item_update()
-    {
+    function test_grade_item_update() {
         $grade_item = new grade_item($this->grade_items[0]);
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
         $this->assertTrue($grade_item->update());
@@ -362,8 +577,7 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
     }
 
-    function test_grade_item_set_timecreated()
-    {
+    function test_grade_item_set_timecreated() {
         $grade_item = new grade_item($this->grade_items[0]);
         $timestamp = mktime();
         $grade_item->set_timecreated();
@@ -371,100 +585,102 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual($grade_item->timecreated, get_field('grade_items', 'timecreated', 'id', $grade_item->id));
     }
 
-    function test_grade_item_get_by_id()
-    {
-        $grade_item = grade_item::get_by_id($this->grade_items[0]->id, true);
-        $this->assertEqual($this->grade_items[0]->id, $grade_item->id);
-        $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo); 
-    }
-
-    function test_grade_item_get_record()
-    {
-        $grade_item = grade_item::get_record(true, 'id', $this->grade_items[0]->id);
+    function test_grade_item_fetch() {
+        $grade_item = grade_item::fetch('id', $this->grade_items[0]->id);
         $this->assertEqual($this->grade_items[0]->id, $grade_item->id);
         $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo); 
         
-        $grade_item = grade_item::get_record(true, 'itemtype', $this->grade_items[1]->itemtype, 'itemmodule', $this->grade_items[1]->itemmodule);
+        $grade_item = grade_item::fetch('itemtype', $this->grade_items[1]->itemtype, 'itemmodule', $this->grade_items[1]->itemmodule);
         $this->assertEqual($this->grade_items[1]->id, $grade_item->id);
         $this->assertEqual($this->grade_items[1]->iteminfo, $grade_item->iteminfo); 
     }
 
-    function test_grade_item_get_records_select()
-    {
+    function test_grade_item_fetch_all_using_this() {
         $grade_item = new grade_item();
         $grade_item->itemtype = 'mod';
-        $grade_items = $grade_item->get_records_select();
+        $grade_items = $grade_item->fetch_all_using_this();
         $this->assertEqual(2, count($grade_items));
         $first_grade_item = reset($grade_items);
         $this->assertEqual($this->grade_items[0]->id, $first_grade_item->id);
     }
+    
+    /**
+     * Retrieve all raw scores for a given grade_item.
+     */
+    function test_grade_item_get_all_raws() {
+        
+    }
 
-    function test_grade_item_get_raw()
-    {
+    /**
+     * Retrieve the raw score for a specific userid.
+     */
+    function test_grade_item_get_raw() { 
+    }
+
+    
+    /**
+     * Retrieve all final scores for a given grade_item.
+     */
+    function test_grade_item_get_all_finals() {
 
     }
 
-    function test_grade_item_get_final()
-    {
+    
+    /**
+     * Retrieve all final scores for a specific userid.
+     */
+    function test_grade_item_get_final() {
 
     }
 
-    function test_grade_item_get_calculation()
-    {
+    function test_grade_item_get_calculation() {
         $grade_item = new grade_item($this->grade_items[0]);
         $grade_calculation = $grade_item->get_calculation();
         $this->assertEqual($this->grade_calculations[0]->id, $grade_calculation->id);
     }
 
-    function test_grade_item_set_calculation()
-    {
+    function test_grade_item_set_calculation() {
         $grade_item = new grade_item($this->grade_items[1]);
         $calculation = 'SUM([unittestgradeitem1], [unittestgradeitem3])';
         $grade_item->set_calculation($calculation);
         $new_calculation = $grade_item->get_calculation();
+        $this->grade_calculations[] = $new_calculation;
 
         $this->assertEqual($calculation, $new_calculation->calculation);
     }
 
-    function test_grade_item_get_category()
-    {
+    function test_grade_item_get_category() {
 
     }
 
 // GRADE_CATEGORY OBJECT
 
-    function test_grade_category_construct()
-    {
+    function test_grade_category_construct() {
 
     }
 
-    function test_grade_category_insert()
-    {
+    function test_grade_category_insert() {
 
     }
 
-    function test_grade_category_update()
-    {
+    function test_grade_category_update() {
 
     }
 
-    function test_grade_category_delete()
-    {
+    function test_grade_category_delete() {
 
     }
 
-    function test_grade_category_get_by_id()
-    {
-
-    }
-
-    function test_grade_category_get_record()
-    {
+    function test_grade_category_fetch() {
 
     } 
 
 // GRADE_CALCULATION OBJECT
 
+// SCENARIOS: define use cases here by defining tests and implementing code until the tests pass.
+
+    /**
+     *
 }
 
 ?>
