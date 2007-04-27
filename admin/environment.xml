@@ -171,8 +171,8 @@
     <CUSTOM_CHECKS>
       <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="qtyperqpwillberemoved" />
-          <ON_OK message="qtyperqpwillberemovedanyway" />
+          <ON_CHECK message="qtyperqpwillberemovedanyway" />
+          <ON_OK message="qtyperqpwillberemoved" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
