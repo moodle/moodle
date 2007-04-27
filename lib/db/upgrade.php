@@ -1018,7 +1018,7 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field timemodified
         $result = $result && add_field($table, $field);
     }
-    
+
     if ($result && $oldversion < 2007042601) {
 
     /// Changing nullability of field usermodified on table grade_calculations to null
@@ -1028,7 +1028,73 @@ function xmldb_main_upgrade($oldversion=0) {
 
         /// Launch change of nullability for field usermodified
         $result = $result && change_field_notnull($table, $field);
-    }
+    }    
+    
+    if ($result && $oldversion < 2007042701) {
+
+    /// Define key categoryid (foreign) to be dropped form grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $key = new XMLDBKey('categoryid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('categoryid'), 'grade_categories', array('id'));
+
+    /// Launch drop key categoryid
+        $result = $result && drop_key($table, $key);   
+
+    /// Rename field categoryid on table grade_categories to parent
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('categoryid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'courseid');
+
+    /// Launch rename field categoryid
+        $result = $result && rename_field($table, $field, 'parent');
+
+    /// Define key parent (foreign) to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $key = new XMLDBKey('parent');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('parent'), 'grade_categories', array('id'));
+
+    /// Launch add key parent
+        $result = $result && add_key($table, $key);
+    
+    /// Define field depth to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('depth');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'parent');
+
+    /// Launch add field depth
+        $result = $result && add_field($table, $field);
+        
+    /// Define field path to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('path');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'depth');
+
+    /// Launch add field path
+        $result = $result && add_field($table, $field);
+     
+    /// Define field gradevalue to be dropped from grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('gradevalue');
+
+    /// Launch drop field gradevalue
+        $result = $result && drop_field($table, $field);
+    
+    /// Define field gradescale to be dropped from grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('gradescale');
+
+    /// Launch drop field gradescale
+        $result = $result && drop_field($table, $field);
+    
+    /// Define field locked to be added to grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('locked');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'hidden');
+
+    /// Launch add field locked
+        $result = $result && add_field($table, $field);
+    } 
+
     return $result;
 
 }
