@@ -108,18 +108,8 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<table><tr><td style=\"white-space:nowrap;\">";
     echo "<strong>$strcategory:</strong>&nbsp;";
-    echo "</td><td>";
     popup_form ("edit.php?courseid=$course->id&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
-    echo "</td><td align=\"right\">";
-    echo "<form method=\"get\" action=\"$CFG->wwwroot/question/category.php\">";
-    echo "<div>";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-    echo "<input type=\"submit\" value=\"$streditcats\" />";
-    echo '</div>';
-    echo "</form>";
-    echo '</td></tr></table>';
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
