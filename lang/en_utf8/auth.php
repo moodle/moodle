@@ -30,6 +30,15 @@ $string['auth_nologindescription'] = 'Auxiliary plugin that prevents user to log
 $string['auth_nologintitle'] = 'No login';
 
 // CAS plugin
+$string['auth_cas_proxycas_key'] = "Proxy mode";
+$string['auth_cas_logoutcas_key'] = "Logout CAS";
+$string['auth_cas_multiauth_key'] = "Multi-authentication";
+$string['auth_cas_proxycas'] = "Turn this to 'yes'' if you use CASin proxy-mode";
+$string['auth_cas_logoutcas'] = "Turn this to 'yes'' if tou want to logout from CAS when you deconnect from Moodle";
+$string['auth_cas_multiauth'] = "Turn this to 'yes'' if you want to have multi-authentication (CAS + other authentication)";
+$string['accesCAS'] = "CAS users";
+$string['accesNOCAS'] = "other users";
+$string['CASform'] = "Authentication choice";
 $string['auth_cas_logincas'] = 'Secure connection access';
 $string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';
 $string['auth_cas_server_settings'] = 'CAS server configuration';
