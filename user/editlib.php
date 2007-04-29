@@ -36,7 +36,7 @@ function useredit_update_bounces($user, $usernew) {
         //locked field
         return;
     }
-    if ($user->email !== $usernew->email) {
+    if (!isset($user->email) || $user->email !== $usernew->email) {
         set_bounce_count($usernew,true);
         set_send_count($usernew,true);
     }
@@ -48,7 +48,7 @@ function useredit_update_trackforums($user, $usernew) {
         //locked field
         return;
     }
-    if (($usernew->trackforums != $user->trackforums) and !$usernew->trackforums) {
+    if ((!isset($user->trackforums) || ($usernew->trackforums != $user->trackforums)) and !$usernew->trackforums) {
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         forum_tp_delete_read_records($usernew->id);
     }
