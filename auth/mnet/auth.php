@@ -208,7 +208,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = insert_record('mnet_session', $mnet_session)) {
+            if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
                 error(get_string('databaseerror', 'mnet'));
             }
         } else {
@@ -217,7 +217,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (false == update_record('mnet_session', $mnet_session)) {
+            if (false == update_record('mnet_session', addslashes_object($mnet_session))) {
                 error(get_string('databaseerror', 'mnet'));
             }
         }
@@ -294,11 +294,11 @@ class auth_plugin_mnet extends auth_plugin_base {
                 error(get_string('nolocaluser', 'mnet'));
             }
             $remoteuser->mnethostid = $remotehost->id;
-            if (! insert_record('user', $remoteuser)) {
+            if (! insert_record('user', addslashes_object($remoteuser))) {
                 error(get_string('databaseerror', 'mnet'));
             }
             $firsttime = true;
-            if (! $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id)) {
+            if (! $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id)) {
                 error(get_string('nolocaluser', 'mnet'));
             }
         }
@@ -367,7 +367,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $localuser->mnethostid = $remotepeer->id;
 
-        $bool = update_record('user', $localuser);
+        $bool = update_record('user', addslashes_object($localuser));
         if (!$bool) {
             // TODO: Jonathan to clean up mess
             // Actually, this should never happen (modulo race conditions) - ML
@@ -390,12 +390,12 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time();
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = insert_record('mnet_session', $mnet_session)) {
+            if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
                 error(get_string('databaseerror', 'mnet'));
             }
         } else {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
-            update_record('mnet_session', $mnet_session);
+            update_record('mnet_session', addslashes_object($mnet_session));
         }
 
         if (!$firsttime) {
@@ -539,7 +539,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             // First up - do we have a record for this course?
             if (!array_key_exists($course['remoteid'], $currentcourses)) {
                 // No record - we must create it
-                $course['id']  =  insert_record('mnet_enrol_course', (object)$course);
+                $course['id']  =  insert_record('mnet_enrol_course', addslashes_object((object)$course));
                 $currentcourse = (object)$course;
             } else {
                 // Pointer to current course:
@@ -557,7 +557,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
 
                 if ($saveflag) {
-                    update_record('mnet_enrol_course', $currentcourse);
+                    update_record('mnet_enrol_course', addslashes_object($currentcourse));
                 }
 
                 if (isset($currentcourse->assignmentid) && is_numeric($currentcourse->assignmentid)) {
@@ -580,7 +580,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $assignObj->hostid    = (int)$MNET_REMOTE_CLIENT->id;
                 $assignObj->courseid  = $course['id'];
                 $assignObj->rolename  = $course['defaultrolename'];
-                $assignObj->id = insert_record('mnet_enrol_assignments', $assignObj);
+                $assignObj->id = insert_record('mnet_enrol_assignments', addslashes_object($assignObj));
             }
         }
 
@@ -885,7 +885,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             unset($logEntryObj->username);
 
-            $insertok = insert_record('mnet_log', $logEntryObj, false);
+            $insertok = insert_record('mnet_log', addslashes_object($logEntryObj), false);
 
             if ($insertok) {
                 $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
@@ -1039,14 +1039,14 @@ class auth_plugin_mnet extends auth_plugin_base {
             from
                 {$CFG->prefix}mnet_session s
             where
-                s.username   = '$username' AND
+                s.username   = '".addslashes($username)."' AND
                 s.useragent  = '$useragent' AND
                 s.mnethostid = '{$USER->mnethostid}'";
 
         $mnetsessions = get_records_sql($sql);
 
         $ignore = delete_records('mnet_session',
-                                 'username', $username,
+                                 'username', addslashes($username),
                                  'useragent', $useragent,
                                  'mnethostid', $USER->mnethostid);
 
@@ -1081,7 +1081,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $USER, $MNET_REMOTE_CLIENT;
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
-        $userid = get_field('user', 'id', 'mnethostid', $CFG->mnet_localhost_id, 'username', $username);
+        $userid = get_field('user', 'id', 'mnethostid', $CFG->mnet_localhost_id, 'username', addslashes($username));
 
         $returnstring = '';
         $sql = "
@@ -1177,7 +1177,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function kill_child($username, $useragent) {
         global $CFG, $MNET_REMOTE_CLIENT;
-        $session = get_record('mnet_session', 'username', $username, 'mnethostid', $MNET_REMOTE_CLIENT->id, 'useragent', $useragent);
+        $session = get_record('mnet_session', 'username', addslashes($username), 'mnethostid', $MNET_REMOTE_CLIENT->id, 'useragent', $useragent);
         if (false != $session) {
             $start = ob_start();
 
@@ -1261,7 +1261,7 @@ class auth_plugin_mnet extends auth_plugin_base {
     function fetch_user_image($username) {
         global $CFG;
 
-        if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
+        if ($user = get_record('user', 'username', addslashes($username), 'mnethostid', $CFG->mnet_localhost_id)) {
             $filename1 = "{$CFG->dataroot}/users/{$user->id}/f1.jpg";
             $filename2 = "{$CFG->dataroot}/users/{$user->id}/f2.jpg";
             $return = array();
@@ -1332,7 +1332,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function can_login_remotely($username, $mnethostid) {
         $accessctrl = 'allow';
-        $aclrecord = get_record('mnet_sso_access_control', 'username', $username, 'mnet_host_id', $mnethostid);
+        $aclrecord = get_record('mnet_sso_access_control', 'username', addslashes($username), 'mnet_host_id', $mnethostid);
         if (!empty($aclrecord)) {
             $accessctrl = $aclrecord->accessctrl;
         }
