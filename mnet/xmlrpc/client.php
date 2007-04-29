@@ -284,7 +284,7 @@ class mnet_xmlrpc_client {
         curl_close($ch);
 
         // xmlrpc errors are pushed onto the $this->error stack
-        if (isset($this->response['faultCode'])) {
+        if (is_array($this->response) && array_key_exists('faultCode', $this->response)) {
             // The faultCode 7025 means we tried to connect with an old SSL key
             // The faultString is the new key - let's save it and try again
             // The re_key attribute stops us from getting into a loop
