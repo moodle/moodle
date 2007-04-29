@@ -1828,7 +1828,7 @@ function require_logout() {
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
-        if (!isset($USER->auth) && empty($USER->auth)) {
+        if (!isset($USER->auth) || empty($USER->auth)) {
             $USER->auth = get_field('user', 'auth', 'id', $USER->id);
         }
         $authplugin = get_auth_plugin($USER->auth);
