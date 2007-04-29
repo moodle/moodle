@@ -91,7 +91,7 @@ function scorm_seq_navigation ($scoid,$userid,$request) {
 						// CARLOS' CODE
 						 if (!isset($parentsco->flow) || ($parentsco->flow == true)) {//I think it's parentsco
                             // Current activity is active !
-							if (scorm_seq_is('active',$sco->id,$userid){
+							if (scorm_seq_is('active',$sco->id,$userid)) {
                                 if ($request == 'continue_') {
                                     $seq->navigation = true;
                                     $seq->termination = 'exit';
