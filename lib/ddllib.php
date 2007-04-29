@@ -616,6 +616,67 @@ function drop_table($table, $continue=true, $feedback=true) {
 }
 
 /**
+ * This function will create the temporary table passed as argument with all its
+ * fields/keys/indexes/sequences, everything based in the XMLDB object
+ *
+ * TRUNCATE the table immediately after creation. A previous process using
+ * the same persistent connection may have created the temp table and failed to
+ * drop it. In that case, the table will exist, and create_temp_table() will
+ * will succeed.
+ *
+ * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
+ * names for temp tables.
+ *
+ * @uses $CFG, $db
+ * @param XMLDBTable table object (full specs are required)
+ * @param boolean continue to specify if must continue on error (true) or stop (false)
+ * @param boolean feedback to specify to show status info (true) or not (false)
+ * @return string tablename on success, false on error
+ */
+function create_temp_table($table, $continue=true, $feedback=true) {
+
+    global $CFG, $db;
+
+    $status = true;
+
+    if (strtolower(get_class($table)) != 'xmldbtable') {
+        return false;
+    }
+
+
+    $temporary = 'TEMPORARY';
+    switch (strtolower($CFG->dbfamily)) {
+        case 'mssql':
+            // TODO: somehow change the name to have a #
+            $temporary = '';
+            break;
+        case 'oracle':
+            $temporary = 'GLOBAL TEMPORARY';
+            break;
+    }
+
+/// Check table doesn't exist
+    if (table_exists($table)) {
+        debugging('Table ' . $table->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
+        return $table->getName(); //Table exists, nothing to do
+    }
+
+    if(!$sqlarr = $table->getCreateTableSQL($CFG->dbtype, $CFG->prefix, false)) {
+        return $table->getName(); //Empty array = nothing to do = no error
+    }
+
+    if (!empty($temporary)) {
+        $sqlarr = preg_replace('/^CREATE/', "CREATE $temporary", $sqlarr);
+    }
+
+    if (execute_sql_arr($sqlarr, $continue, $feedback)) {
+        return $table->getName();
+    } else {
+        return false;
+    }
+}
+
+/**
  * This function will rename the table passed as argument
  * Before renaming the index, the function will check it exists
  *
