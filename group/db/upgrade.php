@@ -16,6 +16,38 @@
 //
 // The commands in here will all be database-neutral,
 // using the functions defined in lib/ddllib.php
+function install_group_db() {
+    global $CFG, $db;
+
+    $group_version = '';  // Get code version
+    require ("$CFG->dirroot/group/version.php");
+
+    $status = true;
+
+    print_heading('group');
+    $db->debug=true;
+
+    //Moodle is already installed - rename old tables, used during tansfer later
+    if (table_exists($t_groups = new XMLDBTable('groups'))) {
+        $status = $status && rename_table($t_groups, 'groups_temp');
+        $status = $status && rename_table(new XMLDBTable('groups_members'), 'groups_members_temp');
+    }
+
+    // install new groups tables
+    $status = $status && install_from_xmldb_file($CFG->dirroot . '/group/db/install.xml');
+    // convert old groups to new ones
+    $status = $status && groups_transfer_db();
+
+    $db->debug = false;
+
+    if (!$status or !set_config('group_version', $group_version)) {
+        error("Upgrade of group system failed!");
+    }
+
+    notify(get_string('databasesuccess'), 'green');
+    notify(get_string('databaseupgradegroups', '', $group_version), 'green');
+}
+
 
 function upgrade_group_db($continueto) {
 /// This function upgrades the group tables, if necessary
@@ -24,69 +56,24 @@ function upgrade_group_db($continueto) {
     global $CFG, $db;
 
     $group_version = '';  // Get code versions
-    require_once ("$CFG->dirroot/group/version.php");
+    require("$CFG->dirroot/group/version.php");
 
     if (empty($CFG->group_version)) {  // New 1.8 groups have never been installed...
-        $status = true;
-
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
                 upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
         upgrade_log_start();
-        print_heading('group');
-        $db->debug=true;
+        //initialize default group settings now
+        install_group_db();
 
-        //TODO: for testing, revert to 'old' groups.
-        if (! get_config('group_version')) {
-            $status = $status && groups_revert_db();
-        }
-
-        //... But Moodle is already installed.
-        if (table_exists($t_groups = new XMLDBTable('groups'))) {
-            $status = $status && rename_table($t_groups, 'groups_temp');
-            $status = $status && rename_table(new XMLDBTable('groups_members'), 'groups_members_temp');
-        }
-
-    /// Both old .sql files and new install.xml are supported
-    /// but we prioritize install.xml (XMLDB) if present
-
-        if (file_exists($CFG->dirroot . '/group/db/install.xml')) {
-            $status = $status && install_from_xmldb_file($CFG->dirroot . '/group/db/install.xml'); //New method
-        } else if (file_exists($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.sql')) {
-            $status = $status && modify_database($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.sql'); //Old method
-        }
-
-        $status = $status && groups_transfer_db();
-
-        $db->debug = false;
-    
-        if (set_config('group_version', $group_version)) { //and set_config('group_release', $group_release)) {
-            //initialize default group settings now
-            $adminroot = admin_get_root();
-            apply_default_settings($adminroot->locate('groups'));
-            notify(get_string('databasesuccess'), 'green');
-            notify(get_string('databaseupgradegroups', '', $group_version), 'green');
-            print_continue($continueto);
-            print_footer('none');
-            exit;
-        } else {
-            error("Upgrade of group system failed! (Could not update version in config table)");
-        }
+        $adminroot = admin_get_root();
+        print_continue($continueto);
+        print_footer('none');
+        exit;
     }
 
 /// Upgrading code starts here
-    $oldupgrade = false;
-    $newupgrade = false;
-    if (is_readable($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.php')) {
-        include_once($CFG->dirroot . '/group/db/' . $CFG->dbtype . '.php');  // defines old upgrading function
-        $oldupgrade = true;
-    }
-    if (is_readable($CFG->dirroot . '/group/db/upgrade.php')) {
-        include_once($CFG->dirroot . '/group/db/upgrade.php');  // defines new upgrading function
-        $newupgrade = true;
-    }
-
     if ($group_version > $CFG->group_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
         print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
@@ -94,55 +81,27 @@ function upgrade_group_db($continueto) {
         upgrade_log_start();
         print_heading('group');
 
-    /// Run de old and new upgrade functions for the module
-        $oldupgrade_function = 'group_upgrade';
-        $newupgrade_function = 'xmldb_group_upgrade';
+        $db->debug = true;
+        $status = xmldb_group_upgrade($CFG->group_version);
+        $db->debug = false;
 
-    /// First, the old function if exists
-        $oldupgrade_status = true;
-        if ($oldupgrade && function_exists($oldupgrade_function)) {
-            $db->debug = true;
-            $oldupgrade_status = $oldupgrade_function($CFG->group_version);
-        } else if ($oldupgrade) {
-            notify ('Upgrade function ' . $oldupgrade_function . ' was not available in ' .
-                    '/group/db/' . $CFG->dbtype . '.php');
-        }
-
-    /// Then, the new function if exists and the old one was ok
-        $newupgrade_status = true;
-        if ($newupgrade && function_exists($newupgrade_function) && $oldupgrade_status) {
-            $db->debug = true;
-            $newupgrade_status = $newupgrade_function($CFG->group_version);
-        } else if ($newupgrade) {
-            notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
-                    '/group/db/upgrade.php');
-        }
-
-        $db->debug=false;
     /// Now analyze upgrade results
-        if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
-            if (set_config('group_version', $group_version)) { //and set_config('group_release', $group_release))
+        if ($status) {    // No upgrading failed
+            if (set_config('group_version', $group_version)) {
                 notify(get_string('databasesuccess'), 'green');
                 notify(get_string('databaseupgradegroups', '', $group_version), 'green');
                 print_continue($continueto);
                 print_footer('none');
                 exit;
             } else {
-                error("Upgrade of group system failed! (Could not update version in config table)");
+                error("Error: Upgrade of group system failed! (Could not update version in config table)");
             }
         } else {
-            error("Upgrade failed!  See group/version.php");
+            error("Error: Upgrade failed! See group/upgrade.php");
         }
 
-        upgrade_log_finish();
-        print_footer();
-
     } else if ($group_version < $CFG->group_version) {
-        upgrade_log_start();
-        notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
-
-        upgrade_log_finish();
-        print_footer();
+        error("Error:  The code you are using is OLDER than the version that made these databases!");
     }
 }
 
@@ -175,7 +134,7 @@ function groups_transfer_db() {
             }
         }
     } else {
-        $status = false;
+        $status = true; //new install - it is ok!
     }
     return $status;
 }
@@ -404,18 +363,6 @@ function xmldb_group_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007012400) {
         if (table_exists(new XMLDBTable('groups_temp')) && file_exists($CFG->dirroot.'/group/db/install.xml')) {
-            $groupupgrade = optional_param('confirmgroupupgrade', 0, PARAM_BOOL);
-            if (empty($groupupgrade)) {
-                notice_yesno(get_string('upgradeconfirm', 'group'), 'index.php?confirmgroupupgrade=yes', 'index.php');
-                /*
-                 * This hack might be necessary for notice_yesno(). I think notice_yesno()
-                 * should be changed to take account of upgrading process. -- ohmori
-                 * (Resetting the SESSION variable below makes 1.8 DEV to 1.8 Beta upgrades fail. Oh dear! -- nick)
-                 */
-                ///$_SESSION['upgraderunning'] = 0;
-                print_footer();
-                exit;
-            } //ELSE
             /// Need to drop foreign keys/indexes added in last upgrade, drop 'new' tables, then start again!!
             $result = $result && groups_drop_keys_indexes_db();
             $result = $result && groups_revert_db($renametemp=false);
