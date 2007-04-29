@@ -1828,11 +1828,11 @@ function require_logout() {
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
-        $authsequence = get_enabled_auth_plugins(); // auths, in sequence
-        foreach($authsequence as $authname) {
-            $authplugin = get_auth_plugin($authname);
-            $authplugin->prelogout_hook();
+        if (!isset($USER->auth) && empty($USER->auth)) {
+            $USER->auth = get_field('user', 'auth', 'id', $USER->id);
         }
+        $authplugin = get_auth_plugin($USER->auth);
+        $authplugin->prelogout_hook();
     }
 
     if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
@@ -1841,7 +1841,15 @@ function require_logout() {
         session_unregister("SESSION");
     }
 
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+    // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
+    $file = $line = null;
+    if (headers_sent($file, $line)) {
+        error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
+        error_log('Headers were already sent in file: '.$file.' on line '.$line);
+    } else {
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath);
+    }
+
     unset($_SESSION['USER']);
     unset($_SESSION['SESSION']);
 
