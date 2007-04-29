@@ -189,9 +189,14 @@
     /// Continue with the instalation
         $db->debug = false;
         if ($status) {
+            //ugly hack - install new groups: MDL-9217
+            require_once("$CFG->dirroot/group/db/upgrade.php");
+            install_group_db();
+
             // Install the roles system.
             moodle_install_roles();
             set_config('statsrolesupgraded',time());
+
 
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
             // (this should only have any effect during initial install).
@@ -320,6 +325,9 @@
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
                     if (empty($CFG->rolesactive)) {
+                        //ugly hack - upgrade to new groups (from 1.6) : MDL-9217
+                        require_once("$CFG->dirroot/group/db/upgrade.php");
+                        install_group_db();
                         // Upgrade to the roles system.
                         moodle_install_roles();
                         set_config('rolesactive', 1);
@@ -367,6 +375,11 @@
         }
     }
 
+/// ugly hack - convert to new groups if upgrading from 1.7; must be reworked
+    require_once("$CFG->dirroot/group/db/upgrade.php");
+    upgrade_group_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+
+
 /// Find and check all main modules and load them up or upgrade them if necessary
 /// first old *.php update and then the new upgrade.php script
     upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
@@ -401,10 +414,6 @@
 /// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/locallib.php");
     upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
-
-/// Check for new groups and upgrade if necessary. TODO:
-    require_once("$CFG->dirroot/group/db/upgrade.php");
-    upgrade_group_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
 /// Check for changes to RPC functions
     require_once($CFG->dirroot.'/admin/mnet/adminlib.php');
