@@ -191,7 +191,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 		$mform->setAdvanced('popup', $CFG->quiz_fix_popup);
         $mform->setDefault('popup', $CFG->quiz_popup);
 
-        $mform->addElement('passwordreveal', 'quizpassword', get_string("requirepassword", "quiz"));
+        $mform->addElement('passwordunmask', 'quizpassword', get_string("requirepassword", "quiz"));
 		$mform->setType('quizpassword', PARAM_TEXT);
 		$mform->setHelpButton('quizpassword', array("requirepassword", get_string("requirepassword", "quiz"), "quiz"));
 		$mform->setAdvanced('quizpassword', $CFG->quiz_fix_password);

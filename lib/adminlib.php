@@ -1426,9 +1426,9 @@ class admin_setting_configtext extends admin_setting {
 
 }
 
-class admin_setting_configpasswordreveal extends admin_setting_configtext {
+class admin_setting_configpasswordunmask extends admin_setting_configtext {
 
-    function admin_setting_configpasswordreveal($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
+    function admin_setting_configpasswordunmask($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW) {
         parent::admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype);
     }
 
@@ -1439,14 +1439,14 @@ class admin_setting_configpasswordreveal extends admin_setting_configtext {
             $current = $this->get_setting();
         }
             $id = 'id_s_'.$this->name;
-            $reveal = get_string('revealpassword', 'form');
-            $revealjs = '<script type="text/javascript">
+            $unmask = get_string('unmaskpassword', 'form');
+            $unmaskjs = '<script type="text/javascript">
 //<![CDATA[
-document.write(\'<div class="reveal"><input id="'.$id.'reveal" value="1" type="checkbox" onclick="revealPassword(\\\''.$id.'\\\')"/><label for="'.$id.'reveal">'.addslashes_js($reveal).'<\/label><\/div>\');
+document.write(\'<div class="unmask"><input id="'.$id.'unmask" value="1" type="checkbox" onclick="unmaskPassword(\\\''.$id.'\\\')"/><label for="'.$id.'unmask">'.addslashes_js($unmask).'<\/label><\/div>\');
 //]]>
 </script>';
         return format_admin_setting($this->name, $this->visiblename,
-                '<input type="password" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.s($current).'" />'.$revealjs,
+                '<input type="password" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.s($current).'" />'.$unmaskjs,
                 $this->description);
     }
     

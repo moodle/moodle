@@ -553,10 +553,10 @@ form.mform div.error,form.mform fieldset.error {
 form.mform .fcheckbox input {
   margin-left: 0px;
 }
-form.mform .fpassword .reveal {
+form.mform .fpassword .unmask {
   display:inline;
 }
-form.mform .fpassword .reveal input {
+form.mform .fpassword .unmask input {
   margin-left:5px;
   margin-right:3px;
 }
@@ -995,12 +995,12 @@ body#admin-modules table.generaltable td.c0
   padding: 0.3em 0 1.5em 0;
 }
 
-#adminsettings .form-item .reveal input {
+#adminsettings .form-item .unmask input {
   margin-left:5px;
   margin-right:3px;
 }
 
-#adminsettings .form-item .reveal label {
+#adminsettings .form-item .unmask label {
   width: auto;
   text-align: left;
 }

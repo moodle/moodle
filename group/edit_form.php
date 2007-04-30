@@ -32,7 +32,7 @@ class group_edit_form extends moodleform {
         $mform->addElement('htmleditor', 'description', get_string('groupdescription', 'group'), array('rows'=> '15', 'course' => $courseid, 'cols'=>'45'));
         $mform->setType('description', PARAM_RAW);
         
-        $mform->addElement('passwordreveal', 'enrolmentkey', get_string('enrolmentkey', 'group'), 'maxlength="254" size="24"', get_string('enrolmentkey'));
+        $mform->addElement('passwordunmask', 'enrolmentkey', get_string('enrolmentkey', 'group'), 'maxlength="254" size="24"', get_string('enrolmentkey'));
         $mform->setHelpButton('enrolmentkey', array('groupenrolmentkey', get_string('enrolmentkey', 'group')), true);
         $mform->setType('enrolmentkey', PARAM_RAW);
         
