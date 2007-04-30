@@ -355,17 +355,9 @@ class grade_item extends grade_object {
         if (empty($this->grade_grades_raw)) {
             $this->load_raw();
         }
-
-        $grade_raw_array = array();
-
-        if (!empty($userid)) {
-            $grade_raw_array[$userid] = $this->grade_grades_raw[$userid];
-        } else {
-            $grade_raw_array = $this->grade_grades_raw;
-        }
         
         // TODO implement parsing of formula and calculation MDL-9643
-        foreach ($grade_raw_array as $r) {
+        foreach ($this->grade_grades_raw as $r) {
             $newgradevalue = 0; // TODO replace '0' with calculated value
             $r->update($newgradevalue, $howmodified, $note);
         }
