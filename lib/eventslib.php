@@ -161,6 +161,7 @@ function events_cleanup($component, $cachedevents) {
  */
 function queue_handler($handler, $eventdata, $failed=false) {
     global $USER;
+
     // adds a record to events_queue (if not exist)
     if (!$existing_event = get_record('events_queue', 'eventdata', serialize($eventdata))) {
         // add it 
@@ -200,7 +201,7 @@ function queue_handler($handler, $eventdata, $failed=false) {
  * @param eventdata - event data object
  * @return number of failed events
  */
-function trigger_events($eventname, $eventdata) {
+function trigger_event($eventname, $eventdata) {
     $failedevent = 0; // number of failed events.
     // pull out all registered event handlers
     if ($handlers = get_records('events_handlers', 'eventname', $eventname)) {
@@ -208,8 +209,8 @@ function trigger_events($eventname, $eventdata) {
             // either excute it now
             
             // if event type is 
-            if ($eventdata->schedule == "instant") {
-                if (trigger_event($handler, $eventdata)) {
+            if ($handler->schedule == 'instant') {
+                if (dispatch_event($handler, $eventdata)) {
                     continue;
                 } else {
                     // update the failed flag
@@ -231,7 +232,7 @@ function trigger_events($eventname, $eventdata) {
  * @param eventdata - event dataobject
  * @return bool - success or fail
  */
-function trigger_event($handler, $eventdata) {
+function dispatch_event($handler, $eventdata) {
     
     global $CFG;
     // checks for handler validity
