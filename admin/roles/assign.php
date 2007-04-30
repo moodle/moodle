@@ -286,10 +286,6 @@
         print_table($table);
     }
 
-    if ($context->contextlevel == CONTEXT_SYSTEM or ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID)) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer($course);
-    }
+    print_footer($course);
 
 ?>

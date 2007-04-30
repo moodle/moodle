@@ -144,11 +144,7 @@
 
     }
 
-    if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer($course);
-    }
+    print_footer($course);
 
     exit;
 ?>

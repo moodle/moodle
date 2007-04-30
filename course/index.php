@@ -157,11 +157,7 @@
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
 
-                if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-                    admin_externalpage_print_footer();
-                } else {
-                    print_footer();  
-                }
+                print_footer();  
                 exit();
             }
         }
@@ -326,11 +322,7 @@
     echo update_categories_button();
     echo '</div></div>';
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer();
-    }
+    print_footer();
 
 
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {

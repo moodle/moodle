@@ -453,10 +453,6 @@
     
     print_course_search();
     
-    if ($adminediting) {
-        admin_externalpage_print_footer();
-    } else {
-        print_footer();
-    }
+    print_footer();
 
 ?>
