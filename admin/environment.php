@@ -34,8 +34,7 @@
     require_once($CFG->libdir.'/environmentlib.php');
     require_once($CFG->libdir.'/componentlib.class.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('environment', $adminroot);
+    admin_externalpage_setup('environment');
 
 /// Parameters
     $action  = optional_param('action', '', PARAM_ACTION);
@@ -53,7 +52,7 @@
     $strmisc = get_string('miscellaneous');
 
 /// Print the header stuff
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
 /// Print the component download link
     echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.$USER->sesskey.'">'.$strupdate.'</a></div>';
@@ -133,5 +132,5 @@
     $status = check_moodle_environment($version, $environment_results);
 
 /// Print footer
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 ?>

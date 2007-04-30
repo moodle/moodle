@@ -13,8 +13,8 @@
     }
 
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('healthcenter', $adminroot);
+
+    admin_externalpage_setup('healthcenter');
 
     define('SEVERITY_NOTICE',      'notice');
     define('SEVERITY_ANNOYANCE',   'annoyance');
@@ -28,7 +28,7 @@
 
     $site = get_site();
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
 echo <<<STYLES
 <style type="text/css">
@@ -100,7 +100,7 @@ STYLES;
     }
 
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 
 function health_find_problems() {

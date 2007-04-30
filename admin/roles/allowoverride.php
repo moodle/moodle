@@ -6,11 +6,9 @@
  * and be in the roles_allow_override table.
  */
     require_once('../../config.php');
-/// check capabilities here
-
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('defineroles', $adminroot);
+
+    admin_externalpage_setup('defineroles');
 
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -48,7 +46,7 @@
     }
 /// displaying form here
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $currenttab='allowoverride';
     require_once('managetabs.php');
@@ -82,7 +80,7 @@
     echo '<input type="hidden" name="dummy" value="1" />'; // this is needed otherwise we do not know a form has been submitted
     echo '</div></form>';
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 // returns array
 function get_box_list($roleid, $arraylist){

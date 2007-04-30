@@ -57,9 +57,8 @@
 
     } else {
         require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
-        admin_externalpage_setup('stickyblocks', $adminroot);
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_setup('stickyblocks');
+        admin_externalpage_print_header();
     }
 
 
@@ -78,7 +77,7 @@
         echo '</tr></table>';
         print_footer();
     } else {
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
     }
 
 ?>

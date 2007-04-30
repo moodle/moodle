@@ -1,5 +1,5 @@
 <?php
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict') {
     print_box(get_string('mnetdisabled','mnet'));
@@ -89,5 +89,5 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     </form>
 </div>
 <?php
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 ?>

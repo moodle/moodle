@@ -8,8 +8,7 @@
     $enrol = optional_param('enrol', $CFG->enrol, PARAM_SAFEDIR);
     $CFG->pagepath = 'enrol';
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolment', $adminroot);
+    admin_externalpage_setup('enrolment');
 
 
 
@@ -41,7 +40,7 @@
 
     $str = get_strings(array('enrolmentplugins', 'users', 'administration', 'settings', 'edit'));
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $modules = get_list_of_plugins("enrol");
     $options = array();
@@ -102,6 +101,6 @@
     echo "</div>";
     echo "</form>";
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

@@ -6,8 +6,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$adminroot = admin_get_root();
-admin_externalpage_setup('upgradesettings', $adminroot); // now hidden page
+admin_externalpage_setup('upgradesettings'); // now hidden page
 
 // a caveat: we're depending on only having one admin access this page at once. why? the following line
 // (the function call to find_new_settings) must have the EXACT SAME RETURN VALUE both times that this
@@ -54,7 +53,7 @@ if ($data = data_submitted()) {
 
 // and finally, if we get here, then there are new settings and we have to print a form
 // to modify them
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 print_simple_box(get_string('upgradesettingsintro','admin'),'','100%','',5,'generalbox','');
 
@@ -67,7 +66,7 @@ echo '</fieldset>';
 echo '<div class="form-buttons"><input class="form-submit" type="submit" value="' . get_string('savechanges','admin') . '" /></div>';
 echo '</form>';
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 
 /**

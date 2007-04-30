@@ -6,11 +6,9 @@
 
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
+    admin_externalpage_setup('reportstats');
 
-    admin_externalpage_setup('reportstats', $adminroot);
-
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
 
     $courseid = optional_param('course', SITEID, PARAM_INT);
@@ -30,7 +28,7 @@
     }
 
     if ($mode == STATS_MODE_RANKED) {
-        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time, '', 3, $adminroot);
+        redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time, '', 3);
     }
 
     if (!$course = get_record("course","id",$courseid)) {
@@ -46,7 +44,7 @@
     require_login();
 
     if (empty($CFG->enablestats)) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3, $adminroot);
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
     }
 
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
@@ -72,6 +70,6 @@
 
     require_once($CFG->dirroot.'/course/report/stats/report.php');
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

@@ -39,12 +39,12 @@
     require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $course->id));
 
     function html_footer() {
-        global $course, $choose, $adminroot;
+        global $course, $choose;
 
         echo '</td></tr></table>';
 
         if ($course->id == SITEID) {
-                admin_externalpage_print_footer($adminroot);
+                admin_externalpage_print_footer();
         } else {
             print_footer($course);
         }
@@ -117,13 +117,11 @@
             if ($course->id == SITEID) {
 
                 if ($wdir == "/backupdata") {
-                    $adminroot = admin_get_root();
-                    admin_externalpage_setup('frontpagerestore', $adminroot);
-                    admin_externalpage_print_header($adminroot);
+                    admin_externalpage_setup('frontpagerestore');
+                    admin_externalpage_print_header();
                 } else {
-                    $adminroot = admin_get_root();
-                    admin_externalpage_setup('sitefiles', $adminroot);
-                    admin_externalpage_print_header($adminroot);
+                    admin_externalpage_setup('sitefiles');
+                    admin_externalpage_print_header();
 
                     print_heading(get_string("publicsitefileswarning"), "center", 2);
                     

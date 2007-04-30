@@ -1,5 +1,5 @@
 <?php
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 $logurl = $CFG->wwwroot.
           '/course/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
@@ -96,5 +96,5 @@ print_simple_box_start("center", "");
 </form>
 <?php
 print_simple_box_end();
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 ?>

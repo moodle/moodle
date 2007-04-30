@@ -3,9 +3,8 @@
     require_once('../../config.php');
 
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
 
-    admin_externalpage_setup('defineroles', $adminroot);
+    admin_externalpage_setup('defineroles');
 
     $roleid      = optional_param('roleid', 0, PARAM_INT);             // if set, we are editing a role
     $name        = optional_param('name', '', PARAM_MULTILANG);        // new role name
@@ -245,7 +244,7 @@
 
             } else if (confirm_sesskey()){
                 // show confirmation
-                admin_externalpage_print_header($adminroot);
+                admin_externalpage_print_header();
                 $optionsyes = array('action'=>'delete', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
                 $a = new object();
                 $a->id = $roleid;
@@ -253,7 +252,7 @@
                 $a->shortname = $roles[$roleid]->shortname;
                 $a->count = (int)count_records('role_assignments', 'roleid', $roleid);
                 notice_yesno(get_string('deleterolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, NULL, 'post', 'get');
-                admin_externalpage_print_footer($adminroot);
+                admin_externalpage_print_footer();
                 die;
             }
 
@@ -299,7 +298,7 @@
                 //ok - lets duplicate!
             } else {
                 // show confirmation
-                admin_externalpage_print_header($adminroot);
+                admin_externalpage_print_header();
                 $optionsyes = array('action'=>'duplicate', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
                 $optionsno  = array('action'=>'view', 'roleid'=>$roleid);
                 $a = new object();
@@ -307,7 +306,7 @@
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
                 notice_yesno(get_string('duplicaterolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
-                admin_externalpage_print_footer($adminroot);
+                admin_externalpage_print_footer();
                 die;
             }
 
@@ -356,7 +355,7 @@
 
             } else {
                 // show confirmation
-                admin_externalpage_print_header($adminroot);
+                admin_externalpage_print_header();
                 $optionsyes = array('action'=>'reset', 'roleid'=>$roleid, 'sesskey'=>sesskey(), 'confirm'=>1);
                 $optionsno  = array('action'=>'view', 'roleid'=>$roleid);
                 $a = new object();
@@ -370,7 +369,7 @@
                     $warning = get_string('resetrolesure', 'role', $a);
                 }
                 notice_yesno($warning, 'manage.php', 'manage.php', $optionsyes, $optionsno, 'post', 'get');
-                admin_externalpage_print_footer($adminroot);
+                admin_externalpage_print_footer();
                 die;
             }
 
@@ -382,7 +381,7 @@
 
 /// print UI now
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $currenttab = 'manage';
     include_once('managetabs.php');
@@ -535,7 +534,7 @@
         echo '</div>';
     }
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
     die;
 
 

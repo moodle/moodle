@@ -7,8 +7,7 @@
     include_once($CFG->dirroot.'/mnet/lib.php');
 
     require_login();
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('net', $adminroot);
+    admin_externalpage_setup('net');
 
     $context = get_context_instance(CONTEXT_SYSTEM);
 
@@ -16,19 +15,19 @@
 
 
     if (!extension_loaded('openssl')) {
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
 
     if (!$site = get_site()) {
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('nosite', '', '', NULL, true);
     }
 
     if (!function_exists('curl_init') ) {
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         set_config('mnet_dispatcher_mode', 'off');
         print_error('nocurl', 'mnet', '', NULL, true);
     }
@@ -90,7 +89,7 @@
     }
     $hosts = get_records_select('mnet_host', " id != '{$CFG->mnet_localhost_id}' AND deleted = '0' ",'wwwroot ASC' );
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 ?>
 <center>
 <form method="post" action="index.php">
@@ -148,5 +147,5 @@
 </center>
 
 <?php
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 ?>

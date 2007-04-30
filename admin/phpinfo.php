@@ -4,14 +4,9 @@
     require_once("../config.php");
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('phpinfo', $adminroot);
+    admin_externalpage_setup('phpinfo');
 
-    require_login();
-
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     echo '<div class="phpinfo">';
 
@@ -33,6 +28,6 @@
 
     echo '</div>';
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

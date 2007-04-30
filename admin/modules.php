@@ -9,8 +9,7 @@
     // defines
     define('MODULE_TABLE','module_administration_table');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('managemodules', $adminroot);
+    admin_externalpage_setup('managemodules');
 
     $show    = optional_param('show', '', PARAM_SAFEDIR);
     $hide    = optional_param('hide', '', PARAM_SAFEDIR);
@@ -30,7 +29,7 @@
     $stractivitymodule = get_string("activitymodule");
     $strshowmodulecourse = get_string('showmodulecourse');
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_heading($stractivities);
 
@@ -67,7 +66,7 @@
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename),
                          "modules.php?delete=$delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                          "modules.php");
-            admin_externalpage_print_footer($adminroot);
+            admin_externalpage_print_footer();
             exit;
 
         } else {  // Delete everything!!
@@ -213,6 +212,6 @@
 
     $table->print_html();
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

@@ -5,8 +5,7 @@
     require_once(dirname(__FILE__) . "/../../config.php");
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('mnetenrol', $adminroot);
+    admin_externalpage_setup('mnetenrol');
     $CFG->pagepath = 'admin/mnet';
 
 
@@ -18,7 +17,7 @@
 
     /// get language strings
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_box(get_string("remoteenrolhosts_desc", "mnet"));
 
@@ -57,6 +56,6 @@
     echo '</table>'
        . '</div>';
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

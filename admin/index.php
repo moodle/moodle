@@ -545,8 +545,8 @@
 
 /// Print default admin page with notifications.
 
-    admin_externalpage_setup('adminnotifications', $adminroot);
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_setup('adminnotifications');
+    admin_externalpage_print_header();
 
 /// Deprecated database! Warning!!
     if (!empty($CFG->migrated_to_new_db)) {
@@ -624,7 +624,7 @@
     }
 
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 
 ?>

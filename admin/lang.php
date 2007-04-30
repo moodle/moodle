@@ -5,8 +5,8 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('langedit', $adminroot);    
+
+    admin_externalpage_setup('langedit');    
 
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
@@ -77,7 +77,7 @@
     }
 
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     if (!$mode) {
         print_box_start();
@@ -88,7 +88,7 @@
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
         print_box_end();
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -211,7 +211,7 @@
         if (!empty($somethingfound)) {
             print_continue("lang.php");
         } else {
-            notice(get_string("languagegood"), "lang.php", '', $adminroot);
+            notice(get_string("languagegood"), "lang.php");
         }
 
     } else if ($mode == "compare") {
@@ -479,7 +479,7 @@
         }
     }
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 //////////////////////////////////////////////////////////////////////
 

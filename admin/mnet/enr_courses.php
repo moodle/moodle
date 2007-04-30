@@ -10,8 +10,7 @@
     }
 
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('mnetenrol', $adminroot);
+    admin_externalpage_setup('mnetenrol');
     $CFG->pagepath = 'admin/mnet';
 
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
@@ -24,7 +23,7 @@
 
     /// Print the page
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_box('<strong>' . s($host->name) . ' </strong><br />'
               . get_string("enrolcourses_desc", "mnet"));
@@ -53,6 +52,6 @@
     }
     echo '</table></div>';
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

@@ -10,17 +10,16 @@ require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 require_once $CFG->libdir . '/adminlib.php';
 include_once $CFG->dirroot . '/mnet/lib.php';
 
-require_login();
-$adminroot = admin_get_root();
-admin_externalpage_setup('ssoaccesscontrol', $adminroot);
-admin_externalpage_print_header($adminroot);
+
+admin_externalpage_setup('ssoaccesscontrol');
+admin_externalpage_print_header();
 
 $addcategory    = optional_param('addcategory', 0, PARAM_BOOL);
 $removecategory = optional_param('removecategory', 0, PARAM_BOOL);
 $addcourse      = optional_param('addcourse', 0, PARAM_BOOL);
 $removecourse   = optional_param('removecourse', 0, PARAM_BOOL);
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 $sesskey = sesskey();
 $formerror = array();
 
@@ -250,6 +249,6 @@ if (count($courses) < 1) {
 <?php
 
 print_simple_box_end();
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 ?>

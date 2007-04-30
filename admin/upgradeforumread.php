@@ -3,14 +3,10 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/mod/forum/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('upgradeforumread', $adminroot);
+
+    admin_externalpage_setup('upgradeforumread');
 
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
-
-    require_login();
-
-    require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     if ($CFG->version < 2005042300) {
         error("This script does not work with this old version of Moodle");
@@ -25,14 +21,14 @@
 
     $strupgradingdata  = get_string('upgradingdata', 'admin');
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
     print_heading($strupgradingdata);
 
     if (!data_submitted() or empty($confirm) or !confirm_sesskey()) {
         $optionsyes = array('confirm'=>'1', 'sesskey'=>sesskey());
         notice_yesno(get_string('upgradeforumreadinfo', 'admin'),
                     'upgradeforumread.php', 'index.php', $optionsyes, NULL, 'post', 'get');
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -108,6 +104,6 @@
 
     print_continue('index.php');
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

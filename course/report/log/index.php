@@ -75,9 +75,8 @@
         switch ($logformat) {
             case 'showashtml':
                 if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-                    $adminroot = admin_get_root();
-                    admin_externalpage_setup('reportlog', $adminroot);
-                    admin_externalpage_print_header($adminroot);
+                    admin_externalpage_setup('reportlog');
+                    admin_externalpage_print_header();
 
                 } else {
                     print_header($course->shortname .': '. $strlogs, $course->fullname, 
@@ -123,9 +122,8 @@
 
     } else {
         if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-                    $adminroot = admin_get_root();
-                    admin_externalpage_setup('reportlog', $adminroot);
-                    admin_externalpage_print_header($adminroot);
+                    admin_externalpage_setup('reportlog');
+                    admin_externalpage_print_header();
         } else {
             print_header($course->shortname .': '. $strlogs, $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
@@ -147,7 +145,7 @@
     }
 
     if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
     } else {
         print_footer($course);
     }

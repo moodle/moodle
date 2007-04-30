@@ -5,7 +5,7 @@ $logurl = $CFG->wwwroot.
           '&amp;date=0'.
           '&amp;modid=&amp;modaction=0&amp;logformat=showashtml';
 
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
     $tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
@@ -131,5 +131,5 @@ if (isset($mnet_peer->ip_address) && '' != $mnet_peer->ip_address){
 </form>
 <?php
 print_simple_box_end();
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 ?>

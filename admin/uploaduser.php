@@ -6,16 +6,14 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/adminlib.php');
-$adminroot = admin_get_root();
-admin_externalpage_setup('uploadusers', $adminroot);
+
+admin_externalpage_setup('uploadusers');
 
 $createpassword = optional_param('createpassword', 0, PARAM_BOOL);
 $updateaccounts = optional_param('updateaccounts', 0, PARAM_BOOL);
 $allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
-require_login();
-
-require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 
 if (! $site = get_site()) {
     error("Could not find site-level course");
@@ -47,7 +45,7 @@ if (isset($CFG->CSV_DELIMITER)) {
 
 /// Print the header
 
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 
 /// If a file has been uploaded, then process it
@@ -402,7 +400,7 @@ echo '<input type="submit" value="'.$struploadusers.'" />';
 echo '</div></form><br />';
 echo '</div>';
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 
 

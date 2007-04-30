@@ -4,17 +4,13 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-$adminroot = admin_get_root();
-admin_externalpage_setup('multilangupgrade', $adminroot);
+
+admin_externalpage_setup('multilangupgrade');
 
 $go = optional_param('go', 0, PARAM_BOOL);
 
-require_login();
-
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-
 ###################################################################
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 print_heading(get_string('multilangupgrade', 'admin'));
 
@@ -23,7 +19,7 @@ $strmultilangupgrade = get_String('multilangupgradeinfo', 'admin');
 if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
     $optionsyes = array('go'=>1, 'sesskey'=>sesskey());
     notice_yesno($strmultilangupgrade, 'multilangupgrade.php', 'index.php', $optionsyes, null, 'post', 'get');
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
     die;
 }
 
@@ -96,7 +92,7 @@ notify('...finished', 'notifysuccess');
 
 print_continue('index.php');
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 die;
 
 

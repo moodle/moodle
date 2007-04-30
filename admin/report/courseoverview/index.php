@@ -4,11 +4,9 @@
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
+    admin_externalpage_setup('reportcourseoverview');
 
-    admin_externalpage_setup('reportcourseoverview', $adminroot);
-
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $report     = optional_param('report', STATS_REPORT_ACTIVE_COURSES, PARAM_INT);
     $time       = optional_param('time', 0, PARAM_INT);
@@ -17,7 +15,7 @@
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_SYSTEM, SITEID));  // needed?
 
     if (empty($CFG->enablestats)) {
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3, $adminroot);
+        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=stats", get_string('mustenablestats', 'admin'), 3);
     }
 
 
@@ -46,7 +44,7 @@
     $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id, $adminroot);
+        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     echo '<form action="index.php" method="post">'."\n";
@@ -115,6 +113,6 @@
             print_table($table);
         }
     }
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

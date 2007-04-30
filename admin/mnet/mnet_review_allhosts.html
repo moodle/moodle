@@ -1,5 +1,5 @@
 <?php
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 $tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
 $tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
@@ -18,5 +18,5 @@ print_simple_box_start("center", "");
 </table>
 <?php
 print_simple_box_end();
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 ?>

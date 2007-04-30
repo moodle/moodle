@@ -11,17 +11,10 @@
         }
     }
     
-    // Ugly hack. This file may be included from admin or course reports.
-    // For admin reports, $adminroot is set. We basically use it to decide
-    // what kind of footer we need to print.
-    if (!isset($adminroot)) {
-        $adminroot = false;
-    }
-
     $reportoptions = stats_get_report_options($course->id, $mode);
     $timeoptions = report_stats_timeoptions($mode);
     if (empty($timeoptions)) {
-        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id, $adminroot);
+        error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     $table->width = '*';
@@ -39,7 +32,7 @@
             .' ORDER BY r.sortorder';
         
         if (!$us = get_records_sql($sql)) {
-            error('Cannot enter detailed view: No users found for this course.', $adminroot);
+            error('Cannot enter detailed view: No users found for this course.');
         }
 
         foreach ($us as $u) {
@@ -76,7 +69,7 @@
 
     if (!empty($report) && !empty($time)) {
         if ($report == STATS_REPORT_LOGINS && $course->id != SITEID) {
-            error('This type of report is only available for the site course', $adminroot);
+            error('This type of report is only available for the site course');
         }
         $timesql = 
         $param = stats_get_parameters($time,$report,$course->id,$mode);

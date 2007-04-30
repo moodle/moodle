@@ -9,8 +9,7 @@
     // defines
     define('FILTER_TABLE','filter_administration_table');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('managefilters', $adminroot);
+    admin_externalpage_setup('managefilters');
 
     // get values from page
     $params = new object();
@@ -263,7 +262,7 @@
     // Display logic
     //==============================
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_heading_with_help($txt->managefilters, 'filters');
 
@@ -272,6 +271,6 @@
 
     // cache control table has been removed
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

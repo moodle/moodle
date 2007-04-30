@@ -5,11 +5,9 @@
     require_once($CFG->dirroot.'/course/report/log/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
+    admin_externalpage_setup('reportlog');
 
-    admin_externalpage_setup('reportlog', $adminroot);
-
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
 
     $course = get_site();
@@ -28,6 +26,6 @@
     print_heading($heading, 'center', 3);
 
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

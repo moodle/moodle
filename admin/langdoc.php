@@ -11,8 +11,7 @@
  */
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('langedit', $adminroot);
+    admin_externalpage_setup('langedit');
 
     //
     // Some local configuration
@@ -32,7 +31,7 @@
     $strthislanguage = get_string("thislanguage");
     $stredithelpdocs = get_string('edithelpdocs', 'admin');
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     $currentlang = current_language();
     $langdir = "$CFG->dataroot/lang/$currentlang";
@@ -40,7 +39,7 @@
 
 
     if (!file_exists($langdir)) {
-        error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang','',$adminroot);
+        error ('to edit this language pack, you need to put it in '.$CFG->dataroot.'/lang');
     }
     // Shall I save POSTed data?
 
@@ -49,7 +48,7 @@
             if (langdoc_save_file($langdir, $currentfile, $_POST['filedata'])) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                error("Could not save the file '$currentfile'!", "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey", $adminroot);
+                error("Could not save the file '$currentfile'!", "langdoc.php?currentfile=$currentfile&sesskey=$USER->sesskey");
             }
         }
     }
@@ -61,7 +60,7 @@
     // Get all files from /docs directory
 
     if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
-        error("Could not find English language docs files!",'',$adminroot);
+        error("Could not find English language docs files!");
     }
 
     $options = array();
@@ -81,7 +80,7 @@
     // Get all files from /help directory
 
     if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
-        error("Could not find English language help files!",'',$adminroot);
+        error("Could not find English language help files!");
     }
 
     foreach ($files as $filekey => $file) {    // check all the help files.
@@ -194,7 +193,7 @@ $langdir/$currentfile")."</font></p>";
         error_reporting($CFG->debug);
     }
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 //////////////////////////////////////////////////////////////////////
 

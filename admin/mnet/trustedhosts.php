@@ -6,20 +6,19 @@
     include_once($CFG->dirroot.'/mnet/lib.php');
 
     require_login();
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('trustedhosts', $adminroot);
+    admin_externalpage_setup('trustedhosts');
 
     $context = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/site:config', $context, $USER->id, true, "nopermissions");
 
     if (!extension_loaded('openssl')) {
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         print_error('requiresopenssl', 'mnet', '', NULL, true);
     }
     
     if (!$site = get_site()) {
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         print_error('nosite', '', '', NULL, true);
     }
 

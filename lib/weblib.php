@@ -2421,6 +2421,10 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME, $COURSE;
 
+    if (defined('ADMIN_EXT_HEADER_PRINTED') and !defined('ADMIN_EXT_FOOTER_PRINTED')) {
+        admin_externalpage_print_footer();  
+    }
+
 /// Course links
     if ($course) {
         if (is_string($course) && $course == 'none') {          // Don't print any links etc
@@ -4715,7 +4719,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function error ($message, $link='', $adminroot=false) {
+function error ($message, $link='') {
 
     global $CFG, $SESSION;
     $message = clean_text($message);   // In case nasties are in here
@@ -4749,8 +4753,8 @@ function error ($message, $link='', $adminroot=false) {
         }
     }
 
-    if ($adminroot) {
-        admin_externalpage_print_footer($adminroot);
+    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
+        admin_externalpage_print_footer();
     } else {
         print_continue($link);
         print_footer();
@@ -4770,9 +4774,8 @@ function error ($message, $link='', $adminroot=false) {
  * @param string $errorcode The name of the string from error.php to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
- * @param boolean $adminroot Is the page an admin settings page?
  */
-function print_error ($errorcode, $module='', $link='', $a=NULL, $adminroot=false) {
+function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
     global $CFG;
 
@@ -4795,7 +4798,7 @@ function print_error ($errorcode, $module='', $link='', $a=NULL, $adminroot=fals
                '<p class="errorcode">'.
                '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
                  get_string('moreinformation').'</a></p>';
-    error($message, $link, $adminroot);
+    error($message, $link);
 }
 /**
  * Returns a string of html with an image of a help icon linked to a help page on a number of help topics.
@@ -4980,7 +4983,7 @@ function editorshortcutshelpbutton() {
  * @param string $link ?
  * @todo Finish documenting this function
  */
-function notice ($message, $link='', $course=NULL, $adminroot='') {
+function notice ($message, $link='', $course=NULL) {
     global $CFG, $SITE;
 
     $message = clean_text($message);
@@ -4989,8 +4992,8 @@ function notice ($message, $link='', $course=NULL, $adminroot='') {
     print_continue($link);
 
     // xhtml strict fix, need to make sure it's the right footer
-    if ($adminroot) {
-        admin_externalpage_print_footer($adminroot);
+    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -5051,7 +5054,7 @@ if (!function_exists('error_get_last')) {
  *      the correct input) and then encode for where it's needed
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
-function redirect($url, $message='', $delay=-1, $adminroot = '') {
+function redirect($url, $message='', $delay=-1) {
 
     global $CFG;
 
@@ -5138,8 +5141,8 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     }
 
     // fix for MDL-8517, admin pages redirections causes bad xhtml
-    if ($adminroot) {
-        admin_externalpage_print_footer($adminroot);  
+    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
+        admin_externalpage_print_footer();  
     } else {
         print_footer('none');
     }

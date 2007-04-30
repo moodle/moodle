@@ -6,8 +6,8 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('langimport', $adminroot);
+
+    admin_externalpage_setup('langimport');
 
     $mode          = optional_param('mode', 0, PARAM_INT);     //phase
     $pack          = optional_param('pack', '', PARAM_FILE);   //pack to install
@@ -27,7 +27,7 @@
     $strthislanguage = get_string("thislanguage");
     $title = $strlang;
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     //reset and diagnose lang cache permissions
     @unlink($CFG->dataroot.'/cache/languages');
@@ -63,7 +63,7 @@
 
                         case INSTALLED:
                             get_list_of_languages(true); //refresh lang cache
-                            redirect('langimport.php', get_string('langpackupdated','admin',$pack), -1, $adminroot);
+                            redirect('langimport.php', get_string('langpackupdated','admin',$pack), -1);
                         break;
 
                         case UPTODATE:
@@ -112,7 +112,7 @@
                 get_list_of_languages(true); //refresh lang cache
                 //delete the direcotries
                 if ($rm1 or $rm2) {
-                    redirect('langimport.php', get_string('langpackremoved','admin'), 3, $adminroot);
+                    redirect('langimport.php', get_string('langpackremoved','admin'), 3);
                 } else {    //nothing deleted, possibly due to permission error
                     error('An error has occurred, language pack is not completely uninstalled, please check file permissions');
                 }
@@ -213,9 +213,9 @@
             }
 
             if ($updated) {
-                notice(get_string('langupdatecomplete','admin'), 'langimport.php', NULL, $adminroot);
+                notice(get_string('langupdatecomplete','admin'), 'langimport.php');
             } else {
-                notice(get_string('nolangupdateneeded','admin'), 'langimport.php', NULL, $adminroot);
+                notice(get_string('nolangupdateneeded','admin'), 'langimport.php');
             }
 
         break;
@@ -326,7 +326,7 @@
 
     }    //close of main switch
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
     /* returns a list of available language packs from a
      * local copy shipped with standard moodle distro

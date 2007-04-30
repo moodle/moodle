@@ -11,8 +11,7 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-$adminroot = admin_get_root();
-admin_externalpage_setup('userauthentication', $adminroot);
+admin_externalpage_setup('userauthentication');
 
 $action = optional_param('action', '', PARAM_ACTION);
 $auth   = optional_param('auth', '', PARAM_SAFEDIR);
@@ -227,7 +226,7 @@ foreach ($displayauths as $auth => $name) {
 }
 
 // output form
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 //print stus messages
 if ($status !== '') {
@@ -298,6 +297,6 @@ echo '</fieldset>';
 echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges', 'admin').'" /></div>';
 echo '</div>';
 echo '</form>';
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 ?>

@@ -7,8 +7,7 @@
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('timezoneimport', $adminroot);
+    admin_externalpage_setup('timezoneimport');
 
     $ok = optional_param('ok', 0, PARAM_BOOL);
 
@@ -17,7 +16,7 @@
 
     $strimporttimezones = get_string('importtimezones', 'admin');
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_heading($strimporttimezones);
 
@@ -33,7 +32,7 @@
 
         notice_yesno($message, 'timezoneimport.php?ok=1&amp;sesskey='.sesskey(), 'index.php');
 
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
         exit;
     }
 
@@ -123,6 +122,6 @@
         print_continue('index.php');
     }
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

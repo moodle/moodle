@@ -6,8 +6,7 @@
 require_once '../config.php';
 require_once $CFG->libdir.'/adminlib.php';
 
-$adminroot = admin_get_root();
-admin_externalpage_setup('userauthentication', $adminroot);
+admin_externalpage_setup('userauthentication');
 $auth = required_param('auth', PARAM_SAFEDIR);
 $authplugin = get_auth_plugin($auth);
 $err = array();
@@ -59,7 +58,7 @@ foreach ($modules as $module) {
 asort($options);
 
 // output configuration form
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 // choose an authentication method
 echo "<form $CFG->frametarget id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
@@ -80,7 +79,7 @@ echo '<p style="text-align: center"><input type="submit" value="' . get_string("
 echo "</div>\n";
 echo "</form>\n";
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 exit;
 
 /// Functions /////////////////////////////////////////////////////////////////

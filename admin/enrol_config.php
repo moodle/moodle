@@ -5,8 +5,7 @@
     require_once("../config.php");
     require_once($CFG->libdir.'/adminlib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('enrolment', $adminroot);
+    admin_externalpage_setup('enrolment');
 
     $enrol = required_param('enrol', PARAM_ALPHA);
     $CFG->pagepath = 'enrol/' . $enrol;
@@ -42,7 +41,7 @@
     }
     asort($options);
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     echo "<form $CFG->frametarget id=\"enrolmenu\" method=\"post\" action=\"enrol_config.php\">";
     echo "<div>";
@@ -66,7 +65,7 @@
     echo "</div>";
     echo "</form>";
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
     exit;
 ?>

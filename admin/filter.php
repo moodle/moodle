@@ -6,8 +6,7 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('managefilters', $adminroot);
+    admin_externalpage_setup('managefilters');
 
     // get parameters
     $param = new Object;
@@ -71,7 +70,7 @@
     //==============================
 
     $filtername = ucfirst($filtername);
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
     print_heading( $filtername );
 
     print_simple_box(get_string("configwarning", "admin"), "center", "50%");
@@ -94,5 +93,5 @@
     <?php
     print_simple_box_end();
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 ?>

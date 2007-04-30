@@ -4,18 +4,14 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-$adminroot = admin_get_root();
-admin_externalpage_setup('replace', $adminroot);
+
+admin_externalpage_setup('replace');
 
 $search  = optional_param('search', '', PARAM_RAW);
 $replace = optional_param('replace', '', PARAM_RAW);
 
-require_login();
-
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
-
 ###################################################################
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 print_heading('Search and replace text throughout the whole database');
 
@@ -32,7 +28,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
     echo '</form>';
     echo '</div>';
     print_simple_box_end();
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
     die;
 }
 
@@ -73,6 +69,6 @@ notify('...finished');
 
 print_continue('index.php');
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 ?>

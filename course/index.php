@@ -108,9 +108,8 @@
     
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
-        admin_externalpage_setup('coursemgmt', $adminroot);    
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_setup('coursemgmt');    
+        admin_externalpage_print_header();
     } else {
         print_header("$site->shortname: $strcategories", $strcourses, 
                   $strcategories, '', '', true, update_categories_button());    
@@ -159,7 +158,7 @@
                              "index.php?sesskey=$USER->sesskey");
 
                 if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-                    admin_externalpage_print_footer($adminroot);
+                    admin_externalpage_print_footer();
                 } else {
                     print_footer();  
                 }
@@ -328,7 +327,7 @@
     echo '</div></div>';
 
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
     } else {
         print_footer();
     }

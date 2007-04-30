@@ -4,9 +4,9 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('manageblocks', $adminroot);
     require_once($CFG->libdir.'/blocklib.php');
+
+    admin_externalpage_setup('manageblocks');
 
     $blockid = required_param('block', PARAM_INT);
 
@@ -55,7 +55,7 @@
     $CFG->pagepath = 'block/' . $block->name() . '/config';
 
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_heading($strblockname);
 
@@ -70,6 +70,6 @@
     echo '</p>';
     $block->config_print();
     echo '</form>';
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

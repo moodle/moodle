@@ -17,8 +17,8 @@
     $lu           = optional_param('lu', '2', PARAM_INT);            // show local users
     $acl          = optional_param('acl', '0', PARAM_INT);           // id of user to tweak mnet ACL (requires $access)
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('editusers', $adminroot);
+
+    admin_externalpage_setup('editusers');
 
     // Let's see if we have *any* mnet users. Just ask for a single record
     $mnet_users = get_records_select('user', " auth='mnet' AND mnethostid != '{$CFG->mnet_localhost_id}' ", '', '*', '0', '1');
@@ -69,7 +69,7 @@
         $securewwwroot = str_replace('http:','https:',$CFG->wwwroot);
     }
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     if ($confirmuser and confirm_sesskey()) {
         if (!$user = get_record('user', 'id', $confirmuser)) {
@@ -106,7 +106,7 @@
             print_heading(get_string('deleteuser', 'admin'));
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
             notice_yesno(get_string('deletecheckfull', '', "'$fullname'"), 'user.php', 'user.php', $optionsyes, NULL, 'post', 'get');
-            admin_externalpage_print_footer($adminroot);
+            admin_externalpage_print_footer();
             die;
         } else if (data_submitted() and !$user->deleted) {
             //following code is also used in auth sync scripts
@@ -421,7 +421,7 @@
     }
 
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 
 ?>

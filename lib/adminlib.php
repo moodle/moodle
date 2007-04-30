@@ -722,12 +722,11 @@ function is_dataroot_insecure() {
 
 ///        require_once('.../config.php');
 ///        require_once($CFG->libdir.'/adminlib.php');
-///        $adminroot = admin_get_root();
-///        admin_externalpage_setup('foo', $adminroot);
+///        admin_externalpage_setup('foo');
 ///        // functionality like processing form submissions goes here
-///        admin_externalpage_print_header($adminroot);
+///        admin_externalpage_print_header();
 ///        // your HTML goes here
-///        admin_externalpage_print_footer($adminroot);
+///        admin_externalpage_print_footer();
 
 /// The admin_externalpage_setup() function call ensures the user is logged in,
 /// and makes sure that they have the proper role permission to access the page.
@@ -2632,9 +2631,11 @@ class admin_setting_special_debugdisplay extends admin_setting_configcheckbox {
 
 // Code for a function that helps externalpages print proper headers and footers
 // N.B.: THIS FUNCTION HANDLES AUTHENTICATION
-function admin_externalpage_setup($section, $adminroot) {
+function admin_externalpage_setup($section) {
 
     global $CFG, $PAGE, $USER;
+
+    $adminroot = admin_get_root();
 
     require_once($CFG->libdir . '/blocklib.php');
     require_once($CFG->dirroot . '/'.$CFG->admin.'/pagelib.php');
@@ -2681,9 +2682,11 @@ function admin_externalpage_setup($section, $adminroot) {
 
 }
 
-function admin_externalpage_print_header($adminroot) {
+function admin_externalpage_print_header() {
 
     global $CFG, $PAGE, $SITE, $THEME;
+
+    define('ADMIN_EXT_HEADER_PRINTED', 'true');
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
@@ -2714,9 +2717,11 @@ function admin_externalpage_print_header($adminroot) {
     }
 }
 
-function admin_externalpage_print_footer($adminroot) {
+function admin_externalpage_print_footer() {
 
     global $CFG, $PAGE, $SITE, $THEME;
+
+    define('ADMIN_EXT_FOOTER_PRINTED', 'true');
 
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);

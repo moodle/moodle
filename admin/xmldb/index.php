@@ -53,8 +53,8 @@
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/ddllib.php'); // Install/upgrade related db functions
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('xmldbeditor', $adminroot);
+
+    admin_externalpage_setup('xmldbeditor');
 
 /// Add other used libraries
     require_once($CFG->libdir . '/xmlize.php');
@@ -105,10 +105,10 @@
                         $standard_javascript = $CFG->javascript;  // Save original javascript file
                         $CFG->javascript = $CFG->dirroot.'/'.$CFG->admin.'/xmldb/javascript.php';  //Use our custom javascript code
                     /// Go with standard admin header
-                        admin_externalpage_print_header($adminroot);
+                        admin_externalpage_print_header();
                         print_heading($xmldb_action->getTitle());
                         echo $xmldb_action->getOutput();
-                        admin_externalpage_print_footer($adminroot);
+                        admin_externalpage_print_footer();
                         break;
                     case ACTION_GENERATE_XML:
                         header('Content-type: application/xhtml+xml');

@@ -381,7 +381,7 @@ function profile_list_categories() {
 
 
 /// Are we adding or editing a cateogory?
-function profile_edit_category($id, $redirect, $adminroot) {
+function profile_edit_category($id, $redirect) {
     global $CFG;
 
     require_once('index_category_form.php');
@@ -418,16 +418,16 @@ function profile_edit_category($id, $redirect, $adminroot) {
         }
 
         /// Print the page
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         print_heading($strheading);
         $categoryform->display();
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
         die;
     }
 
 }
 
-function profile_edit_field($id, $datatype, $redirect, $adminroot) {
+function profile_edit_field($id, $datatype, $redirect) {
     global $CFG;
 
     if (!$field = get_record('user_info_field', 'id', $id)) {
@@ -462,10 +462,10 @@ function profile_edit_field($id, $datatype, $redirect, $adminroot) {
         }
 
         /// Print the page
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_print_header();
         print_heading($strheading);
         $fieldform->display();
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
         die;
     }
 }

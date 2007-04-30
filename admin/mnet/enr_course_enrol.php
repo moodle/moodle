@@ -10,8 +10,7 @@
         error(get_string('confirmsesskeybad', 'error'));
     }
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('mnetenrol', $adminroot);
+    admin_externalpage_setup('mnetenrol');
     $CFG->pagepath = 'admin/mnet';
 
     require_once("$CFG->dirroot/enrol/enrol.class.php");   /// Open the factory class
@@ -255,7 +254,7 @@ $strshowall = get_string('showall');
 $strparticipants = get_string('participants');
 $strsearchresults = get_string('searchresults');
 
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 print_box('<strong>' . s($mnet_peer->name) . ' : ' 
           . format_string($course->shortname) .' '. format_string($course->fullname) 
@@ -276,6 +275,6 @@ if (!empty($errors)) {
 }
 
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 ?>

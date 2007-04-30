@@ -155,9 +155,8 @@
         include_once($CFG->dirroot.'/user/tabs.php');
     } else if ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID) {
         require_once($CFG->libdir.'/adminlib.php');
-        $adminroot = admin_get_root();
-        admin_externalpage_setup('frontpageroles', $adminroot);
-        admin_externalpage_print_header($adminroot);
+        admin_externalpage_setup('frontpageroles');
+        admin_externalpage_print_header();
         $currenttab = '';
         $tabsmode = 'override';
         include_once('tabs.php');
@@ -225,7 +224,7 @@
     }
 
     if ($context->contextlevel == CONTEXT_SYSTEM or ($context->contextlevel==CONTEXT_COURSE and $context->instanceid == SITEID)) {
-        admin_externalpage_print_footer($adminroot);
+        admin_externalpage_print_footer();
     } else {
         print_footer($course);
     }

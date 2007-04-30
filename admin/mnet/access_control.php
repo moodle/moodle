@@ -13,12 +13,10 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);
 $action       = trim(strtolower(optional_param('action', '', PARAM_ALPHA)));
 
 require_login();
-$adminroot = admin_get_root();
 
+admin_externalpage_setup('ssoaccesscontrol');
 
-admin_externalpage_setup('ssoaccesscontrol', $adminroot);
-
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet', '', NULL, true);
@@ -234,6 +232,6 @@ foreach ($formerror as $error) {
 }
 
 print_simple_box_end();
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 ?>

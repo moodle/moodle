@@ -5,8 +5,7 @@
 
     $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('themeselector', $adminroot);
+    admin_externalpage_setup('themeselector');
 
     unset($SESSION->theme);
 
@@ -28,7 +27,7 @@
         }
         if (set_config("theme", $choose)) {
             theme_setup($choose);
-              admin_externalpage_print_header($adminroot);
+              admin_externalpage_print_header();
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
 
@@ -43,7 +42,7 @@
                 echo format_text(implode('', $file), FORMAT_MOODLE);
                 print_simple_box_end();
             }
-              admin_externalpage_print_footer($adminroot);
+              admin_externalpage_print_footer();
             exit;
         } else {
             error("Could not set the theme!");
@@ -135,7 +134,7 @@
     echo "</table>";
 
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 
 ?>

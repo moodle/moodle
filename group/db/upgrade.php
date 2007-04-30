@@ -67,7 +67,6 @@ function upgrade_group_db($continueto) {
         //initialize default group settings now
         install_group_db();
 
-        $adminroot = admin_get_root();
         print_continue($continueto);
         print_footer('none');
         exit;

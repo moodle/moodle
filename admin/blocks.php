@@ -8,8 +8,7 @@
     require_once($CFG->libdir.'/tablelib.php');
     require_once($CFG->libdir.'/ddllib.php');
 
-    $adminroot = admin_get_root();
-    admin_externalpage_setup('manageblocks', $adminroot);
+    admin_externalpage_setup('manageblocks');
 
     $confirm  = optional_param('confirm', 0, PARAM_BOOL);
     $hide     = optional_param('hide', 0, PARAM_INT);
@@ -30,7 +29,7 @@
     $strmultiple = get_string('blockmultiple', 'admin');
     $strshowblockcourse = get_string('showblockcourse');
 
-    admin_externalpage_print_header($adminroot);
+    admin_externalpage_print_header();
 
     print_heading($strmanageblocks);
 
@@ -76,7 +75,7 @@
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
                          'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.$USER->sesskey,
                          'blocks.php');
-            admin_externalpage_print_footer($adminroot);
+            admin_externalpage_print_footer();
             exit;
 
         } else {
@@ -246,6 +245,6 @@
         $table->print_html();
     }
 
-    admin_externalpage_print_footer($adminroot);
+    admin_externalpage_print_footer();
 
 ?>

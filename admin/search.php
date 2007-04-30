@@ -7,8 +7,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $query = trim(stripslashes_safe(required_param('query', PARAM_NOTAGS)));  // Search string
 
-$adminroot = admin_get_root();
-admin_externalpage_setup('search', $adminroot); // now hidden page
+admin_externalpage_setup('search'); // now hidden page
 
 $CFG->adminsearchquery = $query;  // So we can reference it in search boxes later in this invocation
 
@@ -50,7 +49,7 @@ if ($data = data_submitted()) {
 
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
-admin_externalpage_print_header($adminroot);
+admin_externalpage_print_header();
 
 if ($statusmsg != '') {
     notify ($statusmsg);
@@ -74,7 +73,7 @@ if ($resultshtml != '') {
 echo '</fieldset>';
 echo '</form>';
 
-admin_externalpage_print_footer($adminroot);
+admin_externalpage_print_footer();
 
 
 /**
