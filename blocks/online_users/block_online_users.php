@@ -73,6 +73,7 @@ class block_online_users extends block_base {
                       $courseselect
                       $timeselect
                       $groupselect
+                GROUP BY u.id 
                 ORDER BY ul.timeaccess DESC";
         
         
