@@ -639,7 +639,13 @@ HTMLArea.prototype.generate = function () {
     this._htmlArea = htmlarea;
 
     // insert the editor before the textarea.
-    textarea.parentNode.insertBefore(htmlarea, textarea);
+    //Bug fix - unless the textarea is nested within its label, in which case insert editor before label.
+    if (textarea.parentNode.nodeName.toLowerCase()=='label') {
+        textarea.parentNode.parentNode.insertBefore(htmlarea,textarea.parentNode);
+    }
+    else {
+        textarea.parentNode.insertBefore(htmlarea, textarea);
+    }
 
     if (textarea.form) {
         // we have a form, on submit get the HTMLArea content and
