@@ -2422,7 +2422,8 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     global $USER, $CFG, $THEME, $COURSE;
 
     if (defined('ADMIN_EXT_HEADER_PRINTED') and !defined('ADMIN_EXT_FOOTER_PRINTED')) {
-        admin_externalpage_print_footer();  
+        admin_externalpage_print_footer();
+        return;
     }
 
 /// Course links
