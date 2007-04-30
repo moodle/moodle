@@ -1828,11 +1828,11 @@ function require_logout() {
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
-        if (!isset($USER->auth) || empty($USER->auth)) {
-            $USER->auth = get_field('user', 'auth', 'id', $USER->id);
+        $authsequence = get_enabled_auth_plugins(); // auths, in sequence
+        foreach($authsequence as $authname) {
+            $authplugin = get_auth_plugin($authname);
+            $authplugin->prelogout_hook();
         }
-        $authplugin = get_auth_plugin($USER->auth);
-        $authplugin->prelogout_hook();
     }
 
     if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
