@@ -181,9 +181,7 @@
     $userform->display();
 
 /// and proper footer
-    if ($user->id == -1 or ($user->id != $USER->id)) {
-        admin_externalpage_print_footer();
-    } else if (!empty($USER->newadminuser)) {
+    if (!empty($USER->newadminuser)) {
         print_footer('none');
     } else {
         print_footer($course);
