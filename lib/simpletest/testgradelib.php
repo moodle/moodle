@@ -546,7 +546,8 @@ class gradelib_test extends UnitTestCase {
 
     function test_grade_item_insert() {
         $grade_item = new grade_item();
-
+        $this->assertTrue(method_exists($grade_item, 'insert'));
+        
         $grade_item->courseid = $this->courseid;
         $grade_item->categoryid = $this->grade_categories[0]->id;
         $grade_item->itemname = 'unittestgradeitem4';
@@ -565,12 +566,16 @@ class gradelib_test extends UnitTestCase {
 
     function test_grade_item_delete() {
         $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'delete'));
+        
         $this->assertTrue($grade_item->delete());
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
     }
 
     function test_grade_item_update() {
         $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'update'));
+        
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
         $this->assertTrue($grade_item->update());
         $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
@@ -579,6 +584,8 @@ class gradelib_test extends UnitTestCase {
 
     function test_grade_item_set_timecreated() {
         $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'set_timecreated'));
+        
         $timestamp = mktime();
         $grade_item->set_timecreated();
         $this->assertEqual($timestamp, $grade_item->timecreated);
@@ -586,6 +593,9 @@ class gradelib_test extends UnitTestCase {
     }
 
     function test_grade_item_fetch() {
+        $grade_item = new grade_item(); 
+        $this->assertTrue(method_exists($grade_item, 'fetch'));
+
         $grade_item = grade_item::fetch('id', $this->grade_items[0]->id);
         $this->assertEqual($this->grade_items[0]->id, $grade_item->id);
         $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo); 
@@ -598,6 +608,8 @@ class gradelib_test extends UnitTestCase {
     function test_grade_item_fetch_all_using_this() {
         $grade_item = new grade_item();
         $grade_item->itemtype = 'mod';
+        $this->assertTrue(method_exists($grade_item, 'fetch_all_using_this'));
+       
         $grade_items = $grade_item->fetch_all_using_this();
         $this->assertEqual(2, count($grade_items));
         $first_grade_item = reset($grade_items);
@@ -608,13 +620,23 @@ class gradelib_test extends UnitTestCase {
      * Retrieve all raw scores for a given grade_item.
      */
     function test_grade_item_get_all_raws() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_raw'));
         
+        $raw_grades = $grade_item->get_raw();
+        $this->assertEqual(3, count($raw_grades));
     }
 
     /**
      * Retrieve the raw score for a specific userid.
      */
     function test_grade_item_get_raw() { 
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_raw'));
+        
+        $raw_grade = $grade_item->get_raw($this->userid);
+        $this->assertEqual(1, count($raw_grade));
+        $this->assertEqual($this->grade_grades_raw[0]->gradevalue, $raw_grade->gradevalue);
     }
 
     
@@ -622,7 +644,11 @@ class gradelib_test extends UnitTestCase {
      * Retrieve all final scores for a given grade_item.
      */
     function test_grade_item_get_all_finals() {
-
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_final'));
+        
+        $final_grades = $grade_item->get_final();
+        $this->assertEqual(3, count($final_grades)); 
     }
 
     
@@ -630,17 +656,27 @@ class gradelib_test extends UnitTestCase {
      * Retrieve all final scores for a specific userid.
      */
     function test_grade_item_get_final() {
-
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_final'));
+        
+        $final_grade = $grade_item->get_final($this->userid);
+        $this->assertEqual(1, count($final_grade));
+        $this->assertEqual($this->grade_grades_final[0]->gradevalue, $final_grade->gradevalue); 
     }
 
     function test_grade_item_get_calculation() {
         $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_calculation'));
+        
         $grade_calculation = $grade_item->get_calculation();
         $this->assertEqual($this->grade_calculations[0]->id, $grade_calculation->id);
     }
 
     function test_grade_item_set_calculation() {
         $grade_item = new grade_item($this->grade_items[1]);
+        $this->assertTrue(method_exists($grade_item, 'set_calculation'));
+        $this->assertTrue(method_exists($grade_item, 'get_calculation'));
+        
         $calculation = 'SUM([unittestgradeitem1], [unittestgradeitem3])';
         $grade_item->set_calculation($calculation);
         $new_calculation = $grade_item->get_calculation();

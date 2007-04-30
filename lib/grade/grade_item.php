@@ -198,23 +198,33 @@ class grade_item extends grade_object {
     
     
     /**
-     * Returns the raw value for this grade item (as imported by module or other source).
-     * 
-     * @return mixed grades_Raw object if found, or false.
+     * Returns the raw values for this grade item (as imported by module or other source).
+     * @param int $userid Optional: to retrieve a single raw grade
+     * @return mixed An array of all raw_grades (stdClass objects) for this grade_item, or a single raw_grade.
      */
-    function get_raw() {
-        $grade_raw = get_record('grade_grades_raw', 'itemid', $this->id);
-        return $grade_raw; 
+    function get_raw($userid=NULL) {
+        $grade_raw = null;
+        if (!empty($userid)) {
+            $grade_raw = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
+        } else {
+            $grade_raw = get_records('grade_grades_raw', 'itemid', $this->id);
+        }
+        return $grade_raw;
     }
 
     /**
-     * Returns the final value for this grade item. 
-     * 
-     * @return mixed grades_Final object if found, or false.
+     * Returns the final values for this grade item (as imported by module or other source).
+     * @param int $userid Optional: to retrieve a single final grade
+     * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
      */
-    function get_final() {
-        $grade_final = get_record('grade_grades_final', 'itemid', $this->id);
-        return $grade_final; 
+    function get_final($userid=NULL) {
+        $grade_final = null;
+        if (!empty($userid)) {
+            $grade_final = get_record('grade_grades_final', 'itemid', $this->id, 'userid', $userid);
+        } else {
+            $grade_final = get_records('grade_grades_final', 'itemid', $this->id);
+        }
+        return $grade_final;
     }
 
     /**
