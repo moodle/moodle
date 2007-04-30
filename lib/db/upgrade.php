@@ -1094,6 +1094,25 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field locked
         $result = $result && add_field($table, $field);
     } 
+    
+    if ($result && $oldversion < 2007043000) {
+
+    /// Define field gradevalue to be added to grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('gradevalue');
+        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'userid');
+
+    /// Launch add field gradevalue
+        $result = $result && add_field($table, $field);
+        
+    /// Define field gradescale to be added to grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('gradescale');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'gradevalue');
+
+    /// Launch add field gradescale
+        $result = $result && add_field($table, $field);
+    }
 
     return $result;
 
