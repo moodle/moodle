@@ -124,6 +124,41 @@ class grade_grades_raw extends grade_object {
             return false;
         }
     } 
+
+    /**
+     * In addition to the normal updating set up in grade_object, this object also records
+     * its pre-update value and its new value in the grade_history table.
+     *
+     * @param float $newgrade The new gradevalue of this object
+     * @param string $howmodified What caused the modification? manual/module/import/cron...
+     * @param string $note A note attached to this modification.
+     * @return boolean Success or Failure.
+     */
+    function update($newgrade, $howmodified='manual', $note=NULL) {
+        global $USER;
+        $oldgrade = $this->gradevalue;
+        $this->gradevalue = $newgrade;
+
+        $result = parent::update();
+        
+        if ($result) {
+            $logentry = new stdClass();
+            $logentry->itemid = $this->itemid;
+            $logentry->userid = $this->userid;
+            $logentry->oldgrade = $oldgrade;
+            $logentry->newgrade = $this->gradevalue;
+            $logentry->note = $note;
+            $logentry->howmodified = $howmodified;
+            $logentry->timemodified = mktime();
+            $logentry->usermodified = $USER->id;
+
+            insert_record('grade_history', $logentry);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }
 
 ?>

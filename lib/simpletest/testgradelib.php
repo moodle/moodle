@@ -634,8 +634,9 @@ class gradelib_test extends UnitTestCase {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_raw'));
         
-        $raw_grade = $grade_item->get_raw($this->userid);
-        $this->assertEqual(1, count($raw_grade));
+        $raw_grades = $grade_item->get_raw($this->userid);
+        $raw_grade = current($raw_grades);
+        $this->assertEqual(1, count($raw_grades));        
         $this->assertEqual($this->grade_grades_raw[0]->gradevalue, $raw_grade->gradevalue);
     }
 
@@ -686,7 +687,11 @@ class gradelib_test extends UnitTestCase {
     }
 
     function test_grade_item_get_category() {
-
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_category'));
+        
+        $category = $grade_item->get_category();
+        $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
     }
 
 // GRADE_CATEGORY OBJECT

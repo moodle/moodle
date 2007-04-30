@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation');
+    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw');
   
     /**
      * The course this grade_item belongs to.
@@ -167,6 +167,12 @@ class grade_item extends grade_object {
      * @var string $calculation
      */
     var $calculation;
+    
+    /**
+     * Array of grade_grades_raw objects linked to this grade_item. They are indexed by userid.
+     * @var array $grade_grades_raw
+     */
+    var $grade_grades_raw = array();
 
     /**
      * Finds and returns a grade_item object based on 1-3 field values.
@@ -203,13 +209,30 @@ class grade_item extends grade_object {
      * @return mixed An array of all raw_grades (stdClass objects) for this grade_item, or a single raw_grade.
      */
     function get_raw($userid=NULL) {
-        $grade_raw = null;
-        if (!empty($userid)) {
-            $grade_raw = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
-        } else {
-            $grade_raw = get_records('grade_grades_raw', 'itemid', $this->id);
+        if (empty($this->grade_grades_raw)) {
+            $this->load_raw();
         }
-        return $grade_raw;
+
+        $grade_raw_array = null;
+        if (!empty($userid)) {
+            $r = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
+            $grade_raw_array[$r->userid] = new grade_grades_raw($r);
+        } else {
+            $grade_raw_array = $this->grade_grades_raw;
+        }
+        return $grade_raw_array;
+    }
+
+    /**
+     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
+     * @return array grade_grades_raw objects
+     */      
+    function load_raw() {
+        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
+        foreach ($grade_raw_array as $r) {
+            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
+        }
+        return $this->grade_grades_raw;
     }
 
     /**
@@ -295,8 +318,7 @@ class grade_item extends grade_object {
     */
     function get_category() {
         if (!empty($this->categoryid)) {
-            $grade_category = new grade_category($this->category_id);
-            return $grade_category;
+            return grade_category::fetch('id', $this->categoryid);
         } else {
             return null;
         }
@@ -317,6 +339,38 @@ class grade_item extends grade_object {
             $final = $this->get_final($userid);
             return $final->locked;
         }
+    }
+
+    /**
+     * Performs the necessary calculations on the grades_raw referenced by this grade_item,
+     * and stores the results in grade_grades_final. Performs this for only one userid if 
+     * requested. Also resets the needs_update flag once successfully performed.
+     *
+     * @param int $userid
+     * @param string $howmodified What caused the modification? manual/module/import/cron...
+     * @param string $note A note attached to this modification.
+     * @return boolean Success or failure
+     */
+    function update_final_grade($userid=NULL, $howmodified='manual', $note=NULL) {
+        if (empty($this->grade_grades_raw)) {
+            $this->load_raw();
+        }
+
+        $grade_raw_array = array();
+
+        if (!empty($userid)) {
+            $grade_raw_array[$userid] = $this->grade_grades_raw[$userid];
+        } else {
+            $grade_raw_array = $this->grade_grades_raw;
+        }
+        
+        // TODO implement parsing of formula and calculation MDL-9643
+        foreach ($grade_raw_array as $r) {
+            $newgradevalue = 0; // TODO replace '0' with calculated value
+            $r->update($newgradevalue, $howmodified, $note);
+        }
+
+        return true;
     }
 }
 ?>

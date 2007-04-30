@@ -40,6 +40,7 @@ define('GRADE_AGGREGATE_MODE', 3);
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_calculation.php');
+require_once($CFG->libdir . '/grade/grade_grades_raw.php');
 
 /**
 * Extracts from the gradebook all the grade items attached to the calling object. 
@@ -118,4 +119,32 @@ function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL
     return $grade_item->is_locked($userid);
 } 
 
+/**
+ * Updates all grade_grades_final for each grade_item matching the given attributes.
+ * The search is further restricted, so that only grade_items that have needs_update == TRUE
+ * or that use calculation are retrieved.
+ *
+ * @param int $courseid
+ * @param int $gradeitemid
+ * @return int Number of grade_items updated
+ */
+function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
+    $grade_item = new grade_item();
+    $grade_item->courseid = $courseid;
+    $grade_item->id = $gradeitemid;
+    $grade_items = $grade_item->fetch_all_using_this();
+    
+    $count = 0;
+
+    foreach ($grade_items as $gi) {
+        $calculation = $gi->get_calculation();
+        if (!empty($calculation) || $gi->needsupdate) {
+            if ($gi->update_final_grade()) {
+                $count++;
+            }
+        }
+    }
+
+    return $count;
+}
 ?>
