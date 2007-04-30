@@ -15,7 +15,7 @@
     // get values from form
     $param = new stdClass();
 
-    $id = required_param('id', PARAM_INT);   // course id
+    $id = required_param('courseid', PARAM_INT);   // course id
     $param->page = optional_param('page', 1, PARAM_INT);
 
     $param->moveup = optional_param('moveup', 0, PARAM_INT);

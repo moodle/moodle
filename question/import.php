@@ -19,7 +19,7 @@
     $params->choosefile = optional_param('choosefile','',PARAM_PATH);
     $categoryid = optional_param('category', 0, PARAM_INT);
     $catfromfile = optional_param('catfromfile', 0, PARAM_BOOL );
-    $courseid = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
     $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
     $params->stoponerror = optional_param('stoponerror', 0, PARAM_BOOL);

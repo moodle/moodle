@@ -561,11 +561,11 @@ function questionbank_navigation_tabs(&$row, $context, $courseid) {
     }
     
     if (has_capability('moodle/question:managecategory', $context)) {
-        $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?id=$courseid", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
+        $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?courseid=$courseid", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
     }
     
     if (has_capability('moodle/question:import', $context)) {
-        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
+        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?courseid=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
     }
     
     if (has_capability('moodle/question:export', $context)) {

@@ -143,7 +143,7 @@ class question_category_object {
 
         $this->editlist = new question_category_list('ul', '', true, $page);
 
-        $this->add_page_params(array('id'=>$COURSE->id, 'page' => $this->page));
+        $this->add_page_params(array('courseid'=>$COURSE->id, 'page' => $this->page));
         $this->pageurl = strip_querystring(qualified_me());//default
         
         $this->initialize();
@@ -284,7 +284,7 @@ class question_category_object {
         echo '<form action="category.php" method="post">';
         echo '<fieldset class="invisiblefieldset" style="display: block">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-        echo '<input type="hidden" name="id" value="'. $COURSE->id . '" />';
+        echo '<input type="hidden" name="courseid" value="'. $COURSE->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';
         print_table($this->newtable);
         echo '</fieldset>';
