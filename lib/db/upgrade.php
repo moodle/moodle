@@ -1114,6 +1114,33 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007043001) {
+
+    /// Define field informationformat to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('informationformat');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'information');
+
+    /// Launch add field informationformat
+        $result = $result && add_field($table, $field);
+        
+    /// Define field schedule to be added to events_handlers
+        $table = new XMLDBTable('events_handlers');
+        $field = new XMLDBField('schedule');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'handlerfunction');
+
+    /// Launch add field schedule
+        $result = $result && add_field($table, $field);
+        
+    /// Define field status to be added to events_handlers
+        $table = new XMLDBTable('events_handlers');
+        $field = new XMLDBField('status');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'schedule');
+
+    /// Launch add field status
+        $result = $result && add_field($table, $field);
+    }
+
     return $result;
 
 }
