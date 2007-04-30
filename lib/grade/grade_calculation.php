@@ -59,7 +59,22 @@ class grade_calculation extends grade_object {
      * @var int $usermodified
      */
     var $usermodified;
+    
+    /**
+     * A formula parser object.
+     * @var object $parser
+     * @TODO implement parsing of formula and calculation MDL-9643
+     */
+    var $parser;
 
+    /**
+     * Applies the formula represented by this object to the value given, and returns the result.
+     * @param float $oldvalue
+     * @return float result
+     */
+    function compute($oldvalue) {
+        return $oldvalue; // TODO implement computation using parser
+    }
 
     /**
      * Finds and returns a grade_calculation object based on 1-3 field values.

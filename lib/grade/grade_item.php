@@ -175,6 +175,12 @@ class grade_item extends grade_object {
     var $grade_grades_raw = array();
 
     /**
+     * Array of grade_grades_final objects linked to this grade_item. They are indexed by userid.
+     * @var array $grade_grades_final
+     */
+    var $grade_grades_final = array();
+
+    /**
      * Finds and returns a grade_item object based on 1-3 field values.
      *
      * @param string $field1
@@ -364,22 +370,95 @@ class grade_item extends grade_object {
      * requested. Also resets the needs_update flag once successfully performed.
      *
      * @param int $userid
-     * @param string $howmodified What caused the modification? manual/module/import/cron...
-     * @param string $note A note attached to this modification.
-     * @return boolean Success or failure
+     * @return int Number of grades updated, or false if error
      */
-    function update_final_grade($userid=NULL, $howmodified='manual', $note=NULL) {
+    function update_final_grade($userid=NULL) {
         if (empty($this->grade_grades_final)) {
             $this->load_final();
         }
+        if (empty($this->grade_grades_raw)) {
+            $this->load_raw();
+        }
         
-        // TODO implement parsing of formula and calculation MDL-9643
-        foreach ($this->grade_grades_final as $f) {
-            $newgradevalue = 0; // TODO replace '0' with calculated value
-            $f->update($newgradevalue, $howmodified, $note);
+        $count = 0;
+        
+        $grade_final_array = array();
+
+        if (!empty($userid)) {
+            $grade_final_array[$userid] = $this->grade_grades_final[$userid];
+        } else {
+            $grade_final_array = $this->grade_grades_final;
         }
 
-        return true;
+        foreach ($grade_raw_array as $userid => $raw) {
+            $newgradevalue = $raw->gradevalue;
+            
+            if (!empty($this->calculation)) {
+                $this->upgrade_calculation_to_object();
+                $newgradevalue = $this->calculation->compute($raw->gradevalue);
+            }
+            
+            $final = $this->grade_grades_final[$userid];
+
+            $final->gradevalue = $this->adjust_grade($raw, $newgradevalue);
+            if ($final->update($newgradevalue)) {
+                $count++;
+            } else {
+                return false;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Use this when the calculation object is a stdClass (rare) and you need it to have full
+     * object status (with methods and all).
+     */
+    function upgrade_calculation_to_object() {
+        if (!is_a($this->calculation, 'grade_calculation')) {
+            $this->calculation = new grade_calculation($this->calculation, false);
+        }
+    }
+
+    /**
+     * Given a float grade value or integer grade scale, applies a number of adjustment based on 
+     * grade_item variables and returns the result.
+     * @param object $grade_raw The raw object to compare with this grade_item's rules
+     * @param mixed $gradevalue The new gradevalue (after calculations are performed)
+     * @return mixed 
+     */
+    function adjust_grade($grade_raw, $gradevalue=NULL) {
+        if (!empty($grade_raw->gradevalue)) { // Dealing with numerical grade
+            if (empty($gradevalue)) {
+                $gradevalue = $grade_raw->gradevalue;
+            }
+        } elseif(!empty($grade_raw->gradescale)) { // Dealing with a scale value
+            if (empty($gradevalue)) {
+                $gradevalue = $grade_raw->gradescale;
+            }
+
+        } else { // Something's wrong, the raw grade has no value!?
+
+        }
+        
+        $raw_diff = $grade_raw->grademax - $grade_raw->grademin;
+        $item_diff = $this->grademax - $this->grademin;
+        $min_diff = $grade_raw->grademin - $this->grademin;
+
+        $diff_factor = max($raw_diff, $item_diff) / min($raw_diff, $item_diff);
+        
+        if ($raw_diff > $item_diff) {
+            $gradevalue = $gradevalue / $diff_factor;
+        } else {
+            $gradevalue = $gradevalue * $diff_factor;
+        }
+
+        // Apply factors
+        $gradevalue *= $this->multfactor;
+        $gradevalue += $this->plusfactor;
+
+        return $gradevalue;
     }
 }
 ?>

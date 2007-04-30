@@ -695,6 +695,67 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
     }
 
+    /**
+     * Test update of all final grades
+     */
+    function test_grade_item_update_final_grades() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'update_final_grade'));
+        $this->assertEqual(3, $grade_item->update_final_grade()); 
+        $this->assertEqual(1, $grade_item->update_final_grade(1)); 
+    }
+
+    /**
+     * Test loading of raw and final items into grade_item.
+     */
+    function test_grade_item_load() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'load_final'));
+        $this->assertTrue(method_exists($grade_item, 'load_raw'));
+
+        // Check that final and raw items are not yet loaded
+        $this->assertTrue(empty($grade_item->grade_grades_final));
+        $this->assertTrue(empty($grade_item->grade_grades_raw));
+        
+        // Load raw and final grades
+        $grade_item->load_final();
+        $grade_item->load_raw();
+        
+        // Check that final and raw grades are now loaded
+        $this->assertFalse(empty($grade_item->grade_grades_final));
+        $this->assertFalse(empty($grade_item->grade_grades_raw));
+        $this->assertEqual($this->grade_grades_final[0]->gradevalue, $grade_item->grade_grades_final[1]->gradevalue);
+        $this->assertEqual($this->grade_grades_raw[0]->gradevalue, $grade_item->grade_grades_raw[1]->gradevalue);
+    }
+    
+    /**
+     * Test the adjust_grade method
+     */
+    function test_grade_item_adjust_grade() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'adjust_grade'));
+        $grade_raw = new stdClass();
+        $grade_raw->gradevalue = 40;
+        $grade_raw->grademax = 100;
+        $grade_raw->grademin = 0;
+        $grade_item->multfactor = 1;
+        $grade_item->plusfactor = 0;
+        $grade_item->grademax = 50;
+        $grade_item->grademin = 0;
+
+        $this->assertEqual(20, $grade_item->adjust_grade($grade_raw)); 
+
+        $grade_item->grademax = 150;
+        $grade_item->grademin = 0;
+
+        $this->assertEqual(60, $grade_item->adjust_grade($grade_raw)); 
+
+        $grade_item->grademax = 150;
+        $grade_item->grademin = 50;
+
+        $this->assertEqual(40, $grade_item->adjust_grade($grade_raw)); 
+    }
+
 // GRADE_CATEGORY OBJECT
 
     function test_grade_category_construct() {
