@@ -156,8 +156,7 @@ class grade_grades_raw extends grade_object {
             return true;
         } else {
             return false;
-        }
-
+        } 
     }
 }
 

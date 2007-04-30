@@ -660,7 +660,8 @@ class gradelib_test extends UnitTestCase {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
         
-        $final_grade = $grade_item->get_final($this->userid);
+        $final_grades = $grade_item->get_final($this->userid);
+        $final_grade = current($final_grades);
         $this->assertEqual(1, count($final_grade));
         $this->assertEqual($this->grade_grades_final[0]->gradevalue, $final_grade->gradevalue); 
     }

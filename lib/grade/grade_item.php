@@ -241,13 +241,30 @@ class grade_item extends grade_object {
      * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
      */
     function get_final($userid=NULL) {
-        $grade_final = null;
-        if (!empty($userid)) {
-            $grade_final = get_record('grade_grades_final', 'itemid', $this->id, 'userid', $userid);
-        } else {
-            $grade_final = get_records('grade_grades_final', 'itemid', $this->id);
+        if (empty($this->grade_grades_final)) {
+            $this->load_final();
         }
-        return $grade_final;
+
+        $grade_final_array = null;
+        if (!empty($userid)) {
+            $f = get_record('grade_grades_final', 'itemid', $this->id, 'userid', $userid);
+            $grade_final_array[$f->userid] = new grade_grades_final($f);
+        } else {
+            $grade_final_array = $this->grade_grades_final;
+        }
+        return $grade_final_array;
+    }
+
+    /**
+     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
+     * @return array grade_grades_final objects
+     */      
+    function load_final() {
+        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        foreach ($grade_final_array as $f) {
+            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
+        }
+        return $this->grade_grades_final;
     }
 
     /**
@@ -342,7 +359,7 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Performs the necessary calculations on the grades_raw referenced by this grade_item,
+     * Performs the necessary calculations on the grades_final referenced by this grade_item,
      * and stores the results in grade_grades_final. Performs this for only one userid if 
      * requested. Also resets the needs_update flag once successfully performed.
      *
@@ -352,14 +369,14 @@ class grade_item extends grade_object {
      * @return boolean Success or failure
      */
     function update_final_grade($userid=NULL, $howmodified='manual', $note=NULL) {
-        if (empty($this->grade_grades_raw)) {
-            $this->load_raw();
+        if (empty($this->grade_grades_final)) {
+            $this->load_final();
         }
         
         // TODO implement parsing of formula and calculation MDL-9643
-        foreach ($this->grade_grades_raw as $r) {
+        foreach ($this->grade_grades_final as $f) {
             $newgradevalue = 0; // TODO replace '0' with calculated value
-            $r->update($newgradevalue, $howmodified, $note);
+            $f->update($newgradevalue, $howmodified, $note);
         }
 
         return true;

@@ -51,6 +51,18 @@ class grade_grades_final extends grade_object {
     var $userid;
     
     /**
+     * The value of the grade.
+     * @var float $gradevalue
+     */
+    var $gradevalue;
+    
+    /**
+     * The scale of this grade.
+     * @var int $gradescale
+     */
+    var $gradescale;
+    
+    /**
      * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
