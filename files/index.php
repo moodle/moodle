@@ -43,11 +43,7 @@
 
         echo '</td></tr></table>';
 
-        if ($course->id == SITEID) {
-                admin_externalpage_print_footer();
-        } else {
-            print_footer($course);
-        }
+        print_footer($course);
     }
 
     function html_header($course, $wdir, $formfield=""){

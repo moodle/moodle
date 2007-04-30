@@ -4745,7 +4745,7 @@ function error ($message, $link='') {
         upgrade_log_finish();
     }
 
-    if (!$link) {
+    if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
         if ( !empty($SESSION->fromurl) ) {
             $link = $SESSION->fromurl;
             unset($SESSION->fromurl);
@@ -4754,12 +4754,12 @@ function error ($message, $link='') {
         }
     }
 
-    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
-        admin_externalpage_print_footer();
-    } else {
+    if (!empty($link)) {
         print_continue($link);
-        print_footer();
     }
+
+    print_footer();
+
     for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
         echo ' ';
     }
@@ -4992,12 +4992,6 @@ function notice ($message, $link='', $course=NULL) {
     print_box($message, 'generalbox', 'notice');
     print_continue($link);
 
-    // xhtml strict fix, need to make sure it's the right footer
-    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
-        admin_externalpage_print_footer();
-        exit;
-    }
-
     if (empty($course)) {
         print_footer($SITE);
     } else {
@@ -5141,12 +5135,7 @@ function redirect($url, $message='', $delay=-1) {
 <?php
     }
 
-    // fix for MDL-8517, admin pages redirections causes bad xhtml
-    if (defined('ADMIN_EXT_HEADER_PRINTED')) {
-        admin_externalpage_print_footer();  
-    } else {
-        print_footer('none');
-    }
+    print_footer('none');
     die;
 }
 
