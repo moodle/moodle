@@ -221,7 +221,7 @@
             if ($subcategory->visible or has_capability('moodle/course:create', $context)) {
                 $subcategorieswereshown = true;
                 if ($firstentry) {
-                    echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox">';
+                    echo '<table border="0" cellspacing="2" cellpadding="4" class="generalbox boxaligncenter">';
                     echo '<tr><th scope="col">'.get_string('subcategories').'</th></tr>';
                     echo '<tr><td style="white-space: nowrap">';
                     $firstentry = false;
