@@ -36,7 +36,7 @@ class grade_grades_raw extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields');
+    var $nonfields = array('table', 'nonfields', 'scale');
     
     /**
      * The id of the grade_item this raw grade belongs to.
@@ -79,7 +79,13 @@ class grade_grades_raw extends grade_object {
      * @var int $scaleid
      */
     var $scaleid;
-    
+   
+    /**
+     * A grade_scale object (referenced by $this->scaleid).
+     * @var object $scale
+     */
+    var $scale;
+
     /**
      * The userid of the person who last modified this grade.
      * @var int $usermodified
@@ -93,6 +99,10 @@ class grade_grades_raw extends grade_object {
      */
     function grade_grades_raw($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
+        if (!empty($this->scaleid)) {
+            $this->scale = new grade_scale(array('id' => $this->scaleid));
+            $this->scale->load_items();
+        }
     }
 
 
@@ -138,6 +148,11 @@ class grade_grades_raw extends grade_object {
         global $USER;
         $oldgrade = $this->gradevalue;
         $this->gradevalue = $newgrade;
+        
+        // Update this scaleid if it has changed (use the largest integer (most recent))
+        if ($this->scale->id != $this->scaleid) {
+            $this->scaleid = max($this->scale->id, $this->scaleid);
+        }
 
         $result = parent::update();
         

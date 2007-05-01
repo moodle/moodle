@@ -41,11 +41,14 @@ require_once($CFG->libdir . '/dmllib.php');
 
 /**
  * A cleanup of the tables is a good idea before we start, in case the last unit test
- * crashed before running its tearDown method.
+ * crashed before running its tearDown method. Be careful because ANY record matching
+ * this search (%unittest%) will be deleted! Maybe a good idea to switch this off in
+ * production environment.
  */
 delete_records_select('grade_categories', 'fullname LIKE "%unittest%"');
 delete_records_select('grade_items', 'itemname LIKE "%unittest%"');
 delete_records_select('grade_calculation', 'calculation LIKE "%unittest%"');
+delete_records_select('scale', 'name LIKE "%unittest%"');
 
 class gradelib_test extends UnitTestCase {
    
@@ -62,7 +65,8 @@ class gradelib_test extends UnitTestCase {
                         'grade_grades_final',
                         'grade_grades_text',
                         'grade_outcomes',
-                        'grade_history');
+                        'grade_history',
+                        'scale');
 
     var $grade_items = array();
     var $grade_categories = array();
@@ -72,6 +76,7 @@ class gradelib_test extends UnitTestCase {
     var $grade_grades_text = array();
     var $grade_outcomes = array();
     var $grade_history = array();
+    var $scale = array();
 
     var $courseid = 1;
     var $userid = 1;
@@ -472,6 +477,36 @@ class gradelib_test extends UnitTestCase {
 
     }
 
+    /**
+     * Load scale data into the database, and adds the corresponding objects to this class' variable.
+     */
+    function load_scale() {
+        $scale = new stdClass();
+        
+        $scale->name        = 'unittestscale1';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
+        $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        } 
+
+        $scale = new stdClass();
+        
+        $scale->name        = 'unittestscale2';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
+        $scale->description = 'This scale is used to mark standard assignments.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        } 
+    }
 /** 
  * TESTS BEGIN HERE
  */
@@ -537,7 +572,7 @@ class gradelib_test extends UnitTestCase {
         $params->iteminstance = 4;
         $params->iteminfo = 'Grade item used for unit testing';
 
-        $grade_item = new grade_item($params);
+        $grade_item = new grade_item($params, false);
 
         $this->assertEqual($params->courseid, $grade_item->courseid);
         $this->assertEqual($params->categoryid, $grade_item->categoryid);
@@ -752,7 +787,6 @@ class gradelib_test extends UnitTestCase {
         // Try a larger maximum grade
         $grade_item->grademax = 150;
         $grade_item->grademin = 0;
-
         $this->assertEqual(60, $grade_item->adjust_grade($grade_raw)); 
 
         // Try larger minimum grade
@@ -791,6 +825,22 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual(round(1.6), round($grade_item->adjust_grade($grade_raw))); 
     }
 
+    function test_grade_item_adjust_scale_grade() {
+        // Load raw grade and its scale
+        $grade_raw = new grade_grades_raw(array('scaleid' => $this->scale[0]->id));
+        $grade_raw->gradescale = 4;
+        $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
+        
+        // Load grade item and its scale
+        $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id));
+        $this->assertEqual('Very Good', $grade_item->scale->scale_items[1]);
+
+        // Test grade_item::adjust_scale
+        $this->assertEqual(3, $grade_item->adjust_grade($grade_raw));
+        $grade_raw->gradescale = 6;
+        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw));
+    }
+
 // GRADE_CATEGORY OBJECT
 
     function test_grade_category_construct() {
@@ -815,6 +865,46 @@ class gradelib_test extends UnitTestCase {
 
 // GRADE_CALCULATION OBJECT
 
+// SCALE OBJECT
+
+    function test_scale_constructor() {
+        $params = new stdClass();
+        
+        $params->name        = 'unittestscale3';
+        $params->courseid    = $this->courseid;
+        $params->userid      = $this->userid;
+        $params->scale       = 'Distinction, Very Good, Good, Pass, Fail';
+        $params->description = 'This scale is used to mark standard assignments.';
+        $params->timemodified = mktime();
+        
+        $scale = new grade_scale($params, false);
+
+        $this->assertEqual($params->name, $scale->name);
+        $this->assertEqual($params->scale, $scale->scale);
+        $this->assertEqual($params->description, $scale->description);
+
+    }
+
+    function test_scale_load_items() {
+        $scale = new grade_scale($this->scale[0]);
+        $this->assertTrue(method_exists($scale, 'load_items'));
+
+        $scale->load_items();
+        $this->assertEqual(7, count($scale->scale_items));
+        $this->assertEqual('Fairly neutral', $scale->scale_items[2]);
+    }
+
+    function test_scale_compact_items() {
+        $scale = new grade_scale($this->scale[0]);
+        $this->assertTrue(method_exists($scale, 'compact_items'));
+
+        $scale->load_items();
+        $scale->scale = null;
+        $scale->compact_items();
+        
+        // The original string and the new string may have differences in whitespace around the delimiter, and that's OK 
+        $this->assertEqual(preg_replace('/\s*,\s*/', ',', $this->scale[0]->scale), $scale->scale);
+    }
 // SCENARIOS: define use cases here by defining tests and implementing code until the tests pass.
 
 }

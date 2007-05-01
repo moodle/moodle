@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw');
+    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'scale');
   
     /**
      * The course this grade_item belongs to.
@@ -109,11 +109,17 @@ class grade_item extends grade_object {
     var $grademin;
     
     /**
-     * The scale this grade is based on, if applicable.
+     * id of the scale, if this grade is based on a scale.
+     * @var int $scaleid
+     */
+    var $scaleid;
+   
+    /**
+     * A grade_scale object (referenced by $this->scaleid).
      * @var object $scale
      */
     var $scale;
-    
+
     /**
      * The Outcome this grade is associated with, if applicable.
      * @var object $outcome
@@ -179,6 +185,19 @@ class grade_item extends grade_object {
      * @var array $grade_grades_final
      */
     var $grade_grades_final = array();
+
+    /**
+     * Constructor. Extends the basic functionality defined in grade_object.
+     * @param array $params Can also be a standard object.
+     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
+     */
+    function grade_item($params=NULL, $fetch=true) {
+        $this->grade_object($params, $fetch);
+        if (!empty($this->scaleid)) {
+            $this->scale = new grade_scale(array('id' => $this->scaleid));
+            $this->scale->load_items();
+        }
+    }
 
     /**
      * Finds and returns a grade_item object based on 1-3 field values.
@@ -433,33 +452,48 @@ class grade_item extends grade_object {
      * @return mixed 
      */
     function adjust_grade($grade_raw, $gradevalue=NULL) {
+        $raw_offset = 0;
+        $item_offset = 0;
+
         if (!empty($grade_raw->gradevalue)) { // Dealing with numerical grade
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradevalue;
             }
+            
+            // Adjust both scales to 0-? and store offsets
+            $raw_offset = -(0 - $grade_raw->grademin);
+            $item_offset = -(0 - $this->grademin);
+            $raw_adjusted_max = $grade_raw->grademax - $raw_offset;
+            $item_adjusted_max = $this->grademax - $item_offset;
+
         } elseif(!empty($grade_raw->gradescale)) { // Dealing with a scale value
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradescale;
             }
+            
+            $raw_adjusted_max = count($grade_raw->scale->scale_items) - 1;
+            $item_adjusted_max = count($this->scale->scale_items) - 1;
 
         } else { // Something's wrong, the raw grade has no value!?
-
+            return false;
         }
-
-        // Adjust both scales to 0-? and store offsets
-        $raw_offset = -(0 - $grade_raw->grademin);
-        $item_offset = -(0 - $this->grademin);
-        $raw_adjusted_max = $grade_raw->grademax - $raw_offset;
-        $item_adjusted_max = $this->grademax - $item_offset;
-        
-        // Compute factor from adjusted scales
+        // Compute factor from grademax of adjusted scales
         $factor = ($item_adjusted_max) / ($raw_adjusted_max);
+        
+        // Multiply adjusted grade value (using source offset) by factor
         $gradevalue = ($gradevalue - $raw_offset) * $factor;
-        $gradevalue += $item_offset;
 
-        // Apply factors
-        $gradevalue *= $this->multfactor;
-        $gradevalue += $this->plusfactor;
+        // Add target offset to resulting grade value
+        $gradevalue += $item_offset;
+        
+        // Apply rounding or factors, depending on whether it's a scale or value
+        if (!empty($grade_raw->gradevalue)) {
+            // Apply other grade_item factors
+            $gradevalue *= $this->multfactor;
+            $gradevalue += $this->plusfactor;
+        } elseif (!empty($grade_raw->gradescale)) {
+            $gradevalue = (int) round($gradevalue);
+        }
 
         return $gradevalue;
     }
