@@ -383,11 +383,14 @@ class grade_item extends grade_object {
         $count = 0;
         
         $grade_final_array = array();
+        $grade_raw_array   = array();
 
         if (!empty($userid)) {
             $grade_final_array[$userid] = $this->grade_grades_final[$userid];
+            $grade_raw_array[$userid] = $this->grade_grades_raw[$userid];
         } else {
             $grade_final_array = $this->grade_grades_final;
+            $grade_raw_array = $this->grade_grades_raw;
         }
 
         foreach ($grade_raw_array as $userid => $raw) {
@@ -401,6 +404,7 @@ class grade_item extends grade_object {
             $final = $this->grade_grades_final[$userid];
 
             $final->gradevalue = $this->adjust_grade($raw, $newgradevalue);
+            
             if ($final->update($newgradevalue)) {
                 $count++;
             } else {
@@ -441,18 +445,17 @@ class grade_item extends grade_object {
         } else { // Something's wrong, the raw grade has no value!?
 
         }
-        
-        $raw_diff = $grade_raw->grademax - $grade_raw->grademin;
-        $item_diff = $this->grademax - $this->grademin;
-        $min_diff = $grade_raw->grademin - $this->grademin;
 
-        $diff_factor = max($raw_diff, $item_diff) / min($raw_diff, $item_diff);
+        // Adjust both scales to 0-? and store offsets
+        $raw_offset = -(0 - $grade_raw->grademin);
+        $item_offset = -(0 - $this->grademin);
+        $raw_adjusted_max = $grade_raw->grademax - $raw_offset;
+        $item_adjusted_max = $this->grademax - $item_offset;
         
-        if ($raw_diff > $item_diff) {
-            $gradevalue = $gradevalue / $diff_factor;
-        } else {
-            $gradevalue = $gradevalue * $diff_factor;
-        }
+        // Compute factor from adjusted scales
+        $factor = ($item_adjusted_max) / ($raw_adjusted_max);
+        $gradevalue = ($gradevalue - $raw_offset) * $factor;
+        $gradevalue += $item_offset;
 
         // Apply factors
         $gradevalue *= $this->multfactor;

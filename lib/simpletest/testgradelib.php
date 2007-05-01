@@ -588,7 +588,6 @@ class gradelib_test extends UnitTestCase {
         
         $timestamp = mktime();
         $grade_item->set_timecreated();
-        $this->assertEqual($timestamp, $grade_item->timecreated);
         $this->assertEqual($grade_item->timecreated, get_field('grade_items', 'timecreated', 'id', $grade_item->id));
     }
 
@@ -696,7 +695,7 @@ class gradelib_test extends UnitTestCase {
     }
 
     /**
-     * Test update of all final grades
+     * Test update of all final grades, then only 1 grade (give a $userid)
      */
     function test_grade_item_update_final_grades() {
         $grade_item = new grade_item($this->grade_items[0]);
@@ -735,25 +734,61 @@ class gradelib_test extends UnitTestCase {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'adjust_grade'));
         $grade_raw = new stdClass();
+
         $grade_raw->gradevalue = 40;
         $grade_raw->grademax = 100;
         $grade_raw->grademin = 0;
+        
         $grade_item->multfactor = 1;
         $grade_item->plusfactor = 0;
         $grade_item->grademax = 50;
         $grade_item->grademin = 0;
+        
+        $original_grade_raw  = clone($grade_raw);
+        $original_grade_item = clone($grade_item);
 
         $this->assertEqual(20, $grade_item->adjust_grade($grade_raw)); 
-
+        
+        // Try a larger maximum grade
         $grade_item->grademax = 150;
         $grade_item->grademin = 0;
 
         $this->assertEqual(60, $grade_item->adjust_grade($grade_raw)); 
 
-        $grade_item->grademax = 150;
+        // Try larger minimum grade
         $grade_item->grademin = 50;
 
-        $this->assertEqual(40, $grade_item->adjust_grade($grade_raw)); 
+        $this->assertEqual(90, $grade_item->adjust_grade($grade_raw)); 
+
+        // Rescaling from a small scale (0-50) to a larger scale (0-100)
+        $grade_raw->grademax = 50;
+        $grade_raw->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->grademin = 0;
+
+        $this->assertEqual(80, $grade_item->adjust_grade($grade_raw)); 
+
+        // Rescaling from a small scale (0-50) to a larger scale with offset (40-100)
+        $grade_item->grademax = 100;
+        $grade_item->grademin = 40;
+
+        $this->assertEqual(88, $grade_item->adjust_grade($grade_raw)); 
+
+        // Try multfactor and plusfactor
+        $grade_raw = clone($original_grade_raw);
+        $grade_item = clone($original_grade_item);
+        $grade_item->multfactor = 1.23;
+        $grade_item->plusfactor = 3;
+
+        $this->assertEqual(27.6, $grade_item->adjust_grade($grade_raw)); 
+
+        // Try multfactor below 0 and a negative plusfactor
+        $grade_raw = clone($original_grade_raw);
+        $grade_item = clone($original_grade_item);
+        $grade_item->multfactor = 0.23;
+        $grade_item->plusfactor = -3;
+
+        $this->assertEqual(round(1.6), round($grade_item->adjust_grade($grade_raw))); 
     }
 
 // GRADE_CATEGORY OBJECT
