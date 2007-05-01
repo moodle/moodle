@@ -41,7 +41,7 @@ $string['dirroot'] = 'دليل مودل';
 $string['dirrooterror'] = 'إعدادّّّ\"المجلد\" غير صحيح. حاول إعادة الإعداد';
 $string['download'] = 'تنزيل';
 $string['downloadlanguagehead'] = 'تنزيل حزمة اللغة';
-$string['environmenterrortodo'] = 'يجب عليك تصحيح كل المشاكل (الأخطاء) الموضحه أعلاه قبل الأستمرار في ثتبيت هذا الأصدار لمودل';
+$string['environmenterrortodo'] = 'يجب عليك تصحيح كل المشاكل (الأخطاء) الموضحه أعلاه قبل الأستمرار في ثتبيت هذا الأصدار لموّدل';
 $string['environmenthead'] = 'يتم فحص البيئة';
 $string['environmentrecommendinstall'] = 'ينصح بتثبيته/تمكينه';
 $string['environmentrecommendversion'] = 'يفضل الأصدار a$->needed ، وانت تستخدم الأصدار a$->current';
@@ -62,6 +62,7 @@ $string['magicquotesruntimeerror'] = 'هذا يجب ان يكون معطل';
 $string['mbstringrecommended'] = 'يفضل وبشدة تثبيت مكتبة (MBSTRING) الاختيارية وذلك لتسحين اداء الموقع وبذات لوكان موقعك يدعم لغات غير لاتينية.';
 $string['memorylimit'] = 'حد الذاكرة';
 $string['memorylimiterror'] = 'ذاكرة الـ PHP صغيرة جداً... من المحتل ستواجه بعض المشاكل لاحقاً';
+$string['missingrequiredfield'] = 'بعض الحقول المطلوبة مفقودة';
 $string['moodledocslink'] = 'وثائق مودل لهذه الصفحة';
 $string['mysql416bypassed'] = 'على الرغم من أن موقعك يستخدم iso-8859-1 للغات (اللأتينية)فقط، يمكنك الأستمرار في استخدام MySQL 4.1.12 أو أعلى المثبتة حاليا.';
 $string['mysql416required'] = 'MySQL 4.1.16 هي الأصدار الأقل المطلوب لاتثبيت أصدار مودل 1.6 وذلك لضمان إمكانية تحويل جميع البيانات إلى UTF-8 في المستقبل.';
@@ -72,7 +73,7 @@ $string['parentlanguage'] = 'المترجمون: أذا كانت لغتك لها
 $string['pass'] = 'اجتياز';
 $string['password'] = 'كلمة المرور';
 $string['phpversion'] = 'أصدار PHP';
-$string['phpversionerror'] = 'يجب ان يكون إصدار PHP 4.1.0 على الاقل ';
+$string['phpversionerror'] = 'يجب ان يكون إصدار PHP 4.1.0 على الاقل';
 $string['phpversionhelp'] = '<p> يتطلب مودل على الاقل الأصدار 4.1.0 لـ PHP </p>
 <p> انت تستخدم الأصدار $a </p>
 <p> يجب عليك ترقية PHP أو الانتقال إلى مستظيف أخر لديه أصدار اجد لـ PHP.</p>';
