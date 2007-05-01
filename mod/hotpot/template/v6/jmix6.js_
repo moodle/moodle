@@ -1,5 +1,35 @@
-//JMIX STANDARD OUTPUT FORMAT CODE
+[inclScorm1.2]
+//JMIX-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
 
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+		
+//Now send a detailed reports on the item
+		var ItemLabel = 'Item_1';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		if (Finished == true){
+			API.LMSSetValue('cmi.objectives.0.status', 'completed');
+		}
+		else{
+			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
+		}
+				
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+		
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMIX STANDARD OUTPUT FORMAT CODE
 
 var CorrectResponse = '[strGuessCorrect]';
 var IncorrectResponse = '[strGuessIncorrect]';
@@ -13,6 +43,7 @@ var Finished = false;
 var TimeOver = false;
 var Score = 0;
 var strInstructions = '';
+var AnswersTried = '';
 
 
 var SegmentTemplate = '&nbsp; &nbsp;<a class="ExSegment" href="javascript:void(0)" onclick="AddSegment([SegmentNumber])" title="[strClickToAdd]">[CurrentSegment]</a>&nbsp; &nbsp;';
@@ -209,6 +240,9 @@ function CheckAnswer(CheckType){
 
 		WellDone = '<span class="Answer">' + Output + '</span><br /><br />' + CorrectResponse + '<br />';
 
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += Output;
+		
 //Do score calculation here
 		Score = Math.floor(((Segments.length-Penalties) * 100)/Segments.length);
 		WellDone += YourScoreIs + ' ' + Score + '%.<br />';
@@ -224,7 +258,10 @@ function CheckAnswer(CheckType){
 	}
 
 	else{
-		TryAgain = '<span class="Answer">' + CompileString(GuessSequence) + '</span><br /><br />';
+		var WrongGuess = CompileString(GuessSequence);
+		if (AnswersTried.length > 0){AnswersTried += ' | ';}
+		AnswersTried += WrongGuess;
+		TryAgain = '<span class="Answer">' + WrongGuess + '</span><br /><br />';
 		if (CheckType == 0){
 			TryAgain += IncorrectResponse + '<br />';
 		}
@@ -276,6 +313,14 @@ function CheckAnswer(CheckType){
 		setTimeout('Finish()', SubmissionTimeout);
 		WriteToInstructions(YourScoreIs + ' ' + Score + '%.'); 
 	}
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 function FindSegment(SegID){
@@ -298,6 +343,10 @@ function StartUp(){
 [inclSendResults]
 	GetUserName();
 [/inclSendResults]
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
 
 [inclPreloadImages]
 	PreloadImages([PreloadImageList]);
@@ -353,5 +402,8 @@ function TimesUp() {
 	Finished = true;
 	CheckAnswer(0);
 	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
 }
 [/inclTimer]

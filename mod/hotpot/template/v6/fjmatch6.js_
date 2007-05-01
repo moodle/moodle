@@ -1,4 +1,17 @@
 
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormBrowseTime(){
+if (API != null){
+		API.LMSSetValue('cmi.core.session_time', MillisecondsToTime((new Date()).getTime() - ScormStartTime));
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH-SPECIFIC CORE JAVASCRIPT CODE
+
 var CurrItem = null;
 var Stage = 2;
 var QList = new Array();
@@ -34,6 +47,17 @@ function SetUpItems(){
 function StartUp(){
 
 	SetUpItems();
+	
+[inclScorm1.2]
+	initAPI(window);
+	if (API != null){
+		API.LMSInitialize(''); 
+		API.LMSSetValue('cmi.core.lesson_status', 'browsed');
+		API.LMSSetValue('cmi.comments', 'This exercise has no checking or scoring features.');
+		API.LMSCommit('');
+	}
+[/inclScorm1.2]
+
 
 [inclPreloadImages]
 	PreloadImages([PreloadImageList]);

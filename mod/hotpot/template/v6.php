@@ -323,6 +323,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     function v6_expand_NavBarJS() {
         return $this->v6_expand_NavButtons();
     }
+    function v6_expand_Scorm12() {
+        return false;
+    }
 
     // js files (all quiz types)
 

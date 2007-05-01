@@ -22,25 +22,36 @@ function GetPageXY(El) {
 }
 
 function GetScrollTop(){
-	if (document.documentElement && document.documentElement.scrollTop){
-		return document.documentElement.scrollTop;
+	if (typeof(window.pageYOffset) == 'number'){
+		return window.pageYOffset;
 	}
 	else{
-		if (document.body){
- 			return document.body.scrollTop;
+		if ((document.body)&&(document.body.scrollTop)){
+			return document.body.scrollTop;
 		}
 		else{
-			return window.pageYOffset;
+			if ((document.documentElement)&&(document.documentElement.scrollTop)){
+				return document.documentElement.scrollTop;
+			}
+			else{
+				return 0;
+			}
 		}
 	}
 }
 
 function GetViewportHeight(){
-	if (window.innerHeight){
+	if (typeof window.innerHeight != 'undefined'){
 		return window.innerHeight;
 	}
 	else{
-		return document.getElementsByTagName('body')[0].clientHeight;
+		if (((typeof document.documentElement != 'undefined')&&(typeof document.documentElement.clientHeight !=
+     'undefined'))&&(document.documentElement.clientHeight != 0)){
+			return document.documentElement.clientHeight;
+		}
+		else{
+			return document.getElementsByTagName('body')[0].clientHeight;
+		}
 	}
 }
 

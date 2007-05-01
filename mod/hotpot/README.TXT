@@ -1,5 +1,5 @@
 ===============================================
-This is v2.1.23 of the HotPot module for Moodle
+This is v2.1.24 of the HotPot module for Moodle
 ===============================================
 
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.

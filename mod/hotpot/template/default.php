@@ -24,11 +24,11 @@ class hotpot_xml_template_default {
 		//	[1] the full block name (including optional leading 'str' or 'incl')
 		//	[2] leading 'incl' or 'str', if any
 		//	[3] the real block name ([1] without [2])
-		$search = '/\[\/((incl|str)?(\w+))\]/';
+		$search = '/\[\/((incl|str)?((?:\w|\.)+))\]/';
 		preg_match_all($search, $this->$tag, $names);
 		$i_max = count($names[0]);
 		for ($i=0; $i<$i_max; $i++) {
-			$method = $this->parent->template_dir.'_expand_'.$names[3][$i];
+			$method = $this->parent->template_dir.'_expand_'.str_replace('.', '', $names[3][$i]);
 			if (method_exists($this, $method)) {
 				eval('$value=$this->'.$method.'();');
 				$search = '/\['.$names[1][$i].'\](.*?)\[\/'.$names[1][$i].'\]/s';
