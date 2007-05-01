@@ -205,7 +205,7 @@ function groups_db_group_matches($courseid, $grp_name, $grp_description) {
     $records = get_records_sql($sql);
     $group = false;
     if ($records) {
-        $group = $records[0];
+        $group = array_shift($records);
     } 
     return $group;
 }
