@@ -70,6 +70,7 @@ class login_change_password_form extends moodleform {
         if (!check_password_policy($data['newpassword1'], $errmsg)) {
             $errors['newpassword1'] = $errmsg;
             $errors['newpassword2'] = $errmsg;
+            return $errors;
         }
 
         return true;
