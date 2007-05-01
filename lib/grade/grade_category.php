@@ -112,11 +112,20 @@ class grade_category extends grade_object {
     /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
-     * or when a new parent is added or changed.
-     * @todo implement
+     * or when a new parent is added or changed. It is a recursive function: once the calling
+     * object no longer has a parent, the path is complete.
+     *
+     * @static
+     * @param object $grade_category
+     * @return int The depth of this category (2 means there is one parent)
      */
-    function build_path() {
-    
+    function build_path($grade_category) {
+        if (empty($grade_category->parent)) {
+            return "/$grade_category->id";
+        } else {
+            $parent = get_record('grade_categories', 'id', $grade_category->parent);
+            return grade_category::build_path($parent) . "/$grade_category->id";
+        }
     }
 
 
@@ -147,7 +156,45 @@ class grade_category extends grade_object {
         } else {
             return false;
         }
-    } 
+    }
+
+    /**
+     * In addition to the normal insert() defined in grade_object, this method sets the depth
+     * and path for this object, and update the record accordingly. The reason why this must
+     * be done here instead of in the constructor, is that they both need to know the record's
+     * id number, which only gets created at insertion time.
+     */
+    function insert() {
+        $result = parent::insert();
+
+        // Build path and depth variables
+        if (!empty($this->parent)) {
+            $this->path = grade_category::build_path($this);
+            $this->depth = $this->get_depth_from_path();
+        } else {
+            $this->depth = 1;
+            $this->path = "/$this->id";
+        }
+        
+        $this->update();
+        return $result;
+    }
+    
+    /**
+     * Looks at a path string (e.g. /2/45/56) and returns the depth level represented by this path (in this example, 3).
+     * If no string is given, it looks at the obect's path and assigns the resulting depth to its $depth variable.
+     * @param string $path
+     * @return int Depth level
+     */
+    function get_depth_from_path($path=NULL) {
+        if (empty($path)) {
+            $path = $this->path;
+        }
+        preg_match_all('/\/([0-9]+)+?/', $path, $matches);
+        $depth = count($matches[0]);
+
+        return $depth;
+    }
 }
 
 ?>

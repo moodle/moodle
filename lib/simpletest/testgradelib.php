@@ -45,11 +45,12 @@ require_once($CFG->libdir . '/dmllib.php');
  * this search (%unittest%) will be deleted! Maybe a good idea to switch this off in
  * production environment.
  */
+/*
 delete_records_select('grade_categories', 'fullname LIKE "%unittest%"');
 delete_records_select('grade_items', 'itemname LIKE "%unittest%"');
 delete_records_select('grade_calculation', 'calculation LIKE "%unittest%"');
 delete_records_select('scale', 'name LIKE "%unittest%"');
-
+*/
 class gradelib_test extends UnitTestCase {
    
     /**
@@ -844,7 +845,39 @@ class gradelib_test extends UnitTestCase {
 // GRADE_CATEGORY OBJECT
 
     function test_grade_category_construct() {
+        $params = new stdClass();
 
+        $params->courseid = $this->courseid;
+        $params->fullname = 'unittestcategory4';
+
+        $grade_category = new grade_category($params, false);
+        $grade_category->insert();
+        $this->grade_categories[] = $grade_category;
+
+        $this->assertEqual($params->courseid, $grade_category->courseid);
+        $this->assertEqual($params->fullname, $grade_category->fullname);
+        $this->assertEqual(1, $grade_category->depth);
+        $this->assertEqual("/$grade_category->id", $grade_category->path);
+        $parentpath = $grade_category->path;
+
+        // Test a child category
+        $params->parent = $grade_category->id;
+        $params->fullname = 'unittestcategory5';
+        $grade_category = new grade_category($params, false);
+        $grade_category->insert();
+        $this->grade_categories[] = $grade_category;
+        $this->assertEqual(2, $grade_category->depth);
+        $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path); 
+        $parentpath = $grade_category->path;
+        
+        // Test a third depth category
+        $params->parent = $grade_category->id;
+        $params->fullname = 'unittestcategory6';
+        $grade_category = new grade_category($params, false);
+        $grade_category->insert();
+        $this->grade_categories[] = $grade_category;
+        $this->assertEqual(3, $grade_category->depth);
+        $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path); 
     }
 
     function test_grade_category_insert() {
