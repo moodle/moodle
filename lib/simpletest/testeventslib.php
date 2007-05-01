@@ -10,7 +10,7 @@ require_once($CFG->libdir . '/dmllib.php');
 
 // dummy test function
 function plusone($eventdata) {
-    return $eventdata->data+1;  
+    return $eventdata+1;  
 }
 
 class eventslib_test extends UnitTestCase {
@@ -30,9 +30,10 @@ class eventslib_test extends UnitTestCase {
         
         // make a dummy event
         $eventhandler -> eventname = 'testevent';
-        $eventhandler -> handlermodule = 'unittext';
+        $eventhandler -> handlermodule = 'unittest';
         $eventhandler -> handlerfile = '/lib/simpletest/testeventslib.php';
         $eventhandler -> handlerfunction = 'plusone';
+        $eventhandler -> schedule = 'instant';
         
         $this -> handler = $eventhandler;
         $this -> handlerid = insert_record('events_handlers', $eventhandler);
@@ -54,9 +55,12 @@ class eventslib_test extends UnitTestCase {
     function test_events_process_queued_handler_handler() {
         
         $eventdata = new object;
-        $eventdata->data = 1;
+        $eventdata->eventdata = serialize(1);
         $eventdata->schedule = 'instant';
-        $id = queue_handler($this->handler, $eventdata);
+        
+        $eventid = insert_record('events_queue', $eventdata);
+        
+        $id = queue_handler($this->handler, $eventid);
         $storedhandler = get_record('events_queue_handlers', 'id', $id);
         $retval = events_process_queued_handler($storedhandler);
         $this->assertEqual(2, $retval);
@@ -71,14 +75,22 @@ class eventslib_test extends UnitTestCase {
     }
     
     /** 
-     * tests trigger_events funtion()
+     * tests trigger_event funtion()
      */
-    function test_trigger_events() {
+    function test_trigger_event() {
         $eventdata = new object;
-        $eventdata->data = 2;
+        $eventdata->eventdata = 2;
         $eventdata->schedule = 'instant';
-        $this->assertEqual(0, trigger_events('testevent', $eventdata));
+        $this->assertEqual(0, trigger_event('testevent', $eventdata));
     }
+    
+    /** 
+    * tests trigger_event_is_registered funtion()
+    */
+    function test_event_is_registered() {
+        $this->assertTrue(event_is_registered('unittest', 'testevent'));
+    }
+    
 }
 
 ?>

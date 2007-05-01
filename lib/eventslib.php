@@ -70,7 +70,7 @@ function get_cached_events($component='moodle') {
             $eventname = $storedevent->eventname;
             // not needed for comparisons
             unset($storedevent->handlermodule);
-            unset($storedevent->id);
+            //unset($storedevent->id);
             unset($storedevent->eventname);
             $cachedevents[$eventname] = (array)$storedevent;
         }
@@ -80,12 +80,15 @@ function get_cached_events($component='moodle') {
 
 
 /**
+ * We can not removed all event handlers in table, then add them again
+ * because event handlers could be referenced by queued items
+ *
  * Updates the capabilities table with the component capability definitions.
  * If no parameters are given, the function updates the core moodle
  * capabilities.
  *
- * Note that the absence of the db/access.php capabilities definition file
- * will cause any stored capabilities for the component to be removed from
+ * Note that the absence of the db/events.php event definition file
+ * will cause any stored events for the component to be removed from
  * the database.
  *
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
@@ -96,36 +99,58 @@ function events_update_definition($component='moodle') {
 
     $storedevents = array();
 
+    // load event definition from events.php
     $fileevents = events_load_def($component);
+    
     // load event definitions from db tables
     // if we detect an event being already stored, we discard from this array later
     // the remaining needs to be removed
     
     $cachedevents = get_cached_events($component);
     
-    /// compare the 2 arrays, and make adjustments
-    /// array_udiff is php 5 only =(
-    
     if ($fileevents) {
         foreach ($fileevents as $eventname => $fileevent) {
             if (!empty($cachedevents[$eventname])) {
-                if ($cachedevents[$eventname] == $fileevent) {
-                    unset($cachedevents[$eventname]);  
-                    continue; // breaks the cachedevents loop
+                // exact same event handler already present in db,
+                // ignore this entry
+                if ($cachedevents[$eventname]['handlerfile'] == $fileevent['handlerfile'] &&
+                    $cachedevents[$eventname]['handlerfunction'] == $fileevent['handlerfunction'] &&
+                    $cachedevents[$eventname]['schedule'] == $fileevent['schedule']) {                    
+                    
+                    unset($cachedevents[$eventname]);
+                    continue;                    
+                
+                } else {
+                    // same event name matches, this event has been updated,
+                    // update the datebase
+                    $event = new object;
+                    $event->id = $cachedevents[$eventname]['id'];
+                    $event->handlerfile = $fileevent['handlerfile'];
+                    $event->handlerfunction = $fileevent['handlerfunction'];
+                    $event->schedule = $fileevent['schedule'];
+                    
+                    update_record('events_handlers', $event);
+                    
+                    unset($cachedevents[$eventname]);
+                    continue;                   
                 }
-            }
-            // if we are here, no break is called, file event is new
-            $event = new object;
-            $event->eventname =  $eventname;
-            $event->handlermodule = $component;
-            $event->handlerfile = $fileevent['handlerfile'];
-            $event->handlerfunction = $fileevent['handlerfunction'];            
-            insert_record('events_handlers', $event);      
+                
+            } else {            
+                // if we are here, this event handler is not present in db (new)
+                // add it
+                $event = new object;
+                $event->eventname =  $eventname;
+                $event->handlermodule = $component;
+                $event->handlerfile = $fileevent['handlerfile'];
+                $event->handlerfunction = $fileevent['handlerfunction'];
+                $event->schedule = $fileevent['schedule'];        
+                insert_record('events_handlers', $event);
+            } 
         }
     }
     
-    // clean up the left overs
-    // delete from db
+    // clean up the left overs, the entries in cachedevents array at this points are deprecated event handlers
+    // and should be removed, delete from db
     events_cleanup($component, $cachedevents);
 
     return true;
@@ -151,7 +176,6 @@ function events_cleanup($component, $cachedevents) {
 
 /****************** End of Events handler Definition code *******************/
 
-
 /**
  * puts a handler on queue
  * @param object handler - event handler object from db
@@ -159,22 +183,8 @@ function events_cleanup($component, $cachedevents) {
  * @param bool failed -  whether this handler is queued because of a failed event trigger
  * @return
  */
-function queue_handler($handler, $eventdata, $failed=false) {
+function queue_handler($handler, $eventid) {
     global $USER;
-
-    // adds a record to events_queue (if not exist)
-    if (!$existing_event = get_record('events_queue', 'eventdata', serialize($eventdata))) {
-        // add it 
-        $eq = new object;
-        $eq->userid = $USER->id;
-        $eq->schedule = $eventdata->schedule;
-        $eq->eventdata = serialize($eventdata);
-        $eq->stackdump = '';
-        $eq->timecreated = time();
-        $eventid = insert_record('events_queue', $eq); 
-    } else {
-        $eventid = $existing_event->id;
-    }
     
     // check if this event handler is already queued
     if (!$qh = get_record('events_queue_handlers', 'queuedeventid', $eventid, 'handlerid', $handler->id)) {
@@ -203,6 +213,8 @@ function queue_handler($handler, $eventdata, $failed=false) {
  */
 function trigger_event($eventname, $eventdata) {
     $failedevent = 0; // number of failed events.
+    $eventid = 0;
+    
     // pull out all registered event handlers
     if ($handlers = get_records('events_handlers', 'eventname', $eventname)) {
         foreach ($handlers as $handler) {
@@ -210,17 +222,27 @@ function trigger_event($eventname, $eventdata) {
             
             // if event type is 
             if ($handler->schedule == 'instant') {
-                if (dispatch_event($handler, $eventdata)) {
+                if (dispatch_event($handler, $eventdata->eventdata)) {
                     continue;
                 } else {
                     // update the failed flag
-                    $failed = true;
                     $failedevent ++;
                 }
             }
             // if even type is not instant, or trigger failed, queue it
             $queuedevent++;
-            queue_handler($handler, $eventdata, $failed);        
+            // make and queue the event object here
+            
+            if (!$eventid) {
+                $eq = new object;
+                $eq->userid = $USER->id;
+                $eq->schedule = $eventdata->schedule;
+                $eq->eventdata = serialize($eventdata);
+                $eq->stackdump = '';
+                $eq->timecreated = time();
+                $eventid = insert_record('events_queue', $eq);
+            }
+            queue_handler($handler, $eventid);       
         }      
     }
     return $failedevent;
@@ -238,7 +260,7 @@ function dispatch_event($handler, $eventdata) {
     // checks for handler validity
     
     // check if the same handler is queued already, if so, return false so we can queue it
-    // TODO
+    // TODO  
     
     include_once($CFG->dirroot.$handler->handlerfile);
     return call_user_func($handler->handlerfunction, $eventdata);
@@ -246,7 +268,7 @@ function dispatch_event($handler, $eventdata) {
 
 /**
  * given a queued handler, call the respective event handler to process the event
- * @input object handler- events_queued_handler object from db
+ * @param object handler- events_queued_handler object from db
  * @return fail or custom function value
  */
 function events_process_queued_handler($handler) {
@@ -265,7 +287,7 @@ function events_process_queued_handler($handler) {
     }
     // call the function sepcified by the handler
 
-    return trigger_event($eventhandler, unserialize($eventobject->eventdata));
+    return dispatch_event($eventhandler, unserialize($eventobject->eventdata));
 }
 
 /**
@@ -306,5 +328,14 @@ function events_dequeue($handler) {
     } else {
         return false;  
     }
+}
+
+/**
+ * checks if an event is registered for this component
+ * @param string component - component name, can be mod/data or moodle
+ * @return bool
+ */
+function event_is_registered($component, $eventname) {
+    return record_exists('events_handlers', 'handlermodule', $component, 'eventname', $eventname);  
 }
 ?>
