@@ -4,14 +4,10 @@
 /// Returns list of users with their user ids
 
 require_once('../config.php');
-require_once($CFG->libdir.'/uploadlib.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once('uploaduser_form.php');
 
 admin_externalpage_setup('uploadusers');
-
-$createpassword = optional_param('createpassword', 0, PARAM_BOOL);
-$updateaccounts = optional_param('updateaccounts', 0, PARAM_BOOL);
-$allowrenames   = optional_param('allowrenames', 0, PARAM_BOOL);
 
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 
@@ -23,12 +19,8 @@ if (!$adminuser = get_admin()) {
     error("Could not find site admin");
 }
 
-$strfile = get_string('file');
 $struser = get_string('user');
 $strusersnew = get_string('usersnew');
-$strusersupdated = get_string('usersupdated');
-$struploadusers = get_string('uploadusers');
-$straddnewuser = get_string('importuser');
 
 $csv_encode = '/\&\#44/';
 if (isset($CFG->CSV_DELIMITER)) {
@@ -47,15 +39,18 @@ if (isset($CFG->CSV_DELIMITER)) {
 
 admin_externalpage_print_header();
 
+$mform = new admin_uploaduser_form();
 
 /// If a file has been uploaded, then process it
 
+if ( $formdata = $mform->get_data() ) {
 
-$um = new upload_manager('userfile',false,false,null,false,0);
+    $createpassword = $formdata->createpassword;
+    $updateaccounts = $formdata->updateaccounts;
+    $allowrenames   = $formdata->allowrenames;
 
-if ($um->preprocess_files() && confirm_sesskey()) {
-    $filename = $um->files['userfile']['tmp_name'];
-
+    $filename = $mform->get_userfile_name();
+    
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
@@ -274,12 +269,12 @@ if ($um->preprocess_files() && confirm_sesskey()) {
                             $usersnew++;
                             if (empty($user->password) && $createpassword) {
                                 // passwords will be created and sent out on cron
-                                insert_record('user_preferences', array( userid => $user->id,
-                                            name   => 'create_password',
-                                            value  => 1));
-                                insert_record('user_preferences', array( userid => $user->id,
-                                            name   => 'auth_forcepasswordchange',
-                                            value  => 1));
+                                insert_record('user_preferences', array( 'userid' => $user->id,
+                                            'name'   => 'create_password',
+                                            'value'  => 1));
+                                insert_record('user_preferences', array( 'userid' => $user->id,
+                                            'name'   => 'auth_forcepasswordchange',
+                                            'value'  => 1));
                             }
                         } else {
                             // Record not added -- possibly some other error
@@ -369,36 +364,9 @@ if ($um->preprocess_files() && confirm_sesskey()) {
 }
 
 /// Print the form
-print_heading_with_help($struploadusers, 'uploadusers');
+print_heading_with_help(get_string('uploadusers'), 'uploadusers');
 
-$noyesoptions = array( get_string('no'), get_string('yes') );
-
-$maxuploadsize = get_max_upload_file_size();
-echo '<div style="text-align:center">';
-echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php"><div>'.
-$strfile.'&nbsp;<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'" />'.
-'<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />'.
-'<input type="file" name="userfile" size="30" />';
-print_heading(get_string('settings'));
-echo '<table style="margin-left:auto;margin-right:auto">';
-echo '<tr><td>' . get_string('passwordhandling', 'auth') . '</td><td>';
-$passwordopts = array( 0 => get_string('infilefield', 'auth'),
-        1 => get_string('createpasswordifneeded', 'auth'),
-        );
-choose_from_menu($passwordopts, 'createpassword', $createpassword);
-echo '</td></tr>';
-
-echo '<tr><td>' . get_string('updateaccounts', 'admin') . '</td><td>';
-choose_from_menu($noyesoptions, 'updateaccounts', $updateaccounts);
-echo '</td></tr>';
-
-echo '<tr><td>' . get_string('allowrenames', 'admin') . '</td><td>';
-choose_from_menu($noyesoptions, 'allowrenames', $allowrenames);
-echo '</td></tr>';
-echo '</table><br />';
-echo '<input type="submit" value="'.$struploadusers.'" />';
-echo '</div></form><br />';
-echo '</div>';
+$mform->display();
 
 admin_externalpage_print_footer();
 
@@ -419,4 +387,3 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 }
 
 ?>
-
