@@ -1141,6 +1141,17 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007050201) {
+
+    /// Define field theme to be added to course_categories
+        $table = new XMLDBTable('course_categories');
+        $field = new XMLDBField('theme');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '50', null, null, null, null, null, null, 'path');
+
+    /// Launch add field theme
+        $result = $result && add_field($table, $field);
+    }
+
     return $result;
 
 }
