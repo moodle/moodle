@@ -2502,30 +2502,114 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
  * Returns the name of the current theme
  *
  * @uses $CFG
- * @param $USER
- * @param $SESSION
+ * @uses $USER
+ * @uses $SESSION
+ * @uses $COURSE
+ * @uses $FULLME
  * @return string
  */
 function current_theme() {
-    global $CFG, $USER, $SESSION, $COURSE;
+    global $CFG, $USER, $SESSION, $COURSE, $FULLME;
 
-    if (!empty($CFG->pagetheme)) {  // Page theme is for special page-only themes set by code
-        return $CFG->pagetheme;
-
-    } else if (!empty($CFG->allowcoursethemes) and !empty($COURSE->theme)) {  // Course themes override others
-        return $COURSE->theme;
-
-    } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
-        return $SESSION->theme;
-
-    } else if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {    // User theme can override site theme
-        return $USER->theme;
-
+    if (empty($CFG->themeorder)) {
+        $themeorder = array('page', 'course', 'category', 'session', 'user', 'site');
     } else {
-        return $CFG->theme;
+        $themeorder = $CFG->themeorder;
     }
+
+    $theme = '';
+    foreach ($themeorder as $themetype) {
+
+        if (!empty($theme)) continue;
+        
+        switch ($themetype) {
+            case 'page': // Page theme is for special page-only themes set by code
+                if (!empty($CFG->pagetheme)) {
+                    $theme = $CFG->pagetheme;
+                }
+                break;
+            case 'course':
+                if (!empty($CFG->allowcoursethemes) and !empty($COURSE->theme)) {
+                    $theme = $COURSE->theme;
+                }
+                break;
+            case 'category':
+                if (!empty($CFG->allowcategorythemes)) {
+                /// Nasty hack to check if we're in a category page
+                    if (stripos($FULLME, 'course/category.php') !== false) {
+                        global $id;
+                        if (!empty($id)) {
+                            $theme = current_category_theme($id);
+                        }
+                /// Otherwise check if we're in a course that has a category theme set
+                    } else if (!empty($COURSE->category)) {
+                        $theme = current_category_theme($COURSE->category);
+                    }
+                }
+                break;
+            case 'session':
+                if (!empty($SESSION->theme)) {
+                    $theme = $SESSION->theme;
+                }
+                break;
+            case 'user':
+                if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {
+                    $theme = $USER->theme;
+                }
+                break;
+            case 'site':
+                $theme = $CFG->theme;
+                break;
+            default:
+                /// do nothing
+        }
+    }
+
+/// A final check in case 'site' was not included in $CFG->themeorder
+    if (empty($theme)) {
+        $theme = $CFG->theme;
+    }
+
+    return $theme;
 }
 
+/**
+ * Retrieves the category theme if one exists, otherwise checks the parent categories.
+ * Recursive function.
+ *
+ * @uses $COURSE
+ * @param   integer   $categoryid   id of the category to check
+ * @return  string    theme name
+ */
+function current_category_theme($categoryid=0) {
+    global $COURSE;
+    
+/// Use the COURSE global if the categoryid not set
+    if (empty($categoryid)) {
+        if (!empty($COURSE->category)) {
+            $categoryid = $COURSE->category;
+        } else {
+            return false;
+        }
+    }
+    
+/// Retrieve the current category
+    if ($category = get_record('course_categories', 'id', $categoryid)) {
+    
+    /// Return the category theme if it exists
+        if (!empty($category->theme)) {
+            return $category->theme;
+
+    /// Otherwise try the parent category if one exists
+        } else if (!empty($category->parent)) {
+            return current_category_theme($category->parent);
+        }
+
+/// Return false if we can't find the category record
+    } else {
+        return false;
+    }
+}
 
 /**
  * This function is called by stylesheets to set up the header
