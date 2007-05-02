@@ -91,14 +91,15 @@ class grade_calculation extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_calculation = get_record('grade_calculations', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (!isset($this)) {
-                $grade_calculation = new grade_calculation($grade_calculation);
-                return $grade_calculation;
-            } else {
+            if (isset($this) && get_class($this) == 'grade_calculation') {
+                print_object($this);
                 foreach ($grade_calculation as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
+            } else {
+                $grade_calculation = new grade_calculation($grade_calculation);
+                return $grade_calculation;
             }
         } else {
             return false;

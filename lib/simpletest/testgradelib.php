@@ -51,6 +51,12 @@ delete_records_select('grade_items', 'itemname LIKE "%unittest%"');
 delete_records_select('grade_calculation', 'calculation LIKE "%unittest%"');
 delete_records_select('scale', 'name LIKE "%unittest%"');
 */
+
+/**
+ * Here is a brief explanation of the test data set up in these unit tests.
+ * category1 => array(grade_item1, grade_item3, category2 => array(grade_item2))
+ * 3 users for 3 grade_items
+ */
 class gradelib_test extends UnitTestCase {
    
     /**
@@ -129,6 +135,22 @@ class gradelib_test extends UnitTestCase {
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
             $this->grade_categories[] = $grade_category;
         } 
+        
+        $grade_category = new stdClass();
+        
+        $grade_category->fullname    = 'unittestcategory2';
+        $grade_category->courseid    = $this->courseid;
+        $grade_category->aggregation = GRADE_AGGREGATE_MODE;
+        $grade_category->keephigh    = 100;
+        $grade_category->droplow     = 10;
+        $grade_category->hidden      = 0;
+        $grade_category->parent      = $this->grade_categories[0]->id;
+        $grade_category->timecreated = mktime();
+        $grade_category->timemodified = mktime();
+        
+        if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
+            $this->grade_categories[] = $grade_category;
+        } 
     }
 
     /**
@@ -156,6 +178,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item = new stdClass();
 
         $grade_item->courseid = $this->courseid;
+        $grade_item->categoryid = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitem2';
         $grade_item->itemtype = 'import';
         $grade_item->itemmodule = 'assignment';
@@ -881,20 +904,65 @@ class gradelib_test extends UnitTestCase {
     }
 
     function test_grade_category_insert() {
+        $grade_category = new grade_category();
+        $this->assertTrue(method_exists($grade_category, 'insert'));
+        
+        $grade_category->fullname    = 'unittestcategory3';
+        $grade_category->courseid    = $this->courseid;
+        $grade_category->aggregation = GRADE_AGGREGATE_MODE;
+        $grade_category->keephigh    = 100;
+        $grade_category->droplow     = 10;
+        $grade_category->hidden      = 0;
+        $grade_category->parent      = $this->grade_categories[0]->id;
+
+        $grade_category->insert();
+
+        $last_grade_category = end($this->grade_categories);
+
+        $this->assertEqual($grade_category->id, $last_grade_category->id + 1);
+        $this->assertTrue(!empty($grade_category->timecreated));
+        $this->assertTrue(!empty($grade_category->timemodified));
+        $this->grade_categories[] = $grade_category; 
 
     }
 
     function test_grade_category_update() {
-
+        $grade_category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($grade_category, 'update'));
+        
+        $grade_category->fullname = 'Updated info for this unittest grade_category';
+        $this->assertTrue($grade_category->update());
+        $fullname = get_field('grade_categories', 'fullname', 'id', $this->grade_categories[0]->id);
+        $this->assertEqual($grade_category->fullname, $fullname); 
     }
 
     function test_grade_category_delete() {
-
+        $grade_category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($grade_category, 'delete'));
+        
+        $this->assertTrue($grade_category->delete());
+        $this->assertFalse(get_record('grade_categories', 'id', $grade_category->id)); 
     }
 
     function test_grade_category_fetch() {
+        $grade_category = new grade_category(); 
+        $this->assertTrue(method_exists($grade_category, 'fetch'));
 
+        $grade_category = grade_category::fetch('id', $this->grade_categories[0]->id);
+        $this->assertEqual($this->grade_categories[0]->id, $grade_category->id);
+        $this->assertEqual($this->grade_categories[0]->fullname, $grade_category->fullname); 
     } 
+
+    function test_grade_category_get_children() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'get_children'));
+        
+        $this->assertEqual(3, count($category->get_children()));
+        $this->assertEqual(5, count($category->get_children(0))); 
+        
+        $category = new grade_category($this->grade_categories[1]);
+        $this->assertEqual(1, count($category->get_children())); 
+    }
 
 // GRADE_CALCULATION OBJECT
 

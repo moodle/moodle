@@ -132,7 +132,20 @@ class grade_object {
         // Trim trailing AND
         $wheresql = substr($wheresql, 0, strrpos($wheresql, 'AND'));
 
-        return get_records_select($this->table, $wheresql, 'id');
+        $objects = get_records_select($this->table, $wheresql, 'id');
+        
+        if (!empty($objects)) {
+            $full_objects = array();
+
+            // Convert the stdClass objects returned by the get_records_select method into proper objects
+            $classname = get_class($this);
+            foreach ($objects as $id => $stdobject) {
+                $full_objects[$id] = new $classname($stdobject, false);
+            }
+            return $full_objects;
+        } else {
+            return $objects;
+        }
     }
   
     /**

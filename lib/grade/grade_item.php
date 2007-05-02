@@ -213,14 +213,14 @@ class grade_item extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_item = get_record('grade_items', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (!isset($this)) {
-                $grade_item = new grade_item($grade_item);
-                return $grade_item;
-            } else {
+            if (isset($this) && get_class($this) == 'grade_item') {
                 foreach ($grade_item as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
+            } else {
+                $grade_item = new grade_item($grade_item);
+                return $grade_item;
             }
         } else {
             return false;
@@ -298,12 +298,11 @@ class grade_item extends grade_object {
      * @return mixed $calculation A string if found, false otherwise.
      */
     function get_calculation($fetch = false) {
-        if (!$fetch) {
+        if (!$fetch && get_class($this->calculation) == 'grade_calculation') {
             return $this->calculation;
         } 
-        
-        $grade_calculation = grade_calculation::fetch(true, 'itemid', $this->id);
-        
+        $grade_calculation = grade_calculation::fetch('itemid', $this->id);
+            
         if (empty($grade_calculation)) { // There is no calculation in DB
             return false;
         } elseif ($grade_calculation->calculation != $this->calculation->calculation) { // The object's calculation is not in sync with the DB (new value??)

@@ -26,8 +26,9 @@
 require_once('grade_object.php');
 
 class grade_grades_raw extends grade_object {
+    
     /**
-     * DB Table (used by grade_object).
+     * The DB table.
      * @var string $table
      */
     var $table = 'grade_grades_raw';
@@ -121,14 +122,14 @@ class grade_grades_raw extends grade_object {
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
     { 
         if ($object = get_record('grade_grades_raw', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (!isset($this)) {
-                $object = new grade_grades_raw($object);
-                return $object;
-            } else {
+            if (isset($this) && get_class($this) == 'grade_grades_raw') {
                 foreach ($object as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
+            } else {
+                $object = new grade_grades_raw($object);
+                return $object;
             }
         } else {
             return false;

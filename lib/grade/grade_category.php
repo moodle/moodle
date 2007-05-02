@@ -27,7 +27,7 @@ require_once('grade_object.php');
 
 class grade_category extends grade_object {
     /**
-     * DB Table (used by grade_object).
+     * The DB table.
      * @var string $table
      */
     var $table = 'grade_categories';
@@ -36,7 +36,7 @@ class grade_category extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields');
+    var $nonfields = array('table', 'nonfields', 'children', 'all_children');
     
     /**
      * The course this category belongs to.
@@ -100,6 +100,13 @@ class grade_category extends grade_object {
     var $children;
 
     /**
+     * A hierarchical array of all children below this category. This is stored separately from 
+     * $children because it is more memory-intensive and may not be used as often.
+     * @var array $all_children
+     */
+    var $all_children;
+
+    /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
      * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
@@ -144,14 +151,14 @@ class grade_category extends grade_object {
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
     { 
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (!isset($this)) {
-                $grade_category = new grade_category($grade_category);
-                return $grade_category;
-            } else {
+            if (isset($this) && get_class($this) == 'grade_category') {
                 foreach ($grade_category as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
+            } else {
+                $grade_category = new grade_category($grade_category);
+                return $grade_category;
             }
         } else {
             return false;
@@ -194,6 +201,44 @@ class grade_category extends grade_object {
         $depth = count($matches[0]);
 
         return $depth;
+    }
+
+    /**
+     * Fetches and returns all the children categories and/or grade_items belonging to this category. 
+     * By default only returns the immediate children (depth=1), but deeper levels can be requested, 
+     * as well as all levels (0).
+     * @param int $depth 1 for immediate children, 0 for all children, and 2+ for specific levels deeper than 1.
+     * @param string $arraytype Either 'nested' or 'flat'. A nested array represents the true hierarchy, but is more difficult to work with.
+     * @return array Array of child objects (grade_category and grade_item).
+     */
+    function get_children($depth=1, $arraytype='nested') {
+        $children = array();
+
+        if ($depth == 1) {
+            if (!empty($this->children)) {
+                return $this->children;
+            } else {
+                $cat = new grade_category();
+                $cat->parent = $this->id;
+                $children = $cat->fetch_all_using_this();
+                $item = new grade_item();
+                $item->categoryid = $this->id;
+                $item_children = $item->fetch_all_using_this();
+
+                if (!empty($children)) {                    
+                    $children = array_merge($children, $item_children);
+                } else {
+                    $children = $item_children;
+                }
+
+                $this->children = $children;
+            }
+        } elseif ($depth > 1) {
+            // TODO implement
+        } elseif ($depth == 0) {
+            // TODO implement
+        }
+        return $children;
     }
 }
 
