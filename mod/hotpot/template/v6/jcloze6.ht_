@@ -29,6 +29,10 @@
 
 <!--
 
+[inclScorm1.2]
+[strJSScorm_1_2]
+[/inclScorm1.2]
+
 [strJSBrowserCheck]
 
 [strJSButtons]
@@ -58,7 +62,7 @@
 
 </head>
 
-<body onload="StartUp()" id="TheBody">
+<body onload="StartUp()" id="TheBody" [inclScorm1.2]onunload="CheckLMSFinish()"[/inclScorm1.2]>
 
 <!-- BeginTopNavButtons -->
 
@@ -80,7 +84,7 @@
 </div>
 
 <div id="InstructionsDiv" class="StdDiv">
-	<p id="Instructions">[strInstructions]</p>
+	<div id="Instructions">[strInstructions]</div>
 </div>
 
 [inclReading]
@@ -126,7 +130,7 @@
 </div>
 
 [inclKeypad]
-<div class="Keypad">
+<div class="Keypad" id="CharacterKeypad">
 [strKeypad]
 </div>
 [/inclKeypad]

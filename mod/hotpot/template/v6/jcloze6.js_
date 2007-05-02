@@ -1,4 +1,39 @@
 
+[inclScorm1.2]
+//JCLOZE-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+//Now send detailed reports about each item
+		for (var i=0; i<State.length; i++){
+			var ThisItemGuesses = '';
+			var GapLabel = 'Gap_' + (i+1).toString();	
+			var ThisItemScore = Math.floor(State[i].ItemScore * 100) + '';
+			API.LMSSetValue('cmi.objectives.' + i + '.id', 'obj'+GapLabel);
+			API.LMSSetValue('cmi.interactions.' + i + '.id', 'int'+GapLabel);
+			API.LMSSetValue('cmi.objectives.' + i + '.score.raw', ThisItemScore);
+			API.LMSSetValue('cmi.objectives.' + i + '.score.min', '0');
+			API.LMSSetValue('cmi.objectives.' + i + '.score.max', '100');
+			if (State[i].AnsweredCorrectly == true){
+				API.LMSSetValue('cmi.objectives.' + i + '.status', 'completed');
+			}
+			else{
+				API.LMSSetValue('cmi.objectives.' + i + '.status', 'incomplete');
+			}
+			for (var j=0; j<State[i].Guesses.length; j++){
+				if (j>0){ThisItemGuesses += ' | ';}
+				ThisItemGuesses += State[i].Guesses[j];	
+			}	
+			API.LMSSetValue('cmi.interactions.' + i + '.type', 'fill-in');
+			API.LMSSetValue('cmi.interactions.' + i + '.student_response', ThisItemGuesses);
+		}		
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
 //JCLOZE CORE JAVASCRIPT CODE
 
 function ItemState(){
@@ -31,6 +66,14 @@ State = new Array();
 
 function StartUp(){
 	RemoveBottomNavBarForIE();
+//Show a keypad if there is one	(added bugfix for 6.0.4.12)
+	if (document.getElementById('CharacterKeypad') != null){
+		document.getElementById('CharacterKeypad').style.display = 'block';
+	}
+	
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
 
 [inclSendResults]
 	GetUserName();
@@ -62,7 +105,7 @@ function ShowClue(ItemNum){
 }
 
 function SaveCurrentAnswers(){
-	var Ans = ''
+	var Ans = '';
 	for (var i=0; i<I.length; i++){
 		Ans = GetGapValue(i);
 		if ((Ans.length > 0)&&(Ans != State[i].Guesses[State[i].Guesses.length-1])){
@@ -146,6 +189,7 @@ function CheckAnswers(){
 	CompileGuesses();
 	
 	if ((AllCorrect == true)||(Finished == true)){
+	
 [inclSendResults]
 		setTimeout('SendResults(' + TotalScore + ')', 50);
 [/inclSendResults]
@@ -157,6 +201,14 @@ function CheckAnswers(){
 		Finished = true;
 		setTimeout('Finish()', SubmissionTimeout);
 	}
+[inclScorm1.2]
+	if (AllCorrect == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 function TrackFocus(BoxNumber){
@@ -299,6 +351,7 @@ function GetHint(GapNum){
 }
 
 function ShowHint(){
+	if (document.getElementById('FeedbackDiv').style.display == 'block'){return;}
 	if (Locked == true){return;}
 	var CurrGap = FindCurrent();
 	if (CurrGap < 0){return;}
@@ -330,5 +383,8 @@ function TimesUp() {
 	Finished = true;
 	CheckAnswers();
 	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
 }
 [/inclTimer]

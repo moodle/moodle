@@ -1,4 +1,32 @@
 
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+		
+		
+//Now send a detailed reports on the item
+		var ItemLabel = 'Matching';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);	
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));	
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+		
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH-SPECIFIC CORE JAVASCRIPT CODE
+
 var CorrectResponse = '[strGuessCorrect]';
 var IncorrectResponse = '[strGuessIncorrect]';
 var YourScoreIs = '[strYourScoreIs]';
@@ -20,6 +48,7 @@ var LeftColPos = 100;
 var RightColPos = 500;
 var DragTop = 120;
 var Finished = false;
+var AnswersTried = '';
 
 //Fixed and draggable card arrays
 FC = new Array();
@@ -68,6 +97,10 @@ function DroppedOnFixed(DNum){
 
 
 function StartUp(){
+
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
 
 [inclSendResults]
 	GetUserName();
@@ -140,10 +173,9 @@ function StartUp(){
 		if (TempInt > WidestRight){WidestRight = TempInt;}
 	}
 
-	var HeightToSet = Highest;
-	if (C.gecko||C.ie5mac){HeightToSet -= 12;}
-	var WidthToSet = WidestRight;
-	if (C.gecko||C.ie5mac){WidthToSet -= 12;}
+//Fix for 6.2: the reduction by 12 seems to be required -- no idea why!
+	var HeightToSet = Highest-12;
+	var WidthToSet = WidestRight-12;
 
 	for (i=0; i<D.length; i++){
 		DC[i].SetT(CurrTop);
@@ -262,8 +294,11 @@ function CheckAnswers(){
 	var Feedback = '';
 
 //for each fixed, check to see if the tag value for the draggable is the same as the fixed
+	if (AnswersTried.length > 0){AnswersTried += ' | ';}
 	var i, j;
 	for (i=0; i<D.length; i++){
+		if (i>0){AnswersTried += ',';}
+		AnswersTried += D[i][1] + '.' + D[i][2] + '';
 		if ((D[i][2] == D[i][1])&&(D[i][2] > 0)){
 			TotalCorrect++;
 		}
@@ -307,6 +342,14 @@ function CheckAnswers(){
 		setTimeout('Finish()', SubmissionTimeout);
 		WriteToInstructions(Feedback);
 	}
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 [inclTimer]
@@ -318,6 +361,9 @@ function TimesUp() {
 	TimeOver = true;
 	CheckAnswers();
 	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
 }
 [/inclTimer]
 

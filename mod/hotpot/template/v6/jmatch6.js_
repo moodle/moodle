@@ -1,4 +1,39 @@
 
+[inclScorm1.2]
+//JMATCH-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+		
+//Now send a detailed reports on the item
+		var ItemLabel = 'Matching';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);	
+		API.LMSSetValue('cmi.objectives.0.status', API.LMSGetValue('cmi.core.lesson_status'));	
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We can only use the performance type, because we're storing multiple responses of various types.
+		API.LMSSetValue('cmi.interactions.0.type', 'performance');
+		
+		var AnswersTried = '';
+		for (var i=0; i<Status[0][3].length; i++){
+			if (i>0){AnswersTried += ' | ';}
+			for (var j=0; j<Status.length; j++){
+				if (j>0){AnswersTried += ',';}
+				AnswersTried += j + '.' + Status[j][3][i];
+			}
+		}
+		API.LMSSetValue('cmi.interactions.0.student_response', AnswersTried);
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
+//JMATCH CORE JAVASCRIPT CODE
+
 var CorrectIndicator = '[strCorrectIndicator]';
 var IncorrectIndicator = '[strIncorrectIndicator]';
 var YourScoreIs = '[strYourScoreIs]';
@@ -19,6 +54,10 @@ var QsToShow = [QsToShow];
 function StartUp(){
 	RemoveBottomNavBarForIE();
 
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+	
 [inclSendResults]
 	GetUserName();
 [/inclSendResults]
@@ -49,6 +88,7 @@ function CreateStatusArrays(){
 		Status[x][0] = 0; // Item not matched correctly yet
 		Status[x][1] = 0; //Tries at this item so far
 		Status[x][2] = Selects[x].id; //Store a ref to the original drop-down
+		Status[x][3] = new Array(); //Sequence of guesses for this item
 	}
 }
 
@@ -182,6 +222,8 @@ function CheckAnswers(){
 //Get a pointer to the drop-down
 			Select = document.getElementById(Status[i][2]);
 			Key = GetKeyFromSelect(Select);
+//Save the answer given
+			Status[i][3].push(Select.options[Select.selectedIndex].value);
 			
 //Check the answer
 			if (Select.options[Select.selectedIndex].value == Key){
@@ -197,6 +239,10 @@ function CheckAnswers(){
 				Parent = Select.parentNode;
 				Parent.nextSibling.innerHTML = IncorrectIndicator;
 			}
+		}
+		else{
+//Add a copy of the last (correct) answer.
+			Status[i][3].push(Status[i][3][Status[i][3].length-1]);
 		}
 //If it's correct, count it
 		if (Status[i][0] == 1){
@@ -235,6 +281,15 @@ function CheckAnswers(){
 
 //Show the feedback
 	ShowMessage(Feedback);
+	
+[inclScorm1.2]
+	if (AllDone == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 [inclTimer]
@@ -247,6 +302,9 @@ function TimesUp() {
 	Finished = true;
 	CheckAnswers();
 	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
 }
 [/inclTimer]
 

@@ -1014,9 +1014,23 @@ function GetJClozeQuestionDetails(hp, v) {
 				if (r!=2.1) { // exclude Find-It 3a
 					for (var i=0, ii=0; i<I[q][1].length; i++) {
 						var s = I[q][1][i][0];
-						if (typeof(s)=='string' && s!='' && (s.toUpperCase() != correct.toUpperCase())) {
-							x[ii++] = s;
-						}
+                        if (typeof(s)=='string' && s!='') {
+                            if (s.toUpperCase() == correct.toUpperCase()) {
+                                var is_ignored = false;
+                            } else {
+                                // DropDown 2.4
+                                var is_ignored = true;
+                                var iii_max = HP[_wrong][q] ? HP[_wrong][q].length : 0;
+                                for (var iii=0; iii<iii_max; iii++) {
+                                    if (s.toUpperCase() == HP[_wrong][q][iii].toUpperCase()) {
+                                        var is_ignored = false;
+                                    }
+                                }
+                            }
+    						if (is_ignored) {
+    							x[ii++] = s;
+    						}
+                        }
 					}
 				}
 				qDetails += hpHiddenField(Q+'ignored', x);
@@ -1347,8 +1361,15 @@ function GetJQuizAnswerDetails(q, flag) {
 			var x = new Array();
 		} else {
 			// get required part of 'x' and convert to array
-			var i = x.lastIndexOf('|');
-			var x = x.substring((flag==2 ? (i+1) : 1), ((flag==0 || flag==2) ? x.length : i)).split('|');
+            if (x.charAt(0)=='|') {
+                // HP 6.0 and 6.1 (always has leading bar)
+    			var i = x.lastIndexOf('|');
+    			var x = x.substring((flag==2 ? (i+1) : 1), ((flag==0 || flag==2) ? x.length : i)).split('|');
+            } else {
+                // HP 6.2 (no leading delimiter)
+    			var i = x.lastIndexOf(' | ');
+    			var x = x.substring((flag==2 ? (i+3) : 0), ((flag==0 || flag==2) ? x.length : i)).split(' | ');
+            }
 		}
 		for (var i=0; i<x.length; i++) {
 			var a = new Array();
@@ -1364,14 +1385,33 @@ function GetJQuizAnswerDetails(q, flag) {
 			x[i] = a.join('+');
 		}
 	} else if (x) { // multiple-choice, short-answer and hybrid 
-		// remove trailing comma and convert to array
-		x = x.substring(0, x.length-1).split(',');
+        if (x.charAt(x.length-1)==',') {
+            // HP 6.0 and 6.1 (always has trailing comma)
+            x = x.substring(0, x.length-1).split(',');
+        } else {
+            // HP 6.2 (short answer also contains student entered text)
+            x = x.split(' | ');
+        }
 		if (flag) {
 			var a = new Array();
 			if (flag==1 || flag==2 || flag==3) {
 				for (var i=0; i<x.length; i++) {
-					var ii = I[q][3][(x[i].charCodeAt(0)-65)][2];
-					if(((flag==1 || flag==2) && ii==1) || (flag==3 && ii==0)) a.push(x[i]);
+                    var is_correct = false;
+                    if (x[i].length==1) { // single letter
+                        var ii = x[i].charCodeAt(0) - 65;
+                        if (I[q][3] && I[q][3][ii] && I[q][3][ii][2]) {
+                            var is_correct = true;
+                        }
+                    }
+                    if (is_correct) {
+                        if (flag==2) {
+                            a.push(x[i]);
+                        }
+                    } else {
+                        if (flag==1 || flag==3) {
+                            a.push(x[i]);
+                        }
+                    }
 				}
 			}
 			if (flag==1) {
@@ -1392,8 +1432,12 @@ function GetJQuizAnswerDetails(q, flag) {
 		// convert answer indexes to values, if required
 		if (JQuiz[6]==false) {
 			for (var i=0; i<x.length; i++) {
-				var ii = x[i].charCodeAt(0) - 65;
-				x[i] = I[q][3][ii][0];
+                if (x[i].length==1) { // single letter
+                    var ii = x[i].charCodeAt(0) - 65;
+                    if (I[q][3] && I[q][3][ii]) {
+        				x[i] = I[q][3][ii][0];
+                    }
+                }
 			}
 		}
 	} else {
@@ -1504,7 +1548,7 @@ function hpClickClue(hp, t, v, args) {
 }
 function hpClickCheck(hp, t, v, args) {
 	if (t==2) { // JCloze
-		if (v==5 || v==6) {
+    if (v==5 || v==6) {
 			var r = hpRottmeier();
 			var already_correct = 'true';
 			if (r==0) {
@@ -1526,7 +1570,18 @@ function hpClickCheck(hp, t, v, args) {
 					if (hp==5) {
 						g = eval('document.Cloze.Gap'+i+'.value');
 					} else if (hp==6) {
-						g = Get_SelectedDropValue(i);
+						var ii = Get_SelectedDropValue(i);
+                        if (isNaN(ii) || ii<0) { // 'null' || -1
+                            g = ''; // no guess yet
+                        } else {
+                			if (window.MakeIndividualDropdowns) {
+                                var is_wrong = (ii!=0);
+                                g = I[i][1][ii][0];
+                            } else { 
+                                var is_wrong = (ii!=i);
+                                g = I[ii][1][0][0];
+                            }
+                        }
 					}
 				} else if (r==2.1 && i==args[0]) { // Find-It 3a
 					g = I[i][1][0][0];
@@ -1539,18 +1594,22 @@ function hpClickCheck(hp, t, v, args) {
 					// is this a new guess at this gap?
 					if (ii==0 || g!=HP[_guesses][i][ii-1]) { 
 						HP[_guesses][i][ii] = g;
-						var G = g.toUpperCase();
-	
-						var ii_max = I[i][1].length;
-						for (var ii=0; ii<ii_max; ii++) {
-							if (window.CaseSensitive) {
-								if (g==I[i][1][ii][0]) break;
-							} else {
-								if (G==I[i][1][ii][0].toUpperCase()) break;
-							}
-						}
-	
-						if (ii==ii_max) { // guess is wrong
+                        if (r==1) {
+                            // Rottmeier DropDown 2.4
+                            // do nothing 
+                        } else {
+    						var G = g.toUpperCase();	
+    						var ii_max = I[i][1].length;
+    						for (var ii=0; ii<ii_max; ii++) {
+    							if (window.CaseSensitive) {
+    								if (g==I[i][1][ii][0]) break;
+    							} else {
+    								if (G==I[i][1][ii][0].toUpperCase()) break;
+    							}
+    						}
+                            var is_wrong = (ii==ii_max);
+                        }
+						if (is_wrong) { // guess is wrong
 							if (!HP[_wrong][i]) HP[_wrong][i] = new Array();
 							var ii_max = HP[_wrong][i].length;
 							for (var ii=0; ii<ii_max; ii++) {
@@ -1770,7 +1829,7 @@ function hpClickCheck(hp, t, v, args) {
 			}			
 		}
 	}
-	return true;
+	//return true;
 }
 function hpClickCheckJCrossV5V6(hp, v, AD, q, row, col) {
 	// v is the version of Hot Potatoes
@@ -1888,7 +1947,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		if (comma==null) comma = ','; 
 		for (var i=0; i<i_max; i++) {
 			values[i] = trim(values[i]);
-			if (values[i]!='') {
+			if (values[i]!=null && values[i]!='') {
 				value += (i==0 ? '' : comma) +  encode_entities(values[i]);
 			}
 		}
@@ -1991,12 +2050,19 @@ function getFuncCode(fn, extraCode, anchorCode, beforeAnchor) {
 	}
 	return s;
 }
-function getArgsStr(args) {
+function getArgsStr(args, addQuotes) {
 	// make s(tring) version of function args array
 	var s = '';
 	var i_max = args.length;
 	for (var i=0; i<i_max; i++) {
-		s += '"' + args[i] + '",';
+        if (addQuotes) {
+            s += '"' + args[i] + '",';
+        } else {
+            if (s) {
+                s += ',';
+            }
+            s += args[i];
+        }
 	}
 	return s;
 }
@@ -2141,6 +2207,38 @@ function hpFeedback() {
 // ********************
 //	intercept clicks
 // ********************
+function hpNewFunction(f, a, s) {
+    if (window.C && C.safari) {
+        if (f=='CheckAnswers') {
+            if (s.indexOf('TotalChars-State[i].HintsAndChecks/')>=0) {
+                // special fix for "CheckAnswers" in JCloze
+                s = s.replace(/TotalChars-State\[i\]\.HintsAndChecks/g, '(TotalChars-State[i].HintsAndChecks)');
+            }
+            if (s.indexOf('CorrectLetters-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMatch
+                s = s.replace(/CorrectLetters-Penalties/g, '(CorrectLetters-Penalties)');
+            }
+            if (s.indexOf('TotCorrectChoices-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMix (v6)
+                s = s.replace(/TotCorrectChoices-Penalties/g, '(TotCorrectChoices-Penalties)');
+            }
+            if (s.indexOf('TotalCorrect-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMix (v6+) Drag-and_Drop
+                s = s.replace(/TotalCorrect-Penalties/g, '(TotalCorrect-Penalties)');
+            }
+        }
+        if (s.indexOf('replace(\\[')>=0) {
+            s = s.replace(/\\\[/g, '/\\[');
+            s = s.replace(/\\\]/g, '\\]/g');
+        }
+        if (s.indexOf('for (i')>=0) {
+            s = s.replace(/for \(/g, 'for (var ');
+        }
+        eval('window.' + f + '=function(' + getArgsStr(a) + '){' + s + '}');
+    } else {
+        eval('window.' + f + '=new Function(' + getArgsStr(a, true) + 's);');
+    }
+}
 function hpInterceptFeedback() {
 	// modify the function which writes feedback
 	// 	v6: ShowMessage(Feedback)
@@ -2165,7 +2263,7 @@ function hpInterceptFeedback() {
 		if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
 			s = a[0] + "+='<br /><br />" + '<a href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
 		}
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptHints() {
@@ -2228,7 +2326,7 @@ function hpInterceptHints() {
 	// add the e(x)tra code, if any, to the start of the hint (f)unction
 	if (x) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptClues() {
@@ -2283,7 +2381,8 @@ function hpInterceptClues() {
 	// add the e(x)tra code, if any, to the start of the clue (f)unction
 	if (x) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+		var s = getFuncCode(f, '', '', true);
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptChecks() {
@@ -2325,7 +2424,7 @@ function hpInterceptChecks() {
 			if (x) {
 				x = "if(!Finished&&State[QNum].length&&State[QNum][0]<0){" + x + "hpClick(3,args)}";
 				var s = getFuncCode(f[i], x, '', true);
-				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+                hpNewFunction(f[i], a, s);
 			}
 		}
 	}
@@ -2365,7 +2464,7 @@ function hpInterceptChecks() {
 	}
 	if (f) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 	// JMatch has three possible check functions, depending on the version
 	// (NB: other quiz types also have these functions)
@@ -2375,7 +2474,7 @@ function hpInterceptChecks() {
 			var a = getFuncArgs(f[i], true);
 			if (a.length==0) {
 				var s = getFuncCode(f[i], "hpClick(3);", '', true);
-				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+                hpNewFunction(f[i], a, s);
 				break; // out of the loop
 			}
 		}
@@ -2661,7 +2760,13 @@ function hpScore() {
 	} else if (t==3) { // jcross
 		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
 		else if (v==4) x = hpScoreEngine(1, WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0)==a[i].charAt(0)");
-		else if (v==5 || v==6) x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii]==G[i][ii]", "L[i][ii]");
+		else if (v==5 || v==6) {
+            if (window.CaseSensitive) { // HP 6.2
+                x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii]==G[i][ii]", "L[i][ii]");
+            } else {
+                x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii].toUpperCase()==G[i][ii].toUpperCase()", "L[i][ii]");
+            }
+        }
 	} else if (t==4) { // jmatch
 		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
 		else if (v==4) x = hpScoreEngine(1, Draggables, "a[i].correct=='1'");
@@ -2742,7 +2847,13 @@ function hpFinished() {
 	} else if (t==3) { // jcross
 		if (v==3) x = hpFinishedEngine(document.Crossword.elements, "ConvertCase(is.mac?unescape(MacStringToWin(a[i].value)):a[i].value,1)!=Letters[i]");
 		else if (v==4) x = hpFinishedEngine(WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0) != a[i].charAt(0)");
-		else if (v==5 || v==6) x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
+		else if (v==5 || v==6) {
+            if (window.CaseSensitive) { // 6.2
+                x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
+            } else {
+                x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii].toUpperCase()!=G[i][ii].toUpperCase()");
+            }
+		}
 	} else if (t==4) { // jmatch
 		if (v==3) x = hpFinishedEngine(CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex != a[i]");
 		else if (v==4) x = hpFinishedEngine(Draggables, "a[i].correct!='1'");
@@ -2801,9 +2912,9 @@ function hpIsStrict() {
 // **************
 //  initialization
 // **************
-hpInterceptFeedback();
-hpInterceptHints();
-hpInterceptClues();
+//hpInterceptFeedback();
+//hpInterceptHints();
+//hpInterceptClues();
 hpInterceptChecks();
 function hpFindForm(formname, w) {
 	if (w==null) w = self;
@@ -2867,8 +2978,13 @@ if (DB[7] && DB[8] && !is_LMS()) {
 var p = getPrompt(window.GetUserName || window.StartUp);
 var c = getStartUpCode(window.StartUp);
 if (p && c) {
-	window.StartUp = new Function('QuizLogin("' + p + '")');
-	window.StartQuiz = new Function(c);
+    if (window.C && C.safari) {
+        eval('window.StartUp=function(){QuizLogin("' + p + '")}');
+        eval('window.StartQuiz=function(){' + c + '}');
+    } else {
+    	window.StartUp = new Function('QuizLogin("' + p + '")');
+    	window.StartQuiz = new Function(c);
+    }
 	// "QuizLogin" finshes by calling "StartQuiz"
 }
 // reassign the SendResults function

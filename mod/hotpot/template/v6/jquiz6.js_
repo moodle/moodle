@@ -1,4 +1,43 @@
 
+[inclScorm1.2]
+//JQUIZ-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+//Now send detailed reports about each item
+		for (var i=0; i<State.length; i++){
+			if (State[i] != null){
+				var ItemLabel = 'Item_' + (i+1).toString();
+				var ThisItemScore = '';
+				var ThisItemStatus = '';
+				API.LMSSetValue('cmi.objectives.' + i + '.id', 'obj'+ItemLabel);
+				API.LMSSetValue('cmi.interactions.' + i + '.id', 'int'+ItemLabel);
+				API.LMSSetValue('cmi.objectives.' + i + '.score.min', '0');
+				API.LMSSetValue('cmi.objectives.' + i + '.score.max', '100');
+				if (State[i][2] > 0){
+					ThisItemScore = Math.floor(State[i][0] * 100) + '';
+					ThisItemStatus = 'completed';
+				}
+				else{
+					ThisItemScore = '0';
+					ThisItemStatus = 'incomplete';
+				}
+				API.LMSSetValue('cmi.objectives.' + i + '.score.raw', ThisItemScore);
+				API.LMSSetValue('cmi.objectives.' + i + '.status', ThisItemStatus);
+				API.LMSSetValue('cmi.interactions.' + i + '.weighting', I[i][0]);
+//We can only use the performance type, because we're storing multiple responses of various types.
+				API.LMSSetValue('cmi.interactions.' + i + '.type', 'performance');
+				API.LMSSetValue('cmi.interactions.' + i + '.student_response', State[i][5]);
+			}
+		}
+		
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
+
 //JQUIZ CORE JAVASCRIPT CODE
 
 var CurrQNum = 0;
@@ -24,6 +63,7 @@ var State = new Array();
 var Feedback = '';
 var TimeOver = false;
 var strInstructions = '';
+var Locked = false;
 
 //The following variable can be used to add a message explaining that
 //the question is finished, so no further marking will take place.
@@ -153,7 +193,8 @@ function ShowSpecialReadingForQuestion(){
 			document.getElementById('ReadingDiv').innerHTML = '';
 		}
 		if (QArray[CurrQNum] != null){
-			var Children = QArray[CurrQNum].childNodes;
+//Fix for 6.0.4.25
+			var Children = QArray[CurrQNum].getElementsByTagName('div');
 			for (var i=0; i<Children.length; i++){
 			if (Children[i].className=="HiddenReading"){
 					document.getElementById('ReadingDiv').innerHTML = Children[i].innerHTML;
@@ -204,6 +245,10 @@ function StartUp(){
 	
 //Stash the instructions so they can be redisplayed
 	strInstructions = document.getElementById('InstructionsDiv').innerHTML;
+	
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
 	
 [inclSendResults]
 	GetUserName();
@@ -315,7 +360,8 @@ function CheckMCAnswer(QNum, ANum, Btn){
 	
 //Store the try number in the answer part of the State array, for tracking purposes
 	State[QNum][1][ANum] = State[QNum][2];
-	State[QNum][5] += String.fromCharCode(65+ANum) + ',';
+	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
+	State[QNum][5] += String.fromCharCode(65+ANum);
 	
 //Should this answer be accepted as correct?
 	if (I[QNum][3][ANum][2] < 1){
@@ -446,7 +492,7 @@ function CheckMultiSelAnswer(QNum){
 	
 	var ShouldBeChecked;
 	var Matches = 0;
-	State[QNum][5] += '|';
+	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
 	
 //Check if there are any mismatches
 	Feedback = '';
@@ -563,6 +609,16 @@ function CheckFinished(){
 [inclTimer]
 		window.clearInterval(Interval);
 [/inclTimer]
+
+[inclScorm1.2]
+		if (TimeOver == true){
+			SetScormTimedOut();
+		}
+		else{
+			SetScormComplete();
+		}
+[/inclScorm1.2]
+
 		TimeOver = true;
 		Locked = true;
 		
@@ -582,6 +638,11 @@ function CheckFinished(){
 		Detail += '</fields></hpnetresult>';
 		setTimeout('Finish()', SubmissionTimeout);
 	}
+[inclScorm1.2]
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 [inclTimer]
