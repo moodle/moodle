@@ -1151,9 +1151,18 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field theme
         $result = $result && add_field($table, $field);
     }
+    if ($result && $oldversion < 2007050300) {
 
-    return $result;
-
+    // Define field childrentype to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('childrentype');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'parent');
+    
+    // Launch add field childrentype
+        $result = $result && add_field($table, $field);
+    }
+    
+    return $result; 
 }
 
 ?>
