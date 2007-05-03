@@ -283,6 +283,137 @@ function qualified_me() {
     return $url_prefix . me();
 }
 
+
+/**
+ * Class for creating and manipulating urls.
+ */
+class moodle_url {
+    var $scheme = '';// e.g. http 
+    var $host = ''; 
+    var $port = '';
+    var $user = '';
+    var $pass = ''; 
+    var $path = '';
+    var $fragment = '';
+    var $params = array(); //associative array of query string params
+    
+    /**
+     * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
+     * 
+     * @param string $url url
+     */
+    function moodle_url($url = null){
+        global $FULLME;
+        if ($url !== ''){
+            if ($url === null){
+                $url = strip_querystring($FULLME);
+            }
+            $parts = parse_url($url);
+            if ($parts === FALSE){
+                error('invalidurl');
+            }
+            if (isset($parts['query'])){
+                parse_str($parts['query'], $this->params);
+            }
+            unset($parts['query']);
+            foreach ($parts as $key => $value){
+                $this->$key = $value;
+            }
+        }
+    }    
+    /**
+     * Add an array of params to the params for this page. The added params override existing ones if they 
+     * have the same name.
+     *
+     * @param array $params
+     */
+    function params($params){
+        $this->params = $params + $this->params;
+    }
+    
+    /**
+     * Remove all params if no arguments passed. Or else remove param $arg1, $arg2, etc. 
+     *
+     * @param string $arg1
+     * @param string $arg2
+     * @param string $arg3
+     */
+    function remove_params(){
+        if ($thisargs = func_get_args()){
+            foreach ($thisargs as $arg){
+                if (isset($this->params->$arg)){
+                    unset($this->params->$arg);
+                }
+            }
+        } else { // no args
+            $this->params = array();
+        }
+    }
+
+    /**
+     * Add a param to the params for this page. The added param overrides existing one if they 
+     * have the same name.
+     *
+     * @param string $paramname name
+     * @param string $param value
+     */
+    function param($paramname, $param){
+        $this->params = array($paramname => $param) + $this->params;
+    }
+
+   
+    function get_query_string($overrideparams = array()){
+        $arr = array();
+        $params = $overrideparams + $this->params;
+        foreach ($params as $key => $val){
+           $arr[] = urlencode($key)."=".urlencode($val);
+        }
+        return implode($arr, "&amp;");
+    }
+    /**
+     * Outputs params as hidden form elements.
+     * 
+     * @return string html for form elements.
+     */
+    function hidden_params_out($indent = 0){
+        $tabindent = str_repeat("\t", $indent);
+        $str = '';
+        foreach ($this->params as $key => $val){
+           $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
+        }
+        return $str;
+    }
+    /**
+     * Output url
+     * 
+     * @param boolean $noquerystring whether to output page params as a query string in the url.
+     * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
+     * @return string url
+     */
+    function out($noquerystring = false, $overrideparams = array()) { 
+        $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
+        $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
+        $uri .= $this->host ? $this->host : '';
+        $uri .= $this->port ? ':'.$this->port : '';
+        $uri .= $this->path ? $this->path : '';
+        if (!$noquerystring){
+            $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($overrideparams) : '';
+        }
+        $uri .= $this->fragment ? '#'.$this->fragment : '';
+        return $uri; 
+    }
+    /**
+     * Output action url with sesskey
+     * 
+     * @param boolean $noquerystring whether to output page params as a query string in the url.
+     * @return string url
+     */
+    function out_action($overrideparams = array()) { 
+        $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
+        return $this->out(false, $overrideparams);
+    }
+}
+
 /**
  * Determine if there is data waiting to be processed from a form
  *
