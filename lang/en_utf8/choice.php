@@ -40,6 +40,7 @@ $string['publishnot'] = 'Do not publish results to students';
 $string['responses'] = 'Responses';
 $string['responsesto'] = 'Responses to $a';
 $string['savemychoice'] = 'Save my choice';
+$string['removemychoice'] = 'Remove my choice';
 $string['showunanswered'] = 'Show column for unanswered';
 $string['spaceleft'] = 'space available';
 $string['spacesleft'] = 'spaces available';
