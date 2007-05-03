@@ -186,8 +186,13 @@ function CheckShortAnswer(QNum){
 	CA.GetBestMatch();
 	
 //Store any match in the state tracking field
+	if (State[QNum][5].length > 0){State[QNum][5] += ' | ';}
 	if (CA.MatchNum > -1){
-		State[QNum][5] += String.fromCharCode(65+CA.MatchNum) + ',';
+		State[QNum][5] += String.fromCharCode(65+CA.MatchNum);
+	}
+//Else store the student's answer
+	else{
+		State[QNum][5] += G;
 	}
 
 //Add the percent correct value for this answer to the Q State (works for all

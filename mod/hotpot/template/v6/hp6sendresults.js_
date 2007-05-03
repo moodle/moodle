@@ -6,17 +6,17 @@ var UserName = '';
 var StartTime = (new Date()).toLocaleString();
 
 var ResultForm = '<html><body><form name="Results" action="[strFormMailURL]" method="post" enctype="x-www-form-encoded">';
-ResultForm += '<input type="hidden" name="recipient" value="[strEMail]" /></input>';
-ResultForm += '<input type="hidden" name="subject" value="[strEscapedExerciseTitle]" /></input>';
-ResultForm += '<input type="hidden" name="Exercise" value="[strEscapedExerciseTitle]" /></input>';
-ResultForm += '<input type="hidden" name="realname" value="" /></input>';
-ResultForm += '<input type="hidden" name="Score" value="" /></input>';
-ResultForm += '<input type="hidden" name="Start_Time" value="" /></input>';
-ResultForm += '<input type="hidden" name="End_Time" value="" /></input>';
-ResultForm += '<input type="hidden" name="title" value="Thanks!" /></input>';
-[inclPageBGColor]ResultForm += '<input type="hidden" name="bgcolor" value="[strPageBGColor]" /></input>';[/inclPageBGColor]
-ResultForm += '<input type="hidden" name="text_color" value="[strTitleColor]" /></input>';
-ResultForm += '<input type="hidden" name="sort" value="order:realname,Exercise,Score,Start_Time,End_Time" /></input>';
+ResultForm += '<input type="hidden" name="recipient" value="[strEMail]"></input>';
+ResultForm += '<input type="hidden" name="subject" value="[strEscapedExerciseTitle]"></input>';
+ResultForm += '<input type="hidden" name="Exercise" value="[strEscapedExerciseTitle]"></input>';
+ResultForm += '<input type="hidden" name="realname" value=""></input>';
+ResultForm += '<input type="hidden" name="Score" value=""></input>';
+ResultForm += '<input type="hidden" name="Start_Time" value=""></input>';
+ResultForm += '<input type="hidden" name="End_Time" value=""></input>';
+ResultForm += '<input type="hidden" name="title" value="Thanks!"></input>';
+[inclPageBGColor]ResultForm += '<input type="hidden" name="bgcolor" value="[strPageBGColor]"></input>';[/inclPageBGColor]
+ResultForm += '<input type="hidden" name="text_color" value="[strTitleColor]"></input>';
+ResultForm += '<input type="hidden" name="sort" value="order:realname,Exercise,Score,Start_Time,End_Time"></input>';
 ResultForm += '</form></body></html>';
 
 function GetUserName(){
