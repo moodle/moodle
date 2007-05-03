@@ -8,6 +8,7 @@ $temp = new admin_settingpage('themesettings', get_string('themesettings', 'admi
 $temp->add(new admin_setting_configtext('themelist', get_string('themelist', 'admin'), get_string('configthemelist','admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configcheckbox('allowuserthemes', get_string('allowuserthemes', 'admin'), get_string('configallowuserthemes', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('allowcoursethemes', 'admin'), get_string('configallowcoursethemes', 'admin'), 0));
+$temp->add(new admin_setting_configcheckbox('allowcategorythemes',  get_string('allowcategorythemes', 'admin'), get_string('configallowcategorythemes', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin'), 1));
 $temp->add(new admin_setting_configcheckbox('showblocksonmodpages', get_string('showblocksonmodpages', 'admin'), get_string('configshowblocksonmodpages', 'admin'), 0));
 $temp->add(new admin_setting_configselect('hideactivitytypecrumb', get_string('hideactivitytypecrumb', 'admin'), get_string('confighideactivitytypecrumb', 'admin'), 0,

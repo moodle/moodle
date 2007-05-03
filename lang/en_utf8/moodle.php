@@ -1252,6 +1252,7 @@ $string['senddetails'] = 'Send my details via email';
 $string['separate'] = 'Separate';
 $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['serverlocaltime'] = 'Server\'s local time';
+$string['setcategorytheme'] = 'Set Category Theme';
 $string['settings'] = 'Settings';
 $string['shortname'] = 'Short name';
 $string['shortnamecollisionwarning'] = '[*] = This shortname is already in use by a course and will need to be changed upon approval';

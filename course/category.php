@@ -17,6 +17,7 @@
     $moveto       = optional_param('moveto', 0, PARAM_INT);
     $rename       = optional_param('rename', '', PARAM_NOTAGS);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
+    $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -56,6 +57,14 @@
             $category->name = $rename;
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
+            }
+        }
+
+        /// Set the category theme if requested
+        if (($categorytheme !== false) and confirm_sesskey()) {
+            $category->theme = $categorytheme;
+            if (! set_field('course_categories', 'theme', $category->theme, 'id', $category->id)) {
+                notify('An error occurred while setting the theme');
             }
         }
 
@@ -449,7 +458,22 @@
         echo '<input type="submit" value="'.$strrename.'" />';
         echo '</div></form>';
         echo '<br />';
+
+        if (!empty($CFG->allowcategorythemes)) {
+            $choices = array();
+            $choices[''] = get_string('default');
+            $choices += get_list_of_themes();
+
+            echo '<form id="themeform" action="category.php" method="post"><div>';
+            echo '<input type="hidden" name="id" value="'.$category->id.'" />';
+            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+            choose_from_menu($choices, 'categorytheme', $category->theme);
+            echo '<input type="submit" value="'.get_string('setcategorytheme').'" />';
+            echo '</div></form>';
+            echo '<br />';
+        }
     }
+
     
     print_course_search();
     

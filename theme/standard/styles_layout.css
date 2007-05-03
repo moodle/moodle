@@ -1879,6 +1879,10 @@ body#course-info .generalbox.info {
   text-align:center;
 }
 
+#course-category #themeform {
+  text-align: center;
+}
+
 #course-category .singlebutton {
   text-align:center;
 }
