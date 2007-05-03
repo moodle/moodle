@@ -273,7 +273,8 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,font-face');
     }
     function v6_expand_FontSize() {
-        return $this->parent->xml_value('hotpot-config-file,global,font-size');
+        $value = $this->parent->xml_value('hotpot-config-file,global,font-size');
+        return (empty($value) ? 'small' : $value);
     }
     function v6_expand_TextColor() {
         return $this->parent->xml_value('hotpot-config-file,global,text-color');
