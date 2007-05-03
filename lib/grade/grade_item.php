@@ -380,6 +380,40 @@ class grade_item extends grade_object {
             return $final->locked;
         }
     }
+    
+    /**
+     * Locks or unlocks this grade_item and (optionally) all its associated final grades. 
+     * @param boolean $update_final Whether to update final grades too
+     * @param boolean $new_state Optional new state. Will use inverse of current state otherwise.
+     * @return int Number of final grades changed, or false if error occurred during update.
+     */
+    function toggle_locking($update_final=false, $new_state=NULL) {
+        $this->locked = !$this->locked;
+        
+        if (!empty($new_state)) {
+            $this->locked = $new_state;
+        }
+
+        if (!$this->update()) {
+            return false;
+        }
+        
+        $count = 0;
+        
+        if ($update_final) {
+            $this->load_final();
+            foreach ($this->grade_grades_final as $id => $final) {
+                $final->locked = $this->locked;
+                if (!$final->update()) {
+                    return false;
+                }
+                $count++;
+            }
+            $this->load_final();
+        }
+
+        return $count;
+    }
 
     /**
      * Performs the necessary calculations on the grades_final referenced by this grade_item,

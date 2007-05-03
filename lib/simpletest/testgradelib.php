@@ -879,6 +879,24 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual(4, $grade_item->adjust_grade($grade_raw));
     }
 
+    function test_grade_item_toggle_locking() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'toggle_locking'));
+
+        $this->assertFalse($grade_item->locked);
+        $this->assertEqual(0, $grade_item->toggle_locking());
+        $this->assertTrue($grade_item->locked);
+        $grade_item->load_final();
+        $this->assertFalse($grade_item->grade_grades_final[1]->locked);
+        
+        $grade_item->locked = false;
+        $this->assertEqual(3, $grade_item->toggle_locking(true));
+        $this->assertTrue($grade_item->locked);
+        $this->assertTrue($grade_item->grade_grades_final[1]->locked);
+        $this->assertTrue($grade_item->grade_grades_final[2]->locked);
+        $this->assertTrue($grade_item->grade_grades_final[3]->locked);
+    }
+
 // GRADE_CATEGORY OBJECT
 
     function test_grade_category_construct() {
@@ -969,6 +987,8 @@ class gradelib_test extends UnitTestCase {
 
     function test_grade_category_get_children() {
         $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'get_children'));
+
         $children_array = $category->get_children(0);
         $this->assertTrue(is_array($children_array));
         $this->assertTrue(!empty($children_array[0]));
@@ -994,6 +1014,14 @@ class gradelib_test extends UnitTestCase {
         $this->assertTrue(isset($children_array[0]));
         $this->assertTrue(isset($children_array[0]['object']));
         $this->assertEqual($this->grade_items[0]->id, $children_array[0]['object']->id); 
+    }
+    
+    function test_grade_category_has_children() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'has_children')); 
+        $this->assertTrue($category->has_children());
+        $category = new grade_category();
+        $this->assertFalse($category->has_children()); 
     }
 
 // GRADE_CALCULATION OBJECT
