@@ -224,6 +224,11 @@ function choice_show_form($choice, $user, $cm) {
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
     if (!isguest()) { //don't show save button if the logged in user is the guest user.
         echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
+        
+        if ($choice->allowupdate && $aaa = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+            echo "<br /><a href='view.php?id=".$cm->id."&action=delchoice'>".get_string("removemychoice","choice")."</a>";
+        }
+        
     } else {
         print_string('havetologin', 'choice');
     }

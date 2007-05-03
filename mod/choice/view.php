@@ -28,6 +28,12 @@
         print_error('badcontext');
     }
 
+if ($action == 'delchoice') {
+    if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) {
+        //print_object($answer);
+        delete_records('choice_answers', 'id', $answer->id);
+    }
+}
 
 /// Submit any new data if there is any
 
