@@ -1044,6 +1044,33 @@ class gradelib_test extends UnitTestCase {
 
 // GRADE_CALCULATION OBJECT
 
+// GRADE_GRADES_RAW OBJECT
+    
+    function test_grade_raw_construct() {
+        
+    }
+
+    /**
+     * Make sure that an update of a grade_raw object also updates the history table.
+     */
+    function test_grade_raw_update_history() {
+        $grade_raw = new grade_grades_raw($this->grade_grades_raw[0]);
+        $oldgrade = $grade_raw->gradevalue;
+        $newgrade = 88;
+        $howmodified = 'manual';
+        $note = 'unittest editing grade manually';
+        $grade_raw->update($newgrade, $howmodified, $note);
+        
+        // Get last entry in the history log and check its attributes
+        $results = get_records('grade_history', 'itemid', $grade_raw->itemid, 'id DESC', '*', 0, 1);
+        $history_log = current($results);
+        $this->assertEqual($grade_raw->userid, $history_log->userid);
+        $this->assertEqual($oldgrade, $history_log->oldgrade);
+        $this->assertEqual($newgrade, $history_log->newgrade);
+        $this->assertEqual($howmodified, $history_log->howmodified);
+        $this->assertEqual($note, $history_log->note);
+    }
+
 // SCALE OBJECT
 
     function test_scale_constructor() {

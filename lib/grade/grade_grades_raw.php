@@ -109,7 +109,7 @@ class grade_grades_raw extends grade_object {
 
     /**
      * Finds and returns a grade_grades_raw object based on 1-3 field values.
-     *
+     * @static
      * @param string $field1
      * @param string $value1
      * @param string $field2
@@ -119,8 +119,7 @@ class grade_grades_raw extends grade_object {
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($object = get_record('grade_grades_raw', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_grades_raw') {
                 foreach ($object as $param => $value) {

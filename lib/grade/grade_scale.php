@@ -26,7 +26,7 @@
 require_once('grade_object.php');
 
 /**
- * Class representing a grade item. It is responsible for handling its DB representation,
+ * Class representing a grade scale. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
  */
 class grade_scale extends grade_object {

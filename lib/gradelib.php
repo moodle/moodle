@@ -47,6 +47,7 @@ require_once($CFG->libdir . '/grade/grade_calculation.php');
 require_once($CFG->libdir . '/grade/grade_grades_raw.php');
 require_once($CFG->libdir . '/grade/grade_grades_final.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
+require_once($CFG->libdir . '/grade/grade_outcome.php');
 
 /**
 * Extracts from the gradebook all the grade items attached to the calling object. 
