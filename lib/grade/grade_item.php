@@ -227,7 +227,6 @@ class grade_item extends grade_object {
         }
     }
     
-    
     /**
      * Returns the raw values for this grade item (as imported by module or other source).
      * @param int $userid Optional: to retrieve a single raw grade
@@ -458,33 +457,28 @@ class grade_item extends grade_object {
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradevalue;
             }
-            
-            // Adjust both scales to 0-? and store offsets
-            $raw_offset = -(0 - $grade_raw->grademin);
-            $item_offset = -(0 - $this->grademin);
-            $raw_adjusted_max = $grade_raw->grademax - $raw_offset;
-            $item_adjusted_max = $this->grademax - $item_offset;
 
         } elseif(!empty($grade_raw->gradescale)) { // Dealing with a scale value
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradescale;
             }
             
-            $raw_adjusted_max = count($grade_raw->scale->scale_items) - 1;
-            $item_adjusted_max = count($this->scale->scale_items) - 1;
+            $grade_raw->grademax = count($grade_raw->scale->scale_items) - 1;
+            $this->grademax = count($this->scale->scale_items) - 1;
+            $grade_raw->grademin = 0;
+            $this->grademin = 0;
 
         } else { // Something's wrong, the raw grade has no value!?
             return false;
         }
-        // Compute factor from grademax of adjusted scales
-        $factor = ($item_adjusted_max) / ($raw_adjusted_max);
         
-        // Multiply adjusted grade value (using source offset) by factor
-        $gradevalue = ($gradevalue - $raw_offset) * $factor;
+        /**
+         * Darlene's formula
+         */
+        $factor = ($gradevalue - $grade_raw->grademin) / ($grade_raw->grademax - $grade_raw->grademin);
+        $diff = $this->grademax - $this->grademin;
+        $gradevalue = $factor * $diff + $this->grademin;
 
-        // Add target offset to resulting grade value
-        $gradevalue += $item_offset;
-        
         // Apply rounding or factors, depending on whether it's a scale or value
         if (!empty($grade_raw->gradevalue)) {
             // Apply other grade_item factors

@@ -36,6 +36,10 @@ define('GRADE_AGGREGATE_MEAN', 0);
 define('GRADE_AGGREGATE_MEDIAN', 1);
 define('GRADE_AGGREGATE_SUM', 2);
 define('GRADE_AGGREGATE_MODE', 3);
+define('GRADE_CHILDTYPE_ITEM', 0);
+define('GRADE_CHILDTYPE_CAT', 1);
+define('GRADE_ITEM', 0); // Used to compare class names with CHILDTYPE values
+define('GRADE_CATEGORY', 1); // Used to compare class names with CHILDTYPE values
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');

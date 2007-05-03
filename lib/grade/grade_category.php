@@ -49,7 +49,7 @@ class grade_category extends grade_object {
      * @var int $parent 
      */
     var $parent;
-   
+
     /**
      * The number of parents this category has.
      * @var int $depth
@@ -148,8 +148,7 @@ class grade_category extends grade_object {
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*")
-    { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_category') {
                 foreach ($grade_category as $param => $value) {
@@ -169,7 +168,7 @@ class grade_category extends grade_object {
      * In addition to the normal insert() defined in grade_object, this method sets the depth
      * and path for this object, and update the record accordingly. The reason why this must
      * be done here instead of in the constructor, is that they both need to know the record's
-     * id number, which only gets created at insertion time.
+     * id number, which only gets created at insertion time.      
      */
     function insert() {
         $result = parent::insert();
@@ -212,33 +211,125 @@ class grade_category extends grade_object {
      * @return array Array of child objects (grade_category and grade_item).
      */
     function get_children($depth=1, $arraytype='nested') {
-        $children = array();
-
-        if ($depth == 1) {
-            if (!empty($this->children)) {
-                return $this->children;
-            } else {
-                $cat = new grade_category();
-                $cat->parent = $this->id;
-                $children = $cat->fetch_all_using_this();
-                $item = new grade_item();
-                $item->categoryid = $this->id;
-                $item_children = $item->fetch_all_using_this();
-
-                if (!empty($children)) {                    
-                    $children = array_merge($children, $item_children);
-                } else {
-                    $children = $item_children;
-                }
-
-                $this->children = $children;
-            }
-        } elseif ($depth > 1) {
-            // TODO implement
-        } elseif ($depth == 0) {
-            // TODO implement
+        $children_array = array();
+        
+        // Set up $depth for recursion
+        $newdepth = $depth;
+        if ($depth > 1) {
+            $newdepth--;
         }
-        return $children;
+        
+        $childrentype = $this->get_childrentype();
+
+        if ($childrentype == 'grade_item') {
+            $children = get_records('grade_items', 'categoryid', $this->id, 'id');
+            // No need to proceed with recursion
+            $children_array = $this->children_to_array($children, $arraytype, 'grade_item');
+            $this->children = $this->children_to_array($children, 'flat', 'grade_item');
+        } elseif ($childrentype == 'grade_category') {
+            $children = get_records('grade_categories', 'parent', $this->id, 'id');
+            if ($depth == 1) {
+                $children_array = $this->children_to_array($children, $arraytype, 'grade_category');
+                $this->children = $this->children_to_array($children, 'flat', 'grade_category');
+            } else {
+                foreach ($children as $id => $child) {
+                    $cat = new grade_category($child, false);
+
+                    if ($cat->has_children()) {
+                        if ($arraytype == 'nested') {
+                            $children_array[] = array('object' => $cat, 'children' => $cat->get_children($newdepth, $arraytype));
+                        } else {
+                            $children_array[] = $cat;
+                            $cat_children = $cat->get_children($newdepth, $arraytype);
+                            foreach ($cat_children as $id => $cat_child) {
+                                $children_array[] = new grade_category($cat_child, false);
+                            }
+                        }
+                    } else {
+                        if ($arraytype == 'nested') {
+                            $children_array[] = array('object' => $cat);
+                        } else {
+                            $children_array[] = $cat;
+                        }
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
+
+        return $children_array;
+    }
+   
+    /**
+     * Given an array of stdClass children of a certain $object_type, returns a flat or nested
+     * array of these children, ready for appending to a tree built by get_children.
+     * @static
+     * @param array $children
+     * @param string $arraytype
+     * @param string $object_type
+     * @return array
+     */
+    function children_to_array($children, $arraytype='nested', $object_type='grade_item') {
+        $children_array = array();
+
+        foreach ($children as $id => $child) {
+            if ($arraytype == 'nested') {
+                $children_array[] = array('object' => new $object_type($child, false));
+            } else {
+                $children_array[] = new $object_type($child);
+            }
+        }        
+
+        return $children_array;
+    }
+
+    /**
+     * Returns true if this category has any child grade_category or grade_item.
+     * @return int number of direct children, or false if none found.
+     */
+    function has_children() {
+        return count_records('grade_categories', 'parent', $this->id) + count_records('grade_items', 'categoryid', $this->id);
+    }
+
+    /**
+     * This method checks whether an existing child exists for this
+     * category. If the new child is of a different type, the method will return false (not allowed).
+     * Otherwise it will return true.
+     * @param object $child This must be a complete object, not a stdClass
+     * @return boolean Success or failure
+     */
+    function can_add_child($child) {
+        if ($this->has_children()) {
+            if (get_class($child) != $this->get_childrentype()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check the type of the first child of this category, to see whether it is a 
+     * grade_category or a grade_item, and returns that type as a string (get_class).
+     * @return string
+     */
+    function get_childrentype() {
+        $children = $this->children;
+        if (empty($this->children)) {
+            $count_item_children = count_records('grade_items', 'categoryid', $this->id);
+            $count_cat_children = count_records('grade_categories', 'parent', $this->id);
+            if ($count_item_children > 0) {
+                return 'grade_item';
+            } elseif ($count_cat_children > 0) {
+                return 'grade_category';
+            } else {
+                return null;
+            }
+        }
+        return get_class($children[0]);
     }
 }
 
