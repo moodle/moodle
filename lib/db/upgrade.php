@@ -1161,7 +1161,16 @@ function xmldb_main_upgrade($oldversion=0) {
     // Launch add field childrentype
         $result = $result && add_field($table, $field);
     }
+    if ($result && $oldversion < 2007050301) {
+
+    /// Define field parent to be dropped from grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('childrentype');
     
+    /// Launch drop field parent
+        $result = $result && drop_field($table, $field);
+    }
+
     return $result; 
 }
 
