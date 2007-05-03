@@ -638,13 +638,38 @@ function scorm_get_parent($sco) {
 }
 
 function scorm_get_children($sco) {
-    if ($parent = get_records('scorm_scoes','scorm',$sco->scorm,'parent',$sco->identifier)) {
+    if ($children = get_records('scorm_scoes','scorm',$sco->scorm,'parent',$sco->identifier)) {//originally this said parent instead of childrean
         return $children;
     }
     return null;
 }
 
-function scorm_get_sibling($sco) {
+function scorm_get_available_children($sco){
+	$res = get_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'element','availablechildren');
+	if(!$res || $res == null){
+		return false;
+	}
+	else{
+		return unserialize($res->value);
+	}
+}
+
+function scorm_get_available_descendent($descend = array(),$sco){
+	if($sco == null){
+		return $descend;
+	}
+	else{
+		$avchildren = scorm_get_available_children($sco);
+		foreach($avchildren as $avchild){
+			array_push($descend,$avchild);
+		}
+		foreach($avchildren as $avchild){
+			scorm_get_available_descendent($descend,$avchild);
+		}
+	}
+}
+
+function scorm_get_siblings($sco) {
     if ($siblings = get_records('scorm_scoes','scorm',$sco->scorm,'parent',$sco->parent)) {
         unset($siblings[$sco->id]);
         if (!empty($siblings)) {
@@ -659,6 +684,20 @@ function scorm_get_ancestors($sco) {
         return array_push(scorm_get_ancestors(scorm_get_parent($sco)));
     } else {
         return $sco;
+    }
+}
+
+function scorm_get_preorder($preorder=array(),$sco) {
+
+
+    if ($sco != null) {
+        array_push($preorder,$sco);
+		$children = scorm_get_children($sco);
+		foreach ($children as $child){
+			scorm_get_preorder($sco);
+		}
+    } else {
+        return $preorder;
     }
 }
 
