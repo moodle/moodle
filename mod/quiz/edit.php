@@ -32,7 +32,19 @@
 
     list($thispageurl, $courseid, $cmid, $cm, $quiz, $pagevars) = question_edit_setup(true);
 
-    
+    //these params are only passed from page request to request while we stay on this page
+    //otherwise they would go in question_edit_setup
+    $quiz_showbreaks = optional_param('showbreaks', -1, PARAM_BOOL);
+    $quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
+    if ($quiz_showbreaks > -1) {
+        $thispageurl->param('showbreaks', $quiz_showbreaks);
+    } else {
+        $quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
+    }
+    if ($quiz_reordertool != 0) {
+        $thispageurl->param('reordertool', $quiz_reordertool);
+    }
+        
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
     $streditingquestions = get_string('editquestions', "quiz");
@@ -227,11 +239,6 @@
         }
     }
 
-    if(isset($_REQUEST['showbreaks'])) {
-        $SESSION->quiz_showbreaks = optional_param('showbreaks', 0, PARAM_BOOL);
-        $SESSION->quiz_reordertool = optional_param('reordertool', 0, PARAM_BOOL);
-    }
-
 /// Delete any teacher preview attempts if the quiz has been modified
     if (isset($_REQUEST['savechanges']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
         delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
@@ -243,13 +250,6 @@
         $category = get_default_question_category($course->id);
         $quiz->category = $category->id;
     }
-    if (!isset($SESSION->quiz_showbreaks)) {
-        $SESSION->quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
-    }
-    if (!isset($SESSION->quiz_reordertool)) {
-        $SESSION->quiz_reordertool = 0;
-    }
-
 
     // Print basic page layout.
 
@@ -283,7 +283,7 @@
         echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
         echo "</div><br />\n";
 
-        $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
+        $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
             error('Failed to set sumgrades');
         }
@@ -315,7 +315,7 @@
     print_box_start('generalbox quizquestions');
     print_heading(get_string('questionsinthisquiz', 'quiz'), '', 2);
 
-    $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
+    $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $quiz_showbreaks, $quiz_reordertool);
     if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
         error('Failed to set sumgrades');
     }

@@ -320,7 +320,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
 /// Form to choose to show pagebreaks and to repaginate quiz
     echo '<form method="post" action="edit.php" id="showbreaks">';
     echo '<fieldset class="invisiblefieldset">';
-    echo $pageurl->hidden_params_out();
+    echo $pageurl->hidden_params_out(array('showbreaks', 'reordertool'));
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="hidden" name="showbreaks" value="0" />';
     echo '<input type="checkbox" name="showbreaks" value="1"';
