@@ -287,6 +287,14 @@ $CFG->admin = 'admin';
 // $CFG->xmldbdisablecommentchecking = true;
 // $CFG->xmldbdisablenextprevchecking = true;
 //
+// Set the priority of themes from highest to lowest. This is useful (for
+// example) in sites where the user theme should override all other theme
+// settings for accessibility reasons. You can also disable types of themes
+// by removing them from the array. The default setting is:
+//      $CFG->themeorder = array('page', 'course', 'category', 'session', 'user', 'site');
+// NOTE: course, category, session, user themes still require the
+// respective settings to be enabled
+//
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
