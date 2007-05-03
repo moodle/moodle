@@ -372,14 +372,17 @@ class moodle_url {
     }
     /**
      * Outputs params as hidden form elements.
-     * 
+     *
+     * @param  
      * @return string html for form elements.
      */
-    function hidden_params_out($indent = 0){
+    function hidden_params_out($exclude = array(), $indent = 0){
         $tabindent = str_repeat("\t", $indent);
         $str = '';
         foreach ($this->params as $key => $val){
-           $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
+            if (FALSE === array_search($key, $exclude)) {
+                $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
+            }
         }
         return $str;
     }
@@ -5462,8 +5465,8 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
  * @param int $totalcount Thetotal number of entries available to be paged through
  * @param int $page The page you are currently viewing
  * @param int $perpage The number of entries that should be shown per page
- * @param string $baseurl The url which will be used to create page numbered links. Each page will consist of the base url appended by the page
-var an equal sign, then the page number.
+ * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
+ *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  * @param bool $nocurr do not display the current page as a link
  * @param bool $return whether to return an output string or echo now
@@ -5478,12 +5481,20 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $output .= get_string('page') .':';
         if ($page > 0) {
             $pagenum = $page - 1;
-            $output .= '&nbsp;(<a  href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
+            if (!is_a($baseurl, 'moodle_url')){
+                $output .= '&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
+            } else {
+                $output .= '&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
+            }
         }
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            $output .= '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            if (!is_a($baseurl, 'moodle_url')){
+                $output .= '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            } else {
+                $output .= '&nbsp;<a href="'. $baseurl->out(false, array($pagevar => 0)).'">1</a>&nbsp;...';
+            }
         } else {
             $startpage = 0;
         }
@@ -5494,18 +5505,31 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             if ($page == $currpage && empty($nocurr)) {
                 $output .= '&nbsp;&nbsp;'. $displaypage;
             } else {
-                $output .= '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
+                if (!is_a($baseurl, 'moodle_url')){
+                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
+                } else {
+                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl->out(false, array($pagevar => $currpage)).'">'. $displaypage .'</a>';
+                }
+                            
             }
             $displaycount++;
             $currpage++;
         }
         if ($currpage < $lastpage) {
             $lastpageactual = $lastpage - 1;
-            $output .= '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
+            if (!is_a($baseurl, 'moodle_url')){
+                $output .= '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
+            } else {
+                $output .= '&nbsp;...<a href="'. $baseurl->out(false, array($pagevar => $lastpageactual)).'">'. $lastpage .'</a>&nbsp;';
+            }
         }
         $pagenum = $page + 1;
         if ($pagenum != $displaypage) {
-            $output .= '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
+            if (!is_a($baseurl, 'moodle_url')){
+                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
+            } else {
+                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
+            }
         }
         $output .= '</div>';
     }
