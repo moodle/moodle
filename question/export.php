@@ -12,10 +12,11 @@
     require_once("../config.php");
     require_once( "editlib.php" );
 
-    // get parameters
+    list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
+
     $categoryid = optional_param('category',0, PARAM_INT);
     $cattofile = optional_param('cattofile',0, PARAM_BOOL);
-    $courseid = required_param('courseid',PARAM_INT);
+    
     $exportfilename = optional_param('exportfilename','',PARAM_FILE );
     $format = optional_param('format','', PARAM_FILE );
 
@@ -41,7 +42,7 @@
 
     if ($categoryid) { // update category in session variable
         $SESSION->questioncat = $categoryid;
-    } else { // try to get category from modform
+    } else { // try to get category from session
         if (isset($SESSION->questioncat)) {
             $categoryid = $SESSION->questioncat;
         }
@@ -73,20 +74,28 @@
     }
 
     /// Header
-    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $context)
-            ? update_module_button($SESSION->modform->cmid, $course->id, $txt->modulename )
+    if ($cm!==null) {
+        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
+            ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
             : "";
-        print_header_simple($txt->exportquestions, '',
-            "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$txt->modulenameplural</a>".
-            " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
-            ' -> '.$txt->exportquestions,
-            "", "", true, $strupdatemodule);
+        $crumbs = array();
+        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $crumbs[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+        print_header_simple($txt->exportquestions, '', $navigation, "", "", true, $strupdatemodule);
+
         $currenttab = 'edit';
         $mode = 'export';
-        include($CFG->dirroot.'/mod/quiz/tabs.php');
+        ${$cm->modname} = $module;
+        include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
-        print_header_simple($txt->exportquestions, '', $txt->exportquestions);
+        // Print basic page layout.
+        $crumbs = array();
+        $crumbs[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+           
+        print_header_simple($txt->exportquestions, '', $navigation);
         // print tabs
         $currenttab = 'export';
         include('tabs.php');
@@ -116,15 +125,15 @@
         $qformat->setCattofile( $cattofile );
 
         if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
-            error( $txt->exporterror, "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
+            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
         }
 
         if (! $qformat->exportprocess()) {         // Process the export data
-            error( $txt->exporterror, "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
+            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            error( $txt->exporterror, "$CFG->wwwroot/question/export.php?courseid={$course->id}&amp;category=$category->id");
+            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
         }
         echo "<hr />";
 
@@ -139,7 +148,7 @@
         echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$txt->download</a></div></p>";
         echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$txt->downloadextra</font></div></p>";
 
-        print_continue("edit.php?courseid=$course->id");
+        print_continue("edit.php?".$thispageurl->get_query_string());
         print_footer($course);
         exit;
     }
@@ -161,8 +170,7 @@
     <form enctype="multipart/form-data" method="post" action="export.php">
         <fieldset class="invisiblefieldset" style="display: block;">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
-            <input type="hidden" name="courseid" value="<?php echo $course->id; ?>" />
-
+            <?php echo $thispageurl->hidden_params_out(array(), 3); ?>
             <table cellpadding="5">
                 <tr>
                     <td align="right"><?php echo $txt->category; ?>:</td>

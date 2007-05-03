@@ -12,11 +12,16 @@
     require_once("editlib.php");
     require_once("category_class.php");
 
-    // get values from form
+
+
+    list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
+
+
+    // get values from form for actions on this page
     $param = new stdClass();
 
-    $id = required_param('courseid', PARAM_INT);   // course id
     $param->page = optional_param('page', 1, PARAM_INT);
+    $thispageurl->param('page', $param->page);
 
     $param->moveup = optional_param('moveup', 0, PARAM_INT);
     $param->movedown = optional_param('movedown', 0, PARAM_INT);
@@ -33,35 +38,48 @@
     $param->edit = optional_param('edit', 0, PARAM_INT);
     $param->updateid = optional_param('updateid', 0, PARAM_INT);
 
-    if (! $course = get_record("course", "id", $id)) {
+    if (! $course = get_record("course", "id", $courseid)) {
         error("Course ID is incorrect");
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $id);
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     require_login($course->id, false);
     require_capability('moodle/question:managecategory', $context);
 
-    $qcobject = new question_category_object($param->page);
+    $qcobject = new question_category_object($param->page, $thispageurl);
 
+    $streditingcategories = get_string('editcategories', 'quiz');
     if ($qcobject->editlist->process_actions($param->left, $param->right, $param->moveup, $param->movedown)) {
             //processing of these actions is handled in the method and page redirects.
-    } else if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+    } else if ($cm!==null) {
         // Page header
-        // TODO: generalise this to any activity
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
-            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
             : "";
-        print_header_simple(get_string('editcategories', 'quiz'), '',
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
-                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id\">".format_string($quiz->name).'</a>'.
-                 ' -> '.get_string('editcategories', 'quiz'),
-                 "", "", true, $strupdatemodule);
+        $crumbs = array();
+        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 
+                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 
+                            'type' => 'activity');
+        $crumbs[] = array('name' => format_string($module->name), 
+                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}",
+                            'type' => 'title');
+        $crumbs[] = array('name' => $streditingcategories, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+        print_header_simple($streditingcategories, '', $navigation, "", "", true, $strupdatemodule);
+
+
         $currenttab = 'edit';
         $mode = 'categories';
-        include($CFG->dirroot.'/mod/quiz/tabs.php');
+        ${$cm->modname} = $module;
+        include($CFG->dirroot."/mod/{$cm->modname}/tabs.php");
     } else {
-        print_header_simple(get_string('editcategories', 'quiz'), '', get_string('editcategories', 'quiz'));
+        // Print basic page layout.
+        $crumbs = array();
+        $crumbs[] = array('name' => $streditingcategories, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+           
+        print_header_simple($streditingcategories, '', $navigation);
 
         // print tabs
         $currenttab = 'categories';

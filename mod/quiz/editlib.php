@@ -15,17 +15,17 @@ require_once("locallib.php");
 /**
 * Delete a question from a quiz
 *
-* Deletes a question or a pagebreak from a quiz by updating $modform
+* Deletes a question or a pagebreak from a quiz by updating $quiz
 * as well as the quiz, quiz_question_instances
 * @return boolean         false if the question was not in the quiz
 * @param int $id          The id of the question to be deleted
-* @param object $modform  The extended quiz object as used by edit.php
+* @param object $quiz  The extended quiz object as used by edit.php
 *                         This is updated by this function
 */
-function quiz_delete_quiz_question($id, &$modform) {
+function quiz_delete_quiz_question($id, &$quiz) {
     // TODO: For the sake of safety check that this question can be deleted
     // safely, i.e., that it is not already in use.
-    $questions = explode(",", $modform->questions);
+    $questions = explode(",", $quiz->questions);
 
     // only do something if this question exists
     if (!isset($questions[$id])) {
@@ -39,14 +39,14 @@ function quiz_delete_quiz_question($id, &$modform) {
     if ($id == 0 && count($questions) > 1 && $questions[1] == 0) {
         unset($questions[1]);
     }
-    $modform->questions = implode(",", $questions);
+    $quiz->questions = implode(",", $questions);
     // Avoid duplicate page breaks
-    $modform->questions = str_replace(',0,0', ',0', $modform->questions);
+    $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
     // save new questionlist in database
-    if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+    if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
         error('Could not save question list');
     }
-    delete_records('quiz_question_instances', 'quiz', $modform->instance, 'question', $question);
+    delete_records('quiz_question_instances', 'quiz', $quiz->instance, 'question', $question);
     return true;
 }
 
@@ -54,16 +54,16 @@ function quiz_delete_quiz_question($id, &$modform) {
 /**
 * Add a question to a quiz
 *
-* Adds a question to a quiz by updating $modform as well as the
+* Adds a question to a quiz by updating $quiz as well as the
 * quiz and quiz_question_instances tables. It also adds a page break
 * if required.
 * @return boolean         false if the question was already in the quiz
 * @param int $id          The id of the question to be added
-* @param object $modform  The extended quiz object as used by edit.php
+* @param object $quiz  The extended quiz object as used by edit.php
 *                         This is updated by this function
 */
-function quiz_add_quiz_question($id, &$modform) {
-    $questions = explode(",", $modform->questions);
+function quiz_add_quiz_question($id, &$quiz) {
+    $questions = explode(",", $quiz->questions);
 
     if (in_array($id, $questions)) {
         return false;
@@ -75,7 +75,7 @@ function quiz_add_quiz_question($id, &$modform) {
         $end = end($breaks);
         $last = prev($breaks);
         $last = $last ? $last : -1;
-        if (!$modform->questionsperpage or (($end - $last -1) < $modform->questionsperpage)) {
+        if (!$quiz->questionsperpage or (($end - $last -1) < $quiz->questionsperpage)) {
             array_pop($questions);
         }
     }
@@ -85,15 +85,16 @@ function quiz_add_quiz_question($id, &$modform) {
     $questions[] = 0;
 
     // Save new questionslist in database
-    $modform->questions = implode(",", $questions);
-    if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->id)) {
+    $quiz->questions = implode(",", $questions);
+    if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
         error('Could not save question list');
     }
 
     // update question grades
     $questionrecord = get_record("question", "id", $id);
-    $modform->grades[$id] = $questionrecord->defaultgrade;
-    quiz_update_question_instance($modform->grades[$id], $id, $modform->instance);
+    $quiz->grades[$id]
+            = $questionrecord->defaultgrade;
+    quiz_update_question_instance($quiz->grades[$id], $id, $quiz->instance);
 
     return true;
 }
@@ -132,7 +133,7 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param boolean $showbreaks  Indicates whether the page breaks should be displayed
 * @param boolean $showbreaks  Indicates whether the reorder tool should be displayed
 */
-function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $reordertool=false) {
+function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreaks=true, $reordertool=false) {
     global $USER, $CFG, $QTYPES;
 
     $strorder = get_string("order");
@@ -178,6 +179,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
     echo "<form method=\"post\" action=\"edit.php\">";
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    echo $pageurl->hidden_params_out();
 
     echo "<table style=\"width:100%;\">\n";
     echo "<tr><th colspan=\"3\" style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$strorder</th>";
@@ -218,15 +220,15 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                 echo '<td><hr /></td>';
                 echo '<td style="width:45px;">';
                 if ($count > 1) {
-                    echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
+                    echo "<a title=\"$strmoveup\" href=\"".$pageurl->out_action(array('up'=>$count))."\"><img
                          src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall\" alt=\"$strmoveup\" /></a>";
                 }
                 echo '&nbsp;';
                 if ($count < $lastindex) {
-                    echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
+                    echo "<a title=\"$strmovedown\" href=\"".$pageurl->out_action(array('down'=>$count))."\"><img
                          src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\" alt=\"$strmovedown\" /></a>";
 
-                    echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\">
+                    echo "<a title=\"$strremove\" href=\"".$pageurl->out_action(array('delete'=>$count))."\">
                           <img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
                 }
                 echo '</td></tr></table></td>';
@@ -242,13 +244,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
         echo "<td>";
         if ($count != 0) {
-            echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$strmoveup\" href=\"".$pageurl->out_action(array('up'=>$count))."\"><img
                  src=\"$CFG->pixpath/t/up.gif\" class=\"iconsmall\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
         if ($count < $lastindex-1) {
-            echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$strmovedown\" href=\"".$pageurl->out_action(array('down'=>$count))."\"><img
                  src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
@@ -283,7 +285,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
                     <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a>";
         }
         if ($allowdelete) {
-            echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;quizid=$quiz->id&amp;sesskey=$USER->sesskey\">
+            echo "<a title=\"$strremove\" href=\"".$pageurl->out_action(array('delete'=>$count))."\">
                     <img src=\"$CFG->pixpath/t/removeright.gif\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
         }
 
@@ -311,7 +313,6 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 
     echo '<div class="quizquestionlistcontrols"><input type="submit" value="'.get_string('savechanges').'" />';
     echo '<input type="hidden" name="savechanges" value="save" /></div>';
-    echo '<input type="hidden" name="savequizid" value="'.$quiz->id.'" />'; // ugly hack to prevent modform session "mistakes"
 
     echo '</fieldset>';
     echo "</form>\n";
@@ -319,6 +320,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true, $r
 /// Form to choose to show pagebreaks and to repaginate quiz
     echo '<form method="post" action="edit.php" id="showbreaks">';
     echo '<fieldset class="invisiblefieldset">';
+    echo $pageurl->hidden_params_out();
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     echo '<input type="hidden" name="showbreaks" value="0" />';
     echo '<input type="checkbox" name="showbreaks" value="1"';

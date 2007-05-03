@@ -1,6 +1,6 @@
 <?php // $Id$
 /**
- * Functions used by showbank.php to show question editing interface
+ * Functions used to show question editing interface
  *
  * TODO: currently the function question_list still provides controls specific
  *       to the quiz module. This needs to be generalised.
@@ -269,20 +269,19 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         }
     }
 
-    print_paging_bar($totalnumber, $page, $perpage,
-                "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage');
 
     echo '<form method="post" action="edit.php">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    echo $pageurl->hidden_params_out();
+    echo $pageurl->hidden_params_out(array('qsortorder'));
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
     $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
                          'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
                          'id ASC' => get_string("sortage", "quiz"));
-    $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
+    $orderselect  = choose_from_menu ($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
     $orderselect .= '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
     echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
     <th style=\"white-space:nowrap; text-align: right;\" class=\"header\" scope=\"col\">$strtype</th>";
@@ -350,14 +349,13 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
     }
     echo "</table>\n";
 
-    $paging = print_paging_bar($totalnumber, $page, $perpage,
-            "edit.php?".$pageurl->get_query_string()."&amp;perpage=$perpage&amp;", 'page',
+    $paging = print_paging_bar($totalnumber, $page, $perpage, $pageurl, 'qpage',
             false, true);
     if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
         if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-            $showall = '<a href="edit.php?'.$pageurl->get_query_string().'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+            $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>1000)).'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
         } else {
-            $showall = '<a href="edit.php?'.$pageurl->get_query_string().'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+            $showall = '<a href="edit.php?'.$pageurl->get_query_string(array('qperpage'=>DEFAULT_QUESTIONS_PER_PAGE)).'">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
         }
         if ($paging) {
             $paging = substr($paging, 0, strrpos($paging, '</div>'));
@@ -420,32 +418,9 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
  *         {@link http://maths.york.ac.uk/serving_maths}
  * @param moodle_url $pageurl object representing this pages url.
  */
-function showbank($pageurl, $cm){  
+function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){  
     global $SESSION, $COURSE;  
-    $page      = optional_param('page', -1, PARAM_INT);
-    $perpage   = optional_param('perpage', -1, PARAM_INT);
-    $sortorder = optional_param('sortorder', '');
-    if (preg_match("/[';]/", $sortorder)) {
-        error("Incorrect use of the parameter 'sortorder'");
-    }
 
-    if ($page > -1) {
-        $SESSION->questionpage = $page;
-    } else {
-        $page = isset($SESSION->questionpage) ? $SESSION->questionpage : 0;
-    }
-
-    if ($perpage > -1) {
-        $SESSION->questionperpage = $perpage;
-    } else {
-        $perpage = isset($SESSION->questionperpage) ? $SESSION->questionperpage : DEFAULT_QUESTIONS_PER_PAGE;
-    }
-
-    if ($sortorder) {
-        $SESSION->questionsortorder = $sortorder;
-    } else {
-        $sortorder = isset($SESSION->questionsortorder) ? $SESSION->questionsortorder : 'qtype, name ASC';
-    }
     $SESSION->fromurl = $pageurl->out();
 
 /// Now, check for commands on this page and modify variables as necessary
@@ -458,8 +433,8 @@ function showbank($pageurl, $cm){
             error(get_string('categorynoedit', 'quiz', $tocategory->name), $pageurl->out());
         }
         foreach ($_POST as $key => $value) {    // Parse input for question ids
-            if (substr($key, 0, 1) == "q") {
-                $key = substr($key,1);
+            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+                $key = $matches[1];
                 if (!set_field('question', 'category', $tocategory->id, 'id', $key)) {
                     error('Could not update category field');
                 }
@@ -501,9 +476,8 @@ function showbank($pageurl, $cm){
                                  // an asterix in front of those that are in use
             $inuse = false;      // set to true if at least one of the questions is in use
             foreach ($rawquestions as $key => $value) {    // Parse input for question ids
-                if (substr($key, 0, 1) == "q") {
-                    $key = substr($key,1);
-                    $questionlist .= $key.',';
+                if (preg_match('!q([0-9]+)!', $key, $matches)) {
+                    $key = $matches[1];                    $questionlist .= $key.',';
                     if (record_exists('quiz_question_instances', 'question', $key) or
                         record_exists('question_states', 'originalquestion', $key)) {
                         $questionnames .= '* ';
@@ -585,5 +559,63 @@ function showbank($pageurl, $cm){
             $SESSION->questionshowquestiontext);
 
     print_box_end();
+}
+/**
+ * Common setup for all pages for editing questions.
+ * @param boolean $requirecmid require cmid? default false
+ * @param boolean $requirecourseid require courseid, if cmid is not given? default true
+ * @return array $thispageurl, $courseid, $cmid, $cm, $module, $pagevars
+ */
+function question_edit_setup($requirecmid = false, $requirecourseid = true){
+    $thispageurl = new moodle_url();
+    if ($requirecmid){
+        $cmid =required_param('cmid', PARAM_INT);
+    } else {
+        $cmid = optional_param('cmid', 0, PARAM_INT);
+    }
+    if ($cmid){
+        list($module, $cm) = get_module_from_cmid($cmid); 
+        $courseid = $cm->course;
+        $thispageurl->params(compact('cmid'));
+    } else {
+        $module = null;
+        $cm = null;
+        if ($requirecourseid){
+            $courseid  = required_param('courseid', PARAM_INT);
+        } else {
+            $courseid  = optional_param('courseid', 0, PARAM_INT);
+        }
+        if ($courseid){
+            $thispageurl->params(compact('courseid'));
+        }
+    }
+    
+    $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
+    $pagevars['qperpage'] = optional_param('qperpage', -1, PARAM_INT);
+    $pagevars['qsortorder'] = optional_param('qsortorder', '');
+    
+    if (preg_match("/[';]/", $pagevars['qsortorder'])) {
+        error("Incorrect use of the parameter 'qsortorder'");
+    }
+
+    if ($pagevars['qpage'] > -1) {
+        $thispageurl->param('qpage', $pagevars['qpage']);
+    } else {
+        $pagevars['qpage'] = 0;
+    }
+
+    if ($pagevars['qperpage'] > -1) {
+        $thispageurl->param('qperpage', $pagevars['qperpage']);
+    } else {
+        $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
+    }
+
+    if ($pagevars['qsortorder']) {
+        $thispageurl->param('qsortorder', $pagevars['qsortorder']);
+    } else {
+        $pagevars['qsortorder'] = 'qtype, name ASC';
+    }
+    return array($thispageurl, $courseid, $cmid, $cm, $module, $pagevars);
+    
 }
 ?>

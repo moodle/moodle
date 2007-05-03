@@ -13,15 +13,7 @@
     require_once("../config.php");
     require_once("editlib.php");
 
-    require_login();
-
-    $courseid  = required_param('courseid', PARAM_INT);
-
-    // The optional parameter 'clean' allows us to clear module information,
-    // guaranteeing a module-independent  question bank editing interface
-    if (optional_param('clean', false, PARAM_BOOL)) {
-        unset($SESSION->modform);
-    }
+    list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
 
     if (! $course = get_record("course", "id", $courseid)) {
         error("This course doesn't exist");
@@ -31,39 +23,40 @@
   
     $SESSION->returnurl = $FULLME;
 
-    // Print basic page layout.
     $streditingquestions = get_string('editquestions', "quiz");
-
-    // TODO: generalise this to any activity
-    $strquizzes = get_string('modulenameplural', 'quiz');
-    $streditingquestions = get_string('editquestions', "quiz");
-    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+    if ($cm!==null) {
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
-            ? update_module_button($SESSION->modform->cmid, $course->id, get_string('modulename', 'quiz'))
+            ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
             : "";
-        print_header_simple($streditingquestions, '',
-                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
-                 " -> <a href=\"$CFG->wwwroot/mod/quiz/view.php?q={$SESSION->modform->instance}\">".format_string($SESSION->modform->name).'</a>'.
-                 " -> $streditingquestions",
-                 "", "", true, $strupdatemodule);
+        $crumbs = array();
+        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $crumbs[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+        print_header_simple($streditingquestions, '', $navigation, "", "", true, $strupdatemodule);
 
         $currenttab = 'edit';
         $mode = 'questions';
-        $quiz = &$SESSION->modform;
-        include($CFG->dirroot.'/mod/quiz/tabs.php');
+        ${$cm->modname} = $module;
+        include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
-        print_header_simple($streditingquestions, '',
-                 "$streditingquestions");
-    
+        // Print basic page layout.
+        $crumbs = array();
+        $crumbs[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+           
+        print_header_simple($streditingquestions, '', $navigation);
+        
         // print tabs
         $currenttab = 'questions';
         include('tabs.php');
     }
-
+    
+ 
     echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
-    include($CFG->dirroot.'/question/showbank.php');
+    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder']);
 
     echo '</td></tr>';
     echo '</table>';

@@ -29,71 +29,37 @@
     require_once("../../config.php");
     require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 
-    require_login();
 
-    $quizid    = optional_param('quizid', 0, PARAM_INT);
+    list($thispageurl, $courseid, $cmid, $cm, $quiz, $pagevars) = question_edit_setup(true);
 
+    
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
     $streditingquestions = get_string('editquestions', "quiz");
-    $streditingquiz = get_string("editinga", "moodle", $strquiz);
+    $streditingquiz = get_string('editinga', 'moodle', $strquiz);
+    
 
-    if ($modform = data_submitted() and !empty($modform->course)) { // data submitted
 
-        $SESSION->modform = $modform;    // Save the form in the current session
-
-    } else if ($quizid) {
-        if (isset($SESSION->modform->id) and $SESSION->modform->id == $quizid) {
-            // modform for this quiz already exists, use it
-            $modform = $SESSION->modform;
-        } else {
-            // create new modform from database
-            if (! $modform = get_record('quiz', 'id', $quizid)) {
-                error("The required quiz doesn't exist");
-            }
-            $modform->instance = $modform->id;
-            $SESSION->modform = $modform;    // Save the form in the current session
-        }
-
-    } else if (!empty($sortorder)) {
-        // no quiz or course was specified so we need to use the stored modform
-        if (isset($SESSION->modform)) {
-            $modform = $SESSION->modform;
-        } else {
-            error('cmunknown');
-        }
-    } else {
-        // no quiz or course was specified so we need to use the stored modform
-        if (isset($SESSION->modform)) {
-            $modform = $SESSION->modform;
-        } else {
-            print_error('cmunknown');
-        }
-    }
 
     // Get the course object and related bits.
-    if (! $course = get_record("course", "id", $modform->course)) {
+    if (! $course = get_record("course", "id", $quiz->course)) {
         error("This course doesn't exist");
     }
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $modform->course);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
+    $quizcontext = get_context_instance(CONTEXT_MODULE, $quiz->cmid);
 
     require_login($course->id, false);
     
-    // Get the module and related bits.
-    $cm = get_coursemodule_from_instance('quiz', $modform->instance);
-    $modform->cmid = $cm->id;
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // Log this visit.
     add_to_log($cm->course, 'quiz', 'editquestions',
-            "view.php?id=$cm->id", "$quizid", $cm->id);
+            "view.php?id=$cm->id", "$quiz->id", $cm->id);
 
-    require_capability('mod/quiz:manage', $context);
+    require_capability('mod/quiz:manage', $quizcontext);
 
-    if (isset($modform->instance)
-        && empty($modform->grades))  // Construct an array to hold all the grades.
-    {
-        $modform->grades = quiz_get_all_question_grades($modform);
+    if (isset($quiz->instance)
+        && empty($quiz->grades)){  // Construct an array to hold all the grades.
+        $quiz->grades = quiz_get_all_question_grades($quiz);
     }
 
     $SESSION->returnurl = $FULLME;
@@ -102,18 +68,18 @@
 
     if (isset($_REQUEST['up']) and confirm_sesskey()) { /// Move the given question up a slot
         $up = optional_param('up', 0, PARAM_INT);
-        $questions = explode(",", $modform->questions);
+        $questions = explode(",", $quiz->questions);
         if ($up > 0 and isset($questions[$up])) {
             $prevkey = ($questions[$up-1] == 0) ? $up-2 : $up-1;
             $swap = $questions[$prevkey];
             $questions[$prevkey] = $questions[$up];
             $questions[$up]   = $swap;
-            $modform->questions = implode(",", $questions);
+            $quiz->questions = implode(",", $questions);
             // Always have a page break at the end
-            $modform->questions = $modform->questions . ',0';
+            $quiz->questions = $quiz->questions . ',0';
             // Avoid duplicate page breaks
-            $modform->questions = str_replace(',0,0', ',0', $modform->questions);
-            if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
+            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
                 error('Could not save question list');
             }
         }
@@ -121,29 +87,30 @@
 
     if (isset($_REQUEST['down']) and confirm_sesskey()) { /// Move the given question down a slot
         $down = optional_param('down', 0, PARAM_INT);
-        $questions = explode(",", $modform->questions);
+        $questions = explode(",", $quiz->questions);
         if ($down < count($questions)) {
             $nextkey = ($questions[$down+1] == 0) ? $down+2 : $down+1;
             $swap = $questions[$nextkey];
             $questions[$nextkey] = $questions[$down];
             $questions[$down]   = $swap;
-            $modform->questions = implode(",", $questions);
+            $quiz->questions = implode(",", $questions);
             // Avoid duplicate page breaks
-            $modform->questions = str_replace(',0,0', ',0', $modform->questions);
-            if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
+            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
                 error('Could not save question list');
             }
         }
     }
 
     if (isset($_REQUEST['addquestion']) and confirm_sesskey()) { /// Add a single question to the current quiz
-        quiz_add_quiz_question($_REQUEST['addquestion'], $modform);
+        quiz_add_quiz_question($_REQUEST['addquestion'], $quiz);
     }
 
     if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add selected questions to the current quiz
         foreach ($_POST as $key => $value) {    // Parse input for question ids
-            if (substr($key, 0, 1) == "q") {
-                quiz_add_quiz_question(substr($key,1), $modform);
+            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+                $key = $matches[1];
+                quiz_add_quiz_question($key, $quiz);
             }
         }
     }
@@ -161,7 +128,7 @@
         $random = RANDOM;
         if ($existingquestions = get_records_select('question', "qtype = '$random' AND category = '$category->id'")) {
             // now remove the ones that are already used in this quiz
-            if ($questionids = explode(',', $modform->questions)) {
+            if ($questionids = explode(',', $quiz->questions)) {
                 foreach ($questionids as $questionid) {
                     unset($existingquestions[$questionid]);
                 }
@@ -171,7 +138,7 @@
             while (($existingquestion = array_pop($existingquestions)) and ($i < $randomcount)) {
                 if ($existingquestion->questiontext == $recurse) {
                     // this question has the right recurse property, so use it
-                    quiz_add_quiz_question($existingquestion->id, $modform);
+                    quiz_add_quiz_question($existingquestion->id, $quiz);
                     $i++;
                 }
             }
@@ -198,45 +165,41 @@
                 if(!isset($question->id)) {
                     error('Could not insert new random question!');
                 }
-                quiz_add_quiz_question($question->id, $modform);
+                quiz_add_quiz_question($question->id, $quiz);
             }
         }
     }
 
     if (isset($_REQUEST['repaginate']) and confirm_sesskey()) { /// Re-paginate the quiz
         if (isset($_REQUEST['questionsperpage'])) {
-            $modform->questionsperpage = required_param('questionsperpage', PARAM_INT);
-            if (!set_field('quiz', 'questionsperpage', $modform->questionsperpage, 'id', $modform->id)) {
+            $quiz->questionsperpage = required_param('questionsperpage', PARAM_INT);
+            if (!set_field('quiz', 'questionsperpage', $quiz->questionsperpage, 'id', $quiz->id)) {
                 error('Could not save number of questions per page');
             }
         }
-        $modform->questions = quiz_repaginate($modform->questions, $modform->questionsperpage);
-        if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->id)) {
+        $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
+        if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
             error('Could not save layout');
         }
     }
 
     if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
-        quiz_delete_quiz_question($_REQUEST['delete'], $modform);
+        quiz_delete_quiz_question($_REQUEST['delete'], $quiz);
     }
 
     if (isset($_REQUEST['savechanges']) and confirm_sesskey()) {
-        $savequizid = required_param('savequizid', PARAM_INT);
-        if ($modform->id != $savequizid) {
-            error("Error saving quiz settings, please do not change two quizes from the same browser", $CFG->wwwroot.'/mod/quiz/edit.php?quizid='.$savequizid);
-        }
     /// We need to save the new ordering (if given) and the new grades
-        $oldquestions = explode(",", $modform->questions); // the questions in the old order
+        $oldquestions = explode(",", $quiz->questions); // the questions in the old order
         $questions = array(); // for questions in the new order
         $rawgrades = $_POST;
-        unset($modform->grades);
+        unset($quiz->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
-            if (substr($key, 0, 1) == "q") {
-                $key = substr($key,1);
-                $modform->grades[$key] = $value;
-                quiz_update_question_instance($modform->grades[$key], $key, $modform->instance);
-            } elseif (substr($key, 0, 1) == "o") {   // Parse input for ordering info
-                $key = substr($key,1);
+            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+                $key = $matches[1];
+                $quiz->grades[$key] = $value;
+                quiz_update_question_instance($quiz->grades[$key], $key, $quiz->instance);
+            } elseif (preg_match('!q([0-9]+)!', $key, $matches)) {   // Parse input for ordering info
+                $key = $matches[1];
                 $questions[$value] = $oldquestions[$key];
             }
         }
@@ -244,21 +207,21 @@
         // If ordering info was given, reorder the questions
         if ($questions) {
             ksort($questions);
-            $modform->questions = implode(",", $questions);
+            $quiz->questions = implode(",", $questions);
             // Always have a page break at the end
-            $modform->questions = $modform->questions . ',0';
+            $quiz->questions = $quiz->questions . ',0';
             // Avoid duplicate page breaks
-            while (strpos($modform->questions, ',0,0')) {
-                $modform->questions = str_replace(',0,0', ',0', $modform->questions);
+            while (strpos($quiz->questions, ',0,0')) {
+                $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             }
-            if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
+            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
                 error('Could not save question list');
             }
         }
 
         // If rescaling is required save the new maximum
         if (isset($_REQUEST['maxgrade'])) {
-            if (!quiz_set_grade(optional_param('maxgrade', 0), $modform)) {
+            if (!quiz_set_grade(optional_param('maxgrade', 0), $quiz)) {
                 error('Could not set a new maximum grade for the quiz');
             }
         }
@@ -271,14 +234,14 @@
 
 /// Delete any teacher preview attempts if the quiz has been modified
     if (isset($_REQUEST['savechanges']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
-        delete_records('quiz_attempts', 'preview', '1', 'quiz', $modform->id);
+        delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
     }
 
 /// all commands have been dealt with, now print the page
 
-    if (empty($modform->category) or !record_exists('question_categories', 'id', $modform->category)) {
+    if (empty($quiz->category) or !record_exists('question_categories', 'id', $quiz->category)) {
         $category = get_default_question_category($course->id);
-        $modform->category = $category->id;
+        $quiz->category = $category->id;
     }
     if (!isset($SESSION->quiz_showbreaks)) {
         $SESSION->quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
@@ -287,17 +250,16 @@
         $SESSION->quiz_reordertool = 0;
     }
 
-    $SESSION->modform = $modform;
 
     // Print basic page layout.
 
-    if (isset($modform->instance) and record_exists_select('quiz_attempts', "quiz = '$modform->instance' AND preview = '0'")){
+    if (isset($quiz->instance) and record_exists_select('quiz_attempts', "quiz = '$quiz->instance' AND preview = '0'")){
         // one column layout with table of questions used in this quiz
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-                    ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
+                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
         $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-        $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
+        $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
         $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($crumbs);
            
@@ -306,7 +268,7 @@
 
         $currenttab = 'edit';
         $mode = 'editq';
-        $quiz = &$modform;
+
         include('tabs.php');
 
         print_box_start();
@@ -314,15 +276,15 @@
         $a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
         $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
         $a->studentstring  = $course->students;
-        if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
+        if (! $cm = get_coursemodule_from_instance("quiz", $quiz->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
         echo "<div class=\"attemptsnotice\">\n";
         echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
         echo "</div><br />\n";
 
-        $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
-        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
+        $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
+        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
             error('Failed to set sumgrades');
         }
 
@@ -333,11 +295,11 @@
 
     // two column layout with quiz info in left column
     $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-        ? update_module_button($modform->cmid, $course->id, get_string('modulename', 'quiz'))
+        ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
         : "";
       
     $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-    $crumbs[] = array('name' => format_string($modform->name), 'link' => "view.php?q=$modform->instance", 'type' => 'activityinstance');    
+    $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
     $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
     $navigation = build_navigation($crumbs);
     
@@ -345,7 +307,7 @@
 
     $currenttab = 'edit';
     $mode = 'editq';
-    $quiz = &$modform;
+
     include('tabs.php');
 
     echo '<table border="0" style="width:100%" cellpadding="2" cellspacing="0">';
@@ -353,8 +315,8 @@
     print_box_start('generalbox quizquestions');
     print_heading(get_string('questionsinthisquiz', 'quiz'), '', 2);
 
-    $sumgrades = quiz_print_question_list($modform, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
-    if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
+    $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $SESSION->quiz_showbreaks, $SESSION->quiz_reordertool);
+    if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
         error('Failed to set sumgrades');
     }
 
@@ -362,7 +324,7 @@
 
     echo '</td><td style="width:50%" valign="top">';
 
-    require($CFG->dirroot.'/question/showbank.php');
+    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder']);
 
     echo '</td></tr>';
     echo '</table>';
