@@ -16,6 +16,22 @@ require_once($CFG->libdir.'/questionlib.php');
 
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 
+function get_module_from_cmid($cmid){
+    global $CFG;
+    if (!$cmrec = get_record_sql("SELECT cm.*, md.name as modname
+                               FROM {$CFG->prefix}course_modules cm,
+                                    {$CFG->prefix}modules md
+                               WHERE cm.id = '$cmid' AND
+                                     md.id = cm.module")){
+        error('cmunknown');
+    } elseif (!$modrec =get_record($cmrec->modname, 'id', $cmrec->instance)) {
+        error('cmunknown');
+    }
+    $modrec->instance = $modrec->id;
+    $modrec->cmid = $modrec->id;
+    
+    return array($modrec, $cmrec);
+}
 /**
 * Function to read all questions for category into big array
 *
@@ -95,7 +111,7 @@ function get_default_question_category($courseid) {
 /**
  * prints a form to choose categories
  */
-function question_category_form($course, $current, $recurse=1, $showhidden=false, $showquestiontext=false) {
+function question_category_form($course, $pageurl, $current, $recurse=1, $showhidden=false, $showquestiontext=false) {
     global $CFG;
 
 /// Make sure the default category exists for this course
@@ -109,11 +125,11 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     $streditcats = get_string("editcategories", "quiz");
 
     echo "<strong>$strcategory:</strong>&nbsp;";
-    popup_form ("edit.php?courseid=$course->id&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
+    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
-    echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />\n";
+    echo $pageurl->hidden_params_out();
     question_category_form_checkbox('recurse', $recurse);
     question_category_form_checkbox('showhidden', $showhidden);
     question_category_form_checkbox('showquestiontext', $showquestiontext);
@@ -141,14 +157,14 @@ function question_category_form_checkbox($name, $checked) {
 *
 * @param object $course   The course object
 * @param int $categoryid  The id of the question category to be displayed
-* @param int $quizid      The quiz id if we are in the context of a particular quiz, 0 otherwise
+* @param int $cm      The course module record if we are in the context of a particular module, 0 otherwise
 * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
 * @param int $page        The number of the page to be displayed
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
 * @param boolean $showquestiontext whether the text of each question should be shown in the list
 */
-function question_list($course, $categoryid, $quizid=0,
+function question_list($course, $pageurl, $categoryid, $cm = null,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC',
         $showquestiontext = false) {
     global $QTYPE_MENU, $USER, $CFG, $THEME;
@@ -185,11 +201,6 @@ function question_list($course, $categoryid, $quizid=0,
         echo "<p style=\"text-align:center;\"><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
-        if ($quizid) {
-            echo "<p>";
-            print_string("addingquestions", "quiz");
-            echo "</p>";
-        }
         return;
     }
 
@@ -198,10 +209,13 @@ function question_list($course, $categoryid, $quizid=0,
         return;
     }
     $canedit = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course));
-    $editingquiz = false;
-    if ($quizid) {
-        $cm = get_coursemodule_from_instance('quiz', $quizid);
-        $editingquiz = has_capability('mod/quiz:manage', get_context_instance(CONTEXT_MODULE, $cm->id));
+
+    if ($cm AND $cm->modname == 'quiz') {
+        $editingquiz = has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cm->id));
+        $quizid = $cm->instance;
+    } else {
+        $editingquiz = false;
+        $quizid = 0;
     }
     
     echo '<div class="boxaligncenter">';
@@ -215,7 +229,8 @@ function question_list($course, $categoryid, $quizid=0,
     if ($canedit) {
         echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
-        popup_form ("$CFG->wwwroot/question/question.php?category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
+        $returnurl = urlencode($pageurl->out());
+        popup_form ("$CFG->wwwroot/question/question.php?returnurl=$returnurl&amp;category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
                     "", "choose", "", "", false, "self");
         echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
@@ -257,10 +272,10 @@ function question_list($course, $categoryid, $quizid=0,
     print_paging_bar($totalnumber, $page, $perpage,
                 "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;");
 
-    echo '<form method="post" action="edit.php?courseid='.$course->id.'">';
+    echo '<form method="post" action="edit.php">';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-
+    echo $pageurl->hidden_params_out();
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
@@ -293,7 +308,7 @@ function question_list($course, $categoryid, $quizid=0,
         
         // add to quiz
         if ($editingquiz) {
-            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;quizid=$quizid&amp;sesskey=$USER->sesskey\"><img
+            echo "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
         }
         
@@ -308,10 +323,10 @@ function question_list($course, $categoryid, $quizid=0,
                     src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
-                echo "<a title=\"$strrestore\" href=\"edit.php?courseid=$course->id&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
+                echo "<a title=\"$strrestore\" href=\"edit.php?".$pageurl->get_query_string()."&amp;unhide=$question->id&amp;sesskey=$USER->sesskey\"><img
                         src=\"$CFG->pixpath/t/restore.gif\" alt=\"$strrestore\" /></a>";
             } else {
-                echo "<a title=\"$strdelete\" href=\"edit.php?courseid=$course->id&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
+                echo "<a title=\"$strdelete\" href=\"edit.php?".$pageurl->get_query_string()."&amp;deleteselected=$question->id&amp;q$question->id=1\"><img
                         src=\"$CFG->pixpath/t/delete.gif\" alt=\"$strdelete\" /></a>";
             }
         }
@@ -336,13 +351,13 @@ function question_list($course, $categoryid, $quizid=0,
     echo "</table>\n";
 
     $paging = print_paging_bar($totalnumber, $page, $perpage,
-            "edit.php?courseid={$course->id}&amp;perpage=$perpage&amp;", 'page',
+            "edit.php?".$pageurl->get_query_string()."&amp;perpage=$perpage&amp;", 'page',
             false, true);
     if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
         if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-            $showall = '<a href="edit.php?courseid='.$course->id.'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+            $showall = '<a href="edit.php?'.$pageurl->get_query_string().'&amp;perpage=1000">'.get_string('showall', 'moodle', $totalnumber).'</a>';
         } else {
-            $showall = '<a href="edit.php?courseid='.$course->id.'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
+            $showall = '<a href="edit.php?'.$pageurl->get_query_string().'&amp;perpage=' . DEFAULT_QUESTIONS_PER_PAGE . '">'.get_string('showperpage', 'moodle', DEFAULT_QUESTIONS_PER_PAGE).'</a>';
         }
         if ($paging) {
             $paging = substr($paging, 0, strrpos($paging, '</div>'));
@@ -379,8 +394,7 @@ function question_list($course, $categoryid, $quizid=0,
             $randomcount[$i] = $i;
         }
         echo '<br />';
-        print_string('addrandom', 'quiz',
-         choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
+        print_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
         echo '<input type="hidden" name="recurse" value="'.$recurse.'" />';
         echo "<input type=\"hidden\" name=\"categoryid\" value=\"$category->id\" />";
         echo ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
@@ -389,5 +403,187 @@ function question_list($course, $categoryid, $quizid=0,
     echo '</fieldset>';
     echo "</form>\n";
 }
+/**
+ * Shows the question bank editing interface.
+ *
+ * The function also processes a number of actions:
+ * 
+ * Actions affecting the question pool:
+ * move           Moves a question to a different category
+ * deleteselected Deletes the selected questions from the category
+ * Other actions:
+ * cat            Chooses the category
+ * displayoptions Sets display options
+ *
+ * @author Martin Dougiamas and many others. This has recently been extensively
+ *         rewritten by Gustav Delius and other members of the Serving Mathematics project
+ *         {@link http://maths.york.ac.uk/serving_maths}
+ * @param moodle_url $pageurl object representing this pages url.
+ */
+function showbank($pageurl, $cm){  
+    global $SESSION, $COURSE;  
+    $page      = optional_param('page', -1, PARAM_INT);
+    $perpage   = optional_param('perpage', -1, PARAM_INT);
+    $sortorder = optional_param('sortorder', '');
+    if (preg_match("/[';]/", $sortorder)) {
+        error("Incorrect use of the parameter 'sortorder'");
+    }
 
+    if ($page > -1) {
+        $SESSION->questionpage = $page;
+    } else {
+        $page = isset($SESSION->questionpage) ? $SESSION->questionpage : 0;
+    }
+
+    if ($perpage > -1) {
+        $SESSION->questionperpage = $perpage;
+    } else {
+        $perpage = isset($SESSION->questionperpage) ? $SESSION->questionperpage : DEFAULT_QUESTIONS_PER_PAGE;
+    }
+
+    if ($sortorder) {
+        $SESSION->questionsortorder = $sortorder;
+    } else {
+        $sortorder = isset($SESSION->questionsortorder) ? $SESSION->questionsortorder : 'qtype, name ASC';
+    }
+    $SESSION->fromurl = $pageurl->out();
+
+/// Now, check for commands on this page and modify variables as necessary
+    if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
+        $tocategoryid = required_param('category', PARAM_INT);
+        if (!$tocategory = get_record('question_categories', 'id', $tocategoryid)) {
+            error('Invalid category');
+        }
+        if (!has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $tocategory->course))){
+            error(get_string('categorynoedit', 'quiz', $tocategory->name), $pageurl->out());
+        }
+        foreach ($_POST as $key => $value) {    // Parse input for question ids
+            if (substr($key, 0, 1) == "q") {
+                $key = substr($key,1);
+                if (!set_field('question', 'category', $tocategory->id, 'id', $key)) {
+                    error('Could not update category field');
+                }
+            }
+        }
+    }
+
+    if (isset($_REQUEST['deleteselected'])) { // delete selected questions from the category
+
+        if (isset($_REQUEST['confirm']) and confirm_sesskey()) { // teacher has already confirmed the action
+            $deleteselected = required_param('deleteselected');
+            if ($_REQUEST['confirm'] == md5($deleteselected)) {
+                if ($questionlist = explode(',', $deleteselected)) {
+                    // for each question either hide it if it is in use or delete it
+                    foreach ($questionlist as $questionid) {
+                        if (record_exists('quiz_question_instances', 'question', $questionid) or
+                            record_exists('question_states', 'originalquestion', $questionid)) {
+                            if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
+                               error('Was not able to hide question');
+                            }
+                        } else {
+                            delete_question($questionid);
+                        }
+                    }
+                }
+                echo '</td></tr>';
+                echo '</table>';
+                echo '</div>';
+                redirect($pageurl->out());
+            } else {
+                error("Confirmation string was incorrect");
+            }
+
+        } else { // teacher still has to confirm
+            // make a list of all the questions that are selected
+            $rawquestions = $_REQUEST;
+            $questionlist = '';  // comma separated list of ids of questions to be deleted
+            $questionnames = ''; // string with names of questions separated by <br /> with
+                                 // an asterix in front of those that are in use
+            $inuse = false;      // set to true if at least one of the questions is in use
+            foreach ($rawquestions as $key => $value) {    // Parse input for question ids
+                if (substr($key, 0, 1) == "q") {
+                    $key = substr($key,1);
+                    $questionlist .= $key.',';
+                    if (record_exists('quiz_question_instances', 'question', $key) or
+                        record_exists('question_states', 'originalquestion', $key)) {
+                        $questionnames .= '* ';
+                        $inuse = true;
+                    }
+                    $questionnames .= get_field('question', 'name', 'id', $key).'<br />';
+                }
+            }
+            if (!$questionlist) { // no questions were selected
+                redirect($pageurl->out());
+            }
+            $questionlist = rtrim($questionlist, ',');
+
+            // Add an explanation about questions in use
+            if ($inuse) {
+                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
+            }
+            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
+                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
+                        $pageurl->out_action());
+
+            echo '</td></tr>';
+            echo '</table>';
+            print_footer($COURSE);
+            exit;
+        }
+    }
+
+    // Unhide a question
+    if(isset($_REQUEST['unhide']) && confirm_sesskey()) {
+        $unhide = required_param('unhide', PARAM_INT);
+        if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
+            error("Failed to unhide the question.");
+        }
+        redirect($pageurl->out());
+    }
+
+    if ($categoryid = optional_param('cat', 0, PARAM_INT)) { /// coming from category selection drop-down menu
+        $SESSION->questioncat = $categoryid;
+        $page = 0;
+        $SESSION->questionpage = 0;
+    }
+
+    if (empty($SESSION->questioncat) or !count_records_select("question_categories", "id = '{$SESSION->questioncat}' AND (course = '{$COURSE->id}' OR publish = '1')")) {
+        $category = get_default_question_category($COURSE->id);
+        $SESSION->questioncat = $category->id;
+    }
+
+    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionrecurse = $recurse;
+    }
+    if (!isset($SESSION->questionrecurse)) {
+        $SESSION->questionrecurse = 1;
+    }
+
+    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionshowhidden = $showhidden;
+    }
+    if (!isset($SESSION->questionshowhidden)) {
+        $SESSION->questionshowhidden = 0;
+    }
+
+    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
+        $SESSION->questionshowquestiontext = $showquestiontext;
+    }
+    if (!isset($SESSION->questionshowquestiontext)) {
+        $SESSION->questionshowquestiontext = 0;
+    }
+
+    // starts with category selection form
+    print_box_start('generalbox questionbank');
+    print_heading(get_string('questionbank', 'question'), '', 2);
+    question_category_form($COURSE, $pageurl, $SESSION->questioncat, $SESSION->questionrecurse,
+            $SESSION->questionshowhidden, $SESSION->questionshowquestiontext);
+    
+    // continues with list of questions
+    question_list($COURSE, $pageurl, $SESSION->questioncat, isset($cm) ? $cm : null,
+            $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder,
+            $SESSION->questionshowquestiontext);
+
+    print_box_end();
+}
 ?>
