@@ -6,6 +6,12 @@
 
 /* Made with executable version [strFullVersionInfo] */
 
+
+/* Hack to hide a nested Quicktime player from IE, which can't handle it. */
+* html object.MediaPlayerNotForIE {
+	display: none;
+}
+
 body{
 	font-family: [strFontFace];
 [inclPageBGColor]	background-color: [strPageBGColor];[/inclPageBGColor]
@@ -381,6 +387,7 @@ div#ClueEntry{
 div.Keypad{
 	text-align: center;
 	display: none; /* initially hidden, shown if needed */
+	margin-bottom: 0.5em;
 }
 
 div.Keypad button{
@@ -408,7 +415,9 @@ textarea{
 }
 
 .QuestionText{
-
+	text-align: left;
+	margin: 0px;
+	font-size: 100%;
 }
 
 .Answer{

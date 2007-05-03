@@ -29,6 +29,9 @@
 
 <!--
 
+[inclScorm1.2]
+[strJSScorm_1_2]
+[/inclScorm1.2]
 
 [strJSBrowserCheck]
 
@@ -48,7 +51,7 @@
 </head>
 <!--<body>Fool those dumb ad-inserting ISPs</body>-->
 
-<body onload="StartUp()" id="TheBody">
+<body onload="StartUp()" id="TheBody" [inclScorm1.2]onunload="SetScormBrowseTime(); CheckLMSFinish()"[/inclScorm1.2]>
 
 <!-- BeginTopNavButtons -->
 
@@ -66,7 +69,7 @@
 </div>
 
 <div id="InstructionsDiv" class="StdDiv">
-	<p id="Instructions">[strInstructions]</p>
+	<div id="Instructions">[strInstructions]</div>
 </div>
 
 <div id="MainDiv" class="StdDiv">

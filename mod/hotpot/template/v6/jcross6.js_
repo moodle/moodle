@@ -1,3 +1,31 @@
+[inclScorm1.2]
+//JCROSS-SPECIFIC SCORM-RELATED JAVASCRIPT CODE
+
+function SetScormScore(){
+//Reports the current score and any other information back to the LMS
+	if (API != null){
+		API.LMSSetValue('cmi.core.score.raw', Score);
+		
+//Now send a detailed reports on the item
+		var ItemLabel = 'Crossword';
+		API.LMSSetValue('cmi.objectives.0.id', 'obj'+ItemLabel);
+		API.LMSSetValue('cmi.interactions.0.id', 'int'+ItemLabel);
+		if (Finished == true){
+			API.LMSSetValue('cmi.objectives.0.status', 'completed');
+		}
+		else{
+			API.LMSSetValue('cmi.objectives.0.status', 'incomplete');
+		}		
+		API.LMSSetValue('cmi.objectives.0.score.min', '0');
+		API.LMSSetValue('cmi.objectives.0.score.max', '100');
+		API.LMSSetValue('cmi.objectives.0.score.raw', Score);
+//We're not sending any student response data, so we can set this to a non-standard value
+		API.LMSSetValue('cmi.interactions.0.type', 'crossword');
+		
+		API.LMSCommit('');
+	}
+}
+[/inclScorm1.2]
 
 //JCROSS CORE JAVASCRIPT CODE
 
@@ -17,9 +45,10 @@ var Score = 0;
 var InTextBox = false;
 var Locked = false;
 var TimeOver = false;
+var CaseSensitive = [boolCaseSensitive]; 
 
 var InputStuff = '<form method="post" action="" onsubmit="return false;"><span class="ClueNum">[strClueNum]: </span>';
-InputStuff += '[strClue] <input onfocus="CurrentBox=this;InTextBox=true;" onblur="InTextBox=false;" id="[strBoxId]" type="edit" size="[strEditSize]" maxlength="[strMaxLength]" /></input>';
+InputStuff += '[strClue] <input onfocus="CurrentBox=this;InTextBox=true;" onblur="InTextBox=false;" id="[strBoxId]" type="edit" size="[strEditSize]" maxlength="[strMaxLength]"></input>';
 InputStuff += '<button class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="EnterGuess([strParams])">[strEnterCaption]</button>';
 InputStuff += '[inclHint]<button class="FuncButton" onfocus="FuncBtnOver(this)" onblur="FuncBtnOut(this)" onmouseover="FuncBtnOver(this)" onmouseout="FuncBtnOut(this)" onmousedown="FuncBtnDown(this)" onmouseup="FuncBtnOut(this)" onclick="ShowHint([strParams])">[strHintCaption]</button>[/inclHint]';
 InputStuff += '</form>';
@@ -29,6 +58,14 @@ var Finished = false;
 
 function StartUp(){
 	RemoveBottomNavBarForIE();
+//Show a keypad if there is one	(added bugfix for 6.0.4.12)
+	if (document.getElementById('CharacterKeypad') != null){
+		document.getElementById('CharacterKeypad').style.display = 'block';
+	}
+[inclScorm1.2]
+	ScormStartUp();
+[/inclScorm1.2]
+	
 	AcrossCaption = document.getElementById('CluesAcrossLabel').innerHTML;
 	DownCaption = document.getElementById('CluesDownLabel').innerHTML;
 [inclSendResults]
@@ -126,8 +163,6 @@ function SplitStringToPerceivedChars(InString, PC){
 }
 
 function EnterAnswer(Guess,Across,AnsLength,x,y){
-	Guess = Guess.toUpperCase();
-
 	var PC = new Array();
 	SplitStringToPerceivedChars(Guess, PC);
 	
@@ -161,12 +196,23 @@ function SetGridSquareValue(x,y,Val){
 function ShowHint(Across,ClueNum,x,y,BoxId){
 	var i=x;
 	var j=y;
+	var LetterFromGuess = '';
+	var LetterFromKey = '';
 	var OutString = '';
 	if (Across==true){
 		while (j<L[i].length){
 			if (L[i][j] != ''){
 				OutString += L[i][j];
-				if (G[i][j] != L[i][j]){
+				if (CaseSensitive == true){
+					LetterFromKey = L[i][j];
+					LetterFromGuess = G[i][j];
+				}
+				else {
+					LetterFromKey = L[i][j].toUpperCase();
+					LetterFromGuess = G[i][j].toUpperCase();
+				}
+				if (LetterFromGuess != LetterFromKey){
+//				if (G[i][j] != L[i][j]){
 					G[i][j] = L[i][j];
 					Penalties++;
 					break;
@@ -182,7 +228,16 @@ function ShowHint(Across,ClueNum,x,y,BoxId){
 		while (i<L.length){
 			if (L[i][j] != ''){
 				OutString += L[i][j];
-				if (G[i][j] != L[i][j]){
+				if (CaseSensitive == true){
+					LetterFromKey = L[i][j];
+					LetterFromGuess = G[i][j];
+				}
+				else {
+					LetterFromKey = L[i][j].toUpperCase();
+					LetterFromGuess = G[i][j].toUpperCase();
+				}
+				if (LetterFromGuess != LetterFromKey){
+//				if (G[i][j] != L[i][j]){
 					G[i][j] = L[i][j];
 					Penalties++;
 					break;
@@ -214,13 +269,23 @@ function CheckAnswers(){
 	var AllCorrect = true;
 	var TotLetters = 0;
 	var CorrectLetters = 0;
-
+	var LetterFromKey = ''; 
+	var LetterFromGuess = '';
+	
 //Check each letter
 	for (var i=0; i<L.length; i++){
 		for (var j=0; j<L[i].length; j++){
 			if (L[i][j] != ''){
 				TotLetters++;
-				if (G[i][j] != L[i][j]){
+				if (CaseSensitive == true) {
+					LetterFromKey = L[i][j];
+					LetterFromGuess = G[i][j];
+				}
+				else {
+					LetterFromKey = L[i][j].toUpperCase();
+					LetterFromGuess = G[i][j].toUpperCase();
+				}
+				if (LetterFromGuess != LetterFromKey){ 
 					G[i][j] = '';
 //Blank that square in the grid
 					SetGridSquareValue(i,j,'');
@@ -264,6 +329,14 @@ function CheckAnswers(){
 		Finished = true;
 		setTimeout('Finish()', SubmissionTimeout);
 	}
+[inclScorm1.2]
+	if (AllCorrect == true){
+		SetScormComplete();
+	}
+	else{
+		SetScormIncomplete();
+	}
+[/inclScorm1.2]
 }
 
 function Finish(){
@@ -293,5 +366,8 @@ function TimesUp() {
 	Finished = true;
 	CheckAnswers();
 	Locked = true;
+[inclScorm1.2]
+	SetScormTimedOut();
+[/inclScorm1.2]
 }
 [/inclTimer]

@@ -288,7 +288,7 @@ if (window.JQuiz==null) {
 	JQuiz[5] = false;	// show number of checks of incorrect answers (legacy field superceded by [12])
 	// HP6 v6 quizzes only
 	JQuiz[6] = false;	// show answer value (false) or A,B,C... index (true)
-	JQuiz[7] = true;	// show all students answers
+	JQuiz[7] = false;	// show all students answers
 	JQuiz[8] = true;	// show student's wrong answers
 	JQuiz[9] = true;	// show ignored answers (not relevant for multi-select questions)
 	JQuiz[10] = true;	// show score weightings
@@ -518,11 +518,11 @@ function QuizLogin(LoginPrompt) {
 		if (Login[0]) { // user name
 			var v = getCookie(self, 'UserName');
 			html += '<tr>'
-				+	'<th align="right" nowrap="nowrap" scope="row">' + MSG[0] + ' :</th>'
+				+	'<th align=right nowrap>' + MSG[0] + ' :</th>'
 				+	'<td>'
 			;
 			if (typeof(Login[0])=='boolean') { // text box
-				html += '<input type="text" name="UserName" value="' + v + '" />';
+				html += '<input type=text name=UserName value="' + v + '">';
 			} else { // drop down menu of names
 				// pattern to match commas and white space
 				var comma = (window.RegExp) ? new RegExp('\\s*,\\s*') : ',';
@@ -530,7 +530,7 @@ function QuizLogin(LoginPrompt) {
 				if (typeof(Login[0])=='string') {
 					Login[0] = Login[0].split(comma);
 				}
-				html += '<select name="UserName" size="1">'
+				html += '<select name=UserName size=1>'
 					+ '<option value=""></option>'
 				;
 				for(var i=0; i<Login[0].length; i++) {
@@ -548,20 +548,20 @@ function QuizLogin(LoginPrompt) {
 		}
 		if (Login[1]) { // user ID
 			var v = getCookie(self, 'UserID');
-			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[1] + ' :</th><td><input type="text" name="UserID" value="' + v + '" /></td></tr>';
+			html += '<tr><th align=right nowrap>' + MSG[1] + ' :</th><td><input type=text name=UserID value="' + v + '"></td></tr>';
 		}
 		if (Login[2]) { // user email
 			var v = getCookie(self, 'UserEmail');
-			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[2] +' :</th><td><input type="text" name="UserEmail" value="' + v + '" /></td></tr>';
+			html += '<tr><th align=right nowrap>' + MSG[2] +' :</th><td><input type=text name=UserEmail value="' + v + '"></td></tr>';
 		}
 		if (Login[3]) { // quiz password
 			var v = getCookie(self, 'Password');
-			html += '<tr><th align="right" nowrap="nowrap" scope="row">' + MSG[3] + ' :</th><td><input type="password" name="Password" value="' + v + '" /></td></tr>';
+			html += '<tr><th align=right nowrap>' + MSG[3] + ' :</th><td><input type=password name=Password value="' + v + '"></td></tr>';
 		}
 		if (Login[4]) { // cookie lifespan
 			var v = getCookie(self, 'CookieExpiry');
 			html += '<tr>'
-				+ 	'<th align="right" nowrap="nowrap" scope="row">' + MSG[4] + ' :</th>'
+				+ 	'<th align=right nowrap>' + MSG[4] + ' :</th>'
 				+ 	'<td>'
 				+		'<select name="CookieExpiry" size=1>'
 				+ 			makeOption('session', v, MSG[7])
@@ -574,10 +574,10 @@ function QuizLogin(LoginPrompt) {
 			;
 		}
 		html += 	'<tr>'
-			+		'<th scope="row">&nbsp;</th>'
+			+		'<th>&nbsp;</th>'
 			+		'<td nowrap>'
-			+			'<input type="submit" value="' + MSG[5] + '" /> '
-			+ 			'<input type="button" value="' + MSG[6] + '" onClick="opener.goBack();self.close();" />'
+			+			'<input type=submit value="' + MSG[5] + '"> '
+			+ 			'<input type=button value="' + MSG[6] + '" onClick="opener.goBack();self.close();">'
 			+		'</td>'
 			+	'</tr>'
 			+ '</table></form></body></html>'
@@ -856,7 +856,7 @@ function AddStudentDetailsToResultForm() {
 		sDetails += hpHiddenField('email', window.UserEmail);
 	}
 	if (sDetails && window.RegExp) {
-		// insert sDetails before '<input...Score... /></input>'
+		// insert sDetails before '<input...Score...></input>'
 		var r = new RegExp('<input[^>]*Score[^>]*><\\/input>', 'i');
 		var m = r.exec(ResultForm);
 		if (m) {
@@ -1361,8 +1361,15 @@ function GetJQuizAnswerDetails(q, flag) {
 			var x = new Array();
 		} else {
 			// get required part of 'x' and convert to array
-			var i = x.lastIndexOf('|');
-			var x = x.substring((flag==2 ? (i+1) : 1), ((flag==0 || flag==2) ? x.length : i)).split('|');
+            if (x.charAt(0)=='|') {
+                // HP 6.0 and 6.1 (always has leading bar)
+    			var i = x.lastIndexOf('|');
+    			var x = x.substring((flag==2 ? (i+1) : 1), ((flag==0 || flag==2) ? x.length : i)).split('|');
+            } else {
+                // HP 6.2 (no leading delimiter)
+    			var i = x.lastIndexOf(' | ');
+    			var x = x.substring((flag==2 ? (i+3) : 0), ((flag==0 || flag==2) ? x.length : i)).split(' | ');
+            }
 		}
 		for (var i=0; i<x.length; i++) {
 			var a = new Array();
@@ -1378,14 +1385,33 @@ function GetJQuizAnswerDetails(q, flag) {
 			x[i] = a.join('+');
 		}
 	} else if (x) { // multiple-choice, short-answer and hybrid 
-		// remove trailing comma and convert to array
-		x = x.substring(0, x.length-1).split(',');
+        if (x.charAt(x.length-1)==',') {
+            // HP 6.0 and 6.1 (always has trailing comma)
+            x = x.substring(0, x.length-1).split(',');
+        } else {
+            // HP 6.2 (short answer also contains student entered text)
+            x = x.split(' | ');
+        }
 		if (flag) {
 			var a = new Array();
 			if (flag==1 || flag==2 || flag==3) {
 				for (var i=0; i<x.length; i++) {
-					var ii = I[q][3][(x[i].charCodeAt(0)-65)][2];
-					if(((flag==1 || flag==2) && ii==1) || (flag==3 && ii==0)) a.push(x[i]);
+                    var is_correct = false;
+                    if (x[i].length==1) { // single letter
+                        var ii = x[i].charCodeAt(0) - 65;
+                        if (I[q][3] && I[q][3][ii] && I[q][3][ii][2]) {
+                            var is_correct = true;
+                        }
+                    }
+                    if (is_correct) {
+                        if (flag==2) {
+                            a.push(x[i]);
+                        }
+                    } else {
+                        if (flag==1 || flag==3) {
+                            a.push(x[i]);
+                        }
+                    }
 				}
 			}
 			if (flag==1) {
@@ -1406,8 +1432,12 @@ function GetJQuizAnswerDetails(q, flag) {
 		// convert answer indexes to values, if required
 		if (JQuiz[6]==false) {
 			for (var i=0; i<x.length; i++) {
-				var ii = x[i].charCodeAt(0) - 65;
-				x[i] = I[q][3][ii][0];
+                if (x[i].length==1) { // single letter
+                    var ii = x[i].charCodeAt(0) - 65;
+                    if (I[q][3] && I[q][3][ii]) {
+        				x[i] = I[q][3][ii][0];
+                    }
+                }
 			}
 		}
 	} else {
@@ -1518,7 +1548,7 @@ function hpClickClue(hp, t, v, args) {
 }
 function hpClickCheck(hp, t, v, args) {
 	if (t==2) { // JCloze
-		if (v==5 || v==6) {
+    if (v==5 || v==6) {
 			var r = hpRottmeier();
 			var already_correct = 'true';
 			if (r==0) {
@@ -1799,7 +1829,7 @@ function hpClickCheck(hp, t, v, args) {
 			}			
 		}
 	}
-	return true;
+	//return true;
 }
 function hpClickCheckJCrossV5V6(hp, v, AD, q, row, col) {
 	// v is the version of Hot Potatoes
@@ -1928,7 +1958,7 @@ function hpHiddenField(name, value, comma, forceHTML) {
 		}
 		field = '<field><fieldname>' + name + '</fieldname><fielddata>' + value + '</fielddata></field>';
 	} else {
-		field = '<input type=hidden name="' + name + '" value="' + value + '" />';
+		field = '<input type=hidden name="' + name + '" value="' + value + '">';
 	}
 	return field;
 }
@@ -2020,12 +2050,19 @@ function getFuncCode(fn, extraCode, anchorCode, beforeAnchor) {
 	}
 	return s;
 }
-function getArgsStr(args) {
+function getArgsStr(args, addQuotes) {
 	// make s(tring) version of function args array
 	var s = '';
 	var i_max = args.length;
 	for (var i=0; i<i_max; i++) {
-		s += '"' + args[i] + '",';
+        if (addQuotes) {
+            s += '"' + args[i] + '",';
+        } else {
+            if (s) {
+                s += ',';
+            }
+            s += args[i];
+        }
 	}
 	return s;
 }
@@ -2101,8 +2138,8 @@ function hpFeedback() {
 			html += '<html><body>'
 				+ '<form action="' + FEEDBACK[0] + '" method="POST">'
 				+ '<table border="0">'
-				+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
-				+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[8] + ': </th><td>'
+				+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+				+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
 			;
 			if (typeof(FEEDBACK[1])=='string') {
 				html += FEEDBACK[1] + hpHiddenField('recipient', FEEDBACK[1], ',', true);
@@ -2119,9 +2156,9 @@ function hpFeedback() {
 				}
 			}
 			html += '</td></tr>'
-				+	'<tr><th valign="top" align="right" scope="row">' + FEEDBACK[9] + ':</th>'
+				+	'<tr><th valign="top" align="right">' + FEEDBACK[9] + ':</th>'
 				+	'<td><TEXTAREA name="message" rows="10" cols="40"></TEXTAREA></td></tr>'
-				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '" />'
+				+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
 				+ 	hpHiddenField('realname', FEEDBACK[2], ',', true)
 				+ 	hpHiddenField('email', FEEDBACK[3], ',', true)
 				+ 	hpHiddenField('subject', document.title, ',', true)
@@ -2135,10 +2172,10 @@ function hpFeedback() {
 				var i_max = FEEDBACK[1].length;
 				if (i_max>1) { // several teachers
 					html += '<html><body>'
-						+ '<form action="' + FEEDBACK[0] + '" method="post" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
+						+ '<form action="' + FEEDBACK[0] + '" method="POST" onsubmit="this.action+=this.recipient.options[this.recipient.selectedIndex].value">'
 						+ '<table border="0">'
-						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
-						+ '<tr><th valign="top" align="right" scope="row">' + FEEDBACK[8] + ': </th><td>'
+						+ '<tr><th valign="top" align="right">' + FEEDBACK[7] + ':</th><td>' + document.title + '</td></tr>'
+						+ '<tr><th valign="top" align="right">' + FEEDBACK[8] + ': </th><td>'
 					;
 					html += '<select name="recipient">';
 					for (var i=0; i<i_max; i++) {
@@ -2146,7 +2183,7 @@ function hpFeedback() {
 					}
 					html += '</select>';
 					html += '</td></tr>'
-						+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '" />'
+						+	'<tr><td>&nbsp;</td><td><input type="submit" value="' + FEEDBACK[6] + '">'
 						+	'</td></tr></table></form></body></html>'
 					;
 				} else if (i_max==1) { // one teacher
@@ -2170,6 +2207,38 @@ function hpFeedback() {
 // ********************
 //	intercept clicks
 // ********************
+function hpNewFunction(f, a, s) {
+    if (window.C && C.safari) {
+        if (f=='CheckAnswers') {
+            if (s.indexOf('TotalChars-State[i].HintsAndChecks/')>=0) {
+                // special fix for "CheckAnswers" in JCloze
+                s = s.replace(/TotalChars-State\[i\]\.HintsAndChecks/g, '(TotalChars-State[i].HintsAndChecks)');
+            }
+            if (s.indexOf('CorrectLetters-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMatch
+                s = s.replace(/CorrectLetters-Penalties/g, '(CorrectLetters-Penalties)');
+            }
+            if (s.indexOf('TotCorrectChoices-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMix (v6)
+                s = s.replace(/TotCorrectChoices-Penalties/g, '(TotCorrectChoices-Penalties)');
+            }
+            if (s.indexOf('TotalCorrect-Penalties/')>=0) {
+                // special fix for "CheckAnswers" in JMix (v6+) Drag-and_Drop
+                s = s.replace(/TotalCorrect-Penalties/g, '(TotalCorrect-Penalties)');
+            }
+        }
+        if (s.indexOf('replace(\\[')>=0) {
+            s = s.replace(/\\\[/g, '/\\[');
+            s = s.replace(/\\\]/g, '\\]/g');
+        }
+        if (s.indexOf('for (i')>=0) {
+            s = s.replace(/for \(/g, 'for (var ');
+        }
+        eval('window.' + f + '=function(' + getArgsStr(a) + '){' + s + '}');
+    } else {
+        eval('window.' + f + '=new Function(' + getArgsStr(a, true) + 's);');
+    }
+}
 function hpInterceptFeedback() {
 	// modify the function which writes feedback
 	// 	v6: ShowMessage(Feedback)
@@ -2194,7 +2263,7 @@ function hpInterceptFeedback() {
 		if (a[0] && window.FEEDBACK && FEEDBACK[0]) {
 			s = a[0] + "+='<br /><br />" + '<a href="javascript:hpFeedback();">' + FEEDBACK[6] + "</A>';" + s;
 		}
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptHints() {
@@ -2257,7 +2326,7 @@ function hpInterceptHints() {
 	// add the e(x)tra code, if any, to the start of the hint (f)unction
 	if (x) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptClues() {
@@ -2312,7 +2381,8 @@ function hpInterceptClues() {
 	// add the e(x)tra code, if any, to the start of the clue (f)unction
 	if (x) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+		var s = getFuncCode(f, '', '', true);
+        hpNewFunction(f, a, s);
 	}
 }
 function hpInterceptChecks() {
@@ -2354,7 +2424,7 @@ function hpInterceptChecks() {
 			if (x) {
 				x = "if(!Finished&&State[QNum].length&&State[QNum][0]<0){" + x + "hpClick(3,args)}";
 				var s = getFuncCode(f[i], x, '', true);
-				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+                hpNewFunction(f[i], a, s);
 			}
 		}
 	}
@@ -2394,7 +2464,7 @@ function hpInterceptChecks() {
 	}
 	if (f) {
 		var s = getFuncCode(f, x, '', true);
-		eval('window.' + f + '=new Function(' + getArgsStr(a) + 's);');
+        hpNewFunction(f, a, s);
 	}
 	// JMatch has three possible check functions, depending on the version
 	// (NB: other quiz types also have these functions)
@@ -2404,7 +2474,7 @@ function hpInterceptChecks() {
 			var a = getFuncArgs(f[i], true);
 			if (a.length==0) {
 				var s = getFuncCode(f[i], "hpClick(3);", '', true);
-				eval('window.' + f[i] + '=new Function(' + getArgsStr(a) + 's);');
+                hpNewFunction(f[i], a, s);
 				break; // out of the loop
 			}
 		}
@@ -2690,7 +2760,13 @@ function hpScore() {
 	} else if (t==3) { // jcross
 		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
 		else if (v==4) x = hpScoreEngine(1, WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0)==a[i].charAt(0)");
-		else if (v==5 || v==6) x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii]==G[i][ii]", "L[i][ii]");
+		else if (v==5 || v==6) {
+            if (window.CaseSensitive) { // HP 6.2
+                x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii]==G[i][ii]", "L[i][ii]");
+            } else {
+                x = hpScoreEngine(1, L, "", "L[i]", "L[i][ii] && L[i][ii].toUpperCase()==G[i][ii].toUpperCase()", "L[i][ii]");
+            }
+        }
 	} else if (t==4) { // jmatch
 		if (v==3) x = hpScoreEngine(1, CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex==a[i]");
 		else if (v==4) x = hpScoreEngine(1, Draggables, "a[i].correct=='1'");
@@ -2771,7 +2847,13 @@ function hpFinished() {
 	} else if (t==3) { // jcross
 		if (v==3) x = hpFinishedEngine(document.Crossword.elements, "ConvertCase(is.mac?unescape(MacStringToWin(a[i].value)):a[i].value,1)!=Letters[i]");
 		else if (v==4) x = hpFinishedEngine(WinLetters, "ConvertCase(GetBoxValue(i),1).charAt(0) != a[i].charAt(0)");
-		else if (v==5 || v==6) x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
+		else if (v==5 || v==6) {
+            if (window.CaseSensitive) { // 6.2
+                x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii]!=G[i][ii]");
+            } else {
+                x = hpFinishedEngine(L, "", "L[i]", "L[i][ii] && L[i][ii].toUpperCase()!=G[i][ii].toUpperCase()");
+            }
+		}
 	} else if (t==4) { // jmatch
 		if (v==3) x = hpFinishedEngine(CorrectAnswers, "document.QuizForm.elements[i*2].selectedIndex != a[i]");
 		else if (v==4) x = hpFinishedEngine(Draggables, "a[i].correct!='1'");
@@ -2830,9 +2912,9 @@ function hpIsStrict() {
 // **************
 //  initialization
 // **************
-hpInterceptFeedback();
-hpInterceptHints();
-hpInterceptClues();
+//hpInterceptFeedback();
+//hpInterceptHints();
+//hpInterceptClues();
 hpInterceptChecks();
 function hpFindForm(formname, w) {
 	if (w==null) w = self;
@@ -2896,8 +2978,13 @@ if (DB[7] && DB[8] && !is_LMS()) {
 var p = getPrompt(window.GetUserName || window.StartUp);
 var c = getStartUpCode(window.StartUp);
 if (p && c) {
-	window.StartUp = new Function('QuizLogin("' + p + '")');
-	window.StartQuiz = new Function(c);
+    if (window.C && C.safari) {
+        eval('window.StartUp=function(){QuizLogin("' + p + '")}');
+        eval('window.StartQuiz=function(){' + c + '}');
+    } else {
+    	window.StartUp = new Function('QuizLogin("' + p + '")');
+    	window.StartQuiz = new Function(c);
+    }
 	// "QuizLogin" finshes by calling "StartQuiz"
 }
 // reassign the SendResults function

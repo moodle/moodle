@@ -324,6 +324,11 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->v6_expand_NavButtons();
     }
 
+    // switch off scorm
+    function v6_expand_Scorm12() {
+        return false;
+    }
+
     // js files (all quiz types)
 
     function v6_expand_JSBrowserCheck() {
