@@ -897,6 +897,24 @@ class gradelib_test extends UnitTestCase {
         $this->assertTrue($grade_item->grade_grades_final[3]->locked);
     }
 
+    function test_grade_item_toggle_hiding() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'toggle_hiding'));
+
+        $this->assertFalse($grade_item->hidden);
+        $this->assertEqual(0, $grade_item->toggle_hiding());
+        $this->assertTrue($grade_item->hidden);
+        $grade_item->load_final();
+        $this->assertFalse($grade_item->grade_grades_final[1]->hidden);
+        
+        $grade_item->hidden = false;
+        $this->assertEqual(3, $grade_item->toggle_hiding(true));
+        $this->assertTrue($grade_item->hidden);
+        $this->assertTrue($grade_item->grade_grades_final[1]->hidden);
+        $this->assertTrue($grade_item->grade_grades_final[2]->hidden);
+        $this->assertTrue($grade_item->grade_grades_final[3]->hidden);
+    }
+
 // GRADE_CATEGORY OBJECT
 
     function test_grade_category_construct() {
