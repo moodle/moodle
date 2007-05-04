@@ -699,7 +699,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function comment_header($question) {
         //$this->get_question_options($question);
-        global $SESSION;
         $strheader = '';
         $delimiter = '';
 
