@@ -434,7 +434,7 @@ function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){
             error(get_string('categorynoedit', 'quiz', $tocategory->name), $pageurl->out());
         }
         foreach ($_POST as $key => $value) {    // Parse input for question ids
-            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+            if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 if (!set_field('question', 'category', $tocategory->id, 'id', $key)) {
                     error('Could not update category field');
@@ -477,7 +477,7 @@ function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){
                                  // an asterix in front of those that are in use
             $inuse = false;      // set to true if at least one of the questions is in use
             foreach ($rawquestions as $key => $value) {    // Parse input for question ids
-                if (preg_match('!q([0-9]+)!', $key, $matches)) {
+                if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                     $key = $matches[1];                    $questionlist .= $key.',';
                     if (record_exists('quiz_question_instances', 'question', $key) or
                         record_exists('question_states', 'originalquestion', $key)) {

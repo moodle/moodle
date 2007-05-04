@@ -120,7 +120,7 @@
 
     if (isset($_REQUEST['add']) and confirm_sesskey()) { /// Add selected questions to the current quiz
         foreach ($_POST as $key => $value) {    // Parse input for question ids
-            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+            if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 quiz_add_quiz_question($key, $quiz);
             }
@@ -206,11 +206,11 @@
         $rawgrades = $_POST;
         unset($quiz->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
-            if (preg_match('!q([0-9]+)!', $key, $matches)) {
+            if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
                 $key = $matches[1];
                 $quiz->grades[$key] = $value;
                 quiz_update_question_instance($quiz->grades[$key], $key, $quiz->instance);
-            } elseif (preg_match('!q([0-9]+)!', $key, $matches)) {   // Parse input for ordering info
+            } elseif (preg_match('!^q([0-9]+)$!', $key, $matches)) {   // Parse input for ordering info
                 $key = $matches[1];
                 $questions[$value] = $oldquestions[$key];
             }
