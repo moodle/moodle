@@ -2,8 +2,6 @@
 /**
  * Page for editing questions using the new form library.
  *
- * TODO: currently this still treats the quiz as special
- *
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank
