@@ -1170,7 +1170,16 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch drop field parent
         $result = $result && drop_field($table, $field);
     }
+    if ($result && $oldversion < 2007050400) {
 
+    /// Define field feedbackformat to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('feedbackformat');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'feedback');
+
+    /// Launch add field feedbackformat
+        $result = $result && add_field($table, $field);
+    }
     return $result; 
 }
 
