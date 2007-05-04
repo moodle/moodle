@@ -112,6 +112,10 @@ class question_edit_form extends moodleform {
         $mform->addElement('hidden', 'versioning');
         $mform->setType('versioning', PARAM_BOOL);
 
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
+        $mform->setDefault('cmid', 0);
+
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         if (!empty($this->question->id)) {

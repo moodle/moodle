@@ -124,8 +124,7 @@ function question_category_form($course, $pageurl, $current, $recurse=1, $showhi
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    echo "<strong>$strcategory:</strong>&nbsp;";
-    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self");
+    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
@@ -227,11 +226,13 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
 
     // check if editing questions in this category is allowed
     if ($canedit) {
-        echo "<td valign=\"top\"><b>$strcreatenewquestion:</b></td>";
         echo '<td valign="top" align="right">';
         $returnurl = urlencode($pageurl->out());
-        popup_form ("$CFG->wwwroot/question/question.php?returnurl=$returnurl&amp;category=$category->id&amp;qtype=", $qtypemenu, "addquestion",
-                    "", "choose", "", "", false, "self");
+        $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", 
+                                    array('cmid' => $cm->id,
+                                          'returnurl' => $returnurl,
+                                          'category' => $category->id));
+        popup_form ($questionurl->out().'&amp;qtype=', $qtypemenu, "addquestion", "", "choose", "", "", false, "self", "<strong>$strcreatenewquestion</strong>");
         echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td>';

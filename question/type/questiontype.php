@@ -154,6 +154,17 @@ class default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
+        list($heading, $langmodule) = $this->get_heading();
+        print_heading_with_help($heading, $this->name(), $langmodule);
+        $mform->display();
+    }
+    
+    /**
+     * Method called by display_question_editing_page and by question.php to get heading for breadcrumbs.
+     * 
+     * @return array a string heading and the langmodule in which it was found.
+     */
+    function get_heading(){
         $name = $this->name();
         $langmodule = 'qtype_' . $name;
         $strheading = get_string('editing' . $name, $langmodule);
@@ -163,9 +174,7 @@ class default_questiontype {
             $langmodule = 'quiz';
             $strheading = get_string('editing' . $name, $langmodule);
         }
-
-        print_heading_with_help($strheading, $name, $langmodule);
-        $mform->display();
+        return array($strheading, $langmodule);
     }
 
     /**

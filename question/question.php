@@ -19,12 +19,19 @@ $returnurl = optional_param('returnurl', 0, PARAM_URL);
 if (!$returnurl && isset($SESSION->fromurl)) {
     $returnurl = $SESSION->fromurl;
 }
-
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
+$cmid = optional_param('cmid', 0, PARAM_INT);
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
+
+if ($cmid){
+    list($module, $cm) = get_module_from_cmid($cmid); 
+} else {
+    $module = null;
+    $cm = null;
+}
 
 // Validate the URL parameters.
 if ($id) {
@@ -76,6 +83,9 @@ if ($mform === null) {
 }
 $toform = $question; // send the question object and a few more parameters to the form
 $toform->returnurl = $returnurl;
+if ($cm !== null){
+    $toform->cmid = $cm->id;
+}
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()){
@@ -111,16 +121,28 @@ if ($mform->is_cancelled()){
     }
 } else {
 
-    $streditingquestion = get_string('editingquestion', 'question');
-    if (isset($SESSION->modform->instance)) {
-        // TODO: remove restriction to quiz
-        $strediting = '<a href="' . $returnurl . '">' . get_string('editingquiz', 'quiz') . '</a> -> '.
-                $streditingquestion;
+    list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
+    if ($cm !== null) {
+        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $category->course))
+            ? update_module_button($cm->id, $category->course, get_string('modulename', $cm->modname))
+            : "";
+        $crumbs = array();
+        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$category->course", 'type' => 'activity');
+        $crumbs[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $crumbs[] = array('name' => get_string('editingquiz', 'quiz'), 'link' => $returnurl, 'type' => 'title');
+        $crumbs[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($crumbs);
+        print_header_simple($streditingquestion, '', $navigation, "", "", true, $strupdatemodule);
+    
     } else {
+        $crumbs = array();
+        $crumbs[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
+        $crumbs[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
         $strediting = '<a href="edit.php?courseid='.$category->course.'">'.
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
+        $navigation = build_navigation($crumbs);
+        print_header_simple($streditingquestion, '', $navigation);
     }
-    print_header_simple($streditingquestion, '', $strediting);
 
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.
