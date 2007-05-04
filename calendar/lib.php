@@ -1236,30 +1236,12 @@ function calendar_get_default_courses($ignoreref = false) {
         }
     }
     
-    // find all course this student can view
-    if ($allcourses = get_my_courses($USER->id, 'visible DESC, sortorder ASC', '*', true)) {
-        foreach ($allcourses as $courseid => $acourse) {
-            if (!$context = get_context_instance(CONTEXT_COURSE, $courseid)) {
-                continue;
-            }
-            // let's try to see if there is any direct assignments on this context
-            // one can have multiple assignments
-            // just use anyone that has something, or else use empty string
-            // i am not even sure enrolment type is needed here, seems like only the array keys are needed
-            // just keeping this code for safety
-            if ($roleassign = get_records_sql("SELECT * FROM {$CFG->prefix}role_assignments
-                                               WHERE contextid = $context->id
-                                               AND userid = $USER->id")) {
-                foreach ($roleassign as $rid => $rs) {
-                    if (!empty($rs->enrol)) {                     
-                        $courses[$courseid] = $rs->enrol;
-                        break;       
-                    }
-                }
-            }
-        }  
+    if (isset($CFG->adminseesall)) {
+        return get_my_courses($USER->id, 'visible DESC', '*', $CFG->adminseesall);
     }
-    return $courses;
+    else {
+        return get_my_courses($USER->id, 'visible DESC', '*', false);
+    }
 }
 
 function calendar_preferences_button() {
