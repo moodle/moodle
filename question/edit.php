@@ -14,12 +14,11 @@
     require_once("editlib.php");
 
     list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
-
+ 
     if (! $course = get_record("course", "id", $courseid)) {
         error("This course doesn't exist");
     }
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    require_login($course->id, false);
   
     $SESSION->returnurl = $FULLME;
 
@@ -56,7 +55,8 @@
     echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
-    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder']);
+    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
+                    $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 
     echo '</td></tr>';
     echo '</table>';

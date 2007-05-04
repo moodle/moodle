@@ -124,11 +124,11 @@ function question_category_form($course, $pageurl, $current, $recurse=1, $showhi
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;cat=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
+    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;catchange=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
-    echo $pageurl->hidden_params_out();
+    echo $pageurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
     question_category_form_checkbox('recurse', $recurse);
     question_category_form_checkbox('showhidden', $showhidden);
     question_category_form_checkbox('showquestiontext', $showquestiontext);
@@ -164,7 +164,7 @@ function question_category_form_checkbox($name, $checked) {
 * @param boolean $showquestiontext whether the text of each question should be shown in the list
 */
 function question_list($course, $pageurl, $categoryid, $cm = null,
-        $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='qtype, name ASC',
+        $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='typename', $sortorderdecoded='qtype, name ASC',
         $showquestiontext = false) {
     global $QTYPE_MENU, $USER, $CFG, $THEME;
     
@@ -229,9 +229,11 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         echo '<td valign="top" align="right">';
         $returnurl = urlencode($pageurl->out());
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", 
-                                    array('cmid' => $cm->id,
-                                          'returnurl' => $returnurl,
+                                    array('returnurl' => $returnurl,
                                           'category' => $category->id));
+        if ($cm!==null){
+            $questionurl->param('cmid', $cm->id);
+        }
         popup_form ($questionurl->out().'&amp;qtype=', $qtypemenu, "addquestion", "", "choose", "", "", false, "self", "<strong>$strcreatenewquestion</strong>");
         echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
@@ -258,10 +260,10 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         return;
     }
 
-    if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', $page*$perpage, $perpage)) {
+    if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorderdecoded, '*', $page*$perpage, $perpage)) {
         // There are no questions on the requested page.
         $page = 0;
-        if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
+        if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorderdecoded, '*', 0, $perpage)) {
             // There are no questions at all
             echo "<p style=\"text-align:center;\">";
             print_string("noquestions", "quiz");
@@ -279,9 +281,9 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
     echo '<table id="categoryquestions" style="width: 100%"><tr>';
     echo "<th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$straction</th>";
     
-    $sortoptions = array('name, qtype ASC' => get_string("sortalpha", "quiz"),
-                         'qtype, name ASC' => get_string("sorttypealpha", "quiz"),
-                         'id ASC' => get_string("sortage", "quiz"));
+    $sortoptions = array('alpha' => get_string("sortalpha", "quiz"),
+                         'typealpha' => get_string("sorttypealpha", "quiz"),
+                         'age' => get_string("sortage", "quiz"));
     $orderselect  = choose_from_menu ($sortoptions, 'qsortorder', $sortorder, false, 'this.form.submit();', '0', true);
     $orderselect .= '<noscript><div><input type="submit" value="'.get_string("sortsubmit", "quiz").'" /></div></noscript>';
     echo "<th style=\"white-space:nowrap; text-align: left;\" class=\"header\" scope=\"col\">$strquestionname $orderselect</th>
@@ -411,7 +413,7 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
  * move           Moves a question to a different category
  * deleteselected Deletes the selected questions from the category
  * Other actions:
- * cat            Chooses the category
+ * catchange      Chooses the category
  * displayoptions Sets display options
  *
  * @author Martin Dougiamas and many others. This has recently been extensively
@@ -419,7 +421,7 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
  *         {@link http://maths.york.ac.uk/serving_maths}
  * @param moodle_url $pageurl object representing this pages url.
  */
-function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){  
+function question_showbank($pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){  
     global $SESSION, $COURSE;  
 
     $SESSION->fromurl = $pageurl->out();
@@ -516,48 +518,16 @@ function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){
         redirect($pageurl->out());
     }
 
-    if ($categoryid = optional_param('cat', 0, PARAM_INT)) { /// coming from category selection drop-down menu
-        $SESSION->questioncat = $categoryid;
-        $page = 0;
-        $SESSION->questionpage = 0;
-    }
-
-    if (empty($SESSION->questioncat) or !count_records_select("question_categories", "id = '{$SESSION->questioncat}' AND (course = '{$COURSE->id}' OR publish = '1')")) {
-        $category = get_default_question_category($COURSE->id);
-        $SESSION->questioncat = $category->id;
-    }
-
-    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
-        $SESSION->questionrecurse = $recurse;
-    }
-    if (!isset($SESSION->questionrecurse)) {
-        $SESSION->questionrecurse = 1;
-    }
-
-    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
-        $SESSION->questionshowhidden = $showhidden;
-    }
-    if (!isset($SESSION->questionshowhidden)) {
-        $SESSION->questionshowhidden = 0;
-    }
-
-    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
-        $SESSION->questionshowquestiontext = $showquestiontext;
-    }
-    if (!isset($SESSION->questionshowquestiontext)) {
-        $SESSION->questionshowquestiontext = 0;
-    }
-
     // starts with category selection form
     print_box_start('generalbox questionbank');
     print_heading(get_string('questionbank', 'question'), '', 2);
-    question_category_form($COURSE, $pageurl, $SESSION->questioncat, $SESSION->questionrecurse,
-            $SESSION->questionshowhidden, $SESSION->questionshowquestiontext);
+    question_category_form($COURSE, $pageurl, $cat, $recurse,
+            $showhidden, $showquestiontext);
     
     // continues with list of questions
-    question_list($COURSE, $pageurl, $SESSION->questioncat, isset($cm) ? $cm : null,
-            $SESSION->questionrecurse, $page, $perpage, $SESSION->questionshowhidden, $sortorder,
-            $SESSION->questionshowquestiontext);
+    question_list($COURSE, $pageurl, $cat, isset($cm) ? $cm : null,
+            $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, 
+            $showquestiontext);
 
     print_box_end();
 }
@@ -568,6 +538,9 @@ function question_showbank($pageurl, $cm, $page, $perpage, $sortorder){
  * @return array $thispageurl, $courseid, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($requirecmid = false, $requirecourseid = true){
+    global $COURSE;
+    //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array 
+    //of parameters that are passed from page to page.
     $thispageurl = new moodle_url();
     if ($requirecmid){
         $cmid =required_param('cmid', PARAM_INT);
@@ -590,32 +563,74 @@ function question_edit_setup($requirecmid = false, $requirecourseid = true){
             $thispageurl->params(compact('courseid'));
         }
     }
+    require_login($courseid, false);
+    
     
     $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
-    $pagevars['qperpage'] = optional_param('qperpage', -1, PARAM_INT);
-    $pagevars['qsortorder'] = optional_param('qsortorder', '');
-    
-    if (preg_match("/[';]/", $pagevars['qsortorder'])) {
-        error("Incorrect use of the parameter 'qsortorder'");
-    }
-
     if ($pagevars['qpage'] > -1) {
         $thispageurl->param('qpage', $pagevars['qpage']);
     } else {
         $pagevars['qpage'] = 0;
     }
 
+    $pagevars['qperpage'] = optional_param('qperpage', -1, PARAM_INT);
     if ($pagevars['qperpage'] > -1) {
         $thispageurl->param('qperpage', $pagevars['qperpage']);
     } else {
         $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
     }
+    
+    $sortoptions = array('alpha' => 'name, qtype ASC',
+                          'typealpha' => 'qtype, name ASC',
+                          'age' => 'id ASC');
 
-    if ($pagevars['qsortorder']) {
-        $thispageurl->param('qsortorder', $pagevars['qsortorder']);
+    if ($sortorder = optional_param('qsortorder', '', PARAM_ALPHA)) {
+        $pagevars['qsortorderdecoded'] = $sortoptions[$sortorder];
+        $pagevars['qsortorder'] = $sortorder;
+        $thispageurl->param('qsortorder', $sortorder);
     } else {
         $pagevars['qsortorder'] = 'qtype, name ASC';
+    }    
+    
+    //pass cat from page to page and catchange comes a drop down menu
+    //on catchange then we also reset the qpage so we go to page 1 of 
+    //a new cat.
+    $pagevars['cat'] = optional_param('cat', 0, PARAM_INT);
+    if  ($catchange = optional_param('catchange', 0, PARAM_INT)){
+        $pagevars['cat'] = $catchange;
+        $pagevars['qpage'] = 0;
     }
+    if ($pagevars['cat']){
+        $thispageurl->param('cat', $pagevars['cat']);
+    }
+
+    if (empty($pagevars['cat']) or !count_records_select("question_categories", "id = '".$pagevars['cat']."' AND (course = '{$COURSE->id}' OR publish = '1')")) {
+        $category = get_default_question_category($COURSE->id);
+        $pagevars['cat'] = $category->id;
+        $thispageurl->param('cat', $category->id);
+    }
+
+    if(($recurse = optional_param('recurse', -1, PARAM_BOOL)) != -1) {
+        $pagevars['recurse'] = $recurse;
+        $thispageurl->param('recurse', $recurse);
+    } else {
+        $pagevars['recurse'] = 1;
+    }
+        
+    if(($showhidden = optional_param('showhidden', -1, PARAM_BOOL)) != -1) {
+        $pagevars['showhidden'] = $showhidden;
+        $thispageurl->param('showhidden', $showhidden);
+    } else {
+        $pagevars['showhidden'] = 0;
+    }
+        
+    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
+        $pagevars['showquestiontext'] = $showquestiontext;
+        $thispageurl->param('showquestiontext', $showquestiontext);
+    } else {
+        $pagevars['showquestiontext'] = 0;
+    }
+
     return array($thispageurl, $courseid, $cmid, $cm, $module, $pagevars);
     
 }

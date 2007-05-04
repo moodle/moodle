@@ -59,8 +59,6 @@
     }
     $coursecontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
     $quizcontext = get_context_instance(CONTEXT_MODULE, $quiz->cmid);
-
-    require_login($course->id, false);
     
 
     // Log this visit.
@@ -324,7 +322,8 @@
 
     echo '</td><td style="width:50%" valign="top">';
 
-    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder']);
+    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
+                    $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 
     echo '</td></tr>';
     echo '</table>';
