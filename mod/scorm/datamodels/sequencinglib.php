@@ -14,11 +14,12 @@ function scorm_seq_overall ($scoid,$userid,$request,$attempt) {
         if ($seq->sequencing != null) {
             $seq = scorm_seq_sequencing($scoid,$userid,$seq);
 			if($seq->sequencing == 'exit'){//return the control to the LTS
-				return true;
+				return 'true';
 			}
         }
         if ($seq->delivery != null) {
             $seq = scorm_sequencing_delivery($scoid,$userid,$seq);
+			$seq = scorm_content_delivery_environment ($seq,$userid);
         }
     }
     if ($seq->exception != null) {
@@ -502,9 +503,7 @@ function scorm_seq_measure_rollup($sco,$userid){
         foreach ($children as $child){
 		    $child = scorm_get_sco ($child);
 			if (!isset($child->tracked) || ($child->tracked == 1))
-				//check if we haven't done any attempt to see if this activity has been tracked
-				//it could be $child->tracked == true
-
+	
 			    $rolledupobjective = null;// we set the rolled up activity to undefined
 				$objectives = get_records('scorm_seq_objective','scoid',$child->id);
                 foreach ($objective as $objective){
@@ -558,7 +557,7 @@ function scorm_seq_objective_rollup_measure($sco,$userid){
 
 	$objectives = get_records('scorm_seq_objective','scoid',$sco->id);
     foreach ($objectives as $objective){
-	    if ($objective->primaryobj == true){//Objective contributes to rollup I'm using primaryobj field, but not 
+	    if ($objective->primaryobj == true){
 		    $targetobjective = $objective;
 			break;
 		}
@@ -586,7 +585,7 @@ function scorm_seq_objective_rollup_measure($sco,$userid){
 
 				$sco = scorm_get_sco ($sco->id);
 
-				if (!$isactive || ($isactive && (!isset($sco->measuresatisfactionifactive) || $sco->measuresatisfactionifactive == true))){//This condition is really odd. It's in the SeqNav.pdf on page 193, line 3.1.2.1
+				if (!$isactive || ($isactive && (!isset($sco->measuresatisfactionifactive) || $sco->measuresatisfactionifactive == true))){
 				    if($normalizedmeasure->value >= $targetobjective->minnormalizedmeasure){
 					    scorm_seq_set('objectiveprogressstatus',$sco->id,$userid);
 					    scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid);
