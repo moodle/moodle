@@ -1556,7 +1556,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 
 	if ($sco->parent != '/') {
 		$parent = scorm_sco_get_parent ($sco);
-		if ( !get_record('scorm_scoes_track','scoid',$parentid->id,'userid',$userid,'element','sequencingcontrolchoice')){
+		if ( (isset($parent->choice) && ($parent->choice == false)){
 			$seq->delivery = null;
 		    $seq->exception = 'SB.2.9-4';
 		    return $seq;
@@ -1653,7 +1653,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 		foreach ($curtarget as $activ){
 			$i++;
 			if ($i != sizeof($curtarget)){
-				if ( !get_record('scorm_scoes_track','scoid',$activ->id,'userid',$userid,'element','sequencingcontrolchoiceexit')){
+				if ( (isset($activ->choiceexit) && ($activ->choiceexit == false)){
 					$seq->delivery = null;
 		            $seq->exception = 'SB.2.9-7';
 		            return $seq;
@@ -1675,7 +1675,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 
 		$constrained = null;
 		foreach ($curcommon as $acti){
-			if ( !get_record('scorm_scoes_track','scoid',$activ->id,'userid',$userid,'element','sequencingcontrolchoiceexit')){
+			if ( (isset($activ->choiceexit) && ($activ->choiceexit == false)){
 					$seq->delivery = null;
 		            $seq->exception = 'SB.2.9-7';
 		            return $seq;
