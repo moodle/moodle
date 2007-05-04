@@ -820,7 +820,9 @@ ORDER BY $sort");
         }
     }
 
-    if (!empty($USER->id) && ($USER->id == $userid)) {
+    // MDL-9671, my courses should only get cached when '*' is chosen as the field, otherwise courses
+    // can not be displayed properly as cached courses might contain missing course name etc
+    if (!empty($USER->id) && ($USER->id == $userid) && $fields=='*') {
         $USER->mycourses[$doanything] = $mycourses;
     }
 
