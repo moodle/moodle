@@ -98,8 +98,10 @@ class qformat_default {
      * Handle parsing error
      */
     function error( $message, $text='', $questionname='' ) {
+        $importerrorquestion = get_string('importerrorquestion','quiz');
+
         echo "<div class=\"importerror\">\n";
-        echo "<strong>Error in question $questionname</strong>";
+        echo "<strong>$importerrorquestion $questionname</strong>";
         if (!empty($text)) {
             $text = s($text);
             echo "<blockquote>$text</blockquote>\n";
@@ -185,7 +187,7 @@ class qformat_default {
                     }
                 }
                 if (!$answersvalid) {
-                    notify( get_string('matcherror','quiz') );
+                    notify( get_string('matcherror','quiz') ); 
                     continue;
                 }
                 else {
