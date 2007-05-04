@@ -259,6 +259,12 @@
 	}
 	// insert hot-potatoes.js
 	$hp->insert_script(HOTPOT_JS);
+    // get Moodle pageid and pageclass
+    $pageid = '';
+    $pageclass = '';
+    if (function_exists('page_id_and_class')) {
+        page_id_and_class($pageid, $pageclass);
+    }
 	// extract first <head> tag
 	$head = '';
 	$pattern = '|<head([^>]*)>(.*?)</head>|is';
@@ -273,8 +279,10 @@
 	if (preg_match_all($pattern, $head, $matches)) {
 		$count = count($matches[0]);
 		for ($i=0; $i<$count; $i++) {
-			$styles .= $matches[0][$i]."\n";
-			$head = str_replace($matches[0][$i], '', $head);
+            if ($pageid) {
+                $styles .= str_replace('TheBody', $pageid, $matches[0][$i])."\n";
+			}
+            $head = str_replace($matches[0][$i], '', $head);
 		}
 	}
 	// extract <script> tags (and remove from $head)
@@ -283,8 +291,10 @@
 	if (preg_match_all($pattern, $head, $matches)) {
 		$count = count($matches[0]);
 		for ($i=0; $i<$count; $i++) {
-			$scripts .= $matches[0][$i]."\n";
-			$head = str_replace($matches[0][$i], '', $head);
+            if ($pageid) {
+                $scripts .= str_replace('TheBody', $pageid, $matches[0][$i])."\n";
+			}
+            $head = str_replace($matches[0][$i], '', $head);
 		}
 	}
 	// extract <body> tags
@@ -294,8 +304,10 @@
 	// HP6 and some HP5 (v6 and v4) 
 	if (preg_match('|<body'.'([^>]*'.'onLoad=(["\'])(.*?)(\\2)'.'[^>]*)'.'>(.*)</body>|is', $hp->html, $matches)) {
 		$body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
-		$body_tags = $matches[1];
-		// workaround to ensure javascript onload routine for quiz is always executed
+        if ($pageid) {
+            $body_tags = str_replace(' id="TheBody"', '', $matches[1]);
+		}
+        // workaround to ensure javascript onload routine for quiz is always executed
 		//	$body_tags will only be inserted into the <body ...> tag
 		//	if it is included in the theme/$CFG->theme/header.html,
 		//	so some old or modified themes may not insert $body_tags
