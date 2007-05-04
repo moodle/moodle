@@ -73,6 +73,34 @@ class grade_scale extends grade_object {
     var $description;
     
     /**
+     * Finds and returns a grade_scale object based on 1-3 field values.
+     *
+     * @param string $field1
+     * @param string $value1
+     * @param string $field2
+     * @param string $value2
+     * @param string $field3
+     * @param string $value3
+     * @param string $fields
+     * @return object grade_scale object or false if none found.
+     */
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+        if ($grade_scale = get_record('scale', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+            if (isset($this) && get_class($this) == 'grade_scale') {
+                foreach ($grade_scale as $param => $value) {
+                    $this->$param = $value;
+                }
+                return $this;
+            } else {
+                $grade_scale = new grade_scale($grade_scale);
+                return $grade_scale;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Loads the scale's items into the $scale_items array. 
      * There are three ways to achieve this:
      * 1. No argument given: The $scale string is already loaded and exploded to an array of items.

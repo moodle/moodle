@@ -26,73 +26,60 @@
 require_once('grade_object.php');
 
 /**
- * Class representing a grade outcome. It is responsible for handling its DB representation,
- * modifying and returning its metadata.
+ * A text string used to compute the value displayed by a grade_item.
+ * There can be only one grade_text per grade_item (one-to-one).
  */
-class grade_outcome extends grade_object {
+class grade_grades_text extends grade_object {
     /**
      * DB Table (used by grade_object).
      * @var string $table
      */
-    var $table = 'grade_outcomes';
-    
+    var $table = 'grade_grades_text';
+
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'scale');
-  
-    /**
-     * The course this outcome belongs to.
-     * @var int $courseid
-     */
-    var $courseid;
+    var $nonfields = array('table', 'nonfields');
     
     /**
-     * The shortname of the outcome.
-     * @var string $shortname
+     * A reference to the grade_grades_raw object this text belongs to.
+     * @var int $gradesid
      */
-    var $shortname;
+    var $gradesid;
 
     /**
-     * The fullname of the outcome.
-     * @var string $fullname
+     * Further information like forum rating distribution 4/5/7/0/1
+     * @var string $information
      */
-    var $fullname;
+    var $information;
 
     /**
-     * A full grade_scale object referenced by $this->scaleid.
-     * @var object $scale
+     * Text format for information (FORMAT_PLAIN, FORMAT_HTML etc...).
+     * @var int $informationformat
      */
-    var $scale;
+    var $informationformat;
 
     /**
-     * The id of the scale referenced by this outcome.
-     * @var int $scaleid
+     * Manual feedback from the teacher. This could be a code like 'mi'.
+     * @var string $feedback
      */
-    var $scaleid;
-    
+    var $feedback;
+
     /**
-     * The userid of the person who last modified this outcome.
+     * Text format for feedback (FORMAT_PLAIN, FORMAT_HTML etc...).
+     * @var int $feedbackformat
+     */
+    var $feedbackformat;
+
+    /**
+     * The userid of the person who last modified this text.
      * @var int $usermodified
      */
     var $usermodified;
     
     /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
-     */
-    function grade_outcome($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-        if (!empty($this->scaleid)) {
-            $this->scale = new grade_scale(array('id' => $this->scaleid));
-            $this->scale->load_items();
-        }
-    }
-    
-    /**
-     * Finds and returns a grade_outcome object based on 1-3 field values.
+     * Finds and returns a grade_text object based on 1-3 field values.
      *
      * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
@@ -102,19 +89,19 @@ class grade_outcome extends grade_object {
      * @param string $field3
      * @param string $value3
      * @param string $fields
-     * @return object grade_outcome object or false if none found.
+     * @return object grade_text object or false if none found.
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
-        if ($grade_outcome = get_record('grade_outcomes', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_outcome') {
+        if ($grade_text = get_record('grade_grades_text', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+            if (isset($this) && get_class($this) == 'grade_grades_text') {
                 print_object($this);
-                foreach ($grade_outcome as $param => $value) {
+                foreach ($grade_text as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
             } else {
-                $grade_outcome = new grade_outcome($grade_outcome);
-                return $grade_outcome;
+                $grade_text = new grade_grades_text($grade_text);
+                return $grade_text;
             }
         } else {
             return false;

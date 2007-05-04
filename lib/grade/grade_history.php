@@ -26,75 +26,61 @@
 require_once('grade_object.php');
 
 /**
- * Class representing a grade outcome. It is responsible for handling its DB representation,
+ * Class representing a grade history. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
  */
-class grade_outcome extends grade_object {
+class grade_history extends grade_object {
     /**
      * DB Table (used by grade_object).
      * @var string $table
      */
-    var $table = 'grade_outcomes';
+    var $table = 'grade_history';
     
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'scale');
+    var $nonfields = array('table', 'nonfields');
   
     /**
-     * The course this outcome belongs to.
-     * @var int $courseid
+     * The grade_item whose raw grade is being changed.
+     * @var int $itemid
      */
-    var $courseid;
+    var $itemid;
     
     /**
-     * The shortname of the outcome.
-     * @var string $shortname
+     * The user whose raw grade is being changed.
+     * @var int $userid
      */
-    var $shortname;
+    var $userid;
+    
+    /**
+     * The value of the grade before the change.
+     * @var float $oldgrade
+     */
+    var $oldgrade;
 
     /**
-     * The fullname of the outcome.
-     * @var string $fullname
+     * The value of the grade after the change.
+     * @var float $newgrade
      */
-    var $fullname;
+    var $newgrade;
 
     /**
-     * A full grade_scale object referenced by $this->scaleid.
-     * @var object $scale
+     * An optional annotation to explain the change.
+     * @var string $note
      */
-    var $scale;
-
-    /**
-     * The id of the scale referenced by this outcome.
-     * @var int $scaleid
-     */
-    var $scaleid;
+    var $note;
     
     /**
-     * The userid of the person who last modified this outcome.
-     * @var int $usermodified
+     * How the grade was modified ('manual', 'module', 'import' etc...).
+     * @var string $howmodified
      */
-    var $usermodified;
+    var $howmodified;
     
     /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
-     */
-    function grade_outcome($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-        if (!empty($this->scaleid)) {
-            $this->scale = new grade_scale(array('id' => $this->scaleid));
-            $this->scale->load_items();
-        }
-    }
-    
-    /**
-     * Finds and returns a grade_outcome object based on 1-3 field values.
+     * Finds and returns a grade_history object based on 1-3 field values.
      *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
      * @param string $value1
      * @param string $field2
@@ -102,23 +88,47 @@ class grade_outcome extends grade_object {
      * @param string $field3
      * @param string $value3
      * @param string $fields
-     * @return object grade_outcome object or false if none found.
+     * @return object grade_history object or false if none found.
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
-        if ($grade_outcome = get_record('grade_outcomes', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_outcome') {
-                print_object($this);
-                foreach ($grade_outcome as $param => $value) {
+        if ($grade_history = get_record('grade_history', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
+            if (isset($this) && get_class($this) == 'grade_history') {
+                foreach ($grade_history as $param => $value) {
                     $this->$param = $value;
                 }
                 return $this;
             } else {
-                $grade_outcome = new grade_outcome($grade_outcome);
-                return $grade_outcome;
+                $grade_history = new grade_history($grade_history);
+                return $grade_history;
             }
         } else {
             return false;
         }
-    }
+    } 
+
+    /**
+     * Given a grade_grades_raw object and some other parameters, records the 
+     * change of grade value for this object, and associated data.
+     * @static
+     * @param object $grade_raw
+     * @param float $oldgrade
+     * @param string $note
+     * @param string $howmodified
+     * @return boolean Success or Failure
+     */
+    function insert_change($grade_raw, $oldgrade, $howmodified='manual', $note=NULL) {
+        global $USER;
+        $history = new grade_history();
+        $history->itemid = $grade_raw->itemid;
+        $history->userid = $grade_raw->userid;
+        $history->oldgrade = $oldgrade;
+        $history->newgrade = $grade_raw->gradevalue;
+        $history->note = $note;
+        $history->howmodified = $howmodified;
+        $history->timemodified = mktime();
+        $history->usermodified = $USER->id;
+
+        return $history->insert();
+    } 
 }
 ?>

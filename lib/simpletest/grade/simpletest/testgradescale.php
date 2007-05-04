@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
 class grade_scale_test extends gradelib_test {
 
-    function test_scale_constructor() {
+    function test_scale_construct() {
         $params = new stdClass();
         
         $params->name        = 'unittestscale3';
@@ -53,7 +53,55 @@ class grade_scale_test extends gradelib_test {
         $this->assertEqual($params->description, $scale->description);
 
     }
+    
+    function test_grade_scale_insert() {
+        $grade_scale = new grade_scale();
+        $this->assertTrue(method_exists($grade_scale, 'insert'));
+        
+        $grade_scale->name        = 'unittestscale3';
+        $grade_scale->courseid    = $this->courseid;
+        $grade_scale->userid      = $this->userid;
+        $grade_scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
+        $grade_scale->description = 'This scale is used to mark standard assignments.';
 
+        $grade_scale->insert();
+
+        $last_grade_scale = end($this->scale);
+
+        $this->assertEqual($grade_scale->id, $last_grade_scale->id + 1);
+        $this->assertTrue(!empty($grade_scale->timecreated));
+        $this->assertTrue(!empty($grade_scale->timemodified));
+        $this->scale[] = $grade_scale; 
+
+    }
+
+    function test_grade_scale_update() {
+        $grade_scale = new grade_scale($this->scale[0]);
+        $this->assertTrue(method_exists($grade_scale, 'update'));
+        
+        $grade_scale->name = 'Updated info for this unittest grade_scale';
+        $this->assertTrue($grade_scale->update());
+        $name = get_field('scale', 'name', 'id', $this->scale[0]->id);
+        $this->assertEqual($grade_scale->name, $name); 
+    }
+
+    function test_grade_scale_delete() {
+        $grade_scale = new grade_scale($this->scale[0]);
+        $this->assertTrue(method_exists($grade_scale, 'delete'));
+        
+        $this->assertTrue($grade_scale->delete());
+        $this->assertFalse(get_record('scale', 'id', $grade_scale->id)); 
+    }
+
+    function test_grade_scale_fetch() {
+        $grade_scale = new grade_scale(); 
+        $this->assertTrue(method_exists($grade_scale, 'fetch'));
+
+        $grade_scale = grade_scale::fetch('id', $this->scale[0]->id);
+        $this->assertEqual($this->scale[0]->id, $grade_scale->id);
+        $this->assertEqual($this->scale[0]->name, $grade_scale->name); 
+    } 
+    
     function test_scale_load_items() {
         $scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($scale, 'load_items'));

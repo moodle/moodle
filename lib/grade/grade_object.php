@@ -82,10 +82,14 @@ class grade_object {
      * @return boolean
      */
     function update() {
-        $result = update_record($this->table, $this);
-        if ($result) {
-            $this->timemodified = mktime();
+        $this->timemodified = mktime();
+        
+        if (!empty($this->usermodified)) {
+            global $USER;
+            $this->usermodified = $USER->id;
         }
+
+        $result = update_record($this->table, $this);
         return $result;
     }
 
@@ -110,6 +114,9 @@ class grade_object {
                 unset($clone->$var);
             }
         }
+        
+        global $USER;
+        $this->usermodified = $USER->id;
 
         $this->id = insert_record($this->table, $clone, true);
         return $this->id;

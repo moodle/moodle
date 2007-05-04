@@ -94,6 +94,14 @@ class grade_grades_raw extends grade_object {
     var $usermodified;
 
     /**
+     * Additional textual information about this grade. It can be automatically generated 
+     * from the module or entered manually by the teacher. This is kept in its own table
+     * for efficiency reasons, so it is encapsulated in its own object, and included in this raw grade object.
+     * @var object $text
+     */
+    var $text;
+
+    /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
      * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
@@ -104,8 +112,20 @@ class grade_grades_raw extends grade_object {
             $this->scale = new grade_scale(array('id' => $this->scaleid));
             $this->scale->load_items();
         }
-    }
 
+        // Load text object
+        $this->load_text();
+    }
+    
+    /**
+     * Loads the grade_grades_text object linked to this raw grade, into the $this->text variable, if 
+     * such record exists. Otherwise returns null.
+     */
+    function load_text() {
+        if (!empty($this->id)) {
+            $this->text = grade_grades_text::fetch('gradesid', $this->id);
+        }
+    }
 
     /**
      * Finds and returns a grade_grades_raw object based on 1-3 field values.
@@ -125,15 +145,50 @@ class grade_grades_raw extends grade_object {
                 foreach ($object as $param => $value) {
                     $this->$param = $value;
                 }
+                
+                $this->load_text();
                 return $this;
             } else {
                 $object = new grade_grades_raw($object);
+
+                $object->load_text();
                 return $object;
             }
         } else {
             return false;
         }
     } 
+    
+    /**
+     * Updates this grade with the given textual information. This will create a new grade_grades_text entry
+     * if none was previously in DB for this raw grade, or will update the existing one.
+     * @param string $information Further info like forum rating distribution 4/5/7/0/1
+     * @param int $informationformat Text format for information
+     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'.
+     * @param int $feedbackformat Text format for the feedback
+     * @return boolean Success or Failure
+     */
+    function annotate($information, $informationformat=FORMAT_PLAIN, $feedback=NULL, $feedbackformat=FORMAT_PLAIN) {
+        $grade_text = new grade_grades_text();
+
+        $grade_text->gradesid          = $this->id;
+        $grade_text->information       = $information;
+        $grade_text->informationformat = $informationformat;
+        $grade_text->feedback          = $feedback;
+        $grade_text->feedbackformat    = $feedbackformat;
+
+        $result = true;
+
+        if (empty($this->text)) {
+            $result = $grade_text->insert();
+        } else {
+            $result = $grade_text->update();
+        }
+
+        $this->text = $grade_text;
+
+        return $result;
+    }
 
     /**
      * In addition to the normal updating set up in grade_object, this object also records
@@ -155,19 +210,18 @@ class grade_grades_raw extends grade_object {
         }
 
         $result = parent::update();
-        
-        if ($result) {
-            $logentry = new stdClass();
-            $logentry->itemid = $this->itemid;
-            $logentry->userid = $this->userid;
-            $logentry->oldgrade = $oldgrade;
-            $logentry->newgrade = $this->gradevalue;
-            $logentry->note = $note;
-            $logentry->howmodified = $howmodified;
-            $logentry->timemodified = mktime();
-            $logentry->usermodified = $USER->id;
+       
+        // Update grade_grades_text if changed
+        if (!empty($this->text)) {
+            $grade_text = grade_grades_text::fetch('gradesid', $this->id);
+            if ($this->text != $grade_text && $this->text->id == $grade_text->id) {
+                $result = $result & $this->text->update();
+            }
+        }
 
-            insert_record('grade_history', $logentry);
+        if ($result) {
+            // TODO Handle history recording error, such as displaying a notice, but still return true
+            grade_history::insert_change($this, $oldgrade, $howmodified, $note);
             return true;
         } else {
             return false;
