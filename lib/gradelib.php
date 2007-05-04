@@ -154,4 +154,56 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
 
     return $count;
 }
+
+/*
+ * For backward compatibility with old third-party modules, this function is called
+ * via to admin/cron.php to search all mod/xxx/lib.php files for functions named xxx_grades(),
+ * if the current modules does not have grade events registered with the grade book.
+ * Once the data is extracted, the event_trigger() function can be called to initiate 
+ * an event as usual and copy/ *upgrade the data in the gradebook tables. 
+ */
+function grades_grab_grades() {
+    
+    global $CFG, $db;
+
+    if (!$mods = get_list_of_plugins('mod') ) {
+        error('No modules installed!');
+    }
+
+    foreach ($mods as $mod) {
+
+        if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+
+        $fullmod = $CFG->dirroot .'/mod/'. $mod;
+
+        // include the module lib once
+        if (file_exists($fullmod.'/lib.php')) {
+            include_once($fullmod.'/lib.php');
+            // look for mod_grades() function - old grade book pulling function
+            // to see if module supports grades, and check for event registration status
+            $gradefunc = $mod.'_grades';
+            // if this mod has grades, but grade_added event is not registered
+            // then we need to pull grades into the new gradebook
+            if (function_exists($gradefunc) && !event_is_registered($mod, $gradefunc)) {
+                // get all instance of the mod
+                $module = get_record('modules', 'name', $mod);
+                if ($module && $modinstances = get_records('course_modules', 'module', $module->id)) {
+                    foreach ($modinstances as $modinstance) {
+                        // for each instance, call the xxx_grades() function
+                        if ($grades = $gradefunc($modinstance->instance)) {
+                            foreach ($grades->grades as $userid=>$usergrade) {                              
+                                // make the grade_added eventdata
+                                // missing grade event trigger
+                                // trigger_event('grade_added', $eventdata);                              
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 ?>

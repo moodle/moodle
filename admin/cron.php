@@ -380,6 +380,12 @@
             }
         }
     }
+    
+    // attemps to grab grades from third party/non-stard mods, or mods with no event
+    // implemented for 1.9 and above.
+    mtrace("Grabbing grades from modules if required...");
+    include_once($CFG->dirroot.'/lib/gradelib.php');
+    grades_grab_grades();
 
     //Unset session variables and destroy it
     @session_unset();
