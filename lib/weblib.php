@@ -300,9 +300,12 @@ class moodle_url {
     /**
      * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
      * 
-     * @param string $url url
+     * @param string $url url default null means use this page url with no query string
+     *                      empty string means empty url.
+     *                      if you pass any other type of url it will be parsed into it's bits, including query string
+     * @param array $params these params override anything in the query string where params have the same name.
      */
-    function moodle_url($url = null){
+    function moodle_url($url = null, $params = array()){
         global $FULLME;
         if ($url !== ''){
             if ($url === null){
@@ -319,6 +322,7 @@ class moodle_url {
             foreach ($parts as $key => $value){
                 $this->$key = $value;
             }
+            $this->params($params); 
         }
     }    
     /**
