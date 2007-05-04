@@ -365,8 +365,12 @@ class question_match_qtype extends default_questiontype {
     }
 
     function compare_responses($question, $state, $teststate) {
-        foreach ($state->responses as $i=>$sr){
-            if(empty($teststate->responses[$i]) || $state->responses[$i] != $teststate->responses[$i]){
+        foreach ($state->responses as $i=>$sr) {
+            if (empty($teststate->responses[$i])) {
+                if (!empty($state->responses[$i])) {
+                    return false;
+                }
+            } else if ($state->responses[$i] != $teststate->responses[$i]) {
                 return false;
             }
         }
