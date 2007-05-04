@@ -1,5 +1,5 @@
 ==================================================
-This is v2.4.1 of the HotPot module for Moodle 1.9
+This is v2.4.2 of the HotPot module for Moodle 1.9
 ==================================================
 
    This module allows teachers to administer Hot Potatoes and TexToys quizzes via Moodle.
@@ -33,11 +33,11 @@ IMPORTANT NOTICE
 TO INSTALL OR UPDATE THE HOTPOT MODULE
 ======================================
 
-   You should install only this module by installing a complete Moodle 1.8 package. 
+   You should install only this module by installing a complete Moodle 1.9 package. 
 
    Similarly, the recommended way to upgrade this module is to upgrade to a complete Moodle 1.8 package. 
 
-   However, it is possible to download and unzip a complete Moodle 1.8 package and extract the "mod/hotpot" folder for use on your live Moodle 1.8 site.
+   However, it is possible to download and unzip a complete Moodle 1.9 package and extract the "mod/hotpot" folder for use on your live Moodle 1.8 site.
 
 ========================
 TO USE THE HOTPOT MODULE
