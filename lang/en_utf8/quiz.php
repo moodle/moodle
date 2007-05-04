@@ -239,6 +239,7 @@ $string['imagemissing'] = 'Image not available at line $a. The filename will be 
 $string['import'] = 'Import';
 $string['importcategory'] = 'import category';
 $string['importerror'] = 'An error occurred during import processing';
+$string['importerrorquestion'] = 'Error importing question';
 $string['importfilearea'] = 'Import from file already in course files...';
 $string['importfileupload'] = 'Import from file upload...';
 $string['importfromthisfile'] = 'Import from this file';
