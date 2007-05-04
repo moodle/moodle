@@ -108,13 +108,21 @@ class grade_grades_raw extends grade_object {
      */
     function grade_grades_raw($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
-        if (!empty($this->scaleid)) {
-            $this->scale = new grade_scale(array('id' => $this->scaleid));
-            $this->scale->load_items();
-        }
-
-        // Load text object
         $this->load_text();
+        $this->load_scale();
+    }
+    
+    /**
+     * Instantiates a grade_scale object whose data is retrieved from the DB, 
+     * if this raw grade's scaleid variable is set.
+     * @return object grade_scale
+     */
+    function load_scale() {
+        if (!empty($this->scaleid)) {
+            $this->scale = grade_scale::fetch('id', $this->scaleid);
+            $this->scale->load_items();
+        } 
+        return $this->scale;
     }
     
     /**
@@ -125,6 +133,7 @@ class grade_grades_raw extends grade_object {
         if (!empty($this->id)) {
             $this->text = grade_grades_text::fetch('gradesid', $this->id);
         }
+        return $this->text;
     }
 
     /**
@@ -145,7 +154,8 @@ class grade_grades_raw extends grade_object {
                 foreach ($object as $param => $value) {
                     $this->$param = $value;
                 }
-                
+
+                $this->load_scale();
                 $this->load_text();
                 return $this;
             } else {
@@ -204,9 +214,8 @@ class grade_grades_raw extends grade_object {
         $oldgrade = $this->gradevalue;
         $this->gradevalue = $newgrade;
         
-        // Update this scaleid if it has changed (use the largest integer (most recent))
-        if ($this->scale->id != $this->scaleid) {
-            $this->scaleid = max($this->scale->id, $this->scaleid);
+        if (!empty($this->scale->id)) {
+            $this->scaleid = $this->scale->id;
         }
 
         $result = parent::update();

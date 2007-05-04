@@ -119,9 +119,15 @@ class grade_item extends grade_object {
      * @var object $scale
      */
     var $scale;
+    
+    /**
+     * The id of the optional grade_outcome associated with this grade_item.
+     * @var int $outcomeid
+     */
+    var $outcomeid;
 
     /**
-     * The Outcome this grade is associated with, if applicable.
+     * The grade_outcome this grade is associated with, if applicable.
      * @var object $outcome
      */
     var $outcome;
@@ -193,10 +199,48 @@ class grade_item extends grade_object {
      */
     function grade_item($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
+        $this->load_scale();
+        $this->load_outcome();
+    }
+   
+    /**
+     * Instantiates a grade_scale object whose data is retrieved from the DB, 
+     * if this item's scaleid variable is set.
+     * @return object grade_scale
+     */
+    function load_scale() {
         if (!empty($this->scaleid)) {
-            $this->scale = new grade_scale(array('id' => $this->scaleid));
+            $this->scale = grade_scale::fetch('id', $this->scaleid);
             $this->scale->load_items();
+        } 
+        return $this->scale;
+    }
+
+    /**
+     * Instantiates a grade_outcome object whose data is retrieved from the DB, 
+     * if this item's outcomeid variable is set.
+     * @return object grade_outcome
+     */
+    function load_outcome() {
+        if (!empty($this->outcomeid)) {
+            $this->outcome = grade_outcome::fetch('id', $this->outcomeid);
+        } 
+        return $this->outcome;
+    }
+
+    /**
+     * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
+     */
+    function update() {
+        if (!empty($this->outcome->id)) {
+            $this->outcomeid = $this->outcome->id;
         }
+        
+        if (!empty($this->scale->id)) {
+            $this->scaleid = $this->scale->id;
+        }
+
+        return parent::update();
     }
 
     /**
@@ -217,6 +261,9 @@ class grade_item extends grade_object {
                 foreach ($grade_item as $param => $value) {
                     $this->$param = $value;
                 }
+
+                $this->load_scale();
+                $this->load_outcome();
                 return $this;
             } else {
                 $grade_item = new grade_item($grade_item);
