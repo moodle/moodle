@@ -306,6 +306,7 @@ class qformat_default {
         $question->correctfeedback = '';
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
+        $question->answernumbering = 'abc';
 
         // this option in case the questiontypes class wants
         // to know where the data came from
