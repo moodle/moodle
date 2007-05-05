@@ -65,6 +65,8 @@
             $category->theme = $categorytheme;
             if (! set_field('course_categories', 'theme', $category->theme, 'id', $category->id)) {
                 notify('An error occurred while setting the theme');
+            } else {
+                theme_setup();
             }
         }
 
