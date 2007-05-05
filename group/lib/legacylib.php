@@ -270,7 +270,7 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
                 }
                 else {
                     echo($group->id);
-                    notify('you do not belong to this group!',error);
+                    notify('You do not belong to this group!', 'error');
                 }
             }
         }
