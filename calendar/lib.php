@@ -1145,7 +1145,13 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                 // If the user is an editing teacher in there,
                 if(!empty($USER->id) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
                     // If this course has groups, show events from all of them
-                    if(isset($SESSION->cal_courses_shown[$courseid]) && ($SESSION->cal_courses_shown[$courseid]->groupmode != NOGROUPS || !$SESSION->cal_courses_shown[$courseid]->groupmodeforce)) {
+                    if(is_int($groupeventsfrom)) {
+                        $courserecord = get_record('course', 'id', $courseid);
+                        if ($courserecord->groupmode != NOGROUPS || !$courserecord->groupmodeforce) {
+                            $groupids[] = $courseid;
+                        }
+                    }
+                    else if(isset($SESSION->cal_courses_shown[$courseid]) && ($SESSION->cal_courses_shown[$courseid]->groupmode != NOGROUPS || !$SESSION->cal_courses_shown[$courseid]->groupmodeforce)) {
                         $groupids[] = $courseid;
                     }
                 }
