@@ -684,9 +684,11 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*'
 
     global $USER;
 
-    if (!empty($USER->id) && ($USER->id == $userid)) {
+    // If using default params, we may have it cached...
+    if (!empty($USER->id) && ($USER->id == $userid)
+        && $sort==='visible DESC,sortorder ASC' && $fields==='*') {
         if (!empty($USER->mycourses[$doanything])) {
-            return $USER->mycourses[$doanything];      // Just return the cached version
+            return $USER->mycourses[$doanything];
         }
     }
 
@@ -822,7 +824,7 @@ ORDER BY $sort");
 
     // MDL-9671, my courses should only get cached when '*' is chosen as the field, otherwise courses
     // can not be displayed properly as cached courses might contain missing course name etc
-    if (!empty($USER->id) && ($USER->id == $userid) && $fields=='*') {
+    if (!empty($USER->id) && ($USER->id == $userid) && $fields==='*') {
         $USER->mycourses[$doanything] = $mycourses;
     }
 
