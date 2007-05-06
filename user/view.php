@@ -300,7 +300,7 @@
     profile_display_fields($user->id);
 
 
-    if ($mycourses = get_my_courses($user->id,'visible DESC,sortorder ASC', '*', false, 21)) {
+    if ($mycourses = get_my_courses($user->id,'visible DESC,sortorder ASC', null, false, 21)) {
         $shown=0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {

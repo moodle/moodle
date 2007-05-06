@@ -1247,10 +1247,10 @@ function calendar_get_default_courses($ignoreref = false) {
     }
     
     if (isset($CFG->adminseesall)) {
-        $courses = get_my_courses($USER->id, 'visible DESC', '*', $CFG->adminseesall);
+        $courses = get_my_courses($USER->id, 'visible DESC', null, $CFG->adminseesall);
     }
     else {
-        $courses = get_my_courses($USER->id, 'visible DESC', '*', false);
+        $courses = get_my_courses($USER->id, 'visible DESC', null, false);
     }
     // Make sure global events are included
     $courses[0] = true;

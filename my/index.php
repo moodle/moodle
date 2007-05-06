@@ -55,7 +55,7 @@
 /// The main overview in the middle of the page
     
     // limits the number of courses showing up
-    $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', '*', false, 21);
+    $courses = get_my_courses($USER->id, 'visible DESC,sortorder ASC', null, false, 21);
     $site = get_site();
     $course = $site; //just in case we need the old global $course hack
 
