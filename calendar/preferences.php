@@ -13,7 +13,9 @@
     if ($course->id != SITEID) {
         require_login($course->id);
     }
-
+    // Initialize the session variables
+    calendar_session_vars();
+    
 /// If data submitted, then process and store.
 
     if ($form = data_submitted()) {

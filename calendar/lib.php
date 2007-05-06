@@ -64,8 +64,7 @@ define ('CALENDAR_TF_12', '%I:%M %p');
 
 $CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
 
-// Initialize the session variables here to be sure
-calendar_session_vars();
+
 
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER;
@@ -1137,23 +1136,18 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         }
         else {
             $grouparray = array();
-            $groupmodes = NULL;
 
             // We already have the courses to examine in $courses
             // For each course...
+
+            
             foreach($groupcourses as $courseid) {
 
                 // If the user is an editing teacher in there,
                 if(!empty($USER->id) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
-
-                    // The first time we get in here, retrieve all groupmodes at once
-                    if($groupmodes === NULL) {
-                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode, groupmodeforce');
-                    }
-
                     // If this course has groups, show events from all of them
-                    if(isset($groupmodes[$courseid]) && ($groupmodes[$courseid]->groupmode != NOGROUPS || !$groupmodes[$courseid]->groupmodeforce) && ($grouprecords = get_groups($courseid)) !== false) {
-                        $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                    if(($SESSION->cal_courses_shown[$courseid]->groupmode != NOGROUPS || !$SESSION->cal_courses_shown[$courseid]->groupmodeforce)) {
+                        $groupids[] = $courseid;
                     }
                 }
 
@@ -1165,6 +1159,14 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                     }
                 }
             }
+            
+            $sql = "SELECT id, groupid 
+                    FROM {$CFG->prefix}groups_courses_groups
+                    WHERE courseid IN (".implode(',', $groupids).')';
+
+            $grouprecords= get_records_sql($sql);
+            $grouparray = array_merge($grouparray, array_keys($grouprecords));
+            
             if(empty($grouparray)) {
                 $group = false;
             }
@@ -1237,11 +1239,15 @@ function calendar_get_default_courses($ignoreref = false) {
     }
     
     if (isset($CFG->adminseesall)) {
-        return get_my_courses($USER->id, 'visible DESC', '*', $CFG->adminseesall);
+        $courses = get_my_courses($USER->id, 'visible DESC', '*', $CFG->adminseesall);
     }
     else {
-        return get_my_courses($USER->id, 'visible DESC', '*', false);
+        $courses = get_my_courses($USER->id, 'visible DESC', '*', false);
     }
+    // Make sure global events are included
+    $courses[0] = true;
+
+    return $courses;
 }
 
 function calendar_preferences_button() {

@@ -17,6 +17,9 @@ if(!$site = get_site()) {
     redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
 }
 
+// Initialize the session variables
+calendar_session_vars();
+
 $pagetitle = get_string('export', 'calendar');
 $now = usergetdate(time());
 $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;

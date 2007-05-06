@@ -66,6 +66,9 @@
 
     $strcalendar = get_string('calendar', 'calendar');
 
+    // Initialize the session variables
+    calendar_session_vars();
+
     $now = usergetdate(time());
     $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
