@@ -57,7 +57,37 @@ $string['databasesettingssub_mssql'] = '<b>Typ:</b> SQL*Server (bez UTF-8) <b><f
 <b>Název (Name):</b> název databáze, např. moodle<br />
 <b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
 <b>Heslo (Password):</b> heslo pro uživatele<br />
-<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (mandatory)';
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (povinné)';
+$string['databasesettingssub_mssql_n'] = '<b>Typ:</b> SQL*Server (s UTF-8) <br />
+<b>Hostitel (Host):</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název (Name):</b> název databáze, např. moodle<br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (povinné)';
+$string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
+<b>Hostitel (Host):</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název (Name):</b> název databáze, např. moodle<br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (volitelné)';
+$string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
+<b>Hostitel (Host):</b> nepoužito, musí být prázdné<br />
+<b>Název (Name):</b> daný název připojení tnsnames.ora<br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek (povinné, max 2 znaky)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Typ:</b> SQL*Server (přes ODBC) <b><font color=\"red\">Jen pro experimentování! (není určeno pro produkční servery)</font></b><br />
+<b>Hostitel (Host):</b> název DSN podle řídicího panelu ODBC<br />
+<b>Název (Name):</b>název databáze, např. moodle <br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek (povinné)';
+$string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
+<b>Hostitel (Host):</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název (Name):</b> název databáze, např. moodle<br />
+<b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
+<b>Heslo (Password):</b> heslo pro uživatele<br />
+<b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (povinné)';
 $string['dataroot'] = 'Datový adresář';
 $string['datarooterror'] = 'Zadaný datový adresář se nepodařilo nalézt nebo vytvořit. Buď opravte zadanou cestu, nebo vytvořte adresář ručně.';
 $string['dbconnectionerror'] = 'Nepodařilo se připojit k databázi, kterou jste zadali. Zkontrolujte prosím nastavení databáze.';
@@ -66,6 +96,9 @@ $string['dbhost'] = 'Hostitelský server';
 $string['dbprefix'] = 'Předpona tabulek';
 $string['dbtype'] = 'Typ';
 $string['dbwrongencoding'] = 'Vybraná databáze používá nedoporučené kódování $a. Vhodnější by bylo používat databázi s kódováním Unicode (UTF-8). Tuto kontrolu můžete přeskočit zaškrtnutím pole \"Přeskočit test kódování DB\", můžete však v budoucnu narazit na problémy.';
+$string['dbwronghostserver'] = 'Chyba v názvu hostitele.';
+$string['dbwrongnlslang'] = 'Proměnná prostředí Vašeho serveru NLS_LANG musí používat znakovou sadu AL32UTF8. Viz dokumentaci PHP o konfiguraci vlastnosti OCI8.';
+$string['dbwrongprefix'] = 'Chyba v předponě názvů tabulek.';
 $string['directorysettingshead'] = 'Potvrďte prosím adresy této instalace Moodlu.';
 $string['directorysettingssub'] = '<b>Webová adresa</b>:
 zadejte úplnou webovou adresu, na níž bude Moodle dostupný. Jsou-li vaše stránky dostupné na více URL, vyberte z nich tu, kterou budou vaši studenti používat nejčastěji. Na konci adresy neuvádějte lomítko.
@@ -137,16 +170,25 @@ na hodnotu blízkou 40M. Nemáte-li taková práva, požádejte správce vašeho
 </ol>';
 $string['missingrequiredfield'] = 'Chybí některé z povinných polí';
 $string['moodledocslink'] = 'Dokumentace k této stránce';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server s podporou UTF-8 (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s SQL*Server přes rozšíření MSSQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Pokud ovšem ve vaší instalaci Moodlu používáte POUZE jazyky založené na latince (iso-8859-1), můžete nadále používat momentálně nainstalovanou verzi MySQL 4.1.12 (nebo vyšší).';
 $string['mysql416required'] = 'Minimální verzí požadovanou pro Moodle 1.6 -- a pro pozdější bezpečný převod všech dat do UTF-8 -- je MySQL 4.1.16.';
-$string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci v MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
 $string['name'] = 'Název';
 $string['next'] = 'Další';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s Oracle přes rozšíření OCI8. Zkontrolujte váš php.ini nebo překompilujte PHP.';
+$string['odbc_mssql'] = 'SQL*Server přes ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s SQL*Server přes rozšíření ODBC. Zkontrolujte váš php.ini nebo překompilujte PHP.';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Pro běh síťových funkcionalit (\"Moodle Networking\") je potřeba nainstalovat volitelnou knihovnu OpenSSL.';
 $string['parentlanguage'] = '<< Překladatelé: Pokud Váš jazyk má \"nadřazený\" jazyk\", který má Moodle používat v případech, kdy řetězce ve vašem jazykovém balíčku chybí, specifikujte jeho kód zde. Příklad: nl >>';
 $string['pass'] = 'V pořádku';
 $string['password'] = 'Heslo';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s PostgreSQL přes rozšíření PGSQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
 $string['php50restricted'] = 'V PHP 5.0.x bylo nalezeno množství chyb; přejděte buď na vyšší verzi 5.1.x, nebo na nižší verzi 4.3.x či 4.4.x.';
 $string['phpversion'] = 'Verze PHP';
 $string['phpversionerror'] = 'Verze PHP musí být alespoň 4.3.0 nebo 5.1.0 (PHP 5.0.x obsahuje množství chyb).';
@@ -154,6 +196,7 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5
 <p>Nyní používáte PHP verze $a.</p>
 <p>Musíte PHP upgradovat, nebo přejít k hostiteli s vyšší verzí!<br />
 (U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x či 4.3.x.)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Předchozí';
 $string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
 $string['report'] = 'Protokol';
