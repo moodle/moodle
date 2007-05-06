@@ -708,7 +708,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     }
 
     $mycourses = array();
-    
+
     // Fix fields to refer to the course table c
     $fields=preg_replace('/([a-z0-9*]+)/','c.$1',$fields);
 
@@ -717,7 +717,14 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     
     // Check root permissions
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
-    if (has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
+
+    // we can optimise some things for true admins
+    $candoanything = false;
+    if ($doanything && has_capability('moodle/site:doanything',$sitecontext,$userid,true)) {
+        $candoanything = true;
+    }
+
+    if ($candoanything || has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
         // User can view all courses, although there might be exceptions
         // which we will filter later.
         $rs = get_recordset('course c', '', '', $sort, $fields);        
@@ -766,6 +773,12 @@ ORDER BY $sort");
     if ($rs && $rs->RecordCount() > 0) {
         while ($course = rs_fetch_next_record($rs)) {
             if ($course->id != SITEID) {
+
+                if ($candoanything) { // no need for further checks...
+                    $mycourses[$course->id] = $course;
+                    continue;
+                }
+
                 // users with moodle/course:view are considered course participants
                 // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
                 // capability set to view hidden courses  
@@ -790,7 +803,7 @@ ORDER BY $sort");
     /// MDL-9238, course in sub categories are not shown
     // if the user has course:view at system level, then he can view all course
     // skip this part
-    if (!has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
+    if (!$candoanything && !has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
         
         // get all course categories with an assignment
         $SQL = "SELECT a.id, a.id FROM {$CFG->prefix}role_assignments ra
