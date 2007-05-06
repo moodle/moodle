@@ -1041,9 +1041,9 @@ function calendar_session_vars() {
     if(!isset($SESSION->cal_show_user)) {
         $SESSION->cal_show_user = true;
     }
-    if(empty($SESSION->cal_courses_shown)) {
+   // if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-    }
+    //}
     if(empty($SESSION->cal_users_shown)) {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs
@@ -1140,13 +1140,12 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             // We already have the courses to examine in $courses
             // For each course...
 
-            
             foreach($groupcourses as $courseid) {
 
                 // If the user is an editing teacher in there,
                 if(!empty($USER->id) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
                     // If this course has groups, show events from all of them
-                    if(($SESSION->cal_courses_shown[$courseid]->groupmode != NOGROUPS || !$SESSION->cal_courses_shown[$courseid]->groupmodeforce)) {
+                    if(isset($SESSION->cal_courses_shown[$courseid]) && ($SESSION->cal_courses_shown[$courseid]->groupmode != NOGROUPS || !$SESSION->cal_courses_shown[$courseid]->groupmodeforce)) {
                         $groupids[] = $courseid;
                     }
                 }
@@ -1160,12 +1159,15 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                 }
             }
             
-            $sql = "SELECT id, groupid 
-                    FROM {$CFG->prefix}groups_courses_groups
-                    WHERE courseid IN (".implode(',', $groupids).')';
-
-            $grouprecords= get_records_sql($sql);
-            $grouparray = array_merge($grouparray, array_keys($grouprecords));
+            if (!empty($groupids)) {
+                $sql = "SELECT id, groupid 
+                        FROM {$CFG->prefix}groups_courses_groups
+                        WHERE courseid IN (".implode(',', $groupids).')';
+    
+                if ($grouprecords= get_records_sql($sql)) {
+                    $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                }
+            }
             
             if(empty($grouparray)) {
                 $group = false;
