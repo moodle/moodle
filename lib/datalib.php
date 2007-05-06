@@ -686,7 +686,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
 
     // Default parameters
     $d_sort   = 'visible DESC,sortorder ASC';
-    $d_fields = 'id, category, sortorder, shortname, fullname, idnumber, newsitems, teacher, teachers, student, students, guest, startdate, visible, cost, enrol, summary';
+    $d_fields = 'id, category, sortorder, shortname, fullname, idnumber, newsitems, teacher, teachers, student, students, guest, startdate, visible, cost, enrol, summary, groupmode, groupmodeforce';
 
     $usingdefaults = true;
     if (is_null($sort)) {
