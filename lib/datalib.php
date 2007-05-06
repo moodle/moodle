@@ -680,13 +680,28 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * @param int $limit Maximum number of records to return, or 0 for unlimited
  * @return array {@link $COURSE} of course objects
  */
-function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields='*', $doanything=false,$limit=0) {
+function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$limit=0) {
 
     global $USER;
 
+    // Default parameters
+    $d_sort   = 'visible DESC,sortorder ASC';
+    $d_fields = '*';
+
+    $usingdefaults = true;
+    if (is_null($sort)) {
+        $sort = $d_sort;
+    } else {
+        $usingdefaults = false;
+    }
+    if (is_null($fields)) {
+        $fields = $d_fields;
+    } else {
+        $usingdefaults = false;
+    }
+
     // If using default params, we may have it cached...
-    if (!empty($USER->id) && ($USER->id == $userid)
-        && $sort==='visible DESC,sortorder ASC' && $fields==='*') {
+    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         if (!empty($USER->mycourses[$doanything])) {
             return $USER->mycourses[$doanything];
         }
@@ -822,9 +837,8 @@ ORDER BY $sort");
         }
     }
 
-    // MDL-9671, my courses should only get cached when '*' is chosen as the field, otherwise courses
-    // can not be displayed properly as cached courses might contain missing course name etc
-    if (!empty($USER->id) && ($USER->id == $userid) && $fields==='*') {
+    // Cache if using default params...
+    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         $USER->mycourses[$doanything] = $mycourses;
     }
 
