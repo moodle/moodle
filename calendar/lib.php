@@ -1252,8 +1252,6 @@ function calendar_get_default_courses($ignoreref = false) {
     else {
         $courses = get_my_courses($USER->id, 'visible DESC', null, false);
     }
-    // Make sure global events are included
-    $courses[0] = true;
 
     return $courses;
 }
