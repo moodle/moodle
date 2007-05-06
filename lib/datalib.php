@@ -717,6 +717,11 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     
     // Check root permissions
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
+    
+    // Guest's do not have any courses
+    if (has_capability('moodle/legacy:guest',$sitecontext,$userid,true)) {
+        return(array());
+    }
 
     // we can optimise some things for true admins
     $candoanything = false;
@@ -778,7 +783,8 @@ ORDER BY $sort");
                     $mycourses[$course->id] = $course;
                     continue;
                 }
-
+                
+                
                 // users with moodle/course:view are considered course participants
                 // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
                 // capability set to view hidden courses  
