@@ -20,7 +20,9 @@ class block_calendar_month extends block_base {
         if ($this->content !== NULL) {
             return $this->content;
         }
-
+        // Initialize the session variables
+        calendar_session_vars();
+        
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';

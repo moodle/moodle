@@ -60,6 +60,9 @@
         require_login();
     }
 
+    // Initialize the session variables
+    calendar_session_vars();
+
     //add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
     $now = usergetdate(time());
     $pagetitle = '';
