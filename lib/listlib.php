@@ -88,9 +88,8 @@ class moodle_list{
     var $pagecount;
 //------------------------------------------------------
     var $pageurl;
-    var $pageparams = array();
+    var $pageparamname;
 
-    var $str;
     /**
      * Constructor function
      *
@@ -98,62 +97,22 @@ class moodle_list{
      * @param string $attributes
      * @param boolean $editable
      * @param integer $page if 0 no pagination.
+     * @param moodle_url $page if 0 no pagination.
      * @return moodle_list
      */
-    function moodle_list($type='ul', $attributes='', $editable = false, $page = 0){
+    function moodle_list($type='ul', $attributes='', $editable = false, $page = 0, $pageurl=null, $pageparamname = 'page'){
         $this->editable = $editable;
         $this->attributes = $attributes;
         $this->type = $type;
         $this->page = $page;
-        $this->pageurl = strip_querystring(qualified_me());//default
-        if (!empty($this->page)){
-            $this->add_page_params(array('page' => $this->page));
+        $this->pageparamname = $pageparamname;
+           
+        if ($pageurl === null){
+            $this->pageurl = new moodle_url();
+            $this->pageurl->params(array($this->pageparamname => $this->page));
+        } else {
+            $this->pageurl = $pageurl;
         }
-    }
-    /**
-     * Add an array of params to the params for this page.
-     *
-     * @param unknown_type $params
-     */
-    function add_page_params($params){
-        $this->pageparams = $params + $this->pageparams;
-    }
-
-    /**
-     * Get url and query string for an action on this page (get_url() + sesskey)
-     *
-     * @param array $overrideparams an array of params which override $this->pageparams
-     * @return string
-     */
-    function get_action_url($overrideparams = array()){
-        global $USER;
-
-        $arr = array();
-        $paramarray = $overrideparams + $this->pageparams + array('sesskey'=>$USER->sesskey);
-        foreach ($paramarray as $key => $val){
-           $arr[] = urlencode($key)."=".urlencode($val);
-        }
-        $params = implode($arr, "&amp;");
-
-        return $this->pageurl.'?'.$params;
-    }
-
-    /**
-     * Get url and query string for this page
-     *
-     * @param array $overrideparams an array of params which override $this->pageparams
-     * @return string
-     */
-    function get_url($overrideparams = array()){
-
-        $arr = array();
-        $paramarray = $overrideparams + $this->pageparams;
-        foreach ($paramarray as $key => $val){
-           $arr[] = urlencode($key)."=".urlencode($val);
-        }
-        $params = implode($arr, "&amp;");
-
-        return $this->pageurl.'?'.$params;
     }
 
     /**
@@ -285,13 +244,13 @@ class moodle_list{
      */
     function display_page_numbers() {
         if (!empty($this->page) && ($this->pagecount>1)){
-            echo "<div class=\"paging\">".get_string('page').":\n";
+            echo "<div class=\"paging\">".get_string($this->pageparamname).":\n";
             foreach (range(1,$this->pagecount) as $currentpage) {
                 if ($this->page == $currentpage) {
                     echo " $currentpage \n";
                 }
                 else {
-                    echo "<a href=\"".$this->get_url(array('page'=>$currentpage))."\">";
+                    echo "<a href=\"".$this->pageurl->out(false, array($this->pageparamname => $currentpage))."\">";
                     echo " $currentpage </a>\n";
                 }
             }
@@ -428,19 +387,19 @@ class moodle_list{
             $this->move_item_up_down('up', $moveup);
             if ($moveup == $this->items[$this->firstitem -1]->id){//redirect to page that item has been moved to.
                 $this->page --;
-                $this->add_page_params(array('page'=>$this->page));
+                $this->pageurl->params(array($this->pageparamname => $this->page));
             }
         } else if (!empty($movedown)) {
             $this->move_item_up_down('down', $movedown);
             if ($movedown == $this->items[$this->lastitem -1]->id){//redirect to page that item has been moved to.
                 $this->page ++;
-                $this->add_page_params(array('page'=>$this->page));
+                $this->pageurl->params(array($this->pageparamname => $this->page));
             }
         } else {
             return false;
         }
 
-        redirect($this->get_url());
+        redirect($this->pageurl->out());
     }
 }
 
@@ -493,9 +452,7 @@ class list_item{
         $this->set_parent($parent);
         $this->attributes = $attributes;
         $parentlistclass = get_class($parent);
-        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page);
-        $this->children->add_page_params($parent->pageparams);
-        $this->children->pageurl = $parent->pageurl;
+        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page, $parent->pageurl);
         $this->children->set_parent($this);
     }
     /**
@@ -537,11 +494,7 @@ class list_item{
         $strmovedown = get_string('movedown');
         $pixpath = $CFG->pixpath;
         $icons = '&nbsp;';
-        if (!empty($this->parentlist->page)) {
-            $pagelink="&amp;page={$this->parentlist->page}";
-        } else {
-            $pagelink="";
-        }
+    
         if (isset($this->parentlist->parentitem)) {
             $parentitem =& $this->parentlist->parentitem;
             if (isset($parentitem->parentlist->parentitem)){
@@ -549,21 +502,21 @@ class list_item{
             } else {
                 $action = get_string('maketoplevelitem', 'question');
             }
-            $icons .= '<a title="' . $action .'" href="'.$this->parentlist->get_action_url().'&amp;left=' . $this->id .'">
+            $icons .= '<a title="' . $action .'" href="'.$this->parentlist->pageurl->out_action(array('left'=>$this->id)).'">
                 <img src="' . $pixpath . '/t/left.gif" class="iconsmall" alt="' . $action. '" /></a> ';
         } else {
             $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
         }
 
         if (!$first) {
-            $icons .= '<a title="' . $strmoveup .'" href="'.$this->parentlist->get_action_url().'&amp;moveup=' . $this->id .'">
+            $icons .= '<a title="' . $strmoveup .'" href="'.$this->parentlist->pageurl->out_action(array('moveup'=>$this->id)).'">
                 <img src="' . $pixpath . '/t/up.gif" class="iconsmall" alt="' . $strmoveup. '" /></a> ';
         } else {
             $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
         }
 
         if (!$last) {
-            $icons .= '<a title="' . $strmovedown .'" href="'.$this->parentlist->get_action_url().'&amp;movedown=' . $this->id .'">
+            $icons .= '<a title="' . $strmovedown .'" href="'.$this->parentlist->pageurl->out_action(array('movedown'=>$this->id)).'">
                  <img src="' . $pixpath . '/t/down.gif" class="iconsmall" alt="' .$strmovedown. '" /></a> ';
         } else {
             $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
@@ -571,7 +524,7 @@ class list_item{
 
         if (!empty($lastitem)) {
             $makechildof = get_string('makechildof', 'question', $lastitem->name);
-            $icons .= '<a title="' . $makechildof .'" href="'.$this->parentlist->get_action_url().'&amp;right=' . $this->id .'">
+            $icons .= '<a title="' . $makechildof .'" href="'.$this->parentlist->pageurl->out_action(array('right'=>$this->id)).'">
                 <img src="' . $pixpath . '/t/right.gif" class="iconsmall" alt="' . $makechildof. '" /></a> ';
         } else {
             $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
