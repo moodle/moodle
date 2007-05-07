@@ -276,12 +276,14 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         }
         echo '</td><td align="center">';
 
-        $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
         if ($question->qtype != 'random') {
             quiz_question_preview_button($quiz, $question);
         }
         if ($canedit) {
-            echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$qnum$context\">
+            $returnurl = $pageurl->out();
+            $questionparams = array('returnurl' => $returnurl, 'cmid'=>$quiz->cmid, 'id' => $qnum);
+            $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+            echo "<a title=\"$stredit\" href=\"".$questionurl->out()."\">
                     <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a>";
         }
         if ($allowdelete) {
