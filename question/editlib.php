@@ -632,6 +632,13 @@ function question_edit_setup($requirecmid = false, $requirecourseid = true){
     } else {
         $pagevars['showquestiontext'] = 0;
     }
+    
+    //category list page
+    $pagevars['cpage'] = optional_param('cpage', 1, PARAM_INT);
+    if ($pagevars['cpage'] != 1){
+        $thispageurl->param('cpage', $pagevars['cpage']);
+    }
+    
 
     return array($thispageurl, $courseid, $cmid, $cm, $module, $pagevars);
 }

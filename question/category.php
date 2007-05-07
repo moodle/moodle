@@ -20,8 +20,6 @@
     // get values from form for actions on this page
     $param = new stdClass();
 
-    $param->page = optional_param('page', 1, PARAM_INT);
-    $thispageurl->param('page', $param->page);
 
     $param->moveup = optional_param('moveup', 0, PARAM_INT);
     $param->movedown = optional_param('movedown', 0, PARAM_INT);
@@ -46,7 +44,7 @@
 
     require_capability('moodle/question:managecategory', $context);
 
-    $qcobject = new question_category_object($param->page, $thispageurl);
+    $qcobject = new question_category_object($pagevars['cpage'], $thispageurl);
 
     $streditingcategories = get_string('editcategories', 'quiz');
     if ($qcobject->editlist->process_actions($param->left, $param->right, $param->moveup, $param->movedown)) {
@@ -106,7 +104,7 @@
             $qcobject->add_category($param->newparent, $param->newcategory, $param->newinfo,
                 $param->newpublish, $course->id);
         } else if (!empty($param->edit)) {
-            $qcobject->edit_single_category($param->edit, $param->page);
+            $qcobject->edit_single_category($param->edit, $pagevars['cpage']);
         } else if (!empty($param->updateid)) {
             $param->updateparent  = required_param('updateparent',PARAM_INT);
             $param->updatename    = required_param('updatename',PARAM_NOTAGS);

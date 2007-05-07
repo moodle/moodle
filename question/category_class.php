@@ -8,16 +8,15 @@
  */
 
 // number of categories to display on page
-define("QUESTION_PAGE_LENGTH", 25);
+define("QUESTION_PAGE_LENGTH", 2);
 
 require_once("$CFG->libdir/listlib.php");
 
 class question_category_list extends moodle_list {
     var $table = "question_categories";
     var $listitemclassname = 'question_category_list_item';
-    function question_category_list($type='ul', $attributes='', $editable = false, $page = 0){
-        parent::moodle_list($type, $attributes, $editable, $page);
-    }
+    
+
     function get_records() {
         global $COURSE, $CFG;
         $categories = get_records($this->table, 'course', "{$COURSE->id}", $this->sortby);
@@ -47,15 +46,11 @@ class question_category_list_item extends list_item {
 
         $linkcss = $category->publish ? ' class="published" ' : ' class="unpublished" ';
 
-        if (!empty($parent->page)) {
-            $pagelink="&amp;page=".$parent->page;
-        } else {
-            $pagelink="";
-        }
 
         /// Each section adds html to be displayed as part of this list item
+        
 
-        $item = '<a ' . $linkcss . ' title="' . $str->edit. '" href="'.$this->parentlist->get_action_url().'&amp;edit=' . $this->id .'">
+        $item = '<a ' . $linkcss . ' title="' . $str->edit. '" href="'.$this->parentlist->pageurl->out_action(array('edit'=>$this->id)).'">
             <img src="' . $pixpath . '/t/edit.gif" class="iconsmall"
             alt="' .$str->edit. '" /> ' . $category->name . '('.$category->questioncount.')'. '</a>';
 
@@ -63,15 +58,15 @@ class question_category_list_item extends list_item {
 
 
         if (!empty($category->publish)) {
-            $item .= '<a title="' . $str->hide . '" href="'.$this->parentlist->get_action_url().'&amp;hide=' . $this->id .'">
+            $item .= '<a title="' . $str->hide . '" href="'.$this->parentlist->pageurl->out_action(array('hide'=>$this->id)).'">
               <img src="' . $pixpath . '/t/hide.gif" class="iconsmall" alt="' .$str->hide. '" /></a> ';
         } else {
-            $item .= '<a title="' . $str->publish . '" href="'.$this->parentlist->get_action_url().'&amp;publish=' . $this->id .'">
+            $item .= '<a title="' . $str->publish . '" href="'.$this->parentlist->pageurl->out_action(array('publish'=>$this->id)).'">
               <img src="' . $pixpath . '/t/show.gif" class="iconsmall" alt="' .$str->publish. '" /></a> ';
         }
 
         if ($category->id != $extraargs['defaultcategory']->id) {
-            $item .=  '<a title="' . $str->delete . '"href="'.$this->parentlist->get_action_url().'&amp;delete=' . $this->id .'">
+            $item .=  '<a title="' . $str->delete . '" href="'.$this->parentlist->pageurl->out_action(array('delete'=>$this->id)).'">
                     <img src="' . $pixpath . '/t/delete.gif" class="iconsmall" alt="' .$str->delete. '" /></a> ';
         }
 
@@ -105,15 +100,17 @@ class question_category_object {
     var $categorystrings;
     var $defaultcategory;
 //------------------------------------------------------
+    /**
+     * @var moodle_url Object representing url for this page
+     */
     var $pageurl;
-    var $pageparams = array();
 
     /**
      * Constructor
      *
      * Gets necessary strings and sets relevant path information
      */
-    function question_category_object($page) {
+    function question_category_object($page, $pageurl) {
         global $CFG, $COURSE;
 
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
@@ -141,62 +138,14 @@ class question_category_object {
         $this->str->page           = get_string('page');
         $this->pixpath = $CFG->pixpath;
 
-        $this->editlist = new question_category_list('ul', '', true, $page);
+        $this->editlist = new question_category_list('ul', '', true, $page, $pageurl, 'cpage');
 
-        $this->add_page_params(array('courseid'=>$COURSE->id, 'page' => $this->page));
-        $this->pageurl = strip_querystring(qualified_me());//default
+        $this->pageurl = $pageurl;
         
         $this->initialize();
 
     }
     
-    /**
-     * Add an array of params to the params for this page.
-     *
-     * @param unknown_type $params
-     */
-    function add_page_params($params){
-        $this->pageparams = $params + $this->pageparams;
-        $this->editlist->add_page_params($params);
-    }
-    
-    /**
-     * Get url and query string for an action on this page (get_url() + sesskey)
-     *
-     * @param array $overrideparams an array of params which override $this->pageparams
-     * @return string
-     */
-    function get_action_url($overrideparams = array()){
-        global $USER;
-
-        $arr = array();
-        $paramarray = $overrideparams + $this->pageparams + array('sesskey'=>$USER->sesskey);
-        foreach ($paramarray as $key => $val){
-           $arr[] = urlencode($key)."=".urlencode($val);
-        }
-        $params = implode($arr, "&amp;");
-
-        return $this->pageurl.'?'.$params;
-    }
-
-    /**
-     * Get url and query string for this page
-     *
-     * @param array $overrideparams an array of params which override $this->pageparams
-     * @return string
-     */
-    function get_url($overrideparams = array()){
-
-        $arr = array();
-        $paramarray = $overrideparams + $this->pageparams;
-        foreach ($paramarray as $key => $val){
-           $arr[] = urlencode($key)."=".urlencode($val);
-        }
-        $params = implode($arr, "&amp;");
-
-        return $this->pageurl.'?'.$params;
-    }
-
     /**
      * Displays the user interface
      *
@@ -284,7 +233,7 @@ class question_category_object {
         echo '<form action="category.php" method="post">';
         echo '<fieldset class="invisiblefieldset" style="display: block">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-        echo '<input type="hidden" name="courseid" value="'. $COURSE->id . '" />';
+        echo $this->pageurl->hidden_params_out();
         echo '<input type="hidden" name="addcategory" value="true" />';
         print_table($this->newtable);
         echo '</fieldset>';
@@ -297,7 +246,6 @@ class question_category_object {
      *
      * $this->initialize() must have already been called
      *
-     * @param int $page page to display (0=do not paginate)
      */
     function output_edit_list() {
         print_box_start('boxwidthwide boxaligncenter generalbox');
@@ -329,7 +277,7 @@ class question_category_object {
 
 
 
-    function edit_single_category($categoryid, $page=1) {
+    function edit_single_category($categoryid) {
     /// Interface for adding a new category
         global $USER, $COURSE;
 
@@ -340,12 +288,13 @@ class question_category_object {
             helpbutton("categories_edit", $this->str->editcategory, "quiz");
             echo '</h2>';
             echo '<table width="100%"><tr><td>';
-            $this->output_edit_single_table($category, $page);
+            $this->output_edit_single_table($category);
             echo '</td></tr></table>';
+            //cancel button
             echo '<p><div align="center"><form action="category.php" method="get">
-                <div>
-                <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
-                <input type="hidden" name="id" value="' . $COURSE->id . '" />
+                <div>';
+            echo $this->pageurl->hidden_params_out();
+            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
                 <input type="submit" value="' . $this->str->cancel . '" />
                 </div>
                 </form>
@@ -363,8 +312,8 @@ class question_category_object {
      * @param object category
      * @param int page current page
      */
-    function output_edit_single_table($category, $page=1) {
-        global $USER, $COURSE;
+    function output_edit_single_table($category) {
+        global $USER;
         $publishoptions[0] = get_string("no");
         $publishoptions[1] = get_string("yes");
         $strupdate = get_string('update');
@@ -408,9 +357,8 @@ class question_category_object {
         echo '<p><form action="category.php" method="post">';
         echo '<fieldset class="invisiblefieldset">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-        echo '<input type="hidden" name="id" value="'. $COURSE->id . '" />';
+        echo $this->pageurl->hidden_params_out();
         echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
-        echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
         print_table($edittable);
         echo '</fieldset>';
         echo '</form></p>';
@@ -534,7 +482,7 @@ class question_category_object {
         /// Finally delete the category itself
         if (delete_records("question_categories", "id", $category->id)) {
             notify(get_string("categorydeleted", "quiz", format_string($category->name)), 'notifysuccess');
-            redirect($this->get_url());//always redirect after successful action
+            redirect($this->pageurl->out());//always redirect after successful action
         }
     }
 
@@ -555,7 +503,7 @@ class question_category_object {
             if (! set_field("question_categories", "publish", $publish, "id", $tempcat->id)) {
                 notify("Could not update that category!");
             } else {
-                redirect($this->get_url());//always redirect after successful action
+                redirect($this->pageurl->out());//always redirect after successful action
             }
                 
         }
@@ -595,7 +543,7 @@ class question_category_object {
             error("Could not insert the new question category '$newcategory'", "category.php?id={$newcourse}");
         } else {
             notify(get_string("categoryadded", "quiz", $newcategory), 'notifysuccess');
-            redirect($this->get_url());//always redirect after successful action
+            redirect($this->pageurl->out());//always redirect after successful action
         }
     }
 
@@ -625,7 +573,7 @@ class question_category_object {
             error("Could not update the category '$updatename'", "category.php?id={$courseid}");
         } else {
             notify(get_string("categoryupdated", 'quiz'), 'notifysuccess');
-            redirect($this->get_url());
+            redirect($this->pageurl->out());
         }
     }
 }

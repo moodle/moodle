@@ -109,10 +109,11 @@ class moodle_list{
            
         if ($pageurl === null){
             $this->pageurl = new moodle_url();
+            $this->pageurl->params(array($this->pageparamname => $this->page));
         } else {
             $this->pageurl = $pageurl;
         }
-        $this->pageurl->params(array($this->pageparamname => $this->page));
+        
     }
 
     /**
@@ -244,7 +245,7 @@ class moodle_list{
      */
     function display_page_numbers() {
         if (!empty($this->page) && ($this->pagecount>1)){
-            echo "<div class=\"paging\">".get_string($this->pageparamname).":\n";
+            echo "<div class=\"paging\">".get_string('page').":\n";
             foreach (range(1,$this->pagecount) as $currentpage) {
                 if ($this->page == $currentpage) {
                     echo " $currentpage \n";
@@ -452,7 +453,7 @@ class list_item{
         $this->set_parent($parent);
         $this->attributes = $attributes;
         $parentlistclass = get_class($parent);
-        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page, $parent->pageurl);
+        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page, $parent->pageurl, $parent->pageparamname);
         $this->children->set_parent($this);
     }
     /**
