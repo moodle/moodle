@@ -51,7 +51,6 @@ function scorm_seq_navigation ($scoid,$userid,$request,$attempt=0) {
     $seq->exception = null;
 	$seq->reachable = true;
 	$seq->prevact = true;
-	$seq->constrainedchoice = true;
 
     switch ($request) {
         case 'start_':
@@ -81,7 +80,7 @@ function scorm_seq_navigation ($scoid,$userid,$request,$attempt=0) {
                 if ($sco->parent != '/') {
                     if ($parentsco = scorm_get_parent($sco)) {
 						
-						 if (!isset($parentsco->flow) || ($parentsco->flow == true)) {//I think it's parentsco
+						 if (isset($parentsco->flow) && ($parentsco->flow == true)) {//I think it's parentsco
                             // Current activity is active !
 							if (scorm_seq_is('active',$sco->id,$userid)) {
                                 if ($request == 'continue_') {
@@ -89,7 +88,7 @@ function scorm_seq_navigation ($scoid,$userid,$request,$attempt=0) {
                                     $seq->termination = 'exit';
                                     $seq->sequencing = 'continue';
                                 } else {
-                                    if (isset($parentsco->forwardonly) && ($parentsco->forwardonly == false)) {
+                                    if (!isset($parentsco->forwardonly) || ($parentsco->forwardonly == false)) {
                                         $seq->navigation = true;
                                         $seq->termination = 'exit';
                                         $seq->sequencing = 'previous';
@@ -538,7 +537,7 @@ function scorm_seq_measure_rollup($sco,$userid){
 			if($countedmeasures>0){
 				scorm_seq_set('objectivemeasurestatus',$sco->id,$userid);
 				$val=$totalmeasure/$countedmeasure;
-				scorm_seq_set('normalizedmeasure',$sco->id,$userid,$val);
+				scorm_seq_set('objectivenormalizedmeasure',$sco->id,$userid,$val);
 		        
 			}
 			else{
@@ -549,6 +548,35 @@ function scorm_seq_measure_rollup($sco,$userid){
 
 	}
 	
+}
+
+function scorm_seq_objective_rollup($sco,$userid){
+
+	if($targetobjective->satisfiedbymeasure){
+		scorm_seq_objective_rollup_measure($sco,$userid);
+	}
+	else{
+		if ((scorm_seq_rollup_rule_check($sco,$userid,'incomplete'))|| (scorm_seq_rollup_rule_check($sco,$userid,'completed'))){
+			scorm_seq_objective_rollup_rules($sco,$userid);
+		}
+		else{
+
+            $rolluprules = get_record('scorm_seq_rolluprule','scoid',$sco->id,'userid',$userid);
+            foreach($rolluprules as $rolluprule){
+                $rollupruleconds = get_records('scorm_seq_rolluprulecond','rollupruleid',$rolluprule->id);
+			    foreach($rollupruleconds as $rolluprulecond){
+                 
+                    switch ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
+							
+						   scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid, false);
+
+				        break;
+			        }
+			    }
+
+	
+		}
+	}
 }
 
 function scorm_seq_objective_rollup_measure($sco,$userid){
@@ -596,6 +624,7 @@ function scorm_seq_objective_rollup_measure($sco,$userid){
 			        }
 			    }
 				else{
+
 					scorm_seq_set('objectiveprogressstatus',$sco->id,$userid,false);
 				
 			    }
@@ -659,8 +688,6 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
 		$children = scorm_get_children ($sco);
 
 		foreach($rolluprules as $rolluprule){
-
-			
 
 			foreach ($children as $child){
 
@@ -1106,7 +1133,7 @@ function scorm_seq_continue_sequencing($scoid,$userid,$seq){
 	if ($currentact->parent != '/') {//if the activity is the root and is leaf
 	    $parent = scorm_get_parent ($currentact);
 
-		 if (isset($parent->flow) && ($parent->flow == false)) {
+		 if (!isset($parent->flow) || ($parent->flow == false)) {
 			$seq->delivery = null;
 	        $seq->exception = 'SB.2.7-2';
 	        return $seq;
@@ -1133,7 +1160,7 @@ function scorm_seq_previous_sequencing($scoid,$userid,$seq){
 	$currentact= $seq->currentactivity;
 	if ($currentact->parent != '/') {//if the activity is the root and is leaf
 	    $parent = scorm_get_parent ($activity);
-		if (isset($parent->flow) && ($parent->flow == false)) {
+		if (!isset($parent->flow) || ($parent->flow == false)) {
 			$seq->delivery = null;
 	        $seq->exception = 'SB.2.8-2';
 	        return $seq;
@@ -1228,7 +1255,7 @@ function scorm_seq_flow ($candidate,$direction,$seq,$childrenflag,$userid){
 function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid){//returns the next activity on the tree, traversal direction, control returned to the LTS, (may) exception
     $activity = scorm_get_sco ($activity);
     $parent = scorm_get_parent ($activity);
-   if (isset($parent->flow) && ($parent->flow == false)) {
+   if (!isset($parent->flow) || ($parent->flow == false)) {
 		$seq->deliverable = false;
 	    $seq->exception = 'SB.2.2-1';
 		$seq->nextactivity = $activity;
@@ -1396,7 +1423,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
 		 else{
 			 if (!empty($children){
 				 $activity = scorm_get_sco($activity->id);
-				 if (!isset($parent->flow) || ($parent->flow == true)) {
+				 if (isset($parent->flow) && ($parent->flow == true)) {
 					 $children = scorm_get_children ($activity);
 					 $seq->traversaldir = 'forward';
                      $seq->nextactivity = $children[0];
@@ -1674,8 +1701,8 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 		            return $seq;
 			}
 			if ($constrained == null){
-				if($acti->constrainedchoice){
-					$constrained = $acti;//adlseq:can i write it like another property for the $seq object?
+				if($acti->constrainchoice == true){
+					$constrained = $acti;
 				}
 			}
 		}
@@ -1722,7 +1749,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 			        return $seq;
 		        }
                 $act = scorm_get_sco($act->id);
-			    if(scorm_seq_is('active',$act->id,$userid) && ($act->id != $comancestor->id && $act->preventactivation)){//adlseq:can i write it like another property for the $seq object?
+			    if(scorm_seq_is('active',$act->id,$userid) && ($act->id != $comancestor->id && ($act->preventactivation == true))){
 				    $seq->delivery = null;
 		            $seq->exception = 'SB.2.9-6';
 		            return $seq;
@@ -1733,7 +1760,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 		else{
 			foreach ($comtarget as $act){
 				$act = scorm_get_sco($act->id);
-			    if(scorm_seq_is('active',$act->id,$userid) && ($act->id != $comancestor->id && $act->preventactivation)){
+			    if(scorm_seq_is('active',$act->id,$userid) && ($act->id != $comancestor->id && ($act->preventactivation==true))){
 				    $seq->delivery = null;
 		            $seq->exception = 'SB.2.9-6';
 		            return $seq;
@@ -1851,7 +1878,7 @@ function scorm_seq_choice_activity_traversal($activity,$userid,$seq,$direction){
 	if($direction == 'backward'){
 		$parentsco = scorm_get_parent($activity);
 		if($parentsco!= null){
-			 if (!isset($parentsco->forwardonly) || ($parentsco->forwardonly == true)){
+			 if (isset($parentsco->forwardonly) && ($parentsco->forwardonly == true)){
 				 $seq->reachable = false;
 			     $seq->exception = 'SB.2.4-2';
 		         return $seq;
