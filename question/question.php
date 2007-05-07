@@ -51,7 +51,6 @@ if (!$category = get_record('question_categories', 'id', $question->category)) {
 }
 if (!$returnurl) {
     $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$category->course}";
-    $SESSION->fromurl = $returnurl;
 }
 
 // Validate the question type.
@@ -99,7 +98,7 @@ if ($mform->is_cancelled()){
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
-            redirect($SESSION->returnurl);
+            redirect($returnurl);
         }
         die;
     } else {

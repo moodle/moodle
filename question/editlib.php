@@ -321,7 +321,10 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         
         // edit, hide, delete question, using question capabilities, not quiz capabilieies
         if ($canedit) {
-            echo "<a title=\"$stredit\" href=\"$CFG->wwwroot/question/question.php?id=$question->id\"><img
+            $questionparams = (($cm !== null)? array('cmid' => $cm->id) : array()) +
+                                (array('returnurl' => $pageurl->out(), 'id'=>$question->id));
+            $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+            echo "<a title=\"$stredit\" href=\"".$questionurl->out()."\"><img
                     src=\"$CFG->pixpath/t/edit.gif\" alt=\"$stredit\" /></a>&nbsp;";
             // hide-feature
             if($question->hidden) {
