@@ -14,9 +14,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
 
 $returnurl = optional_param('returnurl', 0, PARAM_URL);
-if (!$returnurl && isset($SESSION->fromurl)) {
-    $returnurl = $SESSION->fromurl;
-}
+
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
 $cmid = optional_param('cmid', 0, PARAM_INT);

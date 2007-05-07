@@ -20,7 +20,6 @@
     }
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
   
-    $SESSION->returnurl = $FULLME;
 
     $streditingquestions = get_string('editquestions', "quiz");
     if ($cm!==null) {

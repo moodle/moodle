@@ -72,7 +72,6 @@
         $quiz->grades = quiz_get_all_question_grades($quiz);
     }
 
-    $SESSION->returnurl = $FULLME;
 
 /// Now, check for commands on this page and modify variables as necessary
 
