@@ -109,10 +109,10 @@ class moodle_list{
            
         if ($pageurl === null){
             $this->pageurl = new moodle_url();
-            $this->pageurl->params(array($this->pageparamname => $this->page));
         } else {
             $this->pageurl = $pageurl;
         }
+        $this->pageurl->params(array($this->pageparamname => $this->page));
     }
 
     /**
