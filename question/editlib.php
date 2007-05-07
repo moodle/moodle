@@ -191,7 +191,6 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
     $straction = get_string("action");
     $strrestore = get_string('restore');
 
-    $straddtoquiz = get_string("addtoquiz", "quiz");
     $strtype = get_string("type", "quiz");
     $strcreatemultiple = get_string("createmultiple", "quiz");
     $strpreview = get_string("preview","quiz");
@@ -210,10 +209,8 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
     $canedit = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course));
 
     if ($cm AND $cm->modname == 'quiz') {
-        $editingquiz = has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cm->id));
         $quizid = $cm->instance;
     } else {
-        $editingquiz = false;
         $quizid = 0;
     }
     
@@ -308,12 +305,10 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         
         echo "<tr>\n<td style=\"white-space:nowrap;\" $nameclass>\n";
         
-        // add to quiz
-        if ($editingquiz) {
-            echo "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
-                  src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+        if (function_exists('module_specific_actions')) {
+            echo module_specific_actions($pageurl, $question->id, $cm->id);
         }
-        
+       
         // preview
         link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quizid, 'questionpreview',
                 "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
@@ -377,9 +372,8 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
      '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
 
-    if ($editingquiz) {
-        echo "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
-        echo '</td><td>';
+    if (function_exists('module_specific_buttons')) {
+        echo module_specific_buttons($cm->id);
     }
     // print delete and move selected question
     if ($canedit) {
@@ -389,20 +383,8 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
     }
     echo "</td></tr></table>";
 
-    // add random question
-    if ($editingquiz) {
-        for ($i = 1;$i <= min(10, $totalnumber); $i++) {
-            $randomcount[$i] = $i;
-        }
-        for ($i = 20;$i <= min(100, $totalnumber); $i += 10) {
-            $randomcount[$i] = $i;
-        }
-        echo '<br />';
-        print_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
-        echo '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-        echo "<input type=\"hidden\" name=\"categoryid\" value=\"$category->id\" />";
-        echo ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
-        helpbutton('random', get_string('random', 'quiz'), 'quiz');
+    if (function_exists('module_specific_controls')) {
+        echo module_specific_controls($totalnumber, $recurse, $category->id, $cm->id);
     }
     echo '</fieldset>';
     echo "</form>\n";

@@ -29,7 +29,62 @@
     require_once("../../config.php");
     require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 
-
+    /**
+     * Callback function called from question_list() function (which is called from showbank()
+     * Displays action icon as first action for each question.
+     */
+    function module_specific_actions($pageurl, $questionid, $cmid){
+        global $CFG;
+        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
+            $straddtoquiz = get_string("addtoquiz", "quiz");
+            $out = "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$questionid&amp;sesskey=".sesskey()."\"><img
+                  src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+            return $out;
+        } else {
+            return '';
+        }
+    }
+    /**
+     * Callback function called from question_list() function (which is called from showbank()
+     * Displays button in form with checkboxes for each question.
+     */
+    function module_specific_buttons($cmid){
+        global $THEME;
+        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
+            $straddtoquiz = get_string("addtoquiz", "quiz");
+            $out = "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
+            $out .= '</td><td>';
+            return $out;
+        } else {
+            return '';
+        }
+    }
+    
+    
+    /**
+     * Callback function called from question_list() function (which is called from showbank()
+     * Displays button in form with checkboxes for each question.
+     */
+    function module_specific_controls($totalnumber, $recurse, $categoryid, $cmid){
+        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
+            for ($i = 1;$i <= min(10, $totalnumber); $i++) {
+                $randomcount[$i] = $i;
+            }
+            for ($i = 20;$i <= min(100, $totalnumber); $i += 10) {
+                $randomcount[$i] = $i;
+            }
+            $out = '<br />';
+            $out .= get_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
+            $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
+            $out .= "<input type=\"hidden\" name=\"categoryid\" value=\"$categoryid\" />";
+            $out .= ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
+            $out .= helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, '', true);
+            return $out;
+        } else {
+            return '';
+        }
+    }       
+        
     list($thispageurl, $courseid, $cmid, $cm, $quiz, $pagevars) = question_edit_setup(true);
 
     //these params are only passed from page request to request while we stay on this page
