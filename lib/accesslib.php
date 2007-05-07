@@ -1344,7 +1344,11 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
                 $prohibits[$capability][$context->id] = false;
                 return false;
             }
-            $parent = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+            if ($block->pagetype == 'course-view') {
+                $parent = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
+            } else {
+                $parent = get_context_instance(CONTEXT_SYSTEM); 
+            }           
             $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
             return $prohibits[$capability][$context->id];
         break;
@@ -2982,12 +2986,19 @@ function get_parent_contexts($context) {
             if (!$block = get_record('block_instance','id',$context->instanceid)) {
                 return array();
             }
-            if ($parent = get_context_instance(CONTEXT_COURSE, $block->pageid)) {
+            // fix for MDL-9656, block parents are not necessarily courses
+            if ($block->pagetype == 'course-view') {
+                $parent = get_context_instance(CONTEXT_COURSE, $block->pageid);
+            } else {
+                $parent = get_context_instance(CONTEXT_SYSTEM); 
+            }                       
+            
+            if ($parent) {
                 $res = array_merge(array($parent->id), get_parent_contexts($parent));
                 $pcontexts[$context->id] = $res;
                 return $res;
             } else {
-                return array();
+                return array();              
             }
         break;
 
@@ -3879,7 +3890,6 @@ function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
         }
     }  
 }
-
 
 /**
  * rebuild context_rel table without deleting
