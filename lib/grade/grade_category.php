@@ -107,12 +107,27 @@ class grade_category extends grade_object {
     var $all_children;
 
     /**
+     * An associated grade_item object, with itemtype=category, used to calculate and cache a set of grade values
+     * for this category.
+     * @var object $grade_item
+     */
+    var $grade_item;
+
+    /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
+     * @param boolean $fetch Whether or not to fetch the corresponding row from the DB.
+     * @param object $grade_item The associated grade_item object can be passed during construction.
      */
-    function grade_category($params=NULL, $fetch=true) {
+    function grade_category($params=NULL, $fetch=true, $grade_item=NULL) {
         $this->grade_object($params, $fetch);
+        if (!empty($grade_item) && $grade_item->itemtype == 'category') {
+            $this->grade_item = $grade_item;
+            if (empty($this->grade_item->iteminstance)) {
+                $this->grade_item->iteminstance = $this->id;
+                $this->grade_item->update();
+            }
+        }
     }
 
     
@@ -169,6 +184,7 @@ class grade_category extends grade_object {
      * and path for this object, and update the record accordingly. The reason why this must
      * be done here instead of in the constructor, is that they both need to know the record's
      * id number, which only gets created at insertion time.      
+     * This method also creates an associated grade_item if this wasn't done during construction.
      */
     function insert() {
         $result = parent::insert();
@@ -183,6 +199,15 @@ class grade_category extends grade_object {
         }
         
         $this->update();
+        
+        if (empty($this->grade_item)) {
+            $grade_item = new grade_item();
+            $grade_item->iteminstance = $this->id;
+            $grade_item->itemtype = 'category';
+            $result = $result & $grade_item->insert();
+            $this->grade_item = $grade_item;
+        }
+
         return $result;
     }
     
@@ -220,14 +245,15 @@ class grade_category extends grade_object {
         }
         
         $childrentype = $this->get_childrentype();
-
+        
         if ($childrentype == 'grade_item') {
-            $children = get_records('grade_items', 'categoryid', $this->id, 'id');
+            $children = get_records('grade_items', 'categoryid', $this->id);
             // No need to proceed with recursion
             $children_array = $this->children_to_array($children, $arraytype, 'grade_item');
             $this->children = $this->children_to_array($children, 'flat', 'grade_item');
         } elseif ($childrentype == 'grade_category') {
             $children = get_records('grade_categories', 'parent', $this->id, 'id');
+            
             if ($depth == 1) {
                 $children_array = $this->children_to_array($children, $arraytype, 'grade_category');
                 $this->children = $this->children_to_array($children, 'flat', 'grade_category');
@@ -321,6 +347,7 @@ class grade_category extends grade_object {
         if (empty($this->children)) {
             $count_item_children = count_records('grade_items', 'categoryid', $this->id);
             $count_cat_children = count_records('grade_categories', 'parent', $this->id);
+            
             if ($count_item_children > 0) {
                 return 'grade_item';
             } elseif ($count_cat_children > 0) {
@@ -330,6 +357,16 @@ class grade_category extends grade_object {
             }
         }
         return get_class($children[0]);
+    }
+
+    /**
+     * Retrieves from DB, instantiates and saves the associated grade_item object.
+     * @return object Grade_item
+     */
+    function load_grade_item() {
+        $params = get_record('grade_items', 'categoryid', $this->id, 'itemtype', 'category');
+        $this->grade_item = new grade_item($params);
+        return $this->grade_item;
     }
 }
 

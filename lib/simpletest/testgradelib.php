@@ -38,17 +38,7 @@ global $CFG;
 require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
-
-/**
- * A cleanup of the tables is a good idea before we start, in case the last unit test
- * crashed before running its tearDown method. Be careful because ANY record matching
- * this search (%unittest%) will be deleted! Maybe a good idea to switch this off in
- * production environment.
- */
-delete_records_select('grade_categories', 'fullname LIKE "%unittest%"');
-delete_records_select('grade_items', 'itemname LIKE "%unittest%"');
-delete_records_select('grade_calculation', 'calculation LIKE "%unittest%"');
-delete_records_select('scale', 'name LIKE "%unittest%"');
+require_once($CFG->libdir . '/ddllib.php');
 
 /**
  * Here is a brief explanation of the test data set up in these unit tests.
@@ -87,32 +77,37 @@ class gradelib_test extends UnitTestCase {
     var $userid = 1;
 
     /**
-     * Create temporary entries in the database for these tests.
-     * These tests have to work no matter the data currently in the database
-     * (meaning they should run on a brand new site). This means several items of
-     * data have to be artificially inseminated (:-) in the DB.
+     * Create temporary test tables and entries in the database for these tests.
+     * These tests have to work on a brand new site. 
+     * Override $CFG->prefix while these tests run.
      */
     function setUp() {
+        global $CFG;
+        global $db;
+        // $db->debug=true;
+        $CFG->old_prefix = $CFG->prefix;
+        $CFG->prefix .= 'unittest_';
         foreach ($this->tables as $table) {
+            execute_sql("CREATE TABLE IF NOT EXISTS {$CFG->prefix}$table LIKE {$CFG->old_prefix}$table", false);
             $function = "load_$table";
             $this->$function();
         } 
     }
     
     /**
-     * Delete temporary entries from the database
+     * Drop test tables from DB.
+     * Restore original $CFG->prefix.
      */
     function tearDown() {
+        global $CFG;
         foreach ($this->tables as $table) {
-            foreach ($this->$table as $object) {
-                delete_records($table, 'id', $object->id);
-            }
-
+            execute_sql("TRUNCATE TABLE {$CFG->prefix}$table", false);
             // If data has been entered in DB for any table, unset corresponding array
             if (count($this->$table) > 0) {
                 unset ($this->$table);
             }
         } 
+        $CFG->prefix = $CFG->old_prefix;
     }
    
     /**
@@ -222,7 +217,51 @@ class gradelib_test extends UnitTestCase {
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
             $this->grade_items[] = $grade_item;
-        } 
+        }
+
+        // Load grade_items associated with the 3 categories
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->courseid;
+        $grade_item->iteminstance = $this->grade_categories[0]->id;
+        $grade_item->itemname = 'unittestgradeitemcategory1';
+        $grade_item->itemtype = 'category';
+        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->timecreated = mktime();
+        $grade_item->timemodified = mktime();
+
+        if ($grade_item->id = insert_record('grade_items', $grade_item)) {
+            $this->grade_items[] = $grade_item;
+        }
+        
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->courseid;
+        $grade_item->iteminstance = $this->grade_categories[1]->id;
+        $grade_item->itemname = 'unittestgradeitemcategory2';
+        $grade_item->itemtype = 'category';
+        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->timecreated = mktime();
+        $grade_item->timemodified = mktime();
+
+        if ($grade_item->id = insert_record('grade_items', $grade_item)) {
+            $this->grade_items[] = $grade_item;
+        }
+
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->courseid;
+        $grade_item->iteminstance = $this->grade_categories[2]->id;
+        $grade_item->itemname = 'unittestgradeitemcategory3';
+        $grade_item->itemtype = 'category';
+        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->timecreated = mktime();
+        $grade_item->timemodified = mktime();
+
+        if ($grade_item->id = insert_record('grade_items', $grade_item)) {
+            $this->grade_items[] = $grade_item;
+        }
+
     }
 
     /**
@@ -644,49 +683,64 @@ class gradelib_test extends UnitTestCase {
 // API FUNCTIONS
 
     function test_grade_get_items() {
-        $grade_items = grade_get_items($this->courseid);
+        if (get_class($this) == 'gradelib_test') { 
+            $grade_items = grade_get_items($this->courseid);
 
-        $this->assertTrue(is_array($grade_items)); 
-        $this->assertEqual(count($grade_items), 3);
+            $this->assertTrue(is_array($grade_items)); 
+            $this->assertEqual(count($grade_items), 6);
+        }
     }
     
     function test_grade_create_item() {
-        $params = new stdClass();
+        if (get_class($this) == 'gradelib_test') { 
+            $params = new stdClass();
 
-        $params->courseid = $this->courseid;
-        $params->categoryid = $this->grade_categories[0]->id;
-        $params->itemname = 'unittestgradeitem4';
-        $params->itemtype = 'mod';
-        $params->itemmodule = 'database';
-        $params->iteminstance = 4;
-        $params->iteminfo = 'Grade item used for unit testing';
-        $params->timecreated = mktime();
-        $params->timemodified = mktime();
+            $params->courseid = $this->courseid;
+            $params->categoryid = $this->grade_categories[0]->id;
+            $params->itemname = 'unittestgradeitem4';
+            $params->itemtype = 'mod';
+            $params->itemmodule = 'database';
+            $params->iteminstance = 4;
+            $params->iteminfo = 'Grade item used for unit testing';
+            $params->timecreated = mktime();
+            $params->timemodified = mktime();
 
-        $params->id = grade_create_item($params);
-        $last_grade_item = end($this->grade_items);
+            $params->id = grade_create_item($params);
+            $last_grade_item = end($this->grade_items);
 
-        $this->assertEqual($params->id, $last_grade_item->id + 1);
-        $this->grade_items[] = $params;
+            $this->assertEqual($params->id, $last_grade_item->id + 1);
+            $this->grade_items[] = $params;
+        }
     }
 
     function test_grade_create_category() {
-        $grade_category = new stdClass();
-        $grade_category->timecreated = mktime();
-        $grade_category->timemodified = mktime();
+        if (get_class($this) == 'gradelib_test') { 
+            $grade_category = new stdClass();
+            $grade_category->timecreated = mktime();
+            $grade_category->timemodified = mktime();
         
-        $grade_category->id = grade_create_category($this->courseid, 'unittestcategory4', $this->grade_items, GRADE_AGGREGATE_MEAN);
-        $last_grade_category = end($this->grade_categories);
+            $items = array(new grade_item(), new grade_item());
+            
+            $grade_category->id = grade_create_category($this->courseid, 'unittestcategory4', $items, GRADE_AGGREGATE_MEAN);
+            
+            $last_grade_category = end($this->grade_categories);
+            $this->assertEqual($grade_category->id, $last_grade_category->id + 1);
 
-        $this->assertEqual($grade_category->id, $last_grade_category->id + 1);
-        $this->grade_categories[] = $grade_category;
+            $db_grade_category = get_record('grade_categories', 'id', $grade_category->id);
+            $db_grade_category = new grade_category($db_grade_category);
+            $db_grade_category->load_grade_item();
+            $this->grade_categories[] = $db_grade_category;
+            $this->grade_items[] = $db_grade_category->grade_item;
+        }
     }
 
     function test_grade_is_locked() {
-        $grade_item = $this->grade_items[0];
-        $this->assertFalse(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
-        $grade_item = $this->grade_items[1];
-        $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
+        if (get_class($this) == 'gradelib_test') { 
+            $grade_item = $this->grade_items[0];
+            $this->assertFalse(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
+            $grade_item = $this->grade_items[1];
+            $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
+        }
     }
 }
 

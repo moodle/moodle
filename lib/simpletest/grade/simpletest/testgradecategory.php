@@ -40,12 +40,13 @@ class grade_category_test extends gradelib_test {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
-        $params->fullname = 'unittestcategory4';
+        $params->fullname = 'unittestcategory8';
 
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
-        $this->grade_categories[] = $grade_category;
 
+        $this->grade_categories[] = $grade_category;
+        $this->grade_items[] = $grade_category->grade_item;
         $this->assertEqual($params->courseid, $grade_category->courseid);
         $this->assertEqual($params->fullname, $grade_category->fullname);
         $this->assertEqual(1, $grade_category->depth);
@@ -58,6 +59,7 @@ class grade_category_test extends gradelib_test {
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
         $this->grade_categories[] = $grade_category;
+        $this->grade_items[] = $grade_category->grade_item;
         $this->assertEqual(2, $grade_category->depth);
         $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path); 
         $parentpath = $grade_category->path;
@@ -68,6 +70,7 @@ class grade_category_test extends gradelib_test {
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
         $this->grade_categories[] = $grade_category;
+        $this->grade_items[] = $grade_category->grade_item;
         $this->assertEqual(3, $grade_category->depth);
         $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path); 
     }
@@ -92,7 +95,7 @@ class grade_category_test extends gradelib_test {
         $this->assertTrue(!empty($grade_category->timecreated));
         $this->assertTrue(!empty($grade_category->timemodified));
         $this->grade_categories[] = $grade_category; 
-
+        $this->grade_items[] = $grade_category->grade_item;
     }
 
     function test_grade_category_update() {
