@@ -8,7 +8,7 @@
  */
 
 // number of categories to display on page
-define("QUESTION_PAGE_LENGTH", 2);
+define("QUESTION_PAGE_LENGTH", 20);
 
 require_once("$CFG->libdir/listlib.php");
 
