@@ -62,91 +62,7 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
-class qformat_webct_modified_calculated_qtype extends question_calculated_qtype {
-// We need to make a modification of this qtype so that
-// it will be able to save webct style calculated questions
-// The difference between webct and Moodle is that webct
-// pass the individual data items as part of the question
-// while Moodle core treat them separately
 
-    function save_question_options($question, $options = false) {
-
-        if (false !== $options) {
-            // function is called from save_question...
-            return parent::save_question_options($question, $options);
-        }
-
-        // function is called from format.php...
-
-        $datasetdatas = $question->datasets;
-
-        // Set dataset
-        $form->dataset = array();
-        foreach ($datasetdatas as $datasetname => $notimportant) {
-            // Literal  - question local - name
-            $form->dataset[] = "1-0-$datasetname";
-        }
-
-        $subtypeoptions->answers = $question->answers;
-        $subtypeoptions->units = $question->units;
-
-        unset($question->datasets);
-        unset($question->answers);
-        unset($question->units);
-
-        $this->save_question($question, $form, 'not used', $subtypeoptions);
-
-        // Save dataset options and items...
-
-        // Get datasetdefinitions
-        global $CFG;
-        $datasetdefs = get_records_sql(
-                "SELECT a.*
-                   FROM {$CFG->prefix}question_dataset_definitions a,
-                        {$CFG->prefix}question_datasets b
-                  WHERE a.id = b.datasetdefinition
-                    AND b.question = '$question->id' ");
-
-        foreach ($datasetdefs as $datasetdef) {
-            $datasetdata = $datasetdatas[$datasetdef->name];
-
-            // Set items and retrieve ->itemcout
-            $item->definition = $datasetdef->id;
-            for ($item->itemnumber=1 ; isset($datasetdata->items["$item->itemnumber"]) ; ++$item->itemnumber) {
-                $item->value = $datasetdata->items["$item->itemnumber"];
-                if (!insert_record('question_dataset_items', $item)) {
-                    error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
-                }
-            }
-            $datasetdef->itemcount = $item->itemnumber - 1;
-
-            // Retrieve ->options
-            if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)
-                    && $datasetdata->min <= $datasetdata->max) {
-                if (is_numeric($datasetdata->dec)) {
-                    $dec = max(0, ceil($datasetdata->dec));
-                } else {
-                    $dec = 1; // A try
-                }
-
-                $datasetdef->options = "uniform:$datasetdata->min:$datasetdata->max:$dec";
-            } else {
-                $datasetdef->options = '';
-            }
-
-            // Save definition
-            if ($datasetdef->itemcount || $datasetdef->options) {
-                if (!update_record('question_dataset_definitions', $datasetdef)) {
-                    error("Unable to update dataset definition $datasetdef->name on question $question->id");
-                }
-            }
-        }
-
-        // Done
-        return true;
-    }
-}
-$QTYPES[CALCULATED] = new qformat_webct_modified_calculated_qtype();
 
 function qformat_webct_convert_formula($formula) {
 
@@ -250,7 +166,8 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-        $qtypecalculated = new qformat_webct_modified_calculated_qtype();
+   global $QTYPES ;
+      //  $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -309,11 +226,22 @@ class qformat_webct extends qformat_default {
 
             if (isset($feedbacktext) and is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
-                    $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
+                   $question->feedback[$currentchoice] .= addslashes(trim($feedbacktext));
                     unset($feedbacktext);
                 }
                  else {
                     $feedbacktext .= str_replace('\:', ':', $line);
+                    continue;
+                }
+            }
+
+            if (isset($generalfeedbacktext) and is_string($generalfeedbacktext)) {
+                if (ereg("^:",$line)) {
+                   $question->tempgeneralfeedback= addslashes(trim($generalfeedbacktext));
+                    unset($generalfeedbacktext);
+                }
+                 else {
+                    $generalfeedbacktext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
@@ -350,11 +278,22 @@ class qformat_webct extends qformat_default {
                        $QuestionOK = FALSE;
                     }
                     else {
-                        // Create empty feedback array
-                        $question->feedback = array();
+                        // Create empty feedback array                      
                         foreach ($question->answer as $key => $dataanswer) {
-                            $question->feedback[$key] = '';
+                             $question->feedback[$key] = ''.$question->feedback[$key];
                         }
+                        // this tempgeneralfeedback allows the code to work with versions from 1.6 to 1.9
+                        // when question->generalfeedback is undefined, the webct feedback is added to each answer
+                        if (isset($question->tempgeneralfeedback)){
+                            if (isset($question->generalfeedback)) {
+                                $question->generalfeedback = $question->tempgeneralfeedback;
+                            } else {  
+                                foreach ($question->answer as $key => $dataanswer) {
+                                    $question->feedback[$key] = $question->tempgeneralfeedback.'<br/>'.$question->feedback[$key];
+                                }
+                            }
+                            unset($question->tempgeneralfeedback);   
+                        }   
                         $maxfraction = -1;
                         $totalfraction = 0;
                         foreach($question->fraction as $fraction) {
@@ -383,8 +322,7 @@ class qformat_webct extends qformat_default {
                                     }
                                 } else {
                                     $totalfraction = round($totalfraction,2);
-                                    if ($totalfraction != 1) {
-                                echo "<p>$totalfraction</p>";
+                                    if ($totalfraction != 1) {                               
                                         $totalfraction = $totalfraction * 100;
                                         $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsaddwrong", "quiz", $totalfraction);
                                         $QuestionOK = FALSE;
@@ -394,11 +332,15 @@ class qformat_webct extends qformat_default {
 
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
-                                    if ($formulaerror =qtype_calculated_find_formula_errors($answer->answer)) {
+                                    if ($formulaerror =qtype_calculated_find_formula_errors($answer)) { //$QTYPES['calculated']->
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
                                 }
+                                foreach ($question->dataset as $dataset) {
+                                    $dataset->itemcount=count($dataset->datasetitem);
+                                }
+                                $question->import_process=TRUE ;
                                 break;
 
                             default:
@@ -406,8 +348,8 @@ class qformat_webct extends qformat_default {
                         }
                     }
 
-                    if ($QuestionOK) {
-                        // $question->feedback = array();
+                    if ($QuestionOK) {                        
+                       // echo "<pre>"; print_r ($question);
                         $questions[] = $question;    // store it
                         unset($question);            // and prepare a new one
                         $question = $this->defaultquestion();
@@ -421,6 +363,7 @@ class qformat_webct extends qformat_default {
             if (eregi("^:TYPE:MC:1(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with only one good answer
                 $question = $this->defaultquestion();
+                $question->feedback = array();
                 $question->qtype = MULTICHOICE;
                 $question->single = 1;        // Only one answer is allowed
                 $ignore_rest_of_question = FALSE;
@@ -430,6 +373,7 @@ class qformat_webct extends qformat_default {
             if (eregi("^:TYPE:MC:N(.*)",$line,$webct_options)) {
                 // Multiple Choice Question with several good answers
                 $question = $this->defaultquestion();
+                $question->feedback = array();
                 $question->qtype = MULTICHOICE;
                 $question->single = 0;        // Many answers allowed
                 $ignore_rest_of_question = FALSE;
@@ -439,6 +383,7 @@ class qformat_webct extends qformat_default {
             if (eregi("^:TYPE:S",$line)) {
                 // Short Answer Question
                 $question = $this->defaultquestion();
+                $question->feedback = array();
                 $question->qtype = SHORTANSWER;
                 $question->usecase = 0;       // Ignore case
                 $ignore_rest_of_question = FALSE;
@@ -447,10 +392,12 @@ class qformat_webct extends qformat_default {
 
             if (eregi("^:TYPE:C",$line)) {
                 // Calculated Question
-                $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
+           /*     $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
                 unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
-             /*   $question->qtype = CALCULATED;
+             */
+                 $question = $this->defaultquestion();
+                $question->qtype = CALCULATED;
                 $question->answers = array(); // No problem as they go as :FORMULA: from webct
                 $question->units = array();
                 $question->datasets = array();
@@ -458,9 +405,10 @@ class qformat_webct extends qformat_default {
                 // To make us pass the end-of-question sanity checks
                 $question->answer = array('dummy');
                 $question->fraction = array('1.0');
+                $question->feedback = array();
 
                 $currentchoice = -1;
-                $ignore_rest_of_question = FALSE;*/
+                $ignore_rest_of_question = FALSE;
                 continue;
             }
 
@@ -468,6 +416,7 @@ class qformat_webct extends qformat_default {
                 // Match Question
                 $question = $this->defaultquestion();
                 $question->qtype = MATCH;
+                $question->feedback = array();
                 $ignore_rest_of_question = FALSE;         // match question processing is not debugged
                 continue;
             }
@@ -521,18 +470,20 @@ class qformat_webct extends qformat_default {
                 $datasetvalue = qformat_webct_convert_formula($webct_options[4]);
                 switch ($webct_options[2]) {
                     case 'MIN':
-                        $question->datasets[$datasetname]->min = $datasetvalue;
+                        $question->dataset[$datasetname]->min = $datasetvalue;
                         break;
                     case 'MAX':
-                        $question->datasets[$datasetname]->max = $datasetvalue;
+                        $question->dataset[$datasetname]->max = $datasetvalue;
                         break;
                     case 'DEC':
                         $datasetvalue = floor($datasetvalue); // int only!
-                        $question->datasets[$datasetname]->dec = max(0, $datasetvalue);
+                        $question->dataset[$datasetname]->length = max(0, $datasetvalue);
                         break;
                     default:
                         // The VAL case:
-                        $question->datasets[$datasetname]->items[$webct_options[3]] = $datasetvalue;
+                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]] = new stdClass();
+                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]]->itemnumber = $webct_options[3];
+                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]]->value  = $datasetvalue;
                         break;
                 }
                 continue;
@@ -562,19 +513,23 @@ class qformat_webct extends qformat_default {
             if (eregi('^:FORMULA:(.*)', $line, $webct_options)) {
                 // Answer for a CALCULATED question
                 ++$currentchoice;
-                $question->answers[$currentchoice]->answer =
+                $question->answers[$currentchoice] =
                         qformat_webct_convert_formula($webct_options[1]);
 
                 // Default settings:
-                $question->answers[$currentchoice]->fraction = 1.0;
-                $question->answers[$currentchoice]->tolerance = 0.0;
-                $question->answers[$currentchoice]->tolerancetype = 2; // nominal (units in webct)
-                $question->answers[$currentchoice]->feedback = '';
-                $question->answers[$currentchoice]->correctanswerlength = 4;
+ 								$question->fraction[$currentchoice] = 1.0;
+								$question->tolerance[$currentchoice] = 0.0;
+								$question->tolerancetype[$currentchoice] = 2; // nominal (units in webct)
+								$question->feedback[$currentchoice] = '';
+								$question->correctanswerlength[$currentchoice] = 4;
 
-                $datasetnames = $qtypecalculated->find_dataset_names($webct_options[1]);
+                $datasetnames = $QTYPES[CALCULATED]->find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
-                    $question->datasets[$datasetname]->items = array();
+                    $question->dataset[$datasetname] = new stdClass();
+                    $question->dataset[$datasetname]->datesetitem = array();
+                    $question->dataset[$datasetname]->name = $datasetname ; 
+                    $question->dataset[$datasetname]->distribution = 'uniform'; 
+                    $question->dataset[$datasetname]->status ='private';
                 }
                 continue;
             }
@@ -597,24 +552,38 @@ class qformat_webct extends qformat_default {
                 $currentchoice=$webct_options[1];
                 continue;
             }
+            if (eregi("^:FEEDBACK([0-9]+):?",$line,$webct_options)) {
+                $generalfeedbacktext="";               // Start gathering next lines
+                $currentchoice=$webct_options[1];
+                continue;
+            }
+            if (eregi('^:FEEDBACK:(.*)',$line,$webct_options)) {
+                $generalfeedbacktext="";               // Start gathering next lines
+                continue;
+            }
+            if (eregi('^:LAYOUT:(.*)',$line,$webct_options)) {
+            //    ignore  since layout in question_multichoice  is no more used in moodle       
+            //    $webct_options[1] contains either vertical or horizontal ;
+                continue;
+            }
 
             if (isset($question->qtype ) && CALCULATED == $question->qtype && eregi('^:ANS-DEC:([1-9][0-9]*)', $line, $webct_options)) {
                 // We can but hope that this always appear before the ANSTYPE property
-                $question->answers[$currentchoice]->correctanswerlength = $webct_options[1];
+                $question->correctanswerlength[$currentchoice] = $webct_options[1];
                 continue;
             }
 
             if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi("^:TOL:($webctnumberregex)", $line, $webct_options)) {
                 // We can but hope that this always appear before the TOL property
-                $question->answers[$currentchoice]->tolerance =
+                $question->tolerance[$currentchoice] =
                         qformat_webct_convert_formula($webct_options[1]);
                 continue;
             }
 
             if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi('^:TOLTYPE:percent', $line)) {
                 // Percentage case is handled as relative in Moodle:
-                $question->answers[$currentchoice]->tolerance /= 100;
-                $question->answers[$currentchoice]->tolerancetype = 1; // Relative
+                $question->tolerance[$currentchoice]  /= 100;
+                $question->tolerancetype[$currentchoice] = 1; // Relative
                 continue;
             }
 
@@ -647,11 +616,11 @@ class qformat_webct extends qformat_default {
             }
 
             if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi('^:ANSTYPE:dec', $line)) {
-                // Houston - we have a problem
-                // Moodle does not support this - we try something defensively by
-                // setting the correct answer length to 5, it shoud be enough for
-                // most cases
-                $question->answers[$currentchoice]->correctanswerlength = 5;
+                $question->correctanswerformat[$currentchoice]='1';
+                continue;
+            }
+            if (isset($question->qtype )&& CALCULATED == $question->qtype && eregi('^:ANSTYPE:sig', $line)) {
+                $question->correctanswerformat[$currentchoice]='2';
                 continue;
             }
         }
