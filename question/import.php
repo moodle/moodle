@@ -57,7 +57,7 @@
 
 
 
-    if ($category = get_record("question_categories", "id", $pagevars['cat'])) {
+    if (!$category = get_record("question_categories", "id", $pagevars['cat'])) {
         // if no valid category was given, use the default category
         print_error('nocategory','quiz');
     }
