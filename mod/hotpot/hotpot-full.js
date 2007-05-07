@@ -2214,6 +2214,10 @@ function hpNewFunction(f, a, s) {
                 // special fix for "CheckAnswers" in JCloze
                 s = s.replace(/TotalChars-State\[i\]\.HintsAndChecks/g, '(TotalChars-State[i].HintsAndChecks)');
             }
+            if (s.indexOf('TotalChars-GapList[x][1].HintsAndChecks/')>=0) {
+                // special fix for "CheckAnswers" in JCloze (Find-It)
+                s = s.replace(/TotalChars-GapList\[x\]\[1\]\.HintsAndChecks/g, '(TotalChars-GapList[x][1].HintsAndChecks)');
+            }
             if (s.indexOf('CorrectLetters-Penalties/')>=0) {
                 // special fix for "CheckAnswers" in JMatch
                 s = s.replace(/CorrectLetters-Penalties/g, '(CorrectLetters-Penalties)');
@@ -2231,7 +2235,7 @@ function hpNewFunction(f, a, s) {
             s = s.replace(/\\\[/g, '/\\[');
             s = s.replace(/\\\]/g, '\\]/g');
         }
-        if (s.indexOf('for (i')>=0) {
+        if (s.indexOf('for (i')>=0 || s.indexOf('for (x')>=0) {
             s = s.replace(/for \(/g, 'for (var ');
         }
         eval('window.' + f + '=function(' + getArgsStr(a) + '){' + s + '}');
