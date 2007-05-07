@@ -124,7 +124,7 @@ function question_category_form($course, $pageurl, $current, $recurse=1, $showhi
     $strshow = get_string("show", "quiz");
     $streditcats = get_string("editcategories", "quiz");
 
-    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;catchange=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
+    popup_form ("edit.php?".$pageurl->get_query_string()."&amp;category=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
 
     echo '<form method="post" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
@@ -413,7 +413,7 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
  * move           Moves a question to a different category
  * deleteselected Deletes the selected questions from the category
  * Other actions:
- * catchange      Chooses the category
+ * category      Chooses the category
  * displayoptions Sets display options
  *
  * @author Martin Dougiamas and many others. This has recently been extensively
@@ -567,6 +567,18 @@ function question_edit_setup($requirecmid = false, $requirecourseid = true){
     
     
     $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
+    
+    //pass 'cat' from page to page and when 'category' comes from a drop down menu
+    //then we also reset the qpage so we go to page 1 of 
+    //a new cat.
+    $pagevars['cat'] = optional_param('cat', 0, PARAM_INT);
+    if  ($category = optional_param('category', 0, PARAM_INT)){
+        $pagevars['cat'] = $category;
+        $pagevars['qpage'] = 0;
+    }
+    if ($pagevars['cat']){
+        $thispageurl->param('cat', $pagevars['cat']);
+    }
     if ($pagevars['qpage'] > -1) {
         $thispageurl->param('qpage', $pagevars['qpage']);
     } else {
@@ -589,20 +601,10 @@ function question_edit_setup($requirecmid = false, $requirecourseid = true){
         $pagevars['qsortorder'] = $sortorder;
         $thispageurl->param('qsortorder', $sortorder);
     } else {
-        $pagevars['qsortorder'] = 'qtype, name ASC';
+        $pagevars['qsortorderdecoded'] = $sortoptions['typealpha'];
+        $pagevars['qsortorder'] = 'typealpha';
     }    
     
-    //pass cat from page to page and catchange comes a drop down menu
-    //on catchange then we also reset the qpage so we go to page 1 of 
-    //a new cat.
-    $pagevars['cat'] = optional_param('cat', 0, PARAM_INT);
-    if  ($catchange = optional_param('catchange', 0, PARAM_INT)){
-        $pagevars['cat'] = $catchange;
-        $pagevars['qpage'] = 0;
-    }
-    if ($pagevars['cat']){
-        $thispageurl->param('cat', $pagevars['cat']);
-    }
 
     if (empty($pagevars['cat']) or !count_records_select("question_categories", "id = '".$pagevars['cat']."' AND (course = '{$COURSE->id}' OR publish = '1')")) {
         $category = get_default_question_category($COURSE->id);
@@ -632,6 +634,5 @@ function question_edit_setup($requirecmid = false, $requirecourseid = true){
     }
 
     return array($thispageurl, $courseid, $cmid, $cm, $module, $pagevars);
-    
 }
 ?>

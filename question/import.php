@@ -19,7 +19,6 @@
     // get parameters
     $params = new stdClass;
     $params->choosefile = optional_param('choosefile','',PARAM_PATH);
-    $categoryid = optional_param('category', 0, PARAM_INT);
     $catfromfile = optional_param('catfromfile', 0, PARAM_BOOL );
     $format = optional_param('format','',PARAM_FILE);
     $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
@@ -56,21 +55,11 @@
     $matchgrades['error'] = $txt->matchgradeserror;
     $matchgrades['nearest'] = $txt->matchgradesnearest;
 
-    if ($categoryid) { // update category in session variable
-        $SESSION->questioncat = $categoryid;
-    } else { // try to get category from session
-        if (isset($SESSION->questioncat)) {
-            $categoryid = $SESSION->questioncat;
-        }
-    }
 
-    if (!$category = get_record("question_categories", "id", $categoryid)) {
+
+    if ($category = get_record("question_categories", "id", $pagevars['cat'])) {
         // if no valid category was given, use the default category
-        if ($courseid) {
-            $category = get_default_question_category($courseid);
-        } else {
-            print_error('nocategory','quiz');
-        }
+        print_error('nocategory','quiz');
     }
 
     if (!$courseid) { // need to get the course from the chosen category

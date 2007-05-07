@@ -14,7 +14,6 @@
 
     list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
 
-    $categoryid = optional_param('category',0, PARAM_INT);
     $cattofile = optional_param('cattofile',0, PARAM_BOOL);
     
     $exportfilename = optional_param('exportfilename','',PARAM_FILE );
@@ -40,15 +39,8 @@
         error("Course does not exist!");
     }
 
-    if ($categoryid) { // update category in session variable
-        $SESSION->questioncat = $categoryid;
-    } else { // try to get category from session
-        if (isset($SESSION->questioncat)) {
-            $categoryid = $SESSION->questioncat;
-        }
-    }
 
-    if (!$category = get_record("question_categories", "id", $categoryid)) {   
+    if (!$category = get_record("question_categories", "id", $pagevars['cat'])) {   
         $category = get_default_question_category($courseid); 
     }
     
@@ -66,9 +58,9 @@
     make_upload_directory( "$course->id" );
 
     // check category is valid
-    if (!empty($categoryid)) {
+    if (!empty($pagevars['cat'])) {
         $validcats = question_category_options( $course->id, true, false );
-        if (!array_key_exists( $categoryid, $validcats)) {
+        if (!array_key_exists( $pagevars['cat'], $validcats)) {
             print_error( 'invalidcategory','quiz' );
         }
     }
@@ -125,15 +117,15 @@
         $qformat->setCattofile( $cattofile );
 
         if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
-            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
+            error( $txt->exporterror, $thispageurl->out());
         }
 
         if (! $qformat->exportprocess()) {         // Process the export data
-            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
+            error( $txt->exporterror, $thispageurl->out());
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            error( $txt->exporterror, $thispageurl->out(false, array('category'=>$category->id)));
+            error( $txt->exporterror, $thispageurl->out());
         }
         echo "<hr />";
 
