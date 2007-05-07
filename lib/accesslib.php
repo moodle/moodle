@@ -783,7 +783,7 @@ function roles_context_cmp($contexta, $contextb) {
  * @param $capability string - Only get a specific capability (string)
  * @param $context object - Only get capabilities for a specific context object
  * @param $userid integer - the id of the user whose capabilities we want to load
- * @param $checkenrolments boolean - the id of the user whose capabilities we want to load
+ * @param $checkenrolments boolean - Should we checkenrolment plugins (potentially expensive)
  * @return array of permissions (or nothing if they get assigned to $USER)
  */
 function load_user_capability($capability='', $context=NULL, $userid=NULL, $checkenrolments=true) {
