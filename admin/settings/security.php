@@ -47,6 +47,7 @@ $temp->add(new admin_setting_configtext('minpassworddigits', get_string('minpass
 $temp->add(new admin_setting_configtext('minpasswordlower', get_string('minpasswordlower', 'admin'), get_string('configminpasswordlower', 'admin'), 1, PARAM_INT));
 $temp->add(new admin_setting_configtext('minpasswordupper', get_string('minpasswordupper', 'admin'), get_string('configminpasswordupper', 'admin'), 1, PARAM_INT));
 $temp->add(new admin_setting_configtext('minpasswordnonalphanum', get_string('minpasswordnonalphanum', 'admin'), get_string('configminpasswordnonalphanum', 'admin'), 1, PARAM_INT));
+$temp->add(new admin_setting_configcheckbox('disableuserimages', get_string('disableuserimages', 'admin'), get_string('configdisableuserimages', 'admin'), 0));
 $ADMIN->add('security', $temp);
 
 
