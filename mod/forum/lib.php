@@ -3518,8 +3518,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $replies = forum_count_discussion_replies($forum->id);
 
     $canreply = forum_user_can_post($forum);
-    $canviewparticipants = has_capability('moodle/course:viewparticipants',$context) ||
-        has_capability('moodle/site:viewparticipants',$context); 
+    $canviewparticipants = has_capability('moodle/course:viewparticipants',$context); 
 
     $discussioncount = 0;
     $olddiscussionlink = false;
