@@ -13,7 +13,7 @@ require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
 
-$returnurl = optional_param('returnurl', 0, PARAM_URL);
+$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id

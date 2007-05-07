@@ -116,6 +116,10 @@ class question_edit_form extends moodleform {
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', 0);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->setDefault('returnurl', '');
+
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         if (!empty($this->question->id)) {
