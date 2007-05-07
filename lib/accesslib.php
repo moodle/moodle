@@ -439,8 +439,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $capabilities = $guestcaps;
 
             } else {
-                // this is expensive!
-                $capabilities = load_user_capability($capability, $context, $userid);
+                // This big SQL is expensive!  We reduce it a little by avoiding checking for changed enrolments (false)
+                $capabilities = load_user_capability($capability, $context, $userid, false); 
                 if ($defcaps === false) {
                     $defcaps = load_defaultuser_role(true);
                 }
@@ -783,9 +783,10 @@ function roles_context_cmp($contexta, $contextb) {
  * @param $capability string - Only get a specific capability (string)
  * @param $context object - Only get capabilities for a specific context object
  * @param $userid integer - the id of the user whose capabilities we want to load
+ * @param $checkenrolments boolean - the id of the user whose capabilities we want to load
  * @return array of permissions (or nothing if they get assigned to $USER)
  */
-function load_user_capability($capability='', $context = NULL, $userid='') {
+function load_user_capability($capability='', $context=NULL, $userid=NULL, $checkenrolments=true) {
 
     global $USER, $CFG;
 
@@ -802,7 +803,9 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
         }
         unset($USER->capabilities);           // We don't want possible older capabilites hanging around
 
-        check_enrolment_plugins($USER);       // Call "enrol" system to ensure that we have the correct picture
+        if ($checkenrolments) {               // Call "enrol" system to ensure that we have the correct picture
+            check_enrolment_plugins($USER); 
+        }
 
         $userid = $USER->id;
         $otheruserid = false;
@@ -812,7 +815,9 @@ function load_user_capability($capability='', $context = NULL, $userid='') {
             return false;
         }
 
-        check_enrolment_plugins($user);       // Ensure that we have the correct picture
+        if ($checkenrolments) {               // Call "enrol" system to ensure that we have the correct picture
+            check_enrolment_plugins($user);
+        }
 
         $otheruserid = $userid;
     }
