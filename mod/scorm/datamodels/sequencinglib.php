@@ -512,12 +512,12 @@ function scorm_seq_measure_rollup($sco,$userid){
 		            }
  	            }
 				if ($rolledupobjective != null){
-
-					$measureweight = get_record('scorm_scoes_track','scoid',$child->id,'userid',$userid,'element','objectivemeasureweight');
-					$countedmeasures = $countedmeasures + ($measureweight->value);
+                    $child = scorm_get_sco($child->id);
+				
+					$countedmeasures = $countedmeasures + ($child->measureweight);
 					if (!scorm_seq_is('objectivemeasurestatus',$sco->id,$userid)) {
 						$normalizedmeasure = get_record('scorm_scoes_track','scoid',$child->id,'userid',$userid,'element','objectivenormalizedmeasure');
-						$totalmeasure = $totalmeasure + (($normalizedmeasure->value) * ($measureweight->value));
+						$totalmeasure = $totalmeasure + (($normalizedmeasure->value) * ($child->measureweight));
 						$valid = true;
 					}
 
@@ -960,7 +960,7 @@ function scorm_seq_check_child ($sco, $action, $userid){
 	$sco=scorm_get_sco($sco->id);
 	$r = get_record('scorm_scoes_track','scoid',$sco->id,'userid',$userid,'element','activityattemptcount');
 	if ($action == 'satisfied' || $action == 'notsatisfied'){
-	  if (!scorm_seq_is('rollupobjectivesatisfied',$sco->id,$userid){
+	  if (!$sco->rollupobjectivesatisfied){
 		$included = true;
 		if (($action == 'satisfied' && $sco->requiredforsatisfied == 'ifnotsuspended') || ($action == 'notsatisfied' && $sco->requiredfornotsatisfied == 'ifnotsuspended')){
 			
@@ -987,7 +987,7 @@ function scorm_seq_check_child ($sco, $action, $userid){
       }
 	}
     if ($action == 'completed' || $action == 'incomplete'){
-		if (!scorm_seq_is('rollupprogresscompletion',$sco->id,$userid){
+		if (!$sco->rollupprogresscompletion){
 		    $included = true;
 
             if (($action == 'completed' && $sco->requiredforcompleted == 'ifnotsuspended') || ($action == 'incomplete' && $sco->requiredforincomplete == 'ifnotsuspended')){
@@ -2121,6 +2121,20 @@ function scorm_terminate_descendent_attempts ($activity,$userid,$seq){
 			}
 		}
 }
+
+function scorm_sequencing_exception($seq){
+    if($seq->exception != null){
+
+	   // switch($seq->exception) { We still have to do the cases
+
+               
+					 notify("Exception");
+               
+	}
+}
+
+
+
 /*
 
 function scorm_seq_objective_progress_status($sco,$userid){
