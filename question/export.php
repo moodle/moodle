@@ -48,7 +48,6 @@
         print_error('nocategory','quiz');
     }
 
-    require_login($course->id, false);
 
     // check role capability
     $context = get_context_instance(CONTEXT_COURSE, $course->id);

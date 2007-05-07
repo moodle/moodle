@@ -44,7 +44,6 @@
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    require_login($course->id, false);
     require_capability('moodle/question:managecategory', $context);
 
     $qcobject = new question_category_object($param->page, $thispageurl);
