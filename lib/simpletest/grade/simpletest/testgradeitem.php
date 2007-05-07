@@ -304,10 +304,12 @@ class grade_item_test extends gradelib_test {
         // Load raw grade and its scale
         $grade_raw = new grade_grades_raw(array('scaleid' => $this->scale[0]->id));
         $grade_raw->gradescale = 4;
+        $grade_raw->load_scale();
         $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
         
         // Load grade item and its scale
         $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id));
+        $grade_item->load_scale();
         $this->assertEqual('Very Good', $grade_item->scale->scale_items[1]);
 
         // Test grade_item::adjust_scale

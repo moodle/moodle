@@ -199,8 +199,6 @@ class grade_item extends grade_object {
      */
     function grade_item($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
-        $this->load_scale();
-        $this->load_outcome();
     }
    
     /**
@@ -262,8 +260,6 @@ class grade_item extends grade_object {
                     $this->$param = $value;
                 }
 
-                $this->load_scale();
-                $this->load_outcome();
                 return $this;
             } else {
                 $grade_item = new grade_item($grade_item);
@@ -579,6 +575,15 @@ class grade_item extends grade_object {
                 $gradevalue = $grade_raw->gradescale;
             }
             
+            // In case the scale objects haven't been loaded, do it now
+            if (empty($grade_raw->scale)) {
+                $grade_raw->load_scale();
+            }
+            
+            if (empty($this->scale)) {
+                $this->load_scale();
+            }
+
             $grade_raw->grademax = count($grade_raw->scale->scale_items) - 1;
             $this->grademax = count($this->scale->scale_items) - 1;
             $grade_raw->grademin = 0;

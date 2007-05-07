@@ -108,8 +108,6 @@ class grade_grades_raw extends grade_object {
      */
     function grade_grades_raw($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
-        $this->load_text();
-        $this->load_scale();
     }
     
     /**
@@ -155,8 +153,6 @@ class grade_grades_raw extends grade_object {
                     $this->$param = $value;
                 }
 
-                $this->load_scale();
-                $this->load_text();
                 return $this;
             } else {
                 $object = new grade_grades_raw($object);
