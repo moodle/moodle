@@ -501,7 +501,7 @@ function scorm_seq_measure_rollup($sco,$userid){
 		$children = scorm_get_children($sco);
         foreach ($children as $child){
 		    $child = scorm_get_sco ($child);
-			if (!isset($child->tracked) || ($child->tracked == 1))
+			if (!isset($child->tracked) || ($child->tracked == 1)){
 	
 			    $rolledupobjective = null;// we set the rolled up activity to undefined
 				$objectives = get_records('scorm_seq_objective','scoid',$child->id);
@@ -648,7 +648,7 @@ function scorm_seq_objective_rollup_default($sco,$userid){
                 $rollupruleconds = get_records('scorm_seq_rolluprulecond','rollupruleid',$rolluprule->id);
 			    foreach($rollupruleconds as $rolluprulecond){
                  
-                    switch ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
+                    if ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
 							
 						   scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid, false);
 
@@ -724,7 +724,7 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
 				 $child = scorm_get_sco ($child);
 			if (!isset($child->tracked) || ($child->tracked == 1)){
 
-					if(scorm_seq_check_child ($child,$action,$userid){
+					if(scorm_seq_check_child ($child,$action,$userid)){
 
                         $rollupruleconds = get_records('scorm_seq_rolluprulecond','rollupruleid',$rolluprule->id);
 						$evaluate = scorm_seq_evaluate_rollupcond($child,$rolluprule->conditioncombination,$rollupruleconds,$userid);
@@ -999,7 +999,7 @@ function scorm_seq_check_child ($sco, $action, $userid){
 		}
 		else{
 			if (($action == 'satisfied' && $sco->requiredforsatisfied == 'ifattempted') || ($action == 'notsatisfied' && $sco->requiredfornotsatisfied == 'ifattempted')){
-			    if (!scorm_seq_is('activityprogressstatus',$sco->id,$userid) || (($r->value) == 0)){{
+			    if (!scorm_seq_is('activityprogressstatus',$sco->id,$userid) || (($r->value) == 0)){
 				    $included = false;
 			    }
             }
@@ -1051,7 +1051,6 @@ function scorm_seq_check_child ($sco, $action, $userid){
 
 
 }
-
 function scorm_seq_sequencing ($scoid,$userid,$seq) {
 
     switch ($seq->sequencing) {
@@ -1125,7 +1124,7 @@ function scorm_seq_start_sequencing($scoid,$userid,$seq){
 	else{
 		$ancestors = scorm_get_ancestors($sco);
 		$ancestorsroot = array_reverse($ancestors);
-		$res = scorm_seq_flow($ancestorsroot[0],'forward',$seq,true$userid);
+		$res = scorm_seq_flow($ancestorsroot[0],'forward',$seq,true,$userid);
 		if($res){
 			return $res;
 		}
@@ -1449,7 +1448,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
 			 }
 		 }
 		 else{
-			 if (!empty($children){
+			 if (!empty($children)){
 				 $activity = scorm_get_sco($activity->id);
 				 if (isset($parent->flow) && ($parent->flow == true)) {
 					 $children = scorm_get_children ($activity);
@@ -1591,7 +1590,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 			}
 		}
 
-		if (scorm_seq_rules_check($activity,'hidefromchoice' != null){
+		if (scorm_seq_rules_check($activity,'hidefromchoice' != null)){
 
 			$seq->delivery = null;
 		    $seq->exception = 'SB.2.9-3';
@@ -1603,7 +1602,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 
 	if ($sco->parent != '/') {
 		$parent = scorm_sco_get_parent ($sco);
-		if ( (isset($parent->choice) && ($parent->choice == false)){
+		if ( isset($parent->choice) && ($parent->choice == false)){
 			$seq->delivery = null;
 		    $seq->exception = 'SB.2.9-4';
 		    return $seq;
@@ -1625,7 +1624,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 	$sib = scorm_get_siblings($seq->currentactivity);
 	$pos = array_search($sib, $sco);
 
-	if (pos !=== false){
+	if (pos !== false){
 
 		$siblings = array_slice($sib, 0, $pos-1);
 
@@ -1700,7 +1699,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 		foreach ($curtarget as $activ){
 			$i++;
 			if ($i != sizeof($curtarget)){
-				if ( (isset($activ->choiceexit) && ($activ->choiceexit == false)){
+				if ( isset($activ->choiceexit) && ($activ->choiceexit == false)){
 					$seq->delivery = null;
 		            $seq->exception = 'SB.2.9-7';
 		            return $seq;
@@ -1723,7 +1722,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
 		$constrained = null;
 		foreach ($curcommon as $acti){
 			$acti = scorm_get_sco($acti->id);
-			if ( (isset($acti->choiceexit) && ($acti->choiceexit == false)){
+			if ( isset($acti->choiceexit) && ($acti->choiceexit == false)){
 					$seq->delivery = null;
 		            $seq->exception = 'SB.2.9-7';
 		            return $seq;
@@ -1856,7 +1855,7 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
 					return $seq;
 				}
 				else{
-					i++;
+					$i++;
 				}
 			}
 		}
@@ -1927,7 +1926,7 @@ function scorm_seq_choice_activity_traversal($activity,$userid,$seq,$direction){
 
 function scorm_sequencing_delivery($scoid,$userid,$seq){
 
-	if(!scorm_is_leaf ($seq->delivery){
+	if(!scorm_is_leaf ($seq->delivery)){
 		$seq->deliveryvalid = false;
 		$seq->exception = 'DB.1.1-1';
 		return $seq;
@@ -2021,7 +2020,7 @@ function scorm_clear_suspended_activity($act,$seq){
 				if (!empty ($activitypath)){
 
                     foreach ($activitypath as $activity) {
-					    if (scorm_is_leaf($activity){
+					    if (scorm_is_leaf($activity)){
 							scorm_seq_set('suspended',$activity->id,$userid,false);
 						}
 						else{
@@ -2335,27 +2334,5 @@ function scorm_sequencing_exception($seq){
 
 
 
-/*
-
-function scorm_seq_objective_progress_status($sco,$userid){
-	$res = get_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'element','objectiveprogressstatus');
-	if($res->value === true){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-function scorm_seq_objective_measure_status($sco,$userid){
-	$res = get_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'element','objectivemeasurestatus');
-	if($res->value === true){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-*/
 
 ?>
