@@ -242,9 +242,9 @@ $text_source_options = array(
                 $HOTPOT_FEEDBACK, "studentfeedback", "$form->studentfeedback", "",
                 "return hotpot_lockoptions('form', 'studentfeedback', feedbacklockitems, feedbackoffvalues)"
             );
-			print '<span id="studentfeedbackurlSPAN">';
+            print '<span id="studentfeedbackurlSPAN">';
             print "<input name=\"studentfeedbackurl\" size=\"50\" value=\"$form->studentfeedbackurl\">";
-			print '</span>';
+                print '</span>';
             helpbutton("studentfeedback", get_string("studentfeedback","hotpot"), "hotpot");
         ?></td>
     </tr>
@@ -371,18 +371,18 @@ $text_source_options = array(
     // override the standard Moodle "setfocus" function, 
     // which gives a js error if the "name" field is hidden
     function setfocus() {
-    	var f = getElementById('form');
-    	if (f) {
-    		if (canfocus(f, 'namesource')) {
-    			f.namesource.focus();
-    		} else if (canfocus(f, 'name')) {
-    			f.name.focus();
-    		}
-    	}
+        var f = getElementById('form');
+        if (f) {
+            if (canfocus(f, 'namesource')) {
+                f.namesource.focus();
+            } else if (canfocus(f, 'name')) {
+                f.name.focus();
+            }
+        }
     }
     function canfocus(f, name) {
-    	var obj = eval('f.'+name);
-    	return (obj==null || obj.type=='hidden' || obj.focus==null || (obj.style && obj.style.display=='none')) ? false : true;
+        var obj = eval('f.'+name);
+        return (obj==null || obj.type=='hidden' || obj.focus==null || (obj.style && obj.style.display=='none')) ? false : true;
     }
 //-->
 </script>
