@@ -306,6 +306,7 @@ class qformat_default {
         $question->correctfeedback = '';
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
+        $question->penalty = 0.1;
 
         return $question;
     }
@@ -358,14 +359,14 @@ class qformat_default {
 
         // convert and save file contents
         if (!$content = base64_decode( $base64 )) {
-            return false;
+            return '';
         }
         $newfullpath = "$destination/$newfile";
         if (!$fh = fopen( $newfullpath, 'w' )) {
-            return false;
+            return '';
         }
         if (!fwrite( $fh, $content )) {
-            return false;
+            return '';
         }
         fclose( $fh );
 

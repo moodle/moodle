@@ -95,38 +95,60 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * return the value of a node, given a path to the node
+     * if it doesn't exist return the default value
+     * @param array xml data to read
+     * @param array path path to node expressed as array 
+     * @param mixed default 
+     * @param bool istext process as text
+     * @param string error if set value must exist, return false and issue message if not
+     * @return mixed value
+     */
+    function getpath( $xml, $path, $default, $istext=false, $error='' ) {
+        foreach ($path as $index) {
+            if (empty($xml[$index])) {
+                if (!empty($error)) {
+                    $this->error( $error );
+                    return false;
+                } else {
+                    return $default;
+                }
+            }
+            else $xml = $xml[$index];
+        }
+        if ($istext) {
+            $xml = addslashes( trim( $xml ) );
+        }
+
+        return $xml;
+    }
+
+
+    /**
      * import parts of question common to all types
      * @param array question question array from xml tree
      * @return object question object
      */
     function import_headers( $question ) {
+        // get some error strings
+        $error_noname = get_string( 'xmlimportnoname','quiz' );
+        $error_noquestion = get_string( 'xmlimportnoquestion','quiz' );
+
         // this routine initialises the question object
         $qo = $this->defaultquestion();
-        $name = $this->import_text( $question['#']['name'][0]['#']['text'] );
-        $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
-        $qformat = $question['#']['questiontext'][0]['@']['format'];
-        $image = $question['#']['image'][0]['#'];
-        if (!empty($question['#']['image_base64'][0]['#'])) {
-            $image_base64 = stripslashes( trim( $question['#']['image_base64'][0]['#'] ) );
-            $image = $this->importimagefile( $image, $image_base64 );
-        }
-        if (array_key_exists('generalfeedback', $question['#'])) {
-            $generalfeedback = $this->import_text( $question['#']['generalfeedback'][0]['#']['text'] );
-        } else {
-            $generalfeedback = '';
-        }
-        if (!empty($question['#']['defaultgrade'][0]['#'])) {
-            $qo->defaultgrade = $question['#']['defaultgrade'][0]['#'];
-        }
-        
-        $penalty = $question['#']['penalty'][0]['#'];
 
-        $qo->name = $name;
-        $qo->questiontext = $qtext;
-        $qo->questiontextformat = $this->trans_format( $qformat );
-        $qo->image = ((!empty($image)) ?  $image : '');
-        $qo->generalfeedback = $generalfeedback;
-        $qo->penalty = $penalty;
+        // question name
+        $qo->name = $this->getpath( $question, array('#','name',0,'#','text',0,'#'), '', true, $error_noname );
+        $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true, $error_noquestion );
+        $qo->questiontextformat = $this->getpath( $question, array('#','questiontext',0,'@','format'), '' );
+        $image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
+        $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
+        if (!empty($image_base64)) {
+            $qo->image = $this->importimagefile( $image, stripslashes(image_base64) );
+        }
+        $qo->generalfeedback = $this->getpath( $question, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true );
+        $qo->defaultgrade = $this->getpath( $question, array('#','defaultgrade',0,'#'), $qo->defaultgrade );
+        $qo->penalty = $this->getpath( $question, array('#','penalty',0,'#'), $qo->penalty );
 
         return $qo;
     }
@@ -268,7 +290,7 @@ class qformat_xml extends qformat_default {
         $qo->qtype = SHORTANSWER;
 
         // get usecase
-        $qo->usecase = $question['#']['usecase'][0]['#'];
+        $qo->usecase = $this->getpath($question, array('#','usecase',0,'#'), $qo->usecase );
 
         // run through the answers
         $answers = $question['#']['answer'];  
@@ -515,7 +537,7 @@ class qformat_xml extends qformat_default {
             }
             else {
                 $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
-                $this->error( $notsupportted );
+                $this->error( $notsupported );
                 $qo = null;
             }
 
@@ -653,7 +675,7 @@ class qformat_xml extends qformat_default {
     function presave_process( $content ) {
     // override method to allow us to add xml headers and footers
 
-        $content = "<?xml version=\"1.0\"?>\n" .
+        $content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
                        "<quiz>\n" .
                        $content . "\n" .
                        "</quiz>";
@@ -695,6 +717,12 @@ class qformat_xml extends qformat_default {
         // add comment
         $expout .= "\n\n<!-- question: $question->id  -->\n";
 
+        // check question type - make sure valid
+        $question_type = $this->get_qtype( $question->qtype );
+        if ($question_type=='unknown') {
+            $expout .= "<!-- question: $question->name is not a supported type -->\n\n";
+        }
+
         // add opening tag
         // generates specific header for Cloze and category type question
         if ($question->qtype == 'category') {
@@ -707,7 +735,6 @@ class qformat_xml extends qformat_default {
         }    
         elseif ($question->qtype != MULTIANSWER) {
             // for all question types except Close
-            $question_type = $this->get_qtype( $question->qtype );
             $name_text = $this->writetext( $question->name );
             $qtformat = $this->get_format($question->questiontextformat);
             $question_text = $this->writetext( $question->questiontext );
@@ -728,7 +755,6 @@ class qformat_xml extends qformat_default {
         }
         else {
             // for Cloze type only
-            $question_type = $this->get_qtype( $question->qtype );
             $name_text = $this->writetext( $question->name );
             $question_text = $this->writetext( $question->questiontext );
             $expout .= "  <question type=\"$question_type\">\n";
@@ -864,7 +890,8 @@ class qformat_xml extends qformat_default {
             
             break;
         default:
-            $expout .= "<!-- Question type is unknown or not supported (Type=$question->qtype) -->\n";
+            // should not get here
+            error( 'Unsupported question type detected in strange circumstances!' );
         }
 
         // close the question tag
