@@ -401,8 +401,8 @@ class grade_item_test extends gradelib_test {
         $this->assertEqual(3, count($grade_item->grade_grades_raw));
 
         $grade_item->generate_final();
-        $this->assertEqual(3, count($grade_item->grade_grades_final));
-
+        $grade_item->load_final();
+        $this->assertEqual(3, count($grade_item->grade_grades_final)); 
     }
 } 
 ?>

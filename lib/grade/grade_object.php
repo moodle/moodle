@@ -121,6 +121,27 @@ class grade_object {
         $this->id = insert_record($this->table, $clone, true);
         return $this->id;
     }
+
+    /**
+     * Using this object's id field, fetches the matching record in the DB, and looks at
+     * each variable in turn. If the DB has different data, the db's data is used to update
+     * the object. This is different from the update() function, which acts on the DB record
+     * based on the object.
+     */
+    function update_from_db() {
+        if (empty($this->id)) {
+            return false;
+        } else {
+            $class = get_class($this);
+            $object = new $class(array('id' => $this->id));
+            foreach ($object as $var => $val) {
+                if ($this->$var != $val) {
+                    $this->$var = $val;
+                }
+            }
+        }
+        return true;
+    }
     
     /**
      * Uses the variables of this object to retrieve all matching objects from the DB.

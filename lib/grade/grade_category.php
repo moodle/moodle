@@ -219,7 +219,7 @@ class grade_category extends grade_object {
      * to apply calculations to and generate final grades.
      */
     function generate_grades() {
-        // Check that the children have final grades. If not, call their generate_raw_grades method (recursion)
+        // Check that the children have final grades. If not, call their generate_grades method (recursion)
         if (empty($this->children)) {
             $this->children = $this->get_children(1, 'flat');
         }
@@ -229,34 +229,118 @@ class grade_category extends grade_object {
 
         foreach ($this->children as $child) {
             if (get_class($child) == 'grade_item') {
-                $category_raw_grades[$child->id] = $child->load_final();
-            } elseif ($get_class($child) == 'grade_category') {
-                $category_raw_grades[$child->id] = $child->load_final();
-                if (empty($category_raw_grades)) {
-                    $category_raw_grades[$child->id] = $child->generate_grades();
+                $category_raw_grades[$child->id] = $child->load_raw();
+            } elseif (get_class($child) == 'grade_category') {
+                $child->load_grade_item();
+                $raw_grades = $child->grade_item->load_raw();
+                
+                if (empty($raw_grades)) {
+                    $child->generate_grades(); 
+                    $category_raw_grades[$child->id] = $child->grade_item->load_raw();
+                } else {
+                    $category_raw_grades[$child->id] = $raw_grades;
                 } 
             }
         }
-
+        
         if (empty($category_raw_grades)) {
             return null;
         } else {
             $aggregated_grades = $this->aggregate_grades($category_raw_grades);
+            
+            if (count($category_raw_grades) == 1) {
+                $aggregated_grades = current($category_raw_grades);
+            }
+
             foreach ($aggregated_grades as $raw_grade) {
+                $raw_grade->itemid = $this->grade_item->id;
                 $raw_grade->insert();
             }
-            $this->grade_item->generate_final();
+            $this->load_grade_item();
+            $this->grade_item->generate_final(); 
         }
+        
+        $this->grade_item->load_raw();
+        return $this->grade_item->grade_grades_raw;
     }
 
     /**
      * Given an array of arrays of grade objects (raw or final), uses this category's aggregation method to 
-     * compute and return a single array of grade_raw objects with the aggregated gradevalue.
+     * compute and return a single array of grade_raw objects with the aggregated gradevalue. This method
+     * must also standardise all the scores (which have different mins and maxs) so that their values can
+     * be meaningfully aggregated (it would make no sense to perform MEAN(239, 5) on a grade_item with a 
+     * gradevalue between 20 and 250 and another grade_item with a gradescale between 0 and 7!). Aggregated
+     * values will be saved as grade_grades_raw->gradevalue, even when scales are involved.
      * @param array $raw_grade_sets
      * @return array Raw grade objects
      */
     function aggregate_grades($raw_grade_sets) {
+        if (empty($raw_grade_sets)) {
+            return null;
+        }
         
+        $aggregated_grades = array();
+        $pooled_grades = array();
+
+        foreach ($raw_grade_sets as $setkey => $set) {
+            foreach ($set as $gradekey => $raw_grade) {
+                $valuetype = 'gradevalue';
+                
+                if (!empty($raw_grade->gradescale)) {
+                    $valuetype = 'gradescale';
+                }
+                $this->load_grade_item();
+
+                $value = standardise_score($raw_grade->$valuetype, $raw_grade->grademin, $raw_grade->grademax,
+                    $this->grade_item->grademin, $this->grade_item->grademax);
+                $pooled_grades[$raw_grade->userid][] = $value;
+            }
+        }
+
+        foreach ($pooled_grades as $userid => $grades) {
+            $aggregated_value = null;
+
+            switch ($this->aggregation) {
+                case GRADE_AGGREGATE_MEAN : // Arithmetic average
+                    $num = count($grades);
+                    $sum = array_sum($grades);
+                    $aggregated_value = $sum / $num;
+                    break;
+                case GRADE_AGGREGATE_MEDIAN : // Middle point value in the set: ignores frequencies
+                    sort($grades);
+                    $num = count($grades);
+                    $halfpoint = intval($num / 2);
+                    
+                    if($num % 2 == 0) { 
+                        $aggregated_value = ($grades[ceil($halfpoint)] + $grades[floor($halfpoint)]) / 2; 
+                    } else { 
+                        $aggregated_value = $grades[$halfpoint]; 
+                    }
+
+                    break;
+                case GRADE_AGGREGATE_MODE : // Value that occurs most frequently. Not always useful (all values are likely to be different)
+                    // TODO implement or reject
+                    break;
+                case GRADE_AGGREGATE_SUM : 
+                    $aggregated_value = array_sum($grades);
+                    break;
+                default:
+                    $num = count($grades);
+                    $sum = array_sum($grades);
+                    $aggregated_value = $sum / $num; 
+                    break;
+            }
+
+            $grade_raw = new grade_grades_raw();
+            $grade_raw->userid = $userid;
+            $grade_raw->gradevalue = $aggregated_value;
+            $grade_raw->grademin = $this->grade_item->grademin;
+            $grade_raw->grademax = $this->grade_item->grademax;
+            $grade_raw->itemid = $this->grade_item->id;
+            $aggregated_grades[$userid] = $grade_raw;
+        }
+        
+        return $aggregated_grades;
     }
 
     /**
@@ -414,6 +498,15 @@ class grade_category extends grade_object {
     function load_grade_item() {
         $params = get_record('grade_items', 'categoryid', $this->id, 'itemtype', 'category');
         $this->grade_item = new grade_item($params);
+        
+        // If the associated grade_item isn't yet created, do it now
+        if (empty($this->grade_item->id)) {
+            $this->grade_item->iteminstance = $this->id;
+            $this->grade_item->itemtype = 'category';
+            $this->grade_item->insert();
+            $this->grade_item->update_from_db();
+        }
+
         return $this->grade_item;
     }
 }

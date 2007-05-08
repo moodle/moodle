@@ -174,7 +174,9 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminstance = 1;
-        $grade_item->grademax = 137;
+        $grade_item->gradetype = 'value';
+        $grade_item->grademin = 30;
+        $grade_item->grademax = 140;
         $grade_item->itemnumber = 1;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
@@ -191,13 +193,16 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitem2';
         $grade_item->itemtype = 'import';
         $grade_item->itemmodule = 'assignment';
+        $grade_item->gradetype = 'value';
         $grade_item->iteminstance = 2;
         $grade_item->itemnumber = null;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->locked = mktime() + 240000;
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
-
+        
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
             $this->grade_items[] = $grade_item;
         }
@@ -210,7 +215,10 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
-        $grade_item->itemnumber = 3;
+        $grade_item->gradetype = 'scale';
+        $grade_item->scaleid = 1;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 7;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -741,6 +749,11 @@ class gradelib_test extends UnitTestCase {
             $grade_item = $this->grade_items[1];
             $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
         }
+    }
+
+    function test_grade_standardise_score() {
+        $this->assertEqual(4, round(standardise_score(6, 0, 7, 0, 5)));
+        $this->assertEqual(40, standardise_score(50, 30, 80, 0, 100));
     }
 }
 

@@ -208,4 +208,21 @@ function grades_grab_grades() {
     }
 }
 
+/**
+ * Given a float value situated between a source minimum and a source maximum, converts it to the
+ * corresponding value situated between a target minimum and a target maximum. Thanks to Darlene
+ * for the formula :-)
+ * @param float $gradevalue
+ * @param float $source_min
+ * @param float $source_max
+ * @param float $target_min
+ * @param float $target_max
+ * @return float Converted value
+ */
+function standardise_score($gradevalue, $source_min, $source_max, $target_min, $target_max) {
+    $factor = ($gradevalue - $source_min) / ($source_max - $source_min);
+    $diff = $target_max - $target_min;
+    $gradevalue = $factor * $diff + $target_min;
+    return $gradevalue; 
+}
 ?>

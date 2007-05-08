@@ -159,6 +159,41 @@ class grade_category_test extends gradelib_test {
         $category = new grade_category();
         $this->assertFalse($category->has_children()); 
     }
+    
+    function test_grade_category_generate_grades() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'generate_grades'));
+        $raw_grades = $category->generate_grades();
+        $this->assertEqual(3, count($raw_grades));
+    }
 
+    function test_grade_category_aggregate_grades() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue(method_exists($category, 'aggregate_grades'));
+        
+        // Generate 3 random data sets
+        $grade_sets = array();
+        
+        for ($i = 0; $i < 3; $i++) {
+            for ($j = 0; $j < 200; $j++) {
+                $grade_sets[$i][] = $this->generate_random_raw_grade($this->grade_items[$i], $j);
+            }
+        }
+
+        $this->assertEqual(200, count($category->aggregate_grades($grade_sets)));
+
+    }
+
+    function generate_random_raw_grade($item, $userid) {
+        $raw_grade = new grade_grades_raw();
+        $raw_grade->itemid = $item->id;
+        $raw_grade->userid = $userid;
+        $raw_grade->grademin = $item->grademin;
+        $raw_grade->grademax = $item->grademax;
+        $valuetype = "grade$item->gradetype";
+        $raw_grade->$valuetype = rand($raw_grade->grademin, $raw_grade->grademax);
+        $raw_grade->insert();
+        return $raw_grade;
+    }
 } 
 ?>
