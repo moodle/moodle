@@ -52,7 +52,8 @@ echo '</ul>';
 print_simple_box_end();
 // End of page.
 close_window_button();
-echo '<p align="center"><a href="help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
+global $CFG;
+echo '<p align="center"><a href="'.$CFG->wwwroot.'/help.php?file=index.html">'. get_string('helpindex') .'</a></p>';
 
 $CFG->docroot = '';   // We don't want a doc link here
 print_footer('none');
