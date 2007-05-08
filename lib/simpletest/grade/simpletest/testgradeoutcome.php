@@ -61,7 +61,6 @@ class grade_outcome_test extends gradelib_test {
         $this->assertEqual($grade_outcome->id, $last_grade_outcome->id + 1);
         $this->assertFalse(empty($grade_outcome->timecreated));
         $this->assertFalse(empty($grade_outcome->timemodified));
-        $this->grade_outcomes[] = $grade_outcome; 
     }
 
     function test_grade_outcome_update() {

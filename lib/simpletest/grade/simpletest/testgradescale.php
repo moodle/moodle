@@ -71,8 +71,6 @@ class grade_scale_test extends gradelib_test {
         $this->assertEqual($grade_scale->id, $last_grade_scale->id + 1);
         $this->assertTrue(!empty($grade_scale->timecreated));
         $this->assertTrue(!empty($grade_scale->timemodified));
-        $this->scale[] = $grade_scale; 
-
     }
 
     function test_grade_scale_update() {

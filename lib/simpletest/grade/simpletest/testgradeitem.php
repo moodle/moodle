@@ -40,11 +40,10 @@ class grade_item_test extends gradelib_test {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
-        $params->categoryid = $this->grade_categories[0]->id;
+        $params->categoryid = $this->grade_categories[1]->id;
         $params->itemname = 'unittestgradeitem4';
         $params->itemtype = 'mod';
         $params->itemmodule = 'database';
-        $params->iteminstance = 4;
         $params->iteminfo = 'Grade item used for unit testing';
 
         $grade_item = new grade_item($params, false);
@@ -59,11 +58,10 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue(method_exists($grade_item, 'insert'));
         
         $grade_item->courseid = $this->courseid;
-        $grade_item->categoryid = $this->grade_categories[0]->id;
+        $grade_item->categoryid = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitem4';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
-        $grade_item->iteminstance = 1;
         $grade_item->iteminfo = 'Grade item used for unit testing';
 
         $grade_item->insert();
@@ -71,7 +69,6 @@ class grade_item_test extends gradelib_test {
         $last_grade_item = end($this->grade_items);
 
         $this->assertEqual($grade_item->id, $last_grade_item->id + 1);
-        $this->grade_items[] = $grade_item; 
     }
 
     function test_grade_item_delete() {
@@ -191,7 +188,6 @@ class grade_item_test extends gradelib_test {
         $calculation = 'SUM([unittestgradeitem1], [unittestgradeitem3])';
         $grade_item->set_calculation($calculation);
         $new_calculation = $grade_item->get_calculation();
-        $this->grade_calculations[] = $new_calculation;
 
         $this->assertEqual($calculation, $new_calculation->calculation);
     }
@@ -301,21 +297,33 @@ class grade_item_test extends gradelib_test {
     }
 
     function test_grade_item_adjust_scale_grade() {
-        // Load raw grade and its scale
-        $grade_raw = new grade_grades_raw(array('scaleid' => $this->scale[0]->id));
-        $grade_raw->gradescale = 4;
-        $grade_raw->load_scale();
-        $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
-        
         // Load grade item and its scale
-        $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id));
+        $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id), false);
+        $grade_item->insert();
         $grade_item->load_scale();
         $this->assertEqual('Very Good', $grade_item->scale->scale_items[1]);
+        
+        // Load raw grade and its scale
+        $grade_raw = new grade_grades_raw(array('scaleid' => $this->scale[0]->id), false);
+        $grade_raw->gradescale = 4;
+        $grade_raw->itemid = $grade_item->id;
+        $grade_raw->userid = 1;
+        $grade_raw->insert();
+        $grade_raw->load_scale();
+        $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
 
         // Test grade_item::adjust_scale
-        $this->assertEqual(3, $grade_item->adjust_grade($grade_raw));
+        $this->assertEqual(3, $grade_item->adjust_grade($grade_raw, null, 'gradescale'));
         $grade_raw->gradescale = 6;
-        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw));
+        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw, null, 'gradescale'));
+
+        // Check that the final grades have the correct values now
+        $grade_item->load_raw();
+        $grade_item->update_final_grade();
+        $this->assertFalse(empty($grade_item->grade_grades_final));
+        $this->assertEqual($grade_item->id, $grade_item->grade_grades_final[1]->itemid);
+        $this->assertEqual(3, $grade_item->grade_grades_final[1]->gradescale);
+        $this->assertEqual(1, $grade_item->grade_grades_final[1]->userid);
     }
 
     function test_grade_item_toggle_locking() {
@@ -353,5 +361,48 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue($grade_item->grade_grades_final[2]->hidden);
         $this->assertTrue($grade_item->grade_grades_final[3]->hidden);
     } 
+
+    function test_grade_item_generate_final() {
+        $grade_item = new grade_item();
+        $grade_item->courseid = $this->courseid;
+        $grade_item->categoryid = $this->grade_categories[1]->id;
+        $grade_item->itemname = 'unittestgradeitem4';
+        $grade_item->itemtype = 'mod';
+        $grade_item->itemmodule = 'quiz';
+        $grade_item->iteminfo = 'Grade item used for unit testing';
+
+        $grade_item->insert();
+
+        $grade_grades_raw = new grade_grades_raw();
+        $grade_grades_raw->itemid = $grade_item->id;
+        $grade_grades_raw->userid = 1;
+        $grade_grades_raw->gradevalue = 88;
+        $grade_grades_raw->grademax = 110;
+        $grade_grades_raw->grademin = 18;
+        $grade_grades_raw->insert();
+
+        $grade_grades_raw = new grade_grades_raw();
+        $grade_grades_raw->itemid = $grade_item->id;
+        $grade_grades_raw->userid = 2;
+        $grade_grades_raw->gradevalue = 68;
+        $grade_grades_raw->grademax = 110;
+        $grade_grades_raw->grademin = 18;
+        $grade_grades_raw->insert();
+
+        $grade_grades_raw = new grade_grades_raw();
+        $grade_grades_raw->itemid = $grade_item->id;
+        $grade_grades_raw->userid = 3;
+        $grade_grades_raw->gradevalue = 81;
+        $grade_grades_raw->grademax = 110;
+        $grade_grades_raw->grademin = 18;
+        $grade_grades_raw->insert();
+
+        $grade_item->load_raw();
+        $this->assertEqual(3, count($grade_item->grade_grades_raw));
+
+        $grade_item->generate_final();
+        $this->assertEqual(3, count($grade_item->grade_grades_final));
+
+    }
 } 
 ?>

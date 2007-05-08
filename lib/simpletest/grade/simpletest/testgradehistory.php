@@ -69,8 +69,6 @@ class grade_history_test extends gradelib_test {
         $this->assertEqual($grade_history->id, $last_grade_history->id + 1);
         $this->assertFalse(empty($grade_history->timecreated));
         $this->assertFalse(empty($grade_history->timemodified));
-        $this->grade_history[] = $grade_history; 
-
     }
 
     function test_grade_history_update() {

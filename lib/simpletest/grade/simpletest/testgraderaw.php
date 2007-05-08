@@ -67,8 +67,6 @@ class grade_raw_test extends gradelib_test {
         $this->assertEqual($grade_grades_raw->id, $last_grade_grades_raw->id + 1);
         $this->assertFalse(empty($grade_grades_raw->timecreated));
         $this->assertFalse(empty($grade_grades_raw->timemodified));
-        $this->grade_grades_raw[] = $grade_grades_raw; 
-
     }
 
     function test_grade_grades_raw_update() {

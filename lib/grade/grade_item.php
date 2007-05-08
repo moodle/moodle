@@ -328,10 +328,45 @@ class grade_item extends grade_object {
      */      
     function load_final() {
         $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        
+        if (empty($grade_final_array)) {
+            $this->generate_final();
+            $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        }
+        
+        if (empty($grade_final_array)) {
+            return false;
+        }
+
         foreach ($grade_final_array as $f) {
             $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
         }
         return $this->grade_grades_final;
+    }
+
+    /**
+     * Once the raw_grades are imported or entered, this method uses the grade_item's calculation and rules to 
+     * generate final grade entries in the DB.
+     * @return array final grade objects (grade_grades_final).
+     */
+    function generate_final() {
+        if (empty($this->grade_grades_raw)) {
+            $this->load_raw();
+        }
+        
+        $success = true;
+
+        foreach ($this->grade_grades_raw as $raw_grade) {
+            $final_grade = new grade_grades_final();
+            $final_grade->gradevalue = $this->adjust_grade($raw_grade, null, 'gradevalue');
+            $final_grade->gradescale = $this->adjust_grade($raw_grade, null, 'gradescale');
+            $final_grade->itemid = $this->id;
+            $final_grade->userid = $raw_grade->userid;
+            $success = $success & $final_grade->insert();
+            $this->grade_grades_final[$final_grade->userid] = $final_grade;
+        }
+        
+        return $success;
     }
 
     /**
@@ -522,19 +557,36 @@ class grade_item extends grade_object {
             $grade_raw_array = $this->grade_grades_raw;
         }
 
+        // The following code assumes that there is a grade_final object in DB for every
+        // grade_raw object. This assumption depends on the correct creation of grade_final entries.
+        // This also assumes that the two arrays $this->grade_grades_raw and its final counterpart are
+        // indexed by userid, not sequentially or by grade_id
+        if (count($this->grade_grades_final) != count($this->grade_grades_raw)) {
+            $this->generate_final();
+        }
+
         foreach ($grade_raw_array as $userid => $raw) {
-            $newgradevalue = $raw->gradevalue;
+            // the value could be gradevalue or gradescale
+            $valuetype = null;
+            
+            if (!empty($raw->gradevalue)) {
+                $valuetype = 'gradevalue';
+            } elseif (!empty($raw->gradescale)) {
+                $valuetype = 'gradescale';
+            }
+
+            $newgradevalue = $raw->$valuetype;
             
             if (!empty($this->calculation)) {
                 $this->upgrade_calculation_to_object();
-                $newgradevalue = $this->calculation->compute($raw->gradevalue);
+                $newgradevalue = $this->calculation->compute($raw->$valuetype, $valuetype);
             }
             
             $final = $this->grade_grades_final[$userid];
 
-            $final->gradevalue = $this->adjust_grade($raw, $newgradevalue);
+            $final->$valuetype = $this->adjust_grade($raw, $newgradevalue, $valuetype);
             
-            if ($final->update($newgradevalue)) {
+            if ($final->update()) {
                 $count++;
             } else {
                 return false;
@@ -558,19 +610,21 @@ class grade_item extends grade_object {
      * Given a float grade value or integer grade scale, applies a number of adjustment based on 
      * grade_item variables and returns the result.
      * @param object $grade_raw The raw object to compare with this grade_item's rules
-     * @param mixed $gradevalue The new gradevalue (after calculations are performed)
+     * @param mixed $gradevalue The new gradevalue (after calculations are performed).
+     *                          If null, the raw_grade's gradevalue or gradescale will be used.
+     * @param string $valuetype Either 'gradevalue' or 'gradescale'
      * @return mixed 
      */
-    function adjust_grade($grade_raw, $gradevalue=NULL) {
+    function adjust_grade($grade_raw, $gradevalue=NULL, $valuetype='gradevalue') {
         $raw_offset = 0;
         $item_offset = 0;
-
-        if (!empty($grade_raw->gradevalue)) { // Dealing with numerical grade
+        
+        if ($valuetype == 'gradevalue') { // Dealing with numerical grade
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradevalue;
             }
 
-        } elseif(!empty($grade_raw->gradescale)) { // Dealing with a scale value
+        } elseif($valuetype == 'gradescale') { // Dealing with a scale value
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradescale;
             }
@@ -601,11 +655,11 @@ class grade_item extends grade_object {
         $gradevalue = $factor * $diff + $this->grademin;
 
         // Apply rounding or factors, depending on whether it's a scale or value
-        if (!empty($grade_raw->gradevalue)) {
+        if ($valuetype == 'gradevalue') {
             // Apply other grade_item factors
             $gradevalue *= $this->multfactor;
             $gradevalue += $this->plusfactor;
-        } elseif (!empty($grade_raw->gradescale)) {
+        } elseif ($valuetype == 'gradescale') {
             $gradevalue = (int) round($gradevalue);
         }
 

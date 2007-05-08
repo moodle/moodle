@@ -210,7 +210,55 @@ class grade_category extends grade_object {
 
         return $result;
     }
-    
+   
+    /**
+     * Generates and saves raw_grades, based on this category's immediate children, then uses the 
+     * associated grade_item to generate matching final grades. These immediate children must first have their own
+     * raw and final grades, which means that ultimately we must get grade_items as children. The category's aggregation
+     * method is used to generate these raw grades, which can then be used by the category's associated grade_item
+     * to apply calculations to and generate final grades.
+     */
+    function generate_grades() {
+        // Check that the children have final grades. If not, call their generate_raw_grades method (recursion)
+        if (empty($this->children)) {
+            $this->children = $this->get_children(1, 'flat');
+        }
+        
+        $category_raw_grades = array();
+        $aggregated_grades = array();
+
+        foreach ($this->children as $child) {
+            if (get_class($child) == 'grade_item') {
+                $category_raw_grades[$child->id] = $child->load_final();
+            } elseif ($get_class($child) == 'grade_category') {
+                $category_raw_grades[$child->id] = $child->load_final();
+                if (empty($category_raw_grades)) {
+                    $category_raw_grades[$child->id] = $child->generate_grades();
+                } 
+            }
+        }
+
+        if (empty($category_raw_grades)) {
+            return null;
+        } else {
+            $aggregated_grades = $this->aggregate_grades($category_raw_grades);
+            foreach ($aggregated_grades as $raw_grade) {
+                $raw_grade->insert();
+            }
+            $this->grade_item->generate_final();
+        }
+    }
+
+    /**
+     * Given an array of arrays of grade objects (raw or final), uses this category's aggregation method to 
+     * compute and return a single array of grade_raw objects with the aggregated gradevalue.
+     * @param array $raw_grade_sets
+     * @return array Raw grade objects
+     */
+    function aggregate_grades($raw_grade_sets) {
+        
+    }
+
     /**
      * Looks at a path string (e.g. /2/45/56) and returns the depth level represented by this path (in this example, 3).
      * If no string is given, it looks at the obect's path and assigns the resulting depth to its $depth variable.

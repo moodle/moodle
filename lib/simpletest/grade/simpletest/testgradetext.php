@@ -73,8 +73,6 @@ class grade_text_test extends gradelib_test {
         $this->assertFalse(empty($grade_grades_text->timecreated));
         $this->assertFalse(empty($grade_grades_text->timemodified));
         $this->assertEqual($USER->id, $grade_grades_text->usermodified);
-        $this->grade_grades_text[] = $grade_grades_text; 
-
     }
 
     function test_grade_grades_text_update() {

@@ -59,9 +59,9 @@ class grade_grades_raw extends grade_object {
    
     /**
      * The scale value of this raw grade, if such was provided by the module.
-     * @var int $scalevalue
+     * @var int $gradescale
      */
-    var $scalevalue;
+    var $gradescale;
 
     /**
      * The maximum allowable grade when this grade was created.

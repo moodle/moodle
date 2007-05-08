@@ -70,9 +70,10 @@ class grade_calculation extends grade_object {
     /**
      * Applies the formula represented by this object to the value given, and returns the result.
      * @param float $oldvalue
+     * @param string $valuetype Either 'gradevalue' or 'gradescale'
      * @return float result
      */
-    function compute($oldvalue) {
+    function compute($oldvalue, $valuetype = 'gradevalue') {
         return $oldvalue; // TODO implement computation using parser
     }
 
