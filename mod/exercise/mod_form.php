@@ -3,19 +3,19 @@ require_once ('moodleform_mod.php');
 
 class mod_exercise_mod_form extends moodleform_mod {
 
-	function definition() {
+    function definition() {
 
-		global $CFG, $COURSE, $EXERCISE_TYPE, $EXERCISE_ASSESSMENT_COMPS;
-		$mform    =& $this->_form;
+        global $CFG, $COURSE, $EXERCISE_TYPE, $EXERCISE_ASSESSMENT_COMPS;
+        $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('title', 'exercise'), array('size'=>'64'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
-		$mform->addElement('static', 'description', get_string('description', 'exercise'), get_string('descriptionofexercise', 'exercise', $COURSE->students));
+        $mform->addElement('static', 'description', get_string('description', 'exercise'), get_string('descriptionofexercise', 'exercise', $COURSE->students));
 
         $filesize = array();
         $sizelist = array('10Kb', '50Kb', '100Kb', '500Kb', '1Mb', '2Mb', '5Mb', '10Mb', '20Mb', '50Mb');
@@ -100,9 +100,9 @@ class mod_exercise_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
-        // buttons
+// buttons
         $this->add_action_buttons();
-	}
+    }
 
 
 

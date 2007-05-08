@@ -3,21 +3,21 @@ require_once ('moodleform_mod.php');
 
 class mod_journal_mod_form extends moodleform_mod {
 
-	function definition() {
+    function definition() {
 
-		global $COURSE;
-		$mform    =& $this->_form;
+        global $COURSE;
+        $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('journalname', 'journal'), array('size'=>'64'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
-    	$mform->addElement('htmleditor', 'intro', get_string('journalquestion', 'journal'));
-		$mform->setType('intro', PARAM_RAW);
-		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string('journalquestion', 'journal'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
@@ -43,12 +43,12 @@ class mod_journal_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-		$this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements();
 //-------------------------------------------------------------------------------
-        // buttons
+// buttons
         $this->add_action_buttons();
 
-	}
+    }
 
 
 

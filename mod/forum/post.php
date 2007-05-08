@@ -635,7 +635,7 @@
     if ($post->parent) {
         $crumbs[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'activityinstance');
         $crumbs[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'action');            
-    } else {  	
+    } else {
         $crumbs[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'action');
     }
 

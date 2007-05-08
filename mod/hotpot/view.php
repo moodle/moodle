@@ -283,7 +283,7 @@
         for ($i=0; $i<$count; $i++) {
             if ($pageid) {
                 $styles .= str_replace('TheBody', $pageid, $matches[0][$i])."\n";
-			}
+            }
             $head = str_replace($matches[0][$i], '', $head);
         }
     }
@@ -295,7 +295,7 @@
         for ($i=0; $i<$count; $i++) {
             if ($pageid) {
                 $scripts .= str_replace('TheBody', $pageid, $matches[0][$i])."\n";
-			}
+            }
             $head = str_replace($matches[0][$i], '', $head);
         }
     }
@@ -308,7 +308,7 @@
         $body = $matches[5]; // contents of first <body onload="StartUp()">...</body> block
         if ($pageid) {
             $body_tags = str_replace(' id="TheBody"', '', $matches[1]);
-		}
+        }
         // workaround to ensure javascript onload routine for quiz is always executed
         //  $body_tags will only be inserted into the <body ...> tag
         //  if it is included in the theme/$CFG->theme/header.html,

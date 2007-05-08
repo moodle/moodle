@@ -302,7 +302,7 @@ String.prototype.trim = function() {
             if (!CSS.__remoteSaveRequired) {
                 UI.statusMsg('There are no changes that need saving!', 'chameleon-notice');
                 return;
-            }	
+            }
         
             var css = CSS.toString(CSS.__localCSS);
 
@@ -596,7 +596,7 @@ String.prototype.trim = function() {
             var hasBorder = false;
             var col = false;
             var importantBorders = [];
-        	  
+
             var dec = '{\n';
             for (var prop in css) {
                 
@@ -1775,8 +1775,8 @@ String.prototype.trim = function() {
             var pseudoClasses = ['link', 'active', 'visited', 'hover', 'focus'];
 
             while (n--) {
-            	  var row = n % 2;
-            	
+                var row = n % 2;
+
                 var item = Util.createElement('li');
                 item.className = 'row' + row;
                 var tag = Util.createElement('span', 'chameleon-tag-name-' + n);

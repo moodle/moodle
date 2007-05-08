@@ -200,7 +200,7 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
     
-	//Adding new field to table scorm
+    //Adding new field to table scorm
     if ($result && $oldversion < 2007011800) {
 
     /// Define field format to be added to data_comments

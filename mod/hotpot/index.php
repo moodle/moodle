@@ -341,9 +341,9 @@
 
             // get best score
             if (is_numeric($totals[$hotpot->id]->maxscore)) {
-				$weighting = $hotpot->grade / 100;
-				$precision = hotpot_get_precision($hotpot);
-				$bestscore = round($totals[$hotpot->id]->maxscore * $weighting, $precision)." / $hotpot->grade";
+                $weighting = $hotpot->grade / 100;
+                $precision = hotpot_get_precision($hotpot);
+                $bestscore = round($totals[$hotpot->id]->maxscore * $weighting, $precision)." / $hotpot->grade";
             } else {
                 $bestscore = "&nbsp;";
             }

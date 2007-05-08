@@ -10,7 +10,7 @@ function hotpot_update_to_v2_2() {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
-	}
+    }
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
     
     // add new hotpot_questions.md5key field (and index)
@@ -34,7 +34,7 @@ function hotpot_update_to_v2_2() {
         $index = "{$CFG->prefix}{$table}_{$field}_idx";
     } else {
         $index = "{$table}_{$field}_idx";
-	}
+    }
     hotpot_db_delete_index("{$CFG->prefix}$table", $index);
 
     // add new hotpot_strings.md5key field (and index)

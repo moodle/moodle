@@ -219,7 +219,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 }
             }
             else{
-				$isvisible = true;
+                $isvisible = true;
             }
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {

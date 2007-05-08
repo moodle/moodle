@@ -50,9 +50,9 @@
                 print htmlspecialchars($hp->source);
                 break;
             case 'showxmltree':
-				if (isset($hp->xml)) {
-					print_r($hp->xml);
-				}
+                if (isset($hp->xml)) {
+                    print_r($hp->xml);
+                }
                 break;
             case 'showhtmlsource':
                 print htmlspecialchars($hp->html);

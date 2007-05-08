@@ -210,9 +210,9 @@ function scorm_get_sco($id,$what=SCO_ALL) {
         $sco = ($what == SCO_DATA) ? new stdClass() : $sco;
         if (($what != SCO_ONLY) && ($scodatas = get_records('scorm_scoes_data','scoid',$id))) {
             foreach ($scodatas as $scodata) {
-                $sco->{$scodata->name} = $scodata->value;		
+                $sco->{$scodata->name} = $scodata->value;
             }
-		}
+        }
         elseif (($what != SCO_ONLY) && (!($scodatas = get_records('scorm_scoes_data','scoid',$id)))){
                 $sco->parameters = ''; 
         }
@@ -551,7 +551,6 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
         $scorm->version = 'scorm_12';
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
-	
 
     $result = scorm_get_toc($user,$scorm,'structlist',$orgidentifier);
     $incomplete = $result->incomplete;
@@ -564,7 +563,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string('mode','scorm');
-					  echo '<input type="hidden" name="scoid" value="$sco->id" />'."\n";
+                      echo '<input type="hidden" name="scoid" value="$sco->id" />'."\n";
                       echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
                       echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
                   } else {
@@ -595,7 +594,7 @@ function scorm_simple_play($scorm,$user) {
        if ($scorm->skipview >= 1) {
            $sco = current($scoes);
            if (scorm_get_tracks($sco->id,$user->id) === false) {
-				header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
                $result = true;
            } else if ($scorm->skipview == 2) {
                header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
