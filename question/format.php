@@ -307,6 +307,7 @@ class qformat_default {
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
+        $question->penalty = 0.1;
 
         // this option in case the questiontypes class wants
         // to know where the data came from
@@ -363,14 +364,14 @@ class qformat_default {
 
         // convert and save file contents
         if (!$content = base64_decode( $base64 )) {
-            return false;
+            return '';
         }
         $newfullpath = "$destination/$newfile";
         if (!$fh = fopen( $newfullpath, 'w' )) {
-            return false;
+            return '';
         }
         if (!fwrite( $fh, $content )) {
-            return false;
+            return '';
         }
         fclose( $fh );
 
