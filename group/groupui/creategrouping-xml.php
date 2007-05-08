@@ -18,13 +18,13 @@ $groupingsettings->description= required_param('description', PARAM_ALPHANUM);
 require_login($courseid);
 
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingid = groups_create_grouping($courseid, $groupingsettings);
-	
-	if (!$groupingid) {
-		echo '<error>Failed to create grouping</error>';
-	} else {
-		echo '<groupingid>'.$groupingid.'</groupingid>';
-	}
+    $groupingid = groups_create_grouping($courseid, $groupingsettings);
+
+    if (!$groupingid) {
+        echo '<error>Failed to create grouping</error>';
+    } else {
+        echo '<groupingid>'.$groupingid.'</groupingid>';
+    }
 }
 
 echo '</groupsresponse>';

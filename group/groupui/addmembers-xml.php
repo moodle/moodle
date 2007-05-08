@@ -15,18 +15,18 @@ $groupid  = required_param('groupid', PARAM_INT);
 $users    = required_param('users', PARAM_SEQUENCE);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$userids = explode(',', $users); 
-	
-	if ($userids != false) {
-		foreach($userids as $userid) {
-			$useradded = groups_add_member($groupid, $userid);
-			if (!$useradded) {
-				echo '<error>Failed to add user $userid to group</error>';
-			}
-		}
-	}
+    $userids = explode(',', $users); 
+
+    if ($userids != false) {
+        foreach($userids as $userid) {
+            $useradded = groups_add_member($groupid, $userid);
+            if (!$useradded) {
+                echo '<error>Failed to add user $userid to group</error>';
+            }
+        }
+    }
 }
 
 echo '</groupsresponse>';

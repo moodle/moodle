@@ -8,15 +8,15 @@
  * course
  */
 function groups_remove_user_from_all_groups($userid, $courseid) {
-	// @@@ TO DO 
+    // @@@ TO DO 
 }
 
 function groups_remove_all_group_members($courseid, $showfeedback) {
-	// @@@ TO DO 
+    // @@@ TO DO 
 }
 
 function groups_remove_all_groups($courseid, $removemembers, $showfeedback) {
-	// @@@ TO DO 
+    // @@@ TO DO 
 }
 
 /**
@@ -28,10 +28,10 @@ function groups_remove_all_groups($courseid, $removemembers, $showfeedback) {
  * @return boolean True if the clean up was successful, false otherwise. 
  */
 function groups_cleanup_groups($courseid) {
-	$success = true;
+    $success = true;
 
-	// Delete all the groupings 
-	$groupings = groups_get_groupings($courseid);
+    // Delete all the groupings 
+    $groupings = groups_get_groupings($courseid);
     if ($groupings != false) {
         foreach($groupings as $groupingid) {
             $groupingdeleted = groups_delete_grouping($groupingid);
@@ -44,16 +44,16 @@ function groups_cleanup_groups($courseid) {
     // Delete all the groups
     $groupids = groups_get_groups($courseid);
     if ($groupids != false) {
-	    foreach($groupids as $groupid) {
-	        $groupdeleted = groups_delete_group($groupid);
+        foreach($groupids as $groupid) {
+            $groupdeleted = groups_delete_group($groupid);
 
-	        if (!$groupdeleted) {
-	            $success = false;
-	        }
-	    }
+            if (!$groupdeleted) {
+                $success = false;
+            }
+        }
     }
 
-	return $success;
+    return $success;
 }
 
 ?>

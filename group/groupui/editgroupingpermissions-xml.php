@@ -21,9 +21,9 @@ $groupingsettings->teachersgroupview = required_param('teachersgroupview', PARAM
 $groupingsettings->teachersoverride = required_param('teachersoverride', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingid = groups_set_grouping_settings($groupingid, $groupingsettings);
+    $groupingid = groups_set_grouping_settings($groupingid, $groupingsettings);
 }
 
 echo '</groupsresponse>';

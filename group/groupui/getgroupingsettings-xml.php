@@ -15,12 +15,12 @@ $courseid   = required_param('courseid', PARAM_INT);
 $groupingid = required_param('groupingid', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingsettings = groups_get_grouping_settings($groupingid);
-	echo '<name>'.$groupingsettings->name.'</name>';
-	echo '<description>'.$groupingsettings->description.'</description>';
-	
+    $groupingsettings = groups_get_grouping_settings($groupingid);
+    echo '<name>'.$groupingsettings->name.'</name>';
+    echo '<description>'.$groupingsettings->description.'</description>';
+
 }
 
 echo '</groupsresponse>';

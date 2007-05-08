@@ -17,9 +17,9 @@ $groupingsettings->name       = required_param('groupingname', PARAM_ALPHANUM);
 $groupingsettings->description= required_param('description', PARAM_ALPHANUM);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingid = groups_set_grouping_settings($groupingid, $groupingsettings);
+    $groupingid = groups_set_grouping_settings($groupingid, $groupingsettings);
 }
 
 echo '</groupsresponse>';

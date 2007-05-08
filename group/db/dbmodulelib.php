@@ -19,16 +19,16 @@
  * @return int The grouping id (or false if it is null or an error occurred)
  */
 function groups___db_m_get_groupingid($cmid) {
-	// @@@ Check nulls are turned into false
-	$query = get_record('course_modules', 'groupingid', $userid);
-	return $query;
+    // @@@ Check nulls are turned into false
+    $query = get_record('course_modules', 'groupingid', $userid);
+    return $query;
 }
 
 /**
  * Gets the groupingid for a particular course module instance 
  */
 function groups_db_m_set_groupingid($cmid) {
-	// @@@ TO DO 	
+    // @@@ TO DO
 }
 
 

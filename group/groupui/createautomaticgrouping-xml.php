@@ -27,19 +27,19 @@ $groupingsettings->description = required_param('description', PARAM_ALPHANUM);
 $groupingsettings->prefix = required_param('prefix');
 $groupingsettings->defaultgroupdescription = required_param('defaultgroupdescription');
 
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	if ($generationtype == 'nogroups') {
-		$noofstudents = false;
-	}
-	
-	$groupingid = groups_create_automatic_grouping($courseid, $noofstudents, $noofgroups, 
-	                                               $distribevenly, $groupingsettings, false, $alphabetical); 
-	if (!$groupingid) {
-		echo '<error>Failed to create grouping</error>';
-	} else {
-		echo '<groupingid>'.$groupingid.'</groupingid>';
-	}
+    if ($generationtype == 'nogroups') {
+        $noofstudents = false;
+    }
+
+    $groupingid = groups_create_automatic_grouping($courseid, $noofstudents, $noofgroups, 
+        $distribevenly, $groupingsettings, false, $alphabetical); 
+    if (!$groupingid) {
+        echo '<error>Failed to create grouping</error>';
+    } else {
+        echo '<groupingid>'.$groupingid.'</groupingid>';
+    }
 }
 
 echo '</groupsresponse>';

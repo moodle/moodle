@@ -1,9 +1,9 @@
 
 function onRemoveGroup() {
-	hideAllForms();
-	showElement("groupeditform");
-	removeGroupFromGrouping();
-	return false;
+    hideAllForms();
+    showElement("groupeditform");
+    removeGroupFromGrouping();
+    return false;
 }
 
 /**
@@ -11,23 +11,23 @@ function onRemoveGroup() {
  * another grouping
  */
 function removeGroupFromGrouping() {
- 	//alert("Called removeGroupFromGrouping");
- 	var url = "removegroupfromgrouping-xml.php";
+    //alert("Called removeGroupFromGrouping");
+    var url = "removegroupfromgrouping-xml.php";
     var requeststring = "groupid="+selectedgroupid+"&groupingid="+selectedgroupingid;
     sendPostRequest(request, url, requeststring, removeGroupFromGroupingResponse);
 }
- 
+
 /**
  * The callback for the response to the request sent in removeGroupFromGrouping() 
  */ 
 function removeGroupFromGroupingResponse() {
     if (checkAjaxResponse(request)) {
-    	//alert("removeGroupFromGroupingResponse called");
-      	var xmlDoc= request.responseXML;
-      	// Need XML sent back with groupingid
-      	// Really want to set this to be the grouping before
-      	selectedgroupid = null;
-      	updateGroupings();
+        //alert("removeGroupFromGroupingResponse called");
+        var xmlDoc= request.responseXML;
+        // Need XML sent back with groupingid
+        // Really want to set this to be the grouping before
+        selectedgroupid = null;
+        updateGroupings();
     }
 }
 

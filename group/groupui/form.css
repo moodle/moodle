@@ -26,26 +26,26 @@
    padding:10px;
    z-index:1;
    visibility: hidden;
-}	
+}
 
 .select
 {
-	overflow: visible;
-	clip: auto;
-	width:200px;
+    overflow: visible;
+    clip: auto;
+    width:200px;
 }
 
 .groupmanagementtable
 {
-	padding: 10px;
-	margin-left: auto;
-	margin-right: auto; 
-	text-align: center; 
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto; 
+    text-align: center; 
 }
 
 .groupmanagementtableheader
 {
-	width: 300px;
+    width: 300px;
 }
 
 

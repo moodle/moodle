@@ -16,12 +16,12 @@ $groupingid = required_param('groupingid', PARAM_INT);
 $courseid   = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingremoved = groups_remove_group_from_grouping($groupid, $groupingid);
-	if (!$groupingremoved) {
-		echo '<error>Failed to remove group from grouping</error>';
-	}
+    $groupingremoved = groups_remove_group_from_grouping($groupid, $groupingid);
+    if (!$groupingremoved) {
+        echo '<error>Failed to remove group from grouping</error>';
+    }
 }
 
 echo '</groupsresponse>';

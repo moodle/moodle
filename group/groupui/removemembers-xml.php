@@ -17,19 +17,19 @@ $users    = required_param('users', PARAM_SEQUENCE);
 $courseid = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	// Change the comma-separated string of the userids into an array of the userids
-	$userids = explode(',', $users); 
-	if ($userids != false) {
-		// Remove each user in turn from the group. 
-		foreach($userids as $userid) {
-			$useradded = groups_remove_member($groupid, $userid);
-			if (!$useradded) {
-				echo "<error>Failed to adduser $userid</error>";
-			}
-		}
-	}
+    // Change the comma-separated string of the userids into an array of the userids
+    $userids = explode(',', $users); 
+    if ($userids != false) {
+        // Remove each user in turn from the group. 
+        foreach($userids as $userid) {
+            $useradded = groups_remove_member($groupid, $userid);
+            if (!$useradded) {
+                echo "<error>Failed to adduser $userid</error>";
+            }
+        }
+    }
 }
 
 

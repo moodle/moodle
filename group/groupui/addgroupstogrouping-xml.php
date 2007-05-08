@@ -19,18 +19,18 @@ $groupingid = required_param('groupingid', PARAM_INT);
 $groups     = required_param('groups', PARAM_SEQUENCE); //TODO: check.
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupids = explode(',', $groups); 
-	
-	if ($groupids != false) {
-		foreach($groupids as $groupid) {
-			$groupadded = groups_add_group_to_grouping($groupid, $groupingid);
-			if (!$groupadded) {
-				echo '<error>Failed to add group $groupid to grouping</error>';
-			}
-		} 
-	}
+    $groupids = explode(',', $groups); 
+
+    if ($groupids != false) {
+        foreach($groupids as $groupid) {
+            $groupadded = groups_add_group_to_grouping($groupid, $groupingid);
+            if (!$groupadded) {
+                echo '<error>Failed to add group $groupid to grouping</error>';
+            }
+        } 
+    }
 }
 
 echo '</groupsresponse>';
