@@ -3,30 +3,30 @@ require_once ($CFG->dirroot.'/lib/formslib.php');
 
 class mod_glossary_entry_form extends moodleform {
 
-	function definition() {
+    function definition() {
 
-		global $CFG, $COURSE;
-		$mform    =& $this->_form;
+        global $CFG, $COURSE;
+        $mform    =& $this->_form;
 
-		$glossary =& $this->_customdata['glossary'];
-		$mode     =& $this->_customdata['mode'];
-		$cm       =& $this->_customdata['cm'];
-		$hook     =& $this->_customdata['hook'];
-		$e        =& $this->_customdata['e'];
+        $glossary =& $this->_customdata['glossary'];
+        $mode     =& $this->_customdata['mode'];
+        $cm       =& $this->_customdata['cm'];
+        $hook     =& $this->_customdata['hook'];
+        $e        =& $this->_customdata['e'];
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'concept', get_string('concept', 'glossary'));
-		$mform->setType('concept', PARAM_TEXT);
-		$mform->addRule('concept', null, 'required', null, 'client');
+        $mform->setType('concept', PARAM_TEXT);
+        $mform->addRule('concept', null, 'required', null, 'client');
 
-		$mform->addElement('htmleditor', 'definition', get_string('definition', 'glossary'), array('rows'=>20));
-		$mform->setType('definition', PARAM_RAW);
-		$mform->addRule('definition', null, 'required', null, 'client');
+        $mform->addElement('htmleditor', 'definition', get_string('definition', 'glossary'), array('rows'=>20));
+        $mform->setType('definition', PARAM_RAW);
+        $mform->addRule('definition', null, 'required', null, 'client');
         $mform->setHelpButton('definition', array('writing', 'richtext'), false, 'editorhelpbutton');
 
-		$mform->addElement('format');
+        $mform->addElement('format');
 
         $categories = array();
         if ($categories = get_records_menu('glossary_categories', 'glossaryid', $glossary->id, 'name ASC', 'id, name')){
@@ -39,12 +39,12 @@ class mod_glossary_entry_form extends moodleform {
         $categoriesEl->setMultiple(true);
         $categoriesEl->setSize(5);
 
-		$mform->addElement('textarea', 'aliases', get_string('aliases', 'glossary'), 'rows="2" cols="40"');
-		$mform->setType('aliases', PARAM_TEXT);
+        $mform->addElement('textarea', 'aliases', get_string('aliases', 'glossary'), 'rows="2" cols="40"');
+        $mform->setType('aliases', PARAM_TEXT);
         $mform->setHelpButton('aliases', array('aliases2', strip_tags(get_string('aliases', 'glossary')), 'glossary'));
 
         $this->set_upload_manager(new upload_manager('attachment', true, false, $COURSE, false, 0, true, true, false));
-		$mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
+        $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
         $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'glossary'), 'glossary'));
 
         if (isset($CFG->glossary_linkentries)) {
@@ -92,15 +92,15 @@ class mod_glossary_entry_form extends moodleform {
 
 //-------------------------------------------------------------------------------
         $this->add_action_buttons();
-	}
+    }
 
-	function validation($data){
-	    global $CFG, $USER;
-	    $errors = array();
-	    $e = $this->_customdata['e'];
-	    $glossary = $this->_customdata['glossary'];
-	    $context = $this->_customdata['context'];
-	    $data['concept'] = trim($data['concept']);
+    function validation($data){
+        global $CFG, $USER;
+        $errors = array();
+        $e = $this->_customdata['e'];
+        $glossary = $this->_customdata['glossary'];
+        $context = $this->_customdata['context'];
+        $data['concept'] = trim($data['concept']);
         if ($e) {
             //We are updating an entry, so we compare current session user with
             //existing entry user to avoid some potential problems if secureforms=off
@@ -135,7 +135,7 @@ class mod_glossary_entry_form extends moodleform {
             }
         }
         return $errors;
-	}
+    }
 
 }
 ?>

@@ -1589,9 +1589,9 @@ function wiki_get_post_actions() {
  *   held by current user then the the second element has a member ->id only.
  */
 function wiki_obtain_lock($wikiid,$pagename) {
-	global $USER;
+    global $USER;
 
-	// Check for lock
+    // Check for lock
     $alreadyownlock=false;
     if($lock=get_record('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
         // Consider the page locked if the lock has been confirmed within WIKI_LOCK_PERSISTENCE seconds
@@ -1600,7 +1600,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
             $lockid=$lock->id;
             $alreadyownlock=true;
         } else if(time()-$lock->lockedseen < WIKI_LOCK_PERSISTENCE) {
-        	    return array(false,$lock);
+            return array(false,$lock);
         } else {
             // Not locked any more. Get rid of the old lock record.
             if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wikiid)) {
@@ -1611,23 +1611,23 @@ function wiki_obtain_lock($wikiid,$pagename) {
 
     // Add lock
     if(!$alreadyownlock) {
-		// Lock page
-		$newlock=new stdClass;
-		$newlock->lockedby=$USER->id;
-		$newlock->lockedsince=time();
-		$newlock->lockedseen=$newlock->lockedsince;
-		$newlock->wikiid=$wikiid;
-		$newlock->pagename=$pagename;
-		if(!$lockid=insert_record('wiki_locks',$newlock)) {
-		    error('Unable to insert lock record');
-		}
+        // Lock page
+        $newlock=new stdClass;
+        $newlock->lockedby=$USER->id;
+        $newlock->lockedsince=time();
+        $newlock->lockedseen=$newlock->lockedsince;
+        $newlock->wikiid=$wikiid;
+        $newlock->pagename=$pagename;
+        if(!$lockid=insert_record('wiki_locks',$newlock)) {
+            error('Unable to insert lock record');
+        }
     }
 
     // Store lock information in session so we can clear it later
     if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
-    		$_SESSION[SESSION_WIKI_LOCKS]=array();
+        $_SESSION[SESSION_WIKI_LOCKS]=array();
     }
-	$_SESSION[SESSION_WIKI_LOCKS][$wikiid.'_'.$pagename]=$lockid;
+    $_SESSION[SESSION_WIKI_LOCKS][$wikiid.'_'.$pagename]=$lockid;
     $lockdata=new StdClass;
     $lockdata->id=$lockid;
     return array(true,$lockdata);
@@ -1644,15 +1644,15 @@ function wiki_obtain_lock($wikiid,$pagename) {
  */
 function wiki_release_lock($wikiid,$pagename) {
     if(!array_key_exists(SESSION_WIKI_LOCKS,$_SESSION)) {
-    		// No locks at all in session
-    		return;
+        // No locks at all in session
+        return;
     }
 
     $key=$wikiid.'_'.$pagename;
 
     if(array_key_exists($key,$_SESSION[SESSION_WIKI_LOCKS])) {
-    		$lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
-	    unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
+        $lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
+        unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
         if(!delete_records('wiki_locks','id',$lockid)) {
             error("Unable to delete lock record.");
         }

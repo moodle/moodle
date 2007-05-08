@@ -3,21 +3,21 @@ require_once ('moodleform_mod.php');
 
 class mod_glossary_mod_form extends moodleform_mod {
 
-	function definition() {
+    function definition() {
 
-		global $CFG, $COURSE;
-		$mform    =& $this->_form;
+        global $CFG, $COURSE;
+        $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
-		$mform->addElement('htmleditor', 'intro', get_string('description'));
-		$mform->setType('intro', PARAM_RAW);
-		$mform->addRule('intro', get_string('required'), 'required', null, 'client');
+        $mform->addElement('htmleditor', 'intro', get_string('description'));
+        $mform->setType('intro', PARAM_RAW);
+        $mform->addRule('intro', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('intro', array('writing', 'questions', 'text'), false, 'editorhelpbutton');
 
         $mform->addElement('text', 'entbypage', get_string('entbypage', 'glossary'));
@@ -148,11 +148,11 @@ class mod_glossary_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
-	}
+    }
 
-	function definition_after_data(){
-	    global $COURSE;
-		$mform    =& $this->_form;
+    function definition_after_data(){
+        global $COURSE;
+        $mform    =& $this->_form;
         $mainglossaryel =& $mform->getElement('mainglossary');
         $mainglossary = get_record('glossary', 'mainglossary', 1, 'course', $COURSE->id);
         if ($mainglossary && ($mainglossary->id != $mform->getElementValue('instance'))){
@@ -165,19 +165,19 @@ class mod_glossary_mod_form extends moodleform_mod {
             $mainglossaryel->setPersistantFreeze(false);
 
         }
+    }
 
 
-	}
-	function data_preprocessing($default_values){
+    function data_preprocessing($default_values){
         if (isset($default_values['assessed'])){
-	        $default_values['userating']=($default_values['assessed'])?true:false;
-	    }
+            $default_values['userating']=($default_values['assessed'])?true:false;
+        }
         if (isset($default_values['assessed'])){
-	        $default_values['ratingtime']=($default_values['assessed']
-        	                               && $default_values['assesstimestart']
-        	                               && $default_values['assesstimefinish'] )?1:0;
-	    }
-	}
+            $default_values['ratingtime']=($default_values['assessed']
+                && $default_values['assesstimestart']
+                && $default_values['assesstimefinish'] )?1:0;
+        }
+    }
 
 }
 ?>
