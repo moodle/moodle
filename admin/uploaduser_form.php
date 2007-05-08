@@ -11,8 +11,8 @@ class admin_uploaduser_form extends moodleform {
         $mform->addElement('header', 'settingsheader', get_string('settings'));
 
         $passwordopts = array( 0 => get_string('infilefield', 'auth'),
-                               1 => get_string('createpasswordifneeded', 'auth'),
-                              );
+            1 => get_string('createpasswordifneeded', 'auth'),
+        );
 
         $mform->addElement('select', 'createpassword', get_string('passwordhandling', 'auth'), $passwordopts);
 
@@ -24,7 +24,7 @@ class admin_uploaduser_form extends moodleform {
 
     function get_userfile_name(){
         if ($this->is_submitted() and $this->is_validated()) {
-	  // return the temporary filename to process
+            // return the temporary filename to process
             return $this->_upload_manager->files['userfile']['tmp_name'];
         }else{
             return  NULL;
