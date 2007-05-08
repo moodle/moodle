@@ -72,9 +72,9 @@
         fwrite ($bf,full_tag('OPTIONS',4,false,$scorm->options));
         fwrite ($bf,full_tag('WIDTH',4,false,$scorm->width));
         fwrite ($bf,full_tag('HEIGHT',4,false,$scorm->height));
-		fwrite ($bf,full_tag('MD5HASH',4,false,$scorm->md5hash));
-		fwrite ($bf,full_tag("MAXATTEMPT",4,false,$scorm->maxattempt));
-		fwrite ($bf,full_tag("UPDATEFREQ",4,false,$scorm->updatefreq));
+        fwrite ($bf,full_tag('MD5HASH',4,false,$scorm->md5hash));
+        fwrite ($bf,full_tag("MAXATTEMPT",4,false,$scorm->maxattempt));
+        fwrite ($bf,full_tag("UPDATEFREQ",4,false,$scorm->updatefreq));
         fwrite ($bf,full_tag('TIMEMODIFIED',4,false,$scorm->timemodified));
         $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
         
@@ -117,9 +117,9 @@
                 fwrite ($bf,full_tag('SCORMTYPE',6,false,$sco->scormtype));
                 fwrite ($bf,full_tag('TITLE',6,false,$sco->title));
                 $status = backup_scorm_scoes_data($bf,$preferences,$sco->id);
-				$status = backup_scorm_seq_ruleconds($bf,$preferences,$sco->id);
-				$status = backup_scorm_seq_rolluprule($bf,$preferences,$sco->id);
-				$status = backup_scorm_seq_objective($bf,$preferences,$sco->id);
+                $status = backup_scorm_seq_ruleconds($bf,$preferences,$sco->id);
+                $status = backup_scorm_seq_rolluprule($bf,$preferences,$sco->id);
+                $status = backup_scorm_seq_objective($bf,$preferences,$sco->id);
                 //End sco
                 $status =fwrite ($bf,end_tag('SCO',5,true));
             }
@@ -147,7 +147,7 @@
                 $status =fwrite ($bf,start_tag('SCO_DATA',5,true));
                 //Print track contents
                 fwrite ($bf,full_tag('ID',6,false,$sco_data->id));
-				fwrite ($bf,full_tag('SCOID',6,false,$sco_data->scoid));
+                fwrite ($bf,full_tag('SCOID',6,false,$sco_data->scoid));
                 fwrite ($bf,full_tag('NAME',6,false,$sco_data->name));
                 fwrite ($bf,full_tag('VALUE',6,false,$sco_data->value));
                 //End sco track
@@ -181,8 +181,8 @@
                 fwrite ($bf,full_tag('SCOID',6,false,$sco_track->scoid));
                 fwrite ($bf,full_tag('ELEMENT',6,false,$sco_track->element));
                 fwrite ($bf,full_tag('VALUE',6,false,$sco_track->value));
-				fwrite ($bf,full_tag('ATTEMPT',6,false,$sco_track->attempt));
-				fwrite ($bf,full_tag('TIMEMODIFIED',6,false,$sco_track->timemodified));
+                fwrite ($bf,full_tag('ATTEMPT',6,false,$sco_track->attempt));
+                fwrite ($bf,full_tag('TIMEMODIFIED',6,false,$sco_track->timemodified));
                 //End sco track
                 $status =fwrite ($bf,end_tag('SCO_TRACK',5,true));
             }
@@ -213,9 +213,9 @@
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_rulecondition->scoid));
                 fwrite ($bf,full_tag('CONDITIONCOMBINATION',6,false,$seq_rulecondition->conditioncombination));
                 fwrite ($bf,full_tag('RULETYPE',6,false,$seq_rulecondition->ruletype));
-				fwrite ($bf,full_tag('ACTION',6,false,$seq_rulecondition->action));
-				
-				$status = backup_scorm_seq_rulecond($bf,$preferences,$seq_rulecondition->id);
+                fwrite ($bf,full_tag('ACTION',6,false,$seq_rulecondition->action));
+
+                $status = backup_scorm_seq_rulecond($bf,$preferences,$seq_rulecondition->id);
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_RULECOND',5,true));
             }
@@ -226,7 +226,7 @@
     }
 
 
-	 function backup_scorm_seq_rulecond ($bf,$preferences,$ruleconditions) {
+    function backup_scorm_seq_rulecond ($bf,$preferences,$ruleconditions) {
 
         global $CFG;
 
@@ -246,9 +246,9 @@
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_rulecondition->scoid));
                 fwrite ($bf,full_tag('RULECONDITIONSID',6,false,$seq_rulecondition->ruleconditionsid));
                 fwrite ($bf,full_tag('REFRENCEDOBJECTIVE',6,false,$seq_rulecondition->refrencedobjective));
-				fwrite ($bf,full_tag('MEASURETHRESHOLD',6,false,$seq_rulecondition->measurethreshold));
-				fwrite ($bf,full_tag('OPERATOR',6,false,$seq_rulecondition->operator));
-				fwrite ($bf,full_tag('COND',6,false,$seq_rulecondition->cond));
+                fwrite ($bf,full_tag('MEASURETHRESHOLD',6,false,$seq_rulecondition->measurethreshold));
+                fwrite ($bf,full_tag('OPERATOR',6,false,$seq_rulecondition->operator));
+                fwrite ($bf,full_tag('COND',6,false,$seq_rulecondition->cond));
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_RULECOND_DATA',5,true));
             }
@@ -258,7 +258,7 @@
         return $status;
     }
 
-	 function backup_scorm_seq_rolluprule ($bf,$preferences,$sco) {
+    function backup_scorm_seq_rolluprule ($bf,$preferences,$sco) {
 
         global $CFG;
 
@@ -277,11 +277,11 @@
                 fwrite ($bf,full_tag('ID',6,false,$seq_rolluprule->id));
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_rolluprule->scoid));
                 fwrite ($bf,full_tag('CHILDACTIVITYSET',6,false,$seq_rolluprule->childactivityset));
-				fwrite ($bf,full_tag('MINIMUMCOUNT',6,false,$seq_rolluprule->minimumcount));
-				fwrite ($bf,full_tag('MINIMUMPERCENT',6,false,$seq_rolluprule->minimumpercent));
-				fwrite ($bf,full_tag('CONDITIONCOMBINATION',6,false,$seq_rolluprule->conditioncomnination));
-				fwrite ($bf,full_tag('ACTION',6,false,$seq_rolluprule->action));
-				$status = backup_scorm_seq_rolluprulecond($bf,$preferences,$seq_rolluprule->id);
+                fwrite ($bf,full_tag('MINIMUMCOUNT',6,false,$seq_rolluprule->minimumcount));
+                fwrite ($bf,full_tag('MINIMUMPERCENT',6,false,$seq_rolluprule->minimumpercent));
+                fwrite ($bf,full_tag('CONDITIONCOMBINATION',6,false,$seq_rolluprule->conditioncomnination));
+                fwrite ($bf,full_tag('ACTION',6,false,$seq_rolluprule->action));
+                $status = backup_scorm_seq_rolluprulecond($bf,$preferences,$seq_rolluprule->id);
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_ROLLUPRULE',5,true));
             }
@@ -292,7 +292,7 @@
     }
 
 
-	function backup_scorm_seq_rolluprulecond ($bf,$preferences,$rolluprule) {
+    function backup_scorm_seq_rolluprulecond ($bf,$preferences,$rolluprule) {
 
         global $CFG;
 
@@ -311,9 +311,9 @@
                 fwrite ($bf,full_tag('ID',6,false,$seq_rolluprulecondition->id));
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_rolluprulecondition->scoid));
                 fwrite ($bf,full_tag('ROLLUPRULEID',6,false,$seq_rolluprulecondition->rollupruleid));
-				fwrite ($bf,full_tag('COND',6,false,$seq_rolluprulecondition->condition));
-				fwrite ($bf,full_tag('OPERATOR',6,false,$seq_rolluprulecondition->operator));
-				
+                fwrite ($bf,full_tag('COND',6,false,$seq_rolluprulecondition->condition));
+                fwrite ($bf,full_tag('OPERATOR',6,false,$seq_rolluprulecondition->operator));
+
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_ROLLUPRULECOND',5,true));
             }
@@ -344,10 +344,10 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_objective->scoid));
                 fwrite ($bf,full_tag('PRIMARYOBJ',6,false,$seq_objective->primaryobj));
                 fwrite ($bf,full_tag('OBJECTIVEID',6,false,$seq_objective->objectiveid));
-				fwrite ($bf,full_tag('MINNORMALIZEDMEASURE',6,false,$seq_objective->minnormalizedmeasure));
-				fwrite ($bf,full_tag('SATISFIEDBYMEASURE',6,false,$seq_objective->objectivemeasureweight));
-				
-				$status = backup_scorm_seq_mapinfo($bf,$preferences,$seq_objective->id);
+                fwrite ($bf,full_tag('MINNORMALIZEDMEASURE',6,false,$seq_objective->minnormalizedmeasure));
+                fwrite ($bf,full_tag('SATISFIEDBYMEASURE',6,false,$seq_objective->objectivemeasureweight));
+
+                $status = backup_scorm_seq_mapinfo($bf,$preferences,$seq_objective->id);
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_OBJECTIVE',5,true));
             }
@@ -357,7 +357,7 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
         return $status;
     }
 
-	 function backup_scorm_seq_mapinfo ($bf,$preferences,$objectives) {
+    function backup_scorm_seq_mapinfo ($bf,$preferences,$objectives) {
 
         global $CFG;
 
@@ -377,10 +377,10 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
                 fwrite ($bf,full_tag('SCOID',6,false,$seq_objective->scoid));
                 fwrite ($bf,full_tag('OBJECTIVEID',6,false,$seq_objective->objectiveid));
                 fwrite ($bf,full_tag('TARGETOBJECTIVEID',6,false,$seq_objective->targetobjectiveid));
-				fwrite ($bf,full_tag('READSATISFIEDSTATUS',6,false,$seq_objective->readsatisfiedstatus));
-				fwrite ($bf,full_tag('READNORMALIZEDMEASURE',6,false,$seq_objective->readnormalizedmeasure));
-				fwrite ($bf,full_tag('WRITESATISFIEDSTATUS',6,false,$seq_objective->writesatisfiedstatus));
-				fwrite ($bf,full_tag('WRITENORMALIZEDMEASURE',6,false,$seq_objective->writenormalizedmeasure));
+                fwrite ($bf,full_tag('READSATISFIEDSTATUS',6,false,$seq_objective->readsatisfiedstatus));
+                fwrite ($bf,full_tag('READNORMALIZEDMEASURE',6,false,$seq_objective->readnormalizedmeasure));
+                fwrite ($bf,full_tag('WRITESATISFIEDSTATUS',6,false,$seq_objective->writesatisfiedstatus));
+                fwrite ($bf,full_tag('WRITENORMALIZEDMEASURE',6,false,$seq_objective->writenormalizedmeasure));
                 //End sco track
                 $status =fwrite ($bf,end_tag('SEQ_MAPINF',5,true));
             }

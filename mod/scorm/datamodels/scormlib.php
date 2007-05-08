@@ -645,28 +645,28 @@ function scorm_get_children($sco) {
 }
 
 function scorm_get_available_children($sco){
-	$res = get_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'element','availablechildren');
-	if(!$res || $res == null){
-		return false;
-	}
-	else{
-		return unserialize($res->value);
-	}
+    $res = get_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'element','availablechildren');
+    if(!$res || $res == null){
+        return false;
+    }
+    else{
+        return unserialize($res->value);
+    }
 }
 
 function scorm_get_available_descendent($descend = array(),$sco){
-	if($sco == null){
-		return $descend;
-	}
-	else{
-		$avchildren = scorm_get_available_children($sco);
-		foreach($avchildren as $avchild){
-			array_push($descend,$avchild);
-		}
-		foreach($avchildren as $avchild){
-			scorm_get_available_descendent($descend,$avchild);
-		}
-	}
+    if($sco == null){
+        return $descend;
+    }
+    else{
+        $avchildren = scorm_get_available_children($sco);
+        foreach($avchildren as $avchild){
+            array_push($descend,$avchild);
+        }
+        foreach($avchildren as $avchild){
+            scorm_get_available_descendent($descend,$avchild);
+        }
+    }
 }
 
 function scorm_get_siblings($sco) {
@@ -692,10 +692,10 @@ function scorm_get_preorder($preorder=array(),$sco) {
 
     if ($sco != null) {
         array_push($preorder,$sco);
-		$children = scorm_get_children($sco);
-		foreach ($children as $child){
-			scorm_get_preorder($sco);
-		}
+        $children = scorm_get_children($sco);
+        foreach ($children as $child){
+            scorm_get_preorder($sco);
+        }
     } else {
         return $preorder;
     }

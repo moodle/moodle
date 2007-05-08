@@ -48,16 +48,16 @@
             $scorm->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $scorm->version = backup_todb($info['MOD']['#']['VERSION']['0']['#']);
-			$scorm->md5hash = backup_todb($info['MOD']['#']['MD5HASH']['0']['#']);
+            $scorm->md5hash = backup_todb($info['MOD']['#']['MD5HASH']['0']['#']);
             $scorm->maxgrade = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
             if (!is_int($scorm->maxgrade)) {
                 $scorm->maxgrade = 0;
             }
-			$scorm->updatefreq = backup_todb($info['MOD']['#']['UPDATEFREQ']['0']['#']);
+            $scorm->updatefreq = backup_todb($info['MOD']['#']['UPDATEFREQ']['0']['#']);
             if (!is_int($scorm->updatefreq)) {
                 $scorm->updatefreq = 0;
             }
-			$scorm->maxattempt = backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
+            $scorm->maxattempt = backup_todb($info['MOD']['#']['MAXATTEMPT']['0']['#']);
             if (!is_int($scorm->maxattempt)) {
                 $scorm->maxattempt = 0;
             }
@@ -203,8 +203,8 @@
 
         //Now check if want to restore user data and do it.
         scorm_scoes_seq_objective_restore_mods ($newid,$info,$restore);
-		scorm_scoes_seq_rolluprule_restore_mods ($newid,$info,$restore);
-		scorm_scoes_seq_ruleconds_restore_mods ($newid,$info,$restore);
+        scorm_scoes_seq_rolluprule_restore_mods ($newid,$info,$restore);
+        scorm_scoes_seq_ruleconds_restore_mods ($newid,$info,$restore);
         if (restore_userdata_selected($restore,'scorm',$oldmodid)) {
             //Restore scorm_scoes
             if ($status) {
@@ -250,7 +250,7 @@
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_objective",$objective);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_objective", $oldid, $newid);
             } else {
@@ -268,11 +268,11 @@
                 backup_flush(300);
             }
 
-			//Now restore the scorm_seq_mapinfo for each objective
+            //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_mapinfo_restore_mods ($sco_id,$newid,$obj_info,$restore);
                
-		}
+        }
 
         return $status;
     }
@@ -305,12 +305,12 @@
             $rolluprule->minimumrule = backup_todb($rol_info['#']['MINIMUMCOUNT']['0']['#']);
             $rolluprule->minimumpercent = backup_todb($rol_info['#']['MINIMUMPERCENT']['0']['#']);
             $rolluprule->conditioncombination = backup_todb($rol_info['#']['CONDITIONCOMBINATION']['0']['#']);
-			$rolluprule->action = backup_todb($rol_info['#']['ACTION']['0']['#']);
+            $rolluprule->action = backup_todb($rol_info['#']['ACTION']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_rolluprule",$rolluprule);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_rolluprule", $oldid, $newid);
             } else {
@@ -328,11 +328,11 @@
                 backup_flush(300);
             }
 
-			//Now restore the scorm_seq_mapinfo for each objective
+            //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_rolluprulecond_restore_mods ($sco_id, $newid,$obj_info,$restore);
                
-		}
+        }
 
         return $status;
     }
@@ -360,13 +360,13 @@
             
             $rulecond->scoid = $sco_id;      
             $rulecond->conditioncombination = backup_todb($rul_info['#']['CONDITIONCOMBINATION']['0']['#']);
-			$rulecond->minimumpercent = backup_todb($rul_info['#']['RULETYPE']['0']['#']);
-			$rulecond->action = backup_todb($rul_info['#']['ACTION']['0']['#']);
+            $rulecond->minimumpercent = backup_todb($rul_info['#']['RULETYPE']['0']['#']);
+            $rulecond->action = backup_todb($rul_info['#']['ACTION']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_ruleconds",$rulecond);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_ruleconds", $oldid, $newid);
             } else {
@@ -384,11 +384,11 @@
                 backup_flush(300);
             }
 
-			//Now restore the scorm_seq_mapinfo for each objective
+            //Now restore the scorm_seq_mapinfo for each objective
 
             $status = scorm_seq_rulecond_restore_mods ($sco_id, $newid,$obj_info,$restore);
                
-		}
+        }
 
         return $status;
     }
@@ -416,15 +416,15 @@
             
             $rulecondd->scoid = $sco_id;      
             $rulecondd->ruleconditions = $rulecondid;
-			$rulecondd->refrencedobjective = backup_todb($ruld_info['#']['REFRENCEDOBJECTIVE']['0']['#']);
-			$rulecondd->measurethreshold = backup_todb($ruld_info['#']['MEASURETHRESHOLD']['0']['#']);
-			$rulecondd->operator = backup_todb($ruld_info['#']['OPERATOR']['0']['#']);
-			$rulecondd->cond = backup_todb($ruld_info['#']['COND']['0']['#']);
+            $rulecondd->refrencedobjective = backup_todb($ruld_info['#']['REFRENCEDOBJECTIVE']['0']['#']);
+            $rulecondd->measurethreshold = backup_todb($ruld_info['#']['MEASURETHRESHOLD']['0']['#']);
+            $rulecondd->operator = backup_todb($ruld_info['#']['OPERATOR']['0']['#']);
+            $rulecondd->cond = backup_todb($ruld_info['#']['COND']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_rulecond",$rulecondd);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_rulecond", $oldid, $newid);
             } else {
@@ -442,9 +442,9 @@
                 backup_flush(300);
             }
 
-			//Now restore the scorm_seq_mapinfo for each objective
-               
-		}
+            //Now restore the scorm_seq_mapinfo for each objective
+
+        }
 
         return $status;
     }
@@ -472,14 +472,14 @@
             
             $rolluprulecond->scoid = $sco_id;      
             $rolluprulecond->ruleconditions = $rolluprule;
-			$rolluprulecond->cond = backup_todb($rulc_info['#']['COND']['0']['#']);
-			$rolluprulecond->operator = backup_todb($rulc_info['#']['OPERATOR']['0']['#']);
-			
-            
+            $rolluprulecond->cond = backup_todb($rulc_info['#']['COND']['0']['#']);
+            $rolluprulecond->operator = backup_todb($rulc_info['#']['OPERATOR']['0']['#']);
+
+
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_rolluprulecond",$rolluprulecond);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_rolluprulecond", $oldid, $newid);
             } else {
@@ -497,9 +497,9 @@
                 backup_flush(300);
             }
 
-			//Now restore the scorm_seq_mapinfo for each objective
-               
-		}
+            //Now restore the scorm_seq_mapinfo for each objective
+
+        }
 
         return $status;
     }
@@ -527,17 +527,17 @@
             
             $mapinfo->scoid = $sco_id;      
             $mapinfo->objectiveid = $ojectiveid;
-			$mapinfo->targetobjectiveid = backup_todb($map_info['#']['TARGETOBJECTIVEID']['0']['#']);
-			$mapinfo->readsatisfiedstatus = backup_todb($map_info['#']['READSATISFIEDSTATUS']['0']['#']);
-			$mapinfo->readnormalizedmeasure = backup_todb($map_info['#']['READNORMALIZEDMEASURE']['0']['#']);
-			$mapinfo->writesatisfiedstatus = backup_todb($map_info['#']['WRITESATISFIEDSTATUS']['0']['#']);
-			$mapinfo->writenormalizedmeasure = backup_todb($map_info['#']['WRITENORMALIZEDMEASURE']['0']['#']);
-			
+            $mapinfo->targetobjectiveid = backup_todb($map_info['#']['TARGETOBJECTIVEID']['0']['#']);
+            $mapinfo->readsatisfiedstatus = backup_todb($map_info['#']['READSATISFIEDSTATUS']['0']['#']);
+            $mapinfo->readnormalizedmeasure = backup_todb($map_info['#']['READNORMALIZEDMEASURE']['0']['#']);
+            $mapinfo->writesatisfiedstatus = backup_todb($map_info['#']['WRITESATISFIEDSTATUS']['0']['#']);
+            $mapinfo->writenormalizedmeasure = backup_todb($map_info['#']['WRITENORMALIZEDMEASURE']['0']['#']);
+
             
             //The structure is equal to the db, so insert the forum_discussions
             $newid = insert_record ("scorm_seq_mapinfo",$mapinfo);
 
-			if ($newid) {
+            if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"scorm_seq_mapinfo", $oldid, $newid);
             } else {
@@ -580,7 +580,7 @@
             $scotrack->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
             $scotrack->scoid = backup_todb($sub_info['#']['SCOID']['0']['#']);
             $scotrack->element = backup_todb($sub_info['#']['ELEMENT']['0']['#']);
-			$scotrack->attempt = backup_todb($sub_info['#']['ATTEMPT']['0']['#']);
+            $scotrack->attempt = backup_todb($sub_info['#']['ATTEMPT']['0']['#']);
             $scotrack->value = backup_todb($sub_info['#']['VALUE']['0']['#']);
 
             //We have to recode the userid field
@@ -595,7 +595,7 @@
                 $scotrack->scoid = $sco->new_id;
             }
 
-			$scotrack->timemodified = time();
+            $scotrack->timemodified = time();
             //The structure is equal to the db, so insert the scorm_scoes_track
             $newid = insert_record ("scorm_scoes_track",$scotrack);
 
