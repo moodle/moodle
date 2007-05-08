@@ -29,7 +29,7 @@
         if(count($actions)==2) {
             $pagename=$actions[1];
         } else {
-        	    $pagename=$actions[0];
+            $pagename=$actions[0];
         }
     } else {
         $actions=array('');
@@ -450,7 +450,7 @@
 ";
             }
         } else {
-       		// OK, the page is now locked to us. Put in the AJAX for keeping the lock
+            // OK, the page is now locked to us. Put in the AJAX for keeping the lock
             $strlockcancelled=get_string('lockcancelled','wiki');
             $strnojslockwarning=get_string('nojslockwarning','wiki');
             $intervalms=WIKI_LOCK_RECONFIRM*1000;

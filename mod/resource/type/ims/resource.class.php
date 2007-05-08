@@ -371,7 +371,7 @@ class resource_ims extends resource_base {
             if ($inpopup) {
                 print_header($pagetitle, $course->fullname.' : '.$resource->name);
             } else {
-            	
+
                 $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
                 $this->navigation = build_navigation($this->crumbs);
                  
@@ -473,7 +473,7 @@ class resource_ims extends resource_base {
                 //print_header($pagetitle, $course->fullname.' : '.$resource->name);
                 print_header();
             } else {
-            	$this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+                $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
                 $this->navigation = build_navigation($this->crumbs);
                 print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
             }

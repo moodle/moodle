@@ -35,23 +35,23 @@ function xmldb_enrol_authorize_upgrade($oldversion=0) {
     if ($result && $oldversion < 2006112900) {
         if (isset($CFG->an_login)) {
             if (empty($CFG->an_login)) {
-            	unset_config('an_login');
+                unset_config('an_login');
             }
             else {
-            	$result = $result && set_config('an_login', rc4encrypt($CFG->an_login), 'enrol/authorize') && unset_config('an_login');
+                $result = $result && set_config('an_login', rc4encrypt($CFG->an_login), 'enrol/authorize') && unset_config('an_login');
             }
         }
         if (isset($CFG->an_tran_key)) {
             if (empty($CFG->an_tran_key)) {
-            	unset_config('an_tran_key');
+                unset_config('an_tran_key');
             }
             else {
-            	$result = $result && set_config('an_tran_key', rc4encrypt($CFG->an_tran_key), 'enrol/authorize') && unset_config('an_tran_key');
+                $result = $result && set_config('an_tran_key', rc4encrypt($CFG->an_tran_key), 'enrol/authorize') && unset_config('an_tran_key');
             }
         }
         if (isset($CFG->an_password)) {
             if (empty($CFG->an_password)) {
-            	unset_config('an_password');
+                unset_config('an_password');
             }
             else {
                 $result = $result && set_config('an_password', rc4encrypt($CFG->an_password), 'enrol/authorize') && unset_config('an_password');

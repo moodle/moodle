@@ -545,11 +545,11 @@ class moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
             $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-    		$mform->closeHeaderBefore('buttonar');
+            $mform->closeHeaderBefore('buttonar');
         } else {
             //no group needed
             $mform->addElement('submit', 'submitbutton', $submitlabel);
-    		$mform->closeHeaderBefore('submitbutton');
+            $mform->closeHeaderBefore('submitbutton');
         }
     }
 }

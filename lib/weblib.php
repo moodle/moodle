@@ -4089,11 +4089,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
     $str .= '</textarea>'."\n";
 
-	if ($usehtmleditor) {
+    if ($usehtmleditor) {
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
-		$str .= '<script type="text/javascript">document.write(\''.
+        $str .= '<script type="text/javascript">document.write(\''.
             str_replace('\'','\\\'',editorshortcutshelpbutton()).'\'); </script>';
-	}
+    }
 
     if ($return) {
         return $str;
@@ -5132,7 +5132,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
             $linkobject .= $imagetext;
         } else {
             $linkobject .= '<img class="iconhelp" alt="'.s(strip_tags($tooltip)).'" src="'.
-                   	$CFG->pixpath .'/help.gif" />';
+                $CFG->pixpath .'/help.gif" />';
         }
     } else {
         $linkobject .= $tooltip;
@@ -5193,7 +5193,7 @@ function editorshortcutshelpbutton() {
 
     global $CFG;
     $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
-					get_string('editorshortcutkeys').'" class="iconkbhelp" />';
+        get_string('editorshortcutkeys').'" class="iconkbhelp" />';
 
     return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
 }

@@ -148,9 +148,9 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
     function loginpage_hook() {
         global $SESSION, $CFG;
-	
-	// Prevent username from being shown on login page after logout
-	$CFG->nolastloggedin = true;
+
+        // Prevent username from being shown on login page after logout
+        $CFG->nolastloggedin = true;
 
         return;
     }

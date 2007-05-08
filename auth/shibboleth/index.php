@@ -44,7 +44,7 @@
             
             // Don't show username on login page
             set_moodle_cookie('nobody');
-	    
+
             set_login_session_preferences();
             
             unset($SESSION->lang);

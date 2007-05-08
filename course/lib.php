@@ -2542,7 +2542,7 @@ function get_section_name($format) {
     if($sectionname == "[[name$format]]") {
         $sectionname = get_string("name$format");
     }
-	return $sectionname;
+    return $sectionname;
 }
 
 /**

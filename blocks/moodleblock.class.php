@@ -257,18 +257,18 @@ class block_base {
 
         //Accessibility: validation, can't have <div> inside <h2>, use <span>.
         $title = '<div class="title">';
-        
+
         if (!empty($CFG->allowuserblockhiding)) {
             //Accessibility: added static 'alt' text for the +- icon.
             //TODO (nfreear): language string 'hide OR show block'
             $title .= '<div class="hide-show">'.
-					  '<a title="'.get_string('showhideblock','access').
-					  '" href="#" onclick="elementToggleHide(this, true, function(el) {'.
-					  'return findParentNode(el, \'DIV\', \'sideblock\'); '.
-					  '}, \''.$CFG->pixpath.'\' ); return false;">'.
-					  '<img src="'.$CFG->pixpath.'/spacer.gif" '.
-					  'id = "togglehide_inst'.$this->instance->id.'" '.
-					  'alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
+                '<a title="'.get_string('showhideblock','access').
+                '" href="#" onclick="elementToggleHide(this, true, function(el) {'.
+                'return findParentNode(el, \'DIV\', \'sideblock\'); '.
+                '}, \''.$CFG->pixpath.'\' ); return false;">'.
+                '<img src="'.$CFG->pixpath.'/spacer.gif" '.
+                'id = "togglehide_inst'.$this->instance->id.'" '.
+                'alt="'.get_string('showhideblock','access').'" class="hide-show-image" /></a></div>';
         }
 
         //Accesssibility: added H2 (was in, weblib.php: print_side_block)

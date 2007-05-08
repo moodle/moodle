@@ -211,8 +211,8 @@
             echo "<th scope=\"col\">$strcategory</th>\n";
             echo "<th scope=\"col\">$strselect</th>\n";
             echo "<th scope=\"col\">$stredit</th></tr>\n";
-            foreach ($courses as $course) {    		    
-                
+            foreach ($courses as $course) {
+
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
                 $course->fullname = highlight("$search", $course->fullname);
@@ -256,10 +256,10 @@
                 }
 
                 // checks whether user can do role assignment
-    		    if (has_capability('moodle/role:assign', $coursecontext)) {
+                if (has_capability('moodle/role:assign', $coursecontext)) {
                     echo'<a title="'.get_string('assignroles', 'role').'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$coursecontext->id.'">';
-    		        echo '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
-    		    }                
+                    echo '<img src="'.$CFG->pixpath.'/i/roles.gif" class="iconsmall" alt="'.get_string('assignroles', 'role').'" /></a> ' . "\n";
+                }                
 
                 // checks whether user can delete course
                 if (has_capability('moodle/course:delete', $coursecontext)) {  

@@ -63,7 +63,7 @@
     if ($inpopup) {
         print_header($pagetitle, $course->fullname);
     } else {
-    	
+
         $resource_obj->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
         $resource_obj->crumbs[] = array('name' => $strdeploy, 'link' => '', 'type' => 'action');
         $navigation = build_navigation($resource_obj->crumbs);

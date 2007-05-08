@@ -1877,10 +1877,10 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
                                AND u.deleted <> 1  $groupselect
                           ORDER BY u.email ASC");
     }
-	// Guest user should never be subscribed to a forum.
-	if ($guest = guest_user()) {
-		unset($results[$guest->id]);
-	}
+    // Guest user should never be subscribed to a forum.
+    if ($guest = guest_user()) {
+        unset($results[$guest->id]);
+    }
 
     if ($cache) {
         $resultscache[$forum->id][$groupid] = $results;

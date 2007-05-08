@@ -554,22 +554,22 @@ function question_delete_course($course, $feedback=true) {
     return true;
 }
 
-function questionbank_navigation_tabs(&$row, $context, $courseid) {
+function questionbank_navigation_tabs(&$row, $context, $querystring) {
     global $CFG;
     if (has_capability('moodle/question:manage', $context)) {
-        $row[] = new tabobject('questions', "$CFG->wwwroot/question/edit.php?courseid=$courseid", get_string('questions', 'quiz'), get_string('editquestions', "quiz"));
+        $row[] = new tabobject('questions', "$CFG->wwwroot/question/edit.php?$querystring", get_string('questions', 'quiz'), get_string('editquestions', "quiz"));
     }
     
     if (has_capability('moodle/question:managecategory', $context)) {
-        $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?courseid=$courseid", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
+        $row[] = new tabobject('categories', "$CFG->wwwroot/question/category.php?$querystring", get_string('categories', 'quiz'), get_string('editqcats', 'quiz'));
     }
     
     if (has_capability('moodle/question:import', $context)) {
-        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?courseid=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
+        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?$querystring", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
     }
     
     if (has_capability('moodle/question:export', $context)) {
-        $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?courseid=$courseid", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
+        $row[] = new tabobject('export', "$CFG->wwwroot/question/export.php?$querystring", get_string('export', 'quiz'), get_string('exportquestions', 'quiz'));
     }
 }
 
@@ -1742,7 +1742,7 @@ function question_categorylist($categoryid) {
  * @return mixed category object or null if fails
  */
 function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
-	$catpath = clean_param( $catpath,PARAM_PATH );
+    $catpath = clean_param( $catpath,PARAM_PATH );
     $catnames = explode( $delimiter, $catpath );
     $parent = 0;
     $category = null;

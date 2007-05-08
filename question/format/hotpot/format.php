@@ -488,7 +488,7 @@ class qformat_hotpot extends qformat_default {
         return $this->hotpot_prepare_str($str);
     }
     function hotpot_prepare_str($str) {
-		// convert html entities to unicode and add slashes
+        // convert html entities to unicode and add slashes
         $str = preg_replace('/&#[x0-9A-F]+;/ie', "html_entity_decode('\\0',ENT_NOQUOTES,'UTF-8')", $str);
         return addslashes($str);
     }

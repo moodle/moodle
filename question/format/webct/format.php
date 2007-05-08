@@ -517,11 +517,11 @@ class qformat_webct extends qformat_default {
                         qformat_webct_convert_formula($webct_options[1]);
 
                 // Default settings:
- 								$question->fraction[$currentchoice] = 1.0;
-								$question->tolerance[$currentchoice] = 0.0;
-								$question->tolerancetype[$currentchoice] = 2; // nominal (units in webct)
-								$question->feedback[$currentchoice] = '';
-								$question->correctanswerlength[$currentchoice] = 4;
+                $question->fraction[$currentchoice] = 1.0;
+                $question->tolerance[$currentchoice] = 0.0;
+                $question->tolerancetype[$currentchoice] = 2; // nominal (units in webct)
+                $question->feedback[$currentchoice] = '';
+                $question->correctanswerlength[$currentchoice] = 4;
 
                 $datasetnames = $QTYPES[CALCULATED]->find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {

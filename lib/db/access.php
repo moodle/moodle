@@ -714,17 +714,17 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
-    'moodle/user:editprofile' => array( 	 
-	  	 
-	    'riskbitmask' => RISK_SPAM, 	 
-	  	 
-	    'captype' => 'write', 	 
-	    'contextlevel' => CONTEXT_USER, 	 
-	    'legacy' => array( 	 
-	       'admin' => CAP_ALLOW 	 
-	    ) 	 
-	),
+
+    'moodle/user:editprofile' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
 
     'moodle/user:editownprofile' => array(      
 

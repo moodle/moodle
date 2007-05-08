@@ -134,8 +134,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 if (!is_array($value)) {
                     $currentdate = usergetdate($value);
                     $value = array(
-		                'minute' => $currentdate['minutes'],
-		                'hour' => $currentdate['hours'],
+                        'minute' => $currentdate['minutes'],
+                        'hour' => $currentdate['hours'],
                         'day' => $currentdate['mday'],
                         'month' => $currentdate['mon'],
                         'year' => $currentdate['year']);

@@ -134,14 +134,14 @@ if (!$course = get_record('course', 'id', $courseid)) {
         case 'group':
 
             if ($thisgroup = groups_get_group($filterselect, false)) { //TODO:
-            	if ($tagid || !empty($tag)) {
-                	print_header("$course->shortname: $blogstring", $course->fullname,
-                            '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
-                            <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
-            	} else {
-                	print_header("$course->shortname: $blogstring", $course->fullname,
-                            '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
-                            $blogstring",'','',true,$PAGE->get_extra_header_string());
+                if ($tagid || !empty($tag)) {
+                    print_header("$course->shortname: $blogstring", $course->fullname,
+                        '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name.'</a> ->
+                        <a href="index.php?filtertype=group&amp;filterselect='.$filterselect.'">'. "$blogstring</a> -> $tagstring: $taginstance->text",'','',true,$PAGE->get_extra_header_string());
+                } else {
+                    print_header("$course->shortname: $blogstring", $course->fullname,
+                        '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$filterselect.'">'.$thisgroup->name."</a> ->
+                        $blogstring",'','',true,$PAGE->get_extra_header_string());
                 }
             } else {
                 print_error('Unable to find group');

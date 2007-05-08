@@ -162,7 +162,7 @@ Example file:
         $result["country"] = $country;
         $result["department"] = $institution;
         $result["description"] = "I am a Shibboleth user";
-	
+
     }
 
 ?>

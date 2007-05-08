@@ -39,7 +39,7 @@
     }
         
     if ($download <> "xls" and $download <> "txt" and $download <> "ods") {
-    	
+
         $crumbs[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $crumbs[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $crumbs[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');

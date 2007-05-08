@@ -2715,7 +2715,7 @@ function validate_internal_user_password(&$user, $password) {
 
     $validated = false;
 
-	// get password original encoding in case it was not updated to unicode yet
+    // get password original encoding in case it was not updated to unicode yet
     $textlib = textlib_get_instance();
     $convpassword = $textlib->convert($password, 'utf-8', get_string('oldcharset'));
 

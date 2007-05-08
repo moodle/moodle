@@ -49,7 +49,7 @@
 
         $CFG->framename = "newwindow";
         if ($course->id != SITEID) {
-        	$crumbs[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
+            $crumbs[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
             $crumbs[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
             
             $navigation = build_navigation($crumbs);
