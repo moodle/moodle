@@ -551,7 +551,12 @@ function scorm_seq_measure_rollup($sco,$userid){
 }
 
 function scorm_seq_objective_rollup($sco,$userid){
+	
+    scorm_seq_objective_rollup_measure($sco,$userid);
+    scorm_seq_objective_rollup_rules($sco,$userid);
+    scorm_seq_objective_rollup_default($sco,$userid);
 
+/*
 	if($targetobjective->satisfiedbymeasure){
 		scorm_seq_objective_rollup_measure($sco,$userid);
 	}
@@ -577,6 +582,7 @@ function scorm_seq_objective_rollup($sco,$userid){
 	
 		}
 	}
+*/	
 }
 
 function scorm_seq_objective_rollup_measure($sco,$userid){
@@ -632,6 +638,28 @@ function scorm_seq_objective_rollup_measure($sco,$userid){
 		}
 	}
 
+}
+
+function scorm_seq_objective_rollup_default($sco,$userid){
+	if (!(scorm_seq_rollup_rule_check($sco,$userid,'incomplete')) && !(scorm_seq_rollup_rule_check($sco,$userid,'completed'))){
+		
+            $rolluprules = get_record('scorm_seq_rolluprule','scoid',$sco->id,'userid',$userid);
+            foreach($rolluprules as $rolluprule){
+                $rollupruleconds = get_records('scorm_seq_rolluprulecond','rollupruleid',$rolluprule->id);
+			    foreach($rollupruleconds as $rolluprulecond){
+                 
+                    switch ($rolluprulecond->cond!='satisfied' && $rolluprulecond->cond!='completed' && $rolluprulecond->cond!='attempted'){
+							
+						   scorm_seq_set('objectivesatisfiedstatus',$sco->id,$userid, false);
+
+				        break;
+			        }
+			    }
+
+	
+            }
+	}
+	
 }
 
 
