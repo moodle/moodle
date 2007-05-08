@@ -2119,16 +2119,188 @@ function scorm_terminate_descendent_attempts ($activity,$userid,$seq){
 				    }
 				}
 			}
-		}
+		} 
 }
 
 function scorm_sequencing_exception($seq){
     if($seq->exception != null){
+		switch($seq->exception){
 
-	   // switch($seq->exception) { We still have to do the cases
+			case 'NB.2.1-1':
+                notify("Sequencing session has already begun");
+            break;
+            case 'NB.2.1-2':
+                notify("Sequencing session has not begun");
+            break;
+			case 'NB.2.1-3':
+                notify("Suspended activity is not defined");
+            break;
+			case 'NB.2.1-4':
+                notify("Flow Sequencing Control Model Violation");
+            break;
+			case 'NB.2.1-5':
+                notify("Flow or Forward only Sequencing Control Model Violation");
+            break;
+			case 'NB.2.1-6':
+                notify("No activity is previous to the root");
+            break;
+			case 'NB.2.1-7':
+                notify("Unsupported Navigation Request");
+            break;
+			case 'NB.2.1-8':
+                notify("Choice Exit Sequencing Control Model Violation");
+            break;
+			case 'NB.2.1-9':
+                notify("No activities to consider");
+            break;
+			case 'NB.2.1-10':
+                notify("Choice Sequencing Control Model Violation");
+            break;
+			case 'NB.2.1-11':
+                notify("Target Activity does not exist");
+            break;
+			case 'NB.2.1-12':
+                notify("Current Activity already terminated");
+            break;
+			case 'NB.2.1-13':
+                notify("Undefined Navigation Request");
+            break;
 
-               
-					 notify("Exception");
+			case 'TB.2.3-1':
+                notify("Current Activity already terminated");
+            break;
+			case 'TB.2.3-2':
+                notify("Current Activity already terminated");
+            break;
+			case 'TB.2.3-4':
+                notify("Current Activity already terminated");
+            break;
+			case 'TB.2.3-5':
+                notify("Nothing to suspend; No active activities");
+            break;
+			case 'TB.2.3-6':
+                notify("Nothing to abandon; No active activities");
+            break;
+
+			case 'SB.2.1-1':
+                notify("Last activity in the tree");
+            break;
+            case 'SB.2.1-2':
+                notify("Cluster has no available children");
+            break;
+			case 'SB.2.1-3':
+                notify("No activity is previous to the root");
+            break;
+			case 'SB.2.1-4':
+                notify("Forward Only Sequencing Control Model Violation");
+            break;
+
+			case 'SB.2.2-1':
+                notify("Flow Sequencing Control Model Violation");
+            break;
+			case 'SB.2.2-2':
+                notify("Activity unavailable");
+            break;
+
+			case 'SB.2.3-1':
+                notify("Forward Traversal Blocked");
+            break;
+            case 'SB.2.3-2':
+                notify("Forward Only Sequencing Control Model Violation");
+            break;
+			case 'SB.2.3-3':
+                notify("No activity is previous to the root");
+            break;
+
+			case 'SB.2.5-1':
+                notify("Sequencing session has already begun");
+            break;
+
+			case 'SB.2.6-1':
+                notify("Sequencing session has already begun");
+            break;
+			case 'SB.2.6-2':
+                notify("No Suspended activity is defined");
+            break;
+
+            case 'SB.2.7-1':
+                notify("Sequencing session has not begun");
+            break;
+			case 'SB.2.7-2':
+                notify("Flow Sequencing Control Model Violation");
+            break;
+
+			case 'SB.2.8-1':
+                notify("Sequencing session has not begun");
+            break;
+			case 'SB.2.8-2':
+                notify("Flow Sequencing Control Model Violation");
+            break;
+
+			case 'SB.2.9-1':
+                notify("No target for Choice");
+            break;
+			case 'SB.2.9-2':
+                notify("Target Activity does not exist or is unavailable");
+            break;
+			case 'SB.2.9-3':
+                notify("Target Activity hidden from choice");
+            break;
+			case 'SB.2.9-4':
+                notify("Choice Sequencing Control Model Violation");
+            break;
+			case 'SB.2.9-5':
+                notify("No activities to consider");
+            break;
+			case 'SB.2.9-6':
+                notify("Unable to activate target; target is not a child of the Current Activity");
+            break;
+			case 'SB.2.9-7':
+                notify("Choice Exit Sequencing Control Model Violation");
+            break;
+			case 'SB.2.9-8':
+                notify("Unable to choose target activity - constrained choice");
+            break;
+			case 'SB.2.9-9':
+                notify("Choice Request Prevented by Flow-only Activity");
+            break;
+
+			case 'SB.2.10-1':
+                notify("Sequencing session has not begun");
+            break;
+			case 'SB.2.10-2':
+                notify("Current Activity is active or suspended");
+            break;
+			case 'SB.2.10-3':
+                notify("Flow Sequencing Control Model Violation");
+            break;
+            
+            case 'SB.2.11-1':
+                notify("Sequencing session has not begun");
+            break;
+			case 'SB.2.11-2':
+                notify("Current Activity has not been terminated");
+            break;
+
+			case 'SB.2.12-2':
+                notify("Undefined Sequencing Request");
+            break;
+
+			case 'DB.1.1-1':
+                notify("Cannot deliver a non-leaf activity");
+            break;
+			case 'DB.1.1-2':
+                notify("Nothing to deliver");
+            break;
+			case 'DB.1.1-3':
+                notify("Activity unavailable");
+            break;
+
+			case 'DB.2-1':
+                notify("Identified activity is already active");
+            break;
+					 
+		}
                
 	}
 }
