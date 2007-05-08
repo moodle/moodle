@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 require_once $CFG->libdir.'/formslib.php';
 
 class admin_uploaduser_form extends moodleform {
