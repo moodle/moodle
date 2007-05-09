@@ -67,6 +67,19 @@ class grade_raw_test extends gradelib_test {
         $this->assertEqual($grade_grades_raw->id, $last_grade_grades_raw->id + 1);
         $this->assertFalse(empty($grade_grades_raw->timecreated));
         $this->assertFalse(empty($grade_grades_raw->timemodified));
+
+        // try a scale raw grade
+        $grade_grades_raw = new grade_grades_raw();
+        
+        $grade_grades_raw->itemid = $this->grade_items[0]->id;
+        $grade_grades_raw->userid = 1;
+        $grade_grades_raw->gradevalue = 6;
+        $grade_grades_raw->scaleid = $this->scale[0]->id;
+
+        $grade_grades_raw->insert();
+
+        $this->assertEqual(7, $grade_grades_raw->grademax);
+        $this->assertEqual(0, $grade_grades_raw->grademin); 
     }
 
     function test_grade_grades_raw_update() {

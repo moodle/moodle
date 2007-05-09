@@ -206,6 +206,9 @@ class grade_grades_raw extends grade_object {
         
         if (!empty($this->scale->id)) {
             $this->scaleid = $this->scale->id;
+            $this->grademin = 0;
+            $this->scale->load_items();
+            $this->grademax = count($this->scale->scale_items);
         }
 
         $result = parent::update();
@@ -225,6 +228,23 @@ class grade_grades_raw extends grade_object {
         } else {
             return false;
         } 
+    }
+    
+    /**
+     * In addition to perform parent::insert(), this infers the grademax from the scale if such is given, and
+     * sets grademin to 0 if scale is given.
+     * @return int ID of the new grades_grade_raw record.
+     */
+    function insert() {
+        // Retrieve scale and infer grademax from it
+        if (!empty($this->scaleid)) {
+            $this->load_scale();
+            $this->scale->load_items();
+            $this->grademax = count ($this->scale->scale_items);
+            $this->grademin = 0;
+        }
+
+        return parent::insert();
     }
 }
 
