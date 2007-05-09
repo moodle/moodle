@@ -25,7 +25,8 @@
         }
         
         // list of pages using the layout-table to be able to view sideblocks
-        $excludelist = array('mod-chat-view', 'mod-data-view', 'mod-quiz-view');
+        $excludelist = array('mod-chat-view', 'mod-data-view', 'mod-quiz-view',
+            'my-index');
         if ((in_array($PAGE->type, $excludelist)) && 
             (strstr($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
