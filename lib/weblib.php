@@ -5667,7 +5667,11 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 function print_side_block_start($heading='', $attributes = array()) {
 
     global $CFG, $THEME;
-
+    
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
+    
     // If there are no special attributes, give a default CSS class
     if (empty($attributes) || !is_array($attributes)) {
         $attributes = array('class' => 'sideblock');
@@ -5703,22 +5707,19 @@ function print_side_block_start($heading='', $attributes = array()) {
         //Accessibility: replaced <div> with H2; no, H2 more appropriate in moodleblock.class.php: _title_html.
         // echo '<div class="header">'.$heading.'</div>';
         echo '<div class="header">';
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         echo $heading;
-        if (!empty($THEME->roundcorners)) {
+        if (!empty($THEME->customcorners)) {
             echo '</div></div></div>';
         }
         echo '</div>';
     } else {
-        if (!empty($THEME->roundcorners)) {
+        if (!empty($THEME->customcorners)) {
             echo '<div class="bt"><div></div></div>';
         }
     }
 
-    if (!empty($THEME->roundcorners)) {
+    if (!empty($THEME->customcorners)) {
         echo '<div class="i1"><div class="i2"><div class="i3">';
     }
     echo '<div class="content">';
@@ -5731,12 +5732,12 @@ function print_side_block_start($heading='', $attributes = array()) {
  */
 function print_side_block_end($attributes = array()) {
     global $CFG, $THEME;
-
+    
     echo '</div>';
 
-    if (!empty($THEME->roundcorners)) {
-        echo '</div></div></div>';
-        echo '<div class="bb"><div></div></div>';
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+        print_custom_corners_end();
     }
 
     echo '</div>';
@@ -6148,5 +6149,6 @@ function print_location_comment($file, $line, $return = false)
         echo "<!-- $file at line $line -->\n";
     }
 }
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

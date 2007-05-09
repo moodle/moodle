@@ -6,6 +6,10 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
     require_once('pagelib.php');
+    
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
 
     $id   = optional_param('id', 0, PARAM_INT);
     $c    = optional_param('c', 0, PARAM_INT);
@@ -70,11 +74,14 @@
 
     if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
     }
 
     echo '<td id="middle-column">';
+    if (!empty($THEME->customcorners)) print_custom_corners_start();
     
     if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
         echo '<div class="reportlink">';
@@ -175,6 +182,7 @@
 
 
 /// Finish the page
+    if (!empty($THEME->customcorners)) print_custom_corners_end();
     echo '</td></tr></table>';
 
     print_footer($course);

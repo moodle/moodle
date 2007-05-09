@@ -66,6 +66,10 @@ foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     }
 }
 
+if (!empty($THEME->customcorners)) {
+    require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+}
+
 /**
 * resource_base is the base class for resource types
 *
@@ -168,11 +172,14 @@ function display_course_blocks_start() {
 
     if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
     }
 
     echo '<td id="middle-column">';
+    if (!empty($THEME->customcorners)) print_custom_corners_start();
     echo '<div id="resource">';
 
 }
@@ -190,11 +197,14 @@ function display_course_blocks_end() {
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
     echo '</div>';
+    if (!empty($THEME->customcorners)) print_custom_corners_end();
     echo '</td>';
 
     if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
         echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
     }
 

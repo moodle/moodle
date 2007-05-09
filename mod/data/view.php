@@ -29,6 +29,10 @@
 
     require_once('pagelib.php');
     
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
+    
     
 /// One of these is necessary!
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
@@ -245,10 +249,13 @@
         echo '<table id="layout-table"><tr>';
         if ((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
             echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
             echo '</td>';
         }
         echo '<td id="middle-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
     }
 
     print_heading(format_string($data->name));
@@ -555,10 +562,13 @@
 
 /// If we have blocks, then print the left side here
     if (!empty($CFG->showblocksonmodpages)) {
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';   // Middle column
         if ((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
             echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
             echo '</td>';
         }
         echo '</tr></table>';

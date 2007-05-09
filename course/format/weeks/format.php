@@ -3,6 +3,10 @@
       // Included from "view.php"
 
     require_once($CFG->libdir.'/ajax/ajaxlib.php');
+    
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
 
     $week = optional_param('week', -1, PARAM_INT);
 
@@ -63,17 +67,9 @@
     if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
         echo '<td style="width:'.$preferred_width_left.'px" id="left-column">';
 
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
-        
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
 
         echo '</td>';
     }
@@ -82,10 +78,7 @@
 /// Start main column
     echo '<td id="middle-column">';
 
-    if (!empty($THEME->roundcorners)) {
-       echo '<div class="bt"><div></div></div>';
-       echo '<div class="i1"><div class="i2"><div class="i3">';
-    }
+    if (!empty($THEME->customcorners)) print_custom_corners_start();
         
     echo '<a name="startofcontent"></a>';
 
@@ -281,10 +274,7 @@
         echo '</div>';
     }
 
-    if (!empty($THEME->roundcorners)) {
-        echo '</div></div></div>';
-        echo '<div class="bb"><div></div></div>';
-    }
+    if (!empty($THEME->customcorners)) print_custom_corners_end();
 
     echo '</td>';
 
@@ -294,17 +284,9 @@
     if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
 
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
-
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
 
         echo '</td>';
     }
