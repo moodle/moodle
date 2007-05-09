@@ -25,7 +25,7 @@
  * @return int $groupid
  */
 function groups_get_group_by_name($courseid, $groupname) {
-	//uploaduser.php, get_record("groups","courseid",$course[$i]->id,"name",$addgroup[$i])
+    //uploaduser.php, get_record("groups","courseid",$course[$i]->id,"name",$addgroup[$i])
     $groupids = groups_db_get_groups($courseid);
     if (! $groupids) {
         return false;
@@ -50,13 +50,13 @@ function groups_get_group_by_name($courseid, $groupname) {
  * @return object
  */
 function get_groups($courseid, $userid=0) {
-	if ($userid) {
-		$groupids = groups_get_groups_for_user($userid, $courseid);
-	} else {
-		$groupids = groups_get_groups($courseid);
-	}
+    if ($userid) {
+        $groupids = groups_get_groups_for_user($userid, $courseid);
+    } else {
+        $groupids = groups_get_groups($courseid);
+    }
 
-	return groups_groupids_to_groups($groupids, $courseid, $alldata=true);
+    return groups_groupids_to_groups($groupids, $courseid, $alldata=true);
 }
 
 
@@ -84,7 +84,7 @@ function user_group($courseid, $userid) {
  * @return boolean True if the user is a member, false otherwise.
  */
 function ismember($groupid, $userid = null) {
-	return groups_is_member($groupid, $userid);
+    return groups_is_member($groupid, $userid);
 }
 
 /**
@@ -146,8 +146,8 @@ function add_user_to_group($groupid, $userid) {
  */
 function mygroupid($courseid) {
     global $USER;
-	$groupids = groups_get_groups_for_user($USER->id, $courseid);
-   	return $groupids;
+    $groupids = groups_get_groups_for_user($USER->id, $courseid);
+    return $groupids;
 }
 
 /**
@@ -161,12 +161,12 @@ function groupmode($course, $cm=null) {
         return $cm->groupmode;
     }
     return $course->groupmode;
-    
+
     /*if ($cm and !$course->groupingid) {
         //TODO: was $coursemodule
         return groups_has_groups_setup_for_instance($cm);
     } else {
-    	return groups_has_groups_setup($course->id);
+        return groups_has_groups_setup($course->id);
     }*/
 }
 
@@ -207,13 +207,13 @@ function get_current_group($courseid, $full = false) {
     }
 
     if (isset($SESSION->currentgroup[$courseid])) {
-    	$currentgroup = $SESSION->currentgroup[$courseid];
+        $currentgroup = $SESSION->currentgroup[$courseid];
     } else {
-    	$currentgroup = $mygroupid;
+        $currentgroup = $mygroupid;
     }
-    
+
     if ($currentgroup) {
-    	$SESSION->currentgroup[$courseid] = $mygroupid;
+        $SESSION->currentgroup[$courseid] = $mygroupid;
     }
 
     if ($full) {
@@ -239,9 +239,9 @@ function get_current_group($courseid, $full = false) {
  * @return int|false Returns the current group id or false if error.
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
-	//TODO: ?? groups_has_permission($userid, $groupingid, $courseid, $groupid, $permissiontype);
+    //TODO: ?? groups_has_permission($userid, $groupingid, $courseid, $groupid, $permissiontype);
 
-	// Sets to the specified group, provided the current user has view permission 
+    // Sets to the specified group, provided the current user has view permission 
     if (!$groupmode) {   // Groups don't even apply
         return false;
     }
@@ -339,9 +339,9 @@ function groups_instance_print_group_selector() {
 
 
 function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $courseid) {
-	global $CFG;
-	$context = get_context_instance(CONTEXT_COURSE, $courseid);
-    
+    global $CFG;
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
         if ($group = get_record('groups', 'id', $currentgroup)) {              
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 

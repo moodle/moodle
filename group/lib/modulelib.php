@@ -72,13 +72,13 @@ define('GROUPS_TEACHER_CONTRIBUTE', 10);
  * @return boolean True if the instance is set up to use groups, false otherwise
  */
 function groups_m_uses_groups($cmid) {
-	$usesgroups = false;
-	$groupingid = groups_db_get_groupingid($cmid);
-	if (!$groupingid) {
-		$usesgroups = true;
-	}
-	
-	return $usesgroups;
+    $usesgroups = false;
+    $groupingid = groups_db_get_groupingid($cmid);
+    if (!$groupingid) {
+        $usesgroups = true;
+    }
+
+    return $usesgroups;
 }
 
 /**
@@ -95,24 +95,24 @@ function groups_m_uses_groups($cmid) {
  * use groups in which case returns false. 
  */
 function groups_m_print_group_selector($cmid, $urlroot, $permissiontype) {
-	// Get the groups for the cmid
-	// Produce an array to put into the $groupsmenu array. 
-	// Add an all option if necessary. 
-	$groupids = groups_module_get_groups_for_current_user($cmid, $permissiontype);
-	
-	// Need a line to check if current group selected. 
-	if ($groupids) {
-			$currentgroup = groups_module_get_current_group($cmid);
-			if ($allgroupsoption) {
-				$groupsmenu[0] = get_string('allparticipants');
-			}
-		
-		foreach ($groupids as $groupid) {
-			$groupsmenu[$groupid] = groups_get_group_name($groupid);
-			popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', 
-			$currentgroup, '', '', '', false, 'self');
-		}
-	}	
+    // Get the groups for the cmid
+    // Produce an array to put into the $groupsmenu array. 
+    // Add an all option if necessary. 
+    $groupids = groups_module_get_groups_for_current_user($cmid, $permissiontype);
+
+    // Need a line to check if current group selected. 
+    if ($groupids) {
+        $currentgroup = groups_module_get_current_group($cmid);
+        if ($allgroupsoption) {
+            $groupsmenu[0] = get_string('allparticipants');
+        }
+
+        foreach ($groupids as $groupid) {
+            $groupsmenu[$groupid] = groups_get_group_name($groupid);
+            popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', 
+                $currentgroup, '', '', '', false, 'self');
+        }
+    }
 }
 
 /**
@@ -138,15 +138,15 @@ function groups_m_print_group_selector($cmid, $urlroot, $permissiontype) {
  * TO DO - make this and other functions default to current user  
  */
 function groups_m_get_selected_group($cmid, $permissiontype, $userid) {
-	$currentgroup = optional_param('group');
-	if (!$currentgroup) {
-		$groupids = groups_get_groups_for_user();
-	}
-	// Get it from the session variable, otherwise get it from the form, otherwise
-	// Get it from the database as the first group. 
-	// Then set the  group in the session variable to make it easier to get next time. 	
+    $currentgroup = optional_param('group');
+    if (!$currentgroup) {
+        $groupids = groups_get_groups_for_user();
+    }
+    // Get it from the session variable, otherwise get it from the form, otherwise
+    // Get it from the database as the first group. 
+    // Then set the  group in the session variable to make it easier to get next time.
 }
-	 
+
 /**
  * Gets an array of the group IDs of all groups for the user in this course module.
  * @uses $USER     
@@ -201,71 +201,71 @@ function groups_m_get_my_group($cm) {
  * @return boolean True if the user has the specified permission type, false 
  * otherwise or if an error occurred. 
  */
- function groups_m_has_permission($cm, $groupid, $permissiontype, $userid = null) {
+function groups_m_has_permission($cm, $groupid, $permissiontype, $userid = null) {
     if (!$userid) {
         global $USER;
         $userid = $USER->id;
     }
-	$groupingid = groups_get_grouping_for_coursemodule($cm);
-	if (!$groupingid || !is_object($cm) || !isset($cm->course)) {
+    $groupingid = groups_get_grouping_for_coursemodule($cm);
+    if (!$groupingid || !is_object($cm) || !isset($cm->course)) {
         return false;
     }
     $courseid = $cm->course;
     $isstudent = isstudent($courseid, $userid);
-	$isteacher = isteacher($courseid, $userid);
-	$groupmember = groups_is_member($groupid, $userid);
-	$memberofsomegroup = groups_is_member_of_some_group_in_grouping($userid, $groupingid);
-	
-	$groupingsettings = groups_get_grouping_settings($groupingid);
-	$viewowngroup = $groupingsettings->viewowngroup;
-	$viewallgroupsmembers = $groupingsettings->viewallgroupmembers;
-	$viewallgroupsactivities = $groupingsettings->viewallgroupsactivities;
-	$teachersgroupsmark = $groupingsettings->teachersgroupsmark;
-	$teachersgroupsview = $groupingsettings->teachersgroupsview;
-	$teachersgroupmark = $groupingsettings->teachersgroupmark;
-	$teachersgroupview = $groupingsettings->teachersgroupview;
-	$teachersoverride = $groupingsettings->teachersoverride;
-		
-	$permission = false;
-	
-	switch ($permissiontype) {
-		case 'view':
-			if (($isstudent and $groupmember) or 
-			    ($isteacher and $groupmember) or 
-			    ($isstudent and $viewallgroupsactivities) or 
-			    ($isteacher and !$teachersgroupview) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			} 
-			break;
-			
-		case 'studentcontribute':
-			if (($isstudent and $groupmember) or 
-			    ($isteacher and $groupmember) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			} 
-			break;
-		case 'teachermark':
-			if (($isteacher and $groupmember) or 
-				($isteacher and !$teachersgroupmark) or
-			    ($isteacher and !$memberofsomegroup and $teachersoverride)) {
-				$permission = true;
-			}  
-			break;
-		
-		case 'viewmembers':	
-			if (($isstudent and $groupmember and $viewowngroup) or 
-			    ($isstudent and $viewallgroupsmembers) or 
-				($isteacher and $groupmember) or 
-			    ($isteacher and !$teachersgroupview) or 
-			    ($isteacher and !$memberofsomegroup and $teachersoverride) or 
-			    $isteacheredit) {
-				$permission = true;
-			}  
-			break;
-	}
-	return $permission;	
+    $isteacher = isteacher($courseid, $userid);
+    $groupmember = groups_is_member($groupid, $userid);
+    $memberofsomegroup = groups_is_member_of_some_group_in_grouping($userid, $groupingid);
+
+    $groupingsettings = groups_get_grouping_settings($groupingid);
+    $viewowngroup = $groupingsettings->viewowngroup;
+    $viewallgroupsmembers = $groupingsettings->viewallgroupmembers;
+    $viewallgroupsactivities = $groupingsettings->viewallgroupsactivities;
+    $teachersgroupsmark = $groupingsettings->teachersgroupsmark;
+    $teachersgroupsview = $groupingsettings->teachersgroupsview;
+    $teachersgroupmark = $groupingsettings->teachersgroupmark;
+    $teachersgroupview = $groupingsettings->teachersgroupview;
+    $teachersoverride = $groupingsettings->teachersoverride;
+
+    $permission = false;
+
+    switch ($permissiontype) {
+    case 'view':
+        if (($isstudent and $groupmember) or 
+            ($isteacher and $groupmember) or 
+            ($isstudent and $viewallgroupsactivities) or 
+            ($isteacher and !$teachersgroupview) or 
+            ($isteacher and !$memberofsomegroup and $teachersoverride)) {
+                $permission = true;
+            } 
+        break;
+
+    case 'studentcontribute':
+        if (($isstudent and $groupmember) or 
+            ($isteacher and $groupmember) or 
+            ($isteacher and !$memberofsomegroup and $teachersoverride)) {
+                $permission = true;
+            } 
+        break;
+    case 'teachermark':
+        if (($isteacher and $groupmember) or 
+            ($isteacher and !$teachersgroupmark) or
+            ($isteacher and !$memberofsomegroup and $teachersoverride)) {
+                $permission = true;
+            }  
+        break;
+
+    case 'viewmembers':
+        if (($isstudent and $groupmember and $viewowngroup) or 
+            ($isstudent and $viewallgroupsmembers) or 
+            ($isteacher and $groupmember) or 
+            ($isteacher and !$teachersgroupview) or 
+            ($isteacher and !$memberofsomegroup and $teachersoverride) or 
+            $isteacheredit) {
+                $permission = true;
+            }  
+        break;
+    }
+    return $permission;
 }
 
 /**
@@ -284,17 +284,17 @@ function groups_m_get_my_group($cm) {
  */
 function groups_m_get_members_with_permission($cmid, $groupid, 
                                               $permissiontype) {
-	// Get all the users as $userid
-	$validuserids = array();	
-	foreach($validuserids as $userid) {
-		$haspermission = groups_m_has_permission($cmid, $groupid, 
-										$permissiontype, $userid);
-		if ($haspermission) {
-			array_push($validuserids, $userid);
-		}
-	}
-	return $validuserids;
-}
+    // Get all the users as $userid
+    $validuserids = array();
+    foreach($validuserids as $userid) {
+        $haspermission = groups_m_has_permission($cmid, $groupid, 
+            $permissiontype, $userid);
+        if ($haspermission) {
+            array_push($validuserids, $userid);
+        }
+    }
+    return $validuserids;
+                                              }
 
 /**
  * Gets the group object associated with a group id. This group object can be 
@@ -305,7 +305,7 @@ function groups_m_get_members_with_permission($cmid, $groupid,
  * @return group The group object 
  */
 function groups_m_get_group($groupid) {
-	return groups_db_m_get_group($groupid);
+    return groups_db_m_get_group($groupid);
 }
 
 /**
@@ -316,9 +316,9 @@ function groups_m_get_group($groupid) {
  * @return array An array of the ids of the groups for the module instance 
  */
 function groups_m_get_groups($cmid) {
-	$groupingid = groups_db_get_groupingid($cmid);
-	$groupids = groups_get_groups_in_grouping($groupingid);
-	return $groupids;	
+    $groupingid = groups_db_get_groupingid($cmid);
+    $groupids = groups_get_groups_in_grouping($groupingid);
+    return $groupids;
 }
 
 /**
@@ -329,12 +329,12 @@ function groups_m_get_groups($cmid) {
  * @return array An array of the userids of the members. 
  */
 function groups_m_get_members($cmid, $groupid) {
-	$userids = groups_get_members($groupid, $membertype);
-	if (!$userids) {
-		$memberids = false;
-	} else {
-		// Check if each user is enrolled on the course @@@ TO DO 
-	}
+    $userids = groups_get_members($groupid, $membertype);
+    if (!$userids) {
+        $memberids = false;
+    } else {
+        // Check if each user is enrolled on the course @@@ TO DO 
+    }
     return $memberids;
 }
 

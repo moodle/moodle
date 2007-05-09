@@ -46,7 +46,7 @@ require_once($CFG->libdir.'/datalib.php');
  * Creates the database tables required
  */
 function groups_create_database_tables() {
-	global $CFG;
+    global $CFG;
 
     if ('mysql' == $CFG->dbfamily) {
 
@@ -202,57 +202,57 @@ function groups_create_database_tables() {
  * @param boolean True if the operation was successful, false otherwise. 
  */
 function groups_db_copy_moodle_group_to_imsgroup($groupid, $courseid) {
-	
-	$success = true;
-	
-	$groupsettings = get_record('groups', 'id ', $groupid, '');
-	
-	// Only copy the group if the group exists. 
-	if ($groupsettings != false) {
-        $record = new Object();
-		$record->name = $groupsettings->name;
-		$record->description = $groupsettings->description;
-		$record->password = $groupsettings->password;
-		$record->lang = $groupsettings->lang;
-		$record->theme = $groupsettings->theme;
-		$record->picture = $groupsettings->picture;
-		$record->hidepicture = $groupsettings->hidepicture;
-		$record->timecreated = $groupsettings->timecreated;
-		$record->timemodified = $groupsettings->timemodified;
 
-		$newgroupid = insert_record('groups_groups', $record);
-	    if (!$newgroupid) {
-	    	$success = false;
-	    }
+    $success = true;
+
+    $groupsettings = get_record('groups', 'id ', $groupid, '');
+
+    // Only copy the group if the group exists. 
+    if ($groupsettings != false) {
+        $record = new Object();
+        $record->name = $groupsettings->name;
+        $record->description = $groupsettings->description;
+        $record->password = $groupsettings->password;
+        $record->lang = $groupsettings->lang;
+        $record->theme = $groupsettings->theme;
+        $record->picture = $groupsettings->picture;
+        $record->hidepicture = $groupsettings->hidepicture;
+        $record->timecreated = $groupsettings->timecreated;
+        $record->timemodified = $groupsettings->timemodified;
+
+        $newgroupid = insert_record('groups_groups', $record);
+        if (!$newgroupid) {
+            $success = false;
+        }
 
         $courserecord = new Object();
-		$courserecord->courseid = $groupsettings->courseid;
-		$courserecord->groupid = $newgroupid;
-		
-		$added = insert_record('groups_courses_groups', $courserecord);
+        $courserecord->courseid = $groupsettings->courseid;
+        $courserecord->groupid = $newgroupid;
 
-	    if (!$added) {
-	        $success = false;
-	    }  
+        $added = insert_record('groups_courses_groups', $courserecord);
 
-	    // Copy over the group members
-		$groupmembers = get_records('groups_users', 'groupid', $groupid);
-		if ($groupmembers != false) {
-			foreach($groupmembers as $member) {
+        if (!$added) {
+            $success = false;
+        }  
+
+        // Copy over the group members
+        $groupmembers = get_records('groups_users', 'groupid', $groupid);
+        if ($groupmembers != false) {
+            foreach($groupmembers as $member) {
                 $record = new Object();
                 $record->groupid = $newgroupid;
-				$record->userid = $member->userid;
-				$useradded = insert_record('groups_groups_users', $record);
-				if (!$useradded) {
-					$success = false;
-				}
-			}
-		}
-	}
+                $record->userid = $member->userid;
+                $useradded = insert_record('groups_groups_users', $record);
+                if (!$useradded) {
+                    $success = false;
+                }
+            }
+        }
+    }
 
-	if (!$success) {
-		notify('Copy operations from Moodle groups to IMS Groups failed');
-	}
+    if (!$success) {
+        notify('Copy operations from Moodle groups to IMS Groups failed');
+    }
 
     return $success;
 }

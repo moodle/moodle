@@ -27,38 +27,38 @@ if (!$course) {
 
 
 if (!$error) {
-	// Make sure that the user is a teacher with edit permission for this course
-	require_login($courseid);
-	if (!isteacheredit($courseid)) {
-	    redirect();  
-	}
+    // Make sure that the user is a teacher with edit permission for this course
+    require_login($courseid);
+    if (!isteacheredit($courseid)) {
+        redirect();  
+    }
 
-	// Set the session key so we can check this later
-	$sesskey = !empty($USER->id) ? $USER->sesskey : '';
+    // Set the session key so we can check this later
+    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-	if (!empty($CFG->gdversion)) { //TODO: and $maxbytes)
-		$printuploadpicture = true;
-	} else {
-		$printuploadpicture = false;
-	}
+    if (!empty($CFG->gdversion)) { //TODO: and $maxbytes)
+        $printuploadpicture = true;
+    } else {
+        $printuploadpicture = false;
+    }
 
 
-	$maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
-	$strgroups = get_string('groups');
-	$strparticipants = get_string('participants');
-	// Print the page and form
-	print_header("$course->shortname: $strgroups", 
-                 $course->fullname, 
-	             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-	             "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
+    $maxbytes = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
+    $strgroups = get_string('groups');
+    $strparticipants = get_string('participants');
+    // Print the page and form
+    print_header("$course->shortname: $strgroups", 
+        $course->fullname, 
+        "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
+        "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
+        "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
 
     //TODO: set to false in /course/group.php
     $usehtmleditor = false;
 
-	require_once('form.html');
+    require_once('form.html');
 
-	print_footer($course);
+    print_footer($course);
 }
 
 ?>

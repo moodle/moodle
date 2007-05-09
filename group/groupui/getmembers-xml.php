@@ -15,28 +15,28 @@ $groupid  = required_param('groupid', PARAM_INT);
 $courseid = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
 
-	$userids = groups_get_members($groupid);
-	
-	if ($userids != false) {		
-		// Put the groupings into a hash and sort them
-		foreach($userids as $userid) {
-		    $listmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
-		}
-		natcasesort($listmembers);
-		
-		
-		// Print out the XML 
-		
-		echo "<option>";
-		foreach($listmembers as $value=>$name) {
-			echo "<name>$name</name>";
-			echo "<value>$value</value>";
-		}
-		echo "</option>";
-	}
+    $userids = groups_get_members($groupid);
+
+    if ($userids != false) {
+        // Put the groupings into a hash and sort them
+        foreach($userids as $userid) {
+            $listmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
+        }
+        natcasesort($listmembers);
+
+
+        // Print out the XML 
+
+        echo "<option>";
+        foreach($listmembers as $value=>$name) {
+            echo "<name>$name</name>";
+            echo "<value>$value</value>";
+        }
+        echo "</option>";
+    }
 }
 
 echo '</groupsresponse>';

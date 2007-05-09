@@ -25,8 +25,8 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @return object The user record
  */
 function groups_db_get_user($userid) {
-	$query = get_record('user', 'id', $userid);
-	return $query;
+    $query = get_record('user', 'id', $userid);
+    return $query;
 }
 
 
@@ -74,12 +74,12 @@ function groups_db_get_members($groupid) {
         $users = get_records('groups_members', 'groupid ', $groupid, '', 
                              $fields='id, userid');
         if (!$users) {
-        	$userids = false;
+            $userids = false;
         } else {
-	        $userids = array();
-	        foreach ($users as $user) {
-	            array_push($userids, $user->userid);
-	        }
+            $userids = array();
+            foreach ($users as $user) {
+                array_push($userids, $user->userid);
+            }
         }
     }
     return $userids;
@@ -110,7 +110,7 @@ function groups_db_get_groups_for_user($userid, $courseid) {
         $groups = get_records_sql($sql);
         $groupids = groups_groups_to_groupids($groups);
     }
-	
+
     return $groupids;
 }
  
@@ -138,7 +138,7 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
         }
     }
 
-    return $groupsettings;	
+    return $groupsettings;
 
 }
 
@@ -150,15 +150,15 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
  * if an error occurred. 
  */
 function groups_db_users_in_common_group($userid1, $userid2) {
-	global $CFG;
+    global $CFG;
     $havecommongroup = false;
-	$sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members gm1 " .
-			"INNER JOIN {$CFG->prefix}groups_members gm2 " .
-			"ON gm1.groupid = gm2.groupid" .
-			"WHERE gm1.userid = '$userid1' AND gm2.userid = '$userid2'";
+    $sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members gm1 " .
+        "INNER JOIN {$CFG->prefix}groups_members gm2 " .
+        "ON gm1.groupid = gm2.groupid" .
+        "WHERE gm1.userid = '$userid1' AND gm2.userid = '$userid2'";
     $commongroups = get_record_sql($sql);
     if ($commongroups) {
-    	$havecommongroup = true;
+        $havecommongroup = true;
     }
 
     return $havecommongroup;           
@@ -277,13 +277,13 @@ function groups_db_group_belongs_to_course($groupid, $courseid) {
  * @return int The id of the group created or false if the create failed.
  */
 function groups_db_create_group($courseid, $groupsettings=false, $copytime=false) {
-	// Check we have a valid course id
+    // Check we have a valid course id
     if (!$courseid) {
         $groupid = false; 
     } else {      
-    	$groupsettings = groups_set_default_group_settings($groupsettings);
+        $groupsettings = groups_set_default_group_settings($groupsettings);
 
-    	$record = $groupsettings;
+        $record = $groupsettings;
         if (! $copytime) {
             $now = time();
             $record->timecreated = $now;
@@ -294,17 +294,17 @@ function groups_db_create_group($courseid, $groupsettings=false, $copytime=false
 
         if ($groupid != false) {
             $record2 = new Object();
-	        $record2->courseid = $courseid;
-	        $record2->groupid = $groupid;
+            $record2->courseid = $courseid;
+            $record2->groupid = $groupid;
             if ($copytime) {
                 $record2->timeadded = $record->timemodified;
             } else {
                 $record2->timeadded = $now;
             }
-	        $groupadded = insert_record('groups_courses_groups', $record2);
-	        if (!$groupadded) {
-	        	$groupid = false;
-	        }
+            $groupadded = insert_record('groups_courses_groups', $record2);
+            if (!$groupadded) {
+                $groupid = false;
+            }
         }
     }
     return $groupid;
@@ -350,26 +350,26 @@ function groups_db_upgrade_group($courseid, $group) {
  * @return boolean True if user added successfully, false otherwise. 
  */
 function groups_db_add_member($groupid, $userid, $copytime=false) {
-	// Check that the user and group are valid
+    // Check that the user and group are valid
     if (!$userid or !$groupid or !groups_db_group_exists($groupid)) {
         $useradded = false;
-    // If the user is already a member of the group, just return success
+        // If the user is already a member of the group, just return success
     } elseif (groups_is_member($groupid, $userid)) {
-		$useradded = true;
-	} else {
+        $useradded = true;
+    } else {
         // Add the user to the group
         $record = new Object();
-		$record->groupid = $groupid;
-		$record->userid = $userid;
+        $record->groupid = $groupid;
+        $record->userid = $userid;
         if ($copytime) {
             $record->timeadded = $copytime;
         } else {
-		    $record->timeadded = time();
+            $record->timeadded = time();
         }
-		$useradded = insert_record($table = 'groups_members', $record);
-	}
+        $useradded = insert_record($table = 'groups_members', $record);
+    }
 
-	return $useradded;
+    return $useradded;
 }
 
 
@@ -381,11 +381,11 @@ function groups_db_add_member($groupid, $userid, $copytime=false) {
  * @return boolean True if info was added successfully, false otherwise. 
  */
 function groups_db_set_group_settings($groupid, $groupsettings) {
-	$success = true;
+    $success = true;
     if (!$groupid or !$groupsettings or !groups_db_group_exists($groupid)) {
         $success = false; 
     } else {
-    	$record = $groupsettings;
+        $record = $groupsettings;
         $record->id = $groupid;
         $record->timemodified = time();
         $result = update_record('groups', $record);
@@ -395,7 +395,6 @@ function groups_db_set_group_settings($groupid, $groupsettings) {
     }
 
     return $success;
-	
 }
 
 /******************************************************************************* 
@@ -442,36 +441,36 @@ function groups_db_delete_group($groupid) {
 
         $userids = groups_db_get_members($groupid);
         if ($userids != false) {
-	        foreach($userids as $userid) {
-	            $userdeleted = groups_db_remove_member($userid, $groupid);
-	            if (!$userdeleted) {
-	                $success = false;
-	            }
-	        }
+            foreach($userids as $userid) {
+                $userdeleted = groups_db_remove_member($userid, $groupid);
+                if (!$userdeleted) {
+                    $success = false;
+                }
+            }
         }
 
         // Remove any links with groupings to which the group belongs.
         //TODO: dbgroupinglib also seems to delete these links - duplication?
-	    $groupingids = groups_get_groupings_for_group($groupid); 
- 	    if ($groupingids != false) {
-		    foreach($groupingids as $groupingid) {
-		        $groupremoved = groups_remove_group_from_grouping($groupid, 
-		                                                          $groupingid);
-		        if(!$groupremoved) {
-		       		$success = false; 
-		        }
-		    }
-	    }
+        $groupingids = groups_get_groupings_for_group($groupid); 
+        if ($groupingids != false) {
+            foreach($groupingids as $groupingid) {
+                $groupremoved = groups_remove_group_from_grouping($groupid, 
+                    $groupingid);
+                if(!$groupremoved) {
+                    $success = false; 
+                }
+            }
+        }
 
         // Remove links with courses.
-		$results = delete_records('groups_courses_groups', 'groupid', $groupid);
-		if ($results == false) {
-			$success = false;
-		}
+        $results = delete_records('groups_courses_groups', 'groupid', $groupid);
+        if ($results == false) {
+            $success = false;
+        }
 
         // Delete the group itself
         $results = delete_records($table = 'groups', $field1 = 'id', 
-                                  $value1 = $groupid);
+            $value1 = $groupid);
         // delete_records returns an array of the results from the sql call, 
         // not a boolean, so we have to set our return variable
         if ($results == false) {

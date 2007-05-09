@@ -33,54 +33,54 @@ if ($success) {
         redirect();
     }
 
-    //( confirm_sesskey checks that this is a POST request.)	
+    //( confirm_sesskey checks that this is a POST request.)
 
-	// Print the page and form
-	$strgroups = get_string('groups');
-	$strparticipants = get_string('participants');
-	print_header("$course->shortname: $strgroups", $course->fullname, 
-	             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-	             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-	             "-> <a href=\"$CFG->wwwroot/group/groupui/index.php?id=$courseid\">$strgroups</a>".
-	             "-> Display grouping", "", "", true, '', user_login_string($course, $USER));
+    // Print the page and form
+    $strgroups = get_string('groups');
+    $strparticipants = get_string('participants');
+    print_header("$course->shortname: $strgroups", $course->fullname, 
+        "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
+        "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
+        "-> <a href=\"$CFG->wwwroot/group/groupui/index.php?id=$courseid\">$strgroups</a>".
+        "-> Display grouping", "", "", true, '', user_login_string($course, $USER));
 
     $groupingname = groups_get_grouping_name($groupingid);
     if (! $groupingname) {
         print_error('errorinvalidgrouping', 'group', groups_home_url($courseid));
     } else {
        // Print the name of the grouping
-	   echo "<h1>$groupingname</h1>\n";
+        echo "<h1>$groupingname</h1>\n";
     }
 
-	// Get the groups and group members for the grouping.
+    // Get the groups and group members for the grouping.
     if (GROUP_NOT_IN_GROUPING == $groupingid) {
         $groupids = groups_get_groups_not_in_any_grouping($courseid);
     } else {
         $groupids = groups_get_groups_in_grouping($groupingid);
     }
 
-	if ($groupids) {
-		// Make sure the groups are in the right order
-		$group_names = groups_groupids_to_group_names($groupids);
-        
+    if ($groupids) {
+        // Make sure the groups are in the right order
+        $group_names = groups_groupids_to_group_names($groupids);
+
         // Go through each group in turn and print the group name and then the members
         foreach ($group_names as $group) {
 
-			echo "<h2>{$group->name}</h2>\n";
-			$userids = groups_get_members($group->id);
-			if ($userids != false) {
-				// Make sure the users are in the right order
-				$user_names = groups_userids_to_user_names($userids, $courseid);
+            echo "<h2>{$group->name}</h2>\n";
+            $userids = groups_get_members($group->id);
+            if ($userids != false) {
+                // Make sure the users are in the right order
+                $user_names = groups_userids_to_user_names($userids, $courseid);
 
                 echo "<ol>\n";
                 foreach ($user_names as $user) {
 
-				    echo "<li>{$user->name}</li>\n";
-				}
+                    echo "<li>{$user->name}</li>\n";
+                }
                 echo "</ol>\n";
-			}
-		}
-	}
+            }
+        }
+    }
 
     print_footer($course);
 }

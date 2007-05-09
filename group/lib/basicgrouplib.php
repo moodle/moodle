@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
  * or an error occurred.
  */
 function groups_get_groups($courseid) {
-	$groupids = groups_db_get_groups($courseid);
+    $groupids = groups_db_get_groups($courseid);
     return $groupids;
 }
 
@@ -49,7 +49,7 @@ function groups_get_groups($courseid) {
  * group or false if no users or an error returned.
  */
 function groups_get_members($groupid, $membertype = false) {
-	$userids = groups_db_get_members($groupid);
+    $userids = groups_db_get_members($groupid);
 
     return $userids;
 }
@@ -108,9 +108,9 @@ function groups_get_all_groups_for_user($userid) {
  * @return array An array of the groupids. 
  */
 function groups_get_groups_for_current_user($courseid) {
-	global $USER;
-	$groupids = groups_get_groups_for_user($USER->id, $courseid);
-	return $groupids;
+    global $USER;
+    $groupids = groups_get_groups_for_user($USER->id, $courseid);
+    return $groupids;
 }
 
 
@@ -122,7 +122,7 @@ function groups_get_groups_for_current_user($courseid) {
  * @return object The group settings object 
  */
 function groups_get_group_settings($groupid, $courseid=false, $alldata=false) {
-	return groups_db_get_group_settings($groupid, $courseid, $alldata);
+    return groups_db_get_group_settings($groupid, $courseid, $alldata);
 }
 
 /**
@@ -133,7 +133,7 @@ function groups_get_group_settings($groupid, $courseid=false, $alldata=false) {
  */
 function groups_get_group_image_path($groupid) {
     //TODO: groupid=1, /user/pixgroup.php/1/f1.jpg ??
-	return $CFG->wwwroot.'/pixgroup.php/'.$groupid.'/f1.jpg';
+    return $CFG->wwwroot.'/pixgroup.php/'.$groupid.'/f1.jpg';
 }
 
 /**
@@ -142,8 +142,8 @@ function groups_get_group_image_path($groupid) {
  * @return string The name of the group
  */
 function groups_get_group_name($groupid) {
-	$settings = groups_get_group_settings($groupid);
-	if ($settings) {
+    $settings = groups_get_group_settings($groupid);
+    if ($settings) {
         return $settings->name;
     }
     return false;
@@ -156,14 +156,14 @@ function groups_get_group_name($groupid) {
  * an error occurred. 
  */
 function groups_get_users_not_in_group($courseid, $groupid) {
-	$users = get_course_users($courseid);
+    $users = get_course_users($courseid);
     $userids = groups_users_to_userids($users);   
     $nongroupmembers = array();
     
-    foreach($userids as $userid) { 	
-    	if (!groups_is_member($groupid, $userid)) {
-        	array_push($nongroupmembers, $userid);
-    	}
+    foreach($userids as $userid) {
+        if (!groups_is_member($groupid, $userid)) {
+            array_push($nongroupmembers, $userid);
+        }
     }
 
     return $nongroupmembers;
@@ -177,7 +177,7 @@ function groups_get_users_not_in_group($courseid, $groupid) {
  * if an error occurred. 
  */
 function groups_users_in_common_group($userid1, $userid2) {
-	return groups_db_users_in_common_group($userid1, $userid2); 
+    return groups_db_users_in_common_group($userid1, $userid2); 
 }
 
 
@@ -193,7 +193,7 @@ function groups_users_in_common_group($userid1, $userid2) {
  * occurred. 
  */
 function groups_group_exists($groupid) {
-	return groups_db_group_exists($groupid);
+    return groups_db_group_exists($groupid);
 }
 
 
@@ -277,12 +277,12 @@ function groups_set_default_group_settings($groupinfo = null) {
     }
 
     if (isset($groupinfo->hidepicture)) {
-    	if ($groupinfo->hidepicture != 0 and $groupinfo->hidepicture != 1) {
-    		$groupinfo->hidepicture = 1;
-    	}
+        if ($groupinfo->hidepicture != 0 and $groupinfo->hidepicture != 1) {
+            $groupinfo->hidepicture = 1;
+        }
     }
 
-	return $groupinfo;
+    return $groupinfo;
 }
 
 /***************************** 
@@ -301,8 +301,8 @@ function groups_set_default_group_settings($groupinfo = null) {
  * not created successfully. 
  * See comment above on web service autoupdating. 
  */
-function groups_create_group($courseid, $groupsettings = false) {	
-	return groups_db_create_group($courseid, $groupsettings);
+function groups_create_group($courseid, $groupsettings = false) {
+    return groups_db_create_group($courseid, $groupsettings);
 }
 
 /**
@@ -321,8 +321,8 @@ function groups_restore_group($courseid, $groupsettings) {
  * following properties: name, description, lang, theme, picture, hidepicture
  * @return boolean True if info was added successfully, false otherwise. 
  */
-function groups_set_group_settings($groupid, $groupsettings) {	
-	return groups_db_set_group_settings($groupid, $groupsettings);
+function groups_set_group_settings($groupid, $groupsettings) {
+    return groups_db_set_group_settings($groupid, $groupsettings);
 }
 
 
@@ -335,20 +335,20 @@ function groups_set_group_settings($groupid, $groupsettings) {
  * See comment above on web service autoupdating. 
  */
 function groups_add_member($groupid, $userid) {
-	$useradded = false;
-    
+    $useradded = false;
+
     $alreadymember = groups_is_member($groupid, $userid);
     if (!groups_group_exists($groupid)) {
-    	$useradded = false;
+        $useradded = false;
     } elseif ($alreadymember) {
-    	$useradded = true;
+        $useradded = true;
     } else {
-		$useradded = groups_db_add_member($groupid, $userid);
+        $useradded = groups_db_add_member($groupid, $userid);
     }
     if ($useradded) {
         $useradded = groups_db_set_group_modified($groupid);
     }
-	return $useradded;
+    return $useradded;
 }
 
 /**
@@ -395,7 +395,7 @@ function groups_delete_group($groupid) {
  * See comment above on web service autoupdating. 
  */
 function groups_remove_member($groupid, $userid) {
-	$success = groups_db_remove_member($groupid, $userid);    
+    $success = groups_db_remove_member($groupid, $userid);    
     if ($success) {
         $success = groups_db_set_group_modified($groupid);
     }

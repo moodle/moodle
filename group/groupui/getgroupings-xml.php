@@ -14,24 +14,24 @@ echo '<groupsresponse>';
 $courseid = required_param('courseid', PARAM_INT);
 
 require_login($courseid);
-	
+
 if (confirm_sesskey() and isteacheredit($courseid)) {
-	$groupingids = groups_get_groupings($courseid);
-	if ($groupingids != false) {	
-		// Put the groupings into a hash and sort them
-		foreach($groupingids as $groupingid) {
-		    $listgroupings[$groupingid] = groups_get_grouping_displayname($groupingid);       
-		}
-		natcasesort($listgroupings);
-		
-		// Print out the XML 
-		echo '<option>';
-		foreach($listgroupings as $value=>$name) {
-			echo "<name>$name</name>";
-			echo "<value>$value</value>";
-		}
-		echo '</option>';
-	}
+    $groupingids = groups_get_groupings($courseid);
+    if ($groupingids != false) {
+        // Put the groupings into a hash and sort them
+        foreach($groupingids as $groupingid) {
+            $listgroupings[$groupingid] = groups_get_grouping_displayname($groupingid);       
+        }
+        natcasesort($listgroupings);
+
+        // Print out the XML 
+        echo '<option>';
+        foreach($listgroupings as $value=>$name) {
+            echo "<name>$name</name>";
+            echo "<value>$value</value>";
+        }
+        echo '</option>';
+    }
 }
 
 echo '</groupsresponse>';

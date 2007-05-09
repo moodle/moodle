@@ -61,21 +61,21 @@ function groups_count_groups_in_grouping($groupingid, $courseid) {
  * @return string The display name of the user.
  */
 function groups_get_user_displayname($userid, $courseid) {
-	if ($courseid == false) {
-		$fullname = false;
-	} else {
-		$user = groups_get_user($userid);
-	    $fullname = fullname($user, true);
+    if ($courseid == false) {
+        $fullname = false;
+    } else {
+        $user = groups_get_user($userid);
+        $fullname = fullname($user, true);
         //TODO: isteacher, isteacheredit.
-	    if (isteacher($courseid, $userid)) {
-	        if (isteacheredit($courseid, $userid)) {
-	            $prefix = '# ';
-	        } else {
-	             $prefix = '- ';
-	        }
-	        $fullname = $prefix.$fullname;
-	    }
-	}
+        if (isteacher($courseid, $userid)) {
+            if (isteacheredit($courseid, $userid)) {
+                $prefix = '# ';
+            } else {
+                $prefix = '- ';
+            }
+            $fullname = $prefix.$fullname;
+        }
+    }
     return $fullname;
 }
 
@@ -87,11 +87,11 @@ function groups_get_user_displayname($userid, $courseid) {
  * @return string The display name of the group
  */
 function groups_get_group_displayname($groupid) {
-	if ($groupname = groups_get_group_name($groupid)) {
+    if ($groupname = groups_get_group_name($groupid)) {
         $count = groups_count_group_members($groupid);
         return "$groupname ($count)"; 
     }
-	return false;
+    return false;
 }
 
 
@@ -156,19 +156,19 @@ function groups_userids_to_user_names($userids, $courseid) {
  * @return array The array of group IDs, or false if an error occurred 
  */
 function groups_groups_to_groupids($groups) {
-	if (! $groups) {
+    if (! $groups) {
         return false;
     }
     $groupids = array();
-	foreach ($groups as $group) {
+    foreach ($groups as $group) {
         if (isset($group->id)) {
-		    array_push($groupids, $group->id);
+            array_push($groupids, $group->id);
         } else {
             //Warn if there's no "groupid" member.
             array_push($groupids, $group->groupid);
         }
-	}
-	return $groupids;
+    }
+    return $groupids;
 }
 
 
@@ -271,7 +271,7 @@ function groups_groupingids_to_groupings($groupingids) {
  * @return object The corresponding user object, or false if an error occurred
  */
 function groups_get_user($userid) {
-	return groups_db_get_user($userid);
+    return groups_db_get_user($userid);
 }
 
 
@@ -282,11 +282,11 @@ function groups_get_user($userid) {
  * TODO: need to put the database bit into a db file 
  */
 function groups_get_course_info($courseid){
-	if (!$courseid) {
-		$courseinfo = false;
-	} else {
-		$courseinfo = get_record('course', 'id', $courseid);
-	}
+    if (!$courseid) {
+        $courseinfo = false;
+    } else {
+        $courseinfo = get_record('course', 'id', $courseid);
+    }
     return $courseinfo;
 }
 

@@ -28,15 +28,15 @@ function groups_db_get_groupings($courseid) {
     } else {
         $groupings = get_records('groups_courses_groupings', 'courseid ', 
                                  $courseid, '', $fields='id, groupingid');
-		if (!$groupings) {
-			$groupingids = false;
-		} else {
-	        // Put the results into an array
-	        $groupingids = array();
-	        foreach ($groupings as $grouping) {
-	            array_push($groupingids, $grouping->groupingid);
-	        }
-		}
+        if (!$groupings) {
+            $groupingids = false;
+        } else {
+            // Put the results into an array
+            $groupingids = array();
+            foreach ($groupings as $grouping) {
+                array_push($groupingids, $grouping->groupingid);
+            }
+        }
     }
     
     return $groupingids;
@@ -57,14 +57,14 @@ function groups_db_get_groups_in_grouping($groupingid) {
         $groups = get_records('groups_groupings_groups', 'groupingid ', 
                               $groupingid, '', $fields='id, groupid');
         if (!$groups) {
-			$groupids = false;
-		} else {
-			// Put the results into an array
-			$groupids = array();
-			foreach ($groups as $group) {
-				array_push($groupids, $group->groupid);
-			}
-		}
+            $groupids = false;
+        } else {
+            // Put the results into an array
+            $groupids = array();
+            foreach ($groups as $group) {
+                array_push($groupids, $group->groupid);
+            }
+        }
     }
     
     return $groupids;
@@ -78,23 +78,23 @@ function groups_db_get_groups_in_grouping($groupingid) {
  * or false if there are none or if an error occurred. 
  */
 function groups_db_get_groupings_for_group($groupid) {
-	if (!$groupid) {
-		$groupingids = false;
-	} else {
-		$groupings = get_records('groups_groupings_groups', 'groupid ', 
-		                         $groupid, '', $fields='id, groupingid');
-		if (!$groupings) {
-				$groupingids = false;
-		} else {
-			// Put the results into an array
-	        $groupingids = array();
-	        foreach ($groupings as $grouping) {
-	            array_push($groupingids, $grouping->groupingid);
-	        }
-		} 
-	}
-	
-	return $groupingids;
+    if (!$groupid) {
+        $groupingids = false;
+    } else {
+        $groupings = get_records('groups_groupings_groups', 'groupid ', 
+            $groupid, '', $fields='id, groupingid');
+        if (!$groupings) {
+            $groupingids = false;
+        } else {
+            // Put the results into an array
+            $groupingids = array();
+            foreach ($groupings as $grouping) {
+                array_push($groupingids, $grouping->groupingid);
+            }
+        } 
+    }
+
+    return $groupingids;
 }
 
 
@@ -125,7 +125,7 @@ function groups_db_get_grouping_settings($groupingid) {
  * or if an error occurred. 
  */
 function groups_db_get_grouping_for_coursemodule($cm) {
-	if (is_object($cm) and isset($cm->course) and isset($cm->groupingid)) {
+    if (is_object($cm) and isset($cm->course) and isset($cm->groupingid)) {
         //Do NOT rely on cm->module!
         return $cm->groupingid;
     } elseif (is_numeric($cm)) {
@@ -265,7 +265,7 @@ function groups_db_create_grouping($courseid, $groupingsettings = false) {
     if (!$courseid or !groups_get_course_info($courseid)) {
         $groupingid = false; 
     } else {
-    	// Replace any empty groupsettings
+        // Replace any empty groupsettings
         $groupingsettings = groups_set_default_grouping_settings($groupingsettings);
         $record = $groupingsettings;
         $record->timecreated = time();
@@ -273,13 +273,13 @@ function groups_db_create_grouping($courseid, $groupingsettings = false) {
         $groupingid = insert_record('groups_groupings', $record);
         if ($groupingid != false) {
             $record2 = new Object();
-	        $record2->courseid = $courseid;
-	        $record2->groupingid = $groupingid;
-	        $record2->timeadded = time();
-	        $id= insert_record('groups_courses_groupings', $record2);
-	        if (!$id) {
-	        	$groupingid = false;
-	        }
+            $record2->courseid = $courseid;
+            $record2->groupingid = $groupingid;
+            $record2->timeadded = time();
+            $id= insert_record('groups_courses_groupings', $record2);
+            if (!$id) {
+                $groupingid = false;
+            }
         } 
     }
     
@@ -320,13 +320,13 @@ function groups_db_add_group_to_grouping($groupid, $groupingid) {
  * @param object $groupingsettings 
  */
 function groups_db_set_grouping_settings($groupingid, $groupingsettings) {
-	$success = true;
+    $success = true;
     if (!$groupingid or !$groupingsettings 
         or !groups_db_grouping_exists($groupingid)) {
         $success = false; 
     } else {
-    	// Replace any empty group settings. 
-    	$record = $groupingsettings;
+        // Replace any empty group settings. 
+        $record = $groupingsettings;
         $record->id = $groupingid;
         $record->timemodified = time();
         $result = update_record('groups_groupings', $record);
@@ -346,19 +346,19 @@ function groups_db_set_grouping_settings($groupingid, $groupingsettings) {
  * @return boolean True if the operation was successful, false otherwise
  */
 function groups_db_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
-	$success = true;
-	if (!$groupingid or !$coursemoduleid) {
-		$success = false;
-	} else {
+    $success = true;
+    if (!$groupingid or !$coursemoduleid) {
+        $success = false;
+    } else {
         $record = new Object();
-		$record->id = $coursemoduleid;
-		$record->groupingid = $groupingid;
-		$result = update_record('course_modules', $record);
-		if (!$result) {
-			$success = false;
-		} 
-	}
-	return $success;
+        $record->id = $coursemoduleid;
+        $record->groupingid = $groupingid;
+        $result = update_record('course_modules', $record);
+        if (!$result) {
+            $success = false;
+        } 
+    }
+    return $success;
 }
 
 
@@ -375,12 +375,12 @@ function groups_db_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
  * @return boolean True if the deletion was successful, false otherwise. 
  */
 function groups_db_remove_group_from_grouping($groupid, $groupingid) {
-	$success = true;
+    $success = true;
     if (!$groupingid or !$groupid) {
         $success = false;
     } else {
         $results = delete_records('groups_groupings_groups', 'groupid', 
-                                  $groupid, 'groupingid', $groupingid);
+            $groupid, 'groupingid', $groupingid);
         // delete_records returns an array of the results from the sql call, 
         // not a boolean, so we have to set our return variable
         if ($results == false) {
@@ -399,7 +399,7 @@ function groups_db_remove_group_from_grouping($groupid, $groupingid) {
  * @return boolean True if the deletion was successful, false otherwise.
  */ 
 function groups_db_delete_grouping($groupingid) {
-	$success = true;
+    $success = true;
     if (!$groupingid) {
         $success = false;
     } else {

@@ -77,7 +77,7 @@ function groups_get_groups_in_grouping_records($groupingid) {
  * or false if there are none or if an error occurred. 
  */
 function groups_get_groupings_for_group($groupid) {
-	return groups_db_get_groupings_for_group($groupid);
+    return groups_db_get_groupings_for_group($groupid);
 }
 
 /**
@@ -87,7 +87,7 @@ function groups_get_groupings_for_group($groupid) {
  * description. 
  */
 function groups_get_grouping_settings($groupingid) {
-	return groups_db_get_grouping_settings($groupingid);
+    return groups_db_get_grouping_settings($groupingid);
 }
 
 /**
@@ -96,7 +96,7 @@ function groups_get_grouping_settings($groupingid) {
  * @param object $groupingsettings 
  */
 function groups_set_grouping_settings($groupingid, $groupingsettings) {
-	return groups_db_set_grouping_settings($groupingid, $groupingsettings);
+    return groups_db_set_grouping_settings($groupingid, $groupingsettings);
 }
 
 
@@ -192,25 +192,25 @@ function groups_get_groups_not_in_any_grouping($courseid) {
  * the grouping or false if an error occurred. 
  */
 function groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, 
-                                                       $groupid = false) {
-	$users = get_course_users($courseid);
-    $userids = groups_users_to_userids($users); 
-    $nongroupmembers = array();
-    if (! $userids) {
+    $groupid = false) {
+        $users = get_course_users($courseid);
+        $userids = groups_users_to_userids($users); 
+        $nongroupmembers = array();
+        if (! $userids) {
+            return $nongroupmembers;
+        }
+        foreach($userids as $userid) {
+            if (!groups_is_member_of_some_group_in_grouping($userid, $groupingid)) {
+                // If a group has been specified don't include members of that group
+                if ($groupid  and !groups_is_member($userid, $groupid)) {
+                    array_push($nongroupmembers, $userid);
+                } else {
+                    ///array_push($nongroupmembers, $userid);
+                }
+            }
+        }
         return $nongroupmembers;
     }
-    foreach($userids as $userid) {
-	    if (!groups_is_member_of_some_group_in_grouping($userid, $groupingid)) {
-	      	// If a group has been specified don't include members of that group
-	       	if ($groupid  and !groups_is_member($userid, $groupid)) {
-	           	array_push($nongroupmembers, $userid);
-	       	} else {
-	       		///array_push($nongroupmembers, $userid);
-	       	}
-        }
-    }
-    return $nongroupmembers;
-}
 
 
 /**
@@ -221,21 +221,21 @@ function groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid,
  * or if an error occurred. 
  */
 function groups_user_is_in_multiple_groups($userid, $groupingid) {
-	$inmultiplegroups = false;
+    $inmultiplegroups = false;
     //TODO: $courseid?
-	$groupids = groups_get_groups_for_user($courseid);
-	if ($groupids != false) {
-		$groupinggroupids = array();
-		foreach($groupids as $groupid) {
-			if (groups_belongs_to_grouping($groupid, $groupingid)) {
-				array_push($groupinggroupids, $groupid);
-			}
-		}
-		if (count($groupinggroupids) > 1) {
-			$inmultiplegroups = true;
-		}
-	}
-	return $inmultiplegroups;
+    $groupids = groups_get_groups_for_user($courseid);
+    if ($groupids != false) {
+        $groupinggroupids = array();
+        foreach($groupids as $groupid) {
+            if (groups_belongs_to_grouping($groupid, $groupingid)) {
+                array_push($groupinggroupids, $groupid);
+            }
+        }
+        if (count($groupinggroupids) > 1) {
+            $inmultiplegroups = true;
+        }
+    }
+    return $inmultiplegroups;
 }
 
 
@@ -256,30 +256,30 @@ function groups_set_default_grouping_settings($groupingsettings = null) {
     }
 
     if (!isset($groupingsettings->viewowngroup)) {
-    	$groupingsettings->viewowngroup = 1;
+        $groupingsettings->viewowngroup = 1;
     }
 
     if (!isset($groupingsettings->viewallgroupsmembers)) {
-    	$groupingsettings->viewallgroupsmembers = 0;
+        $groupingsettings->viewallgroupsmembers = 0;
     }
 
     if (!isset($groupingsettings->viewallgroupsactivities)) {
-    	$groupingsettings->viewallgroupsactivities = 0;
+        $groupingsettings->viewallgroupsactivities = 0;
     }
 
     if (!isset($groupingsettings->teachersgroupmark)) {
-    	$groupingsettings->teachersgroupmark = 0;
+        $groupingsettings->teachersgroupmark = 0;
     }  
 
     if (!isset($groupingsettings->teachersgroupview)) {
-    	$groupingsettings->teachersgroupview = 0;
+        $groupingsettings->teachersgroupview = 0;
     }               
 
     if (!isset($groupingsettings->teachersoverride)) {
-    	$groupingsettings->teachersoverride = 1;
+        $groupingsettings->teachersoverride = 1;
     }  
 
-	return $groupingsettings;
+    return $groupingsettings;
 }
 
 
@@ -290,7 +290,7 @@ function groups_set_default_grouping_settings($groupingsettings = null) {
  * or if an error occurred. 
  */
 function groups_get_grouping_for_coursemodule($coursemodule) {
-	return groups_db_get_grouping_for_coursemodule($coursemodule);
+    return groups_db_get_grouping_for_coursemodule($coursemodule);
 }
 
 /*****************************
@@ -304,7 +304,7 @@ function groups_get_grouping_for_coursemodule($coursemodule) {
  * @return True if the grouping exists, false otherwise or if an error occurred. 
  */  
 function groups_grouping_exists($groupingid) {
-	return groups_db_grouping_exists($groupingid);
+    return groups_db_grouping_exists($groupingid);
 }
 
 /**
@@ -329,43 +329,43 @@ function groups_grouping_matches($courseid, $gg_name, $gg_description) {
 }
 
 /**
-  * Determines if a group belongs to a specified grouping
-  * @param int $groupid The id of the group
-  * @param int $groupingid The id of the grouping
-  * @return boolean. True if the group belongs to a grouping, false otherwise or
-  * if an error has occurred.
-  */
- function groups_belongs_to_grouping($groupid, $groupingid) {
-     return groups_db_belongs_to_grouping($groupid, $groupingid);
- }
- 
+ * Determines if a group belongs to a specified grouping
+ * @param int $groupid The id of the group
+ * @param int $groupingid The id of the grouping
+ * @return boolean. True if the group belongs to a grouping, false otherwise or
+ * if an error has occurred.
+ */
+function groups_belongs_to_grouping($groupid, $groupingid) {
+    return groups_db_belongs_to_grouping($groupid, $groupingid);
+}
 
- /**
-  * Detemines if a specified user belongs to any group of a specified grouping.
-  * @param int $userid The id of the user
-  * @param int $groupingid The id of the grouping
-  * @return boolean True if the user belongs to some group in the grouping,
-  * false otherwise or if an error occurred. 
-  */
- function groups_is_member_of_some_group_in_grouping($userid, $groupingid) {
-     return groups_db_is_member_of_some_group_in_grouping($userid, $groupingid);
- }
- 
- /** 
-  * Determines if a grouping belongs to a specified course
-  * @param int $groupingid The id of the grouping
-  * @param int $courseid The id of the course
-  * @return boolean True if the grouping belongs to the course, false otherwise, 
-  * or if an error occurred. 
-  */
- function groups_grouping_belongs_to_course($groupingid, $courseid) {
- 	return groups_db_grouping_belongs_to_course($groupingid, $courseid);
- }
+
+/**
+ * Detemines if a specified user belongs to any group of a specified grouping.
+ * @param int $userid The id of the user
+ * @param int $groupingid The id of the grouping
+ * @return boolean True if the user belongs to some group in the grouping,
+ * false otherwise or if an error occurred. 
+ */
+function groups_is_member_of_some_group_in_grouping($userid, $groupingid) {
+    return groups_db_is_member_of_some_group_in_grouping($userid, $groupingid);
+}
+
+/** 
+ * Determines if a grouping belongs to a specified course
+ * @param int $groupingid The id of the grouping
+ * @param int $courseid The id of the course
+ * @return boolean True if the grouping belongs to the course, false otherwise, 
+ * or if an error occurred. 
+ */
+function groups_grouping_belongs_to_course($groupingid, $courseid) {
+    return groups_db_grouping_belongs_to_course($groupingid, $courseid);
+}
 
 
 /*****************************
         Creation functions  
- *****************************/
+*****************************/
 
 
 /**
@@ -396,19 +396,19 @@ function groups_create_grouping($courseid, $groupingsettings = false) {
  * doesn't belong to the same course as the grouping. 
  */
 function groups_add_group_to_grouping($groupid, $groupingid) {
-	if (GROUP_NOT_IN_GROUPING == $groupingid) {
+    if (GROUP_NOT_IN_GROUPING == $groupingid) {
         return true;
     }
     $belongstogrouping = groups_belongs_to_grouping($groupid, $groupingid);
-	
+
     if (!groups_grouping_exists($groupingid)) {
-		$groupadded = false;
-	} elseif (!$belongstogrouping) {
-		$groupadded = groups_db_add_group_to_grouping($groupid, $groupingid); 
-	} else {
-		$groupadded = true;
-	}
-	
+        $groupadded = false;
+    } elseif (!$belongstogrouping) {
+        $groupadded = groups_db_add_group_to_grouping($groupid, $groupingid); 
+    } else {
+        $groupadded = true;
+    }
+
     return $groupadded;  
 }
 
@@ -433,8 +433,8 @@ function groups_set_grouping_name($groupingid, $name) {
  * @return boolean True if the operation was successful, false otherwise
  */
 function groups_set_grouping_for_coursemodule($groupingid, $coursemoduleid) {
-	return groups_db_set_grouping_for_coursemodule($groupingid, 
-	                                               $coursemoduleid);
+    return groups_db_set_grouping_for_coursemodule($groupingid, 
+                                                        $coursemoduleid);
 }
 
 
