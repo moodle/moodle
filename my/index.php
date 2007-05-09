@@ -57,7 +57,7 @@
     }
 
     echo '<td valign="top" id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
+    if (!empty($THEME->customcorners)) print_custom_corners_start(TRUE);
 
 /// The main overview in the middle of the page
     
