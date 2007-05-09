@@ -184,11 +184,8 @@ a.useredit, a:hover.useredit, .blink {
 }
 
 /* Accessibility: only certain fonts support Unicode chars like &#x25BA; in IE6 */
-.breadcrumb .sep, .headermenu button,
-.calendar-controls .previous, .calendar-controls .next,
-.arrow_button input, .arrow_button button {
-  font-family:Arial,Helvetica,Courier,'Arial Unicode MS',
-    'Lucida Sans Unicode','Lucida Grande','GNU Unifont',unifont,sans-serif;
+.arrow, .arrow_button input {
+  font-family: Arial,Helvetica,Courier,sans-serif;
 }
 
 .navigation button {
