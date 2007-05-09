@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html<?php echo $direction ?>>
+<head>
+    <?php echo $meta ?>
+    <meta name="keywords" content="moodle, <?php echo $title ?> " />
+    <title><?php echo $title ?></title>
+    <link rel="shortcut icon" href="<?php echo $CFG->themewww .'/'. current_theme() ?>/favicon.ico" />
+    
+    <?php include('ui/chameleon.php'); ?>
+    <?php include("$CFG->javascript"); ?>
+    <?php include('js/jquery.php'); ?>
+    
+    <?php require_once($CFG->dirroot.'/lib/custom_corners_lib.php'); ?>
+    
+    <?php
+        
+        global $PAGE;
+        
+        // handle pages which get displayed wrong
+        // either no custom corners or too much
+        
+        // all admin pages are build with the layout-table: sideblocks and content
+        if (($PAGE->type == 'admin') && (strstr($bodytags, ' nocoursepage'))) {
+            $bodytags = str_replace(' nocoursepage', '', $bodytags);
+        }
+        
+        // list of pages using the layout-table to be able to view sideblocks
+        $excludelist = array('mod-chat-view', 'mod-data-view', 'mod-quiz-view');
+        if ((in_array($PAGE->type, $excludelist)) && 
+            (strstr($bodytags, ' nocoursepage'))) {
+            $bodytags = str_replace(' nocoursepage', '', $bodytags);
+        }
+        
+        // add 'nocoursepage' to the list of CLASSes on the admin-roles pages
+        preg_match('/id="([^"]*)"/i', $bodytags, $ids);
+        if (($ids[1] == 'admin-roles-assign') || ($ids[1] == 'admin-roles-override')) {
+            // exclude roles called from the admin area (courseid 1)
+            // include user roles for the Moodle user settings called 
+            // from the start page
+            if (($COURSE->id > 1) || ($_GET['contextid'] == 30)) {
+                preg_match('/class="([^"]*)"/i', $bodytags, $classes);
+                $classlist = explode (' ', $classes[1]);
+                if (!in_array('nocoursepage', $classlist)) {
+                    array_push($classlist, 'nocoursepage');
+                    $bodytags = str_replace($classes[0], 
+                        'class="'.implode(' ', $classlist).'"', $bodytags);
+                }
+            }
+        }
+    ?>
+
+    <?php
+        $infooutput = '<pre>'.'pagetype: '.$PAGE->type.
+            "\n".$bodytags.
+            '</pre>';
+    ?>
+</head>
+
+<body<?php
+    echo " $bodytags";
+    if ($focus) {
+        echo " onload=\"setfocus()\"";
+    };
+    ?>>
+    
+    <?php if(!empty($infooutput)) { ?> 
+        <div id="infowrapper"><div id="infooverlay"><?php echo $infooutput; ?></div></div>
+    <?php } ?>
+<div id="page">
+    
+<?php if ($home) {  // This is what gets printed on the home page only  
+?>
+    <div id="header-home" class="clearfix">
+      <?php print_custom_corners_start(TRUE); ?>
+          <h1 class="headermain"><?php echo $heading ?></h1>
+          <div class="headermenu"><?php echo $menu ?></div>
+      <?php print_custom_corners_end(); ?>
+    </div>
+<?php } else {  // This is what gets printed on any other page with a heading 
+?>
+    <div id="header" class="clearfix">
+      <?php print_custom_corners_start(); ?>
+          <h1 class="headermain"><?php echo $heading ?></h1>
+          <div class="headermenu"><?php echo $menu ?></div>
+    <div class="navbar clearfix">
+    <?php if ($navigation) { // This is the navigation table with breadcrumbs
+    ?>
+        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="navbutton"><?php echo $button; ?></div>
+    <?php } ?>
+    </div>
+    <?php print_custom_corners_end(); ?>
+    </div>
+<?php } ?>
+    <!-- END OF HEADER -->
+<div id="content">
+    <?php print_custom_corners_start(); ?>

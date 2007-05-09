@@ -1,0 +1,22 @@
+
+<?php print_custom_corners_end(); ?>
+</div> <!-- end div containerContent -->
+<!-- START OF FOOTER -->
+<?php global $CFG, $course; ?>
+<div id="footer">
+    <?php print_custom_corners_start(); ?>
+<?php
+  if (function_exists('page_doc_link')) {
+    echo '<p class="helplink">';
+    echo page_doc_link(get_string('moodledocslink'));
+    echo '</p>';
+  }
+?>
+<?php echo $loggedinas ?>
+<?php echo $homelink;
+?>
+    <?php print_custom_corners_end(); ?>
+</div>
+</div>
+</body>
+</html>

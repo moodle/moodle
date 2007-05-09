@@ -1,0 +1,16 @@
+/*
+ * These styles are ONLY included for IE 7 (via meta.php)
+ */
+
+div.navbar {
+    height: 2em;
+}
+div.sideblock ul.list li {
+    margin: 0.4em 0;
+}
+div.i1 {
+    min-width: 0;
+}
+div#header div.i3 {
+    min-width: 0;
+}

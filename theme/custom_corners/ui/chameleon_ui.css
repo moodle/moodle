@@ -1,0 +1,400 @@
+/* sorry about the massive abuse of !important ;-) this tries to prevent user changes in CSS being 
+inherited by the user interface */
+
+/* general box styles */
+#chameleon-selector-box, #chameleon-style-box, 
+#chameleon-color-box, #chameleon-file-box, 
+#chameleon-export-box {
+  position: absolute !important;
+  left: 0; top: 0;
+  margin: 0 !important; padding: 0 !important;
+  width: 400px !important;
+  background: #eee !important;
+  border: 1px solid #ccc !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  color: #000 !important;
+}
+
+/* reset */
+#chameleon-selector-box div, #chameleon-style-box div, #chameleon-color-box div, #chameleon-file-box div {
+  margin: 0 !important; padding: 0 !important;
+  color: #000 !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  border: 0 !important;
+}
+
+#chameleon-selector-box a, #chameleon-style-box a, #chameleon-color-box a, #chameleon-file-box a {
+  margin: 0 !important; padding: 0 !important;
+  color: #000 !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  border: 0 !important;
+  background: none !important;
+}
+
+#chameleon-selector-box a, #chameleon-style-box a, #chameleon-color-box a, #chameleon-file-box a {
+  cursor: pointer !important;
+}
+
+#chameleon-selector-box table, #chameleon-style-box table, #chameleon-color-box table, #chameleon-file-box table,
+#chameleon-selector-box tr, #chameleon-style-box tr, #chameleon-color-box tr, #chameleon-file-box tr,
+#chameleon-selector-box td, #chameleon-style-box td, #chameleon-color-box td, #chameleon-file-box td,
+#chameleon-selector-box th, #chameleon-style-box th, #chameleon-color-box th, #chameleon-file-box th  {
+  padding: 0 !important;
+  color: #000 !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  border: 0 !important;
+  background: none !important;
+}
+
+#chameleon-selector-box p, #chameleon-style-box p, #chameleon-color-box p, #chameleon-file-box p {
+  margin: 0 !important; padding: 5px 10px 0 10px !important;
+  color: #000 !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  border: 0 !important;
+  background: none !important;
+}
+
+/* drag handles */
+#chameleon-selector-box #chameleon-selector-box-handle, 
+#chameleon-style-box #chameleon-style-box-handle, 
+#chameleon-color-box #chameleon-color-box-handle,
+#chameleon-file-box #chameleon-file-box-handle,
+#chameleon-export-box #chameleon-export-box-handle {
+  width: 100% !important; min-height: 20px !important; _height: 20px !important;
+  background: #ddd !important;
+}
+
+#chameleon-selector-box #chameleon-selector-box-close, 
+#chameleon-style-box #chameleon-style-box-close, 
+#chameleon-color-box #chameleon-color-box-close,
+#chameleon-file-box #chameleon-file-box-close {
+  padding: 1px 5px !important;
+  float: right !important;
+  cursor: pointer !important;
+}
+
+/* selector box specific stuff */
+#chameleon-selector-box ol {
+  list-style-type: none !important;
+  margin: 0 !important; padding: 10px 20px 10px 10px !important;
+}
+
+#chameleon-selector-box li {
+  margin: 0 0 2px 0 !important; padding: 0 0 0 20px !important;
+  color: #000 !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  background: url(images/tag.gif) no-repeat 0 0 !important;
+  position: relative !important;
+}
+#chameleon-selector-box li.row1 {
+  background-color: #eee !important;
+}
+
+#chameleon-selector-box #chameleon-selector-list li {
+  background-image: none !important;
+}
+
+#chameleon-selector-box #chameleon-selector-list {
+  border: 1px solid #ccc !important;
+  background: #f6f6f6 !important;
+  margin: 2px !important;
+}
+
+#chameleon-selector-box #chameleon-selector-list li {
+  margin: 2px !important; padding: 0 !important;
+}
+
+#chameleon-selector-box span {
+  padding: 1px 3px !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  color: #000 !important;
+  cursor: pointer !important;
+}
+
+#chameleon-selector-box span.prop-value {
+  padding-right: 0 !important;
+  cursor: default !important;
+  position: absolute !important;
+  top: 0 !important; right: 0 !important;
+}
+
+* html #chameleon-selector-box span.prop-value {
+  padding-right: 15px !important;
+}
+
+#chameleon-selector-box span.active-selector {
+  background: #fff !important;
+  font-weight: bold !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview-container {
+  background: #f6f6f6 url(images/grad.gif) repeat-x 0 100% !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview {
+  margin: 0 !important; padding: 0 !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview th.selector,
+#chameleon-selector-box #chameleon-style-overview th.current-selector {
+  padding: 1px 5px !important;
+  background: #000 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  text-align: left !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview th.current-selector,
+#chameleon-selector-box #chameleon-style-overview td.current-selector {
+  border-top: 2px solid #f90 !important;
+  border-bottom: 2px solid #f90 !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview td.selector,
+#chameleon-selector-box #chameleon-style-overview td.current-selector {
+  padding: 1px 5px !important;
+  background: #000 !important;
+  color: #fff !important;
+  font-weight: normal !important;
+  text-align: left !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview td.selector a,
+#chameleon-selector-box #chameleon-style-overview td.current-selector a {
+  color: #f90 !important;
+  font-weight: bold !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview td.prop {
+  padding: 1px 0 1px 5px !important;
+  width: 150px !important;
+}
+
+#chameleon-selector-box #chameleon-style-overview td.value {
+  padding: 1px 5px 1px 0 !important;
+}
+
+/* style box specific stuff */
+
+#chameleon-style-box input.chameleon-input-text {
+  border: 1px solid #999 !important;
+  color: #000 !important;
+  background: #fff none !important;
+}
+
+#chameleon-style-box option, #chameleon-style-box select {
+  color: #000 !important;
+  background: #fff none !important;
+}
+
+#chameleon-style-box input.chameleon-input-text:focus {
+  border: 1px solid #000 !important;
+  background: #fff none !important;
+}
+
+#chameleon-selector-box input.chameleon-btn,
+#chameleon-style-box input.chameleon-btn {
+  border: 1px solid #000 !important;
+  background: #aaa none !important;
+  color: #000 !important;
+  font-size: 9pt !important;
+  padding: 2px 5px !important; margin: 0 2px;
+}
+
+#chameleon-selector-box input.chameleon-btn:hover,
+#chameleon-style-box input.chameleon-btn:hover {
+  background: #000 none !important;
+  color: #fff !important;
+}
+
+
+#chameleon-style-box table {
+  margin: 3px 3px 0 1px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+#chameleon-style-box #chameleon-style-controls, #chameleon-selector-box #chameleon-selector-controls {
+  position: relative !important;
+  border: 1px solid #999 !important;
+  background: #f6f6f6 !important;
+  margin: -1px 3px 3px 2px !important;
+  z-index: 1 !important;
+}
+
+#chameleon-style-box #chameleon-style-tabs, #chameleon-selector-box #chameleon-selector-tabs {
+  position: relative !important;
+  margin: 3px 3px 0 3px !important;
+  z-index: 2 !important;
+}
+
+#chameleon-style-box td.chameleon-style-tab, #chameleon-selector-box td.chameleon-selector-tab {
+  border: 1px solid #999 !important;
+  border-bottom: 0 !important;
+  background: transparent url(images/inactive_tab.gif) 0 100% repeat-x !important;
+  padding: 2px 5px 1px 5px !important;
+  cursor: pointer !important;
+}
+
+#chameleon-style-box td.chameleon-style-tab-active, #chameleon-selector-box td.chameleon-selector-tab-active {
+  border: 1px solid #999 !important;
+  border-bottom: 0 !important;
+  background: transparent url(images/active_tab.gif) 0 100% repeat-x !important;
+  padding: 2px 5px 1px 5px !important;
+}
+
+
+#chameleon-style-controls td {
+  text-align: left !important;
+  padding: 2px !important;
+}
+
+#chameleon-style-controls td.label {
+  width: 120px !important;
+  text-align: right !important;
+}
+
+/* the open color picker/image browser icons */
+#chameleon-style-controls #chameleon-style-controls-color-picker-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-background-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-border-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-border-left-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-border-right-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-border-top-color,
+#chameleon-style-controls #chameleon-style-controls-color-picker-border-bottom-color,
+#chameleon-style-controls #chameleon-style-controls-background-image-picker {
+  width: 20px !important; height: 20px !important;
+  border: 1px solid #000 !important;
+  margin: 0 0 0 2px !important;
+  cursor: pointer !important;
+}
+
+/* color picker */
+#chameleon-color-box #chameleon-color-palette {
+  position: relative !important;
+  margin: 10px 12px !important;
+}
+
+body #chameleon-color-box {
+  width: 312px !important;
+}
+
+#chameleon-color-box #chameleon-color-palette div {
+  cursor: pointer !important;
+}
+
+#chameleon-file-box table {
+  margin: 2px 0 !important;
+}
+
+#chameleon-file-box #chameleon-files-parent {
+  width: 100px !important;
+  cursor: pointer !important;
+}
+
+#chameleon-file-box #chameleon-files-location p {
+  font-weight: bold !important;
+}
+
+#chameleon-file-box #chameleon-files-location p span {
+  font-weight: normal !important;
+}
+
+#chameleon-file-box div p, #chameleon-file-box table p {
+  padding: 0 0 0 20px !important; margin: 5px 10px !important;
+}
+
+#chameleon-file-box div p {
+  background: url(images/image.gif) no-repeat 0 0 !important;
+}
+
+#chameleon-file-box div p.chameleon-image-folder {
+  background: url(images/folder.gif) no-repeat 0 0 !important;
+}
+
+#chameleon-file-box table p.chameleon-image-folder {
+  background: url(images/parent.gif) no-repeat 0 0 !important;
+}
+
+#chameleon-file-box div p span {
+  cursor: pointer !important;
+}
+
+/* the buttons */
+
+#chameleon-selector-box input.chameleon-btn, 
+#chameleon-style-box input.chameleon-btn, 
+#chameleon-color-box input.chameleon-btn, 
+#chameleon-file-box input.chameleon-btn {
+  cursor: pointer !important;
+  margin-bottom: 3px !important;
+}
+
+#chameleon-selector-box p.chameleon-instructions, #chameleon-style-box p.chameleon-instructions {
+  font-size: 9pt !important;
+  padding: 10px !important;
+}
+
+#chameleon-status-msg {
+  text-align: center !important;
+}
+
+#chameleon-status-msg input {
+  margin-top: 2px !important;
+}
+
+
+div table#chameleon-status-msg {
+  position: relative !important;
+  background: #f6f6f6 !important;
+  width: 390px !important;
+  margin: 5px auto !important;
+  border: 1px solid #999 !important;
+}
+
+div table#chameleon-status-msg td.chameleon-ok {
+  background: #f6f6f6 url(images/ok.gif) no-repeat 50% 50% !important;
+  width: 25px !important; height: 25px !important;
+}
+
+div table#chameleon-status-msg td.chameleon-working {
+  background: #f6f6f6 url(images/working.gif) no-repeat 50% 50% !important;
+  width: 25px !important; height: 25px !important;
+}
+
+div table#chameleon-status-msg td.chameleon-notice {
+  background: #f6f6f6 url(images/notice.gif) no-repeat 50% 50% !important;
+  width: 25px !important; height: 25px !important;
+}
+
+div table#chameleon-status-msg td.chameleon-error {
+  background: #f6f6f6 url(images/error.gif) no-repeat 50% 50% !important;
+  width: 25px !important; height: 25px !important;
+}
+
+div#chameleon-launch-hotspots, div#chameleon-status-msg {
+  position: absolute !important;
+  top: 0 !important; left: 50% !important;
+  z-index: 2 !important;
+  background: #f6f6f6 !important;
+  border: 1px solid #999 !important;
+  padding: 2px 10px !important;
+  margin: 0 0 0 -200px !important;
+  cursor: pointer !important;
+  color: #000 !important;
+  width: 400px !important;
+  font: 9pt/1.4 arial,helvetica,sans-serif !important;
+  text-align: center !important;
+}
+
+body div#chameleon-launch-hotspots {
+  width: 200px !important;
+  margin: 0 0 0 -100px !important;
+}
+
+#chameleon-selector-box ul {
+  list-style-type: none !important;
+}
+
