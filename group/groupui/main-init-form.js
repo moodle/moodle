@@ -30,46 +30,42 @@ window.onload = initPage;
  *and adds the right javascript events to all the buttons etc. 
  */
 function initPage() {
-	// Check that we're using a recent enough version of javascript
-	if (!document.getElementById) {
-		return false;
-	}
-	updateGroupings();
+    // Check that we're using a recent enough version of javascript
+    if (!document.getElementById) {
+        return false;
+    }
+    updateGroupings();
 
-	addEvent('groupings', 'change', onGroupingChange);	
-	addEvent('groups', 'change', onGroupChange);
-	addEvent('deletegrouping', 'click', onDeleteGrouping);
-	addEvent('deletegroup', 'click', onDeleteGroup);
-	addEvent('removegroup', 'click', onRemoveGroup);
-	addEvent('removemembers', 'click', onRemoveMembers);
-	addEvent('showaddmembersform', 'click', onShowAddMembersForm);
-	addEvent('showaddgroupstogroupingform', 'click', onShowAddGroupsToGroupingForm);
-	addEvent('showcreategroupingform', 'click', onShowCreateGroupingForm);
-	addEvent('showcreategroupform', 'click', onShowCreateGroupForm);
-	addEvent('showeditgroupsettingsform', 'click', onShowEditGroupSettingsForm);	
-	addEvent('showeditgroupingsettingsform', 'click', onShowEditGroupingSettingsForm);
-	addEvent('showeditgroupingpermissionsform', 'click', onShowEditGroupingPermissionsForm);	
-	addEvent('showcreateautomaticgroupingform', 'click', onShowAutomaticGroupingForm);
-	addEvent('printerfriendly', 'click', onPrinterFriendly);	
-	addEvent('createautomaticgrouping', 'click', onCreateAutomaticGrouping);
-	addEvent('cancelcreateautomaticgrouping', 'click', onCancel);	
-	addEvent('addgroupstogrouping', 'click', onAddGroupsToGrouping);
-	addEvent('canceladdgroupstogrouping', 'click', onCancel);
-	addEvent('creategroup', 'click', onCreateGroup);	
-	addEvent('cancelcreategroup', 'click', onCancel);	
-	addEvent('creategrouping', 'click', onCreateGrouping);
-	addEvent('cancelcreategrouping', 'click', onCancel);	
-	addEvent('addmembers', 'click', onAddMembers);
-	addEvent('canceladdmembers', 'click', onCancel);
-	addEvent('showall', 'change', onShowAll);
-	addEvent('editgroupsettings', 'click', onEditGroupSettingsSave);	
-	addEvent('canceleditgroupsettings', 'click', onCancel);
-	addEvent('editgroupingsettings', 'click', onEditGroupingSettingsSave);	
-	addEvent('canceleditgroupingsettings', 'click', onCancel);	
-	addEvent('editgroupingpermissions', 'click', onEditGroupingPermissionsSave);	
-	addEvent('canceleditgroupingpermissions', 'click', onCancel);								
+    addEvent('groupings', 'change', onGroupingChange);
+    addEvent('groups', 'change', onGroupChange);
+    addEvent('deletegrouping', 'click', onDeleteGrouping);
+    addEvent('deletegroup', 'click', onDeleteGroup);
+    addEvent('removegroup', 'click', onRemoveGroup);
+    addEvent('removemembers', 'click', onRemoveMembers);
+    addEvent('showaddmembersform', 'click', onShowAddMembersForm);
+    addEvent('showaddgroupstogroupingform', 'click', onShowAddGroupsToGroupingForm);
+    addEvent('showcreategroupingform', 'click', onShowCreateGroupingForm);
+    addEvent('showcreategroupform', 'click', onShowCreateGroupForm);
+    addEvent('showeditgroupsettingsform', 'click', onShowEditGroupSettingsForm);
+    addEvent('showeditgroupingsettingsform', 'click', onShowEditGroupingSettingsForm);
+    addEvent('showeditgroupingpermissionsform', 'click', onShowEditGroupingPermissionsForm);
+    addEvent('showcreateautomaticgroupingform', 'click', onShowAutomaticGroupingForm);
+    addEvent('printerfriendly', 'click', onPrinterFriendly);
+    addEvent('createautomaticgrouping', 'click', onCreateAutomaticGrouping);
+    addEvent('cancelcreateautomaticgrouping', 'click', onCancel);
+    addEvent('addgroupstogrouping', 'click', onAddGroupsToGrouping);
+    addEvent('canceladdgroupstogrouping', 'click', onCancel);
+    addEvent('creategroup', 'click', onCreateGroup);
+    addEvent('cancelcreategroup', 'click', onCancel);
+    addEvent('creategrouping', 'click', onCreateGrouping);
+    addEvent('cancelcreategrouping', 'click', onCancel);
+    addEvent('addmembers', 'click', onAddMembers);
+    addEvent('canceladdmembers', 'click', onCancel);
+    addEvent('showall', 'change', onShowAll);
+    addEvent('editgroupsettings', 'click', onEditGroupSettingsSave);
+    addEvent('canceleditgroupsettings', 'click', onCancel);
+    addEvent('editgroupingsettings', 'click', onEditGroupingSettingsSave);
+    addEvent('canceleditgroupingsettings', 'click', onCancel);
+    addEvent('editgroupingpermissions', 'click', onEditGroupingPermissionsSave);
+    addEvent('canceleditgroupingpermissions', 'click', onCancel);
 }
- 
-
-
-

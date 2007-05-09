@@ -8,8 +8,8 @@
 
 
 <?php
-	echo "var courseid = $courseid;"; 
-	echo "var sesskey = '$sesskey';";
+    echo "var courseid = $courseid;"; 
+    echo "var sesskey = '$sesskey';";
 ?>
 
 /*
@@ -17,27 +17,27 @@
  * @return The XMLHttpRequest object created. 
  */
 function createRequest() {
- 	var newrequest = null;
-	try {
-	    newrequest = new XMLHttpRequest();
-	} catch (trymicrosoft) {
-		// Deal with Microsoft browsers 
-	    try {
-	      	newrequest = new ActiveXObject("Msxml2.XMLHTTP");
-	    } catch (othermicrosoft) {
-			try {
-			    newrequest = new ActiveXObject("Microsoft.XMLHTTP");
-		    } catch (failed) {
-		        newrequest = null;
-		    }
-	    }
-	}
+    var newrequest = null;
+    try {
+        newrequest = new XMLHttpRequest();
+    } catch (trymicrosoft) {
+        // Deal with Microsoft browsers 
+        try {
+            newrequest = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (othermicrosoft) {
+            try {
+                newrequest = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (failed) {
+                newrequest = null;
+            }
+        }
+    }
 
-	if (newrequest == null) {
-	 	alert("Error creating request object!");
-	} else {
-		return newrequest;
-	}
+    if (newrequest == null) {
+        alert("Error creating request object!");
+    } else {
+        return newrequest;
+    }
 }
 
 /*
@@ -49,29 +49,29 @@ function createRequest() {
  * @callbackfunction  - The function to call when the response to the request is received 
 */
 function sendPostRequest(postrequest, url, requeststring, callbackfunction) {
-	// Add on the date and time to get round caching problem
-  	url = url + "?dummy=" + new Date().getTime();
-  	// Add the course id and sesskey so we can check these on the server 
-  	requeststring = 'courseid='+courseid+'&'+'sesskey='+sesskey+'&'+requeststring;
-  	postrequest.abort();
-  	postrequest.open('post',  url, true);
-	postrequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  	postrequest.onreadystatechange = callbackfunction;
-  	postrequest.send(requeststring);
+    // Add on the date and time to get round caching problem
+    url = url + "?dummy=" + new Date().getTime();
+    // Add the course id and sesskey so we can check these on the server 
+    requeststring = 'courseid='+courseid+'&'+'sesskey='+sesskey+'&'+requeststring;
+    postrequest.abort();
+    postrequest.open('post',  url, true);
+    postrequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    postrequest.onreadystatechange = callbackfunction;
+    postrequest.send(requeststring);
 }
 
 function checkAjaxResponse(request) {
-	process = false;
-	
-	if (request.readyState == 4 && request.status == 200) {
-		process = true;
-	}	
+    process = false;
+
+    if (request.readyState == 4 && request.status == 200) {
+        process = true;
+    }
     if (request.readyState == 4 && request.status != 200) {
-    	alert('An error has occurred - the page returned a '+ request.status + ' error');
+        alert('An error has occurred - the page returned a '+ request.status + ' error');
     }
     return process;    
 }
 
 var responseFailure = function(o){ 
-	alert("Failure callback");
+    alert("Failure callback");
 }
