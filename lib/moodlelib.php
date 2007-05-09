@@ -7015,10 +7015,9 @@ function setup_lang_from_browser() {
  * navigation strings.
  */
 function build_navigation($extrabreadcrumbs) {
-    global $CFG, $THEME, $COURSE;
+    global $CFG, $COURSE;
     
     $navigation = '';
-    check_theme_arrows();
 
     //Site name
     if ($site = get_site()) {
@@ -7048,7 +7047,7 @@ function build_navigation($extrabreadcrumbs) {
         }
         $navigation .= '<li class="first">';
         if ($i > 0) {
-            $navigation .= '<span class="sep"> '.$THEME->rarrow.' </span>';
+            $navigation .= ' '.get_arrow_right('sep').' ';
         }
         if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
             $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$breadcrumbs[$i]['link']}\">";

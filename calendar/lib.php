@@ -620,9 +620,8 @@ function calendar_top_controls($type, $data) {
     $data['y'] = $date['year'];
 
     //Accessibility: calendar block controls, replaced <table> with <div>.
-    check_theme_arrows();
-    $nexttext = $THEME->rarrow .'<span class="accesshide">'.get_string('monthnext','access').'</span>';
-    $prevtext = $THEME->larrow .'<span class="accesshide">'.get_string('monthprev','access').'</span>';
+    $nexttext = get_arrow_right().'<span class="accesshide">'.get_string('monthnext','access').'</span>';
+    $prevtext = get_arrow_left() .'<span class="accesshide">'.get_string('monthprev','access').'</span>';
 
     switch($type) {
         case 'frontpage':
@@ -661,7 +660,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<div class="calendar-controls">';
             $content .= '<span class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear)."\"> $THEME->larrow ".userdate($prevdate, get_string('strftimemonthyear')).'</a></span>';
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimemonthyear'))."</span>\n";
-            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.userdate($nextdate, get_string('strftimemonthyear'))." $THEME->rarrow</a></span>\n";
+            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.userdate($nextdate, get_string('strftimemonthyear')).' '.get_arrow_left()."</a></span>\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'day':
@@ -685,7 +684,7 @@ function calendar_top_controls($type, $data) {
             // Print the actual thing
             $content .= '<span class="hide"> | </span><span class="current">'.$text.'</span>';
 
-            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." $THEME->rarrow</a></span>\n";
+            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname.' '.get_arrow_right()."</a></span>\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
     }

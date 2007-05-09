@@ -3099,6 +3099,38 @@ function check_theme_arrows() {
 }
 
 /**
+ * Return (by default) the right arrow defined in check_theme_arrows function above.
+ * @param addclass Additional class names.
+ * @param return Default true, false means echo.
+ * @return Default HTML string, or nothing.
+ */
+function get_arrow_right($addclass='', $return=true) {
+    global $THEME;
+    check_theme_arrows();
+    $output = '<span class="arrow '.$addclass.'">'.$THEME->rarrow.'</span>';
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
+ * Return (by default) the left arrow defined in check_theme_arrows function above.
+ */
+function get_arrow_left($addclass='', $return=true) {
+    global $THEME;
+    check_theme_arrows();
+    $output = '<span class="arrow '.$addclass.'">'.$THEME->larrow.'</span>';
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+
+/**
  * Prints breadcrumb trail of links, called in theme/-/header.html
  *
  * @uses $CFG
@@ -3111,12 +3143,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
     global $CFG, $THEME;
     $output = '';
 
-    check_theme_arrows();
     if (0 === $separator) {
-        $separator = $THEME->rarrow;
-    }
-    if (!empty($separator)) {
-        $separator = '<span class="sep">'. $separator .'</span>';
+        $separator = get_arrow_right('sep');
     }
 
     if ($navigation) {
@@ -3151,11 +3179,11 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             $site = new object();
             $site->shortname = get_string('home');
         }
-        
+
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
         $nav_text = get_string('youarehere','access');
         $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
-        
+
         $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
                                  && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
@@ -3655,11 +3683,11 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
 /**
  * Print a specified group's avatar.
  *
- * @param group $group A {@link group} object representing a group or array of groups
- * @param int $courseid ?
- * @param boolean $large ?
- * @param boolean $return ?
- * @param boolean $link ?
+ * @param group $group A single {@link group} object OR array of groups.
+ * @param int $courseid The course ID.
+ * @param boolean $large Default small picture, or large.
+ * @param boolean $return If false print picture, otherwise return the output as string
+ * @param boolean $link Enclose image in a link to view specified course?
  * @return string
  * @todo Finish documenting this function
  */
@@ -4629,7 +4657,6 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         }
     }
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
-    check_theme_arrows();
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
@@ -4643,14 +4670,14 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $backtext= get_string('activityprev', 'access');
         $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'>'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow."\n".
+                   '<button type="submit" title="'.$backtext.'">'.get_arrow_left()."\n".
                    '<span class="accesshide">'.$backtext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
         $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'>'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow."\n".
+                   '<button type="submit" title="'.$nexttext.'">'.get_arrow_right()."\n".
                    '<span class="accesshide">'.$nexttext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
 
