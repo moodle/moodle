@@ -299,30 +299,32 @@ class grade_item_test extends gradelib_test {
     function test_grade_item_adjust_scale_grade() {
         // Load grade item and its scale
         $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id), false);
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->insert();
         $grade_item->load_scale();
         $this->assertEqual('Very Good', $grade_item->scale->scale_items[1]);
         
         // Load raw grade and its scale
         $grade_raw = new grade_grades_raw(array('scaleid' => $this->scale[0]->id), false);
-        $grade_raw->gradescale = 4;
+        $grade_raw->gradevalue = 4;
         $grade_raw->itemid = $grade_item->id;
         $grade_raw->userid = 1;
         $grade_raw->insert();
         $grade_raw->load_scale();
         $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
-
+        
         // Test grade_item::adjust_scale
-        $this->assertEqual(3, $grade_item->adjust_grade($grade_raw, null, 'gradescale'));
-        $grade_raw->gradescale = 6;
-        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw, null, 'gradescale'));
+        $this->assertEqual(3, round($grade_item->adjust_grade($grade_raw, null, 'gradevalue')));
+        $grade_raw->gradevalue = 6;
+        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw, null, 'gradevalue'));
 
         // Check that the final grades have the correct values now
         $grade_item->load_raw();
         $grade_item->update_final_grade();
+        
         $this->assertFalse(empty($grade_item->grade_grades_final));
         $this->assertEqual($grade_item->id, $grade_item->grade_grades_final[1]->itemid);
-        $this->assertEqual(3, $grade_item->grade_grades_final[1]->gradescale);
+        $this->assertEqual(2.66667, $grade_item->grade_grades_final[1]->gradevalue);
         $this->assertEqual(1, $grade_item->grade_grades_final[1]->userid);
     }
 

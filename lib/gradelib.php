@@ -40,6 +40,9 @@ define('GRADE_CHILDTYPE_ITEM', 0);
 define('GRADE_CHILDTYPE_CAT', 1);
 define('GRADE_ITEM', 0); // Used to compare class names with CHILDTYPE values
 define('GRADE_CATEGORY', 1); // Used to compare class names with CHILDTYPE values
+define('GRADE_TYPE_VALUE', 0);
+define('GRADE_TYPE_SCALE', 1);
+define('GRADE_TYPE_TEXT', 2);
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');

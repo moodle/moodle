@@ -57,12 +57,6 @@ class grade_grades_final extends grade_object {
     var $gradevalue;
     
     /**
-     * The scale of this grade.
-     * @var int $gradescale
-     */
-    var $gradescale;
-    
-    /**
      * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
@@ -87,6 +81,12 @@ class grade_grades_final extends grade_object {
     var $usermodified;
 
     /**
+     * The grade_grades_text object linked to this grade through itemid and userid.
+     * @var object $grade_grades_text
+     */
+    var $grade_grades_text;
+
+    /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
      * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
@@ -95,6 +95,11 @@ class grade_grades_final extends grade_object {
         $this->grade_object($params, $fetch);
     }
 
+    /**
+     * 
+    function get_text() {
+
+    }
 
     /**
      * Finds and returns a grade_grades_final object based on 1-3 field values.

@@ -204,7 +204,11 @@ class grade_category extends grade_object {
             $grade_item = new grade_item();
             $grade_item->iteminstance = $this->id;
             $grade_item->itemtype = 'category';
-            $result = $result & $grade_item->insert();
+            
+            if (!$grade_item->insert()) {
+                return false;
+            }
+            
             $this->grade_item = $grade_item;
         }
 
@@ -256,7 +260,7 @@ class grade_category extends grade_object {
                 $raw_grade->itemid = $this->grade_item->id;
                 $raw_grade->insert();
             }
-            $this->load_grade_item();
+            
             $this->grade_item->generate_final(); 
         }
         
@@ -269,7 +273,7 @@ class grade_category extends grade_object {
      * compute and return a single array of grade_raw objects with the aggregated gradevalue. This method
      * must also standardise all the scores (which have different mins and maxs) so that their values can
      * be meaningfully aggregated (it would make no sense to perform MEAN(239, 5) on a grade_item with a 
-     * gradevalue between 20 and 250 and another grade_item with a gradescale between 0 and 7!). Aggregated
+     * gradevalue between 20 and 250 and another grade_item with a gradevalue between 0 and 7!). Aggregated
      * values will be saved as grade_grades_raw->gradevalue, even when scales are involved.
      * @param array $raw_grade_sets
      * @return array Raw grade objects
@@ -284,14 +288,9 @@ class grade_category extends grade_object {
 
         foreach ($raw_grade_sets as $setkey => $set) {
             foreach ($set as $gradekey => $raw_grade) {
-                $valuetype = 'gradevalue';
-                
-                if (!empty($raw_grade->gradescale)) {
-                    $valuetype = 'gradescale';
-                }
                 $this->load_grade_item();
 
-                $value = standardise_score($raw_grade->$valuetype, $raw_grade->grademin, $raw_grade->grademax,
+                $value = standardise_score($raw_grade->gradevalue, $raw_grade->grademin, $raw_grade->grademax,
                     $this->grade_item->grademin, $this->grade_item->grademax);
                 $pooled_grades[$raw_grade->userid][] = $value;
             }
