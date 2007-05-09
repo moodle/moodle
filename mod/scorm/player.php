@@ -282,6 +282,10 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM content -->
+    <?php if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+        print_custom_corners_end();
+    } ?>
     </div> <!-- Content -->
     </div> <!-- Page -->
 </body>
