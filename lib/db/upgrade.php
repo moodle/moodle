@@ -1199,6 +1199,58 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch drop field gradescale
         $result = $result && drop_field($table, $field);
     }
+    
+    /// fixing the problem of grade_grades_text can't be referenced directly from grade_grades_final
+    if ($result && $oldversion < 2007050901) {
+
+    /// Define key gradesid (foreign) to be dropped form grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $key = new XMLDBKey('gradesid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('gradesid'), 'grade_grades_raw', array('id'));
+
+    /// Launch drop key gradesid
+        $result = $result && drop_key($table, $key);
+        
+    /// Define field gradesid to be dropped from grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('gradesid');
+
+    /// Launch drop field gradesid
+        $result = $result && drop_field($table, $field);
+        
+    /// Define field itemid to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('itemid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'id');
+
+    /// Launch add field itemid
+        $result = $result && add_field($table, $field);
+        
+    /// Define field userid to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('userid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'itemid');
+
+    /// Launch add field userid
+        $result = $result && add_field($table, $field);
+        
+    /// Define key itemid (foreign) to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $key = new XMLDBKey('itemid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('itemid'), 'grade_item', array('id'));
+
+    /// Launch add key itemid
+        $result = $result && add_key($table, $key);
+                
+    /// Define key userid (foreign) to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $key = new XMLDBKey('userid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Launch add key userid
+        $result = $result && add_key($table, $key);
+    
+    }
     return $result; 
 }
 
