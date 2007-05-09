@@ -96,9 +96,14 @@ class grade_grades_final extends grade_object {
     }
 
     /**
-     * 
-    function get_text() {
-
+     * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
+     * saves it as a class variable for this final object.
+     * @return object
+     */
+    function load_text() {
+        if (empty($this->grade_grades_text)) {
+            return $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
+        } 
     }
 
     /**

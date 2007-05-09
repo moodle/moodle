@@ -94,7 +94,6 @@ class grade_grades_text extends grade_object {
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_text = get_record('grade_grades_text', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_grades_text') {
-                print_object($this);
                 foreach ($grade_text as $param => $value) {
                     $this->$param = $value;
                 }

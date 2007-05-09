@@ -91,9 +91,9 @@ class grade_grades_raw extends grade_object {
      * Additional textual information about this grade. It can be automatically generated 
      * from the module or entered manually by the teacher. This is kept in its own table
      * for efficiency reasons, so it is encapsulated in its own object, and included in this raw grade object.
-     * @var object $text
+     * @var object $grade_grades_text
      */
-    var $text;
+    var $grade_grades_text;
 
     /**
      * Constructor. Extends the basic functionality defined in grade_object.
@@ -118,14 +118,14 @@ class grade_grades_raw extends grade_object {
     }
     
     /**
-     * Loads the grade_grades_text object linked to this raw grade, into the $this->text variable, if 
-     * such record exists. Otherwise returns null.
+     * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
+     * saves it as a class variable for this final object.
+     * @return object
      */
     function load_text() {
-        if (!empty($this->id)) {
-            $this->text = grade_grades_text::fetch('gradesid', $this->id);
-        }
-        return $this->text;
+        if (empty($this->grade_grades_text)) {
+            return $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
+        } 
     }
 
     /**
