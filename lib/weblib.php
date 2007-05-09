@@ -2370,10 +2370,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     @header('Accept-Ranges: none');
 
+    $currentlanguage = current_language();
+
     if (empty($usexml)) {
         $direction =  ' xmlns="http://www.w3.org/1999/xhtml"'. $direction;  // See debug_header
     } else {
-        $currentlanguage = current_language();
         $mathplayer = preg_match("/MathPlayer/i", $_SERVER['HTTP_USER_AGENT']);
         if(!$mathplayer) {
             header('Content-Type: application/xhtml+xml');
@@ -2429,6 +2430,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     if (!empty($CFG->blocksdrag)) {
         $pageclass .= ' drag';
     }
+
+    $pageclass .= ' lang-'.$currentlanguage;
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
