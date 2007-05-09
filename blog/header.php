@@ -8,6 +8,10 @@ require_once($CFG->dirroot .'/blog/blogpage.php');
 require_once($CFG->libdir .'/blocklib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 
+if (!empty($THEME->customcorners)) {
+    require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+}
+
 $blockaction = optional_param('blockaction','', PARAM_ALPHA);
 $instanceid  = optional_param('instanceid', 0, PARAM_INT);
 $blockid     = optional_param('blockid',    0, PARAM_INT);
@@ -215,7 +219,9 @@ print '<tr valign="top">' . "\n";
 if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
     print '<td style="vertical-align: top; width: '. $preferred_width_left .'px;" id="left-column">' . "\n";
     print '<!-- Begin left side blocks -->' . "\n";
+    if (!empty($THEME->customcorners)) print_custom_corners_start();
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+    if (!empty($THEME->customcorners)) print_custom_corners_end();
     print '<!-- End left side blocks -->' . "\n";
     print '</td>' . "\n";
 }
@@ -223,6 +229,7 @@ if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
 /// Start main column
 print '<!-- Begin page content -->' . "\n";
 print '<td>';
+if (!empty($THEME->customcorners)) print_custom_corners_start();
 ?>
 <table width="100%">
 <tr>

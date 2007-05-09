@@ -4,7 +4,11 @@
     require_once($CFG->dirroot.'/my/pagelib.php');
     require_once($CFG->dirroot.'/lib/pagelib.php');
     require_once($CFG->dirroot.'/lib/blocklib.php');
-
+    
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
+    
     $pt  = optional_param('pt', null, PARAM_SAFEDIR); //alhanumeric and -
 
     $pagetypes = array(PAGE_MY_MOODLE => array('id' => PAGE_MY_MOODLE,
@@ -50,11 +54,13 @@
         echo '<tr valign="top">';
 
         echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $blocks, BLOCK_POS_LEFT);
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
         echo '<td valign="top" id="middle-column">';
-
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        
     } else {
         require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('stickyblocks');
@@ -70,9 +76,12 @@
 
 
     if (!empty($pt)) {
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
         echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $blocks, BLOCK_POS_RIGHT);
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
         echo '</tr></table>';
         print_footer();
