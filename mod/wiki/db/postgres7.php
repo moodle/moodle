@@ -178,15 +178,15 @@ CREATE TABLE prefix_wiki_locks
     
     if($oldversion < 2006092602) {
 /*
-     	    // This used to be a BYTEA type for no apparent reason, which caused various queries to fail. The new
-    	    // install.xml uses TEXT so I figure it's safe to change it in upgrade too. This one broke the links page...
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs DROP DEFAULT;");
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs TYPE TEXT USING ENCODE(refs,'escape');");
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs SET DEFAULT '';");
-		    // ...and this one broke the search page.
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content DROP DEFAULT;");
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content TYPE TEXT USING ENCODE(content,'escape');");
-    	    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content SET DEFAULT '';");
+    // This used to be a BYTEA type for no apparent reason, which caused various queries to fail. The new
+    // install.xml uses TEXT so I figure it's safe to change it in upgrade too. This one broke the links page...
+    modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs DROP DEFAULT;");
+modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs TYPE TEXT USING ENCODE(refs,'escape');");
+modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN refs SET DEFAULT '';");
+// ...and this one broke the search page.
+modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content DROP DEFAULT;");
+modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content TYPE TEXT USING ENCODE(content,'escape');");
+modify_database('',"ALTER TABLE prefix_wiki_pages ALTER COLUMN content SET DEFAULT '';");
 */
             // following code should be compatible with both pg 8.x and 7.4
             table_column('wiki_pages', '', 'tempcontent', 'TEXT', '', '', '', '');

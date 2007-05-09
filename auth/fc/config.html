@@ -27,10 +27,10 @@
 <table cellspacing="0" cellpadding="5" border="0">
 
 <tr valign="top" class="required">
-	<td align="right"><?php  print_string("auth_fchost_key", "auth") ?>:</td>
+    <td align="right"><?php  print_string("auth_fchost_key", "auth") ?>:</td>
     <td>
         <input name="host" type="text" size="30" value="<?php echo $config->host?>" />
-	<?php  if (isset($err["host"])) formerr($err["host"]); ?>
+    <?php  if (isset($err["host"])) formerr($err["host"]); ?>
     </td>
     <td>
     <?php  print_string("auth_fchost", "auth") ?>
@@ -38,10 +38,10 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right"><?php  print_string("auth_fcfppport_key", "auth") ?>:</td>
+    <td align="right"><?php  print_string("auth_fcfppport_key", "auth") ?>:</td>
     <td>
         <input name="fppport" type="text" size="30" value="<?php echo $config->fppport?>" />
-	<?php  if (isset($err["fppport"])) formerr($err["host"]); ?>
+    <?php  if (isset($err["fppport"])) formerr($err["host"]); ?>
     </td>
     <td>
     <?php  print_string("auth_fcfppport", "auth") ?>
@@ -49,20 +49,20 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right"><?php  print_string("auth_fcuserid_key", "auth") ?>:</td>
+    <td align="right"><?php  print_string("auth_fcuserid_key", "auth") ?>:</td>
     <td>
         <input name="userid" type="text" size="30" maxlength="15" value="<?php echo $config->userid?>" />
-	<?php  if (isset($err["userid"])) formerr($err["userid"]); ?>
+    <?php  if (isset($err["userid"])) formerr($err["userid"]); ?>
     </td>
     <td>
     <?php  print_string("auth_fcuserid", "auth") ?>
     </td>
 </tr>
 <tr valign="top" class="required">
-	<td align="right"><?php  print_string("auth_fcpasswd_key", "auth") ?>:</td>
+    <td align="right"><?php  print_string("auth_fcpasswd_key", "auth") ?>:</td>
     <td>
         <input name="passwd" type="password" size="30" maxlength="12" value="<?php echo $config->passwd?>" />
-	<?php  if (isset($err["passwd"])) formerr($err["passwd"]); ?>
+    <?php  if (isset($err["passwd"])) formerr($err["passwd"]); ?>
     </td>
     <td>
     <?php  print_string("auth_fcpasswd", "auth") ?>
@@ -70,10 +70,10 @@
 </tr>
 
 <tr valign="top" class="required">
-	<td align="right"><?php  print_string("auth_fccreators_key", "auth") ?>:</td>
+    <td align="right"><?php  print_string("auth_fccreators_key", "auth") ?>:</td>
     <td>
         <input name="creators" type="text" size="30" value="<?php echo $config->creators?>" />
-	<?php  if (isset($err["creators"])) formerr($err["creators"]); ?>
+    <?php  if (isset($err["creators"])) formerr($err["creators"]); ?>
     </td>
     <td>
     <?php  print_string("auth_fccreators", "auth") ?>
