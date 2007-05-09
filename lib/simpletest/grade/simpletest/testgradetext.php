@@ -39,14 +39,16 @@ class grade_text_test extends gradelib_test {
     function test_grade_grades_text_construct() {
         $params = new stdClass();
 
-        $params->gradesid = $this->grade_grades_raw[0]->id;
+        $params->itemid = $this->grade_grades_raw[0]->itemid;
+        $params->userid = $this->grade_grades_raw[0]->userid;
         $params->information = 'Thumbs down';
         $params->informationformat = FORMAT_PLAIN;
         $params->feedback = 'Good, but not good enough..';
         $params->feedbackformat = FORMAT_PLAIN;
 
         $grade_grades_text = new grade_grades_text($params, false);
-        $this->assertEqual($params->gradesid, $grade_grades_text->gradesid);
+        $this->assertEqual($params->userid, $grade_grades_text->userid);
+        $this->assertEqual($params->itemid, $grade_grades_text->itemid);
         $this->assertEqual($params->information, $grade_grades_text->information);
         $this->assertEqual($params->informationformat, $grade_grades_text->informationformat);
         $this->assertEqual($params->feedback, $grade_grades_text->feedback);
@@ -57,7 +59,8 @@ class grade_text_test extends gradelib_test {
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'insert'));
         
-        $grade_grades_text->gradesid = $this->grade_grades_raw[0]->id;
+        $grade_grades_text->itemid = $this->grade_grades_raw[0]->itemid;
+        $grade_grades_text->userid = $this->grade_grades_raw[0]->userid;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';

@@ -43,10 +43,16 @@ class grade_grades_text extends grade_object {
     var $nonfields = array('table', 'nonfields');
     
     /**
-     * A reference to the grade_grades_raw object this text belongs to.
-     * @var int $gradesid
+     * The grade_item.id this text refers to.
+     * @var int $itemid
      */
-    var $gradesid;
+    var $itemid;
+
+    /**
+     * The user.id this text refers to.
+     * @var int $userid
+     */
+    var $userid;
 
     /**
      * Further information like forum rating distribution 4/5/7/0/1

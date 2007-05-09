@@ -171,7 +171,8 @@ class grade_grades_raw extends grade_object {
     function annotate($information, $informationformat=FORMAT_PLAIN, $feedback=NULL, $feedbackformat=FORMAT_PLAIN) {
         $grade_text = new grade_grades_text();
 
-        $grade_text->gradesid          = $this->id;
+        $grade_text->itemid            = $this->itemid;
+        $grade_text->userid            = $this->userid;
         $grade_text->information       = $information;
         $grade_text->informationformat = $informationformat;
         $grade_text->feedback          = $feedback;
@@ -215,7 +216,7 @@ class grade_grades_raw extends grade_object {
        
         // Update grade_grades_text if changed
         if (!empty($this->text)) {
-            $grade_text = grade_grades_text::fetch('gradesid', $this->id);
+            $grade_text = grade_grades_text::fetch('userid', $this->userid, 'itemid', $this->itemid);
             if ($this->text != $grade_text && $this->text->id == $grade_text->id) {
                 $result = $result & $this->text->update();
             }
