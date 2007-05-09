@@ -2027,9 +2027,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
     @header('Accept-Ranges: none');
 
+    $currentlanguage = current_language();
+
     if ($usexml) {       // Added by Gustav Delius / Mad Alex for MathML output
                          // Modified by Julian Sedding
-        $currentlanguage = current_language();
         $mathplayer = preg_match("/MathPlayer/i", $_SERVER['HTTP_USER_AGENT']);
         if(!$mathplayer) {
             header('Content-Type: application/xhtml+xml');
@@ -2076,6 +2077,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     if (!empty($USER->editing)) {
         $pageclass .= ' editing';
     }
+
+    $pageclass .= ' lang-'.$currentlanguage;
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
