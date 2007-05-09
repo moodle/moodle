@@ -1180,6 +1180,25 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field feedbackformat
         $result = $result && add_field($table, $field);
     }
+    
+    
+    if ($result && $oldversion < 2007050900) {
+
+    /// Define field gradescale to be dropped from grade_grades_raw
+        $table = new XMLDBTable('grade_grades_raw');
+        $field = new XMLDBField('gradescale');
+
+    /// Launch drop field gradescale
+        $result = $result && drop_field($table, $field);
+        
+        
+    /// Define field gradescale to be dropped from grade_grades_final
+        $table = new XMLDBTable('grade_grades_final');
+        $field = new XMLDBField('gradescale');
+
+    /// Launch drop field gradescale
+        $result = $result && drop_field($table, $field);
+    }
     return $result; 
 }
 
