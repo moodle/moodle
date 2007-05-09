@@ -1,0 +1,110 @@
+<?php  // $Id$
+    if (!isset($sortorder)) {
+        $sortorder = '';
+    }    
+    if (!isset($sortkey)) {
+        $sortkey = '';
+    }
+    
+    //make sure variables are properly cleaned
+    $sortkey   = clean_param($sortkey, PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
+    $sortorder = clean_param($sortorder, PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
+
+    echo '<center>';
+
+    $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
+    $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
+    $data[GLOSSARY_DATE_VIEW]->caption = get_string("dateview", "glossary");
+    $data[GLOSSARY_AUTHOR_VIEW]->caption = get_string("authorview","glossary");
+
+    if (has_capability('mod/glossary:write', $context)) {
+        $data[GLOSSARY_ADDENTRY_VIEW]->caption = get_string("addentry", "glossary");
+        $data[GLOSSARY_ADDENTRY_VIEW]->link = "edit.php?id=$cm->id";
+    }
+    if (has_capability('mod/glossary:import', $context)) {
+        $data[GLOSSARY_IMPORT_VIEW]->caption = get_string("importentries", "glossary");
+        $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
+    }
+        
+    if (has_capability('mod/glossary:export', $context)) {
+        $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");     
+        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook";
+    }
+
+//    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&amp;tab=".GLOSSARY_DATE_VIEW;
+
+    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&amp;mode=date";
+
+    $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&amp;mode=letter";
+    $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&amp;mode=cat";
+    $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&amp;mode=author";
+
+    if (has_capability('mod/glossary:approve', $context)) {
+        $data[GLOSSARY_APPROVAL_VIEW]->caption = get_string("waitingapproval", "glossary");
+        $data[GLOSSARY_APPROVAL_VIEW]->link = "";
+
+        $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");
+        if ($hiddenentries) {
+            $data[GLOSSARY_APPROVAL_VIEW]->caption .= " (" . count($hiddenentries) . " " . get_string("entries","glossary") . ")";
+            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&amp;mode=approval";
+
+        } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {  //Teachers going to approval view and without entries->go to defaulttab
+            $tab = $defaulttab;
+        }
+    } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) { //Non-teachers going to approval view go to defaulttab
+        $tab = $defaulttab;
+    }
+
+/// printing header of the current tab
+    glossary_print_tabbed_table_start($data, $tab, 4);
+ 
+    if (!isset($category)) {
+        $category = "";
+    }
+
+    
+    switch ($tab) {
+        case GLOSSARY_CATEGORY_VIEW:
+            glossary_print_categories_menu($cm, $glossary, $hook, $category);
+        break;
+        case GLOSSARY_APPROVAL_VIEW:
+            glossary_print_approval_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_ADDENTRY_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_AUTHOR_VIEW:
+            $search = "";
+            glossary_print_author_menu($cm, $glossary, "author", $hook, $sortkey, $sortorder, 'print');
+        break;
+        case GLOSSARY_IMPORT_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_import_menu($cm, $glossary, 'import', $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_EXPORT_VIEW:
+            $search = "";
+            $l = "";
+            glossary_print_export_menu($cm, $glossary, 'export', $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_DATE_VIEW:
+            if (!$sortkey) {
+                $sortkey = 'UPDATE';
+            }
+            if (!$sortorder) {
+                $sortorder = 'desc';
+            }
+            glossary_print_alphabet_menu($cm, $glossary, "date", $hook, $sortkey, $sortorder);
+        break;
+        case GLOSSARY_STANDARD_VIEW:
+        default:
+            glossary_print_alphabet_menu($cm, $glossary, "letter", $hook, $sortkey, $sortorder);
+            if ($mode == 'search' and $hook) {
+                echo "<h3>$strsearch: $hook</h3>";
+            } 
+        break;
+    } 
+    echo '<hr />';
+?> 
