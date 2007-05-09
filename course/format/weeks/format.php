@@ -206,7 +206,7 @@
                 // around. For now, just hide all the dates to avoid confusion.
                 $weekperiod = '';
             } else {
-                $weekperiod = $weekday.' '.$endweekday;
+                $weekperiod = $weekday.' - '.$endweekday;
             }
 
 
