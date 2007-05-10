@@ -4,27 +4,26 @@
 <div id="footer">
 
 <?php
-   echo '<p class="helplink">';
-    echo page_doc_link(get_string('moodledocslink'));  
+    echo '<p class="helplink">';
+    echo page_doc_link(get_string('moodledocslink'));
     echo '</p>';
-  ?>
+?>
 
-<?php if ($navigation) { ?>
-    <div class="navbar">
+<?php if ($navigation and false) { ?>
+    <div class="navbar clearfix">
         <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="menu"><?php echo $menu; ?></div>
     </div>
-    <div class="clearer">&nbsp;</div>
 <?php } ?>
 
 <hr />
-<div align="center">
+
 <?php echo $loggedinas ?>
 <?php echo $homelink ?>
 <?php if (!empty($performanceinfo)) {
           echo $performanceinfo;
 } ?>
-</div>
+
 <?php if (debugging()) {
 ?>
         <div class="validators"><ul>
