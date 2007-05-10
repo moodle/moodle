@@ -37,7 +37,6 @@ function events_load_def($component) {
             $defpath = $CFG->dirroot.'/'.$component.'/db/events.php';
         }
     }
-    $events = array();
 
     if (file_exists($defpath)) {
         require($defpath);
