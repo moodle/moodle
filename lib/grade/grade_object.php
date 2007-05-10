@@ -82,15 +82,15 @@ class grade_object {
      * @return boolean
      */
     function update() {
-        $this->timemodified = mktime();
+        global $USER;
+
+        $this->timemodified = time();
         
-        if (!empty($this->usermodified)) {
-            global $USER;
+        if (empty($this->usermodified)) {
             $this->usermodified = $USER->id;
         }
 
-        $result = update_record($this->table, $this);
-        return $result;
+        return update_record($this->table, $this);
     }
 
     /**
@@ -105,21 +105,24 @@ class grade_object {
      * @return int PK ID if successful, false otherwise
      */
     function insert() {
+        global $USER;
+
         $this->set_timecreated();
-        $clone = $this;
+
+        if (empty($this->usermodified)) {
+            $this->usermodified = $USER->id;
+        }
+
+        $clonethis = clone($this);
 
         // Unset non-set fields
-        foreach ($clone as $var => $val) {
-            if (empty($val)) {
-                unset($clone->$var);
+        foreach ($clonethis as $var => $val) {
+            if (!isset($val)) {
+                unset($clonethis->$var);
             }
         }
         
-        global $USER;
-        $this->usermodified = $USER->id;
-
-        $this->id = insert_record($this->table, $clone, true);
-        return $this->id;
+        return $this->id = insert_record($this->table, $clonethis, true);
     }
 
     /**
@@ -188,7 +191,7 @@ class grade_object {
      */
     function set_timecreated($timestamp = null, $override = false) {
         if (empty($timestamp)) {
-            $timestamp = mktime();
+            $timestamp = time();
         }
         
         if (empty($this->id)) {
