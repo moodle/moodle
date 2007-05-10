@@ -193,17 +193,10 @@ class grade_category extends grade_object {
 
         $result = parent::update();
        
-       /**
-        // Notify parent category of need to update.
+        // Use $this->path to update all parent categories
         if ($result && $qualifies) {
-            $this->load_parent_category();
-            if (!empty($this->parent_category)) {
-                if (!$this->parent_category->flag_for_update()) {
-                    return false;
-                }
-            }
+            $this->flag_for_update();
         } 
-*/
         return $result;
     }
     
@@ -256,7 +249,7 @@ class grade_category extends grade_object {
             
             $this->grade_item = $grade_item;
         }
-  /**      
+        
         // Notify parent category of need to update.
         if ($result) {
             $this->load_parent_category();
@@ -266,7 +259,6 @@ class grade_category extends grade_object {
                 }
             }
         } 
-*/
         return $result;
     }
     
@@ -299,7 +291,8 @@ class grade_category extends grade_object {
      * This is triggered whenever any change in any lower level may cause grade_finals
      * for this category to require an update. The flag needs to be propagated up all
      * levels until it reaches the top category. This is then used to determine whether or not
-     * to regenerate the raw and final grades for each category grade_item.
+     * to regenerate the raw and final grades for each category grade_item. This is accomplished
+     * thanks to the path variable, so we don't need to use recursion.
      * @return boolean Success or failure
      */
     function flag_for_update() {
@@ -316,11 +309,17 @@ class grade_category extends grade_object {
         
         $result = $result && $this->grade_item->update();
 
-        $this->load_parent_category();
-        if (!empty($this->parent_category)) {
-            $result = $result && $this->parent_category->flag_for_update();
+        $paths = explode('/', $this->path);
+
+        $wheresql = '';
+
+        foreach ($paths as $categoryid) {
+            $wheresql .= "iteminstance = $categoryid OR";
         }
 
+        $wheresql = substr($wheresql, 0, strrpos($wheresql, 'OR'));
+        
+        // TODO use this sql fragment to set needsupdate to true for all grade_items whose iteminstance matches the categoryids
         return $result;
     }
 

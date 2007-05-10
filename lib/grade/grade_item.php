@@ -24,7 +24,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once('grade_object.php');
-
+global $db;
+$db->debug = true;
 /**
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
@@ -759,9 +760,9 @@ class grade_item extends grade_object {
      * @return boolean Success or failure
      */
     function flag_for_update() {
-        $result = true;
-
         $this->needsupdate = true;
+
+        $result = $this->update();
         $category = $this->get_category();
 
         if (!empty($category)) {
