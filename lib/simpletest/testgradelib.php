@@ -880,7 +880,8 @@ class gradelib_test extends UnitTestCase {
     function load_grade_grades_text() {
         $grade_grades_text = new stdClass();
 
-        $grade_grades_text->gradesid = $this->grade_grades_raw[0]->id;
+        $grade_grades_text->itemid = $this->grade_grades_raw[0]->itemid;
+        $grade_grades_text->userid = $this->grade_grades_raw[0]->userid;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';

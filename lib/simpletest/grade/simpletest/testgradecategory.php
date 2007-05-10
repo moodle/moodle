@@ -40,7 +40,7 @@ class grade_category_test extends gradelib_test {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
-        $params->fullname = 'unittestcategory8';
+        $params->fullname = 'unittestcategory4';
 
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
@@ -56,6 +56,7 @@ class grade_category_test extends gradelib_test {
         $params->fullname = 'unittestcategory5';
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
+        
         $this->assertEqual(2, $grade_category->depth);
         $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path); 
         $parentpath = $grade_category->path;
@@ -73,7 +74,7 @@ class grade_category_test extends gradelib_test {
         $grade_category = new grade_category();
         $this->assertTrue(method_exists($grade_category, 'insert'));
         
-        $grade_category->fullname    = 'unittestcategory3';
+        $grade_category->fullname    = 'unittestcategory4';
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MODE;
         $grade_category->keephigh    = 100;
@@ -102,6 +103,7 @@ class grade_category_test extends gradelib_test {
         $this->assertTrue($grade_category->update());
         $fullname = get_field('grade_categories', 'fullname', 'id', $this->grade_categories[0]->id);
         $this->assertEqual($grade_category->fullname, $fullname); 
+
     }
 
     function test_grade_category_delete() {

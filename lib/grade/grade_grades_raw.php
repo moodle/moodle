@@ -44,6 +44,12 @@ class grade_grades_raw extends grade_object {
      * @var int $itemid
      */
     var $itemid;
+
+    /**
+     * The grade_item object referenced by $this->itemid.
+     * @var object $grade_item
+     */
+    var $grade_item;
     
     /**
      * The id of the user this raw grade belongs to.
@@ -124,8 +130,20 @@ class grade_grades_raw extends grade_object {
      */
     function load_text() {
         if (empty($this->grade_grades_text)) {
-            return $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
+            $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
         } 
+        return $this->grade_grades_text;
+    }
+
+    /**
+     * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
+     * @return object grade_item.
+     */
+    function load_grade_item() {
+        if (empty($this->grade_item) && !empty($this->itemid)) {
+            $this->grade_item = grade_item::fetch('id', $this->itemid);
+        }
+        return $this->grade_item;
     }
 
     /**
@@ -193,7 +211,8 @@ class grade_grades_raw extends grade_object {
 
     /**
      * In addition to the normal updating set up in grade_object, this object also records
-     * its pre-update value and its new value in the grade_history table.
+     * its pre-update value and its new value in the grade_history table. The grade_item
+     * object is also flagged for update.
      *
      * @param float $newgrade The new gradevalue of this object
      * @param string $howmodified What caused the modification? manual/module/import/cron...
@@ -225,7 +244,12 @@ class grade_grades_raw extends grade_object {
         if ($result) {
             // TODO Handle history recording error, such as displaying a notice, but still return true
             grade_history::insert_change($this, $oldgrade, $howmodified, $note);
-            return true;
+
+            // Notify parent grade_item of need to update
+            $this->load_grade_item();
+            $result = $result && $this->grade_item->flag_for_update();
+
+            return $result;
         } else {
             return false;
         } 
@@ -244,8 +268,27 @@ class grade_grades_raw extends grade_object {
             $this->grademax = count ($this->scale->scale_items);
             $this->grademin = 0;
         }
+        
+        $result = parent::insert();
 
-        return parent::insert();
+        // Notify parent grade_item of need to update
+        $this->load_grade_item();
+        $result = $result && $this->grade_item->flag_for_update();
+
+        return $result;
+    }
+
+    /**
+     * If parent::delete() is successful, send flag_for_update message to parent grade_item.
+     * @return boolean Success or failure.
+     */
+    function delete() {
+        $result = parent::delete();
+        if ($result) {
+            $this->load_grade_item();
+            return $this->grade_item->flag_for_update();
+        }
+        return $result;
     }
 }
 

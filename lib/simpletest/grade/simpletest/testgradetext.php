@@ -103,5 +103,15 @@ class grade_text_test extends gradelib_test {
         $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades_text->id);
         $this->assertEqual($this->grade_grades_text[0]->information, $grade_grades_text->information); 
     } 
+
+    function test_grade_grades_text_load_grade_item() {
+        $grade_grades_text = new grade_grades_text($this->grade_grades_text[0]);
+        $this->assertTrue(method_exists($grade_grades_text, 'load_grade_item'));
+        $this->assertNull($grade_grades_text->grade_item);
+        $this->assertTrue($grade_grades_text->itemid);
+        $this->assertNotNull($grade_grades_text->load_grade_item());
+        $this->assertNotNull($grade_grades_text->grade_item);
+        $this->assertEqual($this->grade_items[0]->id, $grade_grades_text->grade_item->id);
+    }
 } 
 ?>

@@ -49,6 +49,12 @@ class grade_grades_text extends grade_object {
     var $itemid;
 
     /**
+     * The grade_item object referenced by $this->itemid.
+     * @var object $grade_item
+     */
+    var $grade_item;
+
+    /**
      * The user.id this text refers to.
      * @var int $userid
      */
@@ -111,6 +117,17 @@ class grade_grades_text extends grade_object {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
+     * @return object grade_item.
+     */
+    function load_grade_item() {
+        if (empty($this->grade_item) && !empty($this->itemid)) {
+            $this->grade_item = grade_item::fetch('id', $this->itemid);
+        }
+        return $this->grade_item;
     }
 }
 ?>

@@ -55,7 +55,7 @@ class grade_item extends grade_object {
     var $categoryid;
     
     /**
-     * The grade_category object referenced by $this->categoryid.
+     * The grade_category object referenced by $this->categoryid or $this->iteminstance (itemtype must be == 'category' in that case).
      * @var object $category 
      */
     var $category;
@@ -237,6 +237,64 @@ class grade_item extends grade_object {
         } 
         return $this->outcome;
     }
+    
+    /**
+     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
+     * @return array grade_grades_raw objects
+     */      
+    function load_raw() {
+        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
+
+        if (empty($grade_raw_array)) {
+            return null;
+        }
+
+        foreach ($grade_raw_array as $r) {
+            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
+        }
+        return $this->grade_grades_raw;
+    }
+
+    /**
+     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
+     * @return array grade_grades_final objects
+     */      
+    function load_final() {
+        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        
+        if (empty($grade_final_array)) {
+            $this->generate_final();
+            $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        }
+        
+        if (empty($grade_final_array)) {
+            return false;
+        }
+
+        foreach ($grade_final_array as $f) {
+            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
+        }
+        return $this->grade_grades_final;
+    }
+
+    /**
+    * Returns the grade_category object this grade_item belongs to (if any).
+    * This category object may be the parent (referenced by categoryid) or the associated category 
+    * (referenced by iteminstance).
+    * 
+    * @return mixed grade_category object if applicable, NULL otherwise
+    */
+    function get_category() {
+        $category = null;
+        
+        if (!empty($this->categoryid)) {
+            $category = grade_category::fetch('id', $this->categoryid);
+        } elseif (!empty($this->iteminstance) && $this->itemtype == 'category') {
+            $category = grade_category::fetch('id', $this->iteminstance);
+        }
+        
+        return $category;
+    }
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
@@ -249,8 +307,50 @@ class grade_item extends grade_object {
         if (!empty($this->scale->id)) {
             $this->scaleid = $this->scale->id;
         }
+        
+        $qualifies = $this->qualifies_for_update();
 
-        return parent::update();
+        $result = parent::update();
+        
+        if ($result && $qualifies) {
+            $category = $this->get_category();
+            
+            if (!empty($category)) {
+                $result = $result && $category->flag_for_update();
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Compares the values held by this object with those of the matching record in DB, and returns
+     * whether or not these differences are sufficient to justify an update of all parent objects.
+     * This assumes that this object has an id number and a matching record in DB. If not, it will return false.
+     * @return boolean
+     */
+    function qualifies_for_update() {
+        if (empty($this->id)) {
+            return false;
+        }
+
+        $db_item = new grade_item(array('id' => $this->id));
+        
+        $gradetypediff = $db_item->gradetype != $this->gradetype;
+        $grademaxdiff = $db_item->grademax != $this->grademax;
+        $grademindiff = $db_item->grademin != $this->grademin;
+        $scaleiddiff = $db_item->scaleid != $this->scaleid;
+        $outcomeiddiff = $db_item->outcomeid != $this->outcomeid;
+        $multfactordiff = $db_item->multfactor != $this->multfactor;
+        $plusfactordiff = $db_item->plusfactor != $this->plusfactor;
+        $needsupdatediff = $db_item->needsupdate != $this->needsupdate;
+
+        if ($gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff || $outcomeiddiff ||
+            $multfactordiff || $plusfactordiff || $needsupdatediff) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -281,7 +381,42 @@ class grade_item extends grade_object {
             return false;
         }
     }
+
+    /**
+     * If parent::delete() is successful, send flag_for_update message to parent category.
+     * @return boolean Success or failure.
+     */
+    function delete() {
+        $result = parent::delete();
+        if ($result) {
+            $category = $this->get_category();
+            if (!empty($category)) {
+                return $category->flag_for_update();
+            }
+        }
+        return $result;
+    }
     
+    /**
+     * In addition to perform parent::insert(), this calls the grade_item's category's (if applicable) flag_for_update() method.
+     * @return int ID of the new grade_item record.
+     */
+    function insert() {
+        $result = parent::insert();
+
+        // Notify parent category of need to update. Note that a grade_item may not have a categoryid.
+        if ($result) {
+            $category = $this->get_category();
+            if (!empty($category)) {
+                if (!$category->flag_for_update()) {
+                    return false;
+                }
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Returns the raw values for this grade item (as imported by module or other source).
      * @param int $userid Optional: to retrieve a single raw grade
@@ -303,23 +438,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
-     * @return array grade_grades_raw objects
-     */      
-    function load_raw() {
-        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
-
-        if (empty($grade_raw_array)) {
-            return null;
-        }
-
-        foreach ($grade_raw_array as $r) {
-            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
-        }
-        return $this->grade_grades_raw;
-    }
-
-    /**
      * Returns the final values for this grade item (as imported by module or other source).
      * @param int $userid Optional: to retrieve a single final grade
      * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
@@ -337,28 +455,6 @@ class grade_item extends grade_object {
             $grade_final_array = $this->grade_grades_final;
         }
         return $grade_final_array;
-    }
-
-    /**
-     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
-     * @return array grade_grades_final objects
-     */      
-    function load_final() {
-        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
-        
-        if (empty($grade_final_array)) {
-            $this->generate_final();
-            $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
-        }
-        
-        if (empty($grade_final_array)) {
-            return false;
-        }
-
-        foreach ($grade_final_array as $f) {
-            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
-        }
-        return $this->grade_grades_final;
     }
 
     /**
@@ -445,18 +541,6 @@ class grade_item extends grade_object {
         }
     }
     
-    /**
-    * Returns the grade_category object this grade_item belongs to (if any) and sets $this->category.
-    * 
-    * @return mixed grade_category object if applicable, NULL otherwise
-    */
-    function load_category() {
-        if (empty($this->category) && !empty($this->categoryid)) {
-            $this->category = grade_category::fetch('id', $this->categoryid);
-        }
-        return $this->category;
-    }
-
     /**
      * Returns the locked state of this grade_item (if the grade_item is locked OR no specific
      * $userid is given) or the locked state of a specific grade within this item if a specific
@@ -678,9 +762,10 @@ class grade_item extends grade_object {
         $result = true;
 
         $this->needsupdate = true;
-        $this->load_parent_category();
-        if (!empty($this->parent_category)) {
-            $result = $result && $this->parent_category->flag_for_update();
+        $category = $this->get_category();
+
+        if (!empty($category)) {
+            $result = $result && $category->flag_for_update();
         }
 
         return $result;

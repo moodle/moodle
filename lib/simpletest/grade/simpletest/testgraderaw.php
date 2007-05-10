@@ -60,8 +60,15 @@ class grade_raw_test extends gradelib_test {
         $grade_grades_raw->grademax = 110;
         $grade_grades_raw->grademin = 18;
 
+        // Check the grade_item's needsupdate variable first
+        $grade_grades_raw->load_grade_item(); 
+        $this->assertFalse($grade_grades_raw->grade_item->needsupdate);
+
         $grade_grades_raw->insert();
 
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($grade_grades_raw->grade_item->needsupdate);
+        
         $last_grade_grades_raw = end($this->grade_grades_raw);
 
         $this->assertEqual($grade_grades_raw->id, $last_grade_grades_raw->id + 1);
@@ -86,17 +93,31 @@ class grade_raw_test extends gradelib_test {
         $grade_grades_raw = new grade_grades_raw($this->grade_grades_raw[0]);
         $this->assertTrue(method_exists($grade_grades_raw, 'update'));
         
+        // Check the grade_item's needsupdate variable first
+        $grade_grades_raw->load_grade_item();
+        $this->assertFalse($grade_grades_raw->grade_item->needsupdate);
+
         $this->assertTrue($grade_grades_raw->update(89));
         $gradevalue = get_field('grade_grades_raw', 'gradevalue', 'id', $this->grade_grades_raw[0]->id);
         $this->assertEqual($grade_grades_raw->gradevalue, $gradevalue); 
+
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($grade_grades_raw->grade_item->needsupdate);
     }
 
     function test_grade_grades_raw_delete() {
         $grade_grades_raw = new grade_grades_raw($this->grade_grades_raw[0]);
         $this->assertTrue(method_exists($grade_grades_raw, 'delete'));
         
+        // Check the grade_item's needsupdate variable first
+        $grade_grades_raw->load_grade_item(); 
+        $this->assertFalse($grade_grades_raw->grade_item->needsupdate);
+
         $this->assertTrue($grade_grades_raw->delete());
         $this->assertFalse(get_record('grade_grades_raw', 'id', $grade_grades_raw->id)); 
+        
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($grade_grades_raw->grade_item->needsupdate);
     }
 
     function test_grade_grades_raw_fetch() {
@@ -134,7 +155,23 @@ class grade_raw_test extends gradelib_test {
     }
 
     function test_grade_raw_load_text() {
-
+        $grade_grades_raw = new grade_grades_raw($this->grade_grades_raw[0]);
+        $this->assertTrue(method_exists($grade_grades_raw, 'load_text'));
+        $this->assertNull($grade_grades_raw->grade_grades_text);
+        $this->assertNotNull($grade_grades_raw->load_text());
+        $this->assertNotNull($grade_grades_raw->grade_grades_text);
+        $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades_raw->grade_grades_text->id); 
     }
+
+    function test_grade_grades_raw_load_grade_item() {
+        $grade_grades_raw = new grade_grades_raw($this->grade_grades_raw[0]);
+        $this->assertTrue(method_exists($grade_grades_raw, 'load_grade_item'));
+        $this->assertNull($grade_grades_raw->grade_item);
+        $this->assertTrue($grade_grades_raw->itemid);
+        $this->assertNotNull($grade_grades_raw->load_grade_item());
+        $this->assertNotNull($grade_grades_raw->grade_item);
+        $this->assertEqual($this->grade_items[0]->id, $grade_grades_raw->grade_item->id);
+    }
+
 } 
 ?>

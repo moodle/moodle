@@ -91,5 +91,14 @@ class grade_final_test extends gradelib_test {
         $this->assertEqual($this->grade_grades_final[0]->gradevalue, $grade_grades_final->gradevalue); 
     } 
 
+    function test_grade_grades_final_load_grade_item() {
+        $grade_grades_final = new grade_grades_final($this->grade_grades_final[0]);
+        $this->assertTrue(method_exists($grade_grades_final, 'load_grade_item'));
+        $this->assertNull($grade_grades_final->grade_item);
+        $this->assertTrue($grade_grades_final->itemid);
+        $this->assertNotNull($grade_grades_final->load_grade_item());
+        $this->assertNotNull($grade_grades_final->grade_item);
+        $this->assertEqual($this->grade_items[0]->id, $grade_grades_final->grade_item->id);
+    }
 } 
 ?>

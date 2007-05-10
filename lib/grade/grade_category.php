@@ -186,6 +186,45 @@ class grade_category extends grade_object {
     }
 
     /**
+     * In addition to update() as defined in grade_object, call flag_for_update of parent categories, if applicable.
+     */
+    function update() { 
+        $qualifies = $this->qualifies_for_update();
+
+        $result = parent::update();
+       
+       /**
+        // Notify parent category of need to update.
+        if ($result && $qualifies) {
+            $this->load_parent_category();
+            if (!empty($this->parent_category)) {
+                if (!$this->parent_category->flag_for_update()) {
+                    return false;
+                }
+            }
+        } 
+*/
+        return $result;
+    }
+    
+    /**
+     * If parent::delete() is successful, send flag_for_update message to parent category.
+     * @return boolean Success or failure.
+     */
+    function delete() {
+        $result = parent::delete();
+        
+        if ($result) {
+            $this->load_parent_category();
+            if (!empty($this->parent_category)) {
+                $result = $result && $this->parent_category->flag_for_update();
+            }
+        }
+
+        return $result;
+    }
+    
+    /**
      * In addition to the normal insert() defined in grade_object, this method sets the depth
      * and path for this object, and update the record accordingly. The reason why this must
      * be done here instead of in the constructor, is that they both need to know the record's
@@ -217,8 +256,42 @@ class grade_category extends grade_object {
             
             $this->grade_item = $grade_item;
         }
-
+  /**      
+        // Notify parent category of need to update.
+        if ($result) {
+            $this->load_parent_category();
+            if (!empty($this->parent_category)) {
+                if (!$this->parent_category->flag_for_update()) {
+                    return false;
+                }
+            }
+        } 
+*/
         return $result;
+    }
+    
+    /**
+     * Compares the values held by this object with those of the matching record in DB, and returns
+     * whether or not these differences are sufficient to justify an update of all parent objects.
+     * This assumes that this object has an id number and a matching record in DB. If not, it will return false.
+     * @return boolean
+     */
+    function qualifies_for_update() {
+        if (empty($this->id)) {
+            return false;
+        }
+
+        $db_item = new grade_category(array('id' => $this->id));
+        
+        $aggregationdiff = $db_item->aggregation != $this->aggregation;
+        $keephighdiff = $db_item->keephigh != $this->keephigh;
+        $droplowdiff = $db_item->droplow != $this->droplow;
+
+        if ($aggregationdiff || $keephighdiff || $droplowdiff) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -231,9 +304,18 @@ class grade_category extends grade_object {
      */
     function flag_for_update() {
         $result = true;
-
+        
         $this->load_grade_item();
+
+        if (empty($this->grade_item)) {
+            die("Associated grade_item object does not exist for this grade_category!" . print_object($this)); 
+            // TODO Send error message, this is a critical error: each category MUST have a matching grade_item object
+        }
+
         $this->grade_item->needsupdate = true;
+        
+        $result = $result && $this->grade_item->update();
+
         $this->load_parent_category();
         if (!empty($this->parent_category)) {
             $result = $result && $this->parent_category->flag_for_update();
@@ -522,10 +604,12 @@ class grade_category extends grade_object {
      * @return object Grade_item
      */
     function load_grade_item() {
-        $params = get_record('grade_items', 'categoryid', $this->id, 'itemtype', 'category');
+        $grade_items = get_records_select('grade_items', "iteminstance = $this->id AND itemtype = 'category'", null, '*', 0, 1);
+
+        $params = current($grade_items);
         $this->grade_item = new grade_item($params);
         
-        // If the associated grade_item isn't yet created, do it now
+        // If the associated grade_item isn't yet created, do it now. But first try loading it, in case it exists in DB.
         if (empty($this->grade_item->id)) {
             $this->grade_item->iteminstance = $this->id;
             $this->grade_item->itemtype = 'category';

@@ -22,7 +22,7 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-
+@set_time_limit(0);
 /**
  * Unit tests for grade_item object.
  *
@@ -64,7 +64,16 @@ class grade_item_test extends gradelib_test {
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminfo = 'Grade item used for unit testing';
 
+        // Check the grade_category's needsupdate variable first
+        $category = $grade_item->get_category(); 
+        $category->load_grade_item();
+        $this->assertNotNull($category->grade_item);
+        $this->assertFalse($category->grade_item->needsupdate);
+
         $grade_item->insert();
+
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($category->grade_item->needsupdate);
 
         $last_grade_item = end($this->grade_items);
 
@@ -75,7 +84,17 @@ class grade_item_test extends gradelib_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));
         
+        // Check the grade_category's needsupdate variable first
+        $category = $grade_item->get_category(); 
+        $category->load_grade_item();
+        $this->assertNotNull($category->grade_item);
+        $this->assertFalse($category->grade_item->needsupdate);
+        
         $this->assertTrue($grade_item->delete());
+
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($category->grade_item->needsupdate);
+
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
     }
 
@@ -84,9 +103,40 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue(method_exists($grade_item, 'update'));
         
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
+
+        // Check the grade_category's needsupdate variable first
+        $category= $grade_item->get_category(); 
+        $category->load_grade_item();
+        $this->assertNotNull($category->grade_item);
+        $this->assertFalse($category->grade_item->needsupdate);
+        
         $this->assertTrue($grade_item->update());
+
+        // Now check the needsupdate variable, it should NOT have been set to true, because insufficient changes to justify update.
+        $this->assertFalse($category->grade_item->needsupdate);
+        
+        $grade_item->grademin = 14; 
+        $this->assertTrue($grade_item->qualifies_for_update());
+        $this->assertTrue($grade_item->update(true));
+        
+        // Now check the needsupdate variable, it should have been set to true
+        $this->assertTrue($category->grade_item->needsupdate);
+        
         $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
+    }
+
+    function test_grade_item_qualifies_for_update() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'qualifies_for_update'));
+        
+        $grade_item->iteminfo = 'Updated info for this unittest grade_item';
+        
+        $this->assertFalse($grade_item->qualifies_for_update());
+
+        $grade_item->grademin = 14;
+
+        $this->assertTrue($grade_item->qualifies_for_update()); 
     }
 
     function test_grade_item_set_timecreated() {
@@ -192,12 +242,12 @@ class grade_item_test extends gradelib_test {
         $this->assertEqual($calculation, $new_calculation->calculation);
     }
 
-    function test_grade_item_load_category() {
+    function test_grade_item_get_category() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'load_category'));
+        $this->assertTrue(method_exists($grade_item, 'get_category'));
         
-        $grade_item->load_category();
-        $this->assertEqual($this->grade_categories[1]->fullname, $grade_item->category->fullname);
+        $category = $grade_item->get_category();
+        $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
     }
 
     /**
