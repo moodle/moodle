@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'scale');
+    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'scale', 'category');
   
     /**
      * The course this grade_item belongs to.
@@ -53,6 +53,12 @@ class grade_item extends grade_object {
      * @var int $categoryid 
      */
     var $categoryid;
+    
+    /**
+     * The grade_category object referenced by $this->categoryid.
+     * @var object $category 
+     */
+    var $category;
     
     /**
      * The name of this grade_item (pushed by the module).
@@ -89,6 +95,12 @@ class grade_item extends grade_object {
      * @var string $iteminfo
      */
     var $iteminfo;
+
+    /**
+     * Arbitrary idnumber provided by the module responsible.
+     * @var string $idnumber
+     */
+    var $idnumber;
 
     /**
      * The type of grade (0 = value, 1 = scale, 2 = text)
@@ -434,16 +446,15 @@ class grade_item extends grade_object {
     }
     
     /**
-    * Returns the grade_category object this grade_item belongs to (if any).
+    * Returns the grade_category object this grade_item belongs to (if any) and sets $this->category.
     * 
     * @return mixed grade_category object if applicable, NULL otherwise
     */
-    function get_category() {
-        if (!empty($this->categoryid)) {
-            return grade_category::fetch('id', $this->categoryid);
-        } else {
-            return null;
+    function load_category() {
+        if (empty($this->category) && !empty($this->categoryid)) {
+            $this->category = grade_category::fetch('id', $this->categoryid);
         }
+        return $this->category;
     }
 
     /**
@@ -653,5 +664,26 @@ class grade_item extends grade_object {
         }         
         return $gradevalue;
     } 
+    
+    /**
+     * Sets this grade_item's needsupdate to true. Also looks at parent category, if any, and calls
+     * its flag_for_update() method.
+     * This is triggered whenever any change in any grade_raw may cause grade_finals
+     * for this grade_item to require an update. The flag needs to be propagated up all
+     * levels until it reaches the top category. This is then used to determine whether or not
+     * to regenerate the raw and final grades for each category grade_item.
+     * @return boolean Success or failure
+     */
+    function flag_for_update() {
+        $result = true;
+
+        $this->needsupdate = true;
+        $this->load_parent_category();
+        if (!empty($this->parent_category)) {
+            $result = $result && $this->parent_category->flag_for_update();
+        }
+
+        return $result;
+    }
 }
 ?>

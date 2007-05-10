@@ -49,6 +49,12 @@ class grade_category extends grade_object {
      * @var int $parent 
      */
     var $parent;
+    
+    /**
+     * The grade_category object referenced by $this->parent (PK).
+     * @var object $parent_category
+     */
+    var $parent_category;
 
     /**
      * The number of parents this category has.
@@ -214,7 +220,28 @@ class grade_category extends grade_object {
 
         return $result;
     }
-   
+
+    /**
+     * Sets this category's and its parent's grade_item.needsupdate to true.
+     * This is triggered whenever any change in any lower level may cause grade_finals
+     * for this category to require an update. The flag needs to be propagated up all
+     * levels until it reaches the top category. This is then used to determine whether or not
+     * to regenerate the raw and final grades for each category grade_item.
+     * @return boolean Success or failure
+     */
+    function flag_for_update() {
+        $result = true;
+
+        $this->load_grade_item();
+        $this->grade_item->needsupdate = true;
+        $this->load_parent_category();
+        if (!empty($this->parent_category)) {
+            $result = $result && $this->parent_category->flag_for_update();
+        }
+
+        return $result;
+    }
+
     /**
      * Generates and saves raw_grades, based on this category's immediate children, then uses the 
      * associated grade_item to generate matching final grades. These immediate children must first have their own
@@ -507,6 +534,18 @@ class grade_category extends grade_object {
         }
 
         return $this->grade_item;
+    }
+
+    /**
+     * Uses $this->parent to instantiate $this->parent_category based on the
+     * referenced record in the DB.
+     * @return object Parent_category
+     */
+    function load_parent_category() {
+        if (empty($this->parent_category) && !empty($this->parent)) {
+            $this->parent_category = grade_category::fetch('id', $this->parent);
+        }
+        return $this->parent_category;
     }
 }
 

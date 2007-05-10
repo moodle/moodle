@@ -192,12 +192,12 @@ class grade_item_test extends gradelib_test {
         $this->assertEqual($calculation, $new_calculation->calculation);
     }
 
-    function test_grade_item_get_category() {
+    function test_grade_item_load_category() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'get_category'));
+        $this->assertTrue(method_exists($grade_item, 'load_category'));
         
-        $category = $grade_item->get_category();
-        $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
+        $grade_item->load_category();
+        $this->assertEqual($this->grade_categories[1]->fullname, $grade_item->category->fullname);
     }
 
     /**
