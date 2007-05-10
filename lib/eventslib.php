@@ -29,25 +29,23 @@ function events_load_def($component) {
             // 'block'. So we need to jump through hoops.
             $defpath = $CFG->dirroot.'/'.$compparts[0].
                                 's/'.$compparts[1].'/db/events.php';
-            $varprefix = $compparts[0].'_'.$compparts[1];
         } else if ($compparts[0] == 'format') {
             // Similar to the above, course formats are 'format' while they 
             // are stored in 'course/format'.
             $defpath = $CFG->dirroot.'/course/'.$component.'/db/events.php';
-            $varprefix = $compparts[0].'_'.$compparts[1];
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/events.php';
-            $varprefix = str_replace('/', '_', $component);
         }
     }
     $events = array();
 
     if (file_exists($defpath)) {
         require($defpath);
-        $events = ${$varprefix.'_events'};
+        $compevents = $events;
     }
-    
-    return $events;
+    if ($compevents) {
+        return $compevents;
+    }
 }
 
 /**
