@@ -41,10 +41,7 @@ function events_load_def($component) {
 
     if (file_exists($defpath)) {
         require($defpath);
-        $compevents = $events;
-    }
-    if ($compevents) {
-        return $compevents;
+        return $events;
     }
 }
 
