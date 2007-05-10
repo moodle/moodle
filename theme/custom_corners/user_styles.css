@@ -32,14 +32,14 @@ div#page {
 div.clearer {
   clear: both;
 }
-a:link {
-  color: #116699;
-}
+a:link,
 a:visited {
-  color: #AA2200;
+  color: #116699;
+  text-decoration:none;
 }
 a:hover {
   color: #0066FF;
+  text-decoration: underline;
 }
 table.generaltable {
   background-color: #EEEEEE;
