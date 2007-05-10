@@ -31,7 +31,7 @@ class grade_export_ods extends grade_export {
     /**
      * To be implemented by child classes
      */
-    function print_grades() { 
+    function print_grades($feedback = false) { 
         
         require_once($CFG->dirroot.'/lib/odslib.class.php');
 
@@ -54,6 +54,11 @@ class grade_export_ods extends grade_export {
         $pos=6;
         foreach ($this->columns as $column) {
             $myxls->write_string(0,$pos++,strip_tags($column));
+            
+            /// add a column_feedback column            
+            if ($feedback) {
+                $myxls->write_string(0,$pos++,strip_tags($column."_feedback"));
+            }
         }
         $myxls->write_string(0,$pos,get_string("total"));
     
@@ -81,6 +86,11 @@ class grade_export_ods extends grade_export {
                     else {
                         $myxls->write_string($i,$j++,strip_tags($grade));
                     }
+                    
+                    // writing comment if requested
+                    if ($feedback) {
+                        $myxls->write_string($i,$j++,array_shift($this->comments[$student->id]));
+                    }   
                 }
                 $myxls->write_number($i,$j,$this->totals[$student->id]);
             }

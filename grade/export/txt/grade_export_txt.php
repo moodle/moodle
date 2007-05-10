@@ -31,7 +31,7 @@ class grade_export_txt extends grade_export {
     /**
      * To be implemented by child classes
      */
-    function print_grades() { 
+    function print_grades($feedback = false;) { 
         
 /// Print header to force download
 
@@ -50,6 +50,11 @@ class grade_export_txt extends grade_export {
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
             echo "\t$column";
+        
+            /// add a column_feedback column            
+            if ($feedback) {
+                echo "\t{$column}_feedback";
+            }        
         }
         echo "\t".get_string("total")."\n";
     
@@ -62,7 +67,11 @@ class grade_export_txt extends grade_export {
             echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
-                echo "\t$grade";
+                echo "\t$grade";            
+                
+                if ($feedback) {
+                    echo "\t".array_shift($this->comments[$student->id]);
+                }       
             }
             echo "\t".$this->totals[$student->id];
             echo "\n";

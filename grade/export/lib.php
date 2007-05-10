@@ -34,6 +34,7 @@ class grade_export {
     var $totals = array();    // Collect all totals in this array
     var $columns = array();     // Accumulate column names in this array.
     var $columnhtml = array();  // Accumulate column html in this array. 
+    var $columnidnumbers = array(); // Collect all gradeitem id numbers
     var $course; // course
     
     // common strings
@@ -109,6 +110,7 @@ class grade_export {
             foreach ($gradeitems as $gradeitem) {
 
                 $this->columns[] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->maxgrade";
+                $this->columnidnumbers[] = $gradeitem->idnumber; // this might be needed for some export plugins  
             
                 if (!empty($gradeitem->maxgrade)) {
                     $maxgrade = "$strmax: $gradeitem->maxgrade";

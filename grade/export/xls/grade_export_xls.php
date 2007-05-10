@@ -31,14 +31,14 @@ class grade_export_xls extends grade_export {
     /**
      * To be implemented by child classes
      */
-    function print_grades() { 
+    function print_grades($feedback = false) { 
         
         global $CFG; 
         
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 
     /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname $this->strgrades.xls");
+        $downloadfilename = clean_filename("$this->course->shortname $this->strgrades.xls");
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
     /// Sending HTTP headers
@@ -56,6 +56,10 @@ class grade_export_xls extends grade_export {
         $pos=6;
         foreach ($this->columns as $column) {
             $myxls->write_string(0,$pos++,strip_tags($column));
+            /// add a column_feedback column            
+            if ($feedback) {
+                $myxls->write_string(0,$pos++,strip_tags($column."_feedback"));
+            }
         }
         $myxls->write_string(0,$pos,get_string("total"));
     
@@ -82,7 +86,12 @@ class grade_export_xls extends grade_export {
                     }
                     else {
                         $myxls->write_string($i,$j++,strip_tags($grade));
-                    }
+                    }                    
+                    
+                    // writing comment if requested
+                    if ($feedback) {
+                        $myxls->write_string($i,$j++,array_shift($this->comments[$student->id]));
+                    }   
                 }
                 $myxls->write_number($i,$j,$this->totals[$student->id]);
             }
