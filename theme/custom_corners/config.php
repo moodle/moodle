@@ -146,8 +146,8 @@ $THEME->customcorners = true;
 /// Please have a look at the README with more details.
 
 
-$THEME->chameleonenabled = true;
-// $THEME->chameleonenabled = false;
+//$THEME->chameleonenabled = true;
+$THEME->chameleonenabled = false;
 
 /// By setting this to false it disables editing of the stylsheets
 /// this saves the overhead of loading chameleon on each page 
