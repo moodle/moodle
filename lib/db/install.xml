@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070509" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070511" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -978,8 +978,10 @@
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="order within the category" PREVIOUS="categoryid" NEXT="required"/>
         <FIELD NAME="required" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Field required" PREVIOUS="sortorder" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Field locked" PREVIOUS="required" NEXT="visible"/>
-        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Visibility: private, public, hidden" PREVIOUS="locked" NEXT="defaultdata"/>
-        <FIELD NAME="defaultdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Default value for this field" PREVIOUS="visible" NEXT="param1"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Visibility: private, public, hidden" PREVIOUS="locked" NEXT="forceunique"/>
+        <FIELD NAME="forceunique" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="should the field contain unique data" PREVIOUS="visible" NEXT="signup"/>
+        <FIELD NAME="signup" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="display field on signup page" PREVIOUS="forceunique" NEXT="defaultdata"/>
+        <FIELD NAME="defaultdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Default value for this field" PREVIOUS="signup" NEXT="param1"/>
         <FIELD NAME="param1" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="defaultdata" NEXT="param2"/>
         <FIELD NAME="param2" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param1" NEXT="param3"/>
         <FIELD NAME="param3" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="General parameter field" PREVIOUS="param2" NEXT="param4"/>

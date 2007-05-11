@@ -1251,6 +1251,26 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_key($table, $key);
     
     }
+
+    if ($result && $oldversion < 2007051100) {
+
+    /// Define field forceunique to be added to user_info_field
+        $table = new XMLDBTable('user_info_field');
+        $field = new XMLDBField('forceunique');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'visible');
+
+    /// Launch add field forceunique
+        $result = $result && add_field($table, $field);
+
+    /// Define field signup to be added to user_info_field
+        $table = new XMLDBTable('user_info_field');
+        $field = new XMLDBField('signup');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'forceunique');
+
+    /// Launch add field signup
+        $result = $result && add_field($table, $field);
+    }
+    
     return $result; 
 }
 
