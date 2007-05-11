@@ -107,7 +107,11 @@ class grade_object {
     function insert() {
         global $USER;
 
-        $this->set_timecreated();
+        if (!empty($this->id)) {   // Object already exists, so let's do an update instead
+            $this->update();
+        }
+
+        $this->timecreated = $this->timemodified = time();
 
         if (empty($this->usermodified)) {
             $this->usermodified = $USER->id;
@@ -179,38 +183,7 @@ class grade_object {
         }
     }
   
-    /**
-     * If this object hasn't yet been saved in DB (empty $id), this method sets the timecreated variable
-     * to the current or given time. If a value is already set in DB,
-     * this method will do nothing, unless the $override parameter is set to true. This is to avoid
-     * unintentional overwrites. 
-     *
-     * @param int $timestamp Optional timestamp to override current timestamp.
-     * @param boolean $override Whether to override an existing value for this field in the DB.
-     * @return boolean True if successful, false otherwise.
-     */
-    function set_timecreated($timestamp = null, $override = false) {
-        if (empty($timestamp)) {
-            $timestamp = time();
-        }
-        
-        if (empty($this->id)) {
-            $this->timecreated = $timestamp;
-            $this->timemodified = $timestamp;
-        } else { 
-            $current_time = get_field($this->table, 'timecreated', 'id', $this->id);
 
-            if (empty($current_time) || $override) {
-                $this->timecreated = $timestamp;
-                $this->timemodified = $timestamp;
-                return $this->timecreated;
-            } else {                
-                return false;
-            } 
-        }
-        return $this->timecreated;
-    }
-    
     /**
      * Given an associated array or object, cycles through each key/variable
      * and assigns the value to the corresponding variable in this object.

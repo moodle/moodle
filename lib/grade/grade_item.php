@@ -25,7 +25,6 @@
 
 require_once('grade_object.php');
 global $db;
-$db->debug = true;
 /**
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.

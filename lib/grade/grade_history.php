@@ -125,7 +125,7 @@ class grade_history extends grade_object {
         $history->newgrade = $grade_raw->gradevalue;
         $history->note = $note;
         $history->howmodified = $howmodified;
-        $history->timemodified = mktime();
+        $history->timemodified = time();
         $history->usermodified = $USER->id;
 
         return $history->insert();

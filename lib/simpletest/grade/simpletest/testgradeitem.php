@@ -139,15 +139,6 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue($grade_item->qualifies_for_update()); 
     }
 
-    function test_grade_item_set_timecreated() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'set_timecreated'));
-        
-        $timestamp = mktime();
-        $grade_item->set_timecreated();
-        $this->assertEqual($grade_item->timecreated, get_field('grade_items', 'timecreated', 'id', $grade_item->id));
-    }
-
     function test_grade_item_fetch() {
         $grade_item = new grade_item(); 
         $this->assertTrue(method_exists($grade_item, 'fetch'));
