@@ -100,10 +100,7 @@
     $strmenubar = get_string('menubar', 'scorm');
     $strtoolbar = get_string('toolbar', 'scorm');
     $strstatus = get_string('statusbar', 'scorm');
-    $strerrorlog = get_string('errorlogs','scorm');
-	$strvalidation = print_string('validation','scorm');
-	$strerrorlog = addslashes_js($strerrorlog);
-	$strvalidation = addslashes_js($strvalidation);
+   
 ?>
 
 <script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" ></script>
@@ -165,11 +162,11 @@
                     return false;
                 }
             } else {
-                //result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
-                result = '<?php echo $strvalidation ?>: '+ result + '\n';
+                result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
+                //result = '<?php echo $strvalidation ?>: '+ result + '\n';
                 if (errorlogs != '') {
-                    //result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
-                    result = '<?php echo $strerrorlog ?>: '+ result + '\n';
+                  result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
+                  //  result = '<?php echo $strerrorlog ?>: '+ result + '\n';
                 }
                 alert(result);
                 return false;
