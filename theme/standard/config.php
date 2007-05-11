@@ -155,7 +155,7 @@ $THEME->custompix = false;
 
 ///$THEME->rarrow = '&#x25BA;' //OR '&rarr;';
 ///$THEME->larrow = '&#x25C4;' //OR '&larr;';
-///$CFG->block_search_button = $THEME->rarrow .'<span class="accesshide">'.get_string('search').'</span>';
+///$CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
 ///
 /// Accessibility: Right and left arrow-like characters are
 /// used in the breadcrumb trail, course navigation menu 
