@@ -59,7 +59,7 @@ class moodle_list{
      *
      * @var list_item or derived class
      */
-    var $parentitem;
+    var $parentitem = null;
     var $table;
     var $fieldnamesparent = 'parent';
     var $sortby = 'parent, sortorder, name';
@@ -380,6 +380,10 @@ class moodle_list{
      * @return unknown
      */
     function process_actions($left, $right, $moveup, $movedown){
+        //should this action be processed by this list object?
+        if (!(array_key_exists($left, $this->records) || array_key_exists($right, $this->records) || array_key_exists($moveup, $this->records) || array_key_exists($movedown, $this->records))){
+            return false;
+        }
         if (!empty($left)) {
             $this->move_item_left($left);
         } else if (!empty($right)) {
@@ -425,7 +429,7 @@ class list_item{
     var $item;
     var $fieldnamesname = 'name';
     var $attributes;
-    var $iconhtml = '';
+    var $icons = array();
     /**
      *
      * @var moodle_list
@@ -486,52 +490,60 @@ class list_item{
         } else {
             $childrenhtml = '';
         }
-        return $this->item_html($extraargs).$this->iconhtml.(($childrenhtml !='')?("\n".$childrenhtml):'');
+        return $this->item_html($extraargs).'&nbsp;'.(join($this->icons, '')).(($childrenhtml !='')?("\n".$childrenhtml):'');
     }
 
     function set_icon_html($first, $last, &$lastitem){
         global $CFG;
         $strmoveup = get_string('moveup');
         $strmovedown = get_string('movedown');
+        $strmoveleft = get_string('maketoplevelitem', 'question');
         $pixpath = $CFG->pixpath;
-        $icons = '&nbsp;';
+        $icons = array();
     
         if (isset($this->parentlist->parentitem)) {
             $parentitem =& $this->parentlist->parentitem;
             if (isset($parentitem->parentlist->parentitem)){
                 $action = get_string('makechildof', 'question', $parentitem->parentlist->parentitem->name);
             } else {
-                $action = get_string('maketoplevelitem', 'question');
+                $action = $strmoveleft;
             }
-            $icons .= '<a title="' . $action .'" href="'.$this->parentlist->pageurl->out_action(array('left'=>$this->id)).'">
-                <img src="' . $pixpath . '/t/left.gif" class="iconsmall" alt="' . $action. '" /></a> ';
+            $icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action(array('left'=>$this->id)), 'left'); 
         } else {
-            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+            $icons['left'] =  $this->image_spacer();
         }
 
         if (!$first) {
-            $icons .= '<a title="' . $strmoveup .'" href="'.$this->parentlist->pageurl->out_action(array('moveup'=>$this->id)).'">
-                <img src="' . $pixpath . '/t/up.gif" class="iconsmall" alt="' . $strmoveup. '" /></a> ';
+             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('up'=>$this->id)), 'up');
         } else {
-            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+            $icons['up'] =  $this->image_spacer();
         }
 
         if (!$last) {
-            $icons .= '<a title="' . $strmovedown .'" href="'.$this->parentlist->pageurl->out_action(array('movedown'=>$this->id)).'">
-                 <img src="' . $pixpath . '/t/down.gif" class="iconsmall" alt="' .$strmovedown. '" /></a> ';
+            $icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action(array('movedown'=>$this->id)), 'down');
         } else {
-            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+            $icons['down'] =  $this->image_spacer();
         }
 
         if (!empty($lastitem)) {
             $makechildof = get_string('makechildof', 'question', $lastitem->name);
-            $icons .= '<a title="' . $makechildof .'" href="'.$this->parentlist->pageurl->out_action(array('right'=>$this->id)).'">
-                <img src="' . $pixpath . '/t/right.gif" class="iconsmall" alt="' . $makechildof. '" /></a> ';
+            $icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action(array('right'=>$this->id)), 'right'); 
         } else {
-            $icons .=  '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
+            $icons['right'] =  $this->image_spacer();
         }
 
-        $this->iconhtml = $icons;
+        $this->icons = $icons;
+    }
+    function image_icon($action, $url, $icon){
+        global $CFG;
+        $pixpath = $CFG->pixpath;
+        return '<a title="' . $action .'" href="'.$this->parentlist->pageurl->out_action(array('left'=>$this->id)).'">
+                <img src="' . $pixpath . '/t/'.$icon.'.gif" class="iconsmall" alt="' . $action. '" /></a> ';
+    }  
+    function image_spacer(){
+        global $CFG;
+        $pixpath = $CFG->pixpath;
+        return '<img src="' . $pixpath . '/spacer.gif" class="iconsmall" alt="" />';
     }
     /**
      * Recurse down tree creating list_items, called from moodle_list::list_from_records
