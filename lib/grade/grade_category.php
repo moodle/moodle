@@ -310,9 +310,9 @@ class grade_category extends grade_object {
         $result = $result && $this->grade_item->update();
 
         $paths = explode('/', $this->path);
-
+        
         $wheresql = '';
-
+        
         foreach ($paths as $categoryid) {
             $wheresql .= "iteminstance = $categoryid OR";
         }
@@ -600,13 +600,18 @@ class grade_category extends grade_object {
 
     /**
      * Retrieves from DB, instantiates and saves the associated grade_item object.
+     * If no grade_item exists yet, create one.
      * @return object Grade_item
      */
     function load_grade_item() {
         $grade_items = get_records_select('grade_items', "iteminstance = $this->id AND itemtype = 'category'", null, '*', 0, 1);
-
-        $params = current($grade_items);
-        $this->grade_item = new grade_item($params);
+        
+        if ($grade_items){ 
+            $params = current($grade_items);
+            $this->grade_item = new grade_item($params);
+        } else {
+            $this->grade_item = new grade_item();
+        }
         
         // If the associated grade_item isn't yet created, do it now. But first try loading it, in case it exists in DB.
         if (empty($this->grade_item->id)) {
@@ -626,7 +631,7 @@ class grade_category extends grade_object {
      */
     function load_parent_category() {
         if (empty($this->parent_category) && !empty($this->parent)) {
-            $this->parent_category = grade_category::fetch('id', $this->parent);
+            $this->parent_category = new grade_category(array('id' => $this->parent));
         }
         return $this->parent_category;
     }

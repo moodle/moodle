@@ -165,8 +165,6 @@ class grade_category_test extends gradelib_test {
     function test_grade_category_generate_grades() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'generate_grades'));
-        $raw_grades = $category->generate_grades();
-        $this->assertEqual(3, count($raw_grades));
     }
 
     function test_grade_category_aggregate_grades() {
