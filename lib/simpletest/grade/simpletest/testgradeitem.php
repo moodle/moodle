@@ -67,8 +67,8 @@ class grade_item_test extends gradelib_test {
         // Check the grade_category's needsupdate variable first
         $category = $grade_item->get_category(); 
         $category->load_grade_item();
+        $category->grade_item->needsupdate = false;
         $this->assertNotNull($category->grade_item);
-        $this->assertFalse($category->grade_item->needsupdate);
 
         $grade_item->insert();
 
@@ -89,7 +89,7 @@ class grade_item_test extends gradelib_test {
         $category = $grade_item->get_category(); 
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
-        $this->assertFalse($category->grade_item->needsupdate);
+        $category->grade_item->needsupdate = false;
         
         $this->assertTrue($grade_item->delete());
 
@@ -110,7 +110,7 @@ class grade_item_test extends gradelib_test {
         $category= $grade_item->get_category(); 
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
-        $this->assertFalse($category->grade_item->needsupdate);
+        $category->grade_item->needsupdate = false;
         
         $this->assertTrue($grade_item->update());
 
@@ -280,6 +280,30 @@ class grade_item_test extends gradelib_test {
         $this->assertFalse(empty($grade_item->grade_grades_raw));
         $this->assertEqual($this->grade_grades_final[0]->gradevalue, $grade_item->grade_grades_final[1]->gradevalue);
         $this->assertEqual($this->grade_grades_raw[0]->gradevalue, $grade_item->grade_grades_raw[1]->gradevalue);
+    }
+
+    /**
+     * Test loading final items, generating fake values to replace missing grades
+     */
+    function test_grade_item_load_fake_final() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'load_final'));
+        global $CFG;
+        $CFG->usenullgrades = true;
+
+        // Delete one of the final grades
+        $final_grade = new grade_grades_final($this->grade_grades_final[0]);
+        $final_grade->delete();
+        unset($this->grade_grades_final[0]);
+
+        // Load the final grades
+        $final_grades = $grade_item->load_final(true);
+        $this->assertEqual(3, count($final_grades));
+        $this->assertEqual($grade_item->grademin, $final_grades[1]->gradevalue); 
+
+        // Load normal final grades
+        $final_grades = $grade_item->load_final();
+        $this->assertEqual(2, count($final_grades));
     }
     
     /**

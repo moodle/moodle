@@ -163,10 +163,20 @@ class grade_category_test extends gradelib_test {
     }
     
     function test_grade_category_generate_grades() {
+        global $CFG;
+        $CFG->usenullgrades = true;
+
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'generate_grades'));
-    }
+        $category->generate_grades();
+        $category->load_grade_item();
+        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
+        $final_grades = get_records('grade_grades_final', 'itemid', $category->grade_item->id);
 
+        $this->assertEqual(3, count($raw_grades));
+        $this->assertEqual(3, count($final_grades));
+    }
+/**
     function test_grade_category_aggregate_grades() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'aggregate_grades'));
@@ -179,11 +189,15 @@ class grade_category_test extends gradelib_test {
                 $grade_sets[$i][] = $this->generate_random_raw_grade($this->grade_items[$i], $j);
             }
         }
-
-        $this->assertEqual(200, count($category->aggregate_grades($grade_sets)));
-
+        
+        $aggregated_grades = $category->aggregate_grades($grade_sets);
+        $this->assertEqual(200, count($aggregated_grades)); 
+        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
     }
-
+*/
     function generate_random_raw_grade($item, $userid) {
         $raw_grade = new grade_grades_raw();
         $raw_grade->itemid = $item->id;
@@ -191,7 +205,7 @@ class grade_category_test extends gradelib_test {
         $raw_grade->grademin = $item->grademin;
         $raw_grade->grademax = $item->grademax;
         $valuetype = "grade$item->gradetype";
-        $raw_grade->$valuetype = rand($raw_grade->grademin, $raw_grade->grademax);
+        $raw_grade->gradevalue = rand(0, 1000) / 1000;
         $raw_grade->insert();
         return $raw_grade;
     }

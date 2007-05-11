@@ -498,6 +498,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->courseid = $this->courseid;
         $grade_item->iteminstance = $this->grade_categories[0]->id;
         $grade_item->itemname = 'unittestgradeitemcategory1';
+        $grade_item->needsupdate = true;
         $grade_item->itemtype = 'category';
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
@@ -513,6 +514,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminstance = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitemcategory2';
         $grade_item->itemtype = 'category';
+        $grade_item->needsupdate = true;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -527,6 +529,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminstance = $this->grade_categories[2]->id;
         $grade_item->itemname = 'unittestgradeitemcategory3';
         $grade_item->itemtype = 'category';
+        $grade_item->needsupdate = true;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();

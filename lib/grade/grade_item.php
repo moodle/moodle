@@ -257,9 +257,12 @@ class grade_item extends grade_object {
 
     /**
      * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
+     * @param boolean $generatefakenullgrades If set to true, AND $CFG->usenullgrades is true, will replace missing grades with grades, gradevalue=grademin
      * @return array grade_grades_final objects
      */      
-    function load_final() {
+    function load_final($generatefakenullgrades=false) {
+        global $CFG;
+
         $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
         
         if (empty($grade_final_array)) {
@@ -274,7 +277,41 @@ class grade_item extends grade_object {
         foreach ($grade_final_array as $f) {
             $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
         }
-        return $this->grade_grades_final;
+
+        $returnarray = fullclone($this->grade_grades_final);
+
+        // If we are generating fake null grades, we have to get a list of users
+        if ($generatefakenullgrades && $CFG->usenullgrades) {
+            $users = get_records_sql_menu('SELECT userid AS "user", userid FROM ' . $CFG->prefix . 'grade_grades_final GROUP BY userid ORDER BY userid');
+            if (!empty($users) && is_array($users)) {
+                foreach ($users as $userid) {
+                    if (!isset($returnarray[$userid])) {
+                        $fakefinal = new grade_grades_final();
+                        $fakefinal->itemid = $this->id;
+                        $fakefinal->userid = $userid;
+                        $fakefinal->gradevalue = $this->grademin;
+                        $returnarray[$userid] = $fakefinal;
+                    }
+                }
+            }
+        }
+
+        return $returnarray;
+    }
+
+    /**
+     * Returns an array of values (NOT objects) standardised from the final grades of this grade_item. They are indexed by userid.
+     * @return array integers
+     */
+    function get_standardised_final() {
+        $standardised_finals = array();
+
+        $final_grades = $this->load_final(true);
+        foreach ($final_grades as $userid => $final) {
+            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1, true);
+        }
+
+        return $standardised_finals;
     }
 
     /**
@@ -435,6 +472,31 @@ class grade_item extends grade_object {
             $grade_raw_array = $this->grade_grades_raw;
         }
         return $grade_raw_array;
+    }
+    
+    /**
+     * Takes an array of grade_grades_raw objects, indexed by userid, and saves each as a raw grade
+     * under this grade_item. This replaces any existing grades, after having logged each change in the history table.
+     * @param array $raw_grades
+     * @return boolean success or failure
+     */
+    function save_raw($raw_grades, $howmodified='module', $note=NULL) {
+        if (!empty($raw_grades) && is_array($raw_grades)) {
+            $this->load_raw();
+            
+            foreach ($raw_grades as $userid => $raw_grade) {
+                if (!empty($this->grade_grades_raw[$userid])) {
+                    $raw_grade->update($raw_grade->gradevalue, $howmodified, $note);
+                } else {
+                    $raw_grade->itemid = $this->id;
+                    $raw_grade->insert();
+                }
+
+                $this->grade_grades_raw[$userid] = $raw_grade;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**

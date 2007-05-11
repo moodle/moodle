@@ -222,7 +222,15 @@ function grades_grab_grades() {
  * @param float $target_max
  * @return float Converted value
  */
-function standardise_score($gradevalue, $source_min, $source_max, $target_min, $target_max) {
+function standardise_score($gradevalue, $source_min, $source_max, $target_min, $target_max, $debug=false) {
+    if ($debug) {
+        echo 'standardise_score debug info: (lib/gradelib.php)';
+        print_object(array('gradevalue' => $gradevalue,
+                           'source_min' => $source_min,
+                           'source_max' => $source_max,
+                           'target_min' => $target_min,
+                           'target_max' => $target_max));
+    }
     $factor = ($gradevalue - $source_min) / ($source_max - $source_min);
     $diff = $target_max - $target_min;
     $gradevalue = $factor * $diff + $target_min;

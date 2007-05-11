@@ -134,6 +134,8 @@ class grade_category extends grade_object {
                 $this->grade_item->update();
             }
         }
+
+        $this->path = grade_category::build_path($this);
     }
 
     
@@ -304,7 +306,6 @@ class grade_category extends grade_object {
             die("Associated grade_item object does not exist for this grade_category!" . print_object($this)); 
             // TODO Send error message, this is a critical error: each category MUST have a matching grade_item object and load_grade_item() is supposed to create one!
         }
-        $this->path = grade_category::build_path($this);
 
         $paths = explode('/', $this->path);
         
@@ -330,81 +331,82 @@ class grade_category extends grade_object {
      * raw and final grades, which means that ultimately we must get grade_items as children. The category's aggregation
      * method is used to generate these raw grades, which can then be used by the category's associated grade_item
      * to apply calculations to and generate final grades.
+     * Steps to follow: 
+     *  1. If the children are categories, AND their grade_item's needsupdate is true call generate_grades() on each of them (recursion)
+     *  2. Get final grades from immediate children (if the children are categories, get the final grades from their grade_item)
+     *  3. Aggregate these grades
+     *  4. Save them under $this->grade_item->grade_grades_raw
+     *  5. Use the grade_item's methods for generating the final grades.
      */
     function generate_grades() {
-        // Check that the children have final grades. If not, call their generate_grades method (recursion)
-        if (empty($this->children)) {
-            $this->children = $this->get_children(1, 'flat');
-        }
+        // 1. Get immediate children
+        $children = $this->get_children(1, 'flat');
         
-        $category_raw_grades = array();
-        $aggregated_grades = array();
+        if (empty($children)) {
+            return false;
+        }
 
-        foreach ($this->children as $child) {
-            if (get_class($child) == 'grade_item') {
-                $category_raw_grades[$child->id] = $child->load_raw();
-            } elseif (get_class($child) == 'grade_category') {
-                $child->load_grade_item();
-                $raw_grades = $child->grade_item->load_raw();
+        // This assumes that all immediate children are of the same type (category OR item)
+        $childrentype = get_class(current($children));
+        
+        $final_grades_for_aggregation = array();
+        
+        // 2. Get final grades from immediate children, after generating them if needed.
+        // NOTE: Make sure that the arrays of final grades are indexed by userid. The resulting arrays are unlikely to match in sizes.
+        if ($childrentype == 'grade_category') {
+            foreach ($children as $id => $category) {
+                $category->load_grade_item();
                 
-                if (empty($raw_grades)) {
-                    $child->generate_grades(); 
-                    $category_raw_grades[$child->id] = $child->grade_item->load_raw();
-                } else {
-                    $category_raw_grades[$child->id] = $raw_grades;
-                } 
+                if ($category->grade_item->needsupdate) {
+                    $category->generate_grades();
+                }
+                
+                $final_grades_for_aggregation[] = $category->grade_item->get_standardised_final();
+            }
+        } elseif ($childrentype == 'grade_item') {
+            foreach ($children as $id => $item) {
+                if ($item->needsupdate) {
+                    $item->generate_final();
+                }
+                
+                $final_grades_for_aggregation[] = $item->get_standardised_final();
             }
         }
-        
-        if (empty($category_raw_grades)) {
-            return null;
-        } else {
-            $aggregated_grades = $this->aggregate_grades($category_raw_grades);
-            
-            if (count($category_raw_grades) == 1) {
-                $aggregated_grades = current($category_raw_grades);
-            }
+        // 3. Aggregate the grades
+        $aggregated_grades = $this->aggregate_grades($final_grades_for_aggregation);
 
-            foreach ($aggregated_grades as $raw_grade) {
-                $raw_grade->itemid = $this->grade_item->id;
-                $raw_grade->insert();
-            }
-            
-            $this->grade_item->generate_final(); 
-        }
-        
-        $this->grade_item->load_raw();
-        return $this->grade_item->grade_grades_raw;
+        // 4. Save the resulting array of grades as raw grades
+        $this->load_grade_item();
+        $this->grade_item->save_raw($aggregated_grades);
+
+        // 5. Use the grade_item's generate_final method
+        $this->grade_item->generate_final();
+
+        return true;
     }
 
     /**
-     * Given an array of arrays of grade objects (raw or final), uses this category's aggregation method to 
-     * compute and return a single array of grade_raw objects with the aggregated gradevalue. This method
-     * must also standardise all the scores (which have different mins and maxs) so that their values can
-     * be meaningfully aggregated (it would make no sense to perform MEAN(239, 5) on a grade_item with a 
-     * gradevalue between 20 and 250 and another grade_item with a gradevalue between 0 and 7!). Aggregated
-     * values will be saved as grade_grades_raw->gradevalue, even when scales are involved.
+     * Given an array of arrays of values, standardised from 0 to 1 and indexed by userid, 
+     * uses this category's aggregation method to 
+     * compute and return a single array of grade_raw objects with the aggregated gradevalue. 
      * @param array $raw_grade_sets
      * @return array Raw grade objects
      */
-    function aggregate_grades($raw_grade_sets) {
-        if (empty($raw_grade_sets)) {
+    function aggregate_grades($final_grade_sets) {
+        if (empty($final_grade_sets)) {
             return null;
         }
-        
         $aggregated_grades = array();
         $pooled_grades = array();
 
-        foreach ($raw_grade_sets as $setkey => $set) {
-            foreach ($set as $gradekey => $raw_grade) {
+        foreach ($final_grade_sets as $setkey => $set) {
+            foreach ($set as $userid => $final_grade) {
                 $this->load_grade_item();
-
-                $value = standardise_score($raw_grade->gradevalue, $raw_grade->grademin, $raw_grade->grademax,
-                    $this->grade_item->grademin, $this->grade_item->grademax);
-                $pooled_grades[$raw_grade->userid][] = $value;
+                $value = standardise_score((float) $final_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
+                $pooled_grades[$userid][] = $value;
             }
         }
-
+        
         foreach ($pooled_grades as $userid => $grades) {
             $aggregated_value = null;
 
@@ -429,7 +431,7 @@ class grade_category extends grade_object {
                 case GRADE_AGGREGATE_MODE : // Value that occurs most frequently. Not always useful (all values are likely to be different)
                     // TODO implement or reject
                     break;
-                case GRADE_AGGREGATE_SUM : 
+                case GRADE_AGGREGATE_SUM : // I don't see much point to this one either
                     $aggregated_value = array_sum($grades);
                     break;
                 default:
@@ -447,7 +449,6 @@ class grade_category extends grade_object {
             $grade_raw->itemid = $this->grade_item->id;
             $aggregated_grades[$userid] = $grade_raw;
         }
-        
         return $aggregated_grades;
     }
 
