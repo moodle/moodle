@@ -25,7 +25,7 @@ define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 * @param bool $recurse include subdirectories
 * @author added by Howard Miller June 2004
 */
-function get_questions_category( $category, $noparent=false, $recurse=true ) {
+function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
 
     global $QTYPES;
 
@@ -52,6 +52,7 @@ function get_questions_category( $category, $noparent=false, $recurse=true ) {
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
             $questiontype = $QTYPES[$question->qtype];
+            $question->export_process = $export;
             $questiontype->get_question_options( $question );
             $qresults[] = $question;
         }
