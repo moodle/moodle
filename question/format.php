@@ -312,6 +312,7 @@ class qformat_default {
         // this option in case the questiontypes class wants
         // to know where the data came from
         $question->export_process = true;
+        $question->import_process = true;
 
         return $question;
     }
