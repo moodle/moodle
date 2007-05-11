@@ -184,6 +184,11 @@ class qformat_default {
         $question->usecase = 0;
         $question->multiplier = array();
 
+        // this option in case the questiontypes class wants
+        // to know where the data came from
+        $question->export_process = true;
+        $question->import_process = true;
+
         return $question;
     }
 
