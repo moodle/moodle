@@ -2202,10 +2202,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     @header('Accept-Ranges: none');
 
+    $currentlanguage = current_language();
+
     if (empty($usexml)) {
         $direction =  ' xmlns="http://www.w3.org/1999/xhtml"'. $direction;  // See debug_header
     } else {
-        $currentlanguage = current_language();
         $mathplayer = preg_match("/MathPlayer/i", $_SERVER['HTTP_USER_AGENT']);
         if(!$mathplayer) {
             header('Content-Type: application/xhtml+xml');
@@ -2261,6 +2262,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     if (!empty($CFG->blocksdrag)) {
         $pageclass .= ' drag';
     }
+
+    $pageclass .= ' lang-'.$currentlanguage;
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
@@ -2834,6 +2837,85 @@ function check_theme_arrows() {
 }
 
 /**
+ * Return the right arrow with text ('next'), and optionally embedded in a link.
+ * See function above, check_theme_arrows.
+ * To see examples of this function in use, see function get_separator below (simple),
+ * and function calendar_get_link_next in calendar/lib.php (more complex).
+ * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $url An optional link to use in a surrounding HTML anchor.
+ * @param bool $accesshide True if text should be hidden (for screen readers only).
+ * @param string $addclass Additional class names for the link, or the arrow character.
+ * @return string HTML string.
+ */
+function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
+    global $THEME;
+    check_theme_arrows();
+    $arrowclass = 'arrow ';
+    if (! $url) {
+        $arrowclass .= $addclass;
+    }
+    $arrow = '<span class="'.$arrowclass.'">'.$THEME->rarrow.'</span>';
+    $htmltext = '';
+    if ($text) {
+        $htmltext = htmlspecialchars($text).'&nbsp;';
+        if ($accesshide) {
+            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+        }
+    }
+    if ($url) {
+        $class = '';
+        if ($addclass) {
+            $class =" class=\"$addclass\"";
+        }
+        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$htmltext.$arrow.'</a>';
+    }
+    return $htmltext.$arrow;
+}
+
+/**
+ * Return the left arrow with text ('previous'), and optionally embedded in a link.
+ * See function above, check_theme_arrows.
+ * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $url An optional link to use in a surrounding HTML anchor.
+ * @param bool $accesshide True if text should be hidden (for screen readers only).
+ * @param string $addclass Additional class names for the link, or the arrow character.
+ * @return string HTML string.
+ */
+function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
+    global $THEME;
+    check_theme_arrows();
+    $arrowclass = 'arrow ';
+    if (! $url) {
+        $arrowclass .= $addclass;
+    }
+    $arrow = '<span class="'.$arrowclass.'">'.$THEME->larrow.'</span>';
+    $htmltext = '';
+    if ($text) {
+        $htmltext = '&nbsp;'.htmlspecialchars($text);
+        if ($accesshide) {
+            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+        }
+    }
+    if ($url) {
+        $class = '';
+        if ($addclass) {
+            $class =" class=\"$addclass\"";
+        }
+        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$arrow.$htmltext.'</a>';
+    }
+    return $arrow.$htmltext;
+}
+
+/**
+ * Return the breadcrumb trail navigation separator.
+ * @return string HTML string.
+ */
+function get_separator() {
+    //Accessibility: the 'hidden' slash is preferred for screen readers.
+    return ' '.link_arrow_right($text='/', $url='', $accesshide=true, 'sep').' ';
+}
+
+/**
  * Prints breadcrumb trail of links, called in theme/-/header.html
  *
  * @uses $CFG
@@ -2846,20 +2928,19 @@ function print_navigation ($navigation, $separator=0, $return=false) {
     global $CFG, $THEME;
     $output = '';
 
-    check_theme_arrows();
     if (0 === $separator) {
-        $separator = $THEME->rarrow;
+        $separator = get_separator();
     }
-    if (!empty($separator)) {
+    else {
         $separator = '<span class="sep">'. $separator .'</span>';
     }
 
     if ($navigation) {
-        
+
         if (!is_array($navigation)) {
             $ar = explode('->', $navigation);
             $navigation = array();
-            
+
             foreach ($ar as $a) {
                 if (strpos($a, '</a>') === false) {
                     $navigation[] = array('title' => $a, 'url' => '');
@@ -2875,17 +2956,17 @@ function print_navigation ($navigation, $separator=0, $return=false) {
             $site = new object();
             $site->shortname = get_string('home');
         }
-        
+
         //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
         $nav_text = get_string('youarehere','access');
         $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
-        
+
         $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
                                  && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                  ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
-        
-        
+
+
         foreach ($navigation as $navitem) {
             $title = trim(strip_tags(format_string($navitem['title'], false)));
             $url   = $navitem['url'];
@@ -2897,7 +2978,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                            .$url.'">'."$title</a>\n</li>\n";
             }
         }    
-        
+
         $output .= "</ul>\n";
     }
 
@@ -3379,11 +3460,11 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
 /**
  * Print a specified group's avatar.
  *
- * @param group $group A {@link group} object representing a group or array of groups
- * @param int $courseid ?
- * @param boolean $large ?
- * @param boolean $return ?
- * @param boolean $link ?
+ * @param group $group A single {@link group} object OR array of groups.
+ * @param int $courseid The course ID.
+ * @param boolean $large Default small picture, or large.
+ * @param boolean $return If false print picture, otherwise return the output as string
+ * @param boolean $link Enclose image in a link to view specified course?
  * @return string
  * @todo Finish documenting this function
  */
@@ -4353,7 +4434,6 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         }
     }
     //Accessibility: added Alt text, replaced &gt; &lt; with 'silent' character and 'accesshide' text.
-    check_theme_arrows();
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
@@ -4367,15 +4447,15 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         $backtext= get_string('activityprev', 'access');
         $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'>'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$backtext.'">'.$THEME->larrow."\n".
-                   '<span class="accesshide">'.$backtext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
+                   '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true)."\n".
+                   '</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
         $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'>'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$nexttext.'">'.$THEME->rarrow."\n".
-                   '<span class="accesshide">'.$nexttext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
+                   '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true)."\n".
+                   '</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
 
     return '<div class="navigation">'."\n".'<ul>'.$logslink . $backmod .

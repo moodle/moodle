@@ -620,31 +620,28 @@ function calendar_top_controls($type, $data) {
     $data['y'] = $date['year'];
 
     //Accessibility: calendar block controls, replaced <table> with <div>.
-    check_theme_arrows();
-    $nexttext = $THEME->rarrow .'<span class="accesshide">'.get_string('monthnext','access').'</span>';
-    $prevtext = $THEME->larrow .'<span class="accesshide">'.get_string('monthprev','access').'</span>';
+    //$nexttext = link_arrow_right(get_string('monthnext', 'access'), $url='', $accesshide=true);
+    //$prevtext = link_arrow_left(get_string('monthprev', 'access'), $url='', $accesshide=true);
 
     switch($type) {
         case 'frontpage':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $nextlink = calendar_get_link_tag($nexttext, 'index.php?', 0, $nextmonth, $nextyear);
-            $prevlink = calendar_get_link_tag($prevtext, 'index.php?', 0, $prevmonth, $prevyear);
-            $content .= '<div class="calendar-controls">';
-            $content .= '<span class="previous" title="'.get_string('monthprev','access').'">'.$prevlink."</span>\n";
+            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'index.php?', 0, $nextmonth, $nextyear, $accesshide=true);
+            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'index.php?', 0, $prevmonth, $prevyear, true);
+            $content .= "\n".'<div class="calendar-controls">'. $prevlink;
             $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-            $content .= '<span class="hide"> | </span><span class="next" title="'.get_string('monthnext','access').'">'.$nextlink."</span>\n";
+            $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
-            $nextlink = calendar_get_link_tag($nexttext, 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear);
-            $prevlink = calendar_get_link_tag($prevtext, 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear);
-            $content .= '<div class="calendar-controls">';
-            $content .= '<span class="previous" title="'.get_string('monthprev','access').'">'.$prevlink."</span>\n";
+            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear, $accesshide=true);
+            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear, true);
+            $content .= "\n".'<div class="calendar-controls">'. $prevlink;
             $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;course='.$data['id'].'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-            $content .= '<span class="hide"> | </span><span class="next" title="'.get_string('monthnext','access').'">'.$nextlink."</span>\n";
+            $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'upcoming':
@@ -658,10 +655,10 @@ function calendar_top_controls($type, $data) {
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $prevdate = make_timestamp($prevyear, $prevmonth, 1);
             $nextdate = make_timestamp($nextyear, $nextmonth, 1);
-            $content .= '<div class="calendar-controls">';
-            $content .= '<span class="previous"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $prevmonth, $prevyear)."\"> $THEME->larrow ".userdate($prevdate, get_string('strftimemonthyear')).'</a></span>';
+            $content .= "\n".'<div class="calendar-controls">';
+            $content .= calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month&amp;', 1, $prevmonth, $prevyear);
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimemonthyear'))."</span>\n";
-            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $nextmonth, $nextyear).'">'.userdate($nextdate, get_string('strftimemonthyear'))." $THEME->rarrow</a></span>\n";
+            $content .= '<span class="hide"> | </span>'.calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month&amp;', 1, $nextmonth, $nextyear);
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'day':
@@ -670,9 +667,9 @@ function calendar_top_controls($type, $data) {
             $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($CALENDARDAYS[$prevdate['wday']]);
             $nextname = calendar_wday_name($CALENDARDAYS[$nextdate['wday']]);
-            $content .= '<div class="calendar-controls">';
-            $content .= '<span class="previous"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year'])."\">$THEME->larrow ".$prevname."</a></span>\n";
-
+            $content .= "\n".'<div class="calendar-controls">';
+            $content .= calendar_get_link_previous($prevname, 'view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']);
+ 
             // Get the format string
             $text = get_string('strftimedaydate');
             /*
@@ -685,7 +682,7 @@ function calendar_top_controls($type, $data) {
             // Print the actual thing
             $content .= '<span class="hide"> | </span><span class="current">'.$text.'</span>';
 
-            $content .= '<span class="hide"> | </span><span class="next"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']).'">'.$nextname." $THEME->rarrow</a></span>\n";
+            $content .= '<span class="hide"> | </span>'. calendar_get_link_next($nextname, 'view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']);
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
     }
@@ -852,6 +849,34 @@ function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
     $href = calendar_get_link_href($linkbase, $d, $m, $y);
     if(empty($href)) return $text;
     return '<a href="'.$href.'">'.$text.'</a>';
+}
+
+/**
+ * Build and return a previous month HTML link, with an arrow.
+ * @param string $text The text label.
+ * @param string $linkbase The URL stub.
+ * @param int $d $m $y Day of month, month and year numbers.
+ * @param bool $accesshide Default visible, or hide from all except screenreaders.
+ * @return string HTML string.
+ */
+function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=false) {
+    $href = calendar_get_link_href($linkbase, $d, $m, $y);
+    if(empty($href)) return $text;
+    return link_arrow_left($text, $href, $accesshide, 'previous');
+}
+
+/**
+ * Build and return a next month HTML link, with an arrow.
+ * @param string $text The text label.
+ * @param string $linkbase The URL stub.
+ * @param int $d $m $y Day of month, month and year numbers.
+ * @param bool $accesshide Default visible, or hide from all except screenreaders.
+ * @return string HTML string.
+ */
+function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide=false) {
+    $href = calendar_get_link_href($linkbase, $d, $m, $y);
+    if(empty($href)) return $text;
+    return link_arrow_right($text, $href, $accesshide, 'next');
 }
 
 function calendar_wday_name($englishname) {

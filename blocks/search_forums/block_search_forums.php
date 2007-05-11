@@ -29,8 +29,7 @@ class block_search_forums extends block_base {
         $search = get_string('search');
 
         //Accessibility: replaced <input value=" />" type="submit"> with configurable text/'silent' character.
-        check_theme_arrows();
-        // Theme config, $CFG->block_search_button = $THEME->rarrow .'<span class="accesshide">'.get_string('search').'</span>';
+        // Theme config, $CFG->block_search_button = link_arrow_right(get_string('search'), $url='', $accesshide=true);
         $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go');
         
         $this->content->text  = '<div class="searchform">';

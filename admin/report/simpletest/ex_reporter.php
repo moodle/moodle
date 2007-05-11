@@ -45,8 +45,7 @@ class ExHtmlReporter extends HtmlReporter {
 
         $this->strrunonlyfolder = $this->get_string('runonlyfolder');
         $this->strrunonlyfile = $this->get_string('runonlyfile');
-        check_theme_arrows();
-        $this->strseparator = ' <span class="sep">'.$THEME->rarrow.'</span> ';
+        $this->strseparator = get_separator();
     }
 
     /**
