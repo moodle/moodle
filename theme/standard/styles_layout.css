@@ -1541,8 +1541,10 @@ table.minicalendar th {
 
 /*Accessibility: controls now div and span, 20:58:20% or 12:74:12% */
 .calendar-controls .previous,
-.calendar-controls .next
-{
+.calendar-controls .next,
+.calendar-controls .current {
+  display: block;
+  float: left;
   width: 12%;
 }
 .calendar-controls .previous {
@@ -1550,16 +1552,10 @@ table.minicalendar th {
 }
 .calendar-controls .current {
   text-align: center;
+  width: 76%;
 }
 .calendar-controls .next {
   text-align: right;
-}
-span.previous, span.current, span.next {
-  display: block;
-  float: left;
-}
-span.current {
-  width: 76%;
 }
 
 #calendar .maincalendar .calendar-controls .previous,
