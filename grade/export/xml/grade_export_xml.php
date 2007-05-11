@@ -54,7 +54,7 @@ class grade_export_xml extends grade_export {
                 // state can be new, or regrade
                 // require comparing of timestamps in db
                 
-                $params->idnumber = $idnumber;
+                $params->idnumber = $this->idnumber;
                 // get the grade item
                 $gradeitem = new grade_item($params);
                 
@@ -91,6 +91,8 @@ class grade_export_xml extends grade_export {
                     echo '<feedback>'.$this->comments[$studentid][$index].'</feedback>';  
 		        }
                 echo '</result>';
+                
+                // if flag is set, timestamp this
             }           
         }
         echo '</results>';

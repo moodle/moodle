@@ -90,7 +90,27 @@ class grade_export_ods extends grade_export {
                     // writing comment if requested
                     if ($feedback) {
                         $myxls->write_string($i,$j++,array_shift($this->comments[$student->id]));
-                    }   
+                    }                                   
+                    
+                    /// if export flag needs to be set
+                    /// construct the grade_grades_final object and update timestamp if CFG flag is set
+                
+                    if ($expplugins = explode(",", get_config($CFG->gradeexport))) {
+                        if (in_array($this->format, $expplugins)) {
+                            $params->idnumber = $this->idnumber;
+                            // get the grade item
+                            $gradeitem = new grade_item($params);
+                
+                            unset($params);
+                            $params->itemid = $gradeitem->id;
+                            $params->userid = $studentid;
+                
+                            $grade_grades_final = new grade_grades_final($params);
+                            $grade_grades_final->exported = time();
+                            // update the time stamp;
+                            $grade_grades_final->update();
+                        }
+                    }
                 }
                 $myxls->write_number($i,$j,$this->totals[$student->id]);
             }

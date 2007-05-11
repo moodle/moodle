@@ -31,10 +31,10 @@ class grade_export_txt extends grade_export {
     /**
      * To be implemented by child classes
      */
-    function print_grades($feedback = false;) { 
+    function print_grades($feedback = false) { 
         
 /// Print header to force download
-
+        global $CFG;
         header("Content-Type: application/download\n"); 
         $downloadfilename = clean_filename("$this->course->shortname $this->strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
@@ -71,7 +71,27 @@ class grade_export_txt extends grade_export {
                 
                 if ($feedback) {
                     echo "\t".array_shift($this->comments[$student->id]);
-                }       
+                }                
+                
+                /// if export flag needs to be set
+                /// construct the grade_grades_final object and update timestamp if CFG flag is set
+                
+                if ($expplugins = explode(",", get_config($CFG->gradeexport))) {
+                    if (in_array($this->format, $expplugins)) {
+                        $params->idnumber = $this->idnumber;
+                        // get the grade item
+                        $gradeitem = new grade_item($params);
+                
+                        unset($params);
+                        $params->itemid = $gradeitem->id;
+                        $params->userid = $studentid;
+                
+                        $grade_grades_final = new grade_grades_final($params);
+                        $grade_grades_final->exported = time();
+                        // update the time stamp;
+                        $grade_grades_final->update();
+                    }
+                }
             }
             echo "\t".$this->totals[$student->id];
             echo "\n";

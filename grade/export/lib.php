@@ -22,7 +22,38 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-
+include_once('../../../config.php');
+include_once($CFG->dirroot.'/lib/gradelib.php');
+/**
+ * Prints all grade items for selection
+ * @input int id - course id
+ */
+function print_gradeitem_selections($id) {
+    
+    // print all items for selections
+    // make this a standard function in lib maybe
+    if ($grade_items = grade_get_items($id)) {
+        echo '<form action="index.php" method="post">';
+        echo '<div>';
+        foreach ($grade_items as $grade_item) {
+            
+            echo '<br/><input type="checkbox" name="itemids[]" value="'.$grade_item->id.'" checked="checked"/>';
+            
+            if ($grade_item->itemtype == 'category') {
+                // grade categories should be displayed bold
+                echo '<b>'.$grade_item->itemname.'</b>';
+            } else {
+                echo $grade_item->itemname;
+            } 
+        }
+        echo '<input type="submit" value="'.get_string('submit').'" />';
+        echo '</div>';
+        echo '</form>';
+    }
+}
+/**
+ * Base export class
+ */
 class grade_export {
     
     var $format = ''; // export format
@@ -160,7 +191,47 @@ class grade_export {
      * To be implemented by child classes
      */
     function print_grades() { }
- 
+    
+    /**
+     * Displays all the grades on screen as a feedback mechanism
+     */
+    function display_grades() {
+        echo get_string("firstname")."\t".
+             get_string("lastname")."\t".
+             get_string("idnumber")."\t".
+             get_string("institution")."\t".
+             get_string("department")."\t".
+             get_string("email");
+        foreach ($this->columns as $column) {
+            $column = strip_tags($column);
+            echo "\t$column";
+        
+            /// add a column_feedback column            
+            if ($feedback) {
+                echo "\t{$column}_feedback";
+            }        
+        }
+        echo "\t".get_string("total")."\n";
+    
+        /// Print all the lines of data.
+        foreach ($this->grades as $studentid => $studentgrades) {
+            $student = $students[$studentid];
+            if (empty($this->totals[$student->id])) {
+                $this->totals[$student->id] = '';
+            }
+            echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
+            foreach ($studentgrades as $grade) {
+                $grade = strip_tags($grade);
+                echo "\t$grade";            
+                
+                if ($feedback) {
+                    echo "\t".array_shift($this->comments[$student->id]);
+                }       
+            }
+            echo "\t".$this->totals[$student->id];
+            echo "\n";
+        }  
+    }
 }
 
 ?>
