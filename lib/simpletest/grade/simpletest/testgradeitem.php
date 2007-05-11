@@ -73,6 +73,7 @@ class grade_item_test extends gradelib_test {
         $grade_item->insert();
 
         // Now check the needsupdate variable, it should have been set to true
+        $category->grade_item->update_from_db();
         $this->assertTrue($category->grade_item->needsupdate);
 
         $last_grade_item = end($this->grade_items);
@@ -93,6 +94,7 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue($grade_item->delete());
 
         // Now check the needsupdate variable, it should have been set to true
+        $category->grade_item->update_from_db();
         $this->assertTrue($category->grade_item->needsupdate);
 
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
@@ -120,7 +122,13 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue($grade_item->update(true));
         
         // Now check the needsupdate variable, it should have been set to true
+        $category->grade_item->update_from_db();
         $this->assertTrue($category->grade_item->needsupdate);
+
+        // Also check parent
+        $category->load_parent_category();
+        $category->parent_category->load_grade_item();
+        $this->assertTrue($category->parent_category->grade_item->needsupdate);
         
         $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
         $this->assertEqual($grade_item->iteminfo, $iteminfo);

@@ -226,14 +226,14 @@ class grade_category extends grade_object {
      */
     function insert() {
         $result = parent::insert();
+        
+        $this->path = grade_category::build_path($this);
 
         // Build path and depth variables
         if (!empty($this->parent)) {
-            $this->path = grade_category::build_path($this);
             $this->depth = $this->get_depth_from_path();
         } else {
             $this->depth = 1;
-            $this->path = "/$this->id";
         }
         
         $this->update();
@@ -302,24 +302,25 @@ class grade_category extends grade_object {
 
         if (empty($this->grade_item)) {
             die("Associated grade_item object does not exist for this grade_category!" . print_object($this)); 
-            // TODO Send error message, this is a critical error: each category MUST have a matching grade_item object
+            // TODO Send error message, this is a critical error: each category MUST have a matching grade_item object and load_grade_item() is supposed to create one!
         }
-
-        $this->grade_item->needsupdate = true;
-        
-        $result = $result && $this->grade_item->update();
+        $this->path = grade_category::build_path($this);
 
         $paths = explode('/', $this->path);
         
-        $wheresql = '';
+        // Remove the first index, which is always empty
+        unset($paths[0]);
         
-        foreach ($paths as $categoryid) {
-            $wheresql .= "iteminstance = $categoryid OR";
+        if (!empty($paths)) {
+            $wheresql = '';
+            
+            foreach ($paths as $categoryid) {
+                $wheresql .= "iteminstance = $categoryid OR ";
+            }
+            $wheresql = substr($wheresql, 0, strrpos($wheresql, 'OR'));
+            $grade_items = set_field_select('grade_items', 'needsupdate', '1', $wheresql);
+            $this->grade_item->update_from_db();
         }
-
-        $wheresql = substr($wheresql, 0, strrpos($wheresql, 'OR'));
-        
-        // TODO use this sql fragment to set needsupdate to true for all grade_items whose iteminstance matches the categoryids
         return $result;
     }
 

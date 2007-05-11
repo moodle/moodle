@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'scale', 'category');
+    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'grade_grades_final', 'scale', 'category', 'outcome');
   
     /**
      * The course this grade_item belongs to.
