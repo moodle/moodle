@@ -35,6 +35,7 @@ $string['moodledocslink'] = 'Документация Moodle для этой с�
 $string['name'] = 'Название';
 $string['next'] = 'Дальше';
 $string['ok'] = 'OK';
+$string['parentlanguage'] = 'ru';
 $string['password'] = 'Пароль';
 $string['previous'] = 'Предыдущий';
 $string['report'] = 'Отчет';
