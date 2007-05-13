@@ -637,7 +637,6 @@ class qformat_xml extends qformat_default {
 
             // stick the result in the $questions array
             if ($qo) {
-                $qo->generalfeedback = '';
                 $questions[] = $qo;
             }
         }
