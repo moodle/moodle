@@ -162,6 +162,25 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {    // Print tabs for anything ex
         $activetwo = array();
     }
 
+/// Here other core tabs should go (always calling tabs.php files)
+/// All the logic to decide what to show must be self-cointained in the tabs file
+/// ej.:
+/// include_once($CFG->dirroot . '/grades/tabs.php');
+
+/// Finally, we support adding some 'on-the-fly' tabs here
+/// All the logic to decide what to show must be self-cointained in the tabs file
+    if (isset($CFG->extratabs) && !empty($CFG->extratabs)) {
+        if ($extratabs = explode(',', $CFG->extratabs)) {
+            asort($extratabs);
+            foreach($extratabs as $extratab) {
+            /// Each extra tab mus be one $CFG->dirroot relative file
+                if (file_exists($CFG->dirroot . '/' . $extratab)) {
+                    include_once($CFG->dirroot . '/' . $extratab);
+                }
+            }
+        }
+    }
+
     if (!empty($secondrow)) {
         $tabs = array($toprow, $secondrow);
     } else {
