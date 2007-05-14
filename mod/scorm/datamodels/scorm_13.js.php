@@ -434,10 +434,11 @@ function SCORMapi1_3() {
 
                                     if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
                                         parentmodel = 'cmi.objectives';
-                                        maxmodel = 'cmi.objectives.Nxxx.id';
+                                        //maxmodel = 'cmi.objectives.Nxxx.id';
                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
 
-                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                            // if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                             if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                 //This is a parentmodel.n.id element
                                                 if (!duplicatedID(parentmodel,value)) {
@@ -473,14 +474,13 @@ function SCORMapi1_3() {
                                             }
                                         } else {
 
-
-
                                             parentmodel = 'cmi.interactions';
-                                            maxmodel = 'cmi.interactions.Nxxx.id';
+                                            //maxmodel = 'cmi.interactions.Nxxx.id';
 
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
 
-                                                if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                     //This is a parentmodel.n.id element
                                                     if (!duplicatedID(parentmodel,value)) {
@@ -505,13 +505,14 @@ function SCORMapi1_3() {
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-
+//alert('model ='+elementmodel+' subelement ='+subelement);
                                                     if (typeof eval(subelement) == "undefined") {
 
                                                         errorCode="408";
                                                     } else {
-                                                        maxmodel = 'cmi.interactions.Nxxx.type';
-                                                        if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
+                                                        //maxmodel = 'cmi.interactions.Nxxx.type';
+                                                        //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
+                                                        if ((elementmodel==parentmodel+'.n.type') && (errorCode=="0")) { 
                                                             subobject = eval(subelement);
                                                            //subobject.correct_responses = new Object();
                                                            //subobject.correct_responses._count = 0;
@@ -533,9 +534,10 @@ function SCORMapi1_3() {
                                      } else {
 
                                          parentmodel = 'cmi.objectives';
-                                         maxmodel = 'cmi.objectives.Nxxx.id';
+                                         //maxmodel = 'cmi.objectives.Nxxx.id';
                                          if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                             if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) {
+                                             //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) {
+                                             if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                  if (eval(element) != value) {
                                                      errorCode = "351";
@@ -545,9 +547,10 @@ function SCORMapi1_3() {
                                          } else {
 
                                              parentmodel = 'cmi.interactions';
-                                             maxmodel = 'cmi.interactions.Nxxx.id';
+                                             //maxmodel = 'cmi.interactions.Nxxx.id';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                                 if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                 //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
+                                                 if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
                                                      if (eval(element) != value) {
                                                          errorCode = "351";
                                                          diagnostic = "Write Once Violation";
