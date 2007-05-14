@@ -3709,25 +3709,69 @@ function count_role_users($roleid, $context, $parent=false) {
 }
 
 /**
- * This function gets the list of courses that this user has a particular capability in
- * This is not the most efficient way of doing this
- * @param string capability
- * @param int $userid
- * @return array
+ * This function gets the list of courses that this user has a particular capability in.
+ * It is still not very efficient.
+ * @param string $capability Capability in question
+ * @param int $userid User ID or null for current user
+ * @param bool $doanything True if 'doanything' is permitted (default)
+ * @param string $fieldsexceptid Leave blank if you only need 'id' in the course records;
+ *   otherwise use a comma-separated list of the fields you require, not including id
+ * @param string $orderby If set, use a comma-separated list of fields from course 
+ *   table with sql modifiers (DESC) if needed 
+ * @return array Array of courses, may have zero entries. Or false if query failed.
  */
-function get_user_capability_course($capability, $userid=NULL) {
-
-    $usercourses = array();
-    $courses = get_records_select('course', '', '', 'id, id');
-
-    foreach ($courses as $course) {
-        if (has_capability($capability, get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
-            $usercourses[] = $course;
+function get_user_capability_course($capability, $userid=NULL,$doanything=true,$fieldsexceptid='',$orderby='') {
+    // Convert fields list and ordering
+    $fieldlist='';
+    if($fieldsexceptid) {
+        $fields=explode(',',$fieldsexceptid);
+        foreach($fields as $field) {
+            $fieldlist.=',c.'.$field;
+        }
+    } 
+    if($orderby) {
+        $fields=explode(',',$orderby);
+        $orderby='';
+        foreach($fields as $field) {
+            if($orderby) {
+                $orderby.=',';
+            }
+            $orderby.='c.'.$field;
+        }
+        $orderby='ORDER BY '.$orderby;
+    }
+        
+    // Obtain a list of everything relevant about all courses including context.
+    // Note the result can be used directly as a context (we are going to), the course
+    // fields are just appended.
+    global $CFG;
+    $rs=get_recordset_sql("
+SELECT
+    x.*,c.id AS courseid$fieldlist
+FROM
+    {$CFG->prefix}course c
+    INNER JOIN {$CFG->prefix}context x ON c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE."
+$orderby
+");
+    if(!$rs) {
+        return false;
+    } 
+    
+    // Check capability for each course in turn
+    $courses=array();
+    while($coursecontext=rs_fetch_next_record($rs)) {
+        if(has_capability($capability,$coursecontext,$userid,$doanything)) {
+            // We've got the capability. Make the record look like a course record
+            // and store it
+            $coursecontext->id=$coursecontext->courseid;
+            unset($coursecontext->courseid);
+            unset($coursecontext->contextlevel);
+            unset($coursecontext->instanceid);
+            $courses[]=$coursecontext;
         }
     }
-    return $usercourses;
+    return $courses;
 }
-
 
 /** This function finds the roles assigned directly to this context only
  * i.e. no parents role
