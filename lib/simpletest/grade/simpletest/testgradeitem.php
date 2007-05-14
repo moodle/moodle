@@ -443,6 +443,8 @@ class grade_item_test extends gradelib_test {
         $grade_item->categoryid = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitem4';
         $grade_item->itemtype = 'mod';
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminfo = 'Grade item used for unit testing';
 

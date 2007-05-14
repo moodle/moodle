@@ -176,7 +176,7 @@ class grade_category_test extends gradelib_test {
         $this->assertEqual(3, count($raw_grades));
         $this->assertEqual(3, count($final_grades));
     }
-/**
+    
     function test_grade_category_aggregate_grades() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'aggregate_grades'));
@@ -197,7 +197,7 @@ class grade_category_test extends gradelib_test {
         $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
         $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
     }
-*/
+    
     function generate_random_raw_grade($item, $userid) {
         $raw_grade = new grade_grades_raw();
         $raw_grade->itemid = $item->id;

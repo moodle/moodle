@@ -374,7 +374,7 @@ class grade_category extends grade_object {
         }
         // 3. Aggregate the grades
         $aggregated_grades = $this->aggregate_grades($final_grades_for_aggregation);
-
+        
         // 4. Save the resulting array of grades as raw grades
         $this->load_grade_item();
         $this->grade_item->save_raw($aggregated_grades);
@@ -396,6 +396,7 @@ class grade_category extends grade_object {
         if (empty($final_grade_sets)) {
             return null;
         }
+        
         $aggregated_grades = array();
         $pooled_grades = array();
 
@@ -406,7 +407,7 @@ class grade_category extends grade_object {
                 $pooled_grades[$userid][] = $value;
             }
         }
-        
+
         foreach ($pooled_grades as $userid => $grades) {
             $aggregated_value = null;
 
@@ -440,6 +441,11 @@ class grade_category extends grade_object {
                     $aggregated_value = $sum / $num; 
                     break;
             }
+            
+            // If the gradevalue is null, we have a problem
+            if (empty($aggregated_value)) {
+                return false;
+            }
 
             $grade_raw = new grade_grades_raw();
             $grade_raw->userid = $userid;
@@ -449,6 +455,7 @@ class grade_category extends grade_object {
             $grade_raw->itemid = $this->grade_item->id;
             $aggregated_grades[$userid] = $grade_raw;
         }
+        
         return $aggregated_grades;
     }
 

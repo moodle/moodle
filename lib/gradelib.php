@@ -223,17 +223,18 @@ function grades_grab_grades() {
  * @return float Converted value
  */
 function standardise_score($gradevalue, $source_min, $source_max, $target_min, $target_max, $debug=false) {
+    $factor = ($gradevalue - $source_min) / ($source_max - $source_min);
+    $diff = $target_max - $target_min;
+    $standardised_value = $factor * $diff + $target_min;
     if ($debug) {
         echo 'standardise_score debug info: (lib/gradelib.php)';
         print_object(array('gradevalue' => $gradevalue,
                            'source_min' => $source_min,
                            'source_max' => $source_max,
                            'target_min' => $target_min,
-                           'target_max' => $target_max));
+                           'target_max' => $target_max,
+                           'result'     => $standardised_value));
     }
-    $factor = ($gradevalue - $source_min) / ($source_max - $source_min);
-    $diff = $target_max - $target_min;
-    $gradevalue = $factor * $diff + $target_min;
-    return $gradevalue; 
+    return $standardised_value; 
 }
 ?>

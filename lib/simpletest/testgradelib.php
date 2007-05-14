@@ -398,7 +398,7 @@ class gradelib_test extends UnitTestCase {
         
         $grade_category->fullname    = 'unittestcategory2';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MODE;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
@@ -414,7 +414,7 @@ class gradelib_test extends UnitTestCase {
         
         $grade_category->fullname    = 'unittestcategory3';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MODE;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
@@ -500,6 +500,8 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitemcategory1';
         $grade_item->needsupdate = true;
         $grade_item->itemtype = 'category';
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -515,6 +517,8 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitemcategory2';
         $grade_item->itemtype = 'category';
         $grade_item->needsupdate = true;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -530,6 +534,8 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitemcategory3';
         $grade_item->itemtype = 'category';
         $grade_item->needsupdate = true;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -977,6 +983,8 @@ class gradelib_test extends UnitTestCase {
             $params->itemname = 'unittestgradeitem4';
             $params->itemtype = 'mod';
             $params->itemmodule = 'database';
+            $params->grademin = 0;
+            $params->grademax = 100;
             $params->iteminstance = 4;
             $params->iteminfo = 'Grade item used for unit testing';
             $params->timecreated = mktime();

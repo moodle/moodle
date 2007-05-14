@@ -308,7 +308,7 @@ class grade_item extends grade_object {
 
         $final_grades = $this->load_final(true);
         foreach ($final_grades as $userid => $final) {
-            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1, true);
+            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
         }
 
         return $standardised_finals;
@@ -530,10 +530,10 @@ class grade_item extends grade_object {
         }
         
         $success = true;
-
+        
         foreach ($this->grade_grades_raw as $raw_grade) {
             $final_grade = new grade_grades_final();
-            $final_grade->gradevalue = $this->adjust_grade($raw_grade, null, 'gradevalue');
+            $final_grade->gradevalue = $this->adjust_grade($raw_grade);
             $final_grade->itemid = $this->id;
             $final_grade->userid = $raw_grade->userid;
             $success = $success & $final_grade->insert();
@@ -769,7 +769,7 @@ class grade_item extends grade_object {
     function adjust_grade($grade_raw, $gradevalue=NULL) {
         $raw_offset = 0;
         $item_offset = 0;
-
+        
         if ($this->gradetype == GRADE_TYPE_VALUE) { // Dealing with numerical grade
             if (empty($gradevalue)) {
                 $gradevalue = $grade_raw->gradevalue;
@@ -797,7 +797,7 @@ class grade_item extends grade_object {
         } elseif ($this->gradetype != GRADE_TYPE_TEXT) { // Something's wrong, the raw grade has no value!?
             return "Error: The gradeitem did not have a valid gradetype value, was $this->gradetype instead";
         }
-        
+           
         // Standardise score to the new grade range
         $gradevalue = standardise_score($gradevalue, $grade_raw->grademin, 
                 $grade_raw->grademax, $this->grademin, $this->grademax);
@@ -807,7 +807,7 @@ class grade_item extends grade_object {
             // Apply other grade_item factors
             $gradevalue *= $this->multfactor;
             $gradevalue += $this->plusfactor;
-        }         
+        }        
         return $gradevalue;
     } 
     
