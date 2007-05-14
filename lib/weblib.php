@@ -3099,35 +3099,82 @@ function check_theme_arrows() {
 }
 
 /**
- * Return (by default) the right arrow defined in check_theme_arrows function above.
- * @param addclass Additional class names.
- * @param return Default true, false means echo.
- * @return Default HTML string, or nothing.
+ * Return the right arrow with text ('next'), and optionally embedded in a link.
+ * See function above, check_theme_arrows.
+ * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $url An optional link to use in a surrounding HTML anchor.
+ * @param bool $accesshide True if text should be hidden (for screen readers only).
+ * @param string $addclass Additional class names for the link, or the arrow character.
+ * @return string HTML string.
  */
-function get_arrow_right($addclass='', $return=true) {
+function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
     global $THEME;
     check_theme_arrows();
-    $output = '<span class="arrow '.$addclass.'">'.$THEME->rarrow.'</span>';
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
+    $arrowclass = 'arrow ';
+    if (! $url) {
+        $arrowclass .= $addclass;
     }
+    $arrow = '<span class="'.$arrowclass.'">'.$THEME->rarrow.'</span>';
+    $htmltext = '';
+    if ($text) {
+        $htmltext = htmlspecialchars($text).'&nbsp;';
+        if ($accesshide) {
+            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+        }
+    }
+    if ($url) {
+        $class = '';
+        if ($addclass) {
+            $class =" class=\"$addclass\"";
+        }
+        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$htmltext.$arrow.'</a>';
+    }
+    return $htmltext.$arrow;
 }
 
 /**
- * Return (by default) the left arrow defined in check_theme_arrows function above.
+ * Return the left arrow with text ('previous'), and optionally embedded in a link.
+ * See function above, check_theme_arrows.
+ * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $url An optional link to use in a surrounding HTML anchor.
+ * @param bool $accesshide True if text should be hidden (for screen readers only).
+ * @param string $addclass Additional class names for the link, or the arrow character.
+ * @return string HTML string.
  */
-function get_arrow_left($addclass='', $return=true) {
+function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
     global $THEME;
     check_theme_arrows();
-    $output = '<span class="arrow '.$addclass.'">'.$THEME->larrow.'</span>';
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
+    $arrowclass = 'arrow ';
+    if (! $url) {
+        $arrowclass .= $addclass;
     }
+    $arrow = '<span class="'.$arrowclass.'">'.$THEME->larrow.'</span>';
+    $htmltext = '';
+    if ($text) {
+        $htmltext = '&nbsp;'.htmlspecialchars($text);
+        if ($accesshide) {
+            $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
+        }
+    }
+    if ($url) {
+        $class = '';
+        if ($addclass) {
+            $class =" class=\"$addclass\"";
+        }
+        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$arrow.$htmltext.'</a>';
+    }
+    return $arrow.$htmltext;
 }
+
+/**
+ * Return the breadcrumb trail navigation separator.
+ * @return string HTML string.
+ */
+function get_separator() {
+    //Accessibility: the 'hidden' slash is preferred for screen readers.
+    return ' '.link_arrow_right($text='/', $url='', $accesshide=true, 'sep').' ';
+}
+
 
 
 /**
@@ -3144,7 +3191,10 @@ function print_navigation ($navigation, $separator=0, $return=false) {
     $output = '';
 
     if (0 === $separator) {
-        $separator = get_arrow_right('sep');
+        $separator = get_separator();
+    }
+    else {
+        $separator = '<span class="sep">'. $separator .'</span>';
     }
 
     if ($navigation) {
@@ -4668,17 +4718,17 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'>'."\n".'<div>'."\n".
-                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$backtext.'">'.get_arrow_left()."\n".
-                   '<span class="accesshide">'.$backtext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+                   '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
+                   '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true).
+                   '</button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'>'."\n".'<div>'."\n".
-                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'."\n".
-                   '<button type="submit" title="'.$nexttext.'">'.get_arrow_right()."\n".
-                   '<span class="accesshide">'.$nexttext.'</span>'."\n".'</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+                   '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
+                   '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true).
+                   '</button></fieldset></form></li>';
     }
 
     return '<div class="navigation">'."\n".'<ul>'.$logslink . $backmod .

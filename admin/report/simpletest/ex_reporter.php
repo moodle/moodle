@@ -45,7 +45,7 @@ class ExHtmlReporter extends HtmlReporter {
 
         $this->strrunonlyfolder = $this->get_string('runonlyfolder');
         $this->strrunonlyfile = $this->get_string('runonlyfile');
-        $this->strseparator = ' '.get_arrow_right().' ';
+        $this->strseparator = get_separator();
     }
 
     /**

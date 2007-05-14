@@ -7054,7 +7054,7 @@ function build_navigation($extrabreadcrumbs) {
         }
         $navigation .= '<li class="first">';
         if ($i > 0) {
-            $navigation .= ' '.get_arrow_right('sep').' ';
+            $navigation .= get_separator();
         }
         if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
             $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$breadcrumbs[$i]['link']}\">";
