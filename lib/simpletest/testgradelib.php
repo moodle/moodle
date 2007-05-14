@@ -849,7 +849,7 @@ class gradelib_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[2]->id;
         $grade_final->userid = 1;
-        $grade_final->gradevalue = 70.5;
+        $grade_final->gradevalue = 6;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -861,7 +861,7 @@ class gradelib_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[2]->id;
         $grade_final->userid = 2;
-        $grade_final->gradevalue = 80.5;
+        $grade_final->gradevalue = 2;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -873,7 +873,7 @@ class gradelib_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[2]->id;
         $grade_final->userid = 3;
-        $grade_final->gradevalue = 64.5;
+        $grade_final->gradevalue = 3;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = false; 

@@ -372,6 +372,7 @@ class grade_category extends grade_object {
                 $final_grades_for_aggregation[] = $item->get_standardised_final();
             }
         }
+
         // 3. Aggregate the grades
         $aggregated_grades = $this->aggregate_grades($final_grades_for_aggregation);
         
@@ -445,9 +446,10 @@ class grade_category extends grade_object {
             // If the gradevalue is null, we have a problem
             if (empty($aggregated_value)) {
                 return false;
-            }
-
+            }            
+            
             $grade_raw = new grade_grades_raw();
+            
             $grade_raw->userid = $userid;
             $grade_raw->gradevalue = $aggregated_value;
             $grade_raw->grademin = $this->grade_item->grademin;

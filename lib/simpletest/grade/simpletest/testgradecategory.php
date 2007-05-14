@@ -175,6 +175,14 @@ class grade_category_test extends gradelib_test {
 
         $this->assertEqual(3, count($raw_grades));
         $this->assertEqual(3, count($final_grades));
+        
+        foreach ($raw_grades as $grade) {
+            $this->assertWithinMargin($grade->gradevalue, $grade->grademin, $grade->grademax);
+        }
+        
+        foreach ($final_grades as $grade) {
+            $this->assertWithinMargin($grade->gradevalue, 0, 100);
+        }
     }
     
     function test_grade_category_aggregate_grades() {
@@ -202,12 +210,12 @@ class grade_category_test extends gradelib_test {
         $raw_grade = new grade_grades_raw();
         $raw_grade->itemid = $item->id;
         $raw_grade->userid = $userid;
-        $raw_grade->grademin = $item->grademin;
-        $raw_grade->grademax = $item->grademax;
+        $raw_grade->grademin = 0;
+        $raw_grade->grademax = 1;
         $valuetype = "grade$item->gradetype";
         $raw_grade->gradevalue = rand(0, 1000) / 1000;
         $raw_grade->insert();
-        return $raw_grade;
+        return $raw_grade->gradevalue;
     }
 } 
 ?>

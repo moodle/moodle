@@ -489,6 +489,9 @@ class grade_item extends grade_object {
                     $raw_grade->update($raw_grade->gradevalue, $howmodified, $note);
                 } else {
                     $raw_grade->itemid = $this->id;
+                    if ($raw_grade->gradevalue > $raw_grade->grademax) {
+                        die("raw GRADE EXCEEDED grademax FIRST");
+                    }
                     $raw_grade->insert();
                 }
 
@@ -536,6 +539,9 @@ class grade_item extends grade_object {
             $final_grade->gradevalue = $this->adjust_grade($raw_grade);
             $final_grade->itemid = $this->id;
             $final_grade->userid = $raw_grade->userid;
+            if ($final_grade->gradevalue > $this->grademax) {
+                die("FINAL GRADE EXCEEDED grademax FIRST");
+            }
             $success = $success & $final_grade->insert();
             $this->grade_grades_final[$final_grade->userid] = $final_grade;
         }
