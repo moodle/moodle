@@ -237,4 +237,48 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
     }
     return $standardised_value; 
 }
+
+
+/*
+ * Handles all grade_added and grade_updated events
+ *
+ * INCOMPLETE
+ *
+ * @param object $eventdata contains all the data for the event
+ * @return boolean success
+ *
+ */
+function grade_handler($eventdata) {
+
+/// First let's make sure a grade_item exists for this grade
+    $gradeitem = new grade_item($eventdata);
+    if (empty($gradeitem->id)) {                      // Doesn't exist yet
+        if (!$gradeitem->id = $gradeitem->insert()) { // Try to create a new item...
+            debugging('Could not create a grade_item!');
+            return false;
+        }
+    }
+
+    $eventdata->itemid = $gradeitem->id;
+
+
+/// Grade_item exists, now we can insert the new raw grade
+
+    $rawgrade = new grade_grade_raw($eventdata); 
+
+    if ($rawgrade->id) {
+        $rawgrade->update($eventdata->gradevalue, 'event');
+    } else {
+        $rawgrade->insert();
+    }
+    
+    // Check how it went
+
+/// Are there other checks to do?
+
+    return true;
+
+}
+
+
 ?>
