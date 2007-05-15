@@ -45,8 +45,8 @@
 
     echo '<div class="noticebox">';
     echo '<object id="policyframe" data="'.$CFG->sitepolicy.'" type="'.$mimetype.'">';
-    echo link_to_popup_window ($CFG->sitepolicy, 'agreement', $strpolicyagreementclick,
-                               500, 500, 'Popup window', 'none', true);
+    // we can not use our popups here, because the url may be arbitrary, see MDL-9823
+    echo '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
     echo '</object></div>';
 
   // see MDL-9798
