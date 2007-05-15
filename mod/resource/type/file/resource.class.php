@@ -543,7 +543,7 @@ function display() {
         } elseif ($resourcetype == 'pdf') {
             echo '<div class="resourcepdf">';
             echo '<object data="' . $fullurl . '" type="application/pdf">';
-            echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . $resource->summary . '</a>';
+            echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . format_string($resource->name) . '</a>';
             echo '</object>';
             echo '</div>';
         }
