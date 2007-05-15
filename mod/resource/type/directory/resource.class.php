@@ -6,6 +6,23 @@ function resource_directory($cmid=0) {
     parent::resource_base($cmid);
 }
 
+function add_instance($resource) {
+    $this->_postprocess($resource);
+    return parent::add_instance($resource);
+}
+
+function update_instance($resource) {
+    $this->_postprocess($resource);
+    return parent::update_instance($resource);
+}
+
+function _postprocess(&$resource) {
+    if($resource->reference=='0')
+        $resource->reference = '';
+
+    $resource->popup = '';
+    $resource->alltext = '';
+}
 
 function display() {
     global $CFG;
