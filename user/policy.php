@@ -38,6 +38,11 @@
     print_heading($strpolicyagreement);
 
     $mimetype = mimeinfo('type', $CFG->sitepolicy);
+    if ($mimetype == 'document/unknown') {
+        //fallback for missing index.php, index.html
+        $mimetype = 'text/html';
+    }
+
     echo '<div class="noticebox">';
     echo '<object id="policyframe" data="'.$CFG->sitepolicy.'" type="'.$mimetype.'">';
     echo link_to_popup_window ($CFG->sitepolicy, 'agreement', $strpolicyagreementclick,
