@@ -226,7 +226,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($feedbacktext) and is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
-                   $question->feedback[$currentchoice] .= addslashes(trim($feedbacktext));
+                   $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
                     unset($feedbacktext);
                 }
                  else {
@@ -280,17 +280,21 @@ class qformat_webct extends qformat_default {
                     else {
                         // Create empty feedback array                      
                         foreach ($question->answer as $key => $dataanswer) {
-                             $question->feedback[$key] = ''.$question->feedback[$key];
+                            if(!isset( $question->feedback[$key])){
+                                $question->feedback[$key] = '';
+                            }
                         }
                         // this tempgeneralfeedback allows the code to work with versions from 1.6 to 1.9
-                        // when question->generalfeedback is undefined, the webct feedback is added to each answer
+                        // when question->generalfeedback is undefined, the webct feedback is added to each answer feedback
                         if (isset($question->tempgeneralfeedback)){
                             if (isset($question->generalfeedback)) {
                                 $question->generalfeedback = $question->tempgeneralfeedback;
                             } else {  
                                 foreach ($question->answer as $key => $dataanswer) {
+                                    if ($question->tempgeneralfeedback !=''){
                                     $question->feedback[$key] = $question->tempgeneralfeedback.'<br/>'.$question->feedback[$key];
                                 }
+                            }
                             }
                             unset($question->tempgeneralfeedback);   
                         }   
@@ -341,6 +345,18 @@ class qformat_webct extends qformat_default {
                                     $dataset->itemcount=count($dataset->datasetitem);
                                 }
                                 $question->import_process=TRUE ;
+                                unset($question->answer); //not used in calculated question
+                                break;
+                            case MATCH:
+                                if (count($question->answer) < 3){
+                                    // add a dummy missing question
+                                    $question->name = 'Dummy question added '.$question->name ;
+                                    $question->answer[] = 'dummy';
+                                    $question->subanswers[] = 'dummy';
+                                    $question->subquestions[] = 'dummy';                                    
+                                    $question->fraction[] = '0.0';
+                                    $question->feedback[] = '';
+                                 }   
                                 break;
 
                             default:
