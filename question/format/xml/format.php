@@ -5,7 +5,10 @@
 //
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
-
+/**
+ * @package questionbank
+ * @subpackage importexport
+ */
 require_once( "$CFG->libdir/xmlize.php" );
 
 class qformat_xml extends qformat_default {
@@ -76,6 +79,7 @@ class qformat_xml extends qformat_default {
             return '';
         }
         $data = $text[0]['#'];
+        $data = html_entity_decode( $data );
         return addslashes(trim( $data ));
     }
 
@@ -95,38 +99,60 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * return the value of a node, given a path to the node
+     * if it doesn't exist return the default value
+     * @param array xml data to read
+     * @param array path path to node expressed as array 
+     * @param mixed default 
+     * @param bool istext process as text
+     * @param string error if set value must exist, return false and issue message if not
+     * @return mixed value
+     */
+    function getpath( $xml, $path, $default, $istext=false, $error='' ) {
+        foreach ($path as $index) {
+            if (empty($xml[$index])) {
+                if (!empty($error)) {
+                    $this->error( $error );
+                    return false;
+                } else {
+                    return $default;
+                }
+            }
+            else $xml = $xml[$index];
+        }
+        if ($istext) {
+            $xml = addslashes( trim( $xml ) );
+        }
+
+        return $xml;
+    }
+
+
+    /**
      * import parts of question common to all types
      * @param array question question array from xml tree
      * @return object question object
      */
     function import_headers( $question ) {
+        // get some error strings
+        $error_noname = get_string( 'xmlimportnoname','quiz' );
+        $error_noquestion = get_string( 'xmlimportnoquestion','quiz' );
+
         // this routine initialises the question object
         $qo = $this->defaultquestion();
-        $name = $this->import_text( $question['#']['name'][0]['#']['text'] );
-        $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
-        $qformat = $question['#']['questiontext'][0]['@']['format'];
-        $image = $question['#']['image'][0]['#'];
-        if (!empty($question['#']['image_base64'][0]['#'])) {
-            $image_base64 = stripslashes( trim( $question['#']['image_base64'][0]['#'] ) );
-            $image = $this->importimagefile( $image, $image_base64 );
-        }
-        if (array_key_exists('generalfeedback', $question['#'])) {
-            $generalfeedback = $this->import_text( $question['#']['generalfeedback'][0]['#']['text'] );
-        } else {
-            $generalfeedback = '';
-        }
-        if (!empty($question['#']['defaultgrade'][0]['#'])) {
-            $qo->defaultgrade = $question['#']['defaultgrade'][0]['#'];
-        }
         
-        $penalty = $question['#']['penalty'][0]['#'];
-
-        $qo->name = $name;
-        $qo->questiontext = $qtext;
-        $qo->questiontextformat = $this->trans_format( $qformat );
-        $qo->image = ((!empty($image)) ?  $image : '');
-        $qo->generalfeedback = $generalfeedback;
-        $qo->penalty = $penalty;
+        // question name
+        $qo->name = $this->getpath( $question, array('#','name',0,'#','text',0,'#'), '', true, $error_noname );
+        $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true, $error_noquestion );
+        $qo->questiontextformat = $this->getpath( $question, array('#','questiontext',0,'@','format'), '' );
+        $image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
+        $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
+        if (!empty($image_base64)) {
+            $qo->image = $this->importimagefile( $image, stripslashes(image_base64) );
+        }
+        $qo->generalfeedback = $this->getpath( $question, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true );
+        $qo->defaultgrade = $this->getpath( $question, array('#','defaultgrade',0,'#'), $qo->defaultgrade );
+        $qo->penalty = $this->getpath( $question, array('#','penalty',0,'#'), $qo->penalty );
 
         return $qo;
     }
@@ -235,9 +261,11 @@ class qformat_xml extends qformat_default {
             } 
             if ($answertext == 'true') {
                 $qo->answer = ($answer['@']['fraction'] == 100);
+                $qo->correctanswer = $qo->answer;
                 $qo->feedbacktrue = $feedback;
             } else {
                 $qo->answer = ($answer['@']['fraction'] != 100);
+                $qo->correctanswer = $qo->answer;
                 $qo->feedbackfalse = $feedback;
             }
             $first = false;
@@ -266,7 +294,7 @@ class qformat_xml extends qformat_default {
         $qo->qtype = SHORTANSWER;
 
         // get usecase
-        $qo->usecase = $question['#']['usecase'][0]['#'];
+        $qo->usecase = $this->getpath($question, array('#','usecase',0,'#'), $qo->usecase );
 
         // run through the answers
         $answers = $question['#']['answer'];  
@@ -348,7 +376,7 @@ class qformat_xml extends qformat_default {
                 $answertext = $this->import_text( $answer['#']['text'] );
             }
             else {
-                $answertext = trim($answer['#'][0]);
+            $answertext = trim($answer['#'][0]);
             }
             if ($answertext == '') {
                 $qo->answer[] = '*';
@@ -441,6 +469,94 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
+    function import_calculated( $question ) {
+    // import numerical question
+
+        // get common parts
+        $qo = $this->import_headers( $question );
+
+        // header parts particular to numerical
+        $qo->qtype = CALCULATED ;//CALCULATED;
+
+        // get answers array
+       // echo "<pre> question";print_r($question);echo "</pre>";
+        $answers = $question['#']['answer'];
+        $qo->answers = array();
+        $qo->feedback = array();
+        $qo->fraction = array();
+        $qo->tolerance = array();
+        $qo->tolerancetype = array();
+        $qo->correctanswerformat = array();
+        $qo->correctanswerlength = array();
+        $qo->feedback = array();
+        foreach ($answers as $answer) {
+            // answer outside of <text> is deprecated
+            if (!empty( $answer['#']['text'] )) {
+                $answertext = $this->import_text( $answer['#']['text'] );
+            }
+            else {
+                $answertext = trim($answer['#'][0]);
+            }
+            if ($answertext == '') {
+                $qo->answers[] = '*';
+            } else {
+                $qo->answers[] = $answertext;
+            }
+            $qo->feedback[] = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
+            $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
+            // fraction as a tag is deprecated
+            if (!empty($answer['#']['fraction'][0]['#'])) {
+                $qo->fraction[] = $answer['#']['fraction'][0]['#'];
+            }
+            else {
+                $qo->fraction[] = $answer['@']['fraction'] / 100;
+            }
+            $qo->tolerancetype[] = $answer['#']['tolerancetype'][0]['#'];
+            $qo->correctanswerformat[] = $answer['#']['correctanswerformat'][0]['#'];
+            $qo->correctanswerlength[] = $answer['#']['correctanswerlength'][0]['#'];
+        }
+        // get units array
+        $qo->unit = array();
+        if (isset($question['#']['units'][0]['#']['unit'])) {
+            $units = $question['#']['units'][0]['#']['unit'];
+            $qo->multiplier = array();
+            foreach ($units as $unit) {
+                $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
+                $qo->unit[] = $unit['#']['unit_name'][0]['#'];
+            }
+        }
+                $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
+                $qo->dataset = array();
+                $qo->datasetindex= 0 ;
+        foreach ($datasets as $dataset) {
+            $qo->datasetindex++;
+            $qo->dataset[$qo->datasetindex] = new stdClass();
+            $qo->dataset[$qo->datasetindex]->status = $this->import_text( $dataset['#']['status'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->name = $this->import_text( $dataset['#']['name'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->type =  $dataset['#']['type'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->distribution = $this->import_text( $dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->max = $this->import_text( $dataset['#']['maximum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->min = $this->import_text( $dataset['#']['minimum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->length = $this->import_text( $dataset['#']['decimals'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->distribution = $this->import_text( $dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->itemcount = $dataset['#']['itemcount'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->datasetitem = array();
+            $qo->dataset[$qo->datasetindex]->itemindex = 0;
+            $qo->dataset[$qo->datasetindex]->number_of_items=$dataset['#']['number_of_items'][0]['#'];
+            $datasetitems = $dataset['#']['dataset_items'][0]['#']['dataset_item'];
+            foreach ($datasetitems as $datasetitem) {
+                $qo->dataset[$qo->datasetindex]->itemindex++;
+              $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex] = new stdClass();
+              $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex]->itemnumber =  $datasetitem['#']['number'][0]['#']; //[0]['#']['number'][0]['#'] ; // [0]['numberitems'] ;//['#']['number'][0]['#'];// $datasetitems['#']['number'][0]['#'];
+              $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex]->value = $datasetitem['#']['value'][0]['#'] ;//$datasetitem['#']['value'][0]['#'];
+          } 
+        }
+                
+                // echo "<pre>loaded qo";print_r($qo);echo "</pre>";
+
+        return $qo;
+    }
+
     /**
      * this is not a real question type. It's a dummy type used
      * to specify the import category
@@ -508,10 +624,22 @@ class qformat_xml extends qformat_default {
             elseif ($question_type=='essay') {
                 $qo = $this->import_essay( $question );
             }
+            elseif ($question_type=='calculated') {
+                $qo = $this->import_calculated( $question );
+            }
             elseif ($question_type=='category') {
                 $qo = $this->import_category( $question );
             }
-            else {
+            elseif ($question_type=='unknown') {
+               $qo = $this->import_headers( $question );
+               if(isset($qo->questiontext)) {
+                     echo "<p>question :$qo->questiontext</p>";
+               }      
+               $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
+                echo "<p>$notsupported</p>";                
+                $qo = null;
+            }
+           else {
                 $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
                 echo "<p>$notsupported</p>";
                 $qo = null;
@@ -519,7 +647,6 @@ class qformat_xml extends qformat_default {
 
             // stick the result in the $questions array
             if ($qo) {
-                $qo->generalfeedback = '';
                 $questions[] = $qo;
             }
         }
@@ -570,6 +697,9 @@ class qformat_xml extends qformat_default {
             break;
         case ESSAY:
             $name = 'essay';
+            break;
+        case CALCULATED:
+            $name = 'calculated';
             break;
         default:
             $name = 'unknown';
@@ -651,7 +781,7 @@ class qformat_xml extends qformat_default {
     function presave_process( $content ) {
     // override method to allow us to add xml headers and footers
 
-        $content = "<?xml version=\"1.0\"?>\n" .
+        $content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
                        "<quiz>\n" .
                        $content . "\n" .
                        "</quiz>";
@@ -687,11 +817,18 @@ class qformat_xml extends qformat_default {
      * @return string xml segment
      */
     function writequestion( $question ) {
+    global $CFG,$QTYPES;
         // initial string;
         $expout = "";
 
         // add comment
         $expout .= "\n\n<!-- question: $question->id  -->\n";
+
+        // check question type - make sure valid
+        $question_type = $this->get_qtype( $question->qtype );
+        if ($question_type=='unknown') {
+            $expout .= "<!-- question: $question->name is not a supported type -->\n\n";
+        }
 
         // add opening tag
         // generates specific header for Cloze and category type question
@@ -705,7 +842,6 @@ class qformat_xml extends qformat_default {
         }    
         elseif ($question->qtype != MULTIANSWER) {
             // for all question types except Close
-            $question_type = $this->get_qtype( $question->qtype );
             $name_text = $this->writetext( $question->name );
             $qtformat = $this->get_format($question->questiontextformat);
             $question_text = $this->writetext( $question->questiontext );
@@ -726,7 +862,6 @@ class qformat_xml extends qformat_default {
         }
         else {
             // for Cloze type only
-            $question_type = $this->get_qtype( $question->qtype );
             $name_text = $this->writetext( $question->name );
             $question_text = $this->writetext( $question->questiontext );
             $expout .= "  <question type=\"$question_type\">\n";
@@ -861,8 +996,70 @@ class qformat_xml extends qformat_default {
             }
             
             break;
+        case CALCULATED:
+            foreach ($question->options->answers as $answer) {
+                $tolerance = $answer->tolerance;
+                $tolerancetype = $answer->tolerancetype;
+                $correctanswerlength= $answer->correctanswerlength ;
+                $correctanswerformat= $answer->correctanswerformat;
+                $percent = 100 * $answer->fraction;
+                $expout .= "<answer fraction=\"$percent\">\n";
+                // "<text/>" tags are an added feature, old files won't have them
+                $expout .= "    <text>{$answer->answer}</text>\n";
+                $expout .= "    <tolerance>$tolerance</tolerance>\n";
+                $expout .= "    <tolerancetype>$tolerancetype</tolerancetype>\n";
+                $expout .= "    <correctanswerformat>$correctanswerformat</correctanswerformat>\n";
+                $expout .= "    <correctanswerlength>$correctanswerformat</correctanswerlength>\n";
+                $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+                $expout .= "</answer>\n";
+            }
+            $units = $question->options->units;
+            if (count($units)) {
+                $expout .= "<units>\n";
+                foreach ($units as $unit) {
+                    $expout .= "  <unit>\n";
+                    $expout .= "    <multiplier>{$unit->multiplier}</multiplier>\n";
+                    $expout .= "    <unit_name>{$unit->unit}</unit_name>\n";
+                    $expout .= "  </unit>\n";
+                }
+                $expout .= "</units>\n";
+             } 
+        //echo "<pre> question calc";print_r($question);echo "</pre>"; 
+        //First, we a new function to get all the   data itmes in the database
+         //   $question_datasetdefs =$QTYPES['calculated']->get_datasets_for_export ($question);
+        //    echo "<pre> question defs";print_r($question_datasetdefs);echo "</pre>";      
+        //If there are question_datasets
+            if( isset($question->options->datasets)&&count($question->options->datasets)){// there should be
+                $expout .= "<dataset_definitions>\n";
+                foreach ($question->options->datasets as $def) {
+                    $expout .= "<dataset_definition>\n";
+                    $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
+                    $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
+                    $expout .= "    <type>calculated</type>\n";
+                    $expout .= "    <distribution>".$this->writetext($def->distribution)."</distribution>\n";
+                    $expout .= "    <minimum>".$this->writetext($def->minimum)."</minimum>\n";
+                    $expout .= "    <maximum>".$this->writetext($def->maximum)."</maximum>\n";
+                    $expout .= "    <decimals>".$this->writetext($def->decimals)."</decimals>\n";               
+                    $expout .= "    <itemcount>$def->itemcount</itemcount>\n";
+                    if ($def->itemcount > 0 ) {
+                        $expout .= "    <dataset_items>\n";
+                        foreach ($def->items as $item ){
+                              $expout .= "        <dataset_item>\n";
+                              $expout .= "           <number>".$item->itemnumber."</number>\n";
+                              $expout .= "           <value>".$item->value."</value>\n";
+                              $expout .= "        </dataset_item>\n";
+                        }        
+                        $expout .= "    </dataset_items>\n";
+                        $expout .= "    <number_of_items>".$def-> number_of_items."</number_of_items>\n";
+                     }
+                    $expout .= "</dataset_definition>\n";
+                } 
+                $expout .= "</dataset_definitions>\n";                                                                                
+            }                      
+            break;
         default:
-            $expout .= "<!-- Question type is unknown or not supported (Type=$question->qtype) -->\n";
+            // should not get here
+            error( 'Unsupported question type detected in strange circumstances!' );
         }
 
         // close the question tag
