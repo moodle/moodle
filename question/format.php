@@ -308,6 +308,11 @@ class qformat_default {
         $question->incorrectfeedback = '';
         $question->penalty = 0.1;
 
+        // this option in case the questiontypes class wants
+        // to know where the data came from
+        $question->export_process = true;
+        $question->import_process = true;
+
         return $question;
     }
 
