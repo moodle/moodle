@@ -478,9 +478,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $numerical = new stdClass;
             $numerical->question = $new_question_id;
             $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
-            if ($numerical->answer = '') {
-                $numerical->answer = '*';
-            }
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
             //We have to recode the answer field
