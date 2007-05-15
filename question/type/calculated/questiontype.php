@@ -19,6 +19,19 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function get_question_options(&$question) {
         // First get the datasets and default options
+         global $CFG;
+        if (!$question->options->answers = get_records_sql(
+                                "SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat " .
+                                "FROM {$CFG->prefix}question_answers a, " .
+                                "     {$CFG->prefix}question_calculated c " .
+                                "WHERE a.question = $question->id " .
+                                "AND   a.id = c.answer ".
+                                "ORDER BY a.id ASC")) {
+            notify('Error: Missing question answer!');
+            return false;
+        }
+
+/*
         if(false === parent::get_question_options($question)) {
             return false;
         }
@@ -43,100 +56,218 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $answer->tolerancetype       = $options->tolerancetype;
             $answer->correctanswerlength = $options->correctanswerlength;
             $answer->correctanswerformat = $options->correctanswerformat;
-        }
+        }*/
 
         $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->get_numerical_units($question);
 
+        if( isset($question->export_process)&&$question->export_process){
+            $question->options->datasets = $this->get_datasets_for_export($question);
+        } 
+  
         return true;
     }
 
+    function get_datasets_for_export(&$question){
+        $datasetdefs = array();
+        if (!empty($question->id)) {
+            global $CFG;
+            $sql = "SELECT i.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i
+                    WHERE d.question = '$question->id'
+                    AND   d.datasetdefinition = i.id
+                   ";
+            if ($records = get_records_sql($sql)) {                
+                foreach ($records as $r) {
+                    $def = $r ;
+                    if ($def->category=='0'){
+                        $def->status='private';
+                    } else {   
+                        $def->status='shared';
+                    }   
+                    $def->type ='calculated' ;
+                    list($distribution, $min, $max,$dec) = explode(':', $def->options, 4);
+                    $def->distribution=$distribution;
+                    $def->minimum=$min;
+                    $def->maximum=$max;
+                    $def->decimals=$dec ;                                         
+                     if ($def->itemcount > 0 ) {
+                        // get the datasetitems
+                        $def->items = array();
+                        $sql1= (" SELECT itemnumber, definition, id, value
+                        FROM {$CFG->prefix}question_dataset_items 
+                        WHERE definition = '$def->id' order by itemnumber ASC ");
+                        if ($items = get_records_sql($sql1)){
+                            $n = 0;
+                            foreach( $items as $ii){
+                                $n++;
+                                $def->items[$n] = new stdClass;
+                                $def->items[$n]->itemnumber=$ii->itemnumber;
+                                $def->items[$n]->value=$ii->value;
+                           }
+                           $def->number_of_items=$n ;
+                        }
+                    }
+                    $datasetdefs["1-$r->category-$r->name"] = $def;                                                                                               
+                }
+            }
+        }
+        return $datasetdefs ;
+    } 
+      
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
         global $CFG;
-        if (!$oldanswers = get_records_sql(
-            "SELECT a.*, c.tolerance, c.tolerancetype,
-                    c.correctanswerlength, c.id AS calcid
-               FROM {$CFG->prefix}question_answers a,
-                    {$CFG->prefix}question_calculated c
-              WHERE c.question = $question->id AND a.id = c.answer")) {
+        // Get old versions of the objects
+        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();
         }
 
-        // Update with new answers
-        $answerrec->question = $calcrec->question = $question->id;
-        $n = count($question->answers);
-        for ($i = 0; $i < $n; $i++) {
-            $answerrec->answer   = $question->answers[$i];
-            $answerrec->fraction = isset($question->fraction[$i])
-                                 ? $question->fraction[$i] : 1.0;
-            $answerrec->feedback = isset($question->feedback[$i])
-                                 ? $question->feedback[$i] : '';
-            $calcrec->tolerance           = isset($question->tolerance[$i])
-                                          ? $question->tolerance[$i]
-                                          : $question->tolerance[0];
-            $calcrec->tolerancetype       = isset($question->tolerancetype[$i])
-                                          ? $question->tolerancetype[$i]
-                                          : $question->tolerancetype[0];
-            $calcrec->correctanswerlength = isset($question->correctanswerlength[$i])
-                                          ? $question->correctanswerlength[$i]
-                                          : $question->correctanswerlength[0];
-            $calcrec->correctanswerformat = isset($question->correctanswerformat[$i])
-                                          ? $question->correctanswerformat[$i]
-                                          : $question->correctanswerformat[0];
-            if ($oldanswer = array_shift($oldanswers)) {
-                // Reuse old records:
-                $calcrec->answer = $answerrec->id = $oldanswer->id;
-                $calcrec->id = $oldanswer->calcid;
-                if (!update_record('question_answers', $answerrec)) {
-                    error("Unable to update answer for calculated question #{$question->id}!");
-                } else {
-                    // notify("Answer updated successfully for calculated question $question->name");
+        if (!$oldoptions = get_records('question_calculated', 'question', $question->id, 'answer ASC')) {
+            $oldoptions = array();
                 }
-                if (!update_record('question_calculated', $calcrec)) {
-                    error("Unable to update options for calculated question #{$question->id}!");
-                } else {
-                    // notify("Options updated successfully for calculated question $question->name");
-                }
-            } else {
-                unset($answerrec->id);
-                unset($calcrec->id);
-                if (!($calcrec->answer = insert_record('question_answers',
-                 $answerrec))) {
-                    error("Unable to insert answer for calculated question $question->id");
-                } else {
-                    // notify("Answer inserted successfully for calculated question $question->id");
-                }
-                if (!insert_record('question_calculated', $calcrec)) {
-                    error("Unable to insert options calculared question $question->id");
-                } else {
-                    // notify("Options inserted successfully for calculated question $question->id");
-                }
-            }
-        }
-
-        // Delete excessive records:
-        foreach ($oldanswers as $oldanswer) {
-            if (!delete_records('question_answers', 'id', $oldanswer->id)) {
-                error("Unable to delete old answers for calculated question $question->id");
-            } else {
-                // notify("Old answers deleted successfully for calculated question $question->id");
-            }
-            if (!delete_records('question_calculated', 'id', $oldanswer->calcid)) {
-                error("Unable to delete old options for calculated question $question->id");
-            } else {
-                // notify("Old options deleted successfully for calculated question $question->id");
-            }
-        }
-
+                // Save the units.
         // Save units
         $virtualqtype = $this->get_virtual_qtype();
-        $virtualqtype->save_numerical_units($question);
+        $result = $virtualqtype->save_numerical_units($question);
+        if (isset($result->error)) {
+            return $result;
+        } else {
+            $units = &$result->units;
+        }
+        // Insert all the new answers
+        foreach ($question->answers as $key => $dataanswer) {
+            if (  trim($dataanswer) != '' ) { 
+                $answer = new stdClass;
+                $answer->question = $question->id;
+                $answer->answer = trim($dataanswer);
+                $answer->fraction = $question->fraction[$key];
+                $answer->feedback = trim($question->feedback[$key]);
+                if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                    $answer->id = $oldanswer->id;
+                    if (! update_record("question_answers", $answer)) {
+                        $result->error = "Could not update question answer! (id=$answer->id)";
+                        return $result;
+                    }
+                } else { // This is a completely new answer
+                    if (! $answer->id = insert_record("question_answers", $answer)) {
+                        $result->error = "Could not insert question answer!";
+                        return $result;
+            }
+        }
 
+                // Set up the options object
+                if (!$options = array_shift($oldoptions)) {
+                    $options = new stdClass;
+            }
+                $options->question  = $question->id;
+                $options->answer    = $answer->id;
+                $options->tolerance = trim($question->tolerance[$key]);
+                $options->tolerancetype  = trim($question->tolerancetype[$key]);
+                $options->correctanswerlength  = trim($question->correctanswerlength[$key]);
+                $options->correctanswerformat  = trim($question->correctanswerformat[$key]);
+                
+                // Save options
+                if (isset($options->id)) { // reusing existing record
+                    if (! update_record('question_calculated', $options)) {
+                        $result->error = "Could not update question calculated options! (id=$options->id)";
+                        return $result;
+                    }
+                } else { // new options
+                    if (! insert_record('question_calculated', $options)) {
+                        $result->error = "Could not insert question  calculated options!";
+                        return $result;
+                    }
+                }
+            }
+        }
+        // delete old answer records
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('question_answers', 'id', $oa->id);
+            }
+            }
+        // delete old answer records
+        if (!empty($oldoptions)) {
+            foreach($oldoptions as $oo) {
+                delete_records('question_calculated', 'id', $oo->id);
+            }
+        }
+
+
+        if( isset($question->import_process)&&$question->import_process){
+            $this->import_datasets($question);
+         }   
+        // Report any problems.
+        if (!empty($result->notice)) {
+            return $result;
+        }
         return true;
     }
 
+    function import_datasets($question){
+        $n = count($question->dataset);
+        foreach ($question->dataset as $dataset) {
+            // name, type, option, 
+            $datasetdef = new stdClass();
+            $datasetdef->name = $dataset->name;
+            $datasetdef->type = 1 ;
+            $datasetdef->options =  $dataset->distribution.':'.$dataset->min.':'.$dataset->max.':'.$dataset->length;
+            $datasetdef->itemcount=$dataset->itemcount;                       
+            if ( $dataset->status =='private'){
+                $datasetdef->category = 0;
+                $todo='create' ;
+            }else if ($dataset->status =='shared' ){
+                if ($sharedatasetdefs = get_records_select(
+                        'question_dataset_definitions',
+                        "type = '1'
+                        AND name = '$dataset->name'
+                        AND category = '$question->category'
+                        ORDER BY id DESC;"
+                       )) { // so there is at least one
+                    $sharedatasetdef = array_shift($sharedatasetdefs);
+                    if ( $sharedatasetdef->options ==  $datasetdef->options ){// identical so use it
+                        $todo='useit' ;
+                        $datasetdef =$sharedatasetdef ;
+                    } else { // different so create a private one
+                        $datasetdef->category = 0;
+                        $todo='create' ;
+                    }    
+                }else { // no so create one
+                    $datasetdef->category =$question->category ;
+                    $todo='create' ;
+               }     
+            }   
+            if (  $todo=='create'){
+                if (!$datasetdef->id = insert_record(
+                    'question_dataset_definitions', $datasetdef)) {
+                    error("Unable to create dataset $defid");
+                } 
+           }  
+           // Create relation to the dataset:
+           $questiondataset = new stdClass;
+           $questiondataset->question = $question->id;
+           $questiondataset->datasetdefinition = $datasetdef->id;
+            if (!insert_record('question_datasets',
+                               $questiondataset)) {
+                error("Unable to create relation to dataset $dataset->name $todo");
+            }
+            if ($todo=='create'){ // add the items
+                foreach ($dataset->datasetitem as $dataitem ){
+                    $datasetitem = new stdClass;
+                    $datasetitem->definition=$datasetdef->id ;
+                    $datasetitem->itemnumber = $dataitem->itemnumber ;
+                    $datasetitem->value = $dataitem->value ;
+                    if (!insert_record('question_dataset_items', $datasetitem)) {
+                        error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                    }
+                }     
+            }                                
+        }
+    }
+         
     function create_runtime_question($question, $form) {
         $question = parent::create_runtime_question($question, $form);
         $question->options->answers = array();
@@ -216,48 +347,39 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
-     $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($question);
 
         // We modify the question to look like a numerical question
-        $numericalquestion = clone($question);
-        $numericalquestion->options = clone($question->options);
-        foreach ($question->options->answers as $key => $answer) {
-            $numericalquestion->options->answers[$key] = clone($answer);
-        }
+        $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
-            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
+          $answer = fullclone($numericalquestion->options->answers[$key]);
             $correctanswer = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
                  $answer->correctanswerformat, $unit->unit);
-            $answer->answer = $correctanswer->answer;
+           $numericalquestion->options->answers[$key]->answer = $correctanswer->answer;
         }
         $numericalquestion->questiontext = parent::substitute_variables(
          $numericalquestion->questiontext, $state->options->dataset);
-        $virtualqtype->print_question_formulation_and_controls($numericalquestion,
-         $state, $cmoptions, $options);
+        $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
         // Forward the grading to the virtual qtype
 
         // We modify the question to look like a numerical question
-        $numericalquestion = clone($question);
-        $numericalquestion->options = clone($question->options);
-        foreach ($question->options->answers as $key => $answer) {
-            $numericalquestion->options->answers[$key] = clone($answer);
-        }
+        $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
-            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
-            $answer->answer = $this->substitute_variables($answer->answer,
+            $answer = $numericalquestion->options->answers[$key]->answer; // for PHP 4.x
+          $numericalquestion->options->answers[$key]->answer = $this->substitute_variables($answer,
              $state->options->dataset);
         }
-        return parent::grade_responses($numericalquestion, $state, $cmoptions);
+         $virtualqtype = $this->get_virtual_qtype();
+        return $virtualqtype->grade_responses($numericalquestion, $state, $cmoptions) ;
     }
 
     function response_summary($question, $state, $length=80) {
@@ -279,7 +401,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
-        return parent::check_response($numericalquestion, $state);
+        $virtualqtype = $this->get_virtual_qtype();
+        return $virtualqtype->check_response($numericalquestion, $state) ;
     }
 
     // ULPGC ecastro
@@ -301,7 +424,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
              $state->options->dataset);
             // apply_unit
         }
-        $numericalquestion->questiontext = parent::substitute_variables(
+        $numericalquestion->questiontext = $this->substitute_variables(
                                   $numericalquestion->questiontext, $state->options->dataset);
         $responses = $virtualqtype->get_all_responses($numericalquestion, $state);
         $response = reset($responses->responses);
@@ -360,7 +483,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         if (empty($form->definition) || empty($form->calcmin)
                 || empty($form->calcmax) || empty($form->calclength)
                 || empty($form->calcdistribution)) {
-            // I gues not:
+            // I guess not
 
         } else {
             // Looks like we just could have some new information here
