@@ -31,12 +31,20 @@ class grade_export_txt extends grade_export {
     /**
      * To be implemented by child classes
      */
-    function print_grades($feedback = false) { 
-        
-/// Print header to force download
+    function print_grades($feedback = false) {        
+
         global $CFG;
+
+        /// Whether this plugin is entitled to update export time
+        if ($expplugins = explode(",", $CFG->gradeexport)) {
+            if (in_array($this->format, $expplugins)) {
+                $export = true;
+            }
+        }
+        
+        /// Print header to force download        
         header("Content-Type: application/download\n"); 
-        $downloadfilename = clean_filename("$this->course->shortname $this->strgrades");
+        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 /// Print names of all the fields
@@ -60,12 +68,14 @@ class grade_export_txt extends grade_export {
     
 /// Print all the lines of data.
         foreach ($this->grades as $studentid => $studentgrades) {
-            $student = $students[$studentid];
+          
+            $student = $this->students[$studentid];
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
             echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
-            foreach ($studentgrades as $grade) {
+
+            foreach ($studentgrades as $gradeitemid => $grade) {
                 $grade = strip_tags($grade);
                 echo "\t$grade";            
                 
@@ -75,22 +85,16 @@ class grade_export_txt extends grade_export {
                 
                 /// if export flag needs to be set
                 /// construct the grade_grades_final object and update timestamp if CFG flag is set
+
+                if ($export) {
+                    unset($params);
+                    $params->itemid = $gradeitemid;
+                    $params->userid = $studentid;
                 
-                if ($expplugins = explode(",", get_config($CFG->gradeexport))) {
-                    if (in_array($this->format, $expplugins)) {
-                        $params->idnumber = $this->idnumber;
-                        // get the grade item
-                        $gradeitem = new grade_item($params);
-                
-                        unset($params);
-                        $params->itemid = $gradeitem->id;
-                        $params->userid = $studentid;
-                
-                        $grade_grades_final = new grade_grades_final($params);
-                        $grade_grades_final->exported = time();
-                        // update the time stamp;
-                        $grade_grades_final->update();
-                    }
+                    $grade_grades_final = new grade_grades_final($params);
+                    $grade_grades_final->exported = time();
+                    // update the time stamp;
+                    $grade_grades_final->update();
                 }
             }
             echo "\t".$this->totals[$student->id];

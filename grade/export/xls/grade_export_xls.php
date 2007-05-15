@@ -35,10 +35,17 @@ class grade_export_xls extends grade_export {
         
         global $CFG; 
         
+        /// Whether this plugin is entitled to update export time
+        if ($expplugins = explode(",", $CFG->gradeexport)) {
+            if (in_array($this->format, $expplugins)) {
+                $export = true;
+            }
+        }
+        
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 
     /// Calculate file name
-        $downloadfilename = clean_filename("$this->course->shortname $this->strgrades.xls");
+        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xls");
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
     /// Sending HTTP headers
@@ -68,7 +75,7 @@ class grade_export_xls extends grade_export {
         if (!empty($this->grades)) {
             foreach ($this->grades as $studentid => $studentgrades) {
                 $i++;
-                $student = $students[$studentid];
+                $student = $this->students[$studentid];
                 if (empty($this->totals[$student->id])) {
                     $this->totals[$student->id] = '';
                 }
@@ -96,21 +103,15 @@ class grade_export_xls extends grade_export {
                     /// if export flag needs to be set
                     /// construct the grade_grades_final object and update timestamp if CFG flag is set
                 
-                    if ($expplugins = explode(",", get_config($CFG->gradeexport))) {
-                        if (in_array($this->format, $expplugins)) {
-                            $params->idnumber = $this->idnumber;
-                            // get the grade item
-                            $gradeitem = new grade_item($params);
+                    if ($export) {
+                        unset($params);
+                        $params->itemid = $gradeitemid;
+                        $params->userid = $studentid;
                 
-                            unset($params);
-                            $params->itemid = $gradeitem->id;
-                            $params->userid = $studentid;
-                
-                            $grade_grades_final = new grade_grades_final($params);
-                            $grade_grades_final->exported = time();
-                            // update the time stamp;
-                            $grade_grades_final->update();
-                        }
+                        $grade_grades_final = new grade_grades_final($params);
+                        $grade_grades_final->exported = time();
+                        // update the time stamp;
+                        $grade_grades_final->update();
                     }
                 }
                 $myxls->write_number($i,$j,$this->totals[$student->id]);

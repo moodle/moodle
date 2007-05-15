@@ -24,6 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 include_once('../../../config.php');
 include_once($CFG->dirroot.'/lib/gradelib.php');
+include_once($CFG->dirroot.'/grade/lib.php');
 /**
  * Prints all grade items for selection
  * @input int id - course id
@@ -46,6 +47,8 @@ function print_gradeitem_selections($id) {
                 echo $grade_item->itemname;
             } 
         }
+        echo '<input type="hidden" name="id" value="'.$id.'"/>';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'"/>';
         echo '<input type="submit" value="'.get_string('submit').'" />';
         echo '</div>';
         echo '</form>';
@@ -66,6 +69,7 @@ class grade_export {
     var $columns = array();     // Accumulate column names in this array.
     var $columnhtml = array();  // Accumulate column html in this array. 
     var $columnidnumbers = array(); // Collect all gradeitem id numbers
+    var $students = array();
     var $course; // course
     
     // common strings
@@ -110,13 +114,13 @@ class grade_export {
         }
 
         if ($currentgroup) {
-            $students = get_group_students($currentgroup, "u.lastname ASC");
+            $this->students = get_group_students($currentgroup, "u.lastname ASC");
         } else {
-            $students = grade_get_course_students($course->id);
+            $this->students = grade_get_course_students($course->id);
         }
 
-        if (!empty($students)) {
-            foreach ($students as $student) {
+        if (!empty($this->students)) {
+            foreach ($this->students as $student) {
                 $this->grades[$student->id] = array();    // Collect all grades in this array
                 $this->gradeshtml[$student->id] = array(); // Collect all grades html formatted in this array
                 $this->totals[$student->id] = array();    // Collect all totals in this array
@@ -133,14 +137,13 @@ class grade_export {
         } else {
             // else we get all items for this course
             $gradeitems = grade_get_items($this->id);
-        }
-        
+        }        
         
         if ($gradeitems) {
             
             foreach ($gradeitems as $gradeitem) {
 
-                $this->columns[] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->maxgrade";
+                $this->columns[] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
                 $this->columnidnumbers[] = $gradeitem->idnumber; // this might be needed for some export plugins  
             
                 if (!empty($gradeitem->maxgrade)) {
@@ -150,24 +153,24 @@ class grade_export {
                 } 
             
                 // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem -> load_final()) {             
+                if ($itemgrades = $gradeitem -> load_final()) {
                 
-                    if (!empty($students)) {                    
-                        foreach ($students as $student) {
+                    if (!empty($this->students)) {                    
+                        foreach ($this->students as $student) {
                       
                             // add support for comment here MDL-9634
                             $studentgrade = $itemgrades[$student->id];            
                             
                             if (!empty($studentgrade->gradevalue)) {
-                                $this->grades[$student->id][] = $currentstudentgrade = $studentgrade->gradevalue;
+                                $this->grades[$student->id][$itemgrades->id] = $currentstudentgrade = $studentgrade->gradevalue;
                             } else {
                                 $this->grades[$student->id][] = $currentstudentgrade = "";
-                                $this->gradeshtml[$student->id][] = "";
+                                $this->gradeshtml[$student->id][$itemgrades->id] = "";
                             }
                             if (!empty($maxgrade)) {
-                                $this->totals[$student->id] = (float)($totals[$student->id]) + (float)($currentstudentgrade);
+                                $this->totals[$student->id] = (float)($this->totals[$student->id]) + (float)($currentstudentgrade);
                             } else {
-                                $this->totals[$student->id] = (float)($totals[$student->id]) + 0;
+                                $this->totals[$student->id] = (float)($this->totals[$student->id]) + 0;
                             }
                             
                             // load comments here
@@ -176,9 +179,9 @@ class grade_export {
                             $comment = $studentgrade->grade_grades_text->feedback;
                             
                             if (!empty($comment)) {
-                                $this->comments[$student->id][] = $comment;
+                                $this->comments[$student->id][$itemgrades->id] = $comment;
                             } else {
-                                $this->comments[$student->id][] = '';  
+                                $this->comments[$student->id][$itemgrades->id] = '';  
                             }
                         }
                     }

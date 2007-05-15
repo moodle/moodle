@@ -33,19 +33,27 @@ class grade_export_xml extends grade_export {
      */
     function print_grades($feedback = false) { 
         
-        global $CFG; 
-        
+        global $CFG;
+
+        /// Whether this plugin is entitled to update export time
+        if ($expplugins = explode(",", $CFG->gradeexport)) {
+            if (in_array($this->format, $expplugins)) {
+                $export = true;
+            }
+        }
+               
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 
         /// Calculate file name
-        $downloadfilename = clean_filename("$this->course->shortname $this->strgrades.xml");        
+        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");        
 
         header("Content-type: text/xml; charset=UTF-8"); 
         header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
         
         /// time stamp to ensure uniqueness of batch export
         echo '<results batch="xml_export_'.time().'">';
-        foreach ($this->$columnidnumbers as $index => $idnumber) {
+        
+        foreach ($this->columnidnumbers as $index => $idnumber) {
             
             // studentgrades[] index should match with corresponding $index 
             foreach ($this->grades as $studentid => $studentgrades) {
@@ -54,13 +62,13 @@ class grade_export_xml extends grade_export {
                 // state can be new, or regrade
                 // require comparing of timestamps in db
                 
-                $params->idnumber = $this->idnumber;
+                $params->idnumber = $idnumber;
                 // get the grade item
                 $gradeitem = new grade_item($params);
                 
                 // we are trying to figure out if this is a new grade, or a regraded grade
                 // only relevant if this grade for this user is already exported
-                if ($gradeitem->exported) {
+                if (!empty($gradeitem->exported)) {
                     
                     // get the grade_grades_final for this user
                     unset($params);
@@ -91,9 +99,14 @@ class grade_export_xml extends grade_export {
                     echo '<feedback>'.$this->comments[$studentid][$index].'</feedback>';  
 		        }
                 echo '</result>';
-                
-                // if flag is set, timestamp this
-            }           
+
+                // timestamp this if needed
+                if ($export) {
+                    $grade_grades_final->exported = time();
+                    // update the time stamp;
+                    $grade_grades_final->update();
+                }
+            }
         }
         echo '</results>';
         exit; 
