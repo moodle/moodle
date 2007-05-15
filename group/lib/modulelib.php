@@ -420,7 +420,7 @@ function groups_m_get_current($cm, $full=false) {
         $SESSION->currentgroupinggroup[$cm->course][$cm->groupingid] = $currentgroup;
     }
     if ($full) {
-        return groups_groupid_to_group($currentgroup);
+        return groups_get_group($currentgroup, false);
     } else {
         return $currentgroup;
     }

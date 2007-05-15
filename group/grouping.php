@@ -18,6 +18,11 @@ $id = optional_param('id', false, PARAM_INT);
 
 $delete = optional_param('delete', false, PARAM_BOOL);
 
+if (empty($CFG->enablegroupings)) {
+    // NO GROUPIGS YET!
+    error('No groupings yet');
+}
+
 // Get the course information so we can print the header and
 // check the course id is valid
 $course = groups_get_course_info($courseid);

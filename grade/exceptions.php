@@ -14,11 +14,13 @@
 
     require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_MODULE, $id));
 
-    $group = get_current_group($course->id);
-    
     print_header("$course->shortname: ".get_string('grades'), $course->fullname, grade_nav($course, $action));
 
-    grade_preferences_menu($action, $course, $group);
+    $groupmode = groupmode($course);
+    $group = setup_and_print_groups($course, $groupmode, 'exceptions.php?id=' . $course->id);
+    echo '<div class="clearer"></div>';
+
+    grade_preferences_menu($action, $course);
 
     grade_set_uncategorized();
 

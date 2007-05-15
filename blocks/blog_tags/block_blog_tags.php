@@ -132,7 +132,7 @@ class block_blog_tags extends block_base {
 
                     case BLOG_GROUP_LEVEL:
                         $filtertype = 'group';
-                        $filterselect = get_current_group($this->instance->pageid);
+                        $filterselect = get_and_set_current_group($COURSE, groupmode($COURSE));
                     break;
 
                     case BLOG_COURSE_LEVEL:

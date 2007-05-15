@@ -120,6 +120,12 @@ img.grouppicture {
   text-align: center;
 }
 
+div.groupselector {
+  float: left;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
 #addmembersform table {
   margin-left: auto;
   margin-right: auto;
@@ -2630,6 +2636,13 @@ body#user-index .rolesform {
 
 #mod-chat-view #chatcurrentusers .chatuserdetails {
    vertical-align: middle;   
+}
+
+#mod-chat-view #enterlink {
+   text-align: center;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
 }
 
 .chat-event .picture,

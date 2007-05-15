@@ -27,6 +27,11 @@ $groupid    = optional_param('group', false, PARAM_INT);
 $userid     = optional_param('user', false, PARAM_INT);
 $action = groups_param_action();
 
+if (empty($CFG->enablegroupings)) {
+    // NO GROUPINGS YET!
+    $groupingid = GROUP_NOT_IN_GROUPING;
+}
+
 if ($groupid) {
     $groupingsforgroup = groups_get_groupings_for_group($groupid);
     if ($groupingsforgroup) {
@@ -100,7 +105,7 @@ if ($success) {
             redirect(groups_grouping_edit_url($courseid, null, false));
             break;
         case 'printerfriendly':
-            redirect('groupui/printgrouping.php?courseid='. $courseid .'&groupingid='. $groupingid);
+            redirect('printgrouping.php?courseid='. $courseid .'&groupingid='. $groupingid);
             break;
 
         case 'showgroupsettingsform':
@@ -201,6 +206,11 @@ if ($success) {
 */
     echo '<table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">'."\n";
     echo '<tr>'."\n";
+
+if (empty($CFG->enablegroupings)) {
+// NO GROUPIGS YET!
+    $sel_groupingid = -1;
+} else {
     echo '<td class="generalboxcontent">'."\n";
     echo '<p><label for="groupings">' .  get_string('groupings', 'group') . '<span id="dummygrouping">&nbsp;</span></label></p>'."\n";
     echo '<select name="grouping" id="groupings" size="15" class="select"';
@@ -265,8 +275,15 @@ if ($success) {
     
     echo '<p><input type="submit" ' . $printerfriendly_disabled . ' name="act_printerfriendly" id="printerfriendly" value="'
             . get_string('printerfriendly', 'group') . '" /></p>'."\n";
-    echo "</td>\n<td>\n";
+    echo "</td>\n";
+}
+    echo "<td>\n";
+if (empty($CFG->enablegroupings)) {
+    // NO GROUPINGS YET!
+    echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
+} else {
     echo '<p><label for="groups"><span id="groupslabel">'.get_string('groupsinselectedgrouping', 'group').' </span><span id="thegrouping">'.get_string('grouping', 'group').'</span></label></p>'."\n";
+}
     echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
@@ -307,7 +324,14 @@ if ($success) {
         echo '<p><input type="submit" '.$disabled.' name="act_removegroup" '
                 . 'id="removegroup" value="' . get_string('removegroupfromselectedgrouping', 'group') . '" /></p>'."\n";
     }
-    
+
+if (empty($CFG->enablegroupings)) {
+// NO GROUPIGS YET!
+    echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
+            . get_string('creategroup', 'group') . '" /></p>'."\n";
+    echo '<p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="'
+            . get_string('printerfriendly', 'group') . '" /></p>'."\n";
+} else {    
     echo '<p><input type="submit" ' . $showcreategroupform_disabled . ' name="act_showcreategroupform" id="showcreategroupform" value="'
             . get_string('creategroupinselectedgrouping', 'group') . '" /></p>'."\n";
     
@@ -318,10 +342,11 @@ if ($success) {
         echo '<p><input type="submit" '.$disabled.' name="act_addgroupstogroupingform" '
                 . 'id="showaddgroupstogroupingform" value="' . get_string('addgroupstogrouping', 'group') . '" /></p>'."\n";
     }
-    
+}
+
     echo '</td>'."\n";
     echo '<td>'."\n";
-    echo '<p><label for="members"><span id="memberslabel">'.get_string('membersofselectedgroup', 'group').' </span><span id="thegroup">'.get_string('group', 'group').'</span></label></p>'."\n";
+    echo '<p><label for="members"><span id="memberslabel">'.get_string('membersofselectedgroup', 'group').' </span><span id="thegroup">&nbsp;</span></label></p>'."\n";
     //NOTE: the SELECT was, multiple="multiple" name="user[]" - not used and breaks onclick.
     echo '<select name="user" id="members" size="15" class="select"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";

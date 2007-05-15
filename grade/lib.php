@@ -311,12 +311,9 @@ function grade_get_formatted_grades() {
         }
     
 
-        if (isset($_REQUEST['group'])) {
-            $group = clean_param($_REQUEST['group'], PARAM_INT);
-        }
         // if the user has selected a group to view by get the group members
-        if (isset($group) && $group != 0) {
-            $groupmembers = get_group_users($group);
+        if ($currentgroup = get_current_group($course->id)) {
+            $groupmembers = get_group_users($currentgroup);
         }
 
         // this next block catches any students who do not have a grade for any item in a particular category
@@ -1064,7 +1061,7 @@ function grade_set_preferences($course, $newprefs) {
 }
 
 
-function grade_preferences_menu($action, $course, $group=0) {
+function grade_preferences_menu($action, $course) {
 
     if (!has_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id))) {
         return;
@@ -1206,17 +1203,7 @@ function grade_download($download, $id) {
     $stractivityreport = get_string("activityreport");
 
 /// Check to see if groups are being used in this course
-    if ($groupmode = groupmode($course)) {   // Groups are being used
-        if (isset($_GET['group'])) {
-            $changegroup = $_GET['group'];  /// 0 or higher
-        } else {
-            $changegroup = -1;              /// This means no group change was specified
-        }
-
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    } else {
-        $currentgroup = false;
-    }
+    $currentgroup = get_current_group($course->id);
 
     if ($currentgroup) {
         $students = get_group_students($currentgroup, "u.lastname ASC");
@@ -1741,7 +1728,6 @@ function grade_view_category_grades($view_by_student) {
     global $course;
     global $USER;
     global $preferences;
-    global $group;
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     
@@ -1783,11 +1769,11 @@ function grade_view_category_grades($view_by_student) {
                 $student_heading_link = get_string('student','grades');
                 //only set sorting links if more than one student displayed.
                 if ($view_by_student == -1) {
-                    $student_heading_link .='<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=lastname">'.get_string('sortbylastname','grades').'</a>';
-                    $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=firstname">'.get_string('sortbyfirstname','grades').'</a>';
+                    $student_heading_link .='<br /><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=lastname">'.get_string('sortbylastname','grades').'</a>';
+                    $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=firstname">'.get_string('sortbyfirstname','grades').'</a>';
                 }
                 else {
-                    $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'">'.get_string('showallstudents','grades').'</a>';
+                    $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$cview.'">'.get_string('showallstudents','grades').'</a>';
                 }
             }
             echo '<table align="center" class="grades">';
@@ -1848,7 +1834,7 @@ function grade_view_category_grades($view_by_student) {
                         $student_link = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student.'&amp;course='.$course->id.'">';
                     }
                     else {
-                        $student_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;user='.$student.'&amp;cview='.$cview.'">';
+                        $student_link = '<a href="?id='.$course->id.'&amp;action=vcats&amp;user='.$student.'&amp;cview='.$cview.'">';
                     }
                     $student_link .= $grades_by_student[$student]['student_data']['lastname'].', '.$grades_by_student[$student]['student_data']['firstname'].'</a>';
                     $row .= '<th class="fullname" scope="row">'.$student_link.'</th>';
@@ -1933,14 +1919,14 @@ function grade_view_category_grades($view_by_student) {
                 
                 if ($first == 0) {
                     if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
-                        $total_sort_link = '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
-                        $total_sort_link .= '<a href="?id='.$course->id.'&amp;group='.$group.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
+                        $total_sort_link = '<a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
+                        $total_sort_link .= '<a href="?id='.$course->id.'&amp;action=vcats&amp;cview='.$cview.'&amp;sort=highgrade_category_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
                     }
                     else {
                         $total_sort_link = '';
                     }
                     
-                    $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;group='.$group.'&amp;category='.$cview.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')">'.get_string('statslink','grades').'</a>';
+                    $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category='.$cview.'\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')">'.get_string('statslink','grades').'</a>';
                     if ($all_categories[$cview]['stats']['drop'] != 0) {
                         $header .= '<th class="'.$class.'" colspan="'.$grade_columns.'" scope="col">'.get_string('total','grades').'&nbsp; (Lowest '. $all_categories[$cview]['stats']['drop']. ' Dropped)'.$total_sort_link.' '.$stats_link.'</th>';
                     }
@@ -2039,7 +2025,6 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
     global $CFG;
     global $course;
     global $USER;
-    global $group; // yu: fix for 5814
     global $preferences;
     
     if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
@@ -2078,8 +2063,8 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
         if (has_capability('moodle/course:viewcoursegrades', $context)) {
             $student_heading_link = get_string('student','grades');
             if ($view_by_student == -1) {
-                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
-                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=firstname&amp;group='.$group.'"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
+                $student_heading_link .='<a href="?id='.$course->id.'&amp;action=grades&amp;sort=lastname"><br /><font size="-2">'.get_string('sortbylastname','grades').'</font></a>';
+                $student_heading_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=firstname"><br /><font size="-2">'.get_string('sortbyfirstname','grades').'</font></a>';
             }
             else {
                 $student_heading_link .= '<br /><a href="?id='.$course->id.'&amp;&amp;action=grades"><font size="-2">'.get_string('showallstudents','grades').'</font></a>';
@@ -2184,14 +2169,14 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                 }
                 
                 if (has_capability('moodle/course:viewcoursegrades', $context) && $view_by_student == -1) {
-                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
-                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
-                    $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
-                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
-                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
-                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
-                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
-                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc&amp;group='.$group.'"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
+                    $grade_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('highgradedescending','grades').'" /></a>';
+                    $grade_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=highgrade_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('highgradeascending','grades').'" /></a>';
+                    $points_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('pointsdescending','grades').'" /></a>';
+                    $points_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=points_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('pointsascending','grades').'" /></a>';
+                    $weighted_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('weighteddescending','grades').'" /></a>';
+                    $weighted_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=weighted_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('weightedascending','grades').'" /></a>';
+                    $percent_sort_link = '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent"><img src="'.$CFG->wwwroot.'/pix/t/down.gif" alt="'.get_string('percentdescending','grades').'" /></a>';
+                    $percent_sort_link .= '<a href="?id='.$course->id.'&amp;action=grades&amp;sort=percent_asc"><img src="'.$CFG->wwwroot.'/pix/t/up.gif" alt="'.get_string('percentascending','grades').'" /></a>';
                 }
                 $stats_link = '<a href="javascript:void(0)" onclick="window.open(\'?id='.$course->id.'&amp;action=stats&amp;category=all\',\''.get_string('statslink','grades').'\',\'height=200,width=300,scrollbars=no\')"><font size="-2">'.get_string('statslink','grades').'</font></a>';
                 $header .= '<th colspan="'.$total_columns.'" scope="col">'.get_string('total','grades').'&nbsp;'.$stats_link.'</th>';
@@ -3010,7 +2995,6 @@ function grade_download_form($type='both') {
                $url .= '&amp;cview='.$cview;
             }
         }
-        setup_and_print_groups($course, $course->groupmode, $url);
         echo '</td>';
 
         echo '</tr></table>';

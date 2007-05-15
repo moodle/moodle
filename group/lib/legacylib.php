@@ -201,25 +201,29 @@ function set_current_group($courseid, $groupid) {
 function get_current_group($courseid, $full = false) {
     global $SESSION;
 
+    if (isset($SESSION->currentgroup[$courseid])) {
+        if ($full) {
+            return groups_get_group($SESSION->currentgroup[$courseid], false);
+        } else {
+            return $SESSION->currentgroup[$courseid];
+        }
+    }
+
     $mygroupid = mygroupid($courseid);
     if (is_array($mygroupid)) {
         $mygroupid = array_shift($mygroupid);
-    }
-
-    if (isset($SESSION->currentgroup[$courseid])) {
-    	$currentgroup = $SESSION->currentgroup[$courseid];
-    } else {
-    	$currentgroup = $mygroupid;
-    }
-    
-    if ($currentgroup) {
-    	$SESSION->currentgroup[$courseid] = $mygroupid;
+        set_current_group($courseid, $mygroupid);
+        if ($full) {
+            return groups_get_group($mygroupid, false);
+        } else {
+            return $mygroupid;
+        }
     }
 
     if ($full) {
-        return groups_groupid_to_group($currentgroup);
+        return false;
     } else {
-        return $currentgroup;
+        return 0;
     }
 }
 
@@ -265,12 +269,11 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
                 /*)}else {
                     $currentgroupid = $group->id;*/
             } elseif ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (ismember($group->id)) { //check if is a member
+                if (ismember($groupid)) { //check if is a member
                     $currentgroupid = set_current_group($course->id, $groupid); //might need to set_current_group?
                 }
                 else {
-                    echo($group->id);
-                    notify('You do not belong to this group!', 'error');
+                    notify('You do not belong to this group! ('.$groupid.')', 'error');
                 }
             }
         }
@@ -280,8 +283,8 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
         if (has_capability('moodle/site:accessallgroups', $context)) { // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
-        } elseif ($groupmode == VISIBLEGROUPS) {  // All groups are visible
-            $currentgroupid = 0;
+        } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
+            $currentgroupid = set_current_group($course->id, 0);
         }
     }
 
@@ -317,24 +320,45 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-    if ($groupmode == VISIBLEGROUPS
-        or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
-        groups_instance_print_grouping_selector();
-    }//added code here to allow non-editting teacher to swap in-between his own groups
-    //added code for students in separategrous to swtich groups
-    else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', $context)) {
-        groups_instance_print_group_selector();
+    if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/site:accessallgroups', $context)) {
+        //we are in separate groups and the current group is group 0, as last set.
+        //this can mean that either, this guy has no group
+        //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
+
+        if ($usergroups = user_group($course->id, $USER->id)){
+            //for the second situation, we need to perform the trick and get him a group.
+            $first = reset($usergroups);
+            $currentgroup = get_and_set_current_group($course, $groupmode, $first->id);
+
+        } else {
+            //else he has no group in this course
+            print_heading(get_string('notingroup'));
+            print_footer($course);
+            exit;
+        }
+    }
+
+    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
+
+        if ($groups = get_groups($course->id)) {
+
+            echo '<div class="groupselector">';
+            print_group_menu($groups, $groupmode, $currentgroup, $urlroot, 1);
+            echo '</div>';
+        }
+
+    } else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', $context)) {
+        //get all the groups this guy is in in this course
+        if ($usergroups = user_group($course->id, $USER->id)){
+            echo '<div class="groupselector">';
+            //print them in the menu
+            print_group_menu($usergroups, $groupmode, $currentgroup, $urlroot, 0);
+            echo '</div>';
+        }
     }
 
     return $currentgroup;
-}
 
-
-function groups_instance_print_grouping_selector() {
-    //TODO: ??
-}
-function groups_instance_print_group_selector() {
-    //TODO: ??
 }
 
 

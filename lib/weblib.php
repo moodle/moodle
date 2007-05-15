@@ -4295,21 +4295,28 @@ function update_groups_button($courseid) {
 function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1, $return=false) {
 
     $output = '';
+    $groupsmenu = array();
 
 /// Add an "All groups" to the start of the menu
     if ($showall){
         $groupsmenu[0] = get_string('allparticipants');
     }
-    foreach ($groups as $key => $groupname) {
-        $groupsmenu[$key] = $groupname;
+    foreach ($groups as $key => $group) {
+        $groupsmenu[$key] = format_string($group->name);
     }
 
     if ($groupmode == VISIBLEGROUPS) {
-        $grouplabel = get_string('groupsvisible').':';
+        $grouplabel = get_string('groupsvisible');
     } else {
-        $grouplabel = get_string('groupsseparate').':';
+        $grouplabel = get_string('groupsseparate');
     }
-    $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self', $grouplabel);
+
+    if (count($groupsmenu) == 1) {
+        $groupname = reset($groupsmenu);
+        $output .= $grouplabel.': '.$groupname;
+    } else {
+        $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self', $grouplabel);
+    }
 
     if ($return) {
         return $output;

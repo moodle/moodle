@@ -65,6 +65,7 @@ class moodleform_mod extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
         if ($supportsgroups){
+            // TODO: we must define this as mod property!
             $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
         }
         $mform->addElement('modvisible', 'visible', get_string('visible'));

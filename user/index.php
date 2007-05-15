@@ -192,13 +192,9 @@
         echo '</td>';
     }
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
-        if ($groups_names = groups_get_groups_names($course->id)) { //TODO:
-            echo '<td class="left">';
-            print_group_menu($groups_names, $groupmode, $currentgroup, $baseurl);
-            echo '</td>';
-        }
-    }
+    echo '<td class="left">';
+    setup_and_print_groups($course, $groupmode, $baseurl);
+    echo '</td>';
 
     // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
     // this might not work anymore because you always going to get yourself as the most recent entry? added $USER!=$user ch

@@ -43,7 +43,7 @@ class block_online_users extends block_base {
                              && !has_capability('moodle/site:accessallgroups', $context));
 
         //Get the user current group
-        $currentgroup = $isseparategroups ? get_current_group($COURSE->id) : NULL;
+        $currentgroup = $isseparategroups ? get_and_set_current_group($COURSE, groupmode($COURSE)) : NULL;
 
         $groupmembers = "";
         $groupselect = "";
@@ -51,7 +51,7 @@ class block_online_users extends block_base {
         //Add this to the SQL to show only group users
         if ($currentgroup !== NULL) {
             $groupmembers = ', '.groups_members_from_sql(); //TODO: ", {$CFG->prefix}groups_members gm ";
-            $groupselect .= groups_members_where_sql($currentgroup, 'u.id'); //" AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+            $groupselect = ' AND '.groups_members_where_sql($currentgroup, 'u.id'); //" AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
         }
 
         if ($COURSE->id == SITEID) {  // Site-level

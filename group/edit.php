@@ -16,12 +16,17 @@ require_once('lib.php');
 require_once('edit_form.php');
 
 /// get url variables
+$courseid    = required_param('courseid', PARAM_INT);
 $id          = optional_param('id', false, PARAM_INT);         
 $groupingid  = optional_param('grouping', false, PARAM_INT);
 $newgrouping = optional_param('newgrouping', false, PARAM_INT);
-$courseid    = required_param('courseid', PARAM_INT);
+$delete      = optional_param('delete', 0, PARAM_BOOL);
+$confirm     = optional_param('confirm', 0, PARAM_BOOL);
 
-$delete = optional_param('delete', false, PARAM_BOOL);
+if (empty($CFG->enablegroupings)) {
+    // NO GROUPINGS YET!
+    $groupingid = GROUP_NOT_IN_GROUPING;
+}
 
 /// Course must be valid 
 if (!$course = get_record('course', 'id', $courseid)) {
@@ -31,6 +36,18 @@ if (!$course = get_record('course', 'id', $courseid)) {
 /// Delete action should not be called without a group id
 if ($delete && !$id) {
     error(get_string('errorinvalidgroup'));
+}
+
+if ($delete && !$confirm) {
+    print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
+    $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
+    $optionsno  = array('id'=>$courseid);
+    if (!$group = get_record('groups', 'id', $id)) {
+        error('Group ID was incorrect');
+    } 
+    notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+    print_footer();
+    die;
 }
 
 /// basic access control checks
@@ -62,6 +79,9 @@ if (!empty($group)) {
 
 // Process delete action
 if ($delete) {
+    if (!confirm_sesskey()) {
+        error('Sesskey error');
+    }
     if (groups_delete_group($id)) {
         redirect(groups_home_url($course->id, null, $groupingid, false));
     } else {
