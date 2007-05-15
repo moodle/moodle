@@ -2292,11 +2292,11 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
  */
 function enrol_into_course($course, $user, $enrol) {
 
+    $timestart = time();
     if ($course->enrolperiod) {
-        $timestart = time();
         $timeend = time() + $course->enrolperiod;
     } else {
-        $timestart = $timeend = 0;
+        $timeend = 0;
     }
 
     if ($role = get_default_course_role($course)) {

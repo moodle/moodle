@@ -10,6 +10,7 @@ require_once($CFG->libdir . '/dmllib.php');
 
 // dummy test function
 function plusone($eventdata) {
+  
     return $eventdata+1;  
 }
 
@@ -59,9 +60,10 @@ class eventslib_test extends UnitTestCase {
         $eventdata->schedule = 'instant';
         
         $eventid = insert_record('events_queue', $eventdata);
-        
+
         $id = queue_handler($this->handler, $eventid);
         $storedhandler = get_record('events_queue_handlers', 'id', $id);
+
         $retval = events_process_queued_handler($storedhandler);
         $this->assertEqual(2, $retval);
         $this->storedhandler = $storedhandler;
@@ -78,9 +80,7 @@ class eventslib_test extends UnitTestCase {
      * tests trigger_event funtion()
      */
     function test_trigger_event() {
-        $eventdata = new object;
-        $eventdata->eventdata = 2;
-        $eventdata->schedule = 'instant';
+        $eventdata = 2;
         $this->assertEqual(0, trigger_event('testevent', $eventdata));
     }
     

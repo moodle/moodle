@@ -216,7 +216,7 @@ function trigger_event($eventname, $eventdata) {
             
             // if event type is 
             if ($handler->schedule == 'instant') {
-                if (dispatch_event($handler, $eventdata->eventdata)) {
+                if (dispatch_event($handler, $eventdata)) {
                     continue;
                 } else {
                     // update the failed flag
@@ -249,7 +249,7 @@ function trigger_event($eventname, $eventdata) {
  * @return bool - success or fail
  */
 function dispatch_event($handler, $eventdata) {
-    
+
     global $CFG;
     // checks for handler validity
     

@@ -201,7 +201,18 @@ function grades_grab_grades() {
                             foreach ($grades->grades as $userid=>$usergrade) {                              
                                 // make the grade_added eventdata
                                 // missing grade event trigger
-                                // trigger_event('grade_added', $eventdata);                              
+                                // trigger_event('grade_added', $eventdata);
+                                unset($eventdata);
+                                $eventdata->courseid =  $modinstance->course;
+                                $eventdata->itemmodule = $mod;
+                                $eventdata->iteminstance = $modinstance->instance;
+                                $eventdata->gradetype = 0;
+                                $eventdata->userid = $userid;
+                                $eventdata->gradevalue = $usergrade;
+                                
+                                print_object($eventdata); 
+                                trigger_event('grade_added', $eventdata);                             
+                                                       
                             }
                         }
                     }
@@ -242,8 +253,6 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
 /*
  * Handles all grade_added and grade_updated events
  *
- * INCOMPLETE
- *
  * @param object $eventdata contains all the data for the event
  * @return boolean success
  *
@@ -252,6 +261,7 @@ function grade_handler($eventdata) {
 
 /// First let's make sure a grade_item exists for this grade
     $gradeitem = new grade_item($eventdata);
+    
     if (empty($gradeitem->id)) {                      // Doesn't exist yet
         if (!$gradeitem->id = $gradeitem->insert()) { // Try to create a new item...
             debugging('Could not create a grade_item!');
@@ -261,10 +271,9 @@ function grade_handler($eventdata) {
 
     $eventdata->itemid = $gradeitem->id;
 
-
 /// Grade_item exists, now we can insert the new raw grade
 
-    $rawgrade = new grade_grade_raw($eventdata); 
+    $rawgrade = new grade_grades_raw($eventdata); 
 
     if ($rawgrade->id) {
         $rawgrade->update($eventdata->gradevalue, 'event');
