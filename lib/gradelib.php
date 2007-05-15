@@ -209,8 +209,6 @@ function grades_grab_grades() {
                                 $eventdata->gradetype = 0;
                                 $eventdata->userid = $userid;
                                 $eventdata->gradevalue = $usergrade;
-                                
-                                print_object($eventdata); 
                                 trigger_event('grade_added', $eventdata);                             
                                                        
                             }
