@@ -44,15 +44,17 @@ function openpopup(url,name,options,fullscreen) {
 function uncheckall() {
   void(d=document);
   void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++)
-    void(el[i].checked=0)
+  for(i=0;i<el.length;i++) {
+    void(el[i].checked=0);
+  }
 }
 
 function checkall() {
   void(d=document);
   void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++)
-    void(el[i].checked=1)
+  for(i=0;i<el.length;i++) {
+    void(el[i].checked=1);
+  }
 }
 
 function inserttext(text) {
