@@ -44,11 +44,8 @@
 
 
 /// Check to see if groups are being used in this journal
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
 
 /// Process incoming data if there is any
     if ($data = data_submitted()) {

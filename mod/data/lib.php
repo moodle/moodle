@@ -1472,11 +1472,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode);
-    } else {
-        $currentgroup = 0;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
     /// Print the tabs
 
@@ -1493,7 +1490,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     }
 }
 
-function data_user_can_add_entry($data, $currentgroup=false, $groupmode='') {
+function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     global $USER;
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
@@ -1505,16 +1502,18 @@ function data_user_can_add_entry($data, $currentgroup=false, $groupmode='') {
         return false;
     }
 
+    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
     if ($currentgroup) {
-        return (has_capability('moodle/site:accessallgroups', $context) or ismember($currentgroup));
+        return ismember($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            
-            $result = groups_is_member($currentgroup);
-            return $result;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 }

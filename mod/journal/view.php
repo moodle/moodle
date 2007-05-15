@@ -32,21 +32,16 @@
                  "<a href=\"index.php?id=$course->id\">$strjournals</a> -> ".format_string($journal->name), '', '', true,
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
+/// Check to see if groups are being used here
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+
     if (isteacher($course->id)) {
-        $currentgroup = get_current_group($course->id);
-        if ($currentgroup and isteacheredit($course->id)) {
-            $group = groups_get_group($currentgroup); //TODO:
-            $groupname = " ($group->name)";
-        } else {
-            $groupname = "";
-        }
         $entrycount = journal_count_entries($journal, $currentgroup);
 
         echo '<div class="reportlink"><a href="report.php?id='.$cm->id.'">'.
-              get_string('viewallentries','journal', $entrycount)."</a>$groupname</div>";
+              get_string('viewallentries','journal', $entrycount).'</a></div>';
 
-    } else if (!$cm->visible) {
-        notice(get_string('activityiscurrentlyhidden'));
     }
 
     $journal->intro = trim($journal->intro);

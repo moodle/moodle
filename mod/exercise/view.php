@@ -337,14 +337,7 @@
         /// Check to see if groups are being used in this exercise
         /// and if so, set $currentgroup to reflect the current group
         $groupmode = groupmode($course, $cm);   // Groups are being used?
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-
-        /// Allow the teacher to change groups (for this session)
-        if ($groupmode) {
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
-            }
-        }
+        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
 
         print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
 

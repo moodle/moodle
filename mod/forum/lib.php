@@ -950,7 +950,7 @@ function forum_print_overview($courses,&$htmlarray) {
             ' JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
             ' LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$USER->id.' WHERE (';
         foreach ($trackingforums as $track) {
-            $sql .= '(d.forum = '.$track->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($track->course,false).')) OR ';
+            $sql .= '(d.forum = '.$track->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($track->course).')) OR ';
         }
         $sql = substr($sql,0,-3); // take off the last OR
         $sql .= ') AND p.modified >= '.$cutoffdate.' AND r.id is NULL GROUP BY d.forum,d.course';
@@ -1730,7 +1730,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
  * Get all discussions in a forum
  */
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
+                               $user=0, $fullpost=true, $currentgroup=-1, $limit=0, $userlastmodified=false) {
     global $CFG, $USER;
 
     $timelimit = '';
@@ -1764,10 +1764,14 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $limitnum = $limit;
     }
 
-    if ($visiblegroups == -1) {
+    if ($currentgroup == -1) {
+        $currentgroup = get_current_group($cm->course);
+    }
+
+    if ($currentgroup) {
+        $groupselect = " AND (d.groupid = '$currentgroup' OR d.groupid = -1) ";
+    } else {
         $groupselect = "";
-    } else  {
-        $groupselect = " AND (d.groupid = '$visiblegroups' OR d.groupid = '-1') ";
     }
 
     if (empty($forumsort)) {
@@ -3211,7 +3215,7 @@ function forum_user_has_posted($forumid, $did, $userid) {
 /**
  * TODO document
  */
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false, $cm=NULL, $context=NULL) {
+function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1, $cm=NULL, $context=NULL) {
 // $forum is an object
     global $USER, $SESSION;
 
@@ -3222,6 +3226,17 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
     if (!$context) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
+    if ($currentgroup == -1) {
+        $currentgroup = get_current_group($cm->course);
+    }
+
+    if ($groupmode == -1) {
+        if (!$course = get_record('course', 'id', $cm->course)) {
+            error('Can not find course');
+        }
+        $groupmode = groupmode($course, $cm);
     }
 
     if ($forum->type == 'news') {
@@ -3235,17 +3250,23 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
 
     if ($forum->type == 'eachuser') {
-        return (!forum_user_has_posted_discussion($forum->id, $USER->id));
-    } else if ($currentgroup) {
-        return (has_capability('moodle/site:accessallgroups', $context)
-                or ismember($currentgroup));
+        if (forum_user_has_posted_discussion($forum->id, $USER->id)) {
+            return false;
+        }
+    }
+
+    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
+    if ($currentgroup) {
+        return ismember($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            return (ismember($currentgroup));
-        }
-        else {
             return true;
+        } else {
+            return false;
         }
     }
 }
@@ -3435,21 +3456,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 // Decide if current user is allowed to see ALL the current discussions or not
 
 // First check the group stuff
-
-    if ($groupmode == -1) {    // We need to reconstruct groupmode because none was given
-        $groupmode = groupmode($course, $cm);   // Works even if $cm is not valid
-    }
-
-    if ($currentgroup == -1) {    // We need to reconstruct currentgroup because none was given
-        $currentgroup = get_current_group($course->id);
-    }
-
-    if (!$currentgroup and 
-       ($groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $context)) ) {
-        $visiblegroups = -1;
-    } else {
-        $visiblegroups = $currentgroup;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
 // If the user can post discussions, then this is a good place to put the
 // button for it. We do not show the button if we are showing site news
@@ -3480,7 +3488,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
     $getuserlastmodified = ($displayformat == 'header');
 
-    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $visiblegroups,0,$getuserlastmodified) ) {
+    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $currentgroup,0,$getuserlastmodified) ) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';

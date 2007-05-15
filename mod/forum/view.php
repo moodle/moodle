@@ -79,15 +79,9 @@
         notice(get_string('noviewdiscussionspermission', 'forum'));
     }
     
+/// find out current groups mode
     $groupmode = groupmode($course, $cm);
-    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    
-    if ($groupmode == SEPARATEGROUPS && ($currentgroup === false) &&
-            !has_capability('moodle/site:accessallgroups', $context)) {
-        notice(get_string('notingroup', 'forum'));
-    }
-
-
+    $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?id=' . $cm->id);
 
 /// Okay, we can show the discussions. Log the forum view.
     if ($cm->id) {
@@ -119,40 +113,6 @@
 
 
     print_box_start('forumcontrol');
-
-    /// 2 ways to do this, 1. we can changed the setup_and_print_groups functions
-    /// in moodlelib, taking in 1 more parameter, and tell the function when to
-    /// allow student menus, 2, we can just use this code to explicitly print this
-    /// menu for students in forums.
-
-    /// Now we need a menu for separategroups as well!
-    if ($groupmode == VISIBLEGROUPS || ($groupmode
-            && has_capability('moodle/site:accessallgroups', $context))) {
-        
-        //the following query really needs to change
-        if ($groups = groups_get_groups_names($course->id)) { //TODO:
-            print_box_start('groupmenu');
-            print_group_menu($groups, $groupmode, $currentgroup, "$CFG->wwwroot/mod/forum/view.php?id=$cm->id");
-            print_box_end(); // groupmenu
-        }
-    }
-
-    /// Only print menus the student is in any course
-    else if ($groupmode == SEPARATEGROUPS){
-        $validgroups = array();
-        // Get all the groups this guy is in in this course
-
-        if ($p = user_group($course->id,$USER->id)){
-            /// Extract the name and id for the group
-            foreach ($p as $index => $object){
-                $validgroups[$object->id] = $object->name;
-            }
-            /// Print them in the menu
-            print_box_start('groupmenu');
-            print_group_menu($validgroups, $groupmode, $currentgroup, "view.php?id=$cm->id",0);
-            print_box_end(); // groupmenu
-        }
-    }
 
     print_box_start('subscription');
 

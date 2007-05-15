@@ -75,23 +75,11 @@
     }
 
     echo '<td id="middle-column">';
-    
-    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
-        echo '<div class="reportlink">';
-        echo "<a href=\"report.php?id=$cm->id\">".
-              get_string('viewreport', 'chat').'</a>';
-        echo '</div>';
-    }
-
-    print_heading(format_string($chat->name));
 
 /// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
-    } else {
-        $currentgroup = 0;
-    }
-
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+    
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
         $groupparam = "&amp;groupid=$currentgroup";
@@ -100,10 +88,20 @@
         $groupparam = "";
     }
 
+    if ($chat->studentlogs or has_capability('mod/chat:readlog',$context)) {
+        echo '<div class="reportlink">';
+        echo "<a href=\"report.php?id=$cm->id\">".
+              get_string('viewreport', 'chat').'</a>';
+        echo '</div>';
+    }
+
+
+    print_heading(format_string($chat->name));
+
 /// Print the main part of the page
 
     if (has_capability('mod/chat:chat',$context)) {
-        print_simple_box_start('center');
+        print_box_start('generalbox', 'enterlink');
         // users with screenreader set, will only see 1 link, to the manual refresh page
         // for better accessibility
         if (!empty($USER->screenreader)) {
@@ -113,30 +111,32 @@
         }
         
         link_to_popup_window ($chattarget,
-                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
-        print_simple_box_end();
+                              "chat$course->id$chat->id$groupparam", "<p>$strenterchat</p>", 500, 700, get_string('modulename', 'chat'));
         
         // if user is using screen reader, then there is no need to display this link again
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
-            print_simple_box_start('center');
             link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                                  "chat$course->id$chat->id$groupparam", '('.get_string('noframesjs', 'message').')', 500, 700, get_string('modulename', 'chat'));
-            print_simple_box_end();
+                                  "chat$course->id$chat->id$groupparam", '<p>('.get_string('noframesjs', 'message').')</p>', 500, 700, get_string('modulename', 'chat'));
         }
-    } else {
-/*    XXX TODO
+
+        print_box_end();
+
+    } else if (isguestuser()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http:','https:', $wwwroot);
         }
 
         notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
-                     $wwwroot, $_SERVER['HTTP_REFERER']);
+                     $wwwroot, $CFG->wwwroot.'/course/view.php?id='.$course->id);
                      
         print_footer($course);
         exit;
-*/
+
+    } else {
+        // show some error message
+        require_capability('mod/chat:chat', $context);
     }
 
 

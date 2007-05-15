@@ -46,13 +46,10 @@
                       '', '', true, '', navmenu($course, $cm));
 
     /// Check to see if groups are being used here
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
-        } else {
-            $currentgroup = false;
-        }
+        $groupmode = groupmode($course, $cm);
+        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
 
-        if (!empty($currentgroup)) {
+        if ($currentgroup) {
             $groupselect = " AND groupid = '$currentgroup'";
         } else {
             $groupselect = "";

@@ -94,7 +94,7 @@ class assignment_base {
                              "", "", true, '', navmenu($this->course, $this->cm));
                 notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
             }
-            $this->currentgroup = get_current_group($this->course->id);
+            $this->currentgroup = get_and_set_current_group($this->course, groupmode($this->course, $this->cm));
         }
 
     /// Set up things for a HTML editor if it's needed
@@ -154,7 +154,11 @@ class assignment_base {
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment), 
                      navmenu($this->course, $this->cm));
 
+        $groupmode = groupmode($this->course, $this->cm);
+        $currentgroup = setup_and_print_groups($this->course, $groupmode, 'view.php?id=' . $this->cm->id);
+        
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
+        echo '<div class="clearer"></div>';
     }
 
 
@@ -794,16 +798,11 @@ class assignment_base {
         $cm         = $this->cm;
         $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    /// Get all teachers and students
+        /// Get all ppl that can submit assignments
 
-        $currentgroup = get_current_group($course->id);
+        $currentgroup = get_and_set_current_group($course, groupmode($course, $cm));
 
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup);
-        } else {
-            $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '',
-                                 '', '', '', '', false);
-        }
+        $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '', '', '', $currentgroup, '', false);
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment, 
@@ -996,44 +995,14 @@ class assignment_base {
         
         print_header_simple(format_string($this->assignment->name,true), "", '<a href="index.php?id='.$course->id.'">'.$this->strassignments.'</a> -> <a href="view.php?a='.$this->assignment->id.'">'.format_string($this->assignment->name,true).'</a> -> '. $this->strsubmissions, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 
-    ///Position swapped
-    /*
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
-        } else {
-            $currentgroup = false;
-        }
-    */
-        
-        /// copied code from assignment module, if this is not the way to do this please change it
-        /// the above code does not work
-        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
-        /// and function groups_instance_print_group_selector() are missing.
-       
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+
+        /// find out current groups mode
         $groupmode = groupmode($course, $cm);
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
-    
-        /// Now we need a menu for separategroups as well!
-        if ($groupmode == VISIBLEGROUPS || ($groupmode
-            && has_capability('moodle/site:accessallgroups', $context))) {
-        
-            //the following query really needs to change
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_box_start('groupmenu');
-                print_group_menu($groups, $groupmode, $currentgroup, 'submissions.php?id='.$this->cm->id);
-                print_box_end(); // groupmenu
-            }
-        }
-   
-    /// Get all teachers and students
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup);
-        } else {
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $users = get_users_by_capability($context, 'mod/assignment:submit'); // everyone with this capability set to non-prohibit
-        }
+        $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id=' . $this->cm->id);
+
+        /// Get all ppl that are allowed to submit assignments
+        $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
@@ -1420,8 +1389,8 @@ class assignment_base {
      */
     function get_graders($user) {
         //potential graders
-        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', $fields='', $sort='', $limitfrom='', 
-                                               $limitnum='', $groups='', $exceptions='', $doanything=false, $view=false);
+        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', '', '', '', '', '', '', false, false);
+
         $graders = array();
         if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
             if ($groups = user_group($this->course->id, $user->id)) {  // Try to find all groups
@@ -2247,7 +2216,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     global $CFG;
 
     if ($groupid) {     /// How many in a particular group?
-        return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
+        return count_records_sql("SELECT COUNT(DISTINCT gm.userid, gm.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
                                           ".groups_members_from_sql()."
                                     WHERE a.assignment = $assignment->id 
@@ -2258,7 +2227,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // this is all the users with this capability set, in this context or higher
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit')) {
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
             foreach ($users as $user) {
                 $array[] = $user->id;
             }
@@ -2477,8 +2446,8 @@ function assignment_print_overview($courses, &$htmlarray) {
             
             // count how many people can submit
             $submissions = 0; // init
-            if ($students = get_users_by_capability($context, 'mod/assignment:submit')) {
-                foreach ($students as $student) {
+            if ($students = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
+                 foreach ($students as $student) {
                     if (get_records_sql("SELECT id,id FROM {$CFG->prefix}assignment_submissions
                                          WHERE assignment = $assignment->id AND
                                                userid = $student->id AND

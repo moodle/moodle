@@ -404,7 +404,7 @@ function forum_clean_search_terms($words, $prefix='') {
 function forum_menu_list($course)  {
 
     $menu = array();
-    $currentgroup = get_current_group($course->id);
+    $currentgroup = get_and_set_current_group($course, groupmode($course));
 
     if ($forums = get_all_instances_in_course("forum", $course)) {
         if ($course->format == 'weeks') {

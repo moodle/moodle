@@ -143,7 +143,7 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->disabledIf('assesstimefinish', 'ratingtime');
 
 //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements(false);
 
 //-------------------------------------------------------------------------------
         // buttons

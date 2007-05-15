@@ -26,12 +26,10 @@ class quiz_report extends quiz_default_report {
             if (!$download) {
                 $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=analysis");
             } else {
-                $changegroup = optional_param('group', -1, PARAM_INT);
-
-                $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+                $currentgroup = get_and_set_current_group($course, $groupmode);
             }
         } else {
-            $currentgroup = false;
+            $currentgroup = get_and_set_current_group($course, $groupmode);
         }
 
         // set Table and Analysis stats options
@@ -76,13 +74,18 @@ class quiz_report extends quiz_default_report {
             $usermax = get_records_sql_menu($sql);
         }
 
-        $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'user u '.
-            'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid ';
-        if (!empty($currentgroup)) {
-            $sql .= groups_members_join_sql($currentgroup);
+        $groupmembers = '';
+        $groupwhere = '';
+
+        //Add this to the SQL to show only group users
+        if ($currentgroup) {
+            $groupmembers = ', '.groups_members_from_sql();
+            $groupwhere = ' AND '.groups_members_where_sql($currentgroup, 'u.id');
         }
-        $sql .= ' WHERE qa.quiz = '.$quiz->id.  // ULPGC ecastro
-            ' AND ( qa.sumgrades >= '.$scorelimit.' ) ';
+
+        $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'quiz_attempts qa, '.$CFG->prefix.'user u '.$groupmembers.
+                 'WHERE u.id = qa.userid AND qa.quiz = '.$quiz->id.' AND ( qa.sumgrades >= '.$scorelimit.' ) '.$groupwhere;
+
         // ^^^^^^ es posible seleccionar aqu� TODOS los quizzes, como quiere Jussi,
         // pero habr�a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
 

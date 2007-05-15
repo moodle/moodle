@@ -104,11 +104,8 @@
 
 
 /// Groups needed for Add entry tab
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode);
-    } else {
-        $currentgroup = 0;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
 /// Print the tabs.
     $currenttab = 'templates';

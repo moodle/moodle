@@ -38,11 +38,18 @@
         redirect("report.php?id=$cm->id");                      
     }
         
-    if ($download <> "xls" and $download <> "txt" and $download <> "ods") {
+    if (!$download) {
         print_header_simple(format_string($choice->name).": $strresponses", "",
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
                   <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
+
+        /// Check to see if groups are being used in this choice
+        $groupmode = groupmode($course, $cm);
+        setup_and_print_groups($course, $groupmode, 'report.php?id='.$id);
+    } else {
+        $groupmode = groupmode($course, $cm);
+        get_and_set_current_group($course, $groupmode);
     }
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');

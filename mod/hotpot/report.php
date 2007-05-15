@@ -598,10 +598,8 @@ function hotpot_get_report_users($course, $formdata) {
     $users = array();
 
     /// Check to see if groups are being used in this module
-    $currentgroup = false;
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simple");
-    }
+    $groupmode = groupmode($course, $cm); //TODO: there is no $cm defined!
+    $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simple");
 
     $sort = "u.lastname ASC";
 

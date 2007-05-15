@@ -100,7 +100,11 @@
             }
         }
 
-        $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        if (isset($_SERVER["HTTP_REFERER"])) {
+            $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        } else {
+            $SESSION->fromurl = '';
+        }
 
 
         // Load up the $post variable.
@@ -114,11 +118,14 @@
         $post->userid     = $USER->id;
         $post->message    = '';
 
-        $post->groupid = get_current_group($course->id);
-        if ($post->groupid == 0) {
-            $post->groupid = -1;
+        if ($groupmode = groupmode($course, $cm)) {
+            $post->groupid = get_and_set_current_group($course, $groupmode);
+            if ($post->groupid == 0) {
+                $post->groupid = -1; //TODO: why -1??
+            }
+        } else {
+            $post->groupid = -1; //TODO: why -1??
         }
-
         forum_set_return();
 
     } else if (!empty($reply)) {      // User is writing a new reply

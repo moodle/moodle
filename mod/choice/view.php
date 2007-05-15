@@ -59,12 +59,16 @@
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
-                                                      
+
+    /// Check to see if groups are being used in this choice
+    $groupmode = groupmode($course, $cm);
+    setup_and_print_groups($course, $groupmode, 'view.php?id='.$id);
+                                   
     if (has_capability('mod/choice:readresponses', $context)) {
-        choice_show_reportlink($choice, $course->id, $cm->id);
-    } else if (!$cm->visible) {
-        notice(get_string("activityiscurrentlyhidden"));
+        choice_show_reportlink($choice, $course->id, $cm->id, $groupmode);
     }
+
+    echo '<div class="clearer"></div>';
 
     if ($choice->text) {
         print_box(format_text($choice->text, $choice->format), 'generalbox', 'intro');

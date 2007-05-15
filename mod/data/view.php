@@ -181,6 +181,12 @@
         echo '<td id="middle-column">';
     }
 
+/// Check to see if groups are being used here
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode,
+                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
+                                            '&amp;order='.s($order).'&amp;');
+
     print_heading(format_string($data->name));
 
     // Do we need to show a link to the RSS feed for the records?
@@ -193,15 +199,6 @@
 
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         print_box(format_text($data->intro), 'generalbox', 'intro');
-    }
-
-/// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode,
-                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
-                                            '&amp;order='.s($order).'&amp;');
-    } else {
-        $currentgroup = 0;
     }
 
 /// Delete any requested records

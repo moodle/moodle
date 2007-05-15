@@ -18,7 +18,7 @@
     }
 
     require_course_login($course);
-    $currentgroup = get_current_group($course->id);
+    $currentgroup = get_and_set_current_group($course, groupmode($course));
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
 

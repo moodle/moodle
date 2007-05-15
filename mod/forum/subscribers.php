@@ -51,11 +51,8 @@
     }
 
 /// Check to see if groups are being used in this forum
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
 
     if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
 

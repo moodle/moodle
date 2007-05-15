@@ -203,11 +203,7 @@
 
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext))) {
-        if ($groups = groups_get_groups_names($course->id)) { //TODO:
-            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
-        }
-    }
+    // groups selector not needed here
 
     echo "</td><td>";
     forum_print_mode_form($discussion->id, $displaymode);

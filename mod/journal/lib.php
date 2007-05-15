@@ -407,7 +407,7 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
     if ($entry) {
         echo "&nbsp;&nbsp;<font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font>";
     }
-    echo "</tr>";
+    echo "</td></tr>";
 
     echo "\n<tr><td width=\"100%\">";
     if ($entry) {
