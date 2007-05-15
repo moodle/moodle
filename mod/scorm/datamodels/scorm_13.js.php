@@ -381,9 +381,9 @@ function SCORMapi1_3() {
     function SetValue (element,value) {
         errorCode = "0";
         diagnostic = "";
-        if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
-            errorCode="408";
-        }
+      //  if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
+        //    errorCode="408";
+        //}
         if ((Initialized) && (!Terminated)) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
