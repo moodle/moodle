@@ -124,10 +124,12 @@
             echo '</ul>';
         }
 
-        $options = null;
+        // can not use forms due to object bug in IE :-( see MDL-9799
+/*        $options = null;
         $options['choose'] = $theme;
         $options['sesskey'] = $sesskey;
-        print_single_button('index.php', $options, $strchoose);
+        print_single_('index.php', $options, $strchoose);*/
+        echo '<a href="index.php?choose='.$theme.'&amp;sesskey='.sesskey().'">'.$strchoose.'</a>';
         echo '</td>';
         echo "</tr>";
     }
