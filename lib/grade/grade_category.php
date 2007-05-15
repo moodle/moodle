@@ -646,6 +646,129 @@ class grade_category extends grade_object {
         }
         return $this->parent_category;
     }
+
+    /**
+     * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
+     * a given course, or for the entire site if no courseid is given.
+     * @param int $courseid
+     * @param boolean $fullobjects Whether to instantiate full objects based on the data or not
+     * @return array
+     */
+    function get_tree($courseid=NULL, $fullobjects=true) {
+        global $CFG;
+        global $db;
+        $db->debug = false;
+        $tree = array();
+        $fillers = array();
+
+        $category_table = $CFG->prefix . 'grade_categories';
+        $items_table = $CFG->prefix . 'grade_items';
+
+        $constraint = '';
+        $itemconstraint = '';
+
+        if (!empty($courseid)) {
+            $constraint = " AND $category_table.courseid = $courseid ";
+            $itemconstraint = " AND $items_table.courseid = $courseid ";
+        }
+        
+        // Get ordered list of grade_items (not category type)
+        $query = "SELECT * FROM $items_table WHERE itemtype <> 'category' $itemconstraint ORDER BY sortorder";
+        $grade_items = get_records_sql($query);
+
+        // For every grade_item that doesn't have a parent category, create category fillers
+        foreach ($grade_items as $itemid => $item) {
+            if (empty($item->categoryid)) {
+                if ($fullobjects) {
+                    $item = new grade_item($item);
+                }
+                $fillers[$item->sortorder] = $item;
+            }
+        }
+
+        // Get all top categories first
+        $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
+                  WHERE iteminstance = $category_table.id AND depth = 1 $constraint ORDER BY sortorder";
+
+        $topcats = get_records_sql($query);
+        
+        if (empty($topcats)) {
+            return null;
+        }
+
+        foreach ($topcats as $topcatid => $topcat) {
+            // Check the fillers array, see if one must be inserted before this topcat
+            if (key($fillers) < $topcat->sortorder) {
+                $sortorder = key($fillers);
+                $itemtoinsert = current($fillers);
+                unset($fillers[$sortorder]);
+                $tree[] = array('object' => 'filler', 'children' => 
+                    array(0 => array('object' => 'filler', 'children' => 
+                        array(0 => array('object' => $itemtoinsert, 'finalgrades' => null))))); 
+            }
+
+            $query = "SELECT $category_table.* FROM $category_table, $items_table 
+                      WHERE iteminstance = $category_table.id AND parent = $topcatid ORDER BY sortorder";
+            $subcats = get_records_sql($query);
+            $subcattree = array();
+            
+            if (empty($subcats)) {
+                continue;
+            }
+
+            foreach ($subcats as $subcatid => $subcat) {
+                $itemtree = array();
+                $items = get_records('grade_items', 'categoryid', $subcatid, 'sortorder');
+                
+                if (empty($items)) {
+                    continue;
+                }
+                
+                foreach ($items as $itemid => $item) { 
+                    $finaltree = array();
+                    
+                    if ($fullobjects) {
+                        $final = new grade_grades_final();
+                        $final->itemid = $itemid;
+                        $finals = $final->fetch_all_using_this();
+                    } else {
+                        $finals = get_records('grade_grades_final', 'itemid', $itemid);
+                    }
+
+                    if ($fullobjects) {
+                        $item = new grade_item($item);
+                    }
+
+                    $itemtree[] = array('object' => $item, 'finalgrades' => $finals);
+                }
+                
+                if ($fullobjects) {
+                    $subcat = new grade_category($subcat, false);
+                }
+
+                $subcattree[] = array('object' => $subcat, 'children' => $itemtree);
+            }
+            
+            if ($fullobjects) {
+                $topcat = new grade_category($topcat, false);
+            }
+
+            $tree[] = array('object' => $topcat, 'children' => $subcattree);
+        }
+
+        // If there are still grade_items, outside of categories, add another filler
+        if (!empty($fillers)) {
+            foreach ($fillers as $sortorder => $item) {
+                $tree[] = array('object' => 'filler', 'children' => 
+                    array(0 => array('object' => 'filler', 'children' => 
+                        array(0 => array('object' => $item, 'finalgrades' => null))))); 
+
+            }
+        }
+
+        $db->debug = false;
+        return $tree;
+    }
 }
 
 ?>
