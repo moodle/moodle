@@ -174,6 +174,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * @param object $config Configuration object
      */
     function process_config($config) {
+	global $CFG;
+
         // set to defaults if undefined
         if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
             $config->auth_instructions = get_string('shibboleth_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/index.php');
@@ -195,7 +197,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
 
         // Check values and return false if something is wrong
-        if (!file_exists($config->convert_data) || !is_readable($config->convert_data)){
+	// Patch Anyware Technologies (14/05/07)
+	if (($config->convert_data != '')&&(!file_exists($config->convert_data) || !is_readable($config->convert_data))){
             return false;
         }
 
