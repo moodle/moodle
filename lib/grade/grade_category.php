@@ -664,11 +664,11 @@ class grade_category extends grade_object {
         $category_table = $CFG->prefix . 'grade_categories';
         $items_table = $CFG->prefix . 'grade_items';
 
-        $constraint = '';
+        $catconstraint = '';
         $itemconstraint = '';
 
         if (!empty($courseid)) {
-            $constraint = " AND $category_table.courseid = $courseid ";
+            $catconstraint = " AND $category_table.courseid = $courseid ";
             $itemconstraint = " AND $items_table.courseid = $courseid ";
         }
         
@@ -686,25 +686,34 @@ class grade_category extends grade_object {
             }
         }
 
-        // Get all top categories first
+        // Get all top categories
         $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
-                  WHERE iteminstance = $category_table.id AND depth = 1 $constraint ORDER BY sortorder";
+                  WHERE iteminstance = $category_table.id $catconstraint ORDER BY sortorder";
 
         $topcats = get_records_sql($query);
         
         if (empty($topcats)) {
             return null;
         }
-
+        
+        // If any of these categories has grade_items as children, create a topcategory filler with colspan=count(children)
+        foreach ($topcats as $topcatid => $topcat) {
+            $topcatobject = new grade_category($topcat, false);
+            if ($topcatobject->get_childrentype() == 'grade_item' && empty($topcatobject->parent)) {
+                $topcatobject->childrencount = $topcatobject->has_children();
+                $fillers[$topcat->sortorder] = $topcatobject;
+                unset($topcats[$topcatid]);
+            }
+        }
+        
         foreach ($topcats as $topcatid => $topcat) {
             // Check the fillers array, see if one must be inserted before this topcat
             if (key($fillers) < $topcat->sortorder) {
                 $sortorder = key($fillers);
-                $itemtoinsert = current($fillers);
+                $object = current($fillers);
                 unset($fillers[$sortorder]);
-                $tree[] = array('object' => 'filler', 'children' => 
-                    array(0 => array('object' => 'filler', 'children' => 
-                        array(0 => array('object' => $itemtoinsert, 'finalgrades' => null))))); 
+                
+                $tree[] = $this->get_filler($object, $fullobjects);
             }
 
             $query = "SELECT $category_table.* FROM $category_table, $items_table 
@@ -756,19 +765,112 @@ class grade_category extends grade_object {
             $tree[] = array('object' => $topcat, 'children' => $subcattree);
         }
 
-        // If there are still grade_items, outside of categories, add another filler
+        // If there are still grade_items or grade_categories without a top category, add another filler
         if (!empty($fillers)) {
-            foreach ($fillers as $sortorder => $item) {
-                $tree[] = array('object' => 'filler', 'children' => 
-                    array(0 => array('object' => 'filler', 'children' => 
-                        array(0 => array('object' => $item, 'finalgrades' => null))))); 
-
+            foreach ($fillers as $sortorder => $object) { 
+                $tree[] = grade_category::get_filler($object, $fullobjects);
             }
         }
-
+        
         $db->debug = false;
         return $tree;
     }
+
+    /**
+     * Returns a hierarchical array, prefilled with the values needed to populate
+     * the tree of grade_items in the cases where a grade_item or grade_category doesn't have a 
+     * 2nd level topcategory.
+     * @param object $object A grade_item or a grade_category object
+     * @param boolean $fullobjects Whether to instantiate full objects or just return stdClass objects
+     * @return array
+     */
+    function get_filler($object, $fullobjects=true) { 
+        $filler_array = array();
+
+        // Depending on whether the filler is for a grade_item or a category...
+        if (isset($object->itemname)) {
+            $filler_array = array('object' => 'filler', 'children' => 
+                array(0 => array('object' => 'filler', 'children' => 
+                    array(0 => array('object' => $object, 'finalgrades' => null))))); 
+        } else {
+            $subcat_children = $object->get_children(0, 'flat');
+            $children_for_tree = array();
+            foreach ($subcat_children as $itemid => $item) {
+                if ($fullobjects) {
+                    $final = new grade_grades_final();
+                    $final->itemid = $itemid;
+                    $finals = $final->fetch_all_using_this();
+                } else {
+                    $finals = get_records('grade_grades_final', 'itemid', $itemid);
+                }
+                $children_for_tree[$itemid] = array('object' => $item, 'finalgrades' => $finals); 
+            }
+
+            $filler_array = array('object' => 'filler', 'colspan' => $object->childrencount, 'children' =>
+                array(0 => array('object' => $object, 'children' => $children_for_tree)));
+        } 
+
+        return $filler_array;
+    }
+
+    /**
+     * Returns a HTML table with all the grades in the course requested, or all the grades in the site.
+     * IMPORTANT: This method (and its associated methods) assumes that we are using only 2 levels of categories (topcat and subcat)
+     * @todo Return extra column for students
+     * @todo Return a row of final grades for each student
+     * @todo Return icons
+     * @todo Return totals
+     * @todo Return row below headers for grading range
+     * @param int $courseid
+     * @return string HTML table
+     */
+    function display_grades($courseid=null) {
+        // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
+        $tree = grade_category::get_tree($courseid);
+        $topcathtml = '<tr>';
+        $cathtml    = '<tr>';
+        $itemhtml   = '<tr>';
+        
+        foreach ($tree as $topcat) {
+            $itemcount = 0;
+            
+            foreach ($topcat['children'] as $catkey => $cat) {
+                $catitemcount = 0;
+
+                foreach ($cat['children'] as $item) {
+                    $itemcount++;
+                    $catitemcount++;
+                    $itemhtml .= '<td>' . $item['object']->itemname . '</td>';
+                }
+                
+                if ($cat['object'] == 'filler') {
+                    $cathtml .= '<td class="subfiller">&nbsp;</td>';
+                } else {
+                    $cat['object']->load_grade_item();
+                    $cathtml .= '<td colspan="' . $catitemcount . '">' . $cat['object']->fullname . '</td>';
+                }
+            }
+
+            if ($topcat['object'] == 'filler') {
+                $colspan = null;
+                if (!empty($topcat['colspan'])) {
+                    $colspan = 'colspan="' . $topcat['colspan'] . '" ';
+                }
+                $topcathtml .= '<td ' . $colspan . 'class="topfiller">&nbsp;</td>';
+            } else {
+                $topcathtml .= '<th colspan="' . $itemcount . '">' . $topcat['object']->fullname . '</th>';
+            }
+
+        }
+        
+        $itemhtml   .= '</tr>';
+        $cathtml    .= '</tr>';
+        $topcathtml .= '</tr>';
+
+        return "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml</table>";
+
+    }
+
 }
 
 ?>

@@ -604,7 +604,7 @@ class gradelib_test extends UnitTestCase {
 
         $grade_item->courseid = $this->courseid;
         $grade_item->categoryid = $this->grade_categories[3]->id;
-        $grade_item->itemname = 'grade_item with only one parent level';
+        $grade_item->itemname = 'singleparentitem1';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
@@ -626,7 +626,7 @@ class gradelib_test extends UnitTestCase {
 
         $grade_item->courseid = $this->courseid;
         $grade_item->categoryid = $this->grade_categories[3]->id;
-        $grade_item->itemname = 'grade_item with only one parent level';
+        $grade_item->itemname = 'singleparentitem2';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
@@ -650,7 +650,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'grade_item for level1 category';
         $grade_item->itemtype = 'category';
         $grade_item->itemmodule = 'quiz';
-        $grade_item->iteminstance = 1;
+        $grade_item->iteminstance = $this->grade_categories[3]->id;
         $grade_item->needsupdate = true;
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 10;
@@ -1372,52 +1372,6 @@ class gradelib_test extends UnitTestCase {
         $this->assertEqual(40, standardise_score(50, 30, 80, 0, 100));
     }
 
-    /**
-     * This is not a real unit test, but an experimental attempt at building a HTML table
-     * based on the sortorders set for each test grade_item.
-     */
-    function test_grade_build_table() {
-        // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
-        $tree = grade_category::get_tree($this->courseid);
-        $topcathtml = '<tr>';
-        $cathtml    = '<tr>';
-        $itemhtml   = '<tr>';
-        
-        foreach ($tree as $topcat) {
-            $itemcount = 0;
-            
-            foreach ($topcat['children'] as $catkey => $cat) {
-                $catitemcount = 0;
-
-                foreach ($cat['children'] as $item) {
-                    $itemcount++;
-                    $catitemcount++;
-                    $itemhtml .= '<td>' . $item['object']->itemname . '</td>';
-                }
-                
-                if ($cat['object'] == 'filler') {
-                    $cathtml .= '<td class="subfiller">&nbsp;</td>';
-                } else {
-                    $cat['object']->load_grade_item();
-                    $cathtml .= '<td colspan="' . $catitemcount . '">' . $cat['object']->fullname . '</td>';
-                }
-            }
-
-            if ($topcat['object'] == 'filler') {
-                $topcathtml .= '<td class="topfiller">&nbsp;</td>';
-            } else {
-                $topcathtml .= '<th colspan="' . $itemcount . '">' . $topcat['object']->fullname . '</th>';
-            }
-
-        }
-        
-        $itemhtml   .= '</tr>';
-        $cathtml    .= '</tr>';
-        $topcathtml .= '</tr>';
-
-        echo "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml</table>";
-
-    }
 }
 
 ?>
