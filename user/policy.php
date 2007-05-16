@@ -49,20 +49,11 @@
     echo '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
     echo '</object></div>';
 
-  // see MDL-9798
-/*    $linkyes    = 'policy.php';
+    $linkyes    = 'policy.php';
     $optionsyes = array('agree'=>1, 'sesskey'=>sesskey());
     $linkno     = $CFG->wwwroot.'/login/logout.php';
     $optionsno  = array('sesskey'=>sesskey());
-    notice_yesno($strpolicyagree, $linkyes, $linkno, $optionsyes, $optionsno);*/
-
-    print_box_start('generalbox', 'notice');
-    echo '<p>'. $strpolicyagree .'</p>';
-    echo '<div class="buttons">';
-    echo '<div class="singlebutton"><a href="policy.php?agree=1&amp;sesskey='.sesskey().'">'.get_string('yes').'</a></div>';
-    echo '<div class="singlebutton"><a href="../login/logout.php?sesskey='.sesskey().'">'.get_string('no').'</a></div>';
-    echo '</div>';
-    print_box_end();
+    notice_yesno($strpolicyagree, $linkyes, $linkno, $optionsyes, $optionsno);
 
     print_footer();
 
