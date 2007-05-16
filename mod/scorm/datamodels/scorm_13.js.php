@@ -381,9 +381,6 @@ function SCORMapi1_3() {
     function SetValue (element,value) {
         errorCode = "0";
         diagnostic = "";
-      //  if (element== 'cmi.interactions.0.learner_response' && value=='Dependency on cmi.interaction.n.type not established'){
-        //    errorCode="408";
-        //}
         if ((Initialized) && (!Terminated)) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
@@ -505,10 +502,24 @@ function SCORMapi1_3() {
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-//alert('model ='+elementmodel+' subelement ='+subelement);
+                                                    
                                                     if (typeof eval(subelement) == "undefined") {
+                                                        if ((elementmodel=='cmi.interactions.n.objectives.n.id') && (typeof eval(parentelement) != "undefined")) {
+                                                           if (!duplicatedID(parentelement,value)) {
 
-                                                        errorCode="408";
+                                                               if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                                   eval(parentelement+'._count++;');
+
+                                                                   eval(subelement+' = new Object();');
+                                                               }
+                                                           } else {
+
+                                                               errorCode="351";
+                                                               diagnostic = "Data Model Element ID Already Exists";
+                                                           }
+                                                        } else {
+                                                            errorCode="408";
+                                                        }
                                                     } else {
                                                         //maxmodel = 'cmi.interactions.Nxxx.type';
                                                         //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
