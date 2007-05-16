@@ -355,8 +355,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
-        $unit = $virtualqtype->get_default_numerical_unit($question);
-
+        if($unit = $virtualqtype->get_default_numerical_unit($question)){
+             $unit = $unit->unit;
+        } else {
+            $unit = '';
+        }          
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
@@ -364,7 +367,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $correctanswer = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit->unit);
+                 $answer->correctanswerformat, $unit);
            $numericalquestion->options->answers[$key]->answer = $correctanswer->answer;
         }
         $numericalquestion->questiontext = parent::substitute_variables(
@@ -812,13 +815,17 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function get_correct_responses(&$question, &$state) {
         $virtualqtype = $this->get_virtual_qtype();
-        $unit = $virtualqtype->get_default_numerical_unit($question);
+        if($unit = $virtualqtype->get_default_numerical_unit($question)){
+             $unit = $unit->unit;
+        } else {
+            $unit = '';
+        }          
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
                 $answernumerical = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit->unit);
+                 $answer->correctanswerformat, $unit);
                 return array('' => $answernumerical->answer);
             }
         }
