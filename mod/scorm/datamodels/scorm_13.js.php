@@ -406,16 +406,20 @@ function SCORMapi1_3() {
                                             errorCode = "351";
                                         }
                                         parentelement = subelement+'.'+elementIndex;
-                                        if (elementIndexes[i+1] > eval(parentelement+'._count')) {
-
-                                            errorCode = "351";
-                                            diagnostic = "Data Model Element Collection Set Out Of Order";
-                                        }
-                                        subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
-                                        i++;
-
-                                        if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
+                                        if ((typeof eval(parentelement) == "undefined") || (typeof eval(parentelement+'._count') == "undefined")) {
                                             errorCode="408";
+                                        } else {
+                                            if (elementIndexes[i+1] > eval(parentelement+'._count')) {
+
+                                                errorCode = "351";
+                                                diagnostic = "Data Model Element Collection Set Out Of Order";
+                                            }
+                                            subelement = subelement.concat('.'+elementIndex+'.N'+elementIndexes[i+1]);
+                                            i++;
+
+                                            if (((typeof eval(subelement)) == "undefined") && (i < elementIndexes.length-2)) {
+                                                errorCode="408";
+                                            }
                                         }
                                     } else {
                                         subelement = subelement.concat('.'+elementIndex);
@@ -431,10 +435,8 @@ function SCORMapi1_3() {
 
                                     if (((typeof eval(subelement)) == "undefined") && (errorCode == "0")) {
                                         parentmodel = 'cmi.objectives';
-                                        //maxmodel = 'cmi.objectives.Nxxx.id';
                                         if (subelement.substr(0,parentmodel.length) == parentmodel) {
 
-                                            // if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                              if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                 //This is a parentmodel.n.id element
@@ -472,11 +474,9 @@ function SCORMapi1_3() {
                                         } else {
 
                                             parentmodel = 'cmi.interactions';
-                                            //maxmodel = 'cmi.interactions.Nxxx.id';
 
                                             if (subelement.substr(0,parentmodel.length) == parentmodel) {
 
-                                                //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                 if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                     //This is a parentmodel.n.id element
@@ -491,8 +491,8 @@ function SCORMapi1_3() {
                                                             subobject = eval(subelement);
                                                             subobject.objectives = new Object();
                                                             subobject.objectives._count = 0;
-                                                            subobject.correct_responses = new Object();
-                                                            subobject.correct_responses._count = 0;
+                                                            //subobject.correct_responses = new Object();
+                                                            //subobject.correct_responses._count = 0;
 
                                                             
                                                         } 
@@ -502,11 +502,13 @@ function SCORMapi1_3() {
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-                                                    
+//alert(element+"\n"+subelement);
+                                                    if ((elementmodel=='cmi.interactions.n.learner_response') && (typeof eval(parentelement+'.type') == "undefined")) {
+                                                        errorCode="408";
+                                                    }
                                                     if (typeof eval(subelement) == "undefined") {
                                                         if ((elementmodel=='cmi.interactions.n.objectives.n.id') && (typeof eval(parentelement) != "undefined")) {
                                                            if (!duplicatedID(parentelement,value)) {
-
                                                                if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                                    eval(parentelement+'._count++;');
 
@@ -517,22 +519,28 @@ function SCORMapi1_3() {
                                                                errorCode="351";
                                                                diagnostic = "Data Model Element ID Already Exists";
                                                            }
+                                                        } else 
+                                                        if ((elementmodel=='cmi.interactions.n.correct_responses.n.pattern') && (typeof eval(parentelement) != "undefined")) {
+                                                            if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                                eval(parentelement+'._count++;');
+
+                                                                eval(subelement+' = new Object();');
+                                                            }
                                                         } else {
                                                             errorCode="408";
                                                         }
                                                     } else {
-                                                        //maxmodel = 'cmi.interactions.Nxxx.type';
-                                                        //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-4) == 'type') && (errorCode=="0")) { 
+//alert('element = '+element+"\nparentmodel = "+parentmodel+"\nparentelement = "+parentelement+"\nvalue = "+value);
                                                         if ((elementmodel==parentmodel+'.n.type') && (errorCode=="0")) { 
                                                             subobject = eval(subelement);
-                                                           //subobject.correct_responses = new Object();
-                                                           //subobject.correct_responses._count = 0;
-                                                           subobject.learner_response = new Object();
-                                                        } 
+                                                            subobject.correct_responses = new Object();
+                                                            subobject.correct_responses._count = 0;
+                                                        } else {
+                                                            errorCode="408";
+                                                        }
                                                     }
                                                 }
                                             } else {
-
 
                                                 if (errorCode == "0") {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
@@ -545,9 +553,7 @@ function SCORMapi1_3() {
                                      } else {
 
                                          parentmodel = 'cmi.objectives';
-                                         //maxmodel = 'cmi.objectives.Nxxx.id';
                                          if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                             //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) {
                                              if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
                                                  if (eval(element) != value) {
@@ -558,9 +564,7 @@ function SCORMapi1_3() {
                                          } else {
 
                                              parentmodel = 'cmi.interactions';
-                                             //maxmodel = 'cmi.interactions.Nxxx.id';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
-                                                 //if ((elemlen <= maxmodel.length) && (element.substr(elemlen-2) == 'id') && (errorCode=="0")) { 
                                                  if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
                                                      if (eval(element) != value) {
                                                          errorCode = "351";
