@@ -689,12 +689,12 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     $d_fields = 'id, category, sortorder, shortname, fullname, idnumber, newsitems, teacher, teachers, student, students, guest, startdate, visible, cost, enrol, summary, groupmode, groupmodeforce';
 
     $usingdefaults = true;
-    if (is_null($sort)) {
+    if (is_null($sort)   || $sort === $d_sort) {
         $sort = $d_sort;
     } else {
         $usingdefaults = false;
     }
-    if (is_null($fields)) {
+    if (is_null($fields) || $fields === $d_fields) {
         $fields = $d_fields;
     } else {
         $usingdefaults = false;
