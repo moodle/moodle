@@ -120,6 +120,12 @@ img.grouppicture {
   text-align: center;
 }
 
+div.groupselector {
+  float: left;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
 #addmembersform table {
   margin-left: auto;
   margin-right: auto;
@@ -703,6 +709,13 @@ table.navbar {
 
 .navigation optgroup option {
   padding:0px;
+}
+
+#navmenupopup option {
+  padding: 2px 0 2px 20px; 
+  background-repeat: no-repeat; 
+  background-position: 1px 2px; 
+  vertical-align: middle;
 }
 
 /***
@@ -2645,6 +2658,13 @@ body#user-index .rolesform {
 
 #mod-chat-view #chatcurrentusers .chatuserdetails {
    vertical-align: middle;   
+}
+
+#mod-chat-view #enterlink {
+   text-align: center;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
 }
 
 .chat-event .picture,
