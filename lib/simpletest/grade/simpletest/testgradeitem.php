@@ -481,5 +481,8 @@ class grade_item_test extends gradelib_test {
         $grade_item->load_final();
         $this->assertEqual(3, count($grade_item->grade_grades_final)); 
     }
+
+    function test_float_keys() {
+    }
 } 
 ?>
