@@ -39,7 +39,11 @@ class grade_export_txt extends grade_export {
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
-            }
+            } else {
+            $export = false;  
+          }
+        } else {
+            $export = false; 
         }
         
         /// Print header to force download        

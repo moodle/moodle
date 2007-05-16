@@ -39,7 +39,11 @@ class grade_export_xls extends grade_export {
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
-            }
+            } else {
+            $export = false;  
+          }
+        } else {
+            $export = false; 
         }
         
         require_once($CFG->dirroot.'/lib/excellib.class.php');
@@ -87,7 +91,7 @@ class grade_export_xls extends grade_export {
                 $myxls->write_string($i,4,$student->department);
                 $myxls->write_string($i,5,$student->email);
                 $j=6;
-                foreach ($studentgrades as $grade) {
+                foreach ($studentgrades as $gradeitemid => $grade) {
                     if (is_numeric($grade)) {
                         $myxls->write_number($i,$j++,strip_tags($grade));
                     }

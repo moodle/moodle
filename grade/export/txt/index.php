@@ -30,15 +30,21 @@ $feedback = optional_param('feedback', '', PARAM_ALPHA);
 
 // process post information
 if ($data = data_submitted() && confirm_sesskey()) {
-    $itemids = implode(",", $data->itemids);
-    // this redirect should trigger a download prompt
-    redirect('export.php?id='.$id.'&amp;itemids='.$itemids);
-    
+
+    if (!is_array($data->itemids)) {
+        $itemidsurl = $data->itemids;
+    } else {
+        $itemidsurl = implode(",",$data->itemids);
+    }
+        
     // print the grades on screen for feedbacks
-    print_header();
-    $export = new grade_export($id, $itemids);
+    print_header(get_string('grade'),get_string('grade'),get_string('grade'));
+    $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
     print_footer();
+    
+    // this redirect should trigger a download prompt
+    redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
     exit; 
 }
 

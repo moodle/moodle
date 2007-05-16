@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 require_once("../../../config.php");
 require_once($CFG->dirroot.'/grade/export/lib.php');
-require_once('grade_export_xml.php');
+require_once('grade_export_ods.php');
 
 $id = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
@@ -42,7 +42,6 @@ if ($data = data_submitted() && confirm_sesskey()) {
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
     print_footer();
-    
     // this redirect should trigger a download prompt
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
     exit; 

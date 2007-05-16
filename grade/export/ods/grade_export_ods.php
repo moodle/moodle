@@ -41,9 +41,13 @@ class grade_export_ods extends grade_export {
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
-            }
+            } else {
+            $export = false;  
+          }
+        } else {
+            $export = false; 
         }
-   
+ 
     /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.ods");
     /// Creating a workbook
@@ -88,7 +92,7 @@ class grade_export_ods extends grade_export {
                 $myxls->write_string($i,4,$student->department);
                 $myxls->write_string($i,5,$student->email);
                 $j=6;
-                foreach ($studentgrades as $grade) {
+                foreach ($studentgrades as $gradeitemid => $grade) {
                     if (is_numeric($grade)) {
                         $myxls->write_number($i,$j++,strip_tags($grade));
                     }

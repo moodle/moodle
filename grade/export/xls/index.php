@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 require_once("../../../config.php");
 require_once($CFG->dirroot.'/grade/export/lib.php');
-require_once('grade_export_xml.php');
+require_once('grade_export_xls.php');
 
 $id = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);

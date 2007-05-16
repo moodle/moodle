@@ -39,7 +39,11 @@ class grade_export_xml extends grade_export {
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
-            }
+            } else {
+            $export = false;  
+          }
+        } else {
+            $export = false; 
         }
                
         require_once($CFG->dirroot.'/lib/excellib.class.php');
@@ -68,18 +72,17 @@ class grade_export_xml extends grade_export {
                 
                 // we are trying to figure out if this is a new grade, or a regraded grade
                 // only relevant if this grade for this user is already exported
-                if (!empty($gradeitem->exported)) {
                     
-                    // get the grade_grades_final for this user
-                    unset($params);
-                    $params->itemid = $gradeitem->id;
-                    $params->userid = $studentid;
+                // get the grade_grades_final for this user
+                unset($params);
+                $params->itemid = $gradeitem->id;
+                $params->userid = $studentid;
                 
-                    $grade_grades_final = new grade_grades_final($params);
+                $grade_grades_final = new grade_grades_final($params);
                     
-                    // if exported, check grade_history, if modified after export, set state to regrade
-                
-                    if (record_exists_select('grade_hitory', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades_final->exported)) {
+                // if exported, check grade_history, if modified after export, set state to regrade
+                if (!empty($grade_grades_final->exported)) {
+                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades_final->exported)) {
                         $status = 'regrade';  
                     } else {
                         $status = 'new';  

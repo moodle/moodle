@@ -143,18 +143,19 @@ class grade_export {
             
             foreach ($gradeitems as $gradeitem) {
 
-                $this->columns[] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
-                $this->columnidnumbers[] = $gradeitem->idnumber; // this might be needed for some export plugins  
-            
-                if (!empty($gradeitem->maxgrade)) {
-                    $maxgrade = "$strmax: $gradeitem->maxgrade";
-                } else {
-                    $maxgrade = "";
-                } 
-            
                 // load as an array of grade_final objects
                 if ($itemgrades = $gradeitem -> load_final()) {
+                    
+                    $this->columns[$itemgrades->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
                 
+                    $this->columnidnumbers[$itemgrades->id] = $gradeitem->idnumber; // this might be needed for some export plugins  
+            
+                    if (!empty($gradeitem->grademax)) {
+                        $maxgrade = "$strmax: $gradeitem->grademax";
+                    } else {
+                        $maxgrade = "";
+                    } 
+                    
                     if (!empty($this->students)) {                    
                         foreach ($this->students as $student) {
                       
@@ -164,7 +165,7 @@ class grade_export {
                             if (!empty($studentgrade->gradevalue)) {
                                 $this->grades[$student->id][$itemgrades->id] = $currentstudentgrade = $studentgrade->gradevalue;
                             } else {
-                                $this->grades[$student->id][] = $currentstudentgrade = "";
+                                $this->grades[$student->id][$itemgrades->id] = $currentstudentgrade = "";
                                 $this->gradeshtml[$student->id][$itemgrades->id] = "";
                             }
                             if (!empty($maxgrade)) {
@@ -198,41 +199,41 @@ class grade_export {
     /**
      * Displays all the grades on screen as a feedback mechanism
      */
-    function display_grades() {
-        echo get_string("firstname")."\t".
-             get_string("lastname")."\t".
-             get_string("idnumber")."\t".
-             get_string("institution")."\t".
-             get_string("department")."\t".
+    function display_grades($feedback=false) {
+        echo get_string("firstname").",".
+             get_string("lastname").",".
+             get_string("idnumber").",".
+             get_string("institution").",".
+             get_string("department").",".
              get_string("email");
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
-            echo "\t$column";
+            echo ",$column";
         
             /// add a column_feedback column            
             if ($feedback) {
-                echo "\t{$column}_feedback";
+                echo ",{$column}_feedback";
             }        
         }
-        echo "\t".get_string("total")."\n";
+        echo ",".get_string("total")."<br/>";
     
         /// Print all the lines of data.
         foreach ($this->grades as $studentid => $studentgrades) {
-            $student = $students[$studentid];
+            $student = $this->students[$studentid];
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
-            echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
+            echo "$student->firstname,$student->lastname,$student->idnumber,$student->institution,$student->department,$student->email";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
-                echo "\t$grade";            
+                echo ",$grade";            
                 
                 if ($feedback) {
-                    echo "\t".array_shift($this->comments[$student->id]);
+                    echo ",".array_shift($this->comments[$student->id]);
                 }       
             }
-            echo "\t".$this->totals[$student->id];
-            echo "\n";
+            echo ",".$this->totals[$student->id];
+            echo "<br/>";
         }  
     }
 }
