@@ -166,7 +166,7 @@ class grade_item_test extends gradelib_test {
         $this->assertTrue(method_exists($grade_item, 'fetch_all_using_this'));
        
         $grade_items = $grade_item->fetch_all_using_this();
-        $this->assertEqual(2, count($grade_items));
+        $this->assertEqual(5, count($grade_items));
         $first_grade_item = reset($grade_items);
         $this->assertEqual($this->grade_items[0]->id, $first_grade_item->id);
     }
@@ -397,7 +397,7 @@ class grade_item_test extends gradelib_test {
         
         $this->assertFalse(empty($grade_item->grade_grades_final));
         $this->assertEqual($grade_item->id, $grade_item->grade_grades_final[1]->itemid);
-        $this->assertEqual(2.66667, $grade_item->grade_grades_final[1]->gradevalue);
+        $this->assertEqual(2.66667, round($grade_item->grade_grades_final[1]->gradevalue, 5));
         $this->assertEqual(1, $grade_item->grade_grades_final[1]->userid);
     }
 
