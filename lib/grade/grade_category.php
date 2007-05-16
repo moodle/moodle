@@ -650,6 +650,7 @@ class grade_category extends grade_object {
     /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
      * a given course, or for the entire site if no courseid is given.
+     * @static
      * @param int $courseid
      * @param boolean $fullobjects Whether to instantiate full objects based on the data or not
      * @return array
@@ -780,6 +781,7 @@ class grade_category extends grade_object {
      * Returns a hierarchical array, prefilled with the values needed to populate
      * the tree of grade_items in the cases where a grade_item or grade_category doesn't have a 
      * 2nd level topcategory.
+     * @static
      * @param object $object A grade_item or a grade_category object
      * @param boolean $fullobjects Whether to instantiate full objects or just return stdClass objects
      * @return array
@@ -789,20 +791,27 @@ class grade_category extends grade_object {
 
         // Depending on whether the filler is for a grade_item or a category...
         if (isset($object->itemname)) {
+            if (get_class($object) == 'grade_item') {
+                $finals = $object->load_final();
+            } else {
+                $item_object = new grade_item($object, false);
+                $finals = $object->load_final();
+            }
+
             $filler_array = array('object' => 'filler', 'children' => 
                 array(0 => array('object' => 'filler', 'children' => 
-                    array(0 => array('object' => $object, 'finalgrades' => null))))); 
+                    array(0 => array('object' => $object, 'finalgrades' => $finals))))); 
         } else {
             $subcat_children = $object->get_children(0, 'flat');
             $children_for_tree = array();
             foreach ($subcat_children as $itemid => $item) {
-                if ($fullobjects) {
-                    $final = new grade_grades_final();
-                    $final->itemid = $itemid;
-                    $finals = $final->fetch_all_using_this();
+                if (get_class($item) == 'grade_item') {
+                    $finals = $item->load_final();
                 } else {
-                    $finals = get_records('grade_grades_final', 'itemid', $itemid);
+                    $item_object = new grade_item($item, false);
+                    $finals = $item->load_final();
                 }
+                
                 $children_for_tree[$itemid] = array('object' => $item, 'finalgrades' => $finals); 
             }
 
@@ -821,6 +830,7 @@ class grade_category extends grade_object {
      * @todo Return icons
      * @todo Return totals
      * @todo Return row below headers for grading range
+     * @static
      * @param int $courseid
      * @return string HTML table
      */
