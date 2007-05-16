@@ -908,7 +908,8 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
  * @return string If $return is true then the entire form is returned as a string.
  * @todo Finish documenting this function<br>
  */
-function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false, $targetwindow='self', $selectlabel='') {
+function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
+$targetwindow='self', $selectlabel='', $optionsextra=NULL) {
 
     global $CFG;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
@@ -994,6 +995,10 @@ function popup_form($common, $options, $formid, $selected='', $nothing='choose',
 
             if ($value == $selected) {
                 $optstr .= ' selected="selected"';
+            }
+
+            if (!empty($optionsextra[$value])) {
+                $optstr .= ' '.$optionsextra[$value];
             }
 
             if ($label) {
@@ -4376,6 +4381,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     $logslink = NULL;
     $flag = false;
     $menu = array();
+    $menustyle = array();
 
     $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
@@ -4437,6 +4443,9 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                 }
             }
             $menu[$url] = $mod->name;
+            if (empty($THEME->navmenuiconshide)) {
+                $menustyle[$url] = 'style="background-image: url('.$CFG->modpixpath.'/'.$mod->mod.'/icon.gif);"';  // Unfortunately necessary to do this here
+            }
             $previousmod = $mod;
         }
     }
@@ -4467,7 +4476,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     return '<div class="navigation">'."\n".'<ul>'.$logslink . $backmod .
             '<li>'.popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenupopup', $selected, $strjumpto,
-                       '', '', true, $targetwindow).'</li>'.
+                       '', '', true, $targetwindow, '', $menustyle).'</li>'.
             $nextmod . '</ul>'."\n".'</div>';
 }
 
@@ -5143,8 +5152,8 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
         $delay += 3; // double redirect prevention, it was sometimes breaking upgrades before 1.7
     }
     echo '<div style="text-align:center">';
-    echo '<p>'. $message .'</p>';
-    echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
+    echo '<div>'. $message .'</div>';
+    echo '<div>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</div>';
     echo '</div>';
 // it might be better not to set timeout the same for both types of redirect, so that we can be sure which one wins
 ?>
