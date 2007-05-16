@@ -86,7 +86,7 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
     function removeOption($value)
     {
         $key=array_search($value, $this->_values);
-        if ($key!==FALSE || $key!==null) {
+        if ($key!==FALSE and $key!==null) {
             unset($this->_values[$key]);
         }
         foreach ($this->_options as $key=>$option){
