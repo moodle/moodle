@@ -1733,7 +1733,7 @@ function grade_view_category_grades($view_by_student) {
     
     // if can't see course grades, print single grade view
     if (!has_capability('moodle/course:viewcoursegrades', $context)) {
-        return print_student_grade($USER, $course);
+        $view_by_student = $USER->id;
     }
 
     if ($preferences->use_advanced == 0) {
@@ -2033,7 +2033,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
 
     // if can't see course grades, print single grade view
     if (!has_capability('moodle/course:viewcoursegrades', $context)) {
-        return print_student_grade($USER, $course);
+        $view_by_student = $USER->id;
     }
     
     list($grades_by_student, $all_categories) = grade_get_formatted_grades();
