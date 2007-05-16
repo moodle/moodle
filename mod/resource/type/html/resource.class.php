@@ -72,7 +72,7 @@ function display() {
         $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
         $inpopup = optional_param('inpopup', '', PARAM_BOOL);
         
-        // fix for MDL-9021, thanks Etienne Rozé
+        // fix for MDL-9021, thanks Etienne Rozï¿½
         add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
         if ($resource->popup) {
@@ -127,7 +127,11 @@ function display() {
 }
 
 function setup_preprocessing(&$defaults){
-    if (!empty($defaults['popup'])) {
+
+    if (!isset($defaults['popup'])) {
+        // use form defaults
+
+    } else if (!empty($defaults['popup'])) {
         $defaults['windowpopup'] = 1;
         if (array_key_exists('popup', $defaults)) {
             $rawoptions = explode(',', $defaults['popup']);
@@ -156,7 +160,7 @@ function setup_elements(&$mform) {
 
     $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
     $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
-    $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
+    $mform->setDefault('windowpopup', (int)!empty($CFG->resource_popup));
 
     $mform->addElement('checkbox', 'blockdisplay', get_string('showcourseblocks', 'resource'));
     $mform->setDefault('blockdisplay', 0);

@@ -129,7 +129,11 @@ function display() {
 
 
 function setup_preprocessing(&$defaults){
-    if (!empty($defaults['popup'])) {
+
+    if (!isset($defaults['popup'])) {
+        // use form defaults
+
+    } else if (!empty($defaults['popup'])) {
         $defaults['windowpopup'] = 1;
         if (array_key_exists('popup', $defaults)) {
             $rawoptions = explode(',', $defaults['popup']);
