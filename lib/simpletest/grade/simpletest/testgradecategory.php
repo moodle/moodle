@@ -216,22 +216,6 @@ class grade_category_test extends gradelib_test {
         $raw_grade->gradevalue = rand(0, 1000) / 1000;
         $raw_grade->insert();
         return $raw_grade->gradevalue;
-    }
-
-    function test_grade_category_display_grades() {
-        $result_html = grade_category::display_grades($this->courseid);
-        $expected_html = '<table style="text-align: center" border="1"><tr><th colspan="3">unittestcategory1</th><td class="topfiller">&nbsp;</td><td colspan="2" class="topfiller">&nbsp;</td></tr><tr><td colspan="2">unittestcategory2</td><td colspan="1">unittestcategory3</td><td class="subfiller">&nbsp;</td><td colspan="2">level1category</td></tr><tr><td>unittestgradeitem1</td><td>unittestgradeitem2</td><td>unittestgradeitem3</td><td>unittestorphangradeitem1</td><td>singleparentitem1</td><td>singleparentitem2</td></tr></table>';
-        $this->assertEqual($expected_html, $result_html);
-    }
-
-    function test_grade_category_get_tree() {
-        $result_tree = grade_category::get_tree($this->courseid);
-        $result_count = count($result_tree, COUNT_RECURSIVE);
-        $this->assertEqual(58, $result_count);
-    }
-
-    function test_grade_category_get_filler() {
-
-    }
+    } 
 } 
 ?>
