@@ -197,6 +197,8 @@
             moodle_install_roles();
             set_config('statsrolesupgraded',time());
 
+            // install core event handlers
+            events_update_definition();
 
             // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
             // (this should only have any effect during initial install).
