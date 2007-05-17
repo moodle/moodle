@@ -22,6 +22,19 @@
     $txt->pathlatex = get_string( 'pathlatex','admin' );
     $txt->pathdvips = get_string( 'pathdvips','admin' );
     $txt->pathconvert = get_string( 'pathconvert','admin' );
+    $txt->tick = '&#x2714';
+    $txt->cross = '&#x2718';
+
+    // check file exists & display tick or cross 
+    function texbinaryconfirm( $path ) {
+        global $txt;
+        if (is_file($path)) {
+            echo "<span style=\"color:green;\">$txt->tick</span>";
+        }
+        else {
+            echo "<span style=\"color:red;\">$txt->cross</span>";
+        }        
+    }
 ?>
 
 <table cellpadding="9" cellspacing="0">
@@ -46,16 +59,22 @@
     <tr valign="top">
         <td align="right"><?php echo $txt->pathlatex; ?></td>
         <td><input type="text" name="filter_tex_pathlatex" size="50"
-            value="<?php p($CFG->filter_tex_pathlatex); ?>" /></td>
+            value="<?php p($CFG->filter_tex_pathlatex); ?>" />
+            <?php texbinaryconfirm( $CFG->filter_tex_pathlatex ); ?>
+        </td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->pathdvips; ?></td>
         <td><input type="text" name="filter_tex_pathdvips" size="50"
-            value="<?php p($CFG->filter_tex_pathdvips); ?>" /></td>
+            value="<?php p($CFG->filter_tex_pathdvips); ?>" />
+            <?php texbinaryconfirm( $CFG->filter_tex_pathdvips ); ?>
+        </td>
     </tr>
     <tr valign="top">
         <td align="right"><?php echo $txt->pathconvert; ?></td>
         <td><input type="text" name="filter_tex_pathconvert" size="50"
-            value="<?php p($CFG->filter_tex_pathconvert); ?>" /></td>
+            value="<?php p($CFG->filter_tex_pathconvert); ?>" />
+            <?php texbinaryconfirm( $CFG->filter_tex_pathconvert ); ?>
+        </td>
     </tr>
 </table>
