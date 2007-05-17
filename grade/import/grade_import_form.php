@@ -24,4 +24,33 @@ class grade_import_form extends moodleform {
         }
     }
 }
+
+
+class grade_import_mapping_form extends moodleform {
+    function definition () {
+        $mform =& $this->_form;
+
+        // course id needs to be passed for auth purposes
+        $mform->addElement('hidden', 'id', optional_param('id'));
+
+        $this->add_action_buttons(false, get_string('uploadgrades'));
+    }
+    
+    function setup ($headers = '', $filename = '') {
+        $mform =& $this->_form;
+        if (is_array($headers)) {
+            foreach ($headers as $header) {
+                $mform->addElement('hidden', $header, $header); 
+                $mform->addRule($header, null, 'required');
+            }
+        }    
+        if ($filename) {
+            $mform->addElement('hidden', 'filename', $filename);
+            $mform->addRule('filename', null, 'required');
+        }
+        
+        print_object($mform);
+                  
+    }
+}
 ?>
