@@ -271,6 +271,7 @@ class grade_item extends grade_object {
         }
         
         if (empty($grade_final_array)) {
+            debugging("No final grades recorded for this grade_item");
             return false;
         }
 
@@ -414,7 +415,8 @@ class grade_item extends grade_object {
                 $grade_item = new grade_item($grade_item);
                 return $grade_item;
             }
-        } else {
+        } else { 
+            debugging("No grade_item matching these criteria in the database.");
             return false;
         }
     }
@@ -446,9 +448,12 @@ class grade_item extends grade_object {
             $category = $this->get_category();
             if (!empty($category)) {
                 if (!$category->flag_for_update()) {
+                    debugging("Could not notify parent category of the need to update its final grades.");
                     return false;
                 }
             }
+        } else {
+            debugging("Could not insert this grade_item in the database!");
         }
 
         return $result;
@@ -498,6 +503,7 @@ class grade_item extends grade_object {
                 $this->grade_grades_raw[$userid] = $raw_grade;
             }
         } else {
+            debugging("The data given to grade_item::save_raw($data) was not valid, it must be an arra of raw grades.");
             return false;
         }
     }
@@ -582,6 +588,7 @@ class grade_item extends grade_object {
         if (empty($calculation)) { // We are setting this item object's calculation variable from the DB
             $grade_calculation = $this->get_calculation(true);
             if (empty($grade_calculation)) {
+                debugging("No calculation to set for this grade_item.");
                 return false;
             } else {
                 $this->calculation = $grade_calculation;
@@ -598,6 +605,7 @@ class grade_item extends grade_object {
                     $this->calculation = $grade_calculation;
                     return true;
                 } else {
+                    debugging("Could not save the calculation in the database, for this grade_item.");
                     return false;
                 }                
             } else { // Updating
@@ -640,6 +648,7 @@ class grade_item extends grade_object {
         }
 
         if (!$this->update()) {
+            debugging("Could not update this grade_item's locked state in the database.");
             return false;
         }
         
@@ -650,6 +659,7 @@ class grade_item extends grade_object {
             foreach ($this->grade_grades_final as $id => $final) {
                 $final->locked = $this->locked;
                 if (!$final->update()) {
+                    debugging("Could not update this grade_item's final grade's locked state in the database.");
                     return false;
                 }
                 $count++;
@@ -674,6 +684,7 @@ class grade_item extends grade_object {
         }
 
         if (!$this->update()) {
+            debugging("Could not update this grade_item's hidden state in the database.");
             return false;
         }
         
@@ -684,6 +695,7 @@ class grade_item extends grade_object {
             foreach ($this->grade_grades_final as $id => $final) {
                 $final->hidden = $this->hidden;
                 if (!$final->update()) {
+                    debugging("Could not update this grade_item's final grade's hidden state in the database.");
                     return false;
                 }
                 $count++;
@@ -747,6 +759,7 @@ class grade_item extends grade_object {
             if ($final->update()) {
                 $count++;
             } else {
+                debugging("Could not update a final grade in this grade_item.");
                 return false;
             }
         }
@@ -838,5 +851,16 @@ class grade_item extends grade_object {
 
         return $result;
     }
+    
+    /**
+     * Returns the sortorder of this grade_item. This method is also available in 
+     * grade_category, for cases where the object type is not know. It will act as a virtual 
+     * variable for a grade_category.
+     * @return int Sort order
+     */
+    function get_sortorder() {
+        return $this->sortorder;
+    }
+
 }
 ?>

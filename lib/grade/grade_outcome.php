@@ -117,6 +117,7 @@ class grade_outcome extends grade_object {
                 return $grade_outcome;
             }
         } else {
+            debugging("No matching grade_outcome in DB with the given criteria.");
             return false;
         }
     }

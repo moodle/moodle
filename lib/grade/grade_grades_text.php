@@ -115,6 +115,7 @@ class grade_grades_text extends grade_object {
                 return $grade_text;
             }
         } else {
+            debugging("No grade_grades_text matching your criteria in the database.");
             return false;
         }
     }

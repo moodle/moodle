@@ -83,44 +83,44 @@ class grade_tree {
     function locate_element($sortorder) {
         $topcatcount = 0;
         $retval = false;
-
-        foreach ($this->tree_array as $topcatkey => $topcat) {
-            $topcatcount++;
-            $subcatcount = 0;
+       debugging($sortorder); 
+        if (empty($this->tree_array)) {
+            debugging("grade_tree->tree_array was empty, I could not locate the element at sortorder $sortorder");
+            return false;
+        }
+        
+        foreach ($this->tree_array as $key1 => $level1) {
+            $level1count++;
+            $level2count = 0;
             $retval = new stdClass();
-            $retval->topcatindex = $topcatkey;
-            unset($retval->subcatindex);
-            unset($retval->itemindex);
+            $retval->index = $key1;
 
-            if ($topcatkey == $sortorder) {
-                $retval->depth = 1;
-                $retval->element = $topcat;
-                $retval->position = $topcatcount;
+            if ($key1 == $sortorder) {
+                $retval->element = $level1;
+                $retval->position = $level1count;
                 return $retval;
             }
 
-            if (!empty($topcat['children'])) {
-                foreach ($topcat['children'] as $subcatkey => $subcat) {
-                    $subcatcount++;
-                    unset($retval->itemindex);
-                    $itemcount = 0;
+            if (!empty($level1['children'])) {
+                foreach ($level1['children'] as $level2key => $level2) {
+                    $level2count++;
+                    $level3count = 0;
 
-                    $retval->subcatindex = $subcatkey;
-                    if ($subcatkey == $sortorder) {
-                        $retval->depth = 2;
-                        $retval->element = $subcat;
-                        $retval->position = $subcatcount;
+                    $retval->index .= "/$level2key";
+                    if ($level2key == $sortorder) {
+                        $retval->element = $level2;
+                        $retval->position = $level2count;
                         return $retval;
                     }
                     
-                    if (!empty($subcat['children'])) {
-                        foreach ($subcat['children'] as $itemkey => $item) {
-                            $itemcount++;
-                            $retval->itemindex = $itemkey;
-                            if ($itemkey == $sortorder) {
-                                $retval->depth = 3;
-                                $retval->element = $item;
-                                $retval->position = $itemcount;
+                    if (!empty($level2['children'])) {
+                        foreach ($level2['children'] as $level3key => $level3) {
+                            $level3count++;
+                            $retval->index .= "/$level3key";
+                            
+                            if ($level3key == $sortorder) {
+                                $retval->element = $level3;
+                                $retval->position = $level3count;
                                 return $retval;
                             } 
                         }
@@ -142,24 +142,28 @@ class grade_tree {
             $this->first_sortorder = key($this->tree_array);
         }
         
-        if (isset($element->depth)) { 
-            switch ($element->depth) {
-                case 1:
-                    unset($this->tree_array[$element->topcatindex]);
-                    break;
-                case 2:
-                    unset($this->tree_array[$element->topcatindex]['children'][$element->subcatindex]);
-                    break;
-                case 3:
-                    unset($this->tree_array[$element->topcatindex]['children'][$element->subcatindex]['children'][$element->itemindex]);
-                    break;
+        if (isset($element->index)) { 
+            // Decompose the element's index and build string for eval(unset) statement to follow
+            $indices = explode('/', $element->index);
+            $element_to_unset = '$this->tree_array[' . $indices[0] . ']';
+            
+            if (isset($indices[1])) {
+                $element_to_unset .= "['children'][" . $indices[1] . ']';            
             }
+            
+            if (isset($indices[2])) {
+                $element_to_unset .= "['children'][" . $indices[2] . ']';
+            }
+
+            eval("unset($element_to_unset);");
+
             return true;
         } else {
             $element = $this->locate_element($element);
             if (!empty($element)) {
                 return $this->remove_element($element);
             } else {
+                debugging("The element you provided grade_tree::remove_element() is not valid.");
                 return false;
             }
         }
@@ -183,7 +187,8 @@ class grade_tree {
         } elseif ($position == 'after') {
             $offset = 0;
         } else {
-            die ('move_element(..... $position) can only be "before" or "after", you gave ' . $position);
+            debugging('move_element(..... $position) can only be "before" or "after", you gave ' . $position);
+            return false;
         }
 
         // TODO Problem when moving topcategories: sortorder gets reindexed when splicing the array
@@ -193,23 +198,19 @@ class grade_tree {
         $destination_element = $this->locate_element($destination_sortorder);
         $position = $destination_element->position;
 
-        switch($element->depth) {
-            case 1:
-                array_splice($this->tree_array, 
-                    $position + $offset, 0, 
-                    $destination_array); 
-                break;
-            case 2:
-                array_splice($this->tree_array[$destination_element->topcatindex]['children'], 
-                    $position + $offset, 0, 
-                    $destination_array); 
-                break;
-            case 3:
-                array_splice($this->tree_array[$destination_element->topcatindex]['children'][$destination_element->subcatindex]['children'], 
-                    $position + $offset, 0, 
-                    $destination_array); 
-                break; 
+        // Decompose the element's index and build string for eval(array_splice) statement to follow
+        $indices = explode('/', $element->index);
+        $element_to_splice = '$this->tree_array';
+        
+        if (isset($indices[0])) {
+            $element_to_splice .= '[' . $indices[0] . "]['children']";            
         }
+        
+        if (isset($indices[1])) {
+            $element_to_splice .= '[' . $indices[1] . "]['children']";
+        }
+
+        eval("array_splice($element_to_splice, \$position + \$offset, 0, \$destination_array);");
 
         return true; 
     }
@@ -235,8 +236,8 @@ class grade_tree {
 
         $destination = $this->locate_element($destination_sortorder);
 
-        if ($destination->depth != $source->depth) {
-            echo "Source and Destination were at different levels.";
+        if (substr_count($destination->index, '/') != substr_count($source->index, '/')) {
+            debugging("Source and Destination were at different levels.");
             return false; 
         } 
         
@@ -272,16 +273,27 @@ class grade_tree {
                         foreach ($subcat['children'] as $item) {
                             $sortorder++;
                             $newtree[$topcatsortorder]['children'][$subcatsortorder]['children'][$sortorder] = $item;
+                            if ($sortorder != $item['object']->sortorder) {
+                                $this->need_update[$item['object']->sortorder] = $sortorder;
+                            }
                         }
                         $newtree[$topcatsortorder]['children'][$subcatsortorder]['object'] = $subcat['object'];
                     } else {
                         $newtree[$topcatsortorder]['children'][$sortorder] = $subcat; 
                     } 
+                    
+                    if ($sortorder != $subcat['object']->sortorder) {
+                        $this->need_update[$subcat['object']->sortorder] = $sortorder;
+                    }
                 }
                 $newtree[$topcatsortorder]['object'] = $topcat['object'];
             } else { 
                 $newtree[$sortorder] = $topcat;
             } 
+
+            if ($sortorder != $topcat['object']->sortorder) {
+                $this->need_update[$topcat['object']->sortorder] = $sortorder;
+            }
         }
         $this->tree_array = $newtree;
         unset($this->first_sortorder);
@@ -354,6 +366,11 @@ class grade_tree {
                 unset($fillers[$sortorder]);
                 
                 $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                if (get_class($object) == 'grade_category') {
+                    $object->get_children();
+                }
+                $object->sortorder = $sortorder;
+                $tree[$sortorder] = $object;
             }
 
             $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
@@ -415,6 +432,11 @@ class grade_tree {
         if (!empty($fillers)) {
             foreach ($fillers as $sortorder => $object) { 
                 $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                if (get_class($object) == 'grade_category') {
+                    $object->get_children();
+                }
+                $object->sortorder = $sortorder;
+                $tree[$sortorder] = $object;
             }
         }
         
@@ -479,6 +501,12 @@ class grade_tree {
     function display_grades() {
         // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
         $tree = $this->tree_filled;
+
+        if (empty($this->tree_filled)) {
+            debugging("The tree_filled array wasn't initialised, grade_tree could not display the grades correctly.");
+            return false;
+        }
+
         $topcathtml = '<tr>';
         $cathtml    = '<tr>';
         $itemhtml   = '<tr>';

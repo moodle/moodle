@@ -183,6 +183,7 @@ class grade_category extends grade_object {
                 return $grade_category;
             }
         } else {
+            debugging("No grade_category matching your criteria in the database.");
             return false;
         }
     }
@@ -246,6 +247,7 @@ class grade_category extends grade_object {
             $grade_item->itemtype = 'category';
             
             if (!$grade_item->insert()) {
+                debugging("Could not insert this grade_item in the database: " . print_r($grade_item, true));
                 return false;
             }
             
@@ -257,6 +259,7 @@ class grade_category extends grade_object {
             $this->load_parent_category();
             if (!empty($this->parent_category)) {
                 if (!$this->parent_category->flag_for_update()) {
+                    debugging("Could not notify parent category of the need to update its final grades.");
                     return false;
                 }
             }
@@ -343,6 +346,7 @@ class grade_category extends grade_object {
         $children = $this->get_children(1, 'flat');
         
         if (empty($children)) {
+            debugging("Could not generate grades for this category, it has no children.");
             return false;
         }
 
@@ -395,6 +399,7 @@ class grade_category extends grade_object {
      */
     function aggregate_grades($final_grade_sets) {
         if (empty($final_grade_sets)) {
+            debugging("Could not aggregate grades: no array of grades given to aggregate.");
             return null;
         }
         
@@ -445,6 +450,7 @@ class grade_category extends grade_object {
             
             // If the gradevalue is null, we have a problem
             if (empty($aggregated_value)) {
+                debugging("There was an error during the aggregation procedure, an empty value resulted.");
                 return false;
             }            
             
@@ -480,7 +486,7 @@ class grade_category extends grade_object {
     /**
      * Fetches and returns all the children categories and/or grade_items belonging to this category. 
      * By default only returns the immediate children (depth=1), but deeper levels can be requested, 
-     * as well as all levels (0).
+     * as well as all levels (0). The elements are indexed by sort order.
      * @param int $depth 1 for immediate children, 0 for all children, and 2+ for specific levels deeper than 1.
      * @param string $arraytype Either 'nested' or 'flat'. A nested array represents the true hierarchy, but is more difficult to work with.
      * @return array Array of child objects (grade_category and grade_item).
@@ -513,19 +519,19 @@ class grade_category extends grade_object {
 
                     if ($cat->has_children()) {
                         if ($arraytype == 'nested') {
-                            $children_array[] = array('object' => $cat, 'children' => $cat->get_children($newdepth, $arraytype));
+                            $children_array[$cat->get_sortorder()] = array('object' => $cat, 'children' => $cat->get_children($newdepth, $arraytype));
                         } else {
-                            $children_array[] = $cat;
+                            $children_array[$cat->get_sortorder()] = $cat;
                             $cat_children = $cat->get_children($newdepth, $arraytype);
                             foreach ($cat_children as $id => $cat_child) {
-                                $children_array[] = new grade_category($cat_child, false);
+                                $children_array[$cat_child->get_sortorder()] = new grade_category($cat_child, false);
                             }
                         }
                     } else {
                         if ($arraytype == 'nested') {
-                            $children_array[] = array('object' => $cat);
+                            $children_array[$cat->get_sortorder()] = array('object' => $cat);
                         } else {
-                            $children_array[] = $cat;
+                            $children_array[$cat->get_sortorder()] = $cat;
                         }
                     }
                 }
@@ -536,7 +542,24 @@ class grade_category extends grade_object {
 
         return $children_array;
     }
-   
+  
+    /**
+     * Returns the sortorder of the associated grade_item. This method is also available in 
+     * grade_item, for cases where the object type is not know. It will act as a virtual 
+     * variable for a grade_category.
+     * @return int Sort order
+     */
+    function get_sortorder() {
+        if (empty($this->sortorder)) {
+            $this->load_grade_item();
+            if (!empty($this->grade_item)) {
+                return $this->grade_item->sortorder;
+            }
+        } else {
+            return $this->sortorder;
+        }
+    }
+
     /**
      * Given an array of stdClass children of a certain $object_type, returns a flat or nested
      * array of these children, ready for appending to a tree built by get_children.
@@ -550,10 +573,11 @@ class grade_category extends grade_object {
         $children_array = array();
 
         foreach ($children as $id => $child) {
+            $child = new $object_type($child, false);
             if ($arraytype == 'nested') {
-                $children_array[] = array('object' => new $object_type($child, false));
+                $children_array[$child->get_sortorder()] = array('object' => $child);
             } else {
-                $children_array[] = new $object_type($child);
+                $children_array[$child->get_sortorder()] = $child;
             }
         }        
 
@@ -645,8 +669,6 @@ class grade_category extends grade_object {
             $this->parent_category = new grade_category(array('id' => $this->parent));
         }
         return $this->parent_category;
-    }
-
-
+    } 
 } 
 ?>
