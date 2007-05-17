@@ -43,6 +43,13 @@ class grade_tree {
     var $tree_array = array();
 
     /**
+     * Another array with fillers for categories and items that do not have a parent, but have
+     * are not at level 2. This is used by the display_grades method.
+     * @var array $tree_filled
+     */
+    var $tree_filled = array();
+
+    /**
      * An array of objects that need updating (normally just grade_item.sortorder).
      * @var array $need_update
      */
@@ -75,12 +82,15 @@ class grade_tree {
      */
     function locate_element($sortorder) {
         $topcatcount = 0;
+        $retval = false;
 
         foreach ($this->tree_array as $topcatkey => $topcat) {
             $topcatcount++;
             $subcatcount = 0;
             $retval = new stdClass();
             $retval->topcatindex = $topcatkey;
+            unset($retval->subcatindex);
+            unset($retval->itemindex);
 
             if ($topcatkey == $sortorder) {
                 $retval->depth = 1;
@@ -92,6 +102,7 @@ class grade_tree {
             if (!empty($topcat['children'])) {
                 foreach ($topcat['children'] as $subcatkey => $subcat) {
                     $subcatcount++;
+                    unset($retval->itemindex);
                     $itemcount = 0;
 
                     $retval->subcatindex = $subcatkey;
@@ -166,7 +177,7 @@ class grade_tree {
         if (empty($this->first_sortorder)) { 
             $this->first_sortorder = key($this->tree_array);
         }
-
+        
         if ($position == 'before') {
             $offset = -1;
         } elseif ($position == 'after') {
@@ -176,21 +187,26 @@ class grade_tree {
         }
 
         // TODO Problem when moving topcategories: sortorder gets reindexed when splicing the array
-        $destination_array = array($destination_sortorder => $source->element);
+        $destination_array = array($destination_sortorder => $element->element);
+
+        // Get the position of the destination element
+        $destination_element = $this->locate_element($destination_sortorder);
+        $position = $destination_element->position;
+
         switch($element->depth) {
             case 1:
                 array_splice($this->tree_array, 
-                    $element->position + $offset, 0, 
+                    $position + $offset, 0, 
                     $destination_array); 
                 break;
             case 2:
-                array_splice($this->tree_array[$element->topcatindex]['children'], 
-                    $element->position + $offset, 0, 
+                array_splice($this->tree_array[$destination_element->topcatindex]['children'], 
+                    $position + $offset, 0, 
                     $destination_array); 
                 break;
             case 3:
-                array_splice($this->tree_array[$element->topcatindex]['children'][$element->subcatindex]['children'], 
-                    $element->position + $offset, 0, 
+                array_splice($this->tree_array[$destination_element->topcatindex]['children'][$destination_element->subcatindex]['children'], 
+                    $position + $offset, 0, 
                     $destination_array); 
                 break; 
         }
@@ -225,7 +241,7 @@ class grade_tree {
         } 
         
         // Insert the element before the destination sortorder
-        $this->insert_element($destination, $destination_sortorder, $position); 
+        $this->insert_element($source, $destination_sortorder, $position); 
 
         return true;
     }
@@ -240,7 +256,7 @@ class grade_tree {
         $sortorder = $starting_sortorder;
         
         if (empty($starting_sortorder)) { 
-            $sortorder = $this->first_sortorder;
+            $sortorder = $this->first_sortorder - 1;
         }
         
         $newtree = array();
@@ -257,15 +273,16 @@ class grade_tree {
                             $sortorder++;
                             $newtree[$topcatsortorder]['children'][$subcatsortorder]['children'][$sortorder] = $item;
                         }
+                        $newtree[$topcatsortorder]['children'][$subcatsortorder]['object'] = $subcat['object'];
                     } else {
                         $newtree[$topcatsortorder]['children'][$sortorder] = $subcat; 
                     } 
                 }
+                $newtree[$topcatsortorder]['object'] = $topcat['object'];
             } else { 
                 $newtree[$sortorder] = $topcat;
             } 
         }
-            
         $this->tree_array = $newtree;
         unset($this->first_sortorder);
         return true;
@@ -336,10 +353,10 @@ class grade_tree {
                 $object = current($fillers);
                 unset($fillers[$sortorder]);
                 
-                $tree[$sortorder] = $this->get_filler($object, $fullobjects);
+                $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
             }
 
-            $query = "SELECT $category_table.* FROM $category_table, $items_table 
+            $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
                       WHERE iteminstance = $category_table.id AND parent = $topcatid ORDER BY sortorder";
             $subcats = get_records_sql($query);
             $subcattree = array();
@@ -368,30 +385,36 @@ class grade_tree {
                     }
 
                     if ($fullobjects) {
+                        $sortorder = $item->sortorder;
                         $item = new grade_item($item);
+                        $item->sortorder = $sortorder;
                     }
 
-                    $itemtree[] = array('object' => $item, 'finalgrades' => $finals);
+                    $itemtree[$item->sortorder] = array('object' => $item, 'finalgrades' => $finals);
                 }
                 
                 if ($fullobjects) {
+                    $sortorder = $subcat->sortorder;
                     $subcat = new grade_category($subcat, false);
+                    $subcat->sortorder = $sortorder;
                 }
-
-                $subcattree[] = array('object' => $subcat, 'children' => $itemtree);
+                $subcattree[$subcat->sortorder] = array('object' => $subcat, 'children' => $itemtree);
             }
             
             if ($fullobjects) {
+                $sortorder = $topcat->sortorder;
                 $topcat = new grade_category($topcat, false);
+                $topcat->sortorder = $sortorder;
             }
 
-            $tree[] = array('object' => $topcat, 'children' => $subcattree);
+            $tree[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree);
+            $this->tree_filled[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree);
         }
 
         // If there are still grade_items or grade_categories without a top category, add another filler
         if (!empty($fillers)) {
             foreach ($fillers as $sortorder => $object) { 
-                $tree[] = $this->get_filler($object, $fullobjects);
+                $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
             }
         }
         
@@ -455,7 +478,7 @@ class grade_tree {
      */
     function display_grades() {
         // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
-        $tree = $this->tree_array;
+        $tree = $this->tree_filled;
         $topcathtml = '<tr>';
         $cathtml    = '<tr>';
         $itemhtml   = '<tr>';
