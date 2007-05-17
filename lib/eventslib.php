@@ -20,7 +20,7 @@ function events_load_def($component) {
 
     if ($component == 'moodle') {
         $defpath = $CFG->libdir.'/db/events.php';
-        $varprefix = 'moodle';
+
     } else {
         $compparts = explode('/', $component);
 
