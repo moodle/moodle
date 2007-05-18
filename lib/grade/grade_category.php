@@ -617,7 +617,6 @@ class grade_category extends grade_object {
      * @return string
      */
     function get_childrentype() {
-        $children = $this->children;
         if (empty($this->children)) {
             $count_item_children = count_records('grade_items', 'categoryid', $this->id);
             $count_cat_children = count_records('grade_categories', 'parent', $this->id);
@@ -630,7 +629,7 @@ class grade_category extends grade_object {
                 return null;
             }
         }
-        return get_class($children[0]);
+        return get_class($this->children[0]);
     }
 
     /**

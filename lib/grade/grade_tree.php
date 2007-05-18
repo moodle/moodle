@@ -83,19 +83,21 @@ class grade_tree {
     function locate_element($sortorder) {
         $topcatcount = 0;
         $retval = false;
-       debugging($sortorder); 
+        
         if (empty($this->tree_array)) {
             debugging("grade_tree->tree_array was empty, I could not locate the element at sortorder $sortorder");
             return false;
         }
         
-        foreach ($this->tree_array as $key1 => $level1) {
+        $level1count = 0;
+        
+        foreach ($this->tree_array as $levelkey1 => $level1) {
             $level1count++;
             $level2count = 0;
             $retval = new stdClass();
-            $retval->index = $key1;
+            $retval->index = $levelkey1;
 
-            if ($key1 == $sortorder) {
+            if ($levelkey1 == $sortorder) {
                 $retval->element = $level1;
                 $retval->position = $level1count;
                 return $retval;
@@ -106,7 +108,7 @@ class grade_tree {
                     $level2count++;
                     $level3count = 0;
 
-                    $retval->index .= "/$level2key";
+                    $retval->index = "$levelkey1/$level2key";
                     if ($level2key == $sortorder) {
                         $retval->element = $level2;
                         $retval->position = $level2count;
@@ -116,7 +118,7 @@ class grade_tree {
                     if (!empty($level2['children'])) {
                         foreach ($level2['children'] as $level3key => $level3) {
                             $level3count++;
-                            $retval->index .= "/$level3key";
+                            $retval->index = "$levelkey1/$level2key/$level3key";
                             
                             if ($level3key == $sortorder) {
                                 $retval->element = $level3;
@@ -129,6 +131,50 @@ class grade_tree {
             }
         } 
         return $retval;
+    }
+
+    /**
+     * Given an element object, returns its type (topcat, subcat or item).
+     * @param object $element
+     * @return string Type
+     */
+    function get_element_type($element) {
+        if (!empty($element->element['object'])) {
+            $object = $element->element['object']; 
+        } elseif (!empty($element['object'])) {
+            $object = $element['object'];
+        } elseif (is_object($element)) {
+            $object = $element;
+        } else {
+            debugging("Invalid element given to grade_tree::get_element_type.");
+            return false;
+        }
+
+        if (get_class($object) == 'grade_item') {
+            return 'item';
+        } elseif (get_class($object) == 'grade_category') {
+            $object->get_children();
+            if (!empty($object->children)) {
+                $first_child = current($object->children);
+                if (get_class($first_child) == 'grade_item') {
+                    return 'subcat';
+                } elseif (get_class($first_child) == 'grade_category') {
+                    return 'topcat';
+                } else {
+                    debugging("The category's first child was neither a category nor an item.");
+                    return false;
+                }
+            } else {
+                debugging("The category did not have any children.");
+                return false;
+            }
+        } else {
+            debugging("Invalid element given to grade_tree::get_element_type.");
+            return false;
+        } 
+
+        debugging("Could not determine the type of the given element.");
+        return false;
     }
 
     /**
@@ -167,6 +213,9 @@ class grade_tree {
                 return false;
             }
         }
+        
+        debugging("Unable to remove an element from the grade_tree.");
+        return false;
     }
     
     /**
@@ -190,23 +239,48 @@ class grade_tree {
             debugging('move_element(..... $position) can only be "before" or "after", you gave ' . $position);
             return false;
         }
+        
+        if (is_array($element)) {
+            $new_element = new stdClass();
+            $new_element->element = $element;
+        } elseif (is_object($element)) {
+            $new_element = $element;
+        }
+        
+        // If the object is a grade_item, but the final_grades index isn't yet loaded, make the switch now. Same for grade_category and children
+        if (get_class($new_element->element['object']) == 'grade_item' && empty($new_element->element['final_grades'])) {
+            $new_element->element['final_grades'] = $new_element->element['object']->load_final();
+            unset($new_element->element['object']->grade_grades_final);
+        } elseif (get_class($new_element->element['object']) == 'grade_category' && 
+                    empty($new_element->element['children']) &&
+                    $new_element->element['object']->has_children()) {
+            $new_element->element['children'] = $new_element->element['object']->get_children(1);
+            unset($new_element->element['object']->children);
+        }
+
 
         // TODO Problem when moving topcategories: sortorder gets reindexed when splicing the array
-        $destination_array = array($destination_sortorder => $element->element);
+        $destination_array = array($destination_sortorder => $new_element->element);
 
         // Get the position of the destination element
         $destination_element = $this->locate_element($destination_sortorder);
         $position = $destination_element->position;
-
+        
         // Decompose the element's index and build string for eval(array_splice) statement to follow
-        $indices = explode('/', $element->index);
+        $indices = explode('/', $destination_element->index);
+        
+        if (empty($indices)) {
+            debugging("The destination element did not have a valid index (as assigned by grade_tree::locate_element).");
+            return false;
+        }
+
         $element_to_splice = '$this->tree_array';
         
-        if (isset($indices[0])) {
+        if (isset($indices[1])) {
             $element_to_splice .= '[' . $indices[0] . "]['children']";            
         }
         
-        if (isset($indices[1])) {
+        if (isset($indices[2])) {
             $element_to_splice .= '[' . $indices[1] . "]['children']";
         }
 
@@ -235,11 +309,6 @@ class grade_tree {
         $this->remove_element($source);
 
         $destination = $this->locate_element($destination_sortorder);
-
-        if (substr_count($destination->index, '/') != substr_count($source->index, '/')) {
-            debugging("Source and Destination were at different levels.");
-            return false; 
-        } 
         
         // Insert the element before the destination sortorder
         $this->insert_element($source, $destination_sortorder, $position); 
@@ -366,11 +435,21 @@ class grade_tree {
                 unset($fillers[$sortorder]);
                 
                 $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                $element = array();
+
                 if (get_class($object) == 'grade_category') {
-                    $object->get_children();
+                    $children = $object->get_children(1);
+                    unset($object->children);
+                    $element['children'] = $children;
+                } elseif (get_class($object) == 'grade_item') {
+                    $final_grades = $object->get_final();
+                    unset($object->grade_grades_final);
+                    $element['final_grades'] = $final_grades;
                 }
+
                 $object->sortorder = $sortorder;
-                $tree[$sortorder] = $object;
+                $element['object'] = $object;
+                $tree[$sortorder] = $element;
             }
 
             $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
@@ -432,11 +511,20 @@ class grade_tree {
         if (!empty($fillers)) {
             foreach ($fillers as $sortorder => $object) { 
                 $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                
                 if (get_class($object) == 'grade_category') {
-                    $object->get_children();
+                    $children = $object->get_children(1);
+                    unset($object->children);
+                    $element['children'] = $children;
+                } elseif (get_class($object) == 'grade_item') {
+                    $final_grades = $object->get_final();
+                    unset($object->grade_grades_final);
+                    $element['final_grades'] = $final_grades;
                 }
+
                 $object->sortorder = $sortorder;
-                $tree[$sortorder] = $object;
+                $element['object'] = $object;
+                $tree[$sortorder] = $element;
             }
         }
         

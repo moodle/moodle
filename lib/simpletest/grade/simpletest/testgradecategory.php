@@ -129,14 +129,14 @@ class grade_category_test extends gradelib_test {
 
         $children_array = $category->get_children(0);
         $this->assertTrue(is_array($children_array));
-        $this->assertTrue(!empty($children_array[0]));
-        $this->assertTrue(!empty($children_array[0]['object']));
-        $this->assertTrue(!empty($children_array[0]['children']));
-        $this->assertEqual($this->grade_categories[1]->id, $children_array[0]['object']->id);
-        $this->assertEqual($this->grade_categories[2]->id, $children_array[1]['object']->id);
-        $this->assertEqual($this->grade_items[0]->id, $children_array[0]['children'][0]['object']->id);
-        $this->assertEqual($this->grade_items[1]->id, $children_array[0]['children'][1]['object']->id);
-        $this->assertEqual($this->grade_items[2]->id, $children_array[1]['children'][0]['object']->id);
+        $this->assertFalse(empty($children_array[2]));
+        $this->assertFalse(empty($children_array[2]['object']));
+        $this->assertFalse(empty($children_array[2]['children']));
+        $this->assertEqual($this->grade_categories[1]->id, $children_array[2]['object']->id);
+        $this->assertEqual($this->grade_categories[2]->id, $children_array[5]['object']->id);
+        $this->assertEqual($this->grade_items[0]->id, $children_array[2]['children'][3]['object']->id);
+        $this->assertEqual($this->grade_items[1]->id, $children_array[2]['children'][4]['object']->id);
+        $this->assertEqual($this->grade_items[2]->id, $children_array[5]['children'][6]['object']->id);
 
         $children_array = $category->get_children(0, 'flat');
         $this->assertEqual(5, count($children_array));
@@ -149,9 +149,9 @@ class grade_category_test extends gradelib_test {
         $children = get_records('grade_items', 'categoryid', $this->grade_categories[1]->id);
         $children_array = grade_category::children_to_array($children, 'nested', 'grade_item');
         $this->assertTrue(is_array($children_array));
-        $this->assertTrue(isset($children_array[0]));
-        $this->assertTrue(isset($children_array[0]['object']));
-        $this->assertEqual($this->grade_items[0]->id, $children_array[0]['object']->id); 
+        $this->assertTrue(isset($children_array[3]));
+        $this->assertTrue(isset($children_array[3]['object']));
+        $this->assertEqual($this->grade_items[0]->id, $children_array[3]['object']->id); 
     }
     
     function test_grade_category_has_children() {
