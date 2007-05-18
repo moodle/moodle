@@ -248,7 +248,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             }
         }
         }
-     return datasets ;
+     return $datasets ;
      }
     /**
     * this version save the available data at the different steps of the question editing process
@@ -479,7 +479,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         foreach($olditems as $item ){
                             $item->definition = $datasetdef->id;
                         if (!insert_record('question_dataset_items', $item)) {
-                            error("Unable to insert dataset item $item->number with $item->value for $datasetdef->name");
+                            error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                         }
                         $itemcount++; 
                         }
