@@ -333,6 +333,16 @@ class grade_item extends grade_object {
         
         return $category;
     }
+    
+    /**
+     * Calls upon the get_category method to retrieve the grade_category object
+     * from the DB and assigns it to $this->category. It also returns the object.
+     * @return object Grade_category
+     */
+    function load_category() {
+        $this->category = $this->get_category();
+        return $this->category;
+    }
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.

@@ -54,6 +54,19 @@ class grade_tree {
      * @var array $need_update
      */
     var $need_update = array();
+    
+    /**
+     * An array of objects that need inserting in the DB.
+     * @var array $need_insert
+     */
+    var $need_insert = array();
+
+    /**
+     * An array of objects that need deleting from the DB.
+     * @var array $need_delete
+     */
+    var $need_delete = array();
+
 
     /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
@@ -71,6 +84,8 @@ class grade_tree {
         } else {
             $this->tree_array = $this->get_tree($fullobjects);
         }
+        
+        $this->first_sortorder = key($this->tree_array);
     }
 
     /**
@@ -134,7 +149,9 @@ class grade_tree {
     }
 
     /**
-     * Given an element object, returns its type (topcat, subcat or item).
+     * Given an element object, returns its type (topcat, subcat or item). 
+     * The $element can be a straight object (fully instantiated), an array of 'object' and 'children'/'final_grades', or a stdClass element
+     * as produced by grade_tree::locate_element(). This method supports all three types of inputs.
      * @param object $element
      * @return string Type
      */
@@ -179,8 +196,9 @@ class grade_tree {
 
     /**
      * Removes the given element (a stdClass object or a sortorder), remove_elements
-     * it from the tree. This does not renumber the tree.
-     * @var object $element An stdClass object typically returned by $this->locate(), or a sortorder
+     * it from the tree. This does not renumber the tree. If a sortorder (int) is given, this 
+     * method will first retrieve the referenced element from the tree, then re-run the method with that object.
+     * @var object $element An stdClass object typically returned by $this->locate(), or a sortorder (int)
      * @return boolean
      */
     function remove_element($element) {
@@ -202,6 +220,13 @@ class grade_tree {
             }
 
             eval("unset($element_to_unset);");
+
+            if (empty($element->element['object'])) {
+                debugging("Could not delete this element from the DB due to missing information.");
+                return false;
+            }
+
+            $this->need_delete[] = $element->element['object'];
 
             return true;
         } else {
@@ -286,9 +311,16 @@ class grade_tree {
 
         eval("array_splice($element_to_splice, \$position + \$offset, 0, \$destination_array);");
 
+        if (!is_object($new_element)) {
+            debugging("Could not insert this element into the DB due to missing information.");
+            return false;
+        }
+
+        $this->need_insert[] = $new_element;
+        
         return true; 
     }
-    
+
     /**
      * Moves an existing element in the tree to another position OF EQUAL LEVEL. This 
      * constraint is essential and very important. 
@@ -326,7 +358,11 @@ class grade_tree {
         $sortorder = $starting_sortorder;
         
         if (empty($starting_sortorder)) { 
-            $sortorder = $this->first_sortorder - 1;
+            if (empty($this->first_sortorder)) {
+                debugging("The tree's first_order variable isn't set, you must provide a starting_sortorder to the renumber method.");
+                return false;
+            }
+            $sortorder = $this->first_sortorder - 1; 
         }
         
         $newtree = array();

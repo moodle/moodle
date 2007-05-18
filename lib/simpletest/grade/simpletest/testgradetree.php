@@ -35,7 +35,6 @@ global $CFG;
 require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
 class grade_tree_test extends gradelib_test {
-    /*
     
     function test_grade_tree_locate_element() {
         $tree = new grade_tree($this->courseid);
@@ -86,8 +85,11 @@ class grade_tree_test extends gradelib_test {
         $this->assertEqual($this->grade_items[2]->itemname, $tree->tree_array[1]['children'][2]['children'][1]['object']->itemname);
         $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][1]['final_grades'][1]));
         $this->assertEqual($this->grade_grades_final[6]->gradevalue, $tree->tree_array[1]['children'][2]['children'][1]['final_grades'][1]->gradevalue);
+        
+        // Check the need_insert array
+        $this->assertEqual(1, count($tree->need_insert));
     }
-*/
+
     function test_grade_tree_move_element() {
         $tree = new grade_tree($this->courseid);
         
@@ -157,17 +159,61 @@ class grade_tree_test extends gradelib_test {
     
     function test_grade_tree_renumber() {
         $tree = new grade_tree($this->courseid);
+        $tree1 = $tree;
         $tree->renumber();
-
+        $this->assertEqual($tree1->tree_array[1]['object'], $tree->tree_array[1]['object']);
     }
 
     function test_grade_tree_remove_element() {
         $tree = new grade_tree($this->courseid);
 
+        // Removing the orphan grade_item
+        $tree->remove_element(7);
+        $this->assertTrue(empty($tree->tree_array[7]));
+        $this->assertFalse(empty($tree->tree_array[1]));
+        $this->assertFalse(empty($tree->tree_array[8]));
+        $tree->renumber();
+        $this->assertFalse(empty($tree->tree_array[7]));
+        $this->assertFalse(empty($tree->tree_array[1]));
+        $this->assertTrue(empty($tree->tree_array[8]));
+        
+        // Removing a grade_item with only 1 parent
+        $tree->remove_element(8);
+        $this->assertTrue(empty($tree->tree_array[7]['children'][8]));
+        $this->assertFalse(empty($tree->tree_array[7]['children'][9]));
+        $tree->renumber();
+        $this->assertFalse(empty($tree->tree_array[7]['children'][8]));
+        $this->assertTrue(empty($tree->tree_array[7]['children'][9]));
+
+        // Now remove this sub-category (the one without a topcat)
+        $tree->remove_element(7);
+        $this->assertTrue(empty($tree->tree_array[7]));
+        
+        // At this point we're left with a topcat, 2 subcats and 3 items, so try removing an item first
+        $tree->remove_element(4);
+        $this->assertTrue(empty($tree->tree_array[1]['children'][2]['children'][4]));
+        $this->assertFalse(empty($tree->tree_array[1]['children'][5]));
+        $tree->renumber();
+        $this->assertFalse(empty($tree->tree_array[1]['children'][4]));
+
+        // Now remove a subcat sandwiched between a topcat and its items
+        $tree->remove_element(4);
+        $this->assertTrue(empty($tree->tree_array[1]['children'][4]));
+        $tree->renumber();
+        $this->assertTrue(empty($tree->tree_array[1]['children'][4])); 
+        
+        $this->assertEqual(12, count($tree->tree_array, COUNT_RECURSIVE));
+        
+        // Check the need_delete array
+        $this->assertEqual(5, count($tree->need_delete));
     }
 
     function test_grade_tree_get_filler() {
         $tree = new grade_tree($this->courseid);
 
     } 
+
+    function test_grade_tree_build_tree_filled() {
+
+    }
 }

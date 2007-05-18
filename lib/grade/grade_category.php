@@ -669,5 +669,87 @@ class grade_category extends grade_object {
         }
         return $this->parent_category;
     } 
+   
+    /**
+     * Sets this category as the parent for the given children.
+     * A number of constraints are necessary:
+     *    - The children must all be of the same type and at the same level
+     *    - The children must be consecutive (no gap between them), this assumes they have been correctly ordered previously
+     *    - The children cannot already be top categories
+     *    - The children cannot already have a top category
+     * @param array $children An array of fully instantiated grade_category OR grade_item objects
+     * @return boolean Success or Failure
+     */
+    function set_as_parent($children) {
+        global $CFG;
+
+        // Check type and sortorder of first child
+        $first_child = current($children);
+        $first_child_type = get_class($first_child);
+        $first_child_sortorder = $first_child->get_sortorder();
+
+        foreach ($children as $child) {
+            if (get_class($child) != $first_child_type) {
+                debugging("Violated constraint: Attempted to set a category as a parent over children of 2 different types.");
+                return false;
+            }
+            if ($child->get_sortorder() != $first_child_sortorder++) {
+                debugging("Violated constraint: Attempted to set a category as a parent over children which were not consecutively arranged (gaps exist).");
+                return false;
+            } 
+            if (grade_tree::get_element_type($child) == 'topcat') {
+                debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
+                return false;
+            }
+            if ($first_child_type == 'grade_item') {
+                $child->load_category();
+                if (!empty($child->category->parent)) {
+                    debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
+                    return false;
+                }
+            } elseif ($first_child_type == 'grade_category') {
+                if (!empty($child->parent)) {
+                    debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
+                    return false; 
+                }
+            } else {
+                debugging("Attempted to set a category over children that are neither grade_items nor grade_categories.");
+                return false;
+            }                
+        } 
+
+        // We passed all the checks, time to set the category as a parent.
+        foreach ($children as $child) {
+            if ($first_child_type == 'grade_item') {
+                $child->categoryid = $this->id;
+                if (!$child->update()) {
+                    debugging("Could not set this category as a parent for one of its child grade_items, DB operation failed.");
+                    return false;
+                }
+            } elseif ($first_child_type == 'grade_category') {
+                $child->parent = $this->id;
+                if (!$child->update()) {
+                    debugging("Could not set this category as a parent for one of its child categories, DB operation failed.");
+                    return false;
+                }
+            }
+        }
+
+        // TODO Assign correct sortorders to the newly assigned children and parent. Simply add 1 to all of them!
+        $this->load_grade_item();
+        $this->grade_item->sortorder = $first_child->get_sortorder();
+        
+        if (!$this->update()) {
+            debugging("Could not update this category's sortorder in DB.");
+            return false;
+        }
+
+        $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= $this->grade_item->sortorder";
+        if (!execute_sql($query)) {
+            debugging("Could not update the sortorder of grade_items listed after this category.");
+        } else {
+            return true;
+        }
+    }
 } 
 ?>

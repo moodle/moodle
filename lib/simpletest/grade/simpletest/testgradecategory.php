@@ -76,7 +76,7 @@ class grade_category_test extends gradelib_test {
         
         $grade_category->fullname    = 'unittestcategory4';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MODE;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
@@ -217,5 +217,44 @@ class grade_category_test extends gradelib_test {
         $raw_grade->insert();
         return $raw_grade->gradevalue;
     } 
+
+    function test_grade_category_set_as_parent() {
+        // There are 4 constraints which, if violated, should return false and trigger a debugging message. Test each of them
+        $grade_category = new grade_category();
+        $grade_category->fullname    = 'new topcategory';
+        $grade_category->courseid    = $this->courseid;
+
+        // 1. mixed types of children
+        $child1 = new grade_item();
+        $child1->sortorder = 1;
+        $child2 = new grade_category();
+        $child2->grade_item = new grade_item();
+        $child2->grade_item->sortorder = 2;
+        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
+
+        // 2. Non-consecutive children
+        $child1 = new grade_item();
+        $child2 = new grade_item();
+        $child1->sortorder = 1;
+        $child2->sortorder = 3;
+        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
+        
+        // 3. Child is a top category
+        $child1 = new grade_category($this->grade_categories[0]);
+        $this->assertFalse($grade_category->set_as_parent(array($child1)));
+
+        // 4. Child already has a top category
+        $child1 = new grade_item($this->grade_items[0]);
+        $this->assertFalse($grade_category->set_as_parent(array($child1)));
+
+        // Now test setting parent correctly
+        $child1 = new grade_item();
+        $child2 = new grade_item();
+        $child1->itemname = 'new grade_item';
+        $child2->itemname = 'new grade_item';
+        $child1->sortorder = 1;
+        $child2->sortorder = 2;
+        $this->assertTrue($grade_category->set_as_parent(array($child1, $child2)));
+    }
 } 
 ?>
