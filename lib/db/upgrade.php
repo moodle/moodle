@@ -671,6 +671,15 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007021504) {
+        if (empty($CFG->enablegroupings)) {
+            // delete all groupings - they do not work yet :-(
+            // while keeping all existing groups
+            require_once("$CFG->dirroot/group/db/upgrade.php");
+            undo_groupings();
+        }
+    }
+
     return $result;
 
 }
