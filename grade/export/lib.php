@@ -29,7 +29,7 @@ include_once($CFG->dirroot.'/grade/lib.php');
  * Prints all grade items for selection
  * @input int id - course id
  */
-function print_gradeitem_selections($id) {
+function print_gradeitem_selections($id, $params = NULL) {
     
     // print all items for selections
     // make this a standard function in lib maybe
@@ -127,28 +127,29 @@ class grade_export {
                 $this->comments[$student->id] = array(); // Collect all comments in tihs array
             }
         }
-        
+
         // if grade_item ids are specified
-        if ($iids = explode(",", $itemids)) {
-            foreach ($iids as $iid) {
+        if ($itemids) {
+            foreach ($itemids as $iid) {
                 $params->id = $iid;
                 $gradeitems[] = new grade_item($params);               
             }  
         } else {
             // else we get all items for this course
             $gradeitems = grade_get_items($this->id);
-        }        
+        }
         
         if ($gradeitems) {
             
             foreach ($gradeitems as $gradeitem) {
-
+              
+                $gradeitem -> generate_final();
                 // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem -> load_final()) {
+                if ($itemgrades = $gradeitem -> load_final()) {                    
                     
-                    $this->columns[$itemgrades->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
+                    $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
                 
-                    $this->columnidnumbers[$itemgrades->id] = $gradeitem->idnumber; // this might be needed for some export plugins  
+                    $this->columnidnumbers[$gradeitem->id] = $gradeitem->idnumber; // this might be needed for some export plugins  
             
                     if (!empty($gradeitem->grademax)) {
                         $maxgrade = "$strmax: $gradeitem->grademax";
@@ -163,10 +164,10 @@ class grade_export {
                             $studentgrade = $itemgrades[$student->id];            
                             
                             if (!empty($studentgrade->gradevalue)) {
-                                $this->grades[$student->id][$itemgrades->id] = $currentstudentgrade = $studentgrade->gradevalue;
+                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->gradevalue;
                             } else {
-                                $this->grades[$student->id][$itemgrades->id] = $currentstudentgrade = "";
-                                $this->gradeshtml[$student->id][$itemgrades->id] = "";
+                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = "";
+                                $this->gradeshtml[$student->id][$gradeitem->id] = "";
                             }
                             if (!empty($maxgrade)) {
                                 $this->totals[$student->id] = (float)($this->totals[$student->id]) + (float)($currentstudentgrade);
@@ -180,9 +181,9 @@ class grade_export {
                             $comment = $studentgrade->grade_grades_text->feedback;
                             
                             if (!empty($comment)) {
-                                $this->comments[$student->id][$itemgrades->id] = $comment;
+                                $this->comments[$student->id][$gradeitem->id] = $comment;
                             } else {
-                                $this->comments[$student->id][$itemgrades->id] = '';  
+                                $this->comments[$student->id][$gradeitem->id] = '';  
                             }
                         }
                     }

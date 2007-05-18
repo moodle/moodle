@@ -29,7 +29,7 @@ $id = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
 
 // process post information
-if ($data = data_submitted() && confirm_sesskey()) {
+if (($data = data_submitted()) && confirm_sesskey()) {
 
     if (!is_array($data->itemids)) {
         $itemidsurl = $data->itemids;

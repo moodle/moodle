@@ -27,6 +27,15 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 class grade_export_txt extends grade_export {
     
     var $format = 'txt'; // export format
+    var $separator = "\t"; // default separator
+    
+    function set_separator($separator) {
+        if ($separator == 'comma') {
+            $this->separator = ",";
+        } else if ($separator == 'tab') {
+            $this->separator = "\t";  
+        }  
+    }
     
     /**
      * To be implemented by child classes
@@ -53,22 +62,22 @@ class grade_export_txt extends grade_export {
 
 /// Print names of all the fields
 
-        echo get_string("firstname")."\t".
-             get_string("lastname")."\t".
-             get_string("idnumber")."\t".
-             get_string("institution")."\t".
-             get_string("department")."\t".
+        echo get_string("firstname")."$this->separator".
+             get_string("lastname")."{$this->separator}".
+             get_string("idnumber")."{$this->separator}".
+             get_string("institution")."{$this->separator}".
+             get_string("department")."{$this->separator}".
              get_string("email");
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
-            echo "\t$column";
+            echo "{$this->separator}$column";
         
             /// add a column_feedback column            
             if ($feedback) {
-                echo "\t{$column}_feedback";
+                echo "{$this->separator}{$column}_feedback";
             }        
         }
-        echo "\t".get_string("total")."\n";
+        echo "{$this->separator}".get_string("total")."\n";
     
 /// Print all the lines of data.
         foreach ($this->grades as $studentid => $studentgrades) {
@@ -77,14 +86,14 @@ class grade_export_txt extends grade_export {
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
-            echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
+            echo "$student->firstname{$this->separator}$student->lastname{$this->separator}$student->idnumber{$this->separator}$student->institution{$this->separator}$student->department{$this->separator}$student->email";
 
             foreach ($studentgrades as $gradeitemid => $grade) {
                 $grade = strip_tags($grade);
-                echo "\t$grade";            
+                echo "{$this->separator}$grade";            
                 
                 if ($feedback) {
-                    echo "\t".array_shift($this->comments[$student->id]);
+                    echo "{$this->separator}".array_shift($this->comments[$student->id]);
                 }                
                 
                 /// if export flag needs to be set
@@ -101,7 +110,7 @@ class grade_export_txt extends grade_export {
                     $grade_grades_final->update();
                 }
             }
-            echo "\t".$this->totals[$student->id];
+            echo "{$this->separator}".$this->totals[$student->id];
             echo "\n";
         }
     
