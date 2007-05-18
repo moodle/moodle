@@ -48,6 +48,33 @@ function install_group_db() {
     notify(get_string('databaseupgradegroups', '', $group_version), 'green');
 }
 
+function undo_groupings() {
+    global $CFG;
+
+    if (!$rs = get_recordset_sql("
+                    SELECT gpgs.courseid, ggs.groupid 
+                    FROM {$CFG->prefix}groups_courses_groupings gpgs,
+                         {$CFG->prefix}groups_groupings_groups ggs
+                    WHERE gpgs.groupingid = ggs.groupingid")) {
+        //strange - did we already remove the tables?
+        return;
+    }
+
+    $db->debug = false;
+    if ($rs && $rs->RecordCount() > 0) {
+        while ($group = rs_fetch_next_record($rs)) {
+            if (!record_exists('groups_courses_groups', 'courseid', $group->courseid, 'groupid', $group->groupid)) {
+                insert_record('groups_courses_groups', $group);
+            }
+        }
+    }
+    $db->debug = true;
+
+    delete_records('groups_courses_groupings');
+    delete_records('groups_groupings_groups');
+    delete_records('groups_groupings');
+}
+
 
 function upgrade_group_db($continueto) {
 /// This function upgrades the group tables, if necessary
