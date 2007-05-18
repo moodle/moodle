@@ -61,13 +61,14 @@ function undo_groupings() {
     }
 
     $db->debug = false;
-    if ($rs && $rs->RecordCount() > 0) {
+    if ($rs->RecordCount() > 0) {
         while ($group = rs_fetch_next_record($rs)) {
             if (!record_exists('groups_courses_groups', 'courseid', $group->courseid, 'groupid', $group->groupid)) {
                 insert_record('groups_courses_groups', $group);
             }
         }
     }
+    rs_close($rs);
     $db->debug = true;
 
     delete_records('groups_courses_groupings');
