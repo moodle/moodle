@@ -1280,6 +1280,18 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007051801) {
+        //  Get the role id of the "Auth. User" role and check if the default role id is different
+        $userrole = get_record( 'role', 'shortname', 'user' );
+        $defaultroleid = $CFG->defaultuserroleid;
+
+        if( $defaultroleid != $userrole->id ) {
+            //  Add in the new moodle/my:manageblocks capibility to the default user role
+            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            assign_capability('moodle/my:manageblocks',CAP_ALLOW,$defaultroleid,$context->id);
+        }
+    }
+
     return $result; 
 }
 

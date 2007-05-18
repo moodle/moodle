@@ -12,7 +12,7 @@ class page_my_moodle extends page_base {
         page_id_and_class($id,$class);
         if ($id == PAGE_MY_MOODLE) {
             return true;
-        } else if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
+        } else if (has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return false;
@@ -20,7 +20,7 @@ class page_my_moodle extends page_base {
 
     function user_is_editing() {
         global $USER;
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
+        if (has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
         return (!empty($USER->editing));

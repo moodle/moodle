@@ -1003,7 +1003,16 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    )    
+    ),
+    
+        'moodle/my:manageblocks' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'user' => CAP_ALLOW
+        )
+    )
+        
 );
 
 ?>
