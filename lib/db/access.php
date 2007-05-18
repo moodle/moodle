@@ -890,7 +890,16 @@ $moodle_capabilities = array(
         'legacy' => array(
             'admin' => CAP_ALLOW
         )
+    ),
+    
+    'moodle/my:manageblocks' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'user' => CAP_ALLOW
+        )
     )
+    
 );
 
 ?>

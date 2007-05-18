@@ -337,7 +337,14 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     } // End foreach
 
 
-    if ($page->blocks_default_position() == $position && $page->user_is_editing()) {
+    //  Check if
+    //    we are on the default position/side AND
+    //    we're editing the page AND
+    //    (
+    //      we have the capability to manage blocks OR
+    //      we are in myMoodle page AND have the capibility to manage myMoodle blocks
+    //    )
+    if ($page->blocks_default_position() == $position && $page->user_is_editing() && (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $COURSE->id)) || ($page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_COURSE, $COURSE->id)))) ) {
         blocks_print_adminblock($page, $pageblocks);
     }
 }
