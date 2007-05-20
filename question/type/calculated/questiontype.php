@@ -354,8 +354,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
         $virtualqtype = $this->get_virtual_qtype();
-        $unit = $virtualqtype->get_default_numerical_unit($question);
-
+        if($unit = $virtualqtype->get_default_numerical_unit($question)){
+             $unit = $unit->unit;
+        } else {
+            $unit = '';
+        }          
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
@@ -363,7 +366,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $correctanswer = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit->unit);
+                 $answer->correctanswerformat, $unit);
            $numericalquestion->options->answers[$key]->answer = $correctanswer->answer;
         }
         $numericalquestion->questiontext = parent::substitute_variables(
@@ -700,7 +703,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function comment_header($question) {
         //$this->get_question_options($question);
-        global $SESSION;
         $strheader = '';
         $delimiter = '';
 
@@ -712,7 +714,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-            $delimiter = ',';
+            $delimiter = '<br/><br/>';
         }
         return $strheader;
     }
@@ -749,15 +751,15 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $virtualqtype->get_tolerance_interval($calculated);
             if ($calculated->min === '') {
                 // This should mean that something is wrong
-                $errors .= " -$calculated->answer";
-                $stranswers .= $delimiter;
+                $stranswers .= " -$calculated->answer".'<br/><br/>';                
             } else {
                 $stranswers .= $formula.' = '.$calculated->answer. '<br/>';
-                $strmin     .= $delimiter.$calculated->min;
-                $strmax     .= $delimiter.$calculated->max;
+                $stranswers .= $strmin. $delimiter.$calculated->min.'---';
+                $stranswers .= $strmax.$delimiter.$calculated->max;
+                $stranswers .='<br/>';
             }
         }
-        return "$stranswers$strmin<br/>$strmax<br/>$errors";
+        return "$stranswers";
     }
 
     function tolerance_types() {
@@ -814,13 +816,17 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function get_correct_responses(&$question, &$state) {
         $virtualqtype = $this->get_virtual_qtype();
-        $unit = $virtualqtype->get_default_numerical_unit($question);
+        if($unit = $virtualqtype->get_default_numerical_unit($question)){
+             $unit = $unit->unit;
+        } else {
+            $unit = '';
+        }          
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
                 $answernumerical = qtype_calculated_calculate_answer(
                  $answer->answer, $state->options->dataset, $answer->tolerance,
                  $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit->unit);
+                 $answer->correctanswerformat, $unit);
                 return array('' => $answernumerical->answer);
             }
         }
