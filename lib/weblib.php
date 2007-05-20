@@ -388,6 +388,7 @@ class moodle_url {
         $str = '';
         foreach ($this->params as $key => $val){
             if (FALSE === array_search($key, $exclude)) {
+                $val = s($val);
                 $str.= "$tabindent<input type=\"hidden\" name=\"$key\" value=\"$val\" />\n";
             }
         }
