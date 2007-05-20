@@ -9,21 +9,11 @@ class HTMLPurifier_AttrTransform_Name extends HTMLPurifier_AttrTransform
 {
     
     function transform($attr, $config, &$context) {
-        
         if (!isset($attr['name'])) return $attr;
-        
-        $name = $attr['name'];
-        unset($attr['name']);
-        
-        if (isset($attr['id'])) {
-            // ID already set, discard name
-            return $attr;
-        }
-        
-        $attr['id'] = $name;
-        
+        $id = $this->confiscateAttr($attr, 'name');
+        if ( isset($attr['id']))   return $attr;
+        $attr['id'] = $id;
         return $attr;
-        
     }
     
 }

@@ -22,6 +22,7 @@ require_once 'HTMLPurifier/HTMLModule/Tables.php';
 require_once 'HTMLPurifier/HTMLModule/Image.php';
 require_once 'HTMLPurifier/HTMLModule/StyleAttribute.php';
 require_once 'HTMLPurifier/HTMLModule/Legacy.php';
+require_once 'HTMLPurifier/HTMLModule/Target.php';
 
 // proprietary modules
 require_once 'HTMLPurifier/HTMLModule/TransformToStrict.php';
@@ -134,6 +135,7 @@ class HTMLPurifier_HTMLModuleManager
             'CommonAttributes',
             'Text', 'Hypertext', 'List', 'Presentation',
             'Edit', 'Bdo', 'Tables', 'Image', 'StyleAttribute',
+            'Target',
             // define-redefine
             'Legacy',
             // redefine
@@ -155,7 +157,7 @@ class HTMLPurifier_HTMLModuleManager
             'HTML 4.01 Transitional' => array(array('XHTML 1.0 Transitional')),
             'HTML 4.01 Strict' => array(array('XHTML 1.0 Strict')),
             // XHTML definitions
-            'XHTML 1.0 Transitional' => array( array('XHTML 1.0 Strict'), 'Legacy' ),
+            'XHTML 1.0 Transitional' => array( array('XHTML 1.0 Strict'), 'Legacy', 'Target' ),
             'XHTML 1.0 Strict' => array(array('_Common')),
             'XHTML 1.1' => array(array('_Common')),
         );
@@ -206,20 +208,35 @@ class HTMLPurifier_HTMLModuleManager
      * @param $module Mixed: string module name, with or without
      *                HTMLPurifier_HTMLModule prefix, or instance of
      *                subclass of HTMLPurifier_HTMLModule.
+     * @note This function will not call autoload, you must instantiate
+     *       (and thus invoke) autoload outside the method.
+     * @note If a string is passed as a module name, different variants
+     *       will be tested in this order:
+     *          - Check for HTMLPurifier_HTMLModule_$name
+     *          - Check all prefixes with $name in order they were added
+     *          - Check for literal object name
+     *          - Throw fatal error
+     *       If your object name collides with an internal class, specify
+     *       your module manually.
      */
     function addModule($module) {
         if (is_string($module)) {
             $original_module = $module;
-            if (!class_exists($module)) {
-                foreach ($this->prefixes as $prefix) {
-                    $module = $prefix . $original_module;
-                    if (class_exists($module)) break;
+            $ok = false;
+            foreach ($this->prefixes as $prefix) {
+                $module = $prefix . $original_module;
+                if ($this->_classExists($module)) {
+                    $ok = true;
+                    break;
                 }
             }
-            if (!class_exists($module)) {
-                trigger_error($original_module . ' module does not exist',
-                    E_USER_ERROR);
-                return;
+            if (!$ok) {
+                $module = $original_module;
+                if (!$this->_classExists($module)) {
+                    trigger_error($original_module . ' module does not exist',
+                        E_USER_ERROR);
+                    return;
+                }
             }
             $module = new $module();
         }
@@ -227,6 +244,23 @@ class HTMLPurifier_HTMLModuleManager
         $this->modules[$module->name] = $module;
         if ($this->autoDoctype !== false && $this->autoCollection !== false) {
             $this->collections[$this->autoCollection][$this->autoDoctype][] = $module->name;
+        }
+    }
+    
+    /**
+     * Safely tests for class existence without invoking __autoload in PHP5
+     * @param $name String class name to test
+     * @private
+     */
+    function _classExists($name) {
+        static $is_php_4 = null;
+        if ($is_php_4 === null) {
+            $is_php_4 = version_compare(PHP_VERSION, '5', '<');
+        }
+        if ($is_php_4) {
+            return class_exists($name);
+        } else {
+            return class_exists($name, false);
         }
     }
     
@@ -491,7 +525,8 @@ class HTMLPurifier_HTMLModuleManager
         
         $elements = array();
         foreach ($this->activeModules as $module) {
-            foreach ($module->elements as $name) {
+            foreach ($module->info as $name => $v) {
+                if (isset($elements[$name])) continue;
                 $elements[$name] = $this->getElement($name, $config);
             }
         }

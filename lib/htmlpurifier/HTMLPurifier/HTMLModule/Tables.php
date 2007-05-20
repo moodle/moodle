@@ -12,7 +12,6 @@ class HTMLPurifier_HTMLModule_Tables extends HTMLPurifier_HTMLModule
     var $name = 'Tables';
     var $elements = array('caption', 'table', 'td', 'th', 'tr', 'col',
         'colgroup', 'tbody', 'thead', 'tfoot');
-    var $info = array();
     var $content_sets = array('Block' => 'table');
     
     function HTMLPurifier_HTMLModule_Tables() {

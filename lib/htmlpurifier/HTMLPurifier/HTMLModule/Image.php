@@ -15,7 +15,6 @@ class HTMLPurifier_HTMLModule_Image extends HTMLPurifier_HTMLModule
     
     var $name = 'Image';
     var $elements = array('img');
-    var $info = array();
     var $content_sets = array('Inline' => 'img');
     
     function HTMLPurifier_HTMLModule_Image() {

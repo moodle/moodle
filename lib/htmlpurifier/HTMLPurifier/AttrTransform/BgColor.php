@@ -12,12 +12,10 @@ extends HTMLPurifier_AttrTransform {
         
         if (!isset($attr['bgcolor'])) return $attr;
         
-        $bgcolor = $attr['bgcolor'];
-        unset($attr['bgcolor']);
+        $bgcolor = $this->confiscateAttr($attr, 'bgcolor');
         // some validation should happen here
         
-        $attr['style'] = isset($attr['style']) ? $attr['style'] : '';
-        $attr['style'] = "background-color:$bgcolor;" . $attr['style'];
+        $this->prependCSS($attr, "background-color:$bgcolor;");
         
         return $attr;
         

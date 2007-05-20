@@ -17,7 +17,6 @@ class HTMLPurifier_HTMLModule_Presentation extends HTMLPurifier_HTMLModule
     
     var $name = 'Presentation';
     var $elements = array('b', 'big', 'hr', 'i', 'small', 'sub', 'sup', 'tt');
-    var $info = array();
     var $content_sets = array(
         'Block' => 'hr',
         'Inline' => 'b | big | i | small | sub | sup | tt'

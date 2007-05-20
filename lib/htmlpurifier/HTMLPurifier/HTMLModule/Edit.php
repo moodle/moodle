@@ -12,7 +12,6 @@ class HTMLPurifier_HTMLModule_Edit extends HTMLPurifier_HTMLModule
     
     var $name = 'Edit';
     var $elements = array('del', 'ins');
-    var $info = array();
     var $content_sets = array('Inline' => 'del | ins');
     
     function HTMLPurifier_HTMLModule_Edit() {

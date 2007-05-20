@@ -1,5 +1,7 @@
 <?php
 
+require_once 'HTMLPurifier/AttrTransform/Lang.php';
+
 /**
  * Proprietary module that transforms XHTML 1.0 deprecated aspects into
  * XHTML 1.1 compliant ones, when possible. For maximum effectiveness,
@@ -24,6 +26,10 @@ class HTMLPurifier_HTMLModule_TransformToXHTML11 extends HTMLPurifier_HTMLModule
     var $info_attr_transform_post = array(
         'lang' => false // remove it
     );
+    
+    function HTMLPurifier_HTMLModule_TransformToXHTML11() {
+        $this->info_attr_transform_pre['lang'] = new HTMLPurifier_AttrTransform_Lang();
+    }
     
 }
 

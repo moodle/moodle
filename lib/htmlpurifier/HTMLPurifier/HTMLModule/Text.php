@@ -22,8 +22,6 @@ class HTMLPurifier_HTMLModule_Text extends HTMLPurifier_HTMLModule
         'h4', 'h5', 'h6', 'kbd', 'p', 'pre', 'q', 'samp', 'span', 'strong',
         'var', 'nolink', 'tex', 'algebra'); //moodle modification
     
-    var $info = array();
-    
     var $content_sets = array(
         'Heading' => 'h1 | h2 | h3 | h4 | h5 | h6',
         'Block' => 'address | blockquote | div | p | pre | nolink | tex | algebra', //moodle modification

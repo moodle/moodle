@@ -334,6 +334,10 @@ class HTMLPurifier_ConfigSchema {
             case 'hash':
             case 'lookup':
                 if (is_string($var)) {
+                    // special case: technically, this is an array with
+                    // a single empty string item, but having an empty
+                    // array is more intuitive
+                    if ($var == '') return array();
                     // simplistic string to array method that only works
                     // for simple lists of tag names or alphanumeric characters
                     $var = explode(',',$var);

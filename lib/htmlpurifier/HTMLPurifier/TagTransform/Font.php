@@ -20,6 +20,7 @@ class HTMLPurifier_TagTransform_Font extends HTMLPurifier_TagTransform
     var $transform_to = 'span';
     
     var $_size_lookup = array(
+        '0' => 'xx-small',
         '1' => 'xx-small',
         '2' => 'small',
         '3' => 'medium',
@@ -28,9 +29,10 @@ class HTMLPurifier_TagTransform_Font extends HTMLPurifier_TagTransform
         '6' => 'xx-large',
         '7' => '300%',
         '-1' => 'smaller',
-        '+1' => 'larger',
         '-2' => '60%',
+        '+1' => 'larger',
         '+2' => '150%',
+        '+3' => '200%',
         '+4' => '300%'
     );
     
@@ -58,6 +60,15 @@ class HTMLPurifier_TagTransform_Font extends HTMLPurifier_TagTransform
         
         // handle size transform
         if (isset($attr['size'])) {
+            // normalize large numbers
+            if ($attr['size']{0} == '+' || $attr['size']{0} == '-') {
+                $size = (int) $attr['size'];
+                if ($size < -2) $attr['size'] = '-2';
+                if ($size > 4)  $attr['size'] = '+4';
+            } else {
+                $size = (int) $attr['size'];
+                if ($size > 7) $attr['size'] = '7';
+            }
             if (isset($this->_size_lookup[$attr['size']])) {
                 $prepend_style .= 'font-size:' .
                   $this->_size_lookup[$attr['size']] . ';';

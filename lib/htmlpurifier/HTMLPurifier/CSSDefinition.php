@@ -206,6 +206,9 @@ class HTMLPurifier_CSSDefinition
             new HTMLPurifier_AttrDef_CSS_Percentage()
         ));
         
+        // partial support
+        $this->info['white-space'] = new HTMLPurifier_AttrDef_Enum(array('nowrap'));
+        
     }
     
 }

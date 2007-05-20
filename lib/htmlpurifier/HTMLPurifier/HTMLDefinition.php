@@ -183,9 +183,18 @@ class HTMLPurifier_HTMLDefinition
         $this->manager->setup($this->config);
         
         foreach ($this->manager->activeModules as $module) {
-            foreach($module->info_tag_transform         as $k => $v) $this->info_tag_transform[$k]      = $v;
-            foreach($module->info_attr_transform_pre    as $k => $v) $this->info_attr_transform_pre[$k] = $v;
-            foreach($module->info_attr_transform_post   as $k => $v) $this->info_attr_transform_post[$k]= $v;
+            foreach($module->info_tag_transform         as $k => $v) {
+                if ($v === false) unset($this->info_tag_transform[$k]);
+                else $this->info_tag_transform[$k] = $v;
+            }
+            foreach($module->info_attr_transform_pre    as $k => $v) {
+                if ($v === false) unset($this->info_attr_transform_pre[$k]);
+                else $this->info_attr_transform_pre[$k] = $v;
+            }
+            foreach($module->info_attr_transform_post   as $k => $v) {
+                if ($v === false) unset($this->info_attr_transform_post[$k]);
+                else $this->info_attr_transform_post[$k] = $v;
+            }
         }
         
         $this->info = $this->manager->getElements($this->config);

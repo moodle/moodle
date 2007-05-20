@@ -22,7 +22,7 @@
  */
 
 /*
-    HTML Purifier 1.6.0 - Standards Compliant HTML Filtering
+    HTML Purifier 1.6.1 - Standards Compliant HTML Filtering
     Copyright (C) 2006 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -64,7 +64,7 @@ require_once 'HTMLPurifier/Encoder.php';
 class HTMLPurifier
 {
     
-    var $version = '1.6.0';
+    var $version = '1.6.1';
     
     var $config;
     var $filters;

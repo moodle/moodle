@@ -10,7 +10,7 @@ class HTMLPurifier_HTMLModule_List extends HTMLPurifier_HTMLModule
     
     var $name = 'List';
     var $elements = array('dl', 'dt', 'dd', 'ol', 'ul', 'li');
-    var $info = array();
+    
     // According to the abstract schema, the List content set is a fully formed
     // one or more expr, but it invariably occurs in an optional declaration
     // so we're not going to do that subtlety. It might cause trouble

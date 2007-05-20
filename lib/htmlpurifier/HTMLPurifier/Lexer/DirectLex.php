@@ -110,6 +110,23 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     continue;
                 }
                 
+                // Check leading character is alnum, if not, we may
+                // have accidently grabbed an emoticon. Translate into
+                // text and go our merry way
+                if (!ctype_alnum($segment[0])) {
+                    $array[] = new
+                        HTMLPurifier_Token_Text(
+                            '<' .
+                            $this->parseData(
+                                $segment
+                            ) . 
+                            '>'
+                        );
+                    $cursor = $position_next_gt + 1;
+                    $inside_tag = false;
+                    continue;
+                }
+                
                 // Check if it is explicitly self closing, if so, remove
                 // trailing slash. Remember, we could have a tag like <br>, so
                 // any later token processing scripts must convert improperly

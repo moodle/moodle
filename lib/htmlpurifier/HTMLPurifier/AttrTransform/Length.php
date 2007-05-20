@@ -18,13 +18,9 @@ class HTMLPurifier_AttrTransform_Length extends HTMLPurifier_AttrTransform
     
     function transform($attr, $config, &$context) {
         if (!isset($attr[$this->name])) return $attr;
-        $length = $attr[$this->name];
-        unset($attr[$this->name]);
+        $length = $this->confiscateAttr($attr, $this->name);
         if(ctype_digit($length)) $length .= 'px';
-        
-        $attr['style'] = isset($attr['style']) ? $attr['style'] : '';
-        $attr['style'] = $this->cssName . ":$length;" . $attr['style'];
-        
+        $this->prependCSS($attr, $this->cssName . ":$length;");
         return $attr;
     }
     
