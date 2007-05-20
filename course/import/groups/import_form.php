@@ -18,10 +18,6 @@ class course_import_groups_form extends moodleform {
         //later using set_data
         // buttons
 
-        $mform->addElement('hidden', 'sesskey');
-        $mform->setType('sesskey', PARAM_ALPHA);
-        $mform->setConstants(array('sesskey'=> $USER->sesskey));
-
         $mform->addElement('file', 'userfile', '');
         $mform->setHelpButton('userfile', array('attachment', get_string('attachment', 'forum'), 'forum'));
 
@@ -29,10 +25,13 @@ class course_import_groups_form extends moodleform {
         $this->add_action_buttons(false, $strimportgroups);
 
     }
-
-    function validation($data) {
-        return true;
+    function get_import_name(){
+        if ($this->is_submitted() and $this->is_validated()) {
+            // return the temporary filename to process
+            return $this->_upload_manager->files['userfile']['tmp_name'];
+        }else{
+            return  NULL;
+        }
     }
-
 }
 ?>
