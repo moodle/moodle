@@ -713,7 +713,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-            $delimiter = ',';
+            $delimiter = '<br/><br/>';
         }
         return $strheader;
     }
@@ -750,15 +750,15 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $virtualqtype->get_tolerance_interval($calculated);
             if ($calculated->min === '') {
                 // This should mean that something is wrong
-                $errors .= " -$calculated->answer";
-                $stranswers .= $delimiter;
+                $stranswers .= " -$calculated->answer".'<br/><br/>';                
             } else {
-                $stranswers .= $formula.' = '.$calculated->answer. '<br/>';
-                $strmin     .= $delimiter.$calculated->min;
-                $strmax     .= $delimiter.$calculated->max;
+                $stranswers .= $formula.' = '.$calculated->answer.'<br/>' ;
+                $stranswers .= $strmin. $delimiter.$calculated->min.'---';
+                $stranswers .= $strmax.$delimiter.$calculated->max;
+                $stranswers .='<br/>';
             }
         }
-        return "$stranswers$strmin<br/>$strmax<br/>$errors";
+        return "$stranswers";
     }
 
     function tolerance_types() {
