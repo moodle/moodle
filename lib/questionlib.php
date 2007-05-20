@@ -1653,70 +1653,90 @@ function add_indented_names($categories) {
  * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
  */
-function question_category_select_menu($courseid, $published = false, $only_editable = false, $selected = "") {
-    $categoriesarray = question_category_options($courseid, $published, $only_editable);
+function question_category_select_menu($contexts, $top = false, $currentcat = 0, $selected = "") {
+    $categoriesarray = question_category_options($contexts, $top, $currentcat);
     if ($selected) {
         $nothing = '';
     } else {
         $nothing = 'choose';
     }
-    choose_from_menu($categoriesarray, 'category', $selected, $nothing);
+    choose_from_menu_nested($categoriesarray, 'category', $selected, $nothing);
 }
 
 /**
  * Output an array of question categories.
  *
- * Categories from this course and (optionally) published categories from other courses
- * are included. Optionally, only categories the current user may edit can be included.
  *
- * @param integer $courseid the id of the course to get the categories for.
- * @param integer $published if true, include publised categories from other courses.
- * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
- * @return array The list of categories.
  */
-function question_category_options($courseid, $published = false, $only_editable = false) {
+function question_category_options($contexts, $top = false, $currentcat = 0, $popupform = false) {
     global $CFG;
-
-    // get sql fragment for published
-    $publishsql="";
-    if ($published) {
-        $publishsql = " OR publish = 1";
+    $pcontexts = array();
+    foreach($contexts as $context){
+        $pcontexts[] = $context->id;
     }
+    $contextslist = join($pcontexts, ', ');
+    
+    // get sql fragment for published
+
 
     $categories = get_records_sql("
-            SELECT cat.*, c.shortname AS coursename
-            FROM {$CFG->prefix}question_categories cat, {$CFG->prefix}course c
-            WHERE c.id = cat.course AND (cat.course = $courseid $publishsql)
-            ORDER BY (CASE WHEN cat.course = $courseid THEN 0 ELSE 1 END), cat.parent, cat.sortorder, cat.name ASC");
+            SELECT *
+            FROM {$CFG->prefix}question_categories
+            WHERE contextid IN ($contextslist)
+            ORDER BY parent, sortorder, name ASC");
+    $categories = question_add_context_in_key($categories);
+    if ($top){
+        $categories = question_add_tops($categories, $pcontexts);
+    }
     $categories = add_indented_names($categories);
 
+    //sort cats out into different contexts
     $categoriesarray = array();
-    foreach ($categories as $category) {
-        $cid = $category->id;
-        $cname = question_category_coursename($category, $courseid);
-        if ((!$only_editable) || has_capability('moodle/question:managecategory', get_context_instance(CONTEXT_COURSE, $category->course))) {
-            $categoriesarray[$cid] = $cname;
+    foreach ($pcontexts as $pcontext){
+        $contextstring = print_context_name(get_context_instance_by_id($pcontext), true, true);
+        foreach ($categories as $category) {
+            if ($category->contextid == $pcontext){ 
+                $cid = $category->id;
+                if ($currentcat!= $cid) {
+                    $categoriesarray[$contextstring][$cid] = $category->indentedname;
+                }
+            }
         }
     }
-    return $categoriesarray;
+    if ($popupform){
+        $popupcats = array();
+        foreach ($categoriesarray as $contextstring => $optgroup){
+            $popupcats[] = '--'.$contextstring;
+            $popupcats = array_merge($popupcats, $optgroup);
+            $popupcats[] = '--';
+        }
+        return $popupcats;
+    } else {
+        return $categoriesarray;
+    }
 }
 
-/**
- * If the category is not from this course, and it is a published category,
- * then return the course category name with the course shortname appended in
- * brackets. Otherwise, just return the category name.
- */
-function question_category_coursename($category, $courseid = 0) {
-    $cname = (isset($category->indentedname)) ? $category->indentedname : $category->name;
-    if ($category->course != $courseid && $category->publish) {
-        if (!empty($category->coursename)) {
-            $coursename = $category->coursename;
-        } else {
-            $coursename = get_field('course', 'shortname', 'id', $category->course);
-        }
-        $cname .= " ($coursename)";
+function question_add_context_in_key($categories){
+    $newcatarray = array();
+    foreach ($categories as $id => $category) {
+        $category->parent = "$category->parent,$category->contextid";
+        $category->id = "$category->id,$category->contextid";
+        $newcatarray["$id,$category->contextid"] = $category;
     }
-    return $cname;
+    return $newcatarray;
+}
+function question_add_tops($categories, $pcontexts){
+    $topcats = array();
+    foreach ($pcontexts as $context){
+        $newcat = new object();
+        $newcat->id = "0,$context";
+        $newcat->name = get_string('top');
+        $newcat->parent = -1;
+        $newcat->contextid = $context;
+        $topcats["0,$context"] = $newcat;
+    }
+    //put topcats in at beginning of array - they'll be sorted into different contexts later.
+    return array_merge($topcats, $categories);
 }
 
 /**
@@ -1733,67 +1753,8 @@ function question_categorylist($categoryid) {
     return $categorylist;
 }
 
-/**
- * find and/or create the category described by a delimited list
- * e.g. tom/dick/harry
- * @param string catpath delimited category path
- * @param string delimiter path delimiting character
- * @param int courseid course to search for categories
- * @return mixed category object or null if fails
- */
-function create_category_path( $catpath, $delimiter='/', $courseid=0 ) {
-    $catpath = clean_param( $catpath,PARAM_PATH );
-    $catnames = explode( $delimiter, $catpath );
-    $parent = 0;
-    $category = null;
-    foreach ($catnames as $catname) {
-        if ($category = get_record( 'question_categories', 'name', $catname, 'course', $courseid, 'parent', $parent )) {
-            $parent = $category->id;
-        }
-        else {
-            // create the new category
-            $category = new object;
-            $category->course = $courseid;
-            $category->name = $catname;
-            $category->info = '';
-            $category->publish = false;
-            $category->parent = $parent;
-            $category->sortorder = 999;
-            $category->stamp = make_unique_id_code();
-            if (!($id = insert_record( 'question_categories', $category ))) {
-                error( "cannot create new category - $catname" );
-            }
-            $category->id = $id;
-            $parent = $id;
-        }
-    }
-    return $category;
-}
 
-/**
- * get the category as a path (e.g., tom/dick/harry)
- * @param int id the id of the most nested catgory
- * @param string delimiter the delimiter you want
- * @return string the path
- */
-function get_category_path( $id, $delimiter='/' ) {
-    $path = '';    
-    do {
-        if (!$category = get_record( 'question_categories','id',$id )) {
-            print_error( "Error reading category record - $id" );    
-        }
-        $name = $category->name;
-        $id = $category->parent;
-        if (!empty($path)) {
-            $path = "{$name}{$delimiter}{$path}";
-        }
-        else {
-            $path = $name;
-        }    
-    } while ($id != 0);        
-         
-    return $path;
-}
+
 
 //===========================
 // Import/Export Functions
