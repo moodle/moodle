@@ -1,4 +1,4 @@
-<?PHP // $Id: edit.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: edit.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -13,7 +13,7 @@ $subchapter = optional_param('subchapter', 0, PARAM_BOOL);
 // =========================================================================
 require_login();
 
-if (!$cm = get_record('course_modules', 'id', $id)) {
+if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }
 
@@ -21,9 +21,8 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if (!isteacheredit($course->id)) {
-    error('Only editing teachers can edit books!', $_SERVER['HTTP_REFERER']);
-}
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('moodle/course:manageactivities', $context);
 
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');

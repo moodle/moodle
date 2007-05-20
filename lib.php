@@ -1,19 +1,21 @@
-<?PHP // $Id: lib.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: lib.php,v 1.2 2007/05/20 06:00:30 skodak Exp $
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
 define('NUM_BULLETS',  '2');
 define('NUM_INDENTED', '3');
 
-$NUMBERING_TYPE = array (NUM_NONE       => get_string('numbering0', 'book'),
-                         NUM_NUMBERS    => get_string('numbering1', 'book'),
-                         NUM_BULLETS    => get_string('numbering2', 'book'),
-                         NUM_INDENTED   => get_string('numbering3', 'book') );
 
 if (!isset($CFG->book_tocwidth)) {
     set_config("book_tocwidth", 180);  // default toc width
 }
 
+function book_get_numbering_types() {
+    return array (NUM_NONE       => get_string('numbering0', 'book'),
+                  NUM_NUMBERS    => get_string('numbering1', 'book'),
+                  NUM_BULLETS    => get_string('numbering2', 'book'),
+                  NUM_INDENTED   => get_string('numbering3', 'book') );
+}
 
 /// Library of functions and constants for module 'book'
 
@@ -25,6 +27,12 @@ function book_add_instance($book) {
 
     $book->timecreated = time();
     $book->timemodified = $book->timecreated;
+    if (!isset($book->customtitles)) {
+        $book->customtitles = 0;
+    }
+    if (!isset($book->disableprinting)) {
+        $book->disableprinting = 0;
+    }
 
     return insert_record('book', $book);
 }
@@ -37,6 +45,12 @@ function book_update_instance($book) {
 
     $book->timemodified = time();
     $book->id = $book->instance;
+    if (!isset($book->customtitles)) {
+        $book->customtitles = 0;
+    }
+    if (!isset($book->disableprinting)) {
+        $book->disableprinting = 0;
+    }
 
     # May have to add extra stuff in here #
 
@@ -64,6 +78,20 @@ function book_delete_instance($id) {
     return $result;
 }
 
+
+function book_get_types() {
+    global $CFG;
+
+    $types = array();
+
+    $type = new object();
+    $type->modclass = MOD_CLASS_RESOURCE;
+    $type->type = 'book';
+    $type->typestr = get_string('modulename', 'book');
+    $types[] = $type;
+
+    return $types;
+}
 function book_user_outline($course, $user, $mod, $book) {
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
@@ -178,11 +206,11 @@ function book_edit_button($id, $courseid, $chapterid) {
             $string = get_string("turneditingon");
             $edit = '1';
         }
-        return '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/mod/book/view.php">'.
+        return '<form method="get" action="'.$CFG->wwwroot.'/mod/book/view.php"><div>'.
                '<input type="hidden" name="id" value="'.$id.'" />'.
                '<input type="hidden" name="chapterid" value="'.$chapterid.'" />'.
                '<input type="hidden" name="edit" value="'.$edit.'" />'.
-               '<input type="submit" value="'.$string.'" /></form>';
+               '<input type="submit" value="'.$string.'" /></div></form>';
     } else {
         return '';
     }

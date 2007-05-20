@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.2 2006/04/24 19:41:14 skodak Exp $
+$Id: README.txt,v 1.3 2007/05/20 06:00:29 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -110,5 +110,9 @@ CHANGELOG:
     * all languages converted to utf-8
     * moved to contrib/book_16 directory
     * added proper content encoding conversion during import
+== 1.4alpha - 2007/05/20 ====================================================
+    * compatible with 1.8
+    * export link enabled - thanks Eloy!
+    * no new features
 
 skodak

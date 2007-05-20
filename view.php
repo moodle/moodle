@@ -1,4 +1,4 @@
-<?PHP // $Id: view.php,v 1.2 2006/10/16 08:05:26 gustav_delius Exp $
+<?PHP // $Id: view.php,v 1.3 2007/05/20 06:00:29 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -10,29 +10,25 @@ $edit      = optional_param('edit', -1, PARAM_BOOL);     // Edit mode
 // =========================================================================
 // security checks START - teachers edit; students view
 // =========================================================================
-if ($CFG->forcelogin) {
-    require_login();
-}
-
-if (!$cm = get_record('course_modules', 'id', $id)) {
-    error('Course Module ID is incorrect');
+if (!$cm = get_coursemodule_from_id('book', $id)) {
+    error('Course Module ID was incorrect');
 }
 
 if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if ($course->category) {
-    require_login($course->id);
-}
-
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
 }
 
-$isteacher = isteacheredit($course->id);
-if ($isteacher) {
-    if($edit != -1) {
+require_course_login($course, true, $cm);
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$allowedit = has_capability('moodle/course:manageactivities', $context);
+
+if ($allowedit) {
+    if ($edit != -1) {
         $USER->editing = $edit;
     } else {
         if (isset($USER->editing)) {
@@ -45,16 +41,12 @@ if ($isteacher) {
     $edit = 0;
 }
 
-if (!$cm->visible and !$isteacher) {
-    notice(get_string('activityiscurrentlyhidden'));
-}
-
 /// read chapters
-$select = $isteacher ? "bookid = $book->id" : "bookid = $book->id AND hidden = 0";
+$select = $allowedit ? "bookid = $book->id" : "bookid = $book->id AND hidden = 0";
 $chapters = get_records_select('book_chapters', $select, 'pagenum', 'id, pagenum, subchapter, title, hidden');
 
 if (!$chapters) {
-    if ($isteacher) {
+    if ($allowedit) {
         redirect('edit.php?id='.$cm->id); //no chapters - add new one
         die;
     } else {
@@ -64,7 +56,7 @@ if (!$chapters) {
 /// check chapterid and read chapter data
 if ($chapterid == '0') { // go to first chapter if no given
     foreach($chapters as $ch) {
-        if ($isteacher) {
+        if ($allowedit) {
             $chapterid = $ch->id;
             break;
         }
@@ -85,7 +77,7 @@ unset($id);
 unset($chapterid);
 
 /// chapter is hidden for students
-if (!$isteacher and $chapter->hidden) {
+if (!$allowedit and $chapter->hidden) {
     error('Error reading book chapters.');
 }
 
@@ -97,7 +89,7 @@ if ($chapter->bookid != $book->id) {
 // security checks  END
 // =========================================================================
 
-add_to_log($course->id, 'book', 'view', 'view.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
+add_to_log($course->id, 'book', 'view', 'view.php?id='.$cm->id.'&amp;chapterid='.$chapter->id, $book->id, $cm->id);
 
 
 ///read standard strings
@@ -112,7 +104,7 @@ if ($course->category) {
     $navigation = '';
 }
 
-$buttons = $isteacher ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update_module_button($cm->id, $course->id, $strbook).'</td>'.
+$buttons = $allowedit ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update_module_button($cm->id, $course->id, $strbook).'</td>'.
            '<td>&nbsp;</td><td>'.book_edit_button($cm->id, $course->id, $chapter->id).'</td></tr></table>'
            : '&nbsp;';
 
@@ -148,19 +140,18 @@ if ($ch == current($chapters)) {
 }
 $chnavigation = '';
 if ($previd) {
-    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&chapterid='.$previd.'"><img src="pix/nav_prev.gif" height="24" width="24" border="0"></img></a>';
+    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$previd.'"><img src="pix/nav_prev.gif" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
 } else {
-    $chnavigation .= '<img src="pix/nav_prev_dis.gif" height="24" width="24" border="0"></img>';
+    $chnavigation .= '<img src="pix/nav_prev_dis.gif" class="bigicon" alt="" />';
 }
-$chnavigation .= '&nbsp;&nbsp;<img src="pix/nav_sep.gif" height="24" width="2" border="0"></img>&nbsp;&nbsp;';
 if ($nextid) {
-    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&chapterid='.$nextid.'"><img src="pix/nav_next.gif" height="24" width="24" border="0"></img></a>';
+    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$nextid.'"><img src="pix/nav_next.gif" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
     $sec = '';
     if ($section = get_record('course_sections', 'id', $cm->section)) {
         $sec = $section->section;
     }
-    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="pix/nav_exit.gif" height="24" width="24" border="0"></img></a>';
+    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="pix/nav_exit.gif" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 }
 
 /// prepare print icons
@@ -168,8 +159,8 @@ if ($book->disableprinting) {
     $printbook = '';
     $printchapter = '';
 } else {
-    $printbook = '<a title="'.get_string('printbook', 'book').'" href="print.php?id='.$cm->id.'" target="_blank"><img src="pix/print_book.gif" height="24" width="24" border="0"></img></a>';
-    $printchapter = '<a title="'.get_string('printchapter', 'book').'" href="print.php?id='.$cm->id.'&chapterid='.$chapter->id.'" target="_blank"><img src="pix/print_chapter.gif" height="24" width="24" border="0"></img></a>';
+    $printbook = '<a title="'.get_string('printbook', 'book').'" href="print.php?id='.$cm->id.'" onclick="this.target=\'_blank\'"><img src="pix/print_book.gif" class="bigicon" alt="'.get_string('printbook', 'book').'"/></a>';
+    $printchapter = '<a title="'.get_string('printchapter', 'book').'" href="print.php?id='.$cm->id.'&amp;chapterid='.$chapter->id.'" onclick="this.target=\'_blank\'"><img src="pix/print_chapter.gif" class="bigicon" alt="'.get_string('printchapter', 'book').'"/></a>';
 }
 
 // prepare $toc and $currtitle, $currsubtitle
@@ -181,7 +172,8 @@ if ($edit) {
     $tocwidth = $CFG->book_tocwidth;
 }
 
-$doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</font>' : '';
+$doimport = ($allowedit and $edit) ? '<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>' : '';
+$doexport = ($allowedit and $edit) ? '<a href="generateimscp.php?id='.$cm->id.'">'.get_string('doexport', 'book').'</a>' : '';
 
 
 // =====================================================
@@ -194,12 +186,17 @@ $doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='
 <!-- subchapter title and upper navigation row //-->
 <tr>
     <td width="<?php echo $tocwidth ?>" valign="bottom">
-        <?php print_string('toc', 'book'); echo $doimport; ?>
+        <?php
+        print_string('toc', 'book');
+        if (!empty($doimport)) {
+            echo "<br/>($doimport, $doexport)";
+        }
+        ?>
     </td>
     <td valign="top">
         <table border="0" cellspacing="0" width="100%" valign="top" cellpadding="0">
         <tr>
-            <td nowrap align="left"><?php echo $printbook.'&nbsp'.$printchapter ?></td>
+            <td nowrap align="left"><?php echo $printbook.$printchapter ?></td>
             <td nowrap align="right"><?php echo $chnavigation ?></td>
         </tr>
         </table>
@@ -210,10 +207,10 @@ $doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='
 <tr>
     <td width="<?php echo $tocwidth ?>" valign="top" align="left">
         <?php
-        print_simple_box_start('middle', '100%');
+        print_box_start('generalbox');
         echo $toc;
-        print_simple_box_end();
-        if ($isteacher and $edit) {
+        print_box_end();
+        if ($allowedit and $edit) {
             echo '<font size="1"><br />';
             helpbutton('faq', get_string('faq','book'), 'book', true, true);
             echo '</font>';
@@ -222,7 +219,7 @@ $doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='
     </td>
     <td valign="top" align="right">
         <?php
-        print_simple_box_start('middle', '100%');
+        print_box_start('generalbox');
         $content = '';
         if (!$book->customtitles) {
           if ($currsubtitle == '&nbsp;') {
@@ -238,9 +235,9 @@ $doimport = ($isteacher and $edit) ? '<font size="-1"> (<a href="import.php?id='
         echo '<div class="book_content">';
         echo format_text($content, FORMAT_HTML, $nocleanoption, $course->id);
         echo '</div>';
-        print_simple_box_end();
+        print_box_end();
         /// lower navigation
-        echo '<p>'.$chnavigation.'<p>';
+        echo '<p>'.$chnavigation.'</p>';
         ?>
     </td>
 </tr>

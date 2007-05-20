@@ -1,4 +1,4 @@
-<?PHP // $Id: generateimscp.php,v 1.1 2007/02/11 12:18:23 stronk7 Exp $
+<?PHP // $Id: generateimscp.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -29,13 +29,11 @@ require_once('lib.php');
 require_once($CFG->dirroot . '/backup/lib.php');
 require_once($CFG->dirroot . '/lib/filelib.php');
 
-$id        = required_param('id', PARAM_INT);           // Course Module ID
+$id = required_param('id', PARAM_INT);           // Course Module ID
 
-if ($CFG->forcelogin) {
-    require_login();
-}
+require_login();
 
-if (!$cm = get_record('course_modules', 'id', $id)) {
+if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }
 
@@ -43,20 +41,11 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if ($course->category) {
-    require_login($course->id);
-}
-
-if (!$cm->visible and !isteacher($course->id)) {
-    notice(get_string('activityiscurrentlyhidden'));
-}
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('moodle/course:manageactivities', $context);
  
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
-}
-
-if (!isteacher($course->id)) {
-    error('Only teachers are allowed to generate IMS CP packages');
 }
 
 $strbooks = get_string('modulenameplural', 'book');
@@ -220,6 +209,7 @@ function chapter2html($chapter, $courseid, $bookid) {
     $content .= '</head>' . "\n";
     $content .= '<body>' . "\n";
     $content .= '<h1 id="header">' . $chapter->title . '</h1>' ."\n";
+    $options = new object();
     $options->noclean = true;
     $content .= format_text($chapter->content, '', $options, $courseid) . "\n";
     $content .= '</body>' . "\n";
@@ -255,7 +245,7 @@ function chapter2html($chapter, $courseid, $bookid) {
     }
 
 /// Build the final object needed to have all the info in order to create the manifest
-    $object = new stdClass;
+    $object = new object();
     $object->content = $content;
     $object->localfiles = $basefiles;
 

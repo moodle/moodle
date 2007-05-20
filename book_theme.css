@@ -1,4 +1,4 @@
-/* $Id: book_theme.css,v 1.1 2006/03/12 18:39:59 skodak Exp $*/
+/* $Id: book_theme.css,v 1.2 2007/05/20 06:00:30 skodak Exp $*/
 /* later should be defined in themes*/
 
 
@@ -14,6 +14,15 @@
 
 .book_content {
     text-align: left;
+}
+
+img.bigicon {
+  vertical-align:middle;
+  margin-right:4px;
+  margin-left:4px;
+  width:24px;
+  height:24px;
+  border:0px;
 }
 
 /* == TOC styles == */

@@ -1,4 +1,4 @@
-<?PHP // $Id: index.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: index.php,v 1.2 2007/05/20 06:00:29 skodak Exp $
 
 /// This page lists all the instances of book in a particular course
 
@@ -10,17 +10,12 @@ $id = required_param('id', PARAM_INT);           // Course Module ID
 // =========================================================================
 // security checks START - teachers and students view
 // =========================================================================
-if ($CFG->forcelogin) {
-    require_login();
-}
 
 if (!$course = get_record('course', 'id', $id)) {
     error('Course ID is incorrect');
 }
 
-if ($course->category) {
-    require_login($course->id);
-}
+require_course_login($course, true);
 
 //check all variables
 unset($id);

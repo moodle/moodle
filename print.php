@@ -1,4 +1,4 @@
-<?PHP // $Id: print.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: print.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -9,11 +9,7 @@ $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
 // =========================================================================
 // security checks START - teachers and students view
 // =========================================================================
-if ($CFG->forcelogin) {
-    require_login();
-}
-
-if (!$cm = get_record('course_modules', 'id', $id)) {
+if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }
 
@@ -21,13 +17,7 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if ($course->category) {
-    require_login($course->id);
-}
-
-if (!$cm->visible and !isteacher($course->id)) {
-    notice(get_string('activityiscurrentlyhidden'));
-}
+require_course_login($course, true, $cm);
  
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
@@ -61,23 +51,15 @@ unset($chapterid);
 
 $strbooks = get_string('modulenameplural', 'book');
 $strbook  = get_string('modulename', 'book');
-$strtop  = get_string('top', 'book');
-
-if (!empty($CFG->unicode)) {
-    $encoding = 'utf-8';
-} else {
-    $encoding = get_string('thischarset');
-}
-
-moodle_setlocale(); //workaround for buggy forced course language
+$strtop   = get_string('top', 'book');
 
 @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
 @header('Pragma: no-cache');
 @header('Expires: ');          
 @header('Accept-Ranges: none');
-@header('Content-type: text/html; charset='.$encoding);
+@header('Content-type: text/html; charset=utf-8');
 
-$formatoptions = new stdClass;
+$formatoptions = new object();
 $formatoptions->noclean = true;
 
 if ($chapter) {
@@ -94,9 +76,9 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?PHP echo str_replace('"', '&quot;', $book->name) ?></title>
-      <meta http-equiv="Content-Type" content="text/html; charset=<?PHP echo $encoding ?>" />
-      <meta name="description" content="<?PHP echo str_replace('"', '&quot;', $book->name) ?>" />
+      <title><?PHP echo format_string($book->name) ?></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="description" content="<?PHP echo s(format_string($book->name)) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
@@ -125,28 +107,28 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?PHP echo str_replace('"', '&quot;', $book->name) ?></title>
+      <title><?PHP echo format_string(name) ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=<?PHP echo $encoding ?>" />
-      <meta name="description" content="<?PHP echo str_replace('"', '&quot;', $book->name) ?>" />
+      <meta name="description" content="<?PHP echo s(format_string($book->name)) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
     <a name="top"></a>
-    <p class="book_title"><?PHP echo strip_tags($book->name) ?></p>
-    <p class="book_summary"><?PHP echo strip_tags($book->summary) ?></p>
+    <p class="book_title"><?PHP echo format_string($book->name) ?></p>
+    <p class="book_summary"><?PHP echo format_string($book->summary) ?></p>
     <div class="book_info"><table>
     <tr>
     <td><?PHP echo get_string('site') ?>:</td>
-    <td><a href="<?PHP echo $CFG->wwwroot ?>"><?PHP echo strip_tags($site->fullname) ?></a></td>
+    <td><a href="<?PHP echo $CFG->wwwroot ?>"><?PHP echo format_string($site->fullname) ?></a></td>
     </tr><tr>
     <td><?PHP echo get_string('course') ?>:</td>
-    <td><?PHP echo strip_tags($course->fullname) ?></td>
+    <td><?PHP echo format_string($course->fullname) ?></td>
     </tr><tr>
     <td><?PHP echo get_string('modulename', 'book') ?>:</td>
-    <td><?PHP echo strip_tags($book->name) ?></td>
+    <td><?PHP echo format_string($book->name) ?></td>
     </tr><tr>
     <td><?PHP echo get_string('printedby', 'book') ?>:</td>
-    <td><?PHP echo strip_tags(fullname($USER, true)) ?></td>
+    <td><?PHP echo format_string(fullname($USER, true)) ?></td>
     </tr><tr>
     <td><?PHP echo get_string('printdate','book') ?>:</td>
     <td><?PHP echo userdate(time()) ?></td>

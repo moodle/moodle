@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.1 2006/03/12 18:40:04 skodak Exp $
+<?PHP // $Id: book.php,v 1.2 2007/05/20 06:00:30 skodak Exp $
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
@@ -40,6 +40,7 @@ $string['navexit'] = 'Exit Book';
 $string['importingchapters'] = 'Importing chapters into book';
 $string['import'] = 'Import';
 $string['doimport'] = 'Import';
+$string['doexport'] = 'Export';
 $string['importing'] = 'Importing';
 $string['relinking'] = 'Relinking';
 $string['importinfo'] = 'Import selected HTML file or directory.<br />Chapters are sorted alphabetically using file names.<br />Files named \'sub_*.*\' are always imported as subchapters.';

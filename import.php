@@ -1,4 +1,4 @@
-<?PHP // $Id: import.php,v 1.2 2006/11/21 19:26:36 skodak Exp $
+<?PHP // $Id: import.php,v 1.3 2007/05/20 06:00:29 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -12,7 +12,7 @@ $cancel     = optional_param('cancel', 0, PARAM_BOOL);
 // =========================================================================
 require_login();
 
-if (!$cm = get_record('course_modules', 'id', $id)) {
+if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }
 
@@ -20,9 +20,8 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if (!isteacheredit($course->id)) {
-    error('Only editing teachers can edit books!');
-}
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('moodle/course:manageactivities', $context);
 
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
@@ -150,8 +149,8 @@ if (($form = data_submitted()) && (confirm_sesskey())) {
         </td>
         <td>
             <?php
-              echo '<input name="reference" size="40" value="" />&nbsp;';
-              button_to_popup_window ('/mod/book/coursefiles.php?choose=theform.reference&id='.$course->id,
+              echo '<input id="id_reference" name="reference" size="40" value="" />&nbsp;';
+              button_to_popup_window ('/mod/book/coursefiles.php?choose=id_reference&id='.$course->id,
                                       'coursefiles', $strchoose, 500, 750, $strchoose);
             ?>
         </td>

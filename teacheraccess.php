@@ -1,4 +1,4 @@
-<?PHP // $Id: teacheraccess.php,v 1.1 2006/03/12 18:39:59 skodak Exp $
+<?PHP // $Id: teacheraccess.php,v 1.2 2007/05/20 06:00:27 skodak Exp $
 
 ///standard routine to allow only teachers in
 ///check of $id and $chapterid parameters
@@ -14,8 +14,7 @@ require_login();
 if (!confirm_sesskey()) {
     error(get_string('confirmsesskeybad', 'error')); 
 }
-
-if (!$cm = get_record('course_modules', 'id', $id)) {
+if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }
 
@@ -23,9 +22,8 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
-if (!isteacheredit($course->id)) {
-    error('Only editing teachers can edit books!');
-}
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('moodle/course:manageactivities', $context);
 
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
