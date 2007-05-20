@@ -392,6 +392,7 @@ class upload_manager {
      * @param $return - optional, defaults to false (log is echoed)
      */
     function print_upload_log($return=false,$skipemptyifmultiple=false) {
+        $str = '';
         foreach (array_keys($this->files) as $i => $key) {
             if (count($this->files) > 1 && !empty($skipemptyifmultiple) && $this->files[$key]['error'] == 4) {
                 continue;
