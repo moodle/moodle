@@ -84,8 +84,9 @@ class moodle_list{
     var $page = 0;// 0 means no pagination
     var $firstitem = 1;
     var $lastitem = 999999;
-    var $topcount;
     var $pagecount;
+    var $paged = false;
+    var $offset = 0;
 //------------------------------------------------------
     var $pageurl;
     var $pageparamname;
@@ -96,17 +97,19 @@ class moodle_list{
      * @param string $type
      * @param string $attributes
      * @param boolean $editable
-     * @param integer $page if 0 no pagination.
-     * @param moodle_url $page if 0 no pagination.
+     * @param moodle_url $pageurl url for this page 
+     * @param integer $page if 0 no pagination. (These three params only used in top level list.)
+     * @param string $pageparamname name of url param that is used for passing page no
+     * @param integer $itemsperpage no of top level items.
      * @return moodle_list
      */
-    function moodle_list($type='ul', $attributes='', $editable = false, $page = 0, $pageurl=null, $pageparamname = 'page'){
+    function moodle_list($type='ul', $attributes='', $editable = false, $pageurl=null, $page = 0, $pageparamname = 'page', $itemsperpage = 20){
         $this->editable = $editable;
         $this->attributes = $attributes;
         $this->type = $type;
         $this->page = $page;
         $this->pageparamname = $pageparamname;
-           
+        $this->itemsperpage = $itemsperpage;
         if ($pageurl === null){
             $this->pageurl = new moodle_url();
             $this->pageurl->params(array($this->pageparamname => $this->page));
@@ -124,28 +127,34 @@ class moodle_list{
     function to_html($indent=0, $extraargs=array()){
         if (count($this->items)){
             $tabs = str_repeat("\t", $indent);
-            $html = $tabs.'<'.$this->type.((!empty($this->attributes))?(' '.$this->attributes):'').">\n";
             $first = true;
             $itemiter = 1;
             $lastitem = '';
+            $html = '';
 
             foreach ($this->items as $item){
                 $last = (count($this->items) == $itemiter);
-                if ($itemiter >= $this->firstitem && $itemiter <= $this->lastitem ){
-                    if ($this->editable){
-                        $item->set_icon_html($first, $last, $lastitem);
-                    }
+                if ($this->editable){
+                    $item->set_icon_html($first, $last, $lastitem);
+                }                
+                if ($itemhtml = $item->to_html($indent+1, $extraargs)){
                     $html .= "$tabs\t<li".((!empty($item->attributes))?(' '.$item->attributes):'').">";
-                    $html .= $item->to_html($indent+1, $extraargs);
+                    $html .= $itemhtml;
                     $html .= "</li>\n";
                 }
                 $first = false;
                 $lastitem = $item;
                 $itemiter++;
             }
-            $html .= $tabs."</".$this->type.">\n";
         } else {
             $html = '';
+        }
+        if ($html){ //if there are list items to display then wrap them in ul / ol tag.
+            $tabs = str_repeat("\t", $indent);
+            $html = $tabs.'<'.$this->type.((!empty($this->attributes))?(' '.$this->attributes):'').">\n".$html;
+            $html .= $tabs."</".$this->type.">\n";
+        } else {
+            $html ='';
         }
         return $html;
     }
@@ -154,6 +163,7 @@ class moodle_list{
      * Recurse down the tree and find an item by it's id.
      *
      * @param integer $id
+     * @param boolean $suppresserror error if not item found?
      * @return list_item *copy* or null if item is not found
      */
     function find_item($id, $suppresserror = false){
@@ -187,7 +197,7 @@ class moodle_list{
     function set_parent(&$parent){
         $this->parentitem =& $parent;
     }
-
+    
 
     /**
      * Produces a hierarchical tree of list items from a flat array of records.
@@ -195,20 +205,23 @@ class moodle_list{
      * records are already sorted.
      * If the parent field doesn't point to another record in the array then this is
      * a top level list
-     *
-     * @param array $records
-     * @param string $listitemclassname
-     * @param integer $itemsperpage no of top level items.
+     * 
+     * @param integer $offset how many list toplevel items are there in lists before this one
+     * @return integer $offset + how many toplevel items where there in this list.
+     * 
      */
-    function list_from_records($itemsperpage = 25){
+    function list_from_records($paged = false, $offset =0){
+        $this->paged = $paged;
+        $this->offset = $offset;
         $this->get_records();
         $records = $this->records;
         $page = $this->page;
         if (!empty($page)) {
-            $this->firstitem = ($page-1) * $itemsperpage + 1;
-            $this->lastitem = $this->firstitem + $itemsperpage - 1;
+            
+            $this->firstitem = ($page-1) * $this->itemsperpage + 1;
+            $this->lastitem = $this->firstitem + $this->itemsperpage - 1;
         }
-        $itemiter = 1;
+        $itemiter = $offset;
         //make a simple array which is easier to search
         $this->childparent = array();
         foreach ($records as $record){
@@ -219,18 +232,26 @@ class moodle_list{
             if (!array_key_exists($record->parent, $this->childparent)){
                 //if this record is not a child of another record then
 
+                $inpage = ($itemiter >= $this->firstitem && $itemiter <= $this->lastitem);
                 //make list item for top level for all items
                 //we need the info about the top level items for reordering peers.
-                $newlistitem =& new $this->listitemclassname($record, $this);
-                if ($itemiter >= $this->firstitem && $itemiter <= $this->lastitem ){
+                if ($this->parentitem!==null){
+                    $newattributes = $this->parentitem->attributes;
+                } else {
+                    $newattributes = '';
+                    
+                }
+                $newlistitem =& new $this->listitemclassname($record, $this, $newattributes, $inpage);
+                if ($inpage){
                     //but don't recurse down the tree for items that are not on this page
                     $newlistitem->create_children($records, $this->childparent, $record->id);
+                } else {
+                    $this->paged = true; 
                 }
                 $itemiter++;
             }
         }
-        $this->topcount = $itemiter - 1;
-        $this->pagecount = (integer) ceil( $this->topcount / QUESTION_PAGE_LENGTH );
+        return array($this->paged, $itemiter);
     }
 
     /**
@@ -244,19 +265,23 @@ class moodle_list{
      * display list of page numbers for navigation
      */
     function display_page_numbers() {
-        if (!empty($this->page) && ($this->pagecount>1)){
-            echo "<div class=\"paging\">".get_string('page').":\n";
+        $html = '';
+        $topcount = count($this->items);
+        $this->pagecount = (integer) ceil(($topcount + $this->offset)/ QUESTION_PAGE_LENGTH );
+        if (!empty($this->page) && ($this->paged)){
+            $html = "<div class=\"paging\">".get_string('page').":\n";
             foreach (range(1,$this->pagecount) as $currentpage) {
                 if ($this->page == $currentpage) {
-                    echo " $currentpage \n";
+                    $html .= " $currentpage \n";
                 }
                 else {
-                    echo "<a href=\"".$this->pageurl->out(false, array($this->pageparamname => $currentpage))."\">";
-                    echo " $currentpage </a>\n";
+                    $html .= "<a href=\"".$this->pageurl->out(false, array($this->pageparamname => $currentpage))."\">";
+                    $html .= " $currentpage </a>\n";
                 }
             }
-            echo "</div>";
+            $html .= "</div>";
         }
+        return $html;
     }
 
     /**
@@ -429,6 +454,7 @@ class list_item{
     var $item;
     var $fieldnamesname = 'name';
     var $attributes;
+    var $display;
     var $icons = array();
     /**
      *
@@ -445,10 +471,13 @@ class list_item{
      * Constructor
      *
      * @param mixed $item fragment of html for list item or record
+     * @param object &$parent reference to parent of this item
      * @param string $attributes attributes for li tag
+     * @param boolean $display whether this item is displayed. Some items may be loaded so we have a complete
+     *                              structure in memory to work with for actions but are not displayed.
      * @return list_item
      */
-    function list_item($item, &$parent, $attributes=''){
+    function list_item($item, &$parent, $attributes='', $display = true){
         $this->item = $item;
         if (is_object($this->item)) {
             $this->id = $this->item->id;
@@ -457,8 +486,9 @@ class list_item{
         $this->set_parent($parent);
         $this->attributes = $attributes;
         $parentlistclass = get_class($parent);
-        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->page, $parent->pageurl, $parent->pageparamname);
+        $this->children =& new $parentlistclass($parent->type, $parent->attributes, $parent->editable, $parent->pageurl, 0);
         $this->children->set_parent($this);
+        $this->display = $display;
     }
     /**
      * Output the html just for this item. Called by to_html which adds html for children.
@@ -483,6 +513,9 @@ class list_item{
      * @return string html
      */
     function to_html($indent=0, $extraargs = array()){
+        if (!$this->display){
+            return '';
+        }
         $tabs = str_repeat("\t", $indent);
 
         if (isset($this->children)){
@@ -514,7 +547,7 @@ class list_item{
         }
 
         if (!$first) {
-             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('up'=>$this->id)), 'up');
+             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('moveup'=>$this->id)), 'up');
         } else {
             $icons['up'] =  $this->image_spacer();
         }
@@ -537,7 +570,7 @@ class list_item{
     function image_icon($action, $url, $icon){
         global $CFG;
         $pixpath = $CFG->pixpath;
-        return '<a title="' . $action .'" href="'.$this->parentlist->pageurl->out_action(array('left'=>$this->id)).'">
+        return '<a title="' . $action .'" href="'.$url.'">
                 <img src="' . $pixpath . '/t/'.$icon.'.gif" class="iconsmall" alt="' . $action. '" /></a> ';
     }  
     function image_spacer(){
