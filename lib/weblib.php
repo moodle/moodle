@@ -286,6 +286,8 @@ function qualified_me() {
 
 /**
  * Class for creating and manipulating urls.
+ * 
+ * See short write up here http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url
  */
 class moodle_url {
     var $scheme = '';// e.g. http 
@@ -377,7 +379,8 @@ class moodle_url {
     /**
      * Outputs params as hidden form elements.
      *
-     * @param  
+     * @param  array $exclude params to ignore
+     * @param integer $indent indentation
      * @return string html for form elements.
      */
     function hidden_params_out($exclude = array(), $indent = 0){
