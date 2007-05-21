@@ -142,7 +142,7 @@ class qformat_xml extends qformat_default {
 
         // question name
         $qo->name = $this->getpath( $question, array('#','name',0,'#','text',0,'#'), '', true, $error_noname );
-        $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true, $error_noquestion );
+        $qo->questiontext = $this->getpath( $question, array('#','questiontext',0,'#','text',0,'#'), '', true );
         $qo->questiontextformat = $this->getpath( $question, array('#','questiontext',0,'@','format'), '' );
         $image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
         $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
@@ -458,12 +458,8 @@ class qformat_xml extends qformat_default {
         $answer = $question['#']['answer'][0];
 
         // get fraction - <fraction> tag is deprecated
-        if (!empty($answer['#']['fraction'][0]['#'])) {
-            $qo->fraction = $answer['#']['fraction'][0]['#'];
-        }
-        else {
-            $qo->fraction = $answer['@']['fraction'] / 100;
-        }
+        $qo->fraction = $this->getpath( $question, array('@','fraction'), 0 ) / 100;
+        $q0->fraction = $this->getpath( $question, array('#','fraction',0,'#'), $qo->fraction );
 
         return $qo;
     }
