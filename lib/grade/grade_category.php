@@ -390,6 +390,27 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Given an array of grade values (numerical indices), applies droplow or keephigh
+     * rules to limit the final array.
+     * @param array $grades
+     * @return array Limited grades.
+     */
+    function apply_limit_rules($grades) {
+        rsort($grades, SORT_NUMERIC);
+        if (!empty($this->droplow)) {
+            for ($i = 0; $i < $this->droplow; $i++) {
+                array_pop($grades);
+            }
+        } elseif (!empty($this->keephigh)) { 
+            while (count($grades) > $this->keephigh) {
+                array_pop($grades);                    
+            }
+        }
+        sort($grades, SORT_NUMERIC);
+        return $grades;
+    }
+
+    /**
      * Given an array of arrays of values, standardised from 0 to 1 and indexed by userid, 
      * uses this category's aggregation method to 
      * compute and return a single array of grade_raw objects with the aggregated gradevalue. 
@@ -415,21 +436,8 @@ class grade_category extends grade_object {
 
         foreach ($pooled_grades as $userid => $grades) {
             $aggregated_value = null;
-            // Sort grades from lowest to largest
-            sort($grades, SORT_NUMERIC);
             
-            // Apply droplow or keephigh rule
-            if (!empty($this->droplow)) {
-                $reversed_grades = array_reverse($grades);
-                for ($i = 0; $i < $this->droplow; $i++) {
-                    array_pop($reversed_grades);
-                }
-                $grades = array_reverse($reversed_grades);
-            } elseif (!empty($this->keephigh)) { 
-                for ($i = 0; $i < $this->keephigh; $i++) {
-                    array_pop($grades);
-                }
-            }
+            $grades = $this->apply_limit_rules($grades);
             
             if (count($grades) > 1) {
 

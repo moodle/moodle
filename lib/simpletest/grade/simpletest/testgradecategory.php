@@ -219,6 +219,9 @@ class grade_category_test extends gradelib_test {
     } 
 
     function test_grade_category_set_as_parent() {
+        global $CFG;
+        $debuglevel = $CFG->debug;
+
         // There are 4 constraints which, if violated, should return false and trigger a debugging message. Test each of them
         $grade_category = new grade_category();
         $grade_category->fullname    = 'new topcategory';
@@ -231,22 +234,30 @@ class grade_category_test extends gradelib_test {
         $child2 = new grade_category();
         $child2->grade_item = new grade_item();
         $child2->grade_item->sortorder = 2;
+        $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
+        $CFG->debug = $debuglevel;
 
         // 2. Non-consecutive children
         $child1 = new grade_item();
         $child2 = new grade_item();
         $child1->sortorder = 1;
         $child2->sortorder = 3;
+        $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
+        $CFG->debug = $debuglevel;
         
         // 3. Child is a top category
         $child1 = new grade_category($this->grade_categories[0]);
+        $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1)));
+        $CFG->debug = $debuglevel;
 
         // 4. Child already has a top category
         $child1 = new grade_item($this->grade_items[0]);
+        $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1)));
+        $CFG->debug = $debuglevel;
 
         // Now test setting parent correctly
         $child1 = new grade_item();
@@ -258,6 +269,20 @@ class grade_category_test extends gradelib_test {
         $child1->insert();
         $child2->insert();
         $this->assertTrue($grade_category->set_as_parent(array($child1, $child2)));
+    }
+
+    function test_grade_category_apply_limit_rules() {
+        $category = new grade_category();
+        $grades = array(5.374, 9.4743, 2.5474, 7.3754);
+        
+        $category->droplow = 2;
+        $result = $category->apply_limit_rules(fullclone($grades));
+        $this->assertEqual(array(7.3754, 9.4743), $result);
+        
+        $category->keephigh = 1;
+        $category->droplow = 0;
+        $result = $category->apply_limit_rules(fullclone($grades));
+        $this->assertEqual(array(9.4743), $result); 
     }
 } 
 ?>

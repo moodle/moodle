@@ -218,5 +218,15 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_build_tree_filled() {
         $tree = new grade_tree($this->courseid);
+        echo $tree->display_grades() . "<br />";
+
+        $element = $tree->tree_array[7];
+        $tree->remove_element(7);
+        $tree->renumber();
+        echo $tree->display_grades() . "<br />";
+
+        $tree->insert_element($element, 4);
+        $tree->renumber();
+        echo $tree->display_grades() . "<br />";
     }
 }
