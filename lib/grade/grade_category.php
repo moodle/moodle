@@ -743,10 +743,11 @@ class grade_category extends grade_object {
             debugging("Could not update this category's sortorder in DB.");
             return false;
         }
-
-        $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= $this->grade_item->sortorder";
+        
+        $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= {$this->grade_item->sortorder}";
         if (!execute_sql($query)) {
             debugging("Could not update the sortorder of grade_items listed after this category.");
+            return false;
         } else {
             return true;
         }

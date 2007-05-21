@@ -223,6 +223,7 @@ class grade_category_test extends gradelib_test {
         $grade_category = new grade_category();
         $grade_category->fullname    = 'new topcategory';
         $grade_category->courseid    = $this->courseid;
+        $grade_category->insert();
 
         // 1. mixed types of children
         $child1 = new grade_item();
@@ -254,6 +255,8 @@ class grade_category_test extends gradelib_test {
         $child2->itemname = 'new grade_item';
         $child1->sortorder = 1;
         $child2->sortorder = 2;
+        $child1->insert();
+        $child2->insert();
         $this->assertTrue($grade_category->set_as_parent(array($child1, $child2)));
     }
 } 
