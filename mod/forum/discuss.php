@@ -10,7 +10,7 @@
     $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the layout of the thread
     $move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
     $fromforum = optional_param('fromforum', 0, PARAM_INT);  // Needs to be set when we want to move a discussion.
-    $mark   = optional_param('mark', 0, PARAM_INT);          // Used for tracking read posts if user initiated.
+    $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
     if (!$discussion = get_record("forum_discussions", "id", $d)) {
@@ -187,11 +187,7 @@
 
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $modcontext))) {
-        if ($groups = groups_get_groups_names($course->id)) { //TODO:
-            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
-        }
-    }
+    // groups selector not needed here
 
     echo "</td><td>";
     forum_print_mode_form($discussion->id, $displaymode);
