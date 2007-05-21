@@ -458,7 +458,7 @@
          */
         function _requireWithError($file) {
             $this->_enableErrorReporting();
-            include($file);
+            include_once($file); // moodle change - include prevents inheritance of test classes MDL-9866
             $error = isset($php_errormsg) ? $php_errormsg : false;
             $this->_disableErrorReporting();
             $self_inflicted_errors = array(
