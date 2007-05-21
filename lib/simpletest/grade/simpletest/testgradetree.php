@@ -210,10 +210,13 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_get_filler() {
         $tree = new grade_tree($this->courseid);
-
+        $filler = $tree->get_filler($tree->tree_array[7]['object']);
+        $this->assertEqual('filler', $filler['object']);
+        $this->assertEqual('filler', $filler['children'][0]['object']);
+        $this->assertEqual($this->grade_items[6]->itemname, $filler['children'][0]['children'][0]['object']->itemname);
     } 
 
     function test_grade_tree_build_tree_filled() {
-
+        $tree = new grade_tree($this->courseid);
     }
 }

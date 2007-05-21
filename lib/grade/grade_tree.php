@@ -203,8 +203,8 @@ class grade_tree {
      */
     function remove_element($element) {
         if (empty($this->first_sortorder)) { 
-            $this->first_sortorder = key($this->tree_array);
-        }
+            $this->reset_first_sortorder();
+        } 
         
         if (isset($element->index)) { 
             // Decompose the element's index and build string for eval(unset) statement to follow
@@ -253,8 +253,8 @@ class grade_tree {
      */
     function insert_element($element, $destination_sortorder, $position='before') {
         if (empty($this->first_sortorder)) { 
-            $this->first_sortorder = key($this->tree_array);
-        }
+            $this->reset_first_sortorder();
+        } 
         
         if ($position == 'before') {
             $offset = -1;
@@ -331,7 +331,7 @@ class grade_tree {
      */ 
     function move_element($source_sortorder, $destination_sortorder, $position='before') {
         if (empty($this->first_sortorder)) { 
-            $this->first_sortorder = key($this->tree_array);
+            $this->reset_first_sortorder();
         } 
 
         // Locate the position of the source element in the tree
@@ -348,6 +348,19 @@ class grade_tree {
         return true;
     }
     
+    /**
+     * Uses the key of the first entry in this->tree_array to reset the first_sortorder of this tree. Essential 
+     * after each renumbering.
+     */
+    function reset_first_sortorder() { 
+        if (count($this->tree_array) < 1) {
+            debugging("Cannot reset the grade_tree's first_sortorder because the tree_array hasn't been loaded or is empty.");
+            return false;
+        }
+        reset($this->tree_array);
+        $this->first_sortorder = key($this->tree_array);
+        return $this->first_sortorder;
+    }
 
     /**
      * One at a time, re-assigns new sort orders for every element in the tree, starting 
@@ -402,6 +415,7 @@ class grade_tree {
         }
         $this->tree_array = $newtree;
         unset($this->first_sortorder);
+        $this->build_tree_filled();
         return true;
     }
     
@@ -591,15 +605,20 @@ class grade_tree {
             $filler_array = array('object' => 'filler', 'children' => 
                 array(0 => array('object' => 'filler', 'children' => 
                     array(0 => array('object' => $object, 'finalgrades' => $finals))))); 
-        } else {
+        } elseif (method_exists($object, 'get_children')) {
+
             $subcat_children = $object->get_children(0, 'flat');
             $children_for_tree = array();
             foreach ($subcat_children as $itemid => $item) {
+                $finals = null;
+
                 if (get_class($item) == 'grade_item') {
                     $finals = $item->load_final();
                 } else {
                     $item_object = new grade_item($item, false);
-                    $finals = $item->load_final();
+                    if (method_exists($item, 'load_final')) {
+                        $finals = $item->load_final();
+                    }
                 }
                 
                 $children_for_tree[$itemid] = array('object' => $item, 'finalgrades' => $finals); 
@@ -674,4 +693,30 @@ class grade_tree {
         return "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml</table>";
 
     } 
+
+    /**
+     * Using $this->tree_array, builds $this->tree_filled, which is the same array but with fake categories as
+     * fillers. These are used by display_grades, to print out empty cells over orphan grade_items and grade_categories.
+     * @return boolean Success or Failure.
+     */
+    function build_tree_filled() {
+        if (empty($this->tree_array)) {
+            debugging("You cannot build the tree_filled array until the tree_array is filled.");
+            return false;
+        }
+        
+        $this->tree_filled = array();
+
+        foreach ($this->tree_array as $level1order => $level1) {
+            if ($this->get_element_type($level1) == 'item' || $this->get_element_type($level1) == 'subcat') {
+                $this->tree_filled[$level1order] = $this->get_filler($level1['object']);
+            } else {
+                $this->tree_filled[$level1order] = $level1;
+            }
+        }
+
+        reset($this->tree_array);
+
+        return true;
+    }
 }
