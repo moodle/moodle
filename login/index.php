@@ -223,7 +223,7 @@ httpsrequired();
             // Currently supported only for ldap-authentication module
             if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
                     $days2expire = $userauth->password_expire($USER->username);
-                    if (intval($days2expire) > 0 && intval($days2expire) < intval($CFG->{$USER->auth.'_expiration_warning'})) {
+                        if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                         print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 
                         notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
                         print_footer();
