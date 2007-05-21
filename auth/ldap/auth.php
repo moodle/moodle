@@ -273,12 +273,98 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $newuser['userpassword']  = $extpassword;
                 break;
             default:
-               print_error('auth_ldap_unsupportedusertype','auth',$this->config->user_type);
+               print_error('auth_ldap_unsupportedusertype','auth','',$this->config->user_type);
         }
         $uadd = $this->ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
         ldap_close($ldapconnection);
         return $uadd;
 
+    }
+
+    function can_signup() {
+        return (!empty($this->config->auth_user_create) and !empty($this->config->create_context));
+    }
+
+    /**
+     * Sign up a new user ready for confirmation.
+     * Password is passed in plaintext.
+     *
+     * @param object $user new user object (with system magic quotes)
+     * @param boolean $notify print notice with link and terminate
+     */
+    function user_signup($user, $notify=true) {
+        if ($this->user_exists($user->username)) {
+            print_error('auth_ldap_user_exists', 'auth');
+        }
+
+        $plainslashedpassword = $user->password;
+        unset($user->password);
+
+        if (! $this->user_create($user, $plainslashedpassword)) {
+            print_error('auth_ldap_create_error', 'auth');
+        }
+
+        if (! ($user->id = insert_record('user', $user)) ) {
+            print_error('auth_emailnoinsert', 'auth');
+        }
+
+        $this->update_user_record($user->username);
+        update_internal_user_password($user, $plainslashedpassword);
+
+        if (! send_confirmation_email($user)) {
+            print_error('auth_emailnoemail', 'auth');
+        }
+
+        if ($notify) {
+            global $CFG;
+            $emailconfirm = get_string('emailconfirm');
+            print_header($emailconfirm, $emailconfirm, $emailconfirm);
+            notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns true if plugin allows confirming of new users.
+     *
+     * @return bool
+     */
+    function can_confirm() {
+        return $this->can_signup();
+    }
+
+    /**
+     * Confirm the new user as registered.
+     *
+     * @param string $username (with system magic quotes)
+     * @param string $confirmsecret (with system magic quotes)
+     */
+    function user_confirm($username, $confirmsecret) {
+        $user = get_complete_user_data('username', $username);
+
+        if (!empty($user)) {
+            if ($user->confirmed) {
+                return AUTH_CONFIRM_ALREADY;
+
+            } else if ($user->auth != 'ldap') {
+                return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == stripslashes($confirmsecret)) {   // They have provided the secret key to get in
+                if (!$this->user_activate($username)) {
+                    return AUTH_CONFIRM_FAIL;
+                }
+                if (!set_field("user", "confirmed", 1, "id", $user->id)) {
+                    return AUTH_CONFIRM_FAIL;
+                }
+                if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
+                    return AUTH_CONFIRM_FAIL;
+                }
+                return AUTH_CONFIRM_OK;
+            }
+        } else {
+            return AUTH_CONFIRM_ERROR;
+        }
     }
 
     /**

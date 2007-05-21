@@ -171,3 +171,10 @@ Upgrading from Moodle 1.7
 Moodle will upgrade the old auth settings (in $CFG->auth_foobar where foo is the
 auth plugin and bar is the setting) to the new style in the config_plugin
 database table.
+
+
+
+Upgrading from Moodle 1.8
+------------------------------
+
+user_activate() method was removed from public API because it was used only from user_confirm() in LDAP

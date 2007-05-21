@@ -30,6 +30,15 @@ $string['auth_nologindescription'] = 'Auxiliary plugin that prevents user to log
 $string['auth_nologintitle'] = 'No login';
 
 // CAS plugin
+$string['auth_cas_proxycas_key'] = "Proxy mode";
+$string['auth_cas_logoutcas_key'] = "Logout CAS";
+$string['auth_cas_multiauth_key'] = "Multi-authentication";
+$string['auth_cas_proxycas'] = "Turn this to 'yes'' if you use CASin proxy-mode";
+$string['auth_cas_logoutcas'] = "Turn this to 'yes'' if tou want to logout from CAS when you deconnect from Moodle";
+$string['auth_cas_multiauth'] = "Turn this to 'yes'' if you want to have multi-authentication (CAS + other authentication)";
+$string['accesCAS'] = "CAS users";
+$string['accesNOCAS'] = "other users";
+$string['CASform'] = "Authentication choice";
 $string['auth_cas_logincas'] = 'Secure connection access';
 $string['auth_cas_invalidcaslogin'] = 'Sorry, your login has failed - you could not be authorised';
 $string['auth_cas_server_settings'] = 'CAS server configuration';
@@ -146,6 +155,7 @@ $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
 $string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.<br /><b>Note!</b> You have to modify the method user_create() in file auth/ldap/auth.php to make user creation work';
+$string['auth_ldap_create_error'] = 'Error creating user in LDAP.';
 $string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
@@ -165,6 +175,7 @@ $string['auth_ldap_preventpassindb'] = 'Select yes to prevent passwords from bei
 $string['auth_ldap_search_sub'] = 'Search users from subcontexts.';
 $string['auth_ldap_server_settings'] = 'LDAP server settings';
 $string['auth_ldap_update_userinfo'] = 'Update user information (firstname, lastname, address..) from LDAP to Moodle.  Specify \"Data mapping\" settings as you need.';
+$string['auth_ldap_user_exists'] = 'LDAP username already exists.';
 $string['auth_ldap_user_attribute'] = 'Optional: Overrides the attribute used to name/search users. Usually \'cn\'.';
 $string['auth_ldap_user_settings'] = 'User lookup settings';
 $string['auth_ldap_user_type'] = 'Select how users are stored in LDAP. This setting also specifies how login expiration, grace logins and user creation will work.';
@@ -204,7 +215,7 @@ $string['auth_ldap_create_context_key'] = 'Context for new users';
 $string['auth_ldap_creators_key'] = 'Creators';
 $string['auth_ldap_noconnect'] = 'LDAP-module cannot connect to server: $a';
 $string['auth_ldap_noconnect_all'] = 'LDAP-module cannot connect to any servers: $a';
-$string['auth_ldap_unsupportedusertype'] = 'auth: ldap user_create() does not support selected usertype:"$a" (..yet)';
+$string['auth_ldap_unsupportedusertype'] = 'auth: ldap user_create() does not support selected usertype: $a (..yet)';
 $string['auth_ldap_usertypeundefined'] = 'config.user_type not defined or function ldap_expirationtime2unix does not support selected type!';
 $string['auth_ldap_usertypeundefined2'] = 'config.user_type not defined or function ldap_unixi2expirationtime does not support selected type!';
 $string['auth_ldap_noextension'] = 'Warning: The PHP LDAP module does not seem to be present. Please ensure it is installed and enabled.';

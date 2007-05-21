@@ -41,10 +41,6 @@
             exit;
 
         } else if ($confirmed == AUTH_CONFIRM_OK) {
-            // Activate new user if necessary
-            if (!$authplugin->user_activate($username)) {
-                error('Could not activate this user!');
-            }
 
             // The user has confirmed successfully, let's log them in
 

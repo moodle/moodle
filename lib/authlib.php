@@ -202,17 +202,6 @@ class auth_plugin_base {
     }
 
     /**
-     * Activates (enables) user in external db so user can login using username/password from external db
-     *
-     * @param mixed $username    username (with system magic quotes)
-     * @return boolen result
-     */
-    function user_activate($username) {
-        //override if needed
-        return true;
-    }
-
-    /**
      * return number of days to user password expires
      *
      * If userpassword does not expire it should return 0. If password is already expired
