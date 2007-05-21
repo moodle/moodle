@@ -1051,6 +1051,23 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
                 break;
 
+            case 'ad':
+                // Passwords in Active Directory must be encoded as Unicode
+                // strings (UCS-2 Little Endian format) and surrounded with
+                // double quotes. See http://support.microsoft.com/?kbid=269190
+                if (!function_exists('mb_convert_encoding')) {
+                    error_log ('You need the mbstring extension to change passwords in Active Directory');
+                    return false;
+                }
+                $extpassword = mb_convert_encoding('"'.$extpassword.'"', "UCS-2LE", $this->config->ldapencoding);
+                $result = ldap_modify($ldapconnection, $user_dn, array('unicodePwd' => $extpassword));
+                if (!$result) {
+                    error_log('LDAP Error in user_update_password(). Error code: ' 
+                              . ldap_errno($ldapconnection) . '; Error string : '
+                              . ldap_err2str(ldap_errno($ldapconnection)));
+                }
+                break;
+
             default:
                 $usedconnection = &$ldapconnection;
                 // send ldap the password in cleartext, it will md5 it itself
