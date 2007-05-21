@@ -102,7 +102,6 @@ class grade_history extends grade_object {
                 return $grade_history;
             }
         } else {
-            debugging("No grade_history matching your criteria in the database.");
             return false;
         }
     } 

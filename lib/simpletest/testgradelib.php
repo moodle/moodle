@@ -385,7 +385,7 @@ class gradelib_test extends UnitTestCase {
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
-        $grade_category->droplow     = 10;
+        $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
@@ -401,7 +401,7 @@ class gradelib_test extends UnitTestCase {
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
-        $grade_category->droplow     = 10;
+        $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
@@ -418,7 +418,7 @@ class gradelib_test extends UnitTestCase {
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
-        $grade_category->droplow     = 10;
+        $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
@@ -437,7 +437,7 @@ class gradelib_test extends UnitTestCase {
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
         $grade_category->keephigh    = 100;
-        $grade_category->droplow     = 10;
+        $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();

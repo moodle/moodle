@@ -183,7 +183,6 @@ class grade_category extends grade_object {
                 return $grade_category;
             }
         } else {
-            debugging("No grade_category matching your criteria in the database.");
             return false;
         }
     }
@@ -410,49 +409,66 @@ class grade_category extends grade_object {
             foreach ($set as $userid => $final_grade) {
                 $this->load_grade_item();
                 $value = standardise_score((float) $final_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
-                $pooled_grades[$userid][] = $value;
+                $pooled_grades[$userid][] = (string) $value;
             }
         }
 
         foreach ($pooled_grades as $userid => $grades) {
             $aggregated_value = null;
-
-            switch ($this->aggregation) {
-                case GRADE_AGGREGATE_MEAN : // Arithmetic average
-                    $num = count($grades);
-                    $sum = array_sum($grades);
-                    $aggregated_value = $sum / $num;
-                    break;
-                case GRADE_AGGREGATE_MEDIAN : // Middle point value in the set: ignores frequencies
-                    sort($grades);
-                    $num = count($grades);
-                    $halfpoint = intval($num / 2);
-                    
-                    if($num % 2 == 0) { 
-                        $aggregated_value = ($grades[ceil($halfpoint)] + $grades[floor($halfpoint)]) / 2; 
-                    } else { 
-                        $aggregated_value = $grades[$halfpoint]; 
-                    }
-
-                    break;
-                case GRADE_AGGREGATE_MODE : // Value that occurs most frequently. Not always useful (all values are likely to be different)
-                    // TODO implement or reject
-                    break;
-                case GRADE_AGGREGATE_SUM : // I don't see much point to this one either
-                    $aggregated_value = array_sum($grades);
-                    break;
-                default:
-                    $num = count($grades);
-                    $sum = array_sum($grades);
-                    $aggregated_value = $sum / $num; 
-                    break;
+            // Sort grades from lowest to largest
+            sort($grades, SORT_NUMERIC);
+            
+            // Apply droplow or keephigh rule
+            if (!empty($this->droplow)) {
+                $reversed_grades = array_reverse($grades);
+                for ($i = 0; $i < $this->droplow; $i++) {
+                    array_pop($reversed_grades);
+                }
+                $grades = array_reverse($reversed_grades);
+            } elseif (!empty($this->keephigh)) { 
+                for ($i = 0; $i < $this->keephigh; $i++) {
+                    array_pop($grades);
+                }
             }
             
-            // If the gradevalue is null, we have a problem
-            if (empty($aggregated_value)) {
-                debugging("There was an error during the aggregation procedure, an empty value resulted.");
-                return false;
-            }            
+            if (count($grades) > 1) {
+
+                switch ($this->aggregation) {
+                    case GRADE_AGGREGATE_MEAN : // Arithmetic average
+                        $num = count($grades);
+                        $sum = array_sum($grades);
+                        $aggregated_value = $sum / $num;
+                        break;
+                    case GRADE_AGGREGATE_MEDIAN : // Middle point value in the set: ignores frequencies
+                        sort($grades);
+                        $num = count($grades);
+                        $halfpoint = intval($num / 2);
+                        
+                        if($num % 2 == 0) { 
+                            $aggregated_value = ($grades[ceil($halfpoint)] + $grades[floor($halfpoint)]) / 2; 
+                        } else { 
+                            $aggregated_value = $grades[$halfpoint]; 
+                        }
+
+                        break;
+                    case GRADE_AGGREGATE_MODE : // Value that occurs most frequently. Not always useful (all values are likely to be different)
+                        // TODO implement or reject
+                        break;
+                    case GRADE_AGGREGATE_SUM : // I don't see much point to this one either
+                        $aggregated_value = array_sum($grades);
+                        break;
+                    default:
+                        $num = count($grades);
+                        $sum = array_sum($grades);
+                        $aggregated_value = $sum / $num; 
+                        break;
+                }
+            } elseif (count($grades) == 1) {
+                $aggregated_value = $grades[0];
+            } else {
+                // TODO what happens if the droplow and keephigh rules have deleted all grades?
+                $aggregated_value = 0;
+            }
             
             $grade_raw = new grade_grades_raw();
             
@@ -633,29 +649,38 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Retrieves from DB, instantiates and saves the associated grade_item object.
-     * If no grade_item exists yet, create one.
+     * Uses get_grade_item to load or create a grade_item, then saves it as $this->grade_item.
      * @return object Grade_item
      */
     function load_grade_item() {
+        $this->grade_item = $this->get_grade_item();
+        return $this->grade_item;
+    }
+    
+    /**
+     * Retrieves from DB and instantiates the associated grade_item object.
+     * If no grade_item exists yet, create one.
+     * @return object Grade_item
+     */
+    function get_grade_item() {
         $grade_items = get_records_select('grade_items', "iteminstance = $this->id AND itemtype = 'category'", null, '*', 0, 1);
         
         if ($grade_items){ 
             $params = current($grade_items);
-            $this->grade_item = new grade_item($params);
+            $grade_item = new grade_item($params);
         } else {
-            $this->grade_item = new grade_item();
+            $grade_item = new grade_item();
         }
         
         // If the associated grade_item isn't yet created, do it now. But first try loading it, in case it exists in DB.
-        if (empty($this->grade_item->id)) {
-            $this->grade_item->iteminstance = $this->id;
-            $this->grade_item->itemtype = 'category';
-            $this->grade_item->insert();
-            $this->grade_item->update_from_db();
+        if (empty($grade_item->id)) {
+            $grade_item->iteminstance = $this->id;
+            $grade_item->itemtype = 'category';
+            $grade_item->insert();
+            $grade_item->update_from_db();
         }
 
-        return $this->grade_item;
+        return $grade_item;
     }
 
     /**
@@ -665,11 +690,24 @@ class grade_category extends grade_object {
      */
     function load_parent_category() {
         if (empty($this->parent_category) && !empty($this->parent)) {
-            $this->parent_category = new grade_category(array('id' => $this->parent));
+            $this->parent_category = $this->get_parent_category();
         }
         return $this->parent_category;
     } 
-   
+    
+    /**
+     * Uses $this->parent to instantiate and return a grade_category object.
+     * @return object Parent_category
+     */
+    function get_parent_category() {
+        if (!empty($this->parent)) {
+            $parent_category = new grade_category(array('id' => $this->parent));
+            return $parent_category; 
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Sets this category as the parent for the given children.
      * A number of constraints are necessary:

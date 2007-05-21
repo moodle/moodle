@@ -173,7 +173,6 @@ class grade_grades_raw extends grade_object {
                 return $object;
             }
         } else {
-            debugging("No grade_grades_raw matching your criteria in the database.");
             return false;
         }
     } 

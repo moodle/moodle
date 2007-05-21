@@ -102,7 +102,6 @@ class grade_calculation extends grade_object {
                 return $grade_calculation;
             }
         } else {
-            debugging("No grade_calculation matching your criteria in the database.");
             return false;
         }
     }

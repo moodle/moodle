@@ -147,7 +147,6 @@ class grade_grades_final extends grade_object {
                 return $object;
             }
         } else {
-            debugging("No grade_grades_final matching your criteria in the database.");
             return false;
         }
     } 

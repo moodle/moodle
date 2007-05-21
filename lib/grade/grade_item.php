@@ -426,7 +426,6 @@ class grade_item extends grade_object {
                 return $grade_item;
             }
         } else { 
-            debugging("No grade_item matching these criteria in the database.");
             return false;
         }
     }
@@ -513,7 +512,7 @@ class grade_item extends grade_object {
                 $this->grade_grades_raw[$userid] = $raw_grade;
             }
         } else {
-            debugging("The data given to grade_item::save_raw($data) was not valid, it must be an arra of raw grades.");
+            debugging("The data given to grade_item::save_raw($raw_grades) was not valid, it must be an array of raw grades.");
             return false;
         }
     }

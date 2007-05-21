@@ -96,7 +96,6 @@ class grade_scale extends grade_object {
                 return $grade_scale;
             }
         } else {
-            debugging("No matching grade_scale in DB with the given criteria.");
             return false;
         }
     }

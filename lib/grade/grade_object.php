@@ -137,7 +137,7 @@ class grade_object {
      */
     function update_from_db() {
         if (empty($this->id)) {
-            debugging("The object could not be used in its state to retrieve a matching record from the DB, because it's id field is not set.");
+            debugging("The object could not be used in its state to retrieve a matching record from the DB, because its id field is not set.");
             return false;
         } else {
             $class = get_class($this);
