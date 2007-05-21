@@ -291,7 +291,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @return integer
      */
     function password_expire($username) {
-        $result = false;
+        $result = 0;
 
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
@@ -302,19 +302,16 @@ class auth_plugin_ldap extends auth_plugin_base {
         $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
         if ($sr)  {
             $info = $this->ldap_get_entries($ldapconnection, $sr);
-            if (empty ($info) or empty($info[0][$this->config->expireattr][0])) {
-                //error_log("ldap: no expiration value".$info[0][$this->config->expireattr]);
-                // no expiration attribute, password does not expire
-                $result = 0;
-            }
-            else {
-                $now = time();
-                $expiretime = $this->ldap_expirationtime2unix($info[0][$this->config->expireattr][0]);
-                if ($expiretime > $now) {
-                    $result = ceil(($expiretime - $now) / DAYSECS);
-                }
-                else {
-                    $result = floor(($expiretime - $now) / DAYSECS);
+            if (!empty ($info) and !empty($info[0][$this->config->expireattr][0])) {
+                $expiretime = $this->ldap_expirationtime2unix($info[0][$this->config->expireattr][0], $ldapconnection, $user_dn);
+                if ($expiretime != 0) {
+                    $now = time();
+                    if ($expiretime > $now) {
+                        $result = ceil(($expiretime - $now) / DAYSECS);
+                    }
+                    else {
+                        $result = floor(($expiretime - $now) / DAYSECS);
+                    }
                 }
             }
         } else {
