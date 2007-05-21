@@ -1680,11 +1680,17 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
 
 
     $categories = get_records_sql("
-            SELECT *
-            FROM {$CFG->prefix}question_categories
-            WHERE contextid IN ($contextslist)
+            SELECT c.*, count(q.id) as questioncount
+            FROM {$CFG->prefix}question_categories as c
+            LEFT JOIN {$CFG->prefix}question as q ON c.id = q.category
+            WHERE c.contextid IN ($contextslist) AND 
+            (q.id IS NULL OR (q.hidden='0' AND q.parent='0'))
+            GROUP BY c.id
             ORDER BY parent, sortorder, name ASC");
+
+
     $categories = question_add_context_in_key($categories);
+
     if ($top){
         $categories = question_add_tops($categories, $pcontexts);
     }
@@ -1698,7 +1704,8 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
             if ($category->contextid == $pcontext){ 
                 $cid = $category->id;
                 if ($currentcat!= $cid) {
-                    $categoriesarray[$contextstring][$cid] = $category->indentedname;
+                    $countstring = (!empty($category->questioncount))?"($category->questioncount)":'';
+                    $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
                 }
             }
         }
