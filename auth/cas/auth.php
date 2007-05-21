@@ -15,7 +15,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 require_once($CFG->libdir.'/authlib.php');
-require_once('CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
 /**
  * CAS authentication plugin.
  */
