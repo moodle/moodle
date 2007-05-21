@@ -59,11 +59,19 @@ function useredit_shared_definition(&$mform) {
 
     $strrequired = get_string('required');
 
-    $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
+    $nameordercheck->firstname = 'a';
+    $nameordercheck->lastname  = 'b';
+    if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
+        $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
+        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
+    } else {
+        $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
+        $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
+    }
+
     $mform->addRule('firstname', $strrequired, 'required', null, 'client');
     $mform->setType('firstname', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'lastname', get_string('lastname'), 'maxlength="100" size="30"');
     $mform->addRule('lastname', $strrequired, 'required', null, 'client');
     $mform->setType('lastname', PARAM_NOTAGS);
 
