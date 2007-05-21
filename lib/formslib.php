@@ -88,8 +88,8 @@ class moodleform {
      * the name you gave the class extending moodleform. You should call your class something
      * like
      *
-     * @param string $action the action attribute for the form. If empty defaults to auto detect the
-     *                  current url.
+     * @param mixed $action the action attribute for the form. If empty defaults to auto detect the
+     *                  current url. If a moodle_url object then outputs params as hidden variables.
      * @param array $customdata if your form defintion method needs access to data such as $course
      *               $cm, etc. to construct the form definition then pass it in this array. You can
      *               use globals for somethings.
@@ -599,12 +599,19 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @var unknown_type
      */
     var $_formName = '';
+    
+    /**
+     * String with the html for hidden params passed in as part of a moodle_url object for the action. Output in the form.
+     *
+     * @var string
+     */
+    var $_pageparams = '';
 
     /**
      * Class constructor - same parameters as HTML_QuickForm_DHTMLRulesTableless
      * @param    string      $formName          Form's name.
      * @param    string      $method            (optional)Form's method defaults to 'POST'
-     * @param    string      $action            (optional)Form's action
+     * @param    mixed      $action             (optional)Form's action - string or moodle_url
      * @param    string      $target            (optional)Form's target defaults to none
      * @param    mixed       $attributes        (optional)Extra attributes for <form> tag
      * @param    bool        $trackSubmit       (optional)Whether to track if the form was submitted by adding a special hidden field
@@ -618,6 +625,12 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         HTML_Common::HTML_Common($attributes);
         $target = empty($target) ? array() : array('target' => $target);
         $this->_formName = $formName;
+        if (is_a($action, 'moodle_url')){
+            $this->_pageparams = $action->hidden_params_out();
+            $action = $action->out(true);
+        } else {
+            $this->_pageparams = '';
+        }
         //no 'name' atttribute for form in xhtml strict :
         $attributes = array('action'=>$action, 'method'=>$method, 'id'=>'mform'.$formcounter) + $target;
         $formcounter++;
@@ -1418,6 +1431,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $this->_advancedHTML = $form->getAdvancedHTML();
         $this->_showAdvanced = $form->getShowAdvanced();
         parent::startForm($form);
+        $this->_hiddenHtml .= $form->_pageparams;
     }
 
     function startGroup(&$group, $required, $error){
