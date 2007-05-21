@@ -18,7 +18,7 @@
     $groupid      = optional_param('groupid', 0, PARAM_INT);             // Group wiki.
     $canceledit   = optional_param('canceledit','', PARAM_ALPHA);          // Editing has been cancelled
     $cacheme      = optional_param('allowcache', 1, PARAM_INT);   // Set this to 0 to try and disable page caching.
-
+    
     // Only want to add edit log entries if we have made some changes ie submitted a form
     $editsave = optional_param('thankyou', '');
     
@@ -64,30 +64,6 @@
 
     require_course_login($course, true, $cm);
     
-    // If true, we are 'really' on an editing page, not just on edit/something
-    $reallyedit=$actions[0]=='edit' && !$canceledit && !$editsave;
-    
-	// Remove lock when we go to another wiki page (such as the cancel page)
-    if(!$reallyedit) {
-        wiki_release_lock($wiki->id,$pagename);
-    }
-    if(array_key_exists('content',$_POST)) {
-        // Do not allow blank content because it causes problems (the wiki decides
-        // the page should automatically go into edit mode, but Moodle doesn't realise
-        // this and filters out the JS)
-        if($_POST['content']=='') {
-            $_POST['content']="\n";
-            $_REQUEST['content']="\n";
-        }
-
-        // We must have the edit lock in order to be permitted to save    
-    	list($ok,$lock)=wiki_obtain_lock($wiki->id,$pagename);
-    	if(!$ok) {
-    	    $strsavenolock=get_string('savenolock','wiki');
-    	    error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
-    	}
-    }
-    
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
 
@@ -101,6 +77,31 @@
     $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
     
     if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
+        // OK, now we know the entry ID, we can do lock etc.
+        
+        // If true, we are 'really' on an editing page, not just on edit/something
+        $reallyedit=$actions[0]=='edit' && !$canceledit && !$editsave;
+
+        // Remove lock when we go to another wiki page (such as the cancel page)
+        if(!$reallyedit) {
+            wiki_release_lock($wiki_entry->id,$pagename);
+        } else if(array_key_exists('content',$_POST)) {
+            // Do not allow blank content because it causes problems (the wiki decides
+            // the page should automatically go into edit mode, but Moodle doesn't realise
+            // this and filters out the JS)
+            if($_POST['content']=='') {
+                $_POST['content']="\n";
+                $_REQUEST['content']="\n";
+            }
+    
+            // We must have the edit lock in order to be permitted to save    
+            list($ok,$lock)=wiki_obtain_lock($wiki_entry->id,$pagename);
+            if(!$ok) {
+                $strsavenolock=get_string('savenolock','wiki');
+                error($strsavenolock,$CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
+            }
+        }
+        
 ///     ################# EWIKI Part ###########################
 ///     The wiki_entry->pagename is set to the specified value of the wiki,
 ///     or the default value in the 'lang' file if the specified value was empty.
@@ -413,7 +414,7 @@
     } else if($actions[0]=='edit' && $reallyedit) {
         // Check the page isn't locked before printing out standard wiki content. (Locking
         // is implemented as a wrapper over the existing wiki.)
-        list($gotlock,$lock)=wiki_obtain_lock($wiki->id,$pagename);
+        list($gotlock,$lock)=wiki_obtain_lock($wiki_entry->id,$pagename);
         if(!$gotlock) {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
             $canoverridelock = has_capability('mod/wiki:overridelock', $modcontext);
