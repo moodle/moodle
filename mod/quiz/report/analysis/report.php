@@ -207,7 +207,7 @@ class quiz_report extends quiz_default_report {
         $top -=$gap;
         $bottom +=$gap;
         foreach ($questions as $qid=>$q) {
-            $questions[$qid] = $this->report_question_stats(&$q, $attemptscores, $statstable, $top, $bottom);
+            $questions[$qid] = $this->report_question_stats($q, $attemptscores, $statstable, $top, $bottom);
         }
         unset($attemptscores);
         unset($statstable);
@@ -530,7 +530,7 @@ class quiz_report extends quiz_default_report {
 
         $row = 3;
         foreach($questions as $q) {
-            $rows = $this->print_row_stats_data(&$q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $rowdata){
                 $col = 0;
                 foreach($rowdata as $item){
@@ -583,7 +583,7 @@ class quiz_report extends quiz_default_report {
 
         $data = array();
         foreach($questions as $q) {
-            $rows = $this->print_row_stats_data(&$q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $row){
                 $data[] = $row;
             }
@@ -616,7 +616,7 @@ class quiz_report extends quiz_default_report {
         echo $text;
 
         foreach($questions as $q) {
-            $rows = $this->print_row_stats_data(&$q);
+            $rows = $this->print_row_stats_data($q);
             foreach($rows as $row){
                 $text = implode("\t", $row);
                 echo $text." \n";
