@@ -482,8 +482,9 @@ function question_showbank($pageurl, $cm, $page, $perpage, $sortorder, $sortorde
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        $pageurl->out_action(array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist))),
-                        $pageurl->out_action());
+                    $pageurl->out(), $pageurl->out(),
+                    array('sesskey' => $USER->sesskey, 'deleteselected' => $questionlist, 'confirm' => md5($questionlist)),
+                    NULL, 'post', 'get');
 
             echo '</td></tr>';
             echo '</table>';
