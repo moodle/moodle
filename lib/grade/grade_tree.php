@@ -226,7 +226,7 @@ class grade_tree {
                 return false;
             }
 
-            $this->need_delete[] = $element->element['object'];
+            $this->need_delete[$element->element['object']->id] = $element->element['object'];
 
             return true;
         } else {
@@ -316,7 +316,7 @@ class grade_tree {
             return false;
         }
 
-        $this->need_insert[] = $new_element;
+        $this->need_insert[$new_element->element['object']->id] = $new_element->element['object'];
         
         return true; 
     }
@@ -365,7 +365,8 @@ class grade_tree {
     /**
      * One at a time, re-assigns new sort orders for every element in the tree, starting 
      * with a base number.
-     * @return boolean;
+     * @return array A debugging array which shows the progression of variables throughout this method. This is very useful
+     * to identify problems and implement new functionality.
      */
     function renumber($starting_sortorder=NULL) {
         $sortorder = $starting_sortorder;
@@ -379,44 +380,100 @@ class grade_tree {
         }
         
         $newtree = array();
+        $topcatsortorder = 0;
+        $debug = array();
 
         foreach ($this->tree_array as $topcat) {
             $sortorder++; 
+            $subcatsortorder = 0;
+
+            $debug[] = array('sortorder' => $sortorder, 
+                             'need_update' => $this->need_update,
+                             'line' => __LINE__);
+
             if (!empty($topcat['children'])) {
                 $topcatsortorder = $sortorder;
+                $debug[] = array('sortorder' => $sortorder, 
+                                 'topcatsortorder' => $topcatsortorder, 
+                                 'need_update' => $this->need_update,
+                                 'line' => __LINE__);
+
                 foreach ($topcat['children'] as $subcat) {
                     $sortorder++; 
+                    $debug[] = array('sortorder' => $sortorder, 
+                                     'topcatsortorder' => $topcatsortorder, 
+                                     'need_update' => $this->need_update,
+                                     'line' => __LINE__);
+                    
                     if (!empty($subcat['children'])) {
                         $subcatsortorder = $sortorder;
+                        
+                        $debug[] = array('sortorder' => $sortorder, 
+                                         'topcatsortorder' => $topcatsortorder, 
+                                         'subcatsortorder' => $subcatsortorder, 
+                                         'need_update' => $this->need_update,
+                                         'line' => __LINE__);
+
                         foreach ($subcat['children'] as $item) {
                             $sortorder++;
+                            
+                            $debug[] = array('sortorder' => $sortorder, 
+                                             'topcatsortorder' => $topcatsortorder, 
+                                             'subcatsortorder' => $subcatsortorder, 
+                                             'need_update' => $this->need_update,
+                                             'line' => __LINE__);
+
                             $newtree[$topcatsortorder]['children'][$subcatsortorder]['children'][$sortorder] = $item;
+                           
                             if ($sortorder != $item['object']->sortorder) {
-                                $this->need_update[$item['object']->sortorder] = $sortorder;
+                                $this->need_update[$item['object']->id] = array('old_sortorder' => $item['object']->sortorder, 'new_sortorder' => $sortorder);
+                                $debug[] = array('sortorder' => $sortorder, 
+                                                 'topcatsortorder' => $topcatsortorder, 
+                                                 'subcatsortorder' => $subcatsortorder, 
+                                                 'need_update' => $this->need_update,
+                                                 'line' => __LINE__);
+                            
                             }
                         }
                         $newtree[$topcatsortorder]['children'][$subcatsortorder]['object'] = $subcat['object'];
+                        $newsortorder = $subcatsortorder; 
                     } else {
                         $newtree[$topcatsortorder]['children'][$sortorder] = $subcat; 
+                        $newsortorder = $sortorder; 
                     } 
-                    
-                    if ($sortorder != $subcat['object']->sortorder) {
-                        $this->need_update[$subcat['object']->sortorder] = $sortorder;
+
+                    if ($newsortorder != $subcat['object']->sortorder) {
+                        $this->need_update[$subcat['object']->id] = array('old_sortorder' => $subcat['object']->sortorder, 'new_sortorder' => $newsortorder);
+                        $debug[] = array('sortorder' => $sortorder, 
+                                         'topcatsortorder' => $topcatsortorder, 
+                                         'subcatsortorder' => $subcatsortorder, 
+                                         'need_update' => $this->need_update,
+                                         'line' => __LINE__);
+                            
                     }
                 }
                 $newtree[$topcatsortorder]['object'] = $topcat['object'];
+                $newsortorder = $topcatsortorder; 
             } else { 
-                $newtree[$sortorder] = $topcat;
+                $newsortorder = $sortorder; 
+                $newtree[$sortorder] = $topcat; 
             } 
-
-            if ($sortorder != $topcat['object']->sortorder) {
-                $this->need_update[$topcat['object']->sortorder] = $sortorder;
+            
+            if ($newsortorder != $topcat['object']->sortorder) {
+                $this->need_update[$topcat['object']->id] = array('old_sortorder' => $topcat['object']->sortorder, 'new_sortorder' => $newsortorder);
+                $debug[] = array('sortorder' => $sortorder, 
+                                 'topcatsortorder' => $topcatsortorder, 
+                                 'subcatsortorder' => $subcatsortorder, 
+                                 'need_update' => $this->need_update,
+                                 'line' => __LINE__);
+                            
             }
         }
+        
         $this->tree_array = $newtree;
         unset($this->first_sortorder);
         $this->build_tree_filled();
-        return true;
+        return $debug;
     }
     
     /**
@@ -718,5 +775,41 @@ class grade_tree {
         reset($this->tree_array);
 
         return true;
+    }
+
+    /**
+     * Performs any delete, insert or update queries required, depending on the objects
+     * stored in $this->need_update, need_insert and need_delete.
+     * @return boolean Success or Failure
+     */
+    function update_db() {
+        // Perform deletions first
+        foreach ($this->need_delete as $id => $object) {
+            // If an item is both in the delete AND insert arrays, it must be an existing object that only needs updating, so ignore it.
+            if (empty($this->need_insert[$id])) {
+                if (!$object->delete()) {
+                    debugging("Could not delete object from DB.");
+                }
+            }
+        }
+
+        foreach ($this->need_insert as $id => $object) {
+            if (empty($this->need_delete[$id])) {
+                if (!$object->insert()) {
+                    debugging("Could not insert object into DB.");
+                }
+            }
+        }
+
+        $this->need_delete = array();
+        $this->need_insert = array();
+
+        foreach ($this->need_update as $id => $sortorders) {
+            if (!set_field('grade_items', 'sortorder', $sortorders['new_sortorder'], 'id', $id)) {
+                debugging("Could not update the grade_item's sortorder in DB.");
+            }
+        } 
+
+        $this->need_update = array();
     }
 }

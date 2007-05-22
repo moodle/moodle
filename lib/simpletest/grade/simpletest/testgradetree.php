@@ -97,6 +97,17 @@ class grade_tree_test extends gradelib_test {
         $this->assertFalse(empty($tree->tree_array[8]['children'][1]));
         $this->assertEqual('unittestgradeitem2', $tree->tree_array[8]['children'][1]['object']->itemname);
         $tree->renumber();
+
+        // Check need_? fields
+        $this->assertFalse(empty($tree->need_update));
+        $this->assertFalse(empty($tree->need_insert));
+        $this->assertFalse(empty($tree->need_delete));
+        $this->assertEqual(6, count($tree->need_update));
+        $this->assertEqual(1, count($tree->need_delete));
+        $this->assertEqual(1, count($tree->need_insert));
+        $this->assertEqual($this->grade_items[1]->itemname, $tree->need_delete[$this->grade_items[1]->id]->itemname);
+        $this->assertEqual($this->grade_items[1]->itemname, $tree->need_insert[$this->grade_items[1]->id]->itemname);
+
         $this->assertFalse(empty($tree->tree_array[1]['children'][4]['children'][5]));
         $this->assertEqual('unittestgradeitem3', $tree->tree_array[1]['children'][4]['children'][5]['object']->itemname);
         
@@ -162,6 +173,7 @@ class grade_tree_test extends gradelib_test {
         $tree1 = $tree;
         $tree->renumber();
         $this->assertEqual($tree1->tree_array[1]['object'], $tree->tree_array[1]['object']);
+        $this->assertTrue(empty($tree->need_update));
     }
 
     function test_grade_tree_remove_element() {
@@ -218,15 +230,33 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_build_tree_filled() {
         $tree = new grade_tree($this->courseid);
-        echo $tree->display_grades() . "<br />";
 
         $element = $tree->tree_array[7];
         $tree->remove_element(7);
         $tree->renumber();
-        echo $tree->display_grades() . "<br />";
 
         $tree->insert_element($element, 4);
         $tree->renumber();
-        echo $tree->display_grades() . "<br />";
     }
+
+    function test_grade_tree_update_db() {
+        $tree = new grade_tree($this->courseid);
+        $tree->remove_element(7);
+        $tree->renumber();
+        $tree->update_db();
+        $item = grade_item::fetch('id', $this->grade_items[6]->id);
+        $this->assertTrue(empty($item->id));
+        
+        $tree->move_element(4, 9);
+        $tree->renumber();
+        $tree->update_db();
+        $item = grade_item::fetch('id', $this->grade_items[1]->id);
+        $this->assertFalse(empty($item->id));
+        $this->assertEqual(8, $item->sortorder);
+        
+        $grade_item = new grade_item($this->grade_items[2]);
+        $element = array('object' => $grade_item);
+        $tree->insert_element($element, 9);
+
+    } 
 }

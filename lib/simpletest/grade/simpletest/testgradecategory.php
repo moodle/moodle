@@ -200,10 +200,10 @@ class grade_category_test extends gradelib_test {
         
         $aggregated_grades = $category->aggregate_grades($grade_sets);
         $this->assertEqual(200, count($aggregated_grades)); 
-        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(0, count($aggregated_grades))]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
+        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
     }
     
     function generate_random_raw_grade($item, $userid) {
@@ -222,7 +222,7 @@ class grade_category_test extends gradelib_test {
         global $CFG;
         $debuglevel = $CFG->debug;
 
-        // There are 4 constraints which, if violated, should return false and trigger a debugging message. Test each of them
+        // There are 3 constraints which, if violated, should return false and trigger a debugging message. Test each of them
         $grade_category = new grade_category();
         $grade_category->fullname    = 'new topcategory';
         $grade_category->courseid    = $this->courseid;
@@ -238,22 +238,13 @@ class grade_category_test extends gradelib_test {
         $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
         $CFG->debug = $debuglevel;
 
-        // 2. Non-consecutive children
-        $child1 = new grade_item();
-        $child2 = new grade_item();
-        $child1->sortorder = 1;
-        $child2->sortorder = 3;
-        $CFG->debug = 2;
-        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
-        $CFG->debug = $debuglevel;
-        
-        // 3. Child is a top category
+        // 2. Child is a top category
         $child1 = new grade_category($this->grade_categories[0]);
         $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1)));
         $CFG->debug = $debuglevel;
 
-        // 4. Child already has a top category
+        // 3. Child already has a top category
         $child1 = new grade_item($this->grade_items[0]);
         $CFG->debug = 2;
         $this->assertFalse($grade_category->set_as_parent(array($child1)));
