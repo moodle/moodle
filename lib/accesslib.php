@@ -2643,7 +2643,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
 /**
  * prints human readable context identifier.
  */
-function print_context_name($context) {
+function print_context_name($context, $withprefix = true, $short = false) {
 
     $name = '';
     switch ($context->contextlevel) {
@@ -2658,30 +2658,45 @@ function print_context_name($context) {
 
         case CONTEXT_USER:
             if ($user = get_record('user', 'id', $context->instanceid)) {
-                $name = get_string('user').': '.fullname($user);
+                if ($withprefix){
+                    $name = get_string('user').': ';
+                }
+                $name .= fullname($user);
             }
             break;
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
             if ($category = get_record('course_categories', 'id', $context->instanceid)) {
-                $name = get_string('category').': '. format_string($category->name);
+                if ($withprefix){
+                    $name = get_string('category').': ';
+                }
+                $name .=format_string($category->name);
             }
             break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if ($course = get_record('course', 'id', $context->instanceid)) {
-              
-                if ($context->instanceid == SITEID) {
-                    $name = get_string('site').': '. format_string($course->fullname);
-                } else {
-                    $name = get_string('course').': '. format_string($course->fullname);
+                if ($withprefix){
+                    if ($context->instanceid == SITEID) {
+                        $name = get_string('site').': ';
+                    } else {
+                        $name = get_string('course').': ';
+                    }
                 }
+                if ($short){
+                    $name .=format_string($course->shortname);
+                } else {
+                    $name .=format_string($course->fullname);
+               }
+
             }
             break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
             if ($name = groups_get_group_name($context->instanceid)) {
-                $name = get_string('group').': '. $name;
+                if ($withprefix){
+                    $name = get_string('group').': '. $name;
+                }                    
             }
             break;
 
@@ -2689,7 +2704,10 @@ function print_context_name($context) {
             if ($cm = get_record('course_modules','id',$context->instanceid)) {
                 if ($module = get_record('modules','id',$cm->module)) {
                     if ($mod = get_record($module->name, 'id', $cm->instance)) {
-                        $name = get_string('activitymodule').': '.$mod->name;
+                        if ($withprefix){
+                            $name = get_string('activitymodule').': ';
+                        }
+                        $name .= $mod->name;
                     }
                 }
             }
@@ -2703,7 +2721,10 @@ function print_context_name($context) {
                     require_once("$CFG->dirroot/blocks/$block->name/block_$block->name.php");
                     $blockname = "block_$block->name";
                     if ($blockobject = new $blockname()) {
-                        $name = $blockobject->title.' ('.get_string('block').')';
+                        if ($withprefix){
+                            $name = get_string('block').': ';
+                        }
+                        $name .= $blockobject->title;
                     }
                 }
             }
