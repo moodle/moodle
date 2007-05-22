@@ -85,17 +85,42 @@ class question_dataset_dependent_items_form extends moodleform {
         if ('' != $strquestionlabel){
             $mform->addElement('static', 'answercomment['.($this->noofitems+1).']', $strquestionlabel);
         }
-        $mform->closeHeaderBefore('addbutton');
-        $mform->addElement('submit', 'addbutton', get_string('additem', 'qtype_datasetdependent'));
+        $addremoveoptions = Array();
+        $addremoveoptions['1']='1';
+        for ($i=10; $i<=100 ; $i+=10){               
+             $addremoveoptions["$i"]="$i";
+        }
+                    $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
+        $mform->closeHeaderBefore('additemhdr');
 
         if ($this->qtypeobj->supports_dataset_item_generation()){
             $radiogrp = array();
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('reuseifpossible', 'qtype_datasetdependent'), 0);
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]', null, get_string('forceregeneration', 'qtype_datasetdependent'), 1);
-            $mform->addGroup($radiogrp, 'forceregenerationgrp', get_string('nextitemtoadd', 'qtype_calculated'), null, false);
+            $mform->addGroup($radiogrp, 'forceregenerationgrp', get_string('nextitemtoadd', 'qtype_calculated'), "<br/>", false);
         }
 
         $mform->addElement('submit', 'getnextbutton', get_string('getnextnow', 'qtype_datasetdependent'));
+        $mform->addElement('static', "dividera", '', '<hr />');
+        $addgrp = array();
+        $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('add', 'moodle'));
+        $addgrp[] =& $mform->createElement('select', "selectadd", get_string('additem', 'qtype_datasetdependent'), $addremoveoptions);
+        $addgrp[] = & $mform->createElement('static',"stat","Items",get_string('item(s)', 'qtype_datasetdependent'));
+        $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
+         $mform->addElement('static', "divideradd", '', '');
+    //     $mform->closeHeaderBefore('divideradd');
+        if ($this->noofitems > 0) {
+            $mform->addElement('header', 'additemhdr', get_string('delete', 'moodle'));
+            $deletegrp = array();
+            $deletegrp[] =& $mform->createElement('submit', 'deletebutton', get_string('delete', 'moodle'));
+            $deletegrp[] =& $mform->createElement('select', "selectdelete", get_string('deleteitem', 'qtype_datasetdependent')."1", $addremoveoptions);
+            $deletegrp[] = & $mform->createElement('static',"stat","Items",get_string('lastitem(s)', 'qtype_datasetdependent'));
+            $mform->addGroup($deletegrp, 'deletegrp', '', '   ', false);
+   //      $mform->addElement('static', "dividerdelete", '', '<hr />');
+   //      $mform->closeHeaderBefore('dividerdelete');
+        } else {
+            $mform->addElement('static','warning','','<span class="error">'.get_string('youmustaddatleastoneitem', 'qtype_datasetdependent').'</span>');
+        }
 
 //------------------------------------------------------------------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
@@ -112,9 +137,6 @@ class question_dataset_dependent_items_form extends moodleform {
             }
             if ('' != $strquestionlabel){
                 $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
-            }
-            if ($i == $this->noofitems) {//last item
-                $mform->addElement('submit', 'deletebutton', get_string('deletelastitem', 'qtype_datasetdependent'));
             }
         }
         $mform->setType('number', PARAM_NUMBER);
@@ -160,7 +182,8 @@ class question_dataset_dependent_items_form extends moodleform {
         }
 
         $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
-
+        $formdata['selectdelete'] = '1';
+        $formdata['selectadd'] = '1';
         $j = $this->noofitems * count($this->datasetdefs)+1;
         $data = array(); // data for comment_on_datasetitems later
         //dataset generation dafaults
@@ -203,7 +226,7 @@ class question_dataset_dependent_items_form extends moodleform {
     function validation($data){
         $errors = array();
         if (isset($data['backtoquiz']) && ($this->noofitems==0)){
-            $errors['addbutton'] = get_string('youmustaddatleastoneitem', 'qtype_datasetdependent');
+            $errors['warning'] = get_string('warning', 'mnet');
         }
         return $errors;
     }
