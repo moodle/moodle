@@ -112,8 +112,10 @@ $string['downloadlanguagenotneeded'] = 'Vous pouvez continuer la procédure d\'i
 $string['downloadlanguagesub'] = 'Vous avez maintenant la possibilité de télécharger le paquetage de la langue que vous avez sélectionnée afin de poursuivre l\'installation dans cette langue.<br /><br />Si le téléchargement ne peut avoir lieu, la procédure d\'installation continuera en anglais. Une fois l\'installation terminée, vous pourrez alors télécharger et installer d\'autres langues.';
 $string['environmenterrortodo'] = 'Vous devez résoudre tous les problèmes liés à l\'environnement (erreurs) décrits ci-dessus avant de continuer l\'installation de cette version de Moodle&nbsp;!';
 $string['environmenthead'] = 'Vérification de l\'environnement...';
+$string['environmentrecommendcustomcheck'] = 'l\'échec de ce test indique un problème potentiel';
 $string['environmentrecommendinstall'] = 'est recommandée&nbsp;; veuillez l\'installer ou l\'activer';
 $string['environmentrecommendversion'] = 'la version $a->needed est recommandée&nbsp;; vous utilisez actuellement la version $a->current';
+$string['environmentrequirecustomcheck'] = 'ce test doit réussir';
 $string['environmentrequireinstall'] = 'est obligatoire&nbsp;; veuillez l\'installer ou l\'activer';
 $string['environmentrequireversion'] = 'la version $a->needed est requise&nbsp;; vous utilisez actuellement la version $a->current';
 $string['environmentsub'] = 'Les divers composants de votre système doivent satisfaire les exigences nécessaires à Moodle. Une vérification de votre environnement est en cours.';
@@ -172,6 +174,8 @@ $string['phpversionerror'] = 'La version du programme PHP doit être au moins 4.
 $string['phpversionhelp'] = '<p>Moodle nécessite au minimum la version 4.3.0 ou 5.1.0 (5.0.x a bon nombre de problèmes).</p><p>Vous utilisez actuellement la version $a.</p><p>Pour que Moodle fonctionne, vous devez mettre à jour PHP ou aller chez un hébergeur ayant une version récente de PHP.<br/>(Si vous avez une version 5.0.x, vous pouvez aussi re-passer à la version 4.4.x)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Précédent';
+$string['qtyperqpwillberemoved'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Vous n\'utilisiez pas ce type de question, et souffrirez donc d\'aucun problème.';
+$string['qtyperqpwillberemovedanyway'] = 'Au cours de cette mise à jour, le type de question RQP sera supprimé. Votre base de données comporte des questions RQP, qui ne fonctionneront plus, à moins que vous ne réinstalliez le code disponible sur http://moodle.org/mod/data/view.php?d=13&amp;rid=797 avant de continuer la mise à jour.';
 $string['remotedownloadnotallowed'] = 'Le téléchargement de composants sur votre serveur n\'est pas autorisé (l\'option allow_url_fopen est désactivée).<br /><br />Vous devez télécharger manuellement le fichier <a href=\"$a->url\">$a->url</a>, le copier vers «&nbsp;$a->dest&nbsp;» dans votre serveur et le décompresser.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Interdit';
