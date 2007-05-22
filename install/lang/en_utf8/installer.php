@@ -135,8 +135,10 @@ $string['downloadlanguagenotneeded'] = 'You may continue the installation proces
 $string['downloadlanguagesub'] = 'You now have the option of downloading a language pack and continuing the installation process in this language.<br /><br />If you are unable to download the language pack, the installation process will continue in English. (Once the installation process is complete, you will have the opportunity to download and install additional language packs.)';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenthead'] = 'Checking your environment ...';
+$string['environmentrecommendcustomcheck'] = 'if this test fails, it indicates a potential problem';
 $string['environmentrecommendinstall'] = 'should be installed and enabled for best results';
 $string['environmentrecommendversion'] = 'version $a->needed is recommended and you are running $a->current';
+$string['environmentrequirecustomcheck'] = 'this test must pass';
 $string['environmentrequireinstall'] = 'must be installed and enabled';
 $string['environmentrequireversion'] = 'version $a->needed is required and you are running $a->current';
 $string['environmentsub'] = 'We are checking if the various components of your system meet the system requirements';
@@ -220,6 +222,8 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Previous';
+$string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type will be removed. You were not using this question type, so you should not experience any problems.';
+$string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['report'] = 'Report';
 $string['restricted'] = 'Restricted';
