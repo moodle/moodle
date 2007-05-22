@@ -189,13 +189,9 @@
         echo '</td>';
     }
 
-    if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
-        if ($groups_names = groups_get_groups_names($course->id)) { //TODO:
-            echo '<td class="left">';
-            print_group_menu($groups_names, $groupmode, $currentgroup, $baseurl);
-            echo '</td>';
-        }
-    }
+    echo '<td class="left">';
+    setup_and_print_groups($course, $groupmode, $baseurl);
+    echo '</td>';
 
     // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
     // this might not work anymore because you always going to get yourself as the most recent entry? added $USER!=$user ch
@@ -605,9 +601,10 @@
         if (has_capability('moodle/site:readallmessages', $context)) {
             $displaylist['messageselect.php'] = get_string('messageselectadd');
         }
-        if ($course->enrolperiod) {
-            $displaylist['extendenrol.php'] = get_string('extendenrol');
-        }
+        
+        $displaylist['extendenrol.php'] = get_string('extendenrol');
+        $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
+        
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';

@@ -195,7 +195,7 @@ function grades_grab_grades() {
             if (function_exists($gradefunc) && !event_is_registered($mod, $gradefunc)) {
                 // get all instance of the mod
                 $module = get_record('modules', 'name', $mod);
-                if ($module && $modinstances = get_records('course_modules', 'module', $module->id)) {
+                if ($module && $modinstances = get_records_select('course_modules cm, '.$CFG->prefix.$mod.' m', 'cm.module = '.$module->id.' AND m.id = cm.instance')) {
                     foreach ($modinstances as $modinstance) {
                         // for each instance, call the xxx_grades() function
                         if ($grades = $gradefunc($modinstance->instance)) {
@@ -210,6 +210,7 @@ function grades_grab_grades() {
                                 $eventdata->gradetype = 0;
                                 $eventdata->userid = $userid;
                                 $eventdata->gradevalue = $usergrade;
+                                $eventdata->itemname = $modinstance->name;
                                 trigger_event('grade_added', $eventdata);                             
                                                        
                             }

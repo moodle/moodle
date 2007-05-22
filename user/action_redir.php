@@ -11,7 +11,8 @@ $id = required_param('id', PARAM_INT);
 // Add every page will be redirected by this script
 $actions = array(
         'messageselect.php',
-        'extendenrol.php'
+        'extendenrol.php',
+        'groupextendenrol.php',
         );
 
 if (array_search($formaction, $actions) === false) {

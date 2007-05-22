@@ -17,6 +17,7 @@
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
     $timestart      = optional_param('timestart', 0, PARAM_INT);
     $timeend        = optional_param('timened', 0, PARAM_INT);
+    $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
@@ -80,8 +81,27 @@
     $strparticipants = get_string('participants');
     $strsearchresults = get_string('searchresults');
 
+    $unlimitedperiod = get_string('unlimited');
+    $defaultperiod = $course->enrolperiod;
+    for ($i=1; $i<=365; $i++) {
+        $seconds = $i * 86400;
+        $periodmenu[$seconds] = get_string('numdays', '', $i);
+    }
 
-
+    $timeformat = get_string('strftimedate');
+    $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
+    if(time() > $course->startdate) {
+        $basemenu[3] = get_string('today') . ' (' . userdate(time(), $timeformat) . ')' ;
+    }
+    if($course->enrollable == 2) {
+        if($course->enrolstartdate > 0) {
+            $basemenu[4] = get_string('courseenrolstartdate') . ' (' . userdate($course->enrolstartdate, $timeformat) . ')';
+        }
+        if($course->enrolenddate > 0) {
+            $basemenu[5] = get_string('courseenrolenddate') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
+        }
+    }
+    
 /// Make sure this user can assign that role
 
     if ($roleid) {
@@ -156,6 +176,12 @@
                     }
                 }
                 if ($allow) {
+                    $timestart = $timemodified;
+                    if($extendperiod > 0) {
+                        $timeend = $timestart + $extendperiod;
+                    } else {
+                        $timeend = 0;
+                    }
                     if (! role_assign($roleid, $adduser, 0, $context->id, $timestart, $timeend, $hidden)) {
                         $errors[] = "Could not add user with id $adduser to this role!";
                     }
