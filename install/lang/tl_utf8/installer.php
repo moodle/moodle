@@ -130,8 +130,10 @@ $string['downloadlanguagesub'] = 'May opsiyon ka ngayon na maglusong ng pakete n
 wikang ito.<br /><br />Kung hindi mo mailusong ang pakete ng wika, ang proseso ng pagluluklok ay magpapatuloy sa Ingles.(Kapag tapos na ang proseso ng pagluluklok, magkakaroon ka ng pagkakataon na maglusong at magluklok ng iba pang pakete ng wika.)';
 $string['environmenterrortodo'] = 'Kailangan mo munang lutasin ang lahat ng suliraning pangkapaligiran (mga error) na natuklasan sa itaas bago mo maituloy ang pagluklok ng bersiyon ng Moodle na ito!';
 $string['environmenthead'] = 'Sinusuri ang kapaligiran mo...';
+$string['environmentrecommendcustomcheck'] = 'Kapag nabigo sa pagsubok na ito, ibig sabihin ay maaaring may problema';
 $string['environmentrecommendinstall'] = 'ay iminumungkahing maluklok/mabuhay';
 $string['environmentrecommendversion'] = 'ang bersiyon $a->needed ay iminumungkahi at ang pinatatakbo mo ay $a->current';
+$string['environmentrequirecustomcheck'] = 'kailangang pumasa sa pagsubok na ito';
 $string['environmentrequireinstall'] = 'ay kinakailangang maluklok/mabuhay';
 $string['environmentrequireversion'] = 'ang bersiyon $a->needed ay kinakailangan at ang pinatatakbo mo ay $a->current';
 $string['environmentsub'] = 'Sinusuri namin kung ang iba\'t-ibang piyesa ng sistema mo ay umaayon sa mga kinakailangan na sistema';
@@ -207,6 +209,8 @@ $string['phpversionhelp'] = '<p>Kinakailangan ng Moodle ang isang bersiyon ng PH
 <p>Kailangan mong gawing bago ang PHP o lumipat sa isang host na may mas bagong bersiyon ng PHP!<br />(Sa kaso ng 5.0.x ay maaari mo ring ibaba ang bersiyon sa 4.4.x)
 </p>';
 $string['previous'] = 'Nakaraan';
+$string['qtyperqpwillberemoved'] = 'Habang nagpapanibago, ang mga uri ng tanong na RQP ay tatanggalin.  Hindi mo ginagamit ang mga uri ng tanong na ito, kaya hindi ka dapat magkaproblema.';
+$string['qtyperqpwillberemovedanyway'] = 'Habang nagpapanibago, ang mga uri ng tanong na RQP ay tatanggalin. May ilang tanong na RQP ka sa iyong datosan, at hindi gagana ang mga ito maliban na lamang kung iluklok mo muli ang koda mula sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 bago ka magpatuloy ng pagpapanibago.';
 $string['remotedownloadnotallowed'] = 'Ang paglusong ng mga piyesa sa server mo ay hindi pinapahintulutan (ang allow_url_fopen ay pinatay).<br /><br />Kailangan mong ilusong ang 
  <a href=\"$a->url\">$a->url</a> sako nang mano-mano, kopyahin ito sa \"$a->dest\" ng iyong server at iunzip ito doon.';
 $string['report'] = 'Ulat';

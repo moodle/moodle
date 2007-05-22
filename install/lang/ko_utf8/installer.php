@@ -120,8 +120,10 @@ $string['downloadlanguagenotneeded'] = '기본 언어팩인 \"$a\"을 사용하�
 $string['downloadlanguagesub'] = '이제 언어팩 선택을 하셨기 때문에 추후에는 선택한 언어로 설치를 계속할 수 있습니다.<br /><br />만일 해당 언어팩을 내려받지 못한다면, 영문으로 설치가 계속될 것입니다.(일단 영문으로 프로그램을 깐 후, 다시 또 다른 언어팩을 선택하여 설정할 수 있는 기회가 있습니다)';
 $string['environmenterrortodo'] = '이 무들버전을 설치하기 전에 앞에서 발견된 모든 환경설정 문제(오류)들을 해결해야 합니다!';
 $string['environmenthead'] = '구동환경을 점검합니다...';
+$string['environmentrecommendcustomcheck'] = '만일 이 검사에 실패한다면 잠재적인 문제를 지니고 있는 것입니다.';
 $string['environmentrecommendinstall'] = '설치하거나 활성화할 것을 권고합니다.';
 $string['environmentrecommendversion'] = '$a->needed 버전을 권장하고 있는 데 현재 $a->current 을 사용하고 있습니다.';
+$string['environmentrequirecustomcheck'] = '이 검사는 반드시 통과해야 합니다.';
 $string['environmentrequireinstall'] = '설치하거나 활성화해야만 합니다.';
 $string['environmentrequireversion'] = '$a->needed 버전을 사용하여야 하는데 현재 $a->current 을 사용하고 있습니다.';
 $string['environmentsub'] = '기존 운영체제가 무들의 여러 구성 요소들을 구동하는데 적합한지 점검합니다.';
@@ -193,6 +195,8 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '이전으로';
+$string['qtyperqpwillberemoved'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 만일 이 유형의 문제를 사용하지 않았다면, 추후에는 어떤 문제도 발생하지 않을 것입니다.';
+$string['qtyperqpwillberemovedanyway'] = '갱신과정에서 RQP 문제 유형은 제거될 것입니다. 데이터베이스에 RQP 문제가 탑재되어 있다면, 비록 갱신하기 전에 http://moodle.org/mod/data/view.php?d=13&amp;rid=797  에서 코드를 다시 불러들였다 하더라도 작업이 중단될 것입니다.';
 $string['remotedownloadnotallowed'] = '서버로 구성요소를 내려받는 것이 허용되지 않습니다. (allow_url_fopen 이 비활성화 됨).<br /><br /> 수동으로 <a href=\"$a->url\">$a->url</a> 파일을 다운로드 하고, 서버의 \"$a->dest\" 에 복사한 후 압축을 푸셔야 합니다.';
 $string['report'] = '보고';
 $string['restricted'] = '제한됨';
