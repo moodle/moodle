@@ -2846,7 +2846,7 @@ function check_theme_arrows() {
  * See function above, check_theme_arrows.
  * To see examples of this function in use, see function get_separator below (simple),
  * and function calendar_get_link_next in calendar/lib.php (more complex).
- * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
  * @param string $url An optional link to use in a surrounding HTML anchor.
  * @param bool $accesshide True if text should be hidden (for screen readers only).
  * @param string $addclass Additional class names for the link, or the arrow character.
@@ -2862,7 +2862,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
     $arrow = '<span class="'.$arrowclass.'">'.$THEME->rarrow.'</span>';
     $htmltext = '';
     if ($text) {
-        $htmltext = htmlspecialchars($text).'&nbsp;';
+        $htmltext = $text.'&nbsp;';
         if ($accesshide) {
             $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
         }
@@ -2872,7 +2872,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class =" class=\"$addclass\"";
         }
-        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$htmltext.$arrow.'</a>';
+        return '<a'.$class.' href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$htmltext.$arrow.'</a>';
     }
     return $htmltext.$arrow;
 }
@@ -2880,7 +2880,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='') {
 /**
  * Return the left arrow with text ('previous'), and optionally embedded in a link.
  * See function above, check_theme_arrows.
- * @param string $text Plain text label (set to blank only for breadcrumb separator cases).
+ * @param string $text HTML/plain text label (set to blank only for breadcrumb separator cases).
  * @param string $url An optional link to use in a surrounding HTML anchor.
  * @param bool $accesshide True if text should be hidden (for screen readers only).
  * @param string $addclass Additional class names for the link, or the arrow character.
@@ -2896,7 +2896,7 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
     $arrow = '<span class="'.$arrowclass.'">'.$THEME->larrow.'</span>';
     $htmltext = '';
     if ($text) {
-        $htmltext = '&nbsp;'.htmlspecialchars($text);
+        $htmltext = '&nbsp;'.$text;
         if ($accesshide) {
             $htmltext = '<span class="accesshide">'.$htmltext.'</span>';
         }
@@ -2906,7 +2906,7 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='') {
         if ($addclass) {
             $class =" class=\"$addclass\"";
         }
-        return '<a'.$class.' href="'.$url.'" title="'.htmlspecialchars($text).'">'.$arrow.$htmltext.'</a>';
+        return '<a'.$class.' href="'.$url.'" title="'.preg_replace('/<.*?>/','',$text).'">'.$arrow.$htmltext.'</a>';
     }
     return $arrow.$htmltext;
 }
