@@ -201,41 +201,50 @@ class grade_export {
      * Displays all the grades on screen as a feedback mechanism
      */
     function display_grades($feedback=false) {
-        echo get_string("firstname").",".
-             get_string("lastname").",".
-             get_string("idnumber").",".
-             get_string("institution").",".
-             get_string("department").",".
-             get_string("email");
+        echo '<table>';
+        echo '<tr>';
+        echo '<th>'.get_string("firstname")."</th>".
+             '<th>'.get_string("lastname")."</th>".
+             '<th>'.get_string("idnumber")."</th>".
+             '<th>'.get_string("institution")."</th>".
+             '<th>'.get_string("department")."</th>".
+             '<th>'.get_string("email")."</th>";
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
-            echo ",$column";
+            echo "<th>$column</th>";
         
             /// add a column_feedback column            
             if ($feedback) {
-                echo ",{$column}_feedback";
+                echo "<th>{$column}_feedback</th>";
             }        
         }
-        echo ",".get_string("total")."<br/>";
-    
+        echo '<th>'.get_string("total")."</th>";
+        echo '</tr>';
         /// Print all the lines of data.
-        foreach ($this->grades as $studentid => $studentgrades) {
+        
+        
+        foreach ($this->grades as $studentid => $studentgrades) {        
+        
+            echo '<tr>';
             $student = $this->students[$studentid];
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
-            echo "$student->firstname,$student->lastname,$student->idnumber,$student->institution,$student->department,$student->email";
+            
+            
+            echo "<td>$student->firstname</td><td>$student->lastname</td><td>$student->idnumber</td><td>$student->institution</td><td>$student->department</td><td>$student->email</td>";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
-                echo ",$grade";            
+                echo "<td>$grade</td>";            
                 
                 if ($feedback) {
-                    echo ",".array_shift($this->comments[$student->id]);
+                    echo '<td>'.array_shift($this->comments[$student->id]).'</td>';
                 }       
             }
-            echo ",".$this->totals[$student->id];
-            echo "<br/>";
-        }  
+            echo '<td>'.$this->totals[$student->id].'</td>';
+            echo "</tr>";
+        }
+        echo '</table>';
     }
 }
 

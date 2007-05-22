@@ -1157,6 +1157,14 @@ function grade_nav($course, $action='grades') {
             case 'excepts':
                 $strcurpage = get_string('gradeexceptions', 'grades');
                 break;
+            case 'exporttxt':
+            case 'exportxml':
+            case 'exportods':
+            case 'exportxls':
+            case 'importcsv':
+            case 'importxml':
+                $strcurpage = get_string($action);
+                break;
             default:
                 unset($strcurpage);
                 break;

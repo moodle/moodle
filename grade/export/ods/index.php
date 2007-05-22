@@ -38,7 +38,10 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     }
         
     // print the grades on screen for feedbacks
-    print_header(get_string('grade'),get_string('grade'),get_string('grade'));
+    $course = get_record('course', 'id', $id);
+    $action = 'exporttxt';
+    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+    
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
 
@@ -46,6 +49,9 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
     exit; 
 }
-
+$course = get_record('course', 'id', $id);
+$action = 'exportods';
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 print_gradeitem_selections($id);
+print_footer();
 ?>

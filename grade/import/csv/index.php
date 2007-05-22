@@ -29,7 +29,11 @@ if (isset($CFG->CSV_DELIMITER)) {
 
 require_once('../grade_import_form.php');
 
-print_header("test","test","test");
+
+require_once($CFG->dirroot.'/grade/lib.php');
+$course = get_record('course', 'id', $id);
+$action = 'importcsv';
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 
 
 $mform = new grade_import_form();

@@ -37,8 +37,10 @@ if (($data = data_submitted()) && confirm_sesskey()) {
         $itemidsurl = implode(",",$data->itemids);
     }
         
-    // print the grades on screen for feedbacks
-    print_header(get_string('grade'),get_string('grade'),get_string('grade'));
+    $course = get_record('course', 'id', $id);
+    $action = 'exporttxt';
+    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+    
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
     
@@ -71,7 +73,7 @@ if ($grade_items = grade_get_items($id)) {
     }
     echo '<br/>';
     echo 'tab<input type="radio" name="separator" value="tab"/>';
-    echo 'comma<input type="radio" name="separator" value="comma"/>';
+    echo 'comma<input type="radio" name="separator" value="comma" checked="checked"/>';
     echo '<input type="hidden" name="id" value="'.$id.'"/>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'"/>';
     echo '<br/>';
