@@ -67,6 +67,11 @@ class grade_tree {
      */
     var $need_delete = array();
 
+    /**
+     * Whether or not this grade_tree should load and store all the grades in addition to the categories and items.
+     * @var boolean $include_grades
+     */
+    var $include_grades;
 
     /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
@@ -74,15 +79,16 @@ class grade_tree {
      * by default, but this can be switched off. The tree is indexed by sortorder, to facilitate CRUD operations
      * and renumbering.
      * @param int $courseid
-     * @param boolean $fullobjects
+     * @param boolean $include_grades
      * @param array $tree
      */
-    function grade_tree($courseid=NULL, $fullobjects=true, $tree=NULL) {
+    function grade_tree($courseid=NULL, $include_grades=false, $tree=NULL) {
         $this->courseid = $courseid;
+        $this->include_grades = $include_grades;
         if (!empty($tree)) {
             $this->tree_array = $tree;
         } else {
-            $this->tree_array = $this->get_tree($fullobjects);
+            $this->tree_array = $this->get_tree($include_grades);
         }
         
         $this->first_sortorder = key($this->tree_array);
@@ -273,7 +279,7 @@ class grade_tree {
         }
         
         // If the object is a grade_item, but the final_grades index isn't yet loaded, make the switch now. Same for grade_category and children
-        if (get_class($new_element->element['object']) == 'grade_item' && empty($new_element->element['final_grades'])) {
+        if (get_class($new_element->element['object']) == 'grade_item' && empty($new_element->element['final_grades']) && $this->include_grades) {
             $new_element->element['final_grades'] = $new_element->element['object']->load_final();
             unset($new_element->element['object']->grade_grades_final);
         } elseif (get_class($new_element->element['object']) == 'grade_category' && 
@@ -479,10 +485,9 @@ class grade_tree {
     /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
      * a given course, or for the entire site if no courseid is given.
-     * @param boolean $fullobjects Whether to instantiate full objects based on the data or not
      * @return array
      */
-    function get_tree($fullobjects=true) {
+    function get_tree() {
         global $CFG;
         global $db;
         $db->debug = false;
@@ -507,9 +512,7 @@ class grade_tree {
         // For every grade_item that doesn't have a parent category, create category fillers
         foreach ($grade_items as $itemid => $item) {
             if (empty($item->categoryid)) {
-                if ($fullobjects) {
-                    $item = new grade_item($item);
-                }
+                $item = new grade_item($item);
                 $fillers[$item->sortorder] = $item;
             }
         }
@@ -541,14 +544,14 @@ class grade_tree {
                 $object = current($fillers);
                 unset($fillers[$sortorder]);
                 
-                $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                $this->tree_filled[$sortorder] = $this->get_filler($object);
                 $element = array();
 
                 if (get_class($object) == 'grade_category') {
                     $children = $object->get_children(1);
                     unset($object->children);
                     $element['children'] = $children;
-                } elseif (get_class($object) == 'grade_item') {
+                } elseif (get_class($object) == 'grade_item' && $this->include_grades) {
                     $final_grades = $object->get_final();
                     unset($object->grade_grades_final);
                     $element['final_grades'] = $final_grades;
@@ -577,38 +580,30 @@ class grade_tree {
                 }
                 
                 foreach ($items as $itemid => $item) { 
-                    $finaltree = array();
-                    
-                    if ($fullobjects) {
+                    $finals = array();
+
+                    if ($this->include_grades) {
                         $final = new grade_grades_final();
                         $final->itemid = $itemid;
                         $finals = $final->fetch_all_using_this();
-                    } else {
-                        $finals = get_records('grade_grades_final', 'itemid', $itemid);
                     }
 
-                    if ($fullobjects) {
-                        $sortorder = $item->sortorder;
-                        $item = new grade_item($item);
-                        $item->sortorder = $sortorder;
-                    }
+                    $sortorder = $item->sortorder;
+                    $item = new grade_item($item);
+                    $item->sortorder = $sortorder;
 
                     $itemtree[$item->sortorder] = array('object' => $item, 'finalgrades' => $finals);
                 }
                 
-                if ($fullobjects) {
-                    $sortorder = $subcat->sortorder;
-                    $subcat = new grade_category($subcat, false);
-                    $subcat->sortorder = $sortorder;
-                }
+                $sortorder = $subcat->sortorder;
+                $subcat = new grade_category($subcat, false);
+                $subcat->sortorder = $sortorder;
                 $subcattree[$subcat->sortorder] = array('object' => $subcat, 'children' => $itemtree);
             }
             
-            if ($fullobjects) {
-                $sortorder = $topcat->sortorder;
-                $topcat = new grade_category($topcat, false);
-                $topcat->sortorder = $sortorder;
-            }
+            $sortorder = $topcat->sortorder;
+            $topcat = new grade_category($topcat, false);
+            $topcat->sortorder = $sortorder;
 
             $tree[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree);
             $this->tree_filled[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree);
@@ -617,13 +612,13 @@ class grade_tree {
         // If there are still grade_items or grade_categories without a top category, add another filler
         if (!empty($fillers)) {
             foreach ($fillers as $sortorder => $object) { 
-                $this->tree_filled[$sortorder] = $this->get_filler($object, $fullobjects);
+                $this->tree_filled[$sortorder] = $this->get_filler($object);
                 
                 if (get_class($object) == 'grade_category') {
                     $children = $object->get_children(1);
                     unset($object->children);
                     $element['children'] = $children;
-                } elseif (get_class($object) == 'grade_item') {
+                } elseif (get_class($object) == 'grade_item' && $this->include_grades) {
                     $final_grades = $object->get_final();
                     unset($object->grade_grades_final);
                     $element['final_grades'] = $final_grades;
@@ -644,19 +639,21 @@ class grade_tree {
      * the tree of grade_items in the cases where a grade_item or grade_category doesn't have a 
      * 2nd level topcategory.
      * @param object $object A grade_item or a grade_category object
-     * @param boolean $fullobjects Whether to instantiate full objects or just return stdClass objects
      * @return array
      */
-    function get_filler($object, $fullobjects=true) { 
+    function get_filler($object) { 
         $filler_array = array();
 
         // Depending on whether the filler is for a grade_item or a category...
         if (isset($object->itemname)) {
-            if (get_class($object) == 'grade_item') {
-                $finals = $object->load_final();
-            } else {
-                $item_object = new grade_item($object, false);
-                $finals = $object->load_final();
+            $finals = array();
+            if ($this->include_grades) {
+                if (get_class($object) == 'grade_item') {
+                    $finals = $object->load_final();
+                } else {
+                    $item_object = new grade_item($object, false);
+                    $finals = $object->load_final();
+                }
             }
 
             $filler_array = array('object' => 'filler', 'children' => 
@@ -667,14 +664,16 @@ class grade_tree {
             $subcat_children = $object->get_children(0, 'flat');
             $children_for_tree = array();
             foreach ($subcat_children as $itemid => $item) {
-                $finals = null;
-
-                if (get_class($item) == 'grade_item') {
-                    $finals = $item->load_final();
-                } else {
-                    $item_object = new grade_item($item, false);
-                    if (method_exists($item, 'load_final')) {
+                $finals = array();
+                
+                if ($this->include_grades) {
+                    if (get_class($item) == 'grade_item') {
                         $finals = $item->load_final();
+                    } else {
+                        $item_object = new grade_item($item, false);
+                        if (method_exists($item, 'load_final')) {
+                            $finals = $item->load_final();
+                        }
                     }
                 }
                 

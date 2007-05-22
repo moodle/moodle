@@ -77,7 +77,7 @@ class grade_tree_test extends gradelib_test {
     }
     
     function test_grade_tree_insert_grade_item() {
-        $tree = new grade_tree($this->courseid);
+        $tree = new grade_tree($this->courseid, true);
         $grade_item = new grade_item($this->grade_items[2]);
         $element = array('object' => $grade_item);
         $tree->insert_element($element, 4);
@@ -163,7 +163,7 @@ class grade_tree_test extends gradelib_test {
     }
 
     function test_grade_tree_get_tree() {
-        $tree = new grade_tree($this->courseid);
+        $tree = new grade_tree($this->courseid, true);
         $this->assertEqual(58, count($tree->tree_filled, COUNT_RECURSIVE));
         $this->assertEqual(44, count($tree->tree_array, COUNT_RECURSIVE));
     }
@@ -214,7 +214,7 @@ class grade_tree_test extends gradelib_test {
         $tree->renumber();
         $this->assertTrue(empty($tree->tree_array[1]['children'][4])); 
         
-        $this->assertEqual(12, count($tree->tree_array, COUNT_RECURSIVE));
+        $this->assertEqual(9, count($tree->tree_array, COUNT_RECURSIVE));
         
         // Check the need_delete array
         $this->assertEqual(5, count($tree->need_delete));
@@ -259,4 +259,9 @@ class grade_tree_test extends gradelib_test {
         $tree->insert_element($element, 9);
 
     } 
+
+    function test_grade_tree_load_without_finals() {
+        $tree = new grade_tree($this->courseid);
+        $this->assertEqual(27, count($tree->tree_array, COUNT_RECURSIVE));
+    }
 }
