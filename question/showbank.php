@@ -123,7 +123,9 @@
                 $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
             }
             notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
-                        "edit.php?courseid=$course->id&amp;sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php?courseid=$course->id");
+                    "edit.php", "edit.php", array('courseid' => $course->id, 'sesskey' => $USER->sesskey,
+                        'deleteselected' => $questionlist, 'confirm' => md5($questionlist)),
+                    array('courseid' => $course->id), 'post', 'get');
 
             echo '</td></tr>';
             echo '</table>';
