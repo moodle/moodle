@@ -144,7 +144,56 @@ function xmldb_quiz_upgrade($oldversion=0) {
             }
         }
     }
+    if ($result && $oldversion < 2007052200) {
 
+    /// Define field timecreated to be added to question
+        $table = new XMLDBTable('question');
+        $field = new XMLDBField('timecreated');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'hidden');
+
+    /// Launch add field timecreated
+        $result = $result && add_field($table, $field);
+    
+    /// Define field timemodified to be added to question
+        $table = new XMLDBTable('question');
+        $field = new XMLDBField('timemodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timecreated');
+
+    /// Launch add field timemodified
+        $result = $result && add_field($table, $field);
+
+    /// Define field createdby to be added to question
+        $table = new XMLDBTable('question');
+        $field = new XMLDBField('createdby');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'timemodified');
+
+    /// Launch add field createdby
+        $result = $result && add_field($table, $field);
+
+    /// Define field modifiedby to be added to question
+        $table = new XMLDBTable('question');
+        $field = new XMLDBField('modifiedby');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'createdby');
+
+    /// Launch add field modifiedby
+        $result = $result && add_field($table, $field);
+
+    /// Define key createdby (foreign) to be added to question
+        $table = new XMLDBTable('question');
+        $key = new XMLDBKey('createdby');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('createdby'), 'user', array('id'));
+
+    /// Launch add key createdby
+        $result = $result && add_key($table, $key);
+
+    /// Define key modifiedby (foreign) to be added to question
+        $table = new XMLDBTable('question');
+        $key = new XMLDBKey('modifiedby');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('modifiedby'), 'user', array('id'));
+
+    /// Launch add key modifiedby
+        $result = $result && add_key($table, $key);
+    }                
     return $result;
 }
 
