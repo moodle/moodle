@@ -126,7 +126,7 @@ function question_category_form($course, $pageurl, $current, $recurse=1, $showhi
 
     popup_form ("edit.php?".$pageurl->get_query_string()."&amp;category=", $catmenu, "catmenu", $current, "", "", "", false, "self", "<strong>$strcategory</strong>");
 
-    echo '<form method="post" action="edit.php" id="displayoptions">';
+    echo '<form method="get" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
     echo $pageurl->hidden_params_out(array('recurse', 'showhidden', 'showquestiontext'));
     question_category_form_checkbox('recurse', $recurse);
