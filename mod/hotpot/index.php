@@ -45,7 +45,12 @@
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
 
     // get display section, if any
-    $section = optional_param('section', 0, PARAM_INT);
+    $section = optional_param('section', 0, PARAM_ALPHANUM);
+    if ($section=='all') {
+        // do nothing
+    } else {
+        $section = intval($section);
+    }
     if ($section) {
         $displaysection = course_set_display($course->id, $section);
     } else {
