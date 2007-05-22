@@ -4785,6 +4785,8 @@ function error ($message, $link='', $adminroot=false) {
     echo '<br />';
     print_simple_box($message, '', '', '', '', 'errorbox');
 
+    debugging('Stack trace:', DEBUG_DEVELOPER);
+
     // in case we are logging upgrade in admin/index.php stop it
     if (function_exists('upgrade_log_finish')) {
         upgrade_log_finish();
