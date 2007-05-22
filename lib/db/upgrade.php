@@ -1292,6 +1292,16 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007052200) {
+
+    /// Define field schedule to be dropped from events_queue
+        $table = new XMLDBTable('events_queue');
+        $field = new XMLDBField('schedule');
+
+    /// Launch drop field stackdump
+        $result = $result && drop_field($table, $field);
+    }
+
     return $result; 
 }
 

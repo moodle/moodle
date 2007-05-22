@@ -123,7 +123,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     $eventdata->idnumber = $idnumber;
                     $eventdata->userid = $studentid;
                     $eventdata->gradevalue = $studentgrade;
-                    trigger_event('grade_added', $eventdata);               
+                    events_trigger('grade_added', $eventdata);               
                 
                     echo "<br/>triggering event for $idnumber... student id is $studentid and grade is $studentgrade";
             

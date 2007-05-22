@@ -121,6 +121,9 @@
             // Delete the capabilities that were defined by this block
             capabilities_cleanup('block/'.$block->name);
 
+            // remove entent handlers and dequeue pending events
+            events_uninstall('block/'.$block->name);
+
             $a->block = $strblockname;
             $a->directory = $CFG->dirroot.'/blocks/'.$block->name;
             notice(get_string('blockdeletefiles', '', $a), 'blocks.php');

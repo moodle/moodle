@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070511" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070517" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1206,12 +1206,11 @@
         <INDEX NAME="eventname-handlermodule" UNIQUE="true" FIELDS="eventname, handlermodule"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers_todo table." PREVIOUS="events_handlers" NEXT="events_queue_handlers">
+    <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="events_handlers" NEXT="events_queue_handlers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventdata"/>
-        <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="schedule"/>
-        <FIELD NAME="schedule" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="'cron' or 'instant'." PREVIOUS="eventdata" NEXT="stackdump"/>
-        <FIELD NAME="stackdump" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="schedule" NEXT="userid"/>
+        <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
+        <FIELD NAME="stackdump" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="eventdata" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="$USER-&amp;gt;id when the event was fired" PREVIOUS="stackdump" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="time stamp of the first time this was added" PREVIOUS="userid"/>
       </FIELDS>

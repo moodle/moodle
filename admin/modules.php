@@ -123,6 +123,9 @@
             // Delete the capabilities that were defined by this module
             capabilities_cleanup('mod/'.$module->name);
 
+            // remove entent handlers and dequeue pending events
+            events_uninstall('mod/'.$module->name);
+
             // rebuild_course_cache();  // Because things have changed
             $coursesaffected = true;
 

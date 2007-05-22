@@ -165,7 +165,7 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
  * For backward compatibility with old third-party modules, this function is called
  * via to admin/cron.php to search all mod/xxx/lib.php files for functions named xxx_grades(),
  * if the current modules does not have grade events registered with the grade book.
- * Once the data is extracted, the event_trigger() function can be called to initiate 
+ * Once the data is extracted, the events_trigger() function can be called to initiate 
  * an event as usual and copy/ *upgrade the data in the gradebook tables. 
  */
 function grades_grab_grades() {
@@ -192,7 +192,7 @@ function grades_grab_grades() {
             $gradefunc = $mod.'_grades';
             // if this mod has grades, but grade_added event is not registered
             // then we need to pull grades into the new gradebook
-            if (function_exists($gradefunc) && !event_is_registered($mod, $gradefunc)) {
+            if (function_exists($gradefunc) && !events_is_registered($gradefunc, $mod)) {//TODO: the use of $gradefunct as eventname here does not seem to be correct
                 // get all instance of the mod
                 $module = get_record('modules', 'name', $mod);
                 if ($module && $modinstances = get_records_select('course_modules cm, '.$CFG->prefix.$mod.' m', 'cm.module = '.$module->id.' AND m.id = cm.instance')) {
@@ -202,8 +202,8 @@ function grades_grab_grades() {
                             foreach ($grades->grades as $userid=>$usergrade) {                              
                                 // make the grade_added eventdata
                                 // missing grade event trigger
-                                // trigger_event('grade_added', $eventdata);
-                                unset($eventdata);
+                                // events_trigger('grade_added', $eventdata);
+                                $eventdata = new object();
                                 $eventdata->courseid =  $modinstance->course;
                                 $eventdata->itemmodule = $mod;
                                 $eventdata->iteminstance = $modinstance->instance;
@@ -211,7 +211,7 @@ function grades_grab_grades() {
                                 $eventdata->userid = $userid;
                                 $eventdata->gradevalue = $usergrade;
                                 $eventdata->itemname = $modinstance->name;
-                                trigger_event('grade_added', $eventdata);                             
+                                events_trigger('grade_added', $eventdata);                             
                                                        
                             }
                         }
