@@ -121,7 +121,7 @@ function question_category_form($course, $current, $recurse=1, $showhidden=false
     echo "</form>";
     echo '</td></tr></table>';
 
-    echo '<form method="post" action="edit.php" id="displayoptions">';
+    echo '<form method="get" action="edit.php" id="displayoptions">';
     echo "<fieldset class='invisiblefieldset'>";
     echo "<input type=\"hidden\" name=\"courseid\" value=\"{$course->id}\" />\n";
     question_category_form_checkbox('recurse', $recurse);
