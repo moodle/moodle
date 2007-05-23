@@ -1,67 +1,69 @@
 <h1>Calculated questions</h1>
-Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken.
-<br />Below is a shrunken view of the main editing page with some example inputs:<br />
+
+<p>Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken.
+<br />Below is a shrunken view of the main editing page with some example inputs:
+</p>
 
 <table><tbody>
 <tr valign="top">
-    <td align="right"><p><b>Question:</b></p>
-    </td>
+    <th scope="col" align="right">Question:</th>
     <td>
         <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">How much is {a} + {b} ?</textarea>
 </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b>Image to display:</b></p></td>
+    <th scope="col" align="right">Image to display:</th>
     <td>
     <select name="image"><option value="" selected="selected">None</option><option value="grevture.gif">grevture.gif</option></select>
     </td>
 </tr>
 
 <tr valign="top">
-<td align="right"><p><b>Correct Answer Formula:</b></p></td>
+<th scope="col" align="right">Correct Answer Formula:</th>
     <td>
     <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}" />&nbsp;&nbsp;
     <input type="hidden" name="fraction[]" value="1.0" />
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b>Tolerance:</b></p></td>
+    <th scope="col" align="right">Tolerance:</th>
     <td>
     <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01" />±
     </td>
 </tr>
 <tr valign="top">
-<td align="right"><p><b>Tolerance Type:</b></p></td>
+<th scope="col" align="right">Tolerance Type:</th>
     <td>
     <select name="tolerancetype[]"><option value="1" selected="selected">Relative</option><option value="2">Nominal</option><option value="3">Geometric</option></select>
     </td>
 </tr>
 <tr valign="top">
-<td align="right"><p><b>Significant Figures:</b></p></td>
+<th scope="col" align="right">Significant Figures:</th>
     <td>
     <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
     </td>
 </tr>
 </tbody></table>
 
-<br />
+<p>
 In the question text input and "Correct Answer Formula" {a} and {b} can be seen. These and any other {name} can be used as a wildcard that is substituted by some value when the quiz is taken. Also, the correct answer is calculated when the quiz is submitted using the expression in "Correct Answer Formula", which is calculated as a numerical expression after the substitution of the wildcards. The possible wildcard values are set or generated on a later page in "editing wizard" for calculated questions...
-<br/>The example formula uses the operator +. Other accepted operators are -*/ and % where % is the modulo operator. It is also possible to use some PHP-style mathematical function. Among these there are 24 single-argument function:<br /><b>
+</p> <p>
+The example formula uses the operator +. Other accepted operators are -*/ and % where % is the modulo operator. It is also possible to use some PHP-style mathematical function. Among these there are 24 single-argument function:<br /><b>
 abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
 </b><br />and two two-argument functions<br /><b>
 atan2, pow
 </b><br />and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similarly the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within each other like <b>cos(deg2rad({a} + 90))</b> etc.
 <br />More details on how to use these PHP-style functions can be found in the <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentation at the PHP web site</a>
-<br /><br />
+</p> <p>
 As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
-<br /><br /><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br />
+</p> <p><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br />
 This is useful if the magnitude of the correct answer can differ greatly between different wildcard values.
-<br /><br /><b>Nominal:</b>  This is the simplest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br />
+</p> <p><b>Nominal:</b>  This is the simplest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br />
 This tolerance type can be useful if the differences between different correct answers are small.
-<br /><br /><b>Geometric:</b> The upper limit of the tolerance interval is calculated as 200 + 0.5*200 and is the same as for the relative case. The lower limit is calculated as 200/(1 + 0.5). The correct response must then be between 133.33 and 300.<br />
+</p> <p><b>Geometric:</b> The upper limit of the tolerance interval is calculated as 200 + 0.5*200 and is the same as for the relative case. The lower limit is calculated as 200/(1 + 0.5). The correct response must then be between 133.33 and 300.<br />
 This is useful for complex calculation that must have great tolerances where relative tolerances of 1 or more would be used for the upper limit but clearly not acceptable for the lower limit as it would make zero a correct answer for all cases.
-<br /><br />
+</p> <p>
 The field <b>Significant Figures</b> does only relate to how the correct answer should be presented in the review or the reports. Examples: If it is set to 3 then the correct answer 13.333 would be presented as 13.3; 1236 would be presented as 1240; 23 would be presented as 23.0 etc.
-<br /><br />
+</p> <p>
 The feedback field and the optional unit fields work just like they do for numerical questions.
-<br />
+</p>

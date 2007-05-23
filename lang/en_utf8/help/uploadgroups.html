@@ -10,11 +10,11 @@
     <blockquote>
       <p><strong>Required fieldnames:</strong> these fields must be included in the first record, and defined for each user</p>
       <p></p>
-      <font color="#990000" face="Courier New, Courier, mono">groupname</font>
+      <code class="example1">groupname</code>
       <p><strong>Default fieldnames:</strong> these are optional - if they are not included then the values are taken from the current language and current course</p>
-      <p><font color="#990000" face="Courier New, Courier, mono">idnumber, coursename, lang</font> </p>
+      <p><code class="example1">idnumber, coursename, lang</code> </p>
       <p><strong>Optional fieldnames: </strong>all of these are completely optional. </p>
-      <p> <font color="#990000" face="Courier New, Courier, mono">description, picture, hidepicture</font></p>
+      <p> <code class="example1">description, picture, hidepicture</code></p>
     </blockquote>
     </li>
   <li>Commas within the data should be encoded as &amp;#44 - the script will automatically decode these back to commas. </li>
@@ -26,8 +26,8 @@
 </ul>
    
 <p>Here is an example of a valid import file:</p>
-<p><font size="-1" face="Courier New, Courier, mono"></font>groupname,idnumber,lang,description,picture <br />
+<p><code>groupname,idnumber,lang,description,picture <br />
 group1, Phil101, en, this group requires extra attention!, 0 <br />
 group2, Math243, , ,
-</p>
+</code></p>
 
