@@ -10,7 +10,7 @@
 ///
 /// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 /// or   php /web/moodle/admin/cron.php 
-
+    set_time_limit(0);
     $starttime = microtime();
 
 /// The following is a hack necessary to allow this script to work well 
