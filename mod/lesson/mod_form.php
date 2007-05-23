@@ -7,22 +7,23 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-require_once ('moodleform_mod.php');
 
+require_once('moodleform_mod.php');
 require_once('locallib.php');
+
 class mod_lesson_mod_form extends moodleform_mod {
 
-	function definition() {
+    function definition() {
+        global $LESSON_NEXTPAGE_ACTION, $COURSE;
 
-		global $LESSON_NEXTPAGE_ACTION, $COURSE;
-		$mform    =& $this->_form;
+        $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('selectyesno', 'timed', get_string('timed', 'lesson'));
         $mform->setDefault('timed', 0);
@@ -32,7 +33,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('maxtime', 20);
         $mform->addRule('maxtime', null, 'required', null, 'client');
         $mform->addRule('maxtime', null, 'numeric', null, 'client');
-		$mform->setType('maxtime', PARAM_INT);
+        $mform->setType('maxtime', PARAM_INT);
 
         $numbers = array();
         for ($i=20; $i>1; $i--) {
@@ -41,7 +42,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), $numbers);
         $mform->setDefault('maxanswers', 4);
         $mform->setHelpButton('maxanswers', array('maxanswers', get_string('displayformat', 'lesson'), 'lesson'));
-
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('gradeoptions', 'lesson'));
@@ -128,24 +128,24 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('slideshow', 0);
 
         $mform->addElement('text', 'width', get_string('slideshowwidth', 'lesson'));
-        $mform->setDefault('width', 20);
+        $mform->setDefault('width', 640);
         $mform->addRule('width', null, 'required', null, 'client');
         $mform->addRule('width', null, 'numeric', null, 'client');
         $mform->setHelpButton('width', array('width', get_string('slideshowwidth', 'lesson'), 'lesson'));
-		$mform->setType('width', PARAM_INT);
+        $mform->setType('width', PARAM_INT);
 
         $mform->addElement('text', 'height', get_string('slideshowheight', 'lesson'));
-        $mform->setDefault('height', 20);
+        $mform->setDefault('height', 480);
         $mform->addRule('height', null, 'required', null, 'client');
         $mform->addRule('height', null, 'numeric', null, 'client');
         $mform->setHelpButton('height', array('height', get_string('slideshowheight', 'lesson'), 'lesson'));
-		$mform->setType('height', PARAM_INT);
+        $mform->setType('height', PARAM_INT);
 
         $mform->addElement('text', 'bgcolor', get_string('slideshowbgcolor', 'lesson'));
         $mform->setDefault('bgcolor', '#FFFFFF');
         $mform->addRule('bgcolor', null, 'required', null, 'client');
         $mform->setHelpButton('bgcolor', array('bgcolor', get_string('slideshowbgcolor', 'lesson'), 'lesson'));
-		$mform->setType('bgcolor', PARAM_TEXT);
+        $mform->setType('bgcolor', PARAM_TEXT);
 
         $mform->addElement('selectyesno', 'displayleft', get_string('displayleftmenu', 'lesson'));
         $mform->setHelpButton('displayleft', array('displayleft', get_string('displayleftmenu', 'lesson'), 'lesson'));
@@ -174,7 +174,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setHelpButton('password', array('password', get_string('password', 'lesson'), 'lesson'));
         $mform->setDefault('password', '');
         //never displayed converted to md5
-		$mform->setType('password', PARAM_RAW);
+        $mform->setType('password', PARAM_RAW);
 
         $mform->addElement('date_time_selector', 'available', get_string('available', 'lesson'));
         $mform->setDefault('available', 0);
@@ -182,7 +182,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'deadline', get_string('deadline', 'lesson'));
         $mform->setDefault('deadline', 0);
 
-        //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('dependencyon', 'lesson'));
 
         $options = array(0=>get_string('none'));
@@ -200,14 +200,14 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
         $mform->setDefault('timespent', 0);
-		$mform->setType('timespent', PARAM_INT);
+        $mform->setType('timespent', PARAM_INT);
 
         $mform->addElement('checkbox', 'completed', get_string('completed', 'lesson'));
         $mform->setDefault('completed', 0);
 
         $mform->addElement('text', 'gradebetterthan', get_string('gradebetterthan', 'lesson'));
         $mform->setDefault('gradebetterthan', 0);
-		$mform->setType('gradebetterthan', PARAM_INT);
+        $mform->setType('gradebetterthan', PARAM_INT);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('mediafile', 'lesson'));
@@ -215,7 +215,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('choosecoursefile', 'mediafile', get_string('mediafile', 'lesson'), array('courseid'=>$COURSE->id));
         $mform->setHelpButton('mediafile', array('mediafile', get_string('mediafile', 'lesson'), 'lesson'));
         $mform->setDefault('mediafile', '');
-		$mform->setType('mediafile', PARAM_PATH);
+        $mform->setType('mediafile', PARAM_PATH);
 
         $mform->addElement('selectyesno', 'mediaclose', get_string('mediaclose', 'lesson'));
         $mform->setDefault('mediaclose', 0);
@@ -225,18 +225,17 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('mediaheight', 100);
         $mform->addRule('mediaheight', null, 'required', null, 'client');
         $mform->addRule('mediaheight', null, 'numeric', null, 'client');
-		$mform->setType('mediaheight', PARAM_INT);
+        $mform->setType('mediaheight', PARAM_INT);
 
         $mform->addElement('text', 'mediawidth', get_string('mediawidth', 'lesson'));
         $mform->setHelpButton('mediawidth', array('mediawidth', get_string('mediawidth', 'lesson'), 'lesson'));
         $mform->setDefault('mediawidth', 650);
         $mform->addRule('mediawidth', null, 'required', null, 'client');
         $mform->addRule('mediawidth', null, 'numeric', null, 'client');
-		$mform->setType('mediawidth', PARAM_INT);
+        $mform->setType('mediawidth', PARAM_INT);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('other', 'lesson'));
-
 
         // get the modules
         if ($mods = get_course_mods($COURSE->id)) {
@@ -245,7 +244,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 
                 // get the module name and then store it in a new array
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    if ($this->_cm->id != $mod->id){
+                    if (isset($this->_cm->id) and $this->_cm->id != $mod->id){
                         $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
                     }
                 }
@@ -264,22 +263,26 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('maxhighscores', 10);
         $mform->addRule('maxhighscores', null, 'required', null, 'client');
         $mform->addRule('maxhighscores', null, 'numeric', null, 'client');
-		$mform->setType('maxhighscores', PARAM_INT);
+        $mform->setType('maxhighscores', PARAM_INT);
 
         $mform->addElement('selectyesno', 'lessondefault', get_string('lessondefault', 'lesson'));
         $mform->setHelpButton('lessondefault', array('lessondefault', get_string('lessondefault', 'lesson'), 'lesson'));
         $mform->setDefault('lessondefault', 0);
 
 //-------------------------------------------------------------------------------
-		$this->standard_coursemodule_elements(false);
+        $this->standard_coursemodule_elements(false);
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
-	}
+    }
 
-
-
-	function data_preprocessing(&$default_values){
+    /**
+     * Enforce defaults here
+     *
+     * @param array $default_values Form defaults
+     * @return void
+     **/
+    function data_preprocessing(&$default_values) {
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;
@@ -289,6 +292,21 @@ class mod_lesson_mod_form extends moodleform_mod {
         if (isset($default_values['password'])) {
             unset($default_values['password']);
         }
-	}
+        if (isset($default_values['add']) and $defaults = get_record('lesson_default', 'course', $default_values['course'])) {
+            foreach ($defaults as $fieldname => $default) {
+                switch ($fieldname) {
+                    case 'conditions':
+                        $conditions = unserialize($default);
+                        $default_values['timespent'] = $conditions->timespent;
+                        $default_values['completed'] = $conditions->completed;
+                        $default_values['gradebetterthan'] = $conditions->gradebetterthan;
+                        break;
+                    default:
+                        $default_values[$fieldname] = $default;
+                        break;
+                }
+            }
+        }
+    }
 }
 ?>
