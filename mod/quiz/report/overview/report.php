@@ -66,42 +66,17 @@ class quiz_report extends quiz_default_report {
                 notify(get_string('numattempts', 'quiz', $a));
             }
         }
-        
-        /* 
-        // Check to see if groups are being used in this quiz
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        /// find out current groups mode
+        if ($groupmode = groupmode($course, $cm)) { // Groups are being used
             if (!$download) {
                 $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=overview");
             } else {
-                $changegroup = optional_param('group', -1, PARAM_INT);
-
-                $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+                $currentgroup = get_and_set_current_group($course, $groupmode);
             }
         } else {
-            $currentgroup = false;
-        }
-        */
-        
-        /// copied code from assignment module, if this is not the way to do this please change it
-        /// the above code does not work
-        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
-        /// and function groups_instance_print_group_selector() are missing.
-       
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
-        $groupmode = groupmode($course, $cm);
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
-    
-        /// Now we need a menu for separategroups as well!
-        if ($groupmode == VISIBLEGROUPS || ($groupmode
-            && has_capability('moodle/site:accessallgroups', $context))) {
-        
-            //the following query really needs to change
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_box_start('groupmenu');
-                print_group_menu($groups, $groupmode, $currentgroup, "report.php?id=$cm->id&amp;mode=overview");
-                print_box_end(); // groupmenu
-            }
+            $currentgroup = get_and_set_current_group($course, $groupmode);
         }
 
         // Set table options
@@ -557,6 +532,8 @@ class quiz_report extends quiz_default_report {
                     $options["mode"] = "overview";
                     $options['sesskey'] = sesskey();
                     $options["noheader"] = "yes";
+                    $options['noattempts'] = $noattempts;
+                    $options['detailedmarks'] = $detailedmarks;
                     echo '<td>';
                     $options["download"] = "ODS";
                     print_single_button("report.php", $options, get_string("downloadods"));
