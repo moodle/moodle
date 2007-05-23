@@ -5,8 +5,8 @@
      web server setups, so this document may look long and complicated.  Don't panic, once you know how to do it you can install Moodle in minutes!</p>
   <p>If you have problems please read this document carefully - most common issues are answered in here.
      If you still have trouble, you can seek help from 
-   <a target="_blank" href="http://moodle.org/help">Moodle Help</a></p>
-  <p>Another option is to contact a <a target="_blank" href="http://moodle.com/hosting/">web hosting company</a>
+   <a href="http://moodle.org/help">Moodle Help</a></p>
+  <p>Another option is to contact a <a href="http://moodle.com/hosting/">web hosting company</a>
      who can completely maintain Moodle for you, so that you can ignore all this and get straight into educating!
 </p>
   <p>&nbsp;  </p>
@@ -27,20 +27,20 @@
      </ol>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading"><a name="requirements"></a>1. Requirements</h3>
+<h3 class="sectionheading" id="requirements">1. Requirements</h3>
 <blockquote> 
   <p>Moodle is primarily developed in Linux using Apache, MySQL and PHP (also 
     sometimes known as the LAMP platform), but is also regularly tested with PostgreSQL 
     and on Windows XP, Mac OS X and Netware 6 operating systems</p>
   <p>The requirements for Moodle are as follows:</p>
   <ol>
-    <li>Web server software. Most people use <a href="http://www.apache.org/" target="_blank">Apache</a>, 
+    <li>Web server software. Most people use <a href="http://www.apache.org/" >Apache</a>, 
       but Moodle should work fine under any web server that supports PHP, such 
       as IIS on Windows platforms.</li>
-    <li><a href="http://www.php.net/" target="_blank">PHP</a> scripting language (version 4.1.0 
+    <li><a href="http://www.php.net/">PHP</a> scripting language (version 4.1.0 
       or later). PHP 5 is supported as of Moodle 1.4. </li>
-    <li>a working database server: <a href="http://www.mysql.com/" target="_blank">MySQL</a> 
-      or <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a> are 
+    <li>a working database server: <a href="http://www.mysql.com/">MySQL</a> 
+      or <a href="http://www.postgresql.org/">PostgreSQL</a> are 
       completely supported and recommended for use with Moodle. </li>
   </ol>
   <p>Most web hosts support all of this by default. If you are signed up with 
@@ -50,10 +50,10 @@
     then please take a look at <a href="http://docs.moodle.org/en/Administrator_documentation">the administrator documentation</a>.</p>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading"><a name="downloading"></a>2. Download and copy files into place </h3>
+<h3 class="sectionheading" id="downloading">2. Download and copy files into place </h3>
 <blockquote>
   <p>There are two ways to get Moodle, as a compressed package and via CVS. These 
-    are explained in detail on the download page: <a href="http://moodle.org/download/" target="_blank">http://moodle.org/download/</a></p>
+    are explained in detail on the download page: <a href="http://moodle.org/download/">http://moodle.org/download/</a></p>
   <p>After downloading and unpacking the archive, or checking out the files via 
     CVS, you will be left with a directory called &quot;moodle&quot;, containing 
     a number of files and folders.</p>
@@ -64,13 +64,13 @@
   <p>If you are downloading Moodle to your local computer and then uploading it to your web site, it is usually better to upload the whole archive as one file, and then do the unpacking on the server. Even web hosting interfaces like Cpanel allow you to uncompress archives in the &quot;File Manager&quot;. </p>
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="site"></a>3. Site structure</h3>
+<h3 class="sectionheading" id="site">3. Site structure</h3>
 <blockquote>
   <p>You can safely skip this section, but here is a quick summary of the contents of the Moodle folder, to help get 
     you oriented:</p>
   <blockquote>
     <table><tr>
-      <td width="130" valign="top">config.php</td>
+      <td valign="top">config.php</td>
       <td valign="top">-</td>
       <td valign="top">
         contains basic settings. This file does not come with Moodle - you will create it. </td>
@@ -109,7 +109,7 @@
     <p>&nbsp;</p>
   </blockquote>
 </blockquote>
-<h3 class="sectionheading"><a name="installer"></a>4. Run the Installer script to create config.php </h3>
+<h3 class="sectionheading" id="installer">4. Run the Installer script to create config.php </h3>
 <blockquote>
   <p>To run the installer script (install.php), just try to access your Moodle main URL using a web browser, or access <strong>http://yourserver/install.php</strong> directly. </p>
   <p>(The Installer will try to set a session cookie. If you get a popup warning in your browser make sure you accept that cookie!) </p>
@@ -119,7 +119,7 @@
 </blockquote>
 <blockquote>
 
-<h3 class="sectionheading"><a name="webserver" id="webserver"></a>4.1 General web server settings </h3>
+<h3 class="sectionheading" id="webserver">4.1 General web server settings </h3>
   <blockquote>
     <p>Firstly, make sure that your web server is set up to use index.php as a default 
       page (perhaps in addition to index.html, default.htm and so on).</p>
@@ -190,7 +190,7 @@ php_value post_max_size 2M
     </blockquote>
   </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a name="database"></a>4.2 Creating a database</h3>
+<h3 class="sectionheading" id="database">4.2 Creating a database</h3>
 
   <blockquote>
     <p>You need to create an empty database (eg "<em>moodle</em>") in your database system 
@@ -227,7 +227,7 @@ php_value post_max_size 2M
   </blockquote>
   <p>&nbsp;</p>
   
-<h3 class="sectionheading"><a name="data"></a>4.3 Creating a data directory </h3>
+<h3 class="sectionheading" id="data">4.3 Creating a data directory </h3>
 
   <blockquote>
     <p>Moodle will also need some space on your server's hard disk to store uploaded files, such as course documents and user pictures. </p>
@@ -245,7 +245,7 @@ php_value post_max_size 2M
 </blockquote>
 
 
-<h3 class="sectionheading"><a name="admin"></a>5. Go to the admin page to continue configuration </h3>
+<h3 class="sectionheading" id="admin">5. Go to the admin page to continue configuration </h3>
 <blockquote> 
   <p>Once the basic <strong>config.php</strong> has been correctly created in the previous step, trying to access the front page of your site will take you the &quot;admin&quot; page for the rest of the configuration.</p>
   <p>The first time you access this admin page, you will be presented with 
@@ -264,10 +264,10 @@ php_value post_max_size 2M
       unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
       '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
       TYPE=MyISAM</p>
-    <p><font color="#006600">SUCCESS</font></p>
+    <p class="success">SUCCESS</p>
   </blockquote>
-  <p>...and so on, followed by: <font color="#006600">Main databases set up 
-      successfully.</font> </p>
+  <p>...and so on, followed by: <span class="success">Main databases set up 
+      successfully.</span> </p>
   <blockquote>
     <p class="style3">If you don't see these, then there must have been some problem with the database 
         or the configuration settings you defined in config.php. Check that PHP isn't 
@@ -288,7 +288,7 @@ php_value post_max_size 2M
       This is easy to fix: just turn off the &quot;secureforms&quot; setting, then 
       try to continue again.</p>
   </blockquote>
-  <p>Next you will see more  pages that print lots of status messages as they set up all the tables required by the various Moodle module. As before, they should all be <font color="#006600">green</font>.</p>
+  <p>Next you will see more  pages that print lots of status messages as they set up all the tables required by the various Moodle module. As before, they should all be <span style="color:#006600">green</span>.</p>
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; link.</p>
   <p>The next page is a form where you can define parameters for your Moodle site 
     and the front page, such as the name, format, description and so on. Fill 
@@ -299,11 +299,11 @@ php_value post_max_size 2M
     email etc and then click &quot;Save changes&quot;. Not all the fields are 
     required, but if you miss any important fields you'll be re-prompted for them. 
   </p>
-  <blockquote> 
-    <blockquote> 
-      <blockquote> 
-        <blockquote> 
-          <blockquote> 
+  <blockquote>
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <blockquote>
             <p><strong>Make sure you remember the username and password you chose 
               for the administration user account, as they will be necessary to 
               access the administration page in future.</strong></p>
@@ -331,7 +331,7 @@ php_value post_max_size 2M
 </blockquote>
 <p>&nbsp;</p>
 
-<h3 class="sectionheading"><a name="cron"></a>6. Set up cron -- IMPORTANT! </h3>
+<h3 class="sectionheading" id="cron">6. Set up cron -- IMPORTANT! </h3>
 <blockquote> 
   <p>Some of Moodle's modules require continual checks to perform tasks. For example, 
     Moodle needs to check the discussion forums so it can mail out copies of posts 
@@ -359,7 +359,7 @@ php_value post_max_size 2M
 
   <h4>On Windows systems</h4>
   <blockquote>
-    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
+    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
   </blockquote>
   <p><strong>On web hosting services</strong></p>
   <blockquote>
@@ -406,7 +406,7 @@ php_value post_max_size 2M
   <p>&nbsp;</p>
 </blockquote>
 
-<h3 class="sectionheading"><a name="course"></a>7. Create a new course</h3>
+<h3 class="sectionheading" id="course">7. Create a new course</h3>
 <blockquote>
   <p>Now that Moodle is running properly, you can try creating a new course to play with. </p>
   <p>Select &quot;Create a new course&quot; from the Admin page (or the admin 
@@ -424,6 +424,6 @@ php_value post_max_size 2M
   <p>See the &quot;<a href="http://docs.moodle.org/en/Teacher_documentation">Teacher Documentation</a>&quot; for more details 
     on course-building.</p>
   <p>&nbsp;</p>
-  <p align="center"><strong>Happy exploring and happy Moodling!</strong></p>
-  <p align="center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/" target="_blank">donating</a> to help us cover our costs! </strong></p>
+  <p class="center"><strong>Happy exploring and happy Moodling!</strong></p>
+  <p class="center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/">donating</a> to help us cover our costs! </strong></p>
 </blockquote>
