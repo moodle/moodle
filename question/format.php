@@ -127,6 +127,9 @@ class qformat_default {
      */
     function importprocess() {
 
+       // reset the timer in case file upload was slow
+       @set_time_limit();
+
        // STAGE 1: Parse the file
        notify( get_string('parsingquestions','quiz') );
          
@@ -155,6 +158,9 @@ class qformat_default {
         $count = 0;
 
         foreach ($questions as $question) {   // Process and store each question
+
+            // reset the php timeout 
+            @set_time_limit();
 
             // check for category modifiers
             if ($question->qtype=='category') {
