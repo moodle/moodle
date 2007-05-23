@@ -199,10 +199,20 @@ function grades_grab_grades() {
                     foreach ($modinstances as $modinstance) {
                         // for each instance, call the xxx_grades() function
                         if ($grades = $gradefunc($modinstance->instance)) {
+                            
+                            $maxgrade = $grades->maxgrade;
+                            if ($maxgrade < 0) {
+                                // this is a scaleid
+                                $scaleid = -1 * $maxgrade;
+                                $maxgrade = null;
+                            } else {
+                                // no scale id used
+                                $scaleid = null;
+                            }
+
                             foreach ($grades->grades as $userid=>$usergrade) {                              
                                 // make the grade_added eventdata
-                                // missing grade event trigger
-                                // events_trigger('grade_added', $eventdata);
+
                                 $eventdata = new object();
                                 $eventdata->courseid =  $modinstance->course;
                                 $eventdata->itemmodule = $mod;
@@ -211,7 +221,12 @@ function grades_grab_grades() {
                                 $eventdata->userid = $userid;
                                 $eventdata->gradevalue = $usergrade;
                                 $eventdata->itemname = $modinstance->name;
+
+                                $eventdata->maxgrade = $maxgrade;
+                                $eventdata->scaleid = $scaleid;
+
                                 events_trigger('grade_added', $eventdata);                             
+
                                                        
                             }
                         }
