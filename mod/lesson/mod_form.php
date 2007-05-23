@@ -7,14 +7,15 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package lesson
  **/
-require_once ('moodleform_mod.php');
 
+require_once('moodleform_mod.php');
 require_once('locallib.php');
+
 class mod_lesson_mod_form extends moodleform_mod {
 
     function definition() {
-
         global $LESSON_NEXTPAGE_ACTION, $COURSE;
+
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
@@ -41,7 +42,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxanswers', get_string('maximumnumberofanswersbranches', 'lesson'), $numbers);
         $mform->setDefault('maxanswers', 4);
         $mform->setHelpButton('maxanswers', array('maxanswers', get_string('displayformat', 'lesson'), 'lesson'));
-
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('gradeoptions', 'lesson'));
@@ -128,14 +128,14 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('slideshow', 0);
 
         $mform->addElement('text', 'width', get_string('slideshowwidth', 'lesson'));
-        $mform->setDefault('width', 20);
+        $mform->setDefault('width', 640);
         $mform->addRule('width', null, 'required', null, 'client');
         $mform->addRule('width', null, 'numeric', null, 'client');
         $mform->setHelpButton('width', array('width', get_string('slideshowwidth', 'lesson'), 'lesson'));
         $mform->setType('width', PARAM_INT);
 
         $mform->addElement('text', 'height', get_string('slideshowheight', 'lesson'));
-        $mform->setDefault('height', 20);
+        $mform->setDefault('height', 480);
         $mform->addRule('height', null, 'required', null, 'client');
         $mform->addRule('height', null, 'numeric', null, 'client');
         $mform->setHelpButton('height', array('height', get_string('slideshowheight', 'lesson'), 'lesson'));
@@ -237,7 +237,6 @@ class mod_lesson_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', '', get_string('other', 'lesson'));
 
-
         // get the modules
         if ($mods = get_course_mods($COURSE->id)) {
             $modinstances = array();
@@ -245,7 +244,7 @@ class mod_lesson_mod_form extends moodleform_mod {
 
                 // get the module name and then store it in a new array
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    if (!empty($this->_cm->id) and $this->_cm->id != $mod->id){
+                    if (isset($this->_cm->id) and $this->_cm->id != $mod->id){
                         $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
                     }
                 }
@@ -277,9 +276,13 @@ class mod_lesson_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-
-
-    function data_preprocessing(&$default_values){
+    /**
+     * Enforce defaults here
+     *
+     * @param array $default_values Form defaults
+     * @return void
+     **/
+    function data_preprocessing(&$default_values) {
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;
@@ -288,6 +291,21 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
         if (isset($default_values['password'])) {
             unset($default_values['password']);
+        }
+        if (isset($default_values['add']) and $defaults = get_record('lesson_default', 'course', $default_values['course'])) {
+            foreach ($defaults as $fieldname => $default) {
+                switch ($fieldname) {
+                    case 'conditions':
+                        $conditions = unserialize($default);
+                        $default_values['timespent'] = $conditions->timespent;
+                        $default_values['completed'] = $conditions->completed;
+                        $default_values['gradebetterthan'] = $conditions->gradebetterthan;
+                        break;
+                    default:
+                        $default_values[$fieldname] = $default;
+                        break;
+                }
+            }
         }
     }
 }
