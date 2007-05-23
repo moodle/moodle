@@ -19,8 +19,8 @@ $text   = optional_param('text', 'No text to display', PARAM_CLEAN);
 $module = optional_param('module', 'moodle', PARAM_ALPHAEXT);
 $forcelang = optional_param('forcelang', '', PARAM_SAFEDIR);
 
-// Start the output.
-print_header();
+// Start the output. TODO: improve the page title.
+print_header(get_string('help'));
 print_simple_box_start();
 
 // We look for the help to display in lots of different places, and
@@ -165,7 +165,7 @@ function include_help_for_each_module($file, $langs, $helpdir) {
             }
 
             if (file_exists_and_readable($filepath)) {
-                echo '<hr size="1" />';
+                echo '<hr />';
                 @include($filepath); // The actual helpfile
                 break; // Out of loop over languages.
             }
