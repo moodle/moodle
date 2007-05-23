@@ -5,7 +5,7 @@
 $string['adminacceptccs'] = 'Which credit card types will be accepted?';
 $string['adminaccepts'] = 'Select payment methods allowed and their types';
 $string['adminauthcode'] = 'If an user\'s credit card cannot be captured on the internet directly, obtain authorization code over the phone from customer\'s bank.';
-$string['adminauthorizeccapture'] = 'Order Review & Scheduled-Capture Settings';
+$string['adminauthorizeccapture'] = 'Order Review &amp; Scheduled-Capture Settings';
 $string['adminauthorizeemail'] = 'Email Sending Settings';
 $string['adminauthorizesettings'] = 'Authorize.net Settings';
 $string['adminauthorizewide'] = 'Site-Wide Settings';

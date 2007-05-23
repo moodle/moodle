@@ -1004,3 +1004,12 @@ form.mform .required label {
 form.mform .fdescription.required {
   color:#a00;
 }
+
+#help hr {
+  border: none;
+  height: 1px;
+  background: #ccc;
+}
+#help .example1 {
+  color: #a00;
+}

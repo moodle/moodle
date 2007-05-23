@@ -1,6 +1,6 @@
 <h1>Relative URLs, media players and Hot Potatoes</h1>
 
-<p><b>Definitions</b></p>
+<h2>Definitions</h2>
 
 <div class="indent">
     <p><i>URL</i><br />
@@ -19,10 +19,10 @@
     </p>
 </div>
 
-<p><b>Relative URLs in Hot Potatoes quizzes</b></p>
+<h2>Relative URLs in Hot Potatoes quizzes</h2>
 <p>Relative URLs are a convenient way to specify images, sounds and videos in a Hot Potatoes quiz, because they allow the quiz to be viewed and tested on a local PC, before being uploaded to a Moodle site. When the quiz is uploaded to the Moodle site, the multimedia files must also be uploaded, so that they are available when the quiz is administered via Moodle.</p>
 <p>For security reasons, Moodle does not allow direct access to course files. All requests for files in a given course go through a guardian script which verfies that the person requesting the file is enrolled in the course. However, this mechanism can break  relative links used in the quiz, because the normal rules for deriving an absolute URL from a relative URL do not work.</p>
 <p>The solution is simple enough: <font color="red"><b>all relative URLs must be converted to absolute URLs </b></font> by the time the quiz reaches the browser. In the case of Hot Potatoes quizzes, the URLs will be converted by Moodle, so content creators do not have to bother with this tedious and error-prone task. </p>
 
-<p><b>Media players in Hot Potatoes quizzes </b></p>
+<h2>Media players in Hot Potatoes quizzes </h2>
 <p>Some media players will not accept the media file if it comes via the script which guards the course files. In this situation, it is necessary to replace the media player with one that is known to be compatible with Moodle. You can do this yourself by modifying the reference to the media player in the quiz, or you can force Moodle to do it by setting the &quot;Force media plugins&quot; option on the quiz's settings page to &quot;Yes&quot;.</p>
