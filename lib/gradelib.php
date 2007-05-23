@@ -201,13 +201,14 @@ function grades_grab_grades() {
                         if ($grades = $gradefunc($modinstance->instance)) {
                             
                             $maxgrade = $grades->maxgrade;
-                            if ($maxgrade < 0) {
-                                // this is a scaleid
-                                $scaleid = -1 * $maxgrade;
-                                $maxgrade = null;
-                            } else {
-                                // no scale id used
+                            if (is_numeric($maxgrade)) { 
+                                // no scale used
                                 $scaleid = null;
+                            } else {
+                                // scale name is provided as a string, try to find it
+                                $scale = get_record('scale', 'name', $maxgrade);
+                                $scaleid = $scale->id;
+                                $maxgrade = null;
                             }
 
                             foreach ($grades->grades as $userid=>$usergrade) {                              
@@ -219,15 +220,22 @@ function grades_grab_grades() {
                                 $eventdata->iteminstance = $modinstance->instance;
                                 $eventdata->gradetype = 0;
                                 $eventdata->userid = $userid;
-                                $eventdata->gradevalue = $usergrade;
+                                
+                                if ($scaleid) {
+                                    // scale in use, words used
+                                    $gradescale = explode(",", $scale->scale);
+                                    $eventdata->gradevalue = array_search($usergrade, $gradescale) + 1;
+                                } else {
+                                    // good old numeric value
+                                    $eventdata->gradevalue = $usergrade;
+                                }
+
                                 $eventdata->itemname = $modinstance->name;
 
                                 $eventdata->maxgrade = $maxgrade;
                                 $eventdata->scaleid = $scaleid;
 
-                                events_trigger('grade_added', $eventdata);                             
-
-                                                       
+                                events_trigger('grade_added', $eventdata);
                             }
                         }
                     }
