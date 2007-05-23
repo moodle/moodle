@@ -83,21 +83,6 @@ class qformat_xml extends qformat_default {
     }
 
     /**
-     * Process text from an element in the XML that may or not be there.
-     * @param string $subelement the name of the element which is either present or missing.
-     * @param array $question a bit of xml tree, this method looks for $question['#'][$subelement][0]['#']['text'].
-     * @return string If $subelement is present, return the content of the text tag inside it.
-     *      Otherwise returns an empty string.
-     */
-    function import_optional_text($subelement, $question) {
-        if (array_key_exists($subelement, $question['#'])) {
-            return $this->import_text($question['#'][$subelement][0]['#']['text']);
-        } else {
-            return '';
-        }
-    }
-
-    /**
      * return the value of a node, given a path to the node
      * if it doesn't exist return the default value
      * @param array xml data to read
@@ -162,15 +147,14 @@ class qformat_xml extends qformat_default {
      * @return object answer object
      */   
     function import_answer( $answer ) {
-        $fraction = $answer['@']['fraction'];
-        $text = $this->import_text( $answer['#']['text']);
-        $feedback = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
+        $fraction = $this->getpath( $answer, array('@','fraction'),0 );
+        $text = $this->getpath( $answer, array('#','text',0,'#'), '', true );
+        $feedback = $this->getpath( $answer, array('#','feedback',0,'#','text',0,'#'), '', true );
 
         $ans = null;
         $ans->answer = $text;
         $ans->fraction = $fraction / 100;
         $ans->feedback = $feedback;
-  
         return $ans;
     }
 
@@ -185,17 +169,13 @@ class qformat_xml extends qformat_default {
 
         // 'header' parts particular to multichoice
         $qo->qtype = MULTICHOICE;
-        $single = $question['#']['single'][0]['#'];
+        $single = $this->getpath( $question, array('#','single',0,'#'), 'true' );
         $qo->single = $this->trans_single( $single );
-        if (array_key_exists('shuffleanswers', $question['#'])) {
-            $shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
-        } else {
-            $shuffleanswers = 'false';
-        }
+        $shuffleanswers = $this->getpath( $question, array('#','shuffleanswers',0,'#'), 'false' );
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
-        $qo->correctfeedback = $this->import_optional_text('correctfeedback', $question);
-        $qo->partiallycorrectfeedback = $this->import_optional_text('partiallycorrectfeedback', $question);
-        $qo->incorrectfeedback = $this->import_optional_text('incorrectfeedback', $question);
+        $qo->correctfeedback = $this->getpath( $question, array('#','correctfeedback',0,'#','text',0,'#'), '', true );
+        $qo->partiallycorrectfeedback = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
+        $qo->incorrectfeedback = $this->getpath( $question, array('#','incorrectfeedback',0,'#','text',0,'#'), '', true );
         
         // run through the answers
         $answers = $question['#']['answer'];  
@@ -207,7 +187,6 @@ class qformat_xml extends qformat_default {
             $qo->feedback[$a_count] = $ans->feedback;
             ++$a_count;
         }
-
         return $qo;
     }
 
@@ -252,8 +231,8 @@ class qformat_xml extends qformat_default {
         $first = true;
         $warning = false;
         foreach ($question['#']['answer'] as $answer) {
-            $answertext = $this->import_text($answer['#']['text']);
-            $feedback = $this->import_text($answer['#']['feedback'][0]['#']['text']);
+            $answertext = $this->getpath( $answer, array('#','text',0,'#'), '', true );
+            $feedback = $this->getpath($answer, array('#','feedback',0,'#','text',0,'#'), '', true );
             if ($answertext != 'true' && $answertext != 'false') {
                 $warning = true;
                 $answertext = $first ? 'true' : 'false'; // Old style file, assume order is true/false.
@@ -276,7 +255,6 @@ class qformat_xml extends qformat_default {
             $a->answer = get_string($qo->answer ? 'true' : 'false', 'quiz');
             notify(get_string('truefalseimporterror', 'quiz', $a));
         }
-
         return $qo;
     }
 
@@ -371,37 +349,27 @@ class qformat_xml extends qformat_default {
         $qo->tolerance = array();
         foreach ($answers as $answer) {
             // answer outside of <text> is deprecated
-            if (!empty( $answer['#']['text'] )) {
-                $answertext = $this->import_text( $answer['#']['text'] );
+            $answertext = trim( $this->getpath( $answer, array('#',0), '' ) );
+            $qo->answer[] = $this->getpath( $answer, array('#','text',0,'#'), $answertext, true );
+            if (empty($qo->answer)) {
+                $qo->answer = '*';
             }
-            else {
-                $answertext = trim($answer['#'][0]);
-            }
-            if ($answertext == '') {
-                $qo->answer[] = '*';
-            } else {
-                $qo->answer[] = $answertext;
-            }
-            $qo->feedback[] = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
-            $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
+            $qo->feedback[] = $this->getpath( $answer, array('#','feedback',0,'#','text',0,'#'), '', true );
+            $qo->tolerance[] = $this->getpath( $answer, array('#','tolerance',0,'#'), 0 );
 
             // fraction as a tag is deprecated
-            if (!empty($answer['#']['fraction'][0]['#'])) {
-                $qo->fraction[] = $answer['#']['fraction'][0]['#'];
-            }
-            else {
-                $qo->fraction[] = $answer['@']['fraction'] / 100;
-            }
+            $fraction = $this->getpath( $answer, array('@','fraction'), 0 ) / 100;
+            $qo->fraction[] = $this->getpath( $answer, array('#','fraction',0,'#'), $fraction ); // deprecated
         }
 
         // get units array
         $qo->unit = array();
-        if (isset($question['#']['units'][0]['#']['unit'])) {
-            $units = $question['#']['units'][0]['#']['unit'];
+        $units = $this->getpath( $question, array('#','units',0,'#','unit'), array() );
+        if (!empty($units)) {
             $qo->multiplier = array();
             foreach ($units as $unit) {
-                $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
-                $qo->unit[] = $unit['#']['unit_name'][0]['#'];
+                $qo->multiplier[] = $this->getpath( $unit, array('#','multiplier',0,'#'), 1 );
+                $qo->unit[] = $this->getpath( $unit, array('#','unit_name',0,'#'), '', true );
             }
         }
         return $qo;
@@ -418,11 +386,7 @@ class qformat_xml extends qformat_default {
 
         // header parts particular to matching
         $qo->qtype = MATCH;
-        if (!empty($question['#']['shuffleanswers'])) {
-            $qo->shuffleanswers = $question['#']['shuffleanswers'][0]['#'];
-        } else {
-            $qo->shuffleanswers = false;
-        }
+        $qo->shuffleanswers = $this->getpath( $question, array( '#','shuffleanswers',0,'#' ), 1 );
 
         // get subquestions
         $subquestions = $question['#']['subquestion'];
@@ -431,10 +395,8 @@ class qformat_xml extends qformat_default {
 
         // run through subquestions
         foreach ($subquestions as $subquestion) {
-            $qtext = $this->import_text( $subquestion['#']['text'] );
-            $atext = $this->import_text( $subquestion['#']['answer'][0]['#']['text'] );
-            $qo->subquestions[] = $qtext;
-            $qo->subanswers[] = $atext;
+            $qo->subquestions[] = $this->getpath( $subquestion, array('#','text',0,'#'), '', true );
+            $qo->subanswers[] = $this->getpath( $subquestion, array('#','answer',0,'#','text',0,'#'), '', true);
         }
         return $qo;
     }
@@ -763,14 +725,33 @@ class qformat_xml extends qformat_default {
 
         return $xml;
     }
+  
+    function xmltidy( $content ) {
+        // can only do this if tidy is installed
+        if (extension_loaded('tidy')) {
+            $config = array( 'input-xml'=>true, 'output-xml'=>true, 'indent'=>true, 'wrap'=>0 );
+            $tidy = new tidy;
+            $tidy->parseString($content, $config, 'utf8');
+            $tidy->cleanRepair(); 
+            return $tidy->value;
+        }
+        else {
+            return $content;
+        }
+    }
+
 
     function presave_process( $content ) {
     // override method to allow us to add xml headers and footers
 
+        // add the xml headers and footers
         $content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
                        "<quiz>\n" .
                        $content . "\n" .
                        "</quiz>";
+
+        // make the xml look nice
+        $content = $this->xmltidy( $content );
 
         return $content;
     }
