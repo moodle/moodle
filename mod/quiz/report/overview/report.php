@@ -532,6 +532,8 @@ class quiz_report extends quiz_default_report {
                     $options["mode"] = "overview";
                     $options['sesskey'] = sesskey();
                     $options["noheader"] = "yes";
+                    $options['noattempts'] = $noattempts;
+                    $options['detailedmarks'] = $detailedmarks;
                     echo '<td>';
                     $options["download"] = "ODS";
                     print_single_button("report.php", $options, get_string("downloadods"));
