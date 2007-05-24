@@ -1,18 +1,20 @@
 <?php  // $Id$
-
-//////////////
-/// RANDOM ///
-//////////////
-
-/// QUESTION TYPE CLASS //////////////////
 /**
+ * Class for the random question type.
+ * 
+ * The random question type does not have any options. When the question is 
+ * attempted, it picks a question at random from the category it is in (and
+ * optionally its subcategories). For details see create_session_and_responses.
+ * Then all other method calls as delegated to that other question.
+ * 
  * @package questionbank
  * @subpackage questiontypes
  */
 class random_qtype extends default_questiontype {
 
-    // Carries questions available as randoms sorted by category
-    // This array is used when needed only
+    // Caches questions available as randoms sorted by category
+    // This is a 2-d array. The first key is question category, and the
+    // second is whether to include subcategories.
     var $catrandoms = array();
 
     function name() {
@@ -20,6 +22,7 @@ class random_qtype extends default_questiontype {
     }
 
     function menu_name() {
+        // Don't include this question type in the 'add new question' menu.
         return false;
     }
 
@@ -35,8 +38,9 @@ class random_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-        // No options, but we use the parent field to hide random questions.
-        // To avoid problems we set the parent field to the question id.
+        // No options, but we set the parent field to the question's own id.
+        // Setting the parent field has the effect of hiding this question in
+        // various places.
         return (set_field('question', 'parent', $question->id, 'id',
          $question->id) ? true : false);
     }
