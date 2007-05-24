@@ -38,12 +38,12 @@
     //        (CL,pk->id,fk->category,files)                   |
     //                  |                             question_dataset_items
     //                  |                          (CL,pk->id,fk->definition)
-    //                  |                                                                                                           question_rqp_type
-    //                  |                                                                                                            (SL,pk->id)
-    //                  |                                                                                                                  |
-    //             --------------------------------------------------------------------------------------------------------------          |
-    //             |             |              |              |                       |                  |                     |        question_rqp
-    //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question)
+    //                  |
+    //                  |
+    //                  |
+    //             --------------------------------------------------------------------------------------------------------------
+    //             |             |              |              |                       |                  |                     |
+    //             |             |              |              |                       |                  |                     |
     //             |             |              |              |             question_calculated          |                     |
     //      question_truefalse   |     question_multichoice    |          (CL,pl->id,fk->question)        |                     |
     // (CL,pk->id,fk->question)  |   (CL,pk->id,fk->question)  |                       .                  |                     |  question_randomsamatch
@@ -72,9 +72,6 @@
     //                    .
     //             question_states
     //       (UL,pk->id,fk->attempt,question)
-    //                |
-    //           question_rqp_states
-    //        (UL,pk->id,fk->stateid)                       
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -678,11 +675,7 @@
 
             if ($newid) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"question_states",$oldid,
-                             $newid);
-                //Now process question type specific state information
-                $qtype = get_field('question', 'qtype', 'id', $state->question);
-                $status = $QTYPES[$qtype]->restore_state($newid,$res_info,$restore);
+                backup_putid($restore->backup_unique_code, 'question_states', $oldid, $newid);
             } else {
                 $status = false;
             }

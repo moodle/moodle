@@ -30,12 +30,12 @@
     //        (CL,pk->id,fk->category,files)                   |
     //                  |                             question_dataset_items
     //                  |                          (CL,pk->id,fk->definition)
-    //                  |                                                                                                           question_rqp_type
-    //                  |                                                                                                            (SL,pk->id)
-    //                  |                                                                                                                  |
-    //             --------------------------------------------------------------------------------------------------------------          |
-    //             |             |              |              |                       |                  |                     |        question_rqp
-    //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question)
+    //                  |
+    //                  |
+    //                  |
+    //             --------------------------------------------------------------------------------------------------------------
+    //             |             |              |              |                       |                  |                     |
+    //             |             |              |              |                       |                  |                     |
     //             |             |              |              |             question_calculated          |                     |
     //      question_truefalse   |     question_multichoice    |          (CL,pl->id,fk->question)        |                     |
     // (CL,pk->id,fk->question)  |   (CL,pk->id,fk->question)  |                       .                  |                     |  question_randomsamatch
@@ -64,9 +64,6 @@
     //                    .
     //             question_states
     //       (UL,pk->id,fk->attempt,question)
-    //                |
-    //           question_rqp_states
-    //        (UL,pk->id,fk->stateid)                       
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -322,8 +319,6 @@
                 fwrite ($bf,full_tag("GRADE",$level + 2,false,$state->grade));
                 fwrite ($bf,full_tag("RAW_GRADE",$level + 2,false,$state->raw_grade));
                 fwrite ($bf,full_tag("PENALTY",$level + 2,false,$state->penalty));
-                // now back up question type specific state information
-                $status = backup_question_rqp_state ($bf,$preferences,$state->id, $level + 2);
                 //End state
                 $status = fwrite ($bf,end_tag("STATE",$level + 1,true));
             }
@@ -359,28 +354,6 @@
             }
             //Write end tag
             $status = fwrite ($bf,end_tag("NEWEST_STATES",$level,true));
-        }
-        return $status;
-    }
-
-    //Backup question_rqp_state contents (executed from backup_question_states)
-    function backup_question_rqp_state ($bf,$preferences,$state, $level = 8) {
-
-        global $CFG;
-
-        $status = true;
-
-        $rqp_state = get_record("question_rqp_states","stateid",$state);
-        //If there is a state
-        if ($rqp_state) {
-            //Write start tag
-            $status = fwrite ($bf,start_tag("RQP_STATE",$level,true));
-            //Print state contents
-            fwrite ($bf,full_tag("RESPONSES",$level + 1,false,$rqp_state->responses));
-            fwrite ($bf,full_tag("PERSISTENT_DATA",$level + 1,false,$rqp_state->persistent_data));
-            fwrite ($bf,full_tag("TEMPLATE_VARS",$level + 1,false,$rqp_state->template_vars));
-            //Write end tag
-            $status = fwrite ($bf,end_tag("RQP_STATE",$level,true));
         }
         return $status;
     }

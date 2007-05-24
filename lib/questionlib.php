@@ -48,7 +48,6 @@ define("DESCRIPTION",   "description");
 define("NUMERICAL",     "numerical");
 define("MULTIANSWER",   "multianswer");
 define("CALCULATED",    "calculated");
-define("RQP",           "rqp");
 define("ESSAY",         "essay");
 /**#@-*/
 

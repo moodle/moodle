@@ -1381,13 +1381,5 @@ class default_questiontype {
         // There is nothing to decode
         return $state->answer;
     }
-
-    //This function restores the question_rqp_states
-    function restore_state($state_id,$info,$restore) {
-        // The default question type does not keep its own state information
-        return true;
-    }
-
 }
-
 ?>
