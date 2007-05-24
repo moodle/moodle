@@ -150,6 +150,20 @@ class grade_grades_final extends grade_object {
             return false;
         }
     } 
+
+    /**
+     * Extends grade_object->insert() to prevent a final grade from being inserted if it already exists
+     * (If a final grade already has the same userid/itemid key combination). It will update it instead.
+     *
+     */
+    function insert() {
+        $exists = count_records('grade_grades_final', 'userid', $this->userid, 'itemid', $this->itemid);
+        if ($exists) {
+            return $this->update();
+        } else {
+            return parent::insert();
+        }
+    }
 }
 
 ?>

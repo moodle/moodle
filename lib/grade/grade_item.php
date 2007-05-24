@@ -352,6 +352,15 @@ class grade_item extends grade_object {
             $this->outcomeid = $this->outcome->id;
         }
         
+        // Retrieve scale and infer grademax from it
+        if (!empty($this->scaleid)) {
+            $this->load_scale();
+            $this->scale->load_items();
+            $this->grademax = count ($this->scale->scale_items);
+            $this->grademin = 0;
+            $this->gradetype = GRADE_TYPE_SCALE;
+        }
+        
         if (!empty($this->scale->id)) {
             $this->scaleid = $this->scale->id;
         }
@@ -450,6 +459,15 @@ class grade_item extends grade_object {
      * @return int ID of the new grade_item record.
      */
     function insert() {
+        // Retrieve scale and infer grademax from it
+        if (!empty($this->scaleid)) {
+            $this->load_scale();
+            $this->scale->load_items();
+            $this->grademax = count ($this->scale->scale_items);
+            $this->grademin = 0;
+            $this->gradetype = GRADE_TYPE_SCALE;
+        }
+        
         $result = parent::insert();
 
         // Notify parent category of need to update. Note that a grade_item may not have a categoryid.
@@ -554,6 +572,7 @@ class grade_item extends grade_object {
             $final_grade->gradevalue = $this->adjust_grade($raw_grade);
             $final_grade->itemid = $this->id;
             $final_grade->userid = $raw_grade->userid;
+            
             if ($final_grade->gradevalue > $this->grademax) {
                 debugging("FINAL GRADE EXCEEDED grademax FIRST");
                 return false;

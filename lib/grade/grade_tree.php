@@ -23,6 +23,11 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once $CFG->libdir . '/grade/grade_category.php';
+require_once $CFG->libdir . '/grade/grade_item.php';
+require_once $CFG->libdir . '/grade/grade_grades_final.php';
+require_once $CFG->libdir . '/grade/grade_grades_raw.php';
+
 /**
  * This class represents a complete tree of categories, grade_items and final grades,
  * organises as an array primarily, but which can also be converted to other formats.
@@ -91,7 +96,9 @@ class grade_tree {
             $this->tree_array = $this->get_tree($include_grades);
         }
         
-        $this->first_sortorder = key($this->tree_array);
+        if (!empty($this->tree_array)) {
+            $this->first_sortorder = key($this->tree_array);
+        }
     }
 
     /**
@@ -508,15 +515,23 @@ class grade_tree {
         // Get ordered list of grade_items (not category type)
         $query = "SELECT * FROM $items_table WHERE itemtype <> 'category' $itemconstraint ORDER BY sortorder";
         $grade_items = get_records_sql($query);
-
+        
+        if (empty($grade_items)) {
+            return null;
+        }
+        
         // For every grade_item that doesn't have a parent category, create category fillers
         foreach ($grade_items as $itemid => $item) {
             if (empty($item->categoryid)) {
                 $item = new grade_item($item);
-                $fillers[$item->sortorder] = $item;
+                if (empty($item->sortorder)) {
+                    $fillers[] = $item;
+                } else {
+                    $fillers[$item->sortorder] = $item;
+                }
             }
         }
-
+        
         // Get all top categories
         $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
                   WHERE iteminstance = $category_table.id $catconstraint ORDER BY sortorder";
@@ -524,7 +539,10 @@ class grade_tree {
         $topcats = get_records_sql($query);
         
         if (empty($topcats)) {
-            return null;
+            $topcats = $grade_items;
+            $topcats[0] = new stdClass();
+            $topcats[0]->sortorder = 0;
+            $topcats[0]->courseid = $this->courseid;
         }
         
         // If any of these categories has grade_items as children, create a topcategory filler with colspan=count(children)
