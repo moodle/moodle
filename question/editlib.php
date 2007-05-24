@@ -166,15 +166,9 @@ function question_category_form_checkbox($name, $checked) {
 function question_list($course, $pageurl, $categoryid, $cm = null,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='typename', $sortorderdecoded='qtype, name ASC',
         $showquestiontext = false) {
+
     global $QTYPE_MENU, $USER, $CFG, $THEME;
     
-    $qtypemenu = $QTYPE_MENU;
-    if ($rqp_types = get_records('question_rqp_types')) {
-        foreach($rqp_types as $type) {
-            $qtypemenu['rqp_'.$type->id] = $type->name;
-        }
-    }
-
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
     $straddquestions = get_string("addquestions", "quiz");
@@ -231,7 +225,7 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
         if ($cm!==null){
             $questionurl->param('cmid', $cm->id);
         }
-        popup_form ($questionurl->out().'&amp;qtype=', $qtypemenu, "addquestion", "", "choose", "", "", false, "self", "<strong>$strcreatenewquestion</strong>");
+        popup_form ($questionurl->out().'&amp;qtype=', $QTYPE_MENU, "addquestion", "", "choose", "", "", false, "self", "<strong>$strcreatenewquestion</strong>");
         echo '</td><td valign="top" align="right">';
         helpbutton("questiontypes", $strcreatenewquestion, "quiz");
         echo '</td>';
