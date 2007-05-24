@@ -16,7 +16,7 @@ class question_essay_qtype extends default_questiontype {
     }
     
     function is_manual_graded() {
-        return true;   
+        return true;
     }
 
     function is_usable_by_random() {
@@ -24,29 +24,29 @@ class question_essay_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-        if ($answer = get_record("question_answers", "question", $question->id)) {
-            // Existing answer, so reuse it
-            $answer->answer   = $question->feedback;
-            $answer->feedback = $question->feedback;
-            $answer->fraction = $question->fraction;
+        $result = true;
+        $update = true;
+        $answer = get_record("question_answers", "question", $question->id);
+        if (!$answer) {
+            $answer = new stdClass;
+            $answer->question = $question->id;
+            $update = false;
+        }
+        $answer->answer   = $question->feedback;
+        $answer->feedback = $question->feedback;
+        $answer->fraction = $question->fraction;
+        if ($update) {
             if (!update_record("question_answers", $answer)) {
                 $result = new stdClass;
                 $result->error = "Could not update quiz answer!";
-                return $result;
             }
         } else {
-            $answer = new stdClass;
-            $answer->question = $question->id;
-            $answer->answer   = $question->feedback;
-            $answer->feedback = $question->feedback;
-            $answer->fraction = $question->fraction;
             if (!$answer->id = insert_record("question_answers", $answer)) {
                 $result = new stdClass;
                 $result->error = "Could not insert quiz answer!";
-                return $result;
             }
         }
-        return true;
+        return $result;
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
