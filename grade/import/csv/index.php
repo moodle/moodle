@@ -1,13 +1,5 @@
 <?php
 
-/*
- This is development code, and it is not finished
- 
-$form = new custom_form_subclass(qualified_me(), array('somefield' => 'somevalue', 'someotherfield' => 'someothervalue') );
-and then in your subclass, in definition, you can access
-$this->_customdata['somefield']
-*/
-
 require_once('../../../config.php');
 
 // capability check
@@ -28,25 +20,20 @@ if (isset($CFG->CSV_DELIMITER)) {
 }
 
 require_once('../grade_import_form.php');
-
-
 require_once($CFG->dirroot.'/grade/lib.php');
+
 $course = get_record('course', 'id', $id);
 $action = 'importcsv';
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 
-
 $mform = new grade_import_form();
-//$mform2 = new grade_import_mapping_form();
 
 //if ($formdata = $mform2->get_data() ) {
 
 if (($formdata = data_submitted()) && !empty($formdata->map)) {
-    // mapping info here    
-
-    // reconstruct the mapping
-
-    print_object($formdata);
+// i am not able to get the mapping[] and map[] array using the following line
+// they are somehow not returned with get_data()
+// if ($formdata = $mform2->get_data()) {
     
     foreach ($formdata->maps as $i=>$header) {
         $map[$header] = $formdata->mapping[$i];  
@@ -57,9 +44,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     // temporary file name supplied by form
     $filename = $CFG->dataroot.'/temp/'.$formdata->filename;
 
-        // Large files are likely to take their time and memory. Let PHP know
-        // that we'll take longer, and that the process should be recycled soon
-        // to free up memory.
+    // Large files are likely to take their time and memory. Let PHP know
+    // that we'll take longer, and that the process should be recycled soon
+    // to free up memory.
     @set_time_limit(0);
     @raise_memory_limit("192M");
     if (function_exists('apache_child_terminate')) {
@@ -76,7 +63,6 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
-            // flag events to add columns if needed (?)
         }
     
         while (!feof ($fp)) {
@@ -86,7 +72,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             // each line is a student record
             unset ($studentid);
             unset ($studentgrades);
-            print_object($map);
+
             foreach ($line as $key => $value) {
                    
                 //decode encoded commas
@@ -125,8 +111,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     $eventdata->gradevalue = $studentgrade;
                     events_trigger('grade_added', $eventdata);               
                 
-                    echo "<br/>triggering event for $idnumber... student id is $studentid and grade is $studentgrade";
-            
+                    debugging("triggering event for $idnumber... student id is $studentid and grade is $studentgrade");            
                 }
             }
         }
@@ -137,7 +122,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         error ('import file '.$filename.' not readable');  
     }
 
-} else if ( $formdata = $mform->get_data() ) {
+} else if ($formdata = $mform->get_data() ) {
 
     $filename = $mform->get_userfile_name();
     
@@ -165,56 +150,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     // --- get header (field names) ---
     $header = split($csv_delimiter, fgets($fp,1024));
     
-    echo '<form action="index.php" method="post" />';
-    
-    $mapfromoptions = array();
-    foreach ($header as $h) {
-        $mapfromoptions[$h] = $h;
-    }
-    
-    choose_from_menu($mapfromoptions, 'mapfrom');    
-    
-    // one mapfrom (csv column) to mapto (one of 4 choices)    
-    $maptooptions = array('userid'=>'userid', 'username'=>'username', 'useridnumber'=>'useridnumber', 'useremail'=>'useremail', '0'=>'ignore');
-    choose_from_menu($maptooptions, 'mapto');
-    
-    $gradeitems = array();
-    
-    include_once($CFG->libdir.'/gradelib.php');
-    if ($grade_items = grade_get_items($id)) {
-      
-        foreach ($grade_items as $grade_item) {
-            $gradeitems[$grade_item->idnumber] = $grade_item->itemname;      
-        }
-    }
-    
-    foreach ($header as $h) {
-        $h = trim($h);
-        // this is the order of the headers
-        echo "<br/> this field is :".$h." => ";
-        echo '<input type="hidden" name="maps[]" value="'.$h.'"/>';
-        // this is what they map to
-        
-        $mapfromoptions = array_merge(array('0'=>'ignore'), $gradeitems);
-
-        choose_from_menu($mapfromoptions, 'mapping[]', $h);
-
-    }
-    $newfilename = 'cvstemp_'.time();
-    move_uploaded_file($filename, $CFG->dataroot.'/temp/'.$newfilename);
-    
-    echo '<input type="hidden" name="map" value="1"/>';
-    echo '<input type="hidden" name="id" value="'.$id.'"/>';    
-    echo '<input name="filename" value='.$newfilename.' type="hidden" />';
-    echo '<input type="submit" value="upload" />';
-    echo '</form>';  
-    
-    // set the headers
-    //$mform2->setup($header, $filename);
-    //$mform2->display();
-  
-    // move file to $CFG->dataroot/temp
-  
+    // print mapping form
+    $mform2 = new grade_import_mapping_form(qualified_me(), array('id'=>$id, 'header'=>$header, 'filename'=>$filename));
+    $mform2->display();
 } else {
     $mform->display();
 }

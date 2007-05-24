@@ -33,32 +33,10 @@ function print_gradeitem_selections($id, $params = NULL) {
     global $CFG;
     // print all items for selections
     // make this a standard function in lib maybe
-    //if ($grade_items = grade_get_items($id)) {
-        include_once('grade_export_form.php');
-        $mform = new grade_export_form(qualified_me(), array('id'=>$id));
-        $mform->display();
-    /*    
-        
-        echo '<form action="index.php" method="post">';
-        echo '<div>';
-        foreach ($grade_items as $grade_item) {
-            
-            echo '<br/><input type="checkbox" name="itemids[]" value="'.$grade_item->id.'" checked="checked"/>';
-            
-            if ($grade_item->itemtype == 'category') {
-                // grade categories should be displayed bold
-                echo '<b>'.$grade_item->itemname.'</b>';
-            } else {
-                echo $grade_item->itemname;
-            } 
-        }
-        echo '<input type="hidden" name="id" value="'.$id.'"/>';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'"/>';
-        echo '<input type="submit" value="'.get_string('submit').'" />';
-        echo '</div>';
-        echo '</form>';
-    */
-    //}
+    include_once('grade_export_form.php');
+    $mform = new grade_export_form(qualified_me(), array('id'=>$id));
+    $mform->display();
+
 }
 /**
  * Base export class

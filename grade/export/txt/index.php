@@ -53,7 +53,11 @@ if (($data = data_submitted()) && confirm_sesskey()) {
 $course = get_record('course', 'id', $id);
 $action = 'exporttxt';
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+include_once('grade_export_txt_form.php');
+$mform = new grade_export_txt_form(qualified_me(), array('id'=>$id));
+$mform->display();
 
+/*
 // print_gradeitem_selections($id);
 // print all items for selections
 // make this a standard function in lib maybe
@@ -81,6 +85,6 @@ if ($grade_items = grade_get_items($id)) {
     echo '</div>';
     echo '</form>';
 }
-
+*/
 print_footer();
 ?>
