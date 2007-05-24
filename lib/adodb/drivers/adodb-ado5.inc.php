@@ -101,9 +101,6 @@ class ADODB_ado extends ADOConnection {
 		
 		if ($argProvider) $dbc->Provider = $argProvider;	
 
-		if ($argProvider) $argHostname = "PROVIDER=$argProvider;DRIVER={SQL Server};SERVER=$argHostname";	
-		
-
 		if ($argDatabasename) $argHostname .= ";DATABASE=$argDatabasename";		
 		if ($argUsername) $argHostname .= ";$u=$argUsername";
 		if ($argPassword)$argHostname .= ";$p=$argPassword";

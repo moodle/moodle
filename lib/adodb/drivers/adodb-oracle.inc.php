@@ -150,7 +150,7 @@ class ADODB_oracle extends ADOConnection {
 			if ($argDatabasename) $argUsername .= "@$argDatabasename";
 
 		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
-			if ($mode = 1)
+			if ($mode == 1)
 				$this->_connectionID = ora_plogon($argUsername,$argPassword);
 			else
 				$this->_connectionID = ora_logon($argUsername,$argPassword);

@@ -18,10 +18,11 @@
 
 global $_ADODB_ACTIVE_DBS;
 global $ADODB_ACTIVE_CACHESECS; // set to true to enable caching of metadata such as field info
+global $ACTIVE_RECORD_SAFETY; // set to false to disable safety checks
 
 // array of ADODB_Active_DB's, indexed by ADODB_Active_Record->_dbat
 $_ADODB_ACTIVE_DBS = array();
-
+$ACTIVE_RECORD_SAFETY = true;
 
 class ADODB_Active_DB {
 	var $db; // ADOConnection
@@ -322,6 +323,8 @@ class ADODB_Active_Record {
 	// set a numeric array (using natural table field ordering) as object properties
 	function Set(&$row)
 	{
+	global $ACTIVE_RECORD_SAFETY;
+	
 		$db =& $this->DB();
 		
 		if (!$row) {
@@ -332,7 +335,7 @@ class ADODB_Active_Record {
 		$this->_saved = true;
 		
 		$table =& $this->TableInfo();
-		if (sizeof($table->flds) != sizeof($row)) {
+		if ($ACTIVE_RECORD_SAFETY && sizeof($table->flds) != sizeof($row)) {
 			$this->Error("Table structure of $this->_table has changed","Load");
 			return false;
 		}

@@ -968,24 +968,26 @@ function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields,
 			$val = $zthis->DBDate($arrFields[$fname]);
 			break;
 
+		
 		case "T":
 			$val = $zthis->DBTimeStamp($arrFields[$fname]);
 			break;
 
 // moodle change start - see readme_moodle.txt
-        case "L": //Integer field suitable for storing booleans (0 or 1)
-        case "I": //Integer
-            $val = (int)$arrFields[$fname];
-            break;
-
         case "F": //Floating point number
         case "N": //Numeric or decimal number
             $val = (float)$arrFields[$fname];
             break;
-// moodle change end
 
-        default:
-			$val = $arrFields[$fname];
+        case "L": //Integer field suitable for storing booleans (0 or 1)
+// moodle change end
+		case "I":
+		case "R":
+		    $val = (int) $arrFields[$fname];
+		    break;
+
+		default:
+			$val = str_replace(array("'"," ","("),"",$arrFields[$fname]); // basic sql injection defence
 			if (empty($val)) $val = '0';
 			break;
 	}

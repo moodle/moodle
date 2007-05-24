@@ -109,8 +109,8 @@ AND    b.name = 'sorts (memory)'",
 			where name = 'free memory' and pool = 'shared pool'",
 		'Percentage of data cache actually in use - should be over 85%'),
 		
-		'shared pool utilization ratio' => array('RATIOU',
-		'select round((sga.bytes/p.value)*100,2)
+				'shared pool utilization ratio' => array('RATIOU', 
+		'select round((sga.bytes/case when p.value=0 then sga.bytes else to_number(p.value) end)*100,2)
 		from v$sgastat sga, v$parameter p
 		where sga.name = \'free memory\' and sga.pool = \'shared pool\'
 		and p.name = \'shared_pool_size\'',
