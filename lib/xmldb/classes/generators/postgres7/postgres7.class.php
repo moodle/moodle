@@ -39,6 +39,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
 
     var $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'BIGSERIAL'; //Particular name for inline sequences in this generator
+    var $sequence_name_small = 'SERIAL'; //Particular name for inline sequences in this generator
     var $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
     var $rename_table_extra_code = true; //Does the generator need to add code after table rename

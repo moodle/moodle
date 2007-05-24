@@ -76,6 +76,7 @@ class XMLDBgenerator {
 
     var $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
     var $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
+    var $sequence_name_small = false; //Different name for small (4byte) sequences or false if same
     var $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name variable
 
     var $enum_inline_code = true; //Does the generator need to add inline code in the column definition
@@ -384,11 +385,16 @@ class XMLDBgenerator {
         }
     /// The sequence
         if ($xmldb_field->getSequence()) {
-            $field .= ' ' . $this->sequence_name;
+            if($xmldb_field->getLength()<=9 && $this->sequence_name_small) {
+                $sequencename=$this->sequence_name_small;
+            } else {
+                $sequencename=$this->sequence_name;
+            }
+            $field .= ' ' . $sequencename;
             if ($this->sequence_only) {
             /// We only want the field name and sequence name to be printed
             /// so, calculate it and return
-                return $this->getEncQuoted($xmldb_field->getName()) . ' ' . $this->sequence_name;
+                return $this->getEncQuoted($xmldb_field->getName()) . ' ' . $sequencename;
             }
         }
         return $field;
