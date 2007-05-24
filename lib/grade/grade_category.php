@@ -653,7 +653,8 @@ class grade_category extends grade_object {
                 return null;
             }
         }
-        return get_class($this->children[0]);
+        reset($this->children);
+        return get_class(current($this->children));
     }
 
     /**

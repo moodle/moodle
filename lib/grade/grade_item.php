@@ -555,7 +555,8 @@ class grade_item extends grade_object {
             $final_grade->itemid = $this->id;
             $final_grade->userid = $raw_grade->userid;
             if ($final_grade->gradevalue > $this->grademax) {
-                die("FINAL GRADE EXCEEDED grademax FIRST");
+                debugging("FINAL GRADE EXCEEDED grademax FIRST");
+                return false;
             }
             $success = $success & $final_grade->insert();
             $this->grade_grades_final[$final_grade->userid] = $final_grade;
@@ -577,6 +578,9 @@ class grade_item extends grade_object {
             
         if (empty($grade_calculation)) { // There is no calculation in DB
             return false;
+        } elseif (empty($this->calculation) || !is_object($this->calculation)) { // The calculation isn't yet loaded
+            $this->calculation = $grade_calculation;
+            return $grade_calculation;
         } elseif ($grade_calculation->calculation != $this->calculation->calculation) { // The object's calculation is not in sync with the DB (new value??)
             $this->calculation = $grade_calculation;
             return $grade_calculation;

@@ -162,12 +162,12 @@ class grade_tree {
      * @return string Type
      */
     function get_element_type($element) {
-        if (!empty($element->element['object'])) {
+        if (is_object($element)) {
+            $object = $element;
+        } elseif (!empty($element->element['object'])) {
             $object = $element->element['object']; 
         } elseif (!empty($element['object'])) {
             $object = $element['object'];
-        } elseif (is_object($element)) {
-            $object = $element;
         } else {
             debugging("Invalid element given to grade_tree::get_element_type.");
             return false;
