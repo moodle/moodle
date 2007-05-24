@@ -424,6 +424,10 @@
     require_once($CFG->dirroot.'/admin/mnet/adminlib.php');
     upgrade_RPC_functions("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
 
+/// Upgrade all plugins for gradebook
+    upgrade_plugins('gradeexport', 'grade/export', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('gradeimport', 'grade/import', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('gradereport', 'grade/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();

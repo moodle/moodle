@@ -22,7 +22,7 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-include_once('../../../config.php');
+
 include_once($CFG->dirroot.'/lib/gradelib.php');
 include_once($CFG->dirroot.'/grade/lib.php');
 /**
@@ -30,10 +30,15 @@ include_once($CFG->dirroot.'/grade/lib.php');
  * @input int id - course id
  */
 function print_gradeitem_selections($id, $params = NULL) {
-    
+    global $CFG;
     // print all items for selections
     // make this a standard function in lib maybe
-    if ($grade_items = grade_get_items($id)) {
+    //if ($grade_items = grade_get_items($id)) {
+        include_once('grade_export_form.php');
+        $mform = new grade_export_form(qualified_me(), array('id'=>$id));
+        $mform->display();
+    /*    
+        
         echo '<form action="index.php" method="post">';
         echo '<div>';
         foreach ($grade_items as $grade_item) {
@@ -52,7 +57,8 @@ function print_gradeitem_selections($id, $params = NULL) {
         echo '<input type="submit" value="'.get_string('submit').'" />';
         echo '</div>';
         echo '</form>';
-    }
+    */
+    //}
 }
 /**
  * Base export class
@@ -155,16 +161,19 @@ class grade_export {
                         $maxgrade = "$strmax: $gradeitem->grademax";
                     } else {
                         $maxgrade = "";
-                    } 
+                    }                    
                     
                     if (!empty($this->students)) {                    
                         foreach ($this->students as $student) {
-                      
+                            unset($studentgrade);
                             // add support for comment here MDL-9634
-                            $studentgrade = $itemgrades[$student->id];            
+                            
+                            if (!empty($itemgrades[$student->id])) {
+                                $studentgrade = $itemgrades[$student->id];
+                            }
                             
                             if (!empty($studentgrade->gradevalue)) {
-                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->gradevalue;
+                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->gradevalue;                                    
                             } else {
                                 $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = "";
                                 $this->gradeshtml[$student->id][$gradeitem->id] = "";
@@ -175,13 +184,14 @@ class grade_export {
                                 $this->totals[$student->id] = (float)($this->totals[$student->id]) + 0;
                             }
                             
-                            // load comments here
-                            $studentgrade->load_text();
-                            // get the actual comment
-                            $comment = $studentgrade->grade_grades_text->feedback;
-                            
-                            if (!empty($comment)) {
-                                $this->comments[$student->id][$gradeitem->id] = $comment;
+                            if (!empty($comment)) {                            
+                                // load comments here
+                                if ($studentgrade) {
+                                    $studentgrade->load_text();
+                                    // get the actual comment
+                                    $comment = $studentgrade->grade_grades_text->feedback;
+                                    $this->comments[$student->id][$gradeitem->id] = $comment;
+                                }
                             } else {
                                 $this->comments[$student->id][$gradeitem->id] = '';  
                             }

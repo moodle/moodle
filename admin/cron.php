@@ -386,6 +386,46 @@
             }
         }
     }
+    
+    // run gradebook import/export/report cron
+    if ($gradeimports = get_list_of_plugins('grade/import')) {
+        foreach ($gradeimports as $gradeimport) {           
+            if (file_exists($CFG->dirroot.'/grade/import/lib.php')) {
+                require_once($CFG->dirroot.'/grade/import/lib.php');
+                $cron_function = 'gradeimport_'.$gradeimport.'_cron';                                    
+                if (function_exists($cron_function)) {
+                    mtrace("Processing gradebook import function $cron_function ...", '');
+                    $cron_function;  
+                }
+            }
+        }      
+    }
+
+    if ($gradeexports = get_list_of_plugins('grade/export')) {
+        foreach ($gradeexports as $gradeexport) {           
+            if (file_exists($CFG->dirroot.'/grade/export/lib.php')) {
+                require_once($CFG->dirroot.'/grade/export/lib.php');
+                $cron_function = 'gradeexport_'.$gradeexport.'_cron';                                    
+                if (function_exists($cron_function)) {
+                    mtrace("Processing gradebook export function $cron_function ...", '');
+                    $cron_function;  
+                }
+            }
+        }
+    }
+    
+    if ($gradereports = get_list_of_plugins('grade/report')) {
+        foreach ($gradereports as $gradereport) {           
+            if (file_exists($CFG->dirroot.'/grade/report/lib.php')) {
+                require_once($CFG->dirroot.'/grade/report/lib.php');
+                $cron_function = 'gradereport_'.$gradereport.'_cron';                                    
+                if (function_exists($cron_function)) {
+                    mtrace("Processing gradebook report function $cron_function ...", '');
+                    $cron_function;  
+                }
+            }
+        }
+    }
 
     //Unset session variables and destroy it
     @session_unset();

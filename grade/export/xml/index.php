@@ -39,7 +39,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
         
     // print the grades on screen for feedbacks
     $course = get_record('course', 'id', $id);
-    $action = 'exporttxt';
+    $action = 'exportxml';
     print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
     
     $export = new grade_export($id, $data->itemids);
@@ -47,7 +47,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     
     // this redirect should trigger a download prompt
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
-    exit; 
+    exit;
 }
 $course = get_record('course', 'id', $id);
 $action = 'exportxml';

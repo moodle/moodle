@@ -39,6 +39,15 @@ function events_load_def($component) {
             // are stored in 'course/format'.
             $defpath = $CFG->dirroot.'/course/format/'.$compparts[1].'/db/events.php';
 
+        } else if ($compparts[0] == 'gradeimport') {
+            $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/events.php';  
+        
+        } else if ($compparts[0] == 'gradeexport') {
+            $defpath = $CFG->dirroot.'/grade/export/'.$compparts[1].'/db/events.php'; 
+        
+        } else if ($compparts[0] == 'gradereport') {
+            $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/events.php'; 
+        
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/events.php';
         }
