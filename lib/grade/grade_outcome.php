@@ -120,5 +120,14 @@ class grade_outcome extends grade_object {
             return false;
         }
     }
+
+    /**
+     * Returns the most descriptive field for this object. This is a standard method used 
+     * when we do not know the exact type of an object.
+     * @return string name
+     */
+    function get_name() {
+        return $this->shortname;
+    } 
 }
 ?>

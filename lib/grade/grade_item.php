@@ -459,6 +459,8 @@ class grade_item extends grade_object {
      * @return int ID of the new grade_item record.
      */
     function insert() {
+        global $CFG;
+
         // Retrieve scale and infer grademax from it
         if (!empty($this->scaleid)) {
             $this->load_scale();
@@ -467,7 +469,16 @@ class grade_item extends grade_object {
             $this->grademin = 0;
             $this->gradetype = GRADE_TYPE_SCALE;
         }
-        
+       
+        // If sortorder not given, extrapolate one
+        if (empty($this->sortorder)) {
+            $query = 'SELECT ' . sql_max('sortorder') . " FROM {$CFG->prefix}grade_items";
+            $last_sortorder = execute_sql($query, false);
+            if (!empty($last_sortorder)) {
+                $this->sortorder = $last_sortorder + 1;
+            }
+        }
+
         $result = parent::insert();
 
         // Notify parent category of need to update. Note that a grade_item may not have a categoryid.
@@ -894,5 +905,13 @@ class grade_item extends grade_object {
         return $this->sortorder;
     }
 
+    /**
+     * Returns the most descriptive field for this object. This is a standard method used 
+     * when we do not know the exact type of an object.
+     * @return string name
+     */
+    function get_name() {
+        return $this->itemname;
+    } 
 }
 ?>

@@ -1634,6 +1634,22 @@ function sql_ilike() {
 
 
 /**
+ * Returns the proper SQL to do MAX
+ *
+ * @uses $CFG
+ * @param string $field
+ * @return string
+ */
+function sql_max($field) {
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        default:
+             return "MAX($field)";
+    }
+}
+
+/**
  * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
  *
  * @uses $CFG
