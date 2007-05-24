@@ -2461,9 +2461,10 @@
                         $eve->visible = backup_todb($info['EVENT']['#']['VISIBLE']['0']['#']);
                         $eve->timemodified = backup_todb($info['EVENT']['#']['TIMEMODIFIED']['0']['#']);
 
-                        //Now search if that event exists (by description and timestart field) in
-                        //restore->course_id course 
-                        $eve_db = get_record("event","courseid",$eve->courseid,"description",$eve->description,"timestart",$eve->timestart);
+                        //Now search if that event exists (by name, description, timestart fields) in
+                        //restore->course_id course
+                        $eve_db = get_record_select("event",
+                            "courseid={$eve->courseid} AND name='{$eve->name}' AND description='{$eve->description}' AND timestart=$eve->timestart");
                         //If it doesn't exist, create
                         if (!$eve_db) {
                             $create_event = true;
