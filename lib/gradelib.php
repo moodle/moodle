@@ -232,7 +232,7 @@ function grades_grab_grades() {
 
                                 $eventdata->itemname = $modinstance->name;
 
-                                $eventdata->maxgrade = $maxgrade;
+                                $eventdata->grademax = $maxgrade;
                                 $eventdata->scaleid = $scaleid;
 
                                 events_trigger('grade_added', $eventdata);
