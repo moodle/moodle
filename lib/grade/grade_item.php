@@ -472,10 +472,11 @@ class grade_item extends grade_object {
        
         // If sortorder not given, extrapolate one
         if (empty($this->sortorder)) {
-            $query = 'SELECT ' . sql_max('sortorder') . " FROM {$CFG->prefix}grade_items";
-            $last_sortorder = execute_sql($query, false);
+            $last_sortorder = get_field_select('grade_items', 'MAX(sortorder)', '');
             if (!empty($last_sortorder)) {
                 $this->sortorder = $last_sortorder + 1;
+            } else {
+                $this->sortorder = 1;
             }
         }
 

@@ -118,14 +118,13 @@ class grade_tree {
         }
         
         $level1count = 0;
-        
-        foreach ($this->tree_array as $levelkey1 => $level1) {
+        foreach ($this->tree_array as $level1key => $level1) {
             $level1count++;
             $level2count = 0;
             $retval = new stdClass();
-            $retval->index = $levelkey1;
+            $retval->index = $level1key;
 
-            if ($levelkey1 == $sortorder) {
+            if ($level1key == $sortorder) {
                 $retval->element = $level1;
                 $retval->position = $level1count;
                 return $retval;
@@ -136,7 +135,7 @@ class grade_tree {
                     $level2count++;
                     $level3count = 0;
 
-                    $retval->index = "$levelkey1/$level2key";
+                    $retval->index = "$level1key/$level2key";
                     if ($level2key == $sortorder) {
                         $retval->element = $level2;
                         $retval->position = $level2count;
@@ -146,7 +145,7 @@ class grade_tree {
                     if (!empty($level2['children'])) {
                         foreach ($level2['children'] as $level3key => $level3) {
                             $level3count++;
-                            $retval->index = "$levelkey1/$level2key/$level3key";
+                            $retval->index = "$level1key/$level2key/$level3key";
                             
                             if ($level3key == $sortorder) {
                                 $retval->element = $level3;
@@ -169,13 +168,9 @@ class grade_tree {
      * @return string Type
      */
     function get_element_type($element) {
-        if (is_object($element)) {
-            $object = $element;
-        } elseif (!empty($element->element['object'])) {
-            $object = $element->element['object']; 
-        } elseif (!empty($element['object'])) {
-            $object = $element['object'];
-        } else {
+        $object = $this->get_object_from_element($element);
+        
+        if (empty($object)) {
             debugging("Invalid element given to grade_tree::get_element_type.");
             return false;
         }
@@ -401,52 +396,26 @@ class grade_tree {
             $sortorder++; 
             $subcatsortorder = 0;
 
-            $debug[] = array('sortorder' => $sortorder, 
-                             'need_update' => $this->need_update,
-                             'line' => __LINE__);
-
             if (!empty($topcat['children'])) {
                 $topcatsortorder = $sortorder;
-                $debug[] = array('sortorder' => $sortorder, 
-                                 'topcatsortorder' => $topcatsortorder, 
-                                 'need_update' => $this->need_update,
-                                 'line' => __LINE__);
 
                 foreach ($topcat['children'] as $subcat) {
                     $sortorder++; 
-                    $debug[] = array('sortorder' => $sortorder, 
-                                     'topcatsortorder' => $topcatsortorder, 
-                                     'need_update' => $this->need_update,
-                                     'line' => __LINE__);
                     
                     if (!empty($subcat['children'])) {
                         $subcatsortorder = $sortorder;
                         
-                        $debug[] = array('sortorder' => $sortorder, 
-                                         'topcatsortorder' => $topcatsortorder, 
-                                         'subcatsortorder' => $subcatsortorder, 
-                                         'need_update' => $this->need_update,
-                                         'line' => __LINE__);
-
                         foreach ($subcat['children'] as $item) {
                             $sortorder++;
                             
-                            $debug[] = array('sortorder' => $sortorder, 
-                                             'topcatsortorder' => $topcatsortorder, 
-                                             'subcatsortorder' => $subcatsortorder, 
-                                             'need_update' => $this->need_update,
-                                             'line' => __LINE__);
-
                             $newtree[$topcatsortorder]['children'][$subcatsortorder]['children'][$sortorder] = $item;
                            
                             if ($sortorder != $item['object']->sortorder) {
-                                $this->need_update[$item['object']->id] = array('old_sortorder' => $item['object']->sortorder, 'new_sortorder' => $sortorder);
-                                $debug[] = array('sortorder' => $sortorder, 
-                                                 'topcatsortorder' => $topcatsortorder, 
-                                                 'subcatsortorder' => $subcatsortorder, 
-                                                 'need_update' => $this->need_update,
-                                                 'line' => __LINE__);
-                            
+                                $this->need_update[$item['object']->id] = 
+                                    array('old_sortorder' => $item['object']->sortorder, 
+                                          'new_sortorder' => $sortorder, 
+                                          'previous_sortorder' => $this->get_neighbour_sortorder($item, 'previous'),
+                                          'next_sortorder' => $this->get_neighbour_sortorder($item, 'next'));
                             }
                         }
                         $newtree[$topcatsortorder]['children'][$subcatsortorder]['object'] = $subcat['object'];
@@ -457,13 +426,11 @@ class grade_tree {
                     } 
 
                     if ($newsortorder != $subcat['object']->sortorder) {
-                        $this->need_update[$subcat['object']->id] = array('old_sortorder' => $subcat['object']->sortorder, 'new_sortorder' => $newsortorder);
-                        $debug[] = array('sortorder' => $sortorder, 
-                                         'topcatsortorder' => $topcatsortorder, 
-                                         'subcatsortorder' => $subcatsortorder, 
-                                         'need_update' => $this->need_update,
-                                         'line' => __LINE__);
-                            
+                        $this->need_update[$subcat['object']->id] = 
+                            array('old_sortorder' => $subcat['object']->sortorder, 
+                                  'new_sortorder' => $newsortorder, 
+                                  'previous_sortorder' => $this->get_neighbour_sortorder($subcat, 'previous'),
+                                  'next_sortorder' => $this->get_neighbour_sortorder($subcat, 'next'));
                     }
                 }
                 $newtree[$topcatsortorder]['object'] = $topcat['object'];
@@ -474,13 +441,11 @@ class grade_tree {
             } 
             
             if ($newsortorder != $topcat['object']->sortorder) {
-                $this->need_update[$topcat['object']->id] = array('old_sortorder' => $topcat['object']->sortorder, 'new_sortorder' => $newsortorder);
-                $debug[] = array('sortorder' => $sortorder, 
-                                 'topcatsortorder' => $topcatsortorder, 
-                                 'subcatsortorder' => $subcatsortorder, 
-                                 'need_update' => $this->need_update,
-                                 'line' => __LINE__);
-                            
+                $this->need_update[$topcat['object']->id] = 
+                    array('old_sortorder' => $topcat['object']->sortorder, 
+                          'new_sortorder' => $newsortorder, 
+                          'previous_sortorder' => $this->get_neighbour_sortorder($topcat, 'previous'),
+                          'next_sortorder' => $this->get_neighbour_sortorder($topcat, 'next'));
             }
         }
         
@@ -489,7 +454,81 @@ class grade_tree {
         $this->build_tree_filled();
         return $debug;
     }
-    
+  
+    /**
+     * Because the $element referred to in this class is rather loosely defined, it 
+     * may come in different flavours and forms. However, it will almost always contain
+     * an object (or be an object). This method takes care of type checking and returns
+     * the object within the $element, if present.
+     * @param mixed $element
+     * @return object
+     */
+    function get_object_from_element($element) {
+        if (is_object($element) && get_class($element) != 'stdClass') {
+            return $element;
+        } elseif (!empty($element->element['object'])) {
+            return $element->element['object']; 
+        } elseif (!empty($element['object'])) {
+            return $element['object'];
+        } elseif (!method_exists($object, 'get_sortorder')) {
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+
+    /** 
+     * Given an element array ('object' => object, 'children' => array), 
+     * searches for the element at the same level placed immediately before this one
+     * in sortorder, and returns its sortorder if found. Recursive function.
+     * @param array $element
+     * @param string $position 'previous' or 'next'
+     * @param array $array of elements to search. Defaults to $this->tree_array
+     * @return int Sortorder (or null if none found)
+     */
+    function get_neighbour_sortorder($element, $position, $array=null) {
+        if (empty($this->tree_array) || empty($element) || empty($position) || !in_array($position, array('previous', 'next'))) {
+            return null;
+        }
+        
+        $object = $this->get_object_from_element($element);
+        
+        if (empty($object)) {
+            debugging("Invalid element given to grade_tree::get_neighbour_sortorder.");
+            return false;
+        }
+        
+        if (empty($array)) {
+            $array = $this->tree_array;
+        }
+
+        $lastsortorder = null;
+        $returnnextelement = false;
+
+        foreach ($array as $sortorder => $child) {
+            if ($returnnextelement) {
+                return $sortorder;
+            }
+
+            if ($object->get_sortorder() == $sortorder) {
+                if ($position == 'previous') {
+                    return $lastsortorder;
+                } elseif ($position == 'next') {
+                    $returnnextelement = true;
+                }
+                continue;
+            }
+
+            if (!empty($child['children'])) {
+                return $this->get_neighbour_sortorder($element, $position, $child['children']);
+            }
+
+            $lastsortorder = $sortorder;
+        }
+        return null;
+    }
+
     /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
      * a given course, or for the entire site if no courseid is given.
@@ -945,6 +984,9 @@ class grade_tree {
             }
 
             foreach ($elements as $sortorder => $element) {
+                if (empty($element->next_sortorder)) {
+                    $element->next_sortorder = null;
+                }
                 $list .= '<li class="level' . $level . 'element sortorder' 
                       . $element['object']->get_sortorder() . '">' 
                       . $element['object']->get_name();

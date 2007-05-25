@@ -79,6 +79,7 @@ class grade_item_test extends gradelib_test {
         $last_grade_item = end($this->grade_items);
 
         $this->assertEqual($grade_item->id, $last_grade_item->id + 1);
+        $this->assertEqual(11, $grade_item->sortorder);
     }
 
     function test_grade_item_delete() {
