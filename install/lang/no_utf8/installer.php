@@ -62,6 +62,7 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
 $string['help'] = 'Hjelp';
+$string['iconvrecommended'] = 'Å installere de valgfrie ICONV biblioteket er sterkt anbefalt for å forbedre nettstedsytelsen, særlig hvis nettstedet ditt støtter ikke-latinske språk.';
 $string['info'] = 'Informasjon';
 $string['installation'] = 'Installation';
 $string['invalidmd5'] = 'Ugyldig md5';
@@ -92,6 +93,8 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
 </ol>';
 $string['missingrequiredfield'] = 'Noen påkrevde felt mangler';
 $string['moodledocslink'] = 'Moodledokumentasjon for denne siden';
+$string['mysql416bypassed'] = 'Uansett, hvis din site bruker BARE ISO-8859-1 (latin) språk, kan du fortsette å bruke din nåværenede installerte MySQL 4.1.12 (eller høyere)';
+$string['mysql416required'] = 'MySQL 4.1.16 er minstekravet for Moodle 1.6 for å garantere at alle data kan konverteres til UTF-8 i framtiden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['name'] = 'Navn';
 $string['next'] = 'Neste';
@@ -99,6 +102,7 @@ $string['ok'] = 'OK';
 $string['parentlanguage'] = 'Overordnet reservespråk';
 $string['pass'] = 'Pass';
 $string['password'] = 'Passord';
+$string['php50restricted'] = 'PHP 5.0.x har et nummer med kjente problem, vær vennlig å oppgrader til 5.1.x eller nedgrader til 4.3.x eller 4.4.x';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP version must be at least 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.</p>
@@ -116,6 +120,8 @@ $string['sessionautostarterror'] = 'This should be off';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Norsk - bokmål';
+$string['unicoderecommended'] = 'Å lagre alle data i Unicode (UTF-8) er anbefalt. Nye installasjoner skal være gjort om til databaser som har Unicode som innstillinger. Hvis du oppgraderer bør du gjennomføre UTF-8 migrasjonsprosessen (se Admin-sida)';
+$string['unicoderequired'] = 'Det er nødvendi at du lagrer alle dine data i Unicode formatet (UTF-8). Nye installasjoner skal være gjort om til databaser som har Unicode som innstillinger. Hvis du oppgraderer bør du gjennomføre UTF-8 migrasjonsprosessen (se Admin-sida)';
 $string['user'] = 'Bruker';
 $string['wrongdestpath'] = 'Gal resultatmappe';
 $string['wrongsourcebase'] = 'Galt ZIP-filnavn.';
