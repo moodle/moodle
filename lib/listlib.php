@@ -210,7 +210,7 @@ class moodle_list{
      * @return integer $offset + how many toplevel items where there in this list.
      * 
      */
-    function list_from_records($paged = false, $offset =0){
+    function list_from_records($paged = false, $offset =1){
         $this->paged = $paged;
         $this->offset = $offset;
         $this->get_records();

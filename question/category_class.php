@@ -138,7 +138,7 @@ class question_category_object {
         $this->str->page           = get_string('page');
         $this->pixpath = $CFG->pixpath;
 
-        $this->editlist = new question_category_list('ul', '', true, $page, $pageurl, 'cpage');
+        $this->editlist = new question_category_list('ul', '', true, $pageurl, $page, 'cpage', QUESTION_PAGE_LENGTH);
 
         $this->pageurl = $pageurl;
         
@@ -177,7 +177,7 @@ class question_category_object {
             error("Error: Could not find or make a category!");
         }
 
-        $this->editlist->list_from_records(QUESTION_PAGE_LENGTH);
+        $this->editlist->list_from_records();
 
         $this->categories = $this->editlist->records;
 
