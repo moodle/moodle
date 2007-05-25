@@ -1140,7 +1140,13 @@ HTMLArea.prototype.updateToolbar = function(noStatus) {
     if (!text) {
         ancestors = this.getAllAncestors();
         if (this.config.statusBar && !noStatus) {
-            this._statusBarTree.innerHTML = HTMLArea.I18N.msg["Path"] + ": "; // clear
+
+            while(this._statusBarTree.childNodes.length>0) {
+                this._statusBarTree.removeChild(this._statusBarTree.childNodes[0]);
+            }
+
+            this._statusBarTree.appendChild(document.createTextNode(HTMLArea.I18N.msg["Path"] + ": "));
+
             for (var i = ancestors.length; --i >= 0;) {
                 var el = ancestors[i];
                 if (!el) {
