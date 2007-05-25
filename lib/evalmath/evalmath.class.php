@@ -99,6 +99,9 @@ class EvalMath {
         'cos','cosh','arccos','acos','arccosh','acosh',
         'tan','tanh','arctan','atan','arctanh','atanh',
         'sqrt','abs','ln','log');
+
+    var $fc = array( // calc functions emulation
+        'sum'=>array(-1), 'pi'=>array(0), 'power'=>array(2), 'round'=>array(2,1), 'average'=>array(-1));
     
     function EvalMath() {
         // make the variables a little more accurate
@@ -198,7 +201,8 @@ class EvalMath {
             //===============
             } elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
                 if ($ex) { // are we expecting an operator but have a number/variable/function/opening parethesis?
-                    $op = '*'; $index--; // it's an implicit multiplication
+                    return $this->trigger("expecting operand");
+                    //$op = '*'; $index--; // it's an implicit multiplication
                 }
                 // heart of the algorithm:
                 while($stack->count > 0 and ($o2 = $stack->last()) and in_array($o2, $ops) and ($ops_r[$op] ? $ops_p[$op] < $ops_p[$o2] : $ops_p[$op] <= $ops_p[$o2])) {
@@ -217,10 +221,16 @@ class EvalMath {
                 if (preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) { // did we just close a function?
                     $fnn = $matches[1]; // get the function name
                     $arg_count = $stack->pop(); // see how many arguments there were (cleverly stored on the stack, thank you)
-                    $output[] = $stack->pop(); // pop the function and push onto the output
+                    $fn = $stack->pop();
+                    $output[] = array('fn'=>$fn, 'fnn'=>$fnn, 'argcount'=>$arg_count); // send function to output
                     if (in_array($fnn, $this->fb)) { // check the argument count
                         if($arg_count > 1)
                             return $this->trigger("too many arguments ($arg_count given, 1 expected)");
+                    } elseif (array_key_exists($fnn, $this->fc)) {
+                        $counts = $this->fc[$fnn];
+                        if (in_array(-1, $counts) and $arg_count > 0) {}
+                        elseif (!in_array($arg_count, $counts))
+                            return $this->trigger("wrong number of arguments ($arg_count given, " . implode('/',$this->fc[$fnn]) . " expected)");
                     } elseif (array_key_exists($fnn, $this->f)) {
                         if ($arg_count != count($this->f[$fnn]['args']))
                             return $this->trigger("wrong number of arguments ($arg_count given, " . count($this->f[$fnn]['args']) . " expected)");
@@ -252,7 +262,7 @@ class EvalMath {
                 $expecting_op = true;
                 $val = $match[1];
                 if (preg_match("/^([a-z]\w*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
-                    if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f)) { // it's a func
+                    if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f) or array_key_exists($matches[1], $this->fc)) { // it's a func
                         $stack->push($val);
                         $stack->push(1);
                         $stack->push('(');
@@ -266,9 +276,24 @@ class EvalMath {
                 }
                 $index += strlen($val);
             //===============
-            } elseif ($op == ')') { // miscellaneous error checking
-                return $this->trigger("unexpected ')'");
-            } elseif (in_array($op, $ops) and !$expecting_op) {
+            } elseif ($op == ')') {
+                //it could be only custom function with no params or general error
+                if ($stack->last() != '(' or $stack->last(2) != 1) return $this->trigger("unexpected ')'");
+                if (preg_match("/^([a-z]\w*)\($/", $stack->last(3), $matches)) { // did we just close a function?
+                    $stack->pop();// (
+                    $stack->pop();// 1
+                    $fn = $stack->pop();
+                    $fnn = $matches[1]; // get the function name
+                    $counts = $this->fc[$fnn];
+                    if (!in_array(0, $counts))
+                        return $this->trigger("wrong number of arguments ($arg_count given, " . implode('/',$this->fc[$fnn]) . " expected)");
+                    $output[] = array('fn'=>$fn, 'fnn'=>$fnn, 'argcount'=>0); // send function to output
+                    $index++;
+                } else {
+                    return $this->trigger("unexpected ')'");
+                }
+            //===============
+            } elseif (in_array($op, $ops) and !$expecting_op) { // miscellaneous error checking
                 return $this->trigger("unexpected operator '$op'");
             } else { // I don't even want to know what you did to get here
                 return $this->trigger("an unexpected error occured");
@@ -300,8 +325,37 @@ class EvalMath {
         $stack = new EvalMathStack;
         
         foreach ($tokens as $token) { // nice and easy
+
+            // if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on
+            if (is_array($token)) { // it's a function!
+                $fnn = $token['fnn'];
+                $count = $token['argcount'];
+                if (in_array($fnn, $this->fb)) { // built-in function:
+                    if (is_null($op1 = $stack->pop())) return $this->trigger("internal error");
+                    $fnn = preg_replace("/^arc/", "a", $fnn); // for the 'arc' trig synonyms
+                    if ($fnn == 'ln') $fnn = 'log';
+                    eval('$stack->push(' . $fnn . '($op1));'); // perfectly safe eval()
+                } elseif (array_key_exists($fnn, $this->fc)) { // calc emulation function
+                    // get args
+                    $args = array();
+                    for ($i = $count-1; $i >= 0; $i--) {
+                        if (is_null($args[] = $stack->pop())) return $this->trigger("internal error");
+                    }
+                    $res = call_user_func(array('EvalMathCalcEmul', $fnn), $args);
+                    if ($res == FALSE) {
+                        return $this->trigger("internal error");
+                    }
+                    $stack->push($res);
+                } elseif (array_key_exists($fnn, $this->f)) { // user function
+                    // get args
+                    $args = array();
+                    for ($i = count($this->f[$fnn]['args'])-1; $i >= 0; $i--) {
+                        if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop())) return $this->trigger("internal error");
+                    }
+                    $stack->push($this->pfx($this->f[$fnn]['func'], $args)); // yay... recursion!!!!
+                }
             // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
-            if (in_array($token, array('+', '-', '*', '/', '^'))) {
+            } elseif (in_array($token, array('+', '-', '*', '/', '^'), true)) {
                 if (is_null($op2 = $stack->pop())) return $this->trigger("internal error");
                 if (is_null($op1 = $stack->pop())) return $this->trigger("internal error");
                 switch ($token) {
@@ -320,22 +374,6 @@ class EvalMath {
             // if the token is a unary operator, pop one value off the stack, do the operation, and push it back on
             } elseif ($token == "_") {
                 $stack->push(-1*$stack->pop());
-            // if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on
-            } elseif (preg_match("/^([a-z]\w*)\($/", $token, $matches)) { // it's a function!
-                $fnn = $matches[1];
-                if (in_array($fnn, $this->fb)) { // built-in function:
-                    if (is_null($op1 = $stack->pop())) return $this->trigger("internal error");
-                    $fnn = preg_replace("/^arc/", "a", $fnn); // for the 'arc' trig synonyms
-                    if ($fnn == 'ln') $fnn = 'log';
-                    eval('$stack->push(' . $fnn . '($op1));'); // perfectly safe eval()
-                } elseif (array_key_exists($fnn, $this->f)) { // user function
-                    // get args
-                    $args = array();
-                    for ($i = count($this->f[$fnn]['args'])-1; $i >= 0; $i--) {
-                        if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop())) return $this->trigger("internal error");
-                    }
-                    $stack->push($this->pfx($this->f[$fnn]['func'], $args)); // yay... recursion!!!!
-                }
             // if the token is a number or variable, push it on the stack
             } else {
                 if (is_numeric($token)) {
@@ -386,3 +424,34 @@ class EvalMathStack {
     }
 }
 
+// spreadsheed functions emulation
+// watch out for reversed args!!
+class EvalMathCalcEmul {
+    function average($args) {
+        return (EvalMathCalcEmul::sum($args)/count($args));
+    }
+
+    function pi($args) {
+        return pi();
+    }
+
+    function power($args) {
+        return $args[0]^$args[0];
+    }
+
+    function round($args) {
+        if (count($args)==1) {
+            return round($args[0]);
+        } else {
+            return round($args[1], $args[0]);
+        }
+    }
+
+    function sum($args) {
+        $res = 0;
+        foreach($args as $a) {
+           $res += $a; 
+        }
+        return $res;
+    }
+}
