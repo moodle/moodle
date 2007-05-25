@@ -91,7 +91,7 @@ class EvalMath {
     var $suppress_errors = false;
     var $last_error = null;
     
-    var $v = array('e'=>2.71,'pi'=>3.14); // variables (and constants)
+    var $v = array(); // variables (and constants)
     var $f = array(); // user-defined functions
     var $vb = array('e', 'pi'); // constants
     var $fb = array(  // built-in functions
@@ -104,9 +104,6 @@ class EvalMath {
         'sum'=>array(-1), 'pi'=>array(0), 'power'=>array(2), 'round'=>array(2,1), 'average'=>array(-1));
     
     function EvalMath() {
-        // make the variables a little more accurate
-        $this->v['pi'] = pi();
-        $this->v['e'] = exp(1);
     }
     
     function e($expr) {
