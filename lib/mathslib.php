@@ -13,7 +13,7 @@ class calc_formula {
 
     // private properties
     var $_em;
-    var $_nfx = false;   // postfix expression
+    var $_nfx   = false;   // postfix notation
     var $_error = false; // last error
 
     /**
@@ -26,7 +26,7 @@ class calc_formula {
         $this->_em = new EvalMath();
         $this->_em->suppress_errors = true;
         if (strpos($formula, '=') !== 0) {
-            $this->_error = "missing '='";
+            $this->_error = "missing leading '='";
             return;
         }
         $formula = substr($formula, 1);
@@ -45,9 +45,10 @@ class calc_formula {
     }
 
     /**
-     * Raplace parameters used in calculation
+     * Raplace parameters used in existing formula,
+     * parameter names must contain only lowercase [a-z] letters, no other characters are allowed!
      *
-     * @param array $params associative array of parameters used in formula. All parameter names must be lowercase!
+     * @param array $params associative array of parameters used in formula
      */
     function set_params($params) {
         $this->_em->v = $params;
@@ -70,13 +71,11 @@ class calc_formula {
             $this->_error = false;
             return $res;
         }
-
     }
 
     /**
      * Get last error.
-     *
-     * TODO: localize the strings
+     * TODO: localize the strings from contructor and EvalMath library
      *
      * @return mixed string with last error description or false if ok
      */
