@@ -86,6 +86,12 @@ LICENSE
 
 */
 
+/**
+ * This class was heavily modified in order to get usefull spreadsheet emulation ;-)
+ * skodak
+ * 
+ */
+
 class EvalMath {
 
     var $suppress_errors = false;
@@ -93,15 +99,17 @@ class EvalMath {
     
     var $v = array(); // variables (and constants)
     var $f = array(); // user-defined functions
-    var $vb = array('e', 'pi'); // constants
+    var $vb = array(); // constants
     var $fb = array(  // built-in functions
         'sin','sinh','arcsin','asin','arcsinh','asinh',
         'cos','cosh','arccos','acos','arccosh','acosh',
         'tan','tanh','arctan','atan','arctanh','atanh',
-        'sqrt','abs','ln','log');
+        'sqrt','abs','ln','log','exp');
 
     var $fc = array( // calc functions emulation
-        'sum'=>array(-1), 'pi'=>array(0), 'power'=>array(2), 'round'=>array(2,1), 'average'=>array(-1));
+        'average'=>array(-1), 'max'=>array(-1),  'min'=>array(-1),
+        'mod'=>array(2),      'pi'=>array(0),    'power'=>array(2),
+        'round'=>array(1, 2), 'sum'=>array(-1));
     
     function EvalMath() {
     }
@@ -151,10 +159,7 @@ class EvalMath {
     }
     
     function vars() {
-        $output = $this->v;
-        unset($output['pi']);
-        unset($output['e']);
-        return $output;
+        return $this->v;
     }
     
     function funcs() {
@@ -424,8 +429,33 @@ class EvalMathStack {
 // spreadsheed functions emulation
 // watch out for reversed args!!
 class EvalMathCalcEmul {
+
     function average($args) {
         return (EvalMathCalcEmul::sum($args)/count($args));
+    }
+
+    function max($args) {
+        $res = array_pop($args);
+        foreach($args as $a) {
+            if ($res < $a) {
+                $res = $a;
+            }
+        }
+        return $res;
+    }
+
+    function min($args) {
+        $res = array_pop($args);
+        foreach($args as $a) {
+            if ($res > $a) {
+                $res = $a;
+            }
+        }
+        return $res;
+    }
+
+    function mod($args) {
+        return $args[1] % $args[0];
     }
 
     function pi($args) {
@@ -433,7 +463,7 @@ class EvalMathCalcEmul {
     }
 
     function power($args) {
-        return $args[0]^$args[0];
+        return $args[1]^$args[0];
     }
 
     function round($args) {
@@ -447,7 +477,7 @@ class EvalMathCalcEmul {
     function sum($args) {
         $res = 0;
         foreach($args as $a) {
-           $res += $a; 
+           $res += $a;
         }
         return $res;
     }
