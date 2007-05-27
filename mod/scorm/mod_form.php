@@ -31,7 +31,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
 // Other Settings
-        $mform->addElement('header', 'advanced', get_string('othersettings'));
+        $mform->addElement('header', 'advanced', get_string('othersettings','scorm'));
 
 // Grading
         $mform->addElement('static', 'grade', get_string('grades'));
