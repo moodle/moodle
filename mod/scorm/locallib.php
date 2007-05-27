@@ -594,10 +594,10 @@ function scorm_simple_play($scorm,$user) {
        if ($scorm->skipview >= 1) {
            $sco = current($scoes);
            if (scorm_get_tracks($sco->id,$user->id) === false) {
-               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
                $result = true;
            } else if ($scorm->skipview == 2) {
-               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
                $result = true;
            }
        }
@@ -626,23 +626,30 @@ function scorm_simple_play($scorm,$user) {
 */
 function scorm_parse($scorm) {
     global $CFG,$repositoryconfigfile;
-    
+
     if ($scorm->reference[0] == '#') {
-        $reference = $CFG->repository.substr($scorm->reference,1);
+        require_once($repositoryconfigfile);
+        if ($CFG->repositoryactivate) {
+            $referencedir = $CFG->repository.substr($scorm->reference,1);
+        }
     } else {
-        $reference = $scorm->dir.'/'.$scorm->id;
+        if ((!scorm_external_link($scorm->reference)) && (basename($scorm->reference) == 'imsmanifest.xml')) {
+            $referencedir = $CFG->dataroot.'/'.$scorm->course.'/'.$scorm->datadir;
+        } else {
+            $referencedir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id;
+        }
     }
+
     // Parse scorm manifest
     if ($scorm->pkgtype == 'AICC') {
         require_once('datamodels/aicclib.php');
-        $scorm->launch = scorm_parse_aicc($reference, $scorm->id);
+        $scorm->launch = scorm_parse_aicc($referencedir, $scorm->id);
     } else {
         require_once('datamodels/scormlib.php');
         if ($scorm->reference[0] == '#') {
             require_once($repositoryconfigfile);
         }
-
-        $scorm->launch = scorm_parse_scorm($reference,$scorm->id);
+        $scorm->launch = scorm_parse_scorm($referencedir,$scorm->id);
     }
     return $scorm->launch;
 }
@@ -923,7 +930,7 @@ function scorm_check_package($data) {
                                 }
                             }
                         } else {
-                            $validation = scorm_validate_manifest($CFG->dataroot.'/'.$COURSE->id.'/'.$reference);
+                            $validation = scorm_validate_manifest($reference);
                         }
                         $validation->pkgtype = 'SCORM';
                     } else {
