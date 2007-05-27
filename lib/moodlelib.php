@@ -448,7 +448,7 @@ function clean_param($param, $type) {
             return $param;
 
         case PARAM_LOCALURL:     // allow http absolute, root relative and relative URLs within wwwroot
-            clean_param($param, PARAM_URL);
+            $param = clean_param($param, PARAM_URL);
             if (!empty($param)) {
                 if (preg_match(':^/:', $param)) {
                     // root-relative, ok!
