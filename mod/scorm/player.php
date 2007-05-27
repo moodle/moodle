@@ -44,6 +44,7 @@
     $strscorms = get_string('modulenameplural', 'scorm');
     $strscorm  = get_string('modulename', 'scorm');
     $strpopup = get_string('popup','scorm');
+    $strexit = get_string('exitactivity','scorm');
 
     if ($course->id != SITEID) {
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
@@ -126,10 +127,11 @@
     
     $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navigation = build_navigation($crumbs);
+    $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
     
     print_header($pagetitle, $course->fullname,
                  $navigation,
-                 '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
+                 '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
     if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
