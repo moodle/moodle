@@ -68,5 +68,17 @@ class MoodleQuickForm_button extends HTML_QuickForm_button
     function getHelpButton(){
         return $this->_helpbutton;
     }
+    /**
+     * Slightly different container template when frozen.
+     *
+     * @return string
+     */
+    function getElementTemplateType(){
+        if ($this->_flagFrozen){
+            return 'nodisplay';
+        } else {
+            return 'default';
+        }
+    }
 } //end class MoodleQuickForm_button
 ?>

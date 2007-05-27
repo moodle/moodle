@@ -10,7 +10,6 @@ require_once("$CFG->libdir/form/textarea.php");
  */
 class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
     var $_type;
-    var $_elementTemplateType='default';
     var $_canUseHtmlEditor;
     var $_options=array('canUseHtmlEditor'=>'detect','rows'=>10, 'cols'=>45, 'width'=>0,'height'=>0, 'course'=>0);
     function MoodleQuickForm_htmleditor($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
@@ -59,9 +58,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
         }
         return parent::setHelpButton($helpbuttonargs, $function);
     }
-    function getElementTemplateType(){
-        return $this->_elementTemplateType;
-    }
+
     function toHtml(){
         if ($this->_canUseHtmlEditor && !$this->_flagFrozen){
             ob_start();

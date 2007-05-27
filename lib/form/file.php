@@ -58,6 +58,18 @@ class MoodleQuickForm_file extends HTML_QuickForm_file{
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     } // end func onQuickFormEvent
+    /**
+     * Slightly different container template when frozen.
+     *
+     * @return string
+     */
+    function getElementTemplateType(){
+        if ($this->_flagFrozen){
+            return 'static';
+        } else {
+            return 'default';
+        }
+    }
 
 }
 ?>

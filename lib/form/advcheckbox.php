@@ -88,6 +88,19 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
             $this->updateAttributes(array('id' => 'id_'.substr(md5(microtime() . $idx++), 0, 6)));
         }
     } // end func _generateId
-
+    /**
+     * Slightly different container template when frozen. Don't want to use a label tag
+     * with a for attribute in that case for the element label but instead use a div.
+     * Templates are defined in renderer constructor.
+     *
+     * @return string
+     */
+    function getElementTemplateType(){
+        if ($this->_flagFrozen){
+            return 'static';
+        } else {
+            return 'default';
+        }
+    }
 }
 ?>

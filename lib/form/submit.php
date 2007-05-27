@@ -41,5 +41,23 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
         return parent::onQuickFormEvent($event, $arg, $caller);
 
     } // end func onQuickFormEvent
+    /**
+     * Slightly different container template when frozen. Don't want to display a submit
+     * button if the form is frozen.
+     *
+     * @return string
+     */
+    function getElementTemplateType(){
+        if ($this->_flagFrozen){
+            return 'nodisplay';
+        } else {
+            return 'default';
+        }
+    }
+    
+    function freeze(){
+        $this->_flagFrozen = true;
+    }
+    
 }
 ?>

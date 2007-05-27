@@ -101,7 +101,7 @@ class moodleform {
      * @param mixed $attributes you can pass a string of html attributes here or an array.
      * @return moodleform
      */
-    function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null) {
+    function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
         if (empty($action)){
             $action = strip_querystring(qualified_me());
         }
@@ -109,6 +109,9 @@ class moodleform {
         $this->_formname = get_class($this); // '_form' suffix kept in order to prevent collisions of form id and other element
         $this->_customdata = $customdata;
         $this->_form =& new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
+        if (!$editable){
+            $this->_form->hardFreeze();
+        }
         $this->set_upload_manager(new upload_manager());
 
         $this->definition();
@@ -1335,8 +1338,19 @@ function validate_' . $this->_formName . '(frm) {
         }
         return true;
     } // end func hardFreeze
-
-    // }}}
+   /**
+    * Tells whether the form was already submitted
+    *
+    * This is useful since the _submitFiles and _submitValues arrays
+    * may be completely empty after the trackSubmit value is removed.
+    *
+    * @access public
+    * @return bool
+    */
+    function isSubmitted()
+    {
+        return parent::isSubmitted() && (!$this->isFrozen());
+    }
 }
 
 
@@ -1411,7 +1425,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
 
-        'static'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>');
+        'static'=>"\n\t\t".'<div class="fitem {advanced}"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement fstatic <!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}&nbsp;</div></div>',
+        
+        'nodisplay'=>'');
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
@@ -1431,7 +1447,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         $this->_advancedHTML = $form->getAdvancedHTML();
         $this->_showAdvanced = $form->getShowAdvanced();
         parent::startForm($form);
-        $this->_hiddenHtml .= $form->_pageparams;
+        if ($form->isFrozen()){
+            $this->_formTemplate = "\n<div class=\"mform frozen\">\n{content}\n</div>";
+        } else {
+            $this->_hiddenHtml .= $form->_pageparams;
+        }
+ 
+        
     }
 
     function startGroup(&$group, $required, $error){
@@ -1523,9 +1545,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     function finishForm(&$form){
+        if ($form->isFrozen()){
+            $this->_hiddenHtml = '';
+        }
         parent::finishForm($form);
-        // add a lockoptions script
-        if ('' != ($script = $form->getLockOptionEndScript())) {
+        if ((!$form->isFrozen()) && ('' != ($script = $form->getLockOptionEndScript()))) {
+            // add a lockoptions script
             $this->_html = $this->_html . "\n" . $script;
         }
     }

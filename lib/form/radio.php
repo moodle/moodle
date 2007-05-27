@@ -62,5 +62,17 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio{
             $this->updateAttributes(array('id' => 'id_'.substr(md5(microtime() . $idx++), 0, 6)));
         }
     } // end func _generateId
+    /**
+     * Slightly different container template when frozen.
+     *
+     * @return string
+     */
+    function getElementTemplateType(){
+        if ($this->_flagFrozen){
+            return 'static';
+        } else {
+            return 'default';
+        }
+    }
 }
 ?>

@@ -464,38 +464,38 @@ div.hide {
  *** Forms
  ***/
 
-form.mform {
+.mform {
   margin: 0 auto;
   padding: 0;
   width: 80%;
 }
-form.mform fieldset {
+.mform fieldset {
   border: 1px solid #DDDDDD;
   padding: 10px 0;
   margin: 0.7em 0;
   width:100%;
 }
-form.mform fieldset.hidden, form.mform fieldset.felement {
+.mform fieldset.hidden, .mform fieldset.felement {
   border: 0;
 }
-form.mform fieldset.felement {
+.mform fieldset.felement {
   width: auto;
 }
-form.mform fieldset legend {
+.mform fieldset legend {
   font-weight: bold;
   margin-left: 0.5em;
 }
-form.mform fieldset .advancedbutton{
+.mform fieldset .advancedbutton{
    width:100%;
    text-align:right;
 }
-form.mform div.fitem {
+.mform div.fitem {
   clear: both;
   width: 100%;
   min-height: 1.5em;
 }
 
-form.mform .fitemtitle {
+.mform .fitemtitle {
   display: block;
   float: left;
   width: 30%;
@@ -504,7 +504,7 @@ form.mform .fitemtitle {
   text-align: right;
 }
 
-form.mform .fitemtitle div{
+.mform .fitemtitle div{
   display: inline;
 }
 
@@ -515,7 +515,7 @@ fieldset.fdate_selector label {
   width: auto;
 }
 
-form.mform div.felement,  form.mform fieldset.felement{
+.mform div.felement,  .mform fieldset.felement{
   display: block;
   float: left;
   margin: 5px 0 0 10px;
@@ -524,45 +524,45 @@ form.mform div.felement,  form.mform fieldset.felement{
   width: 60%;
 }
 
-form.mform div.fdescription {
+.mform div.fdescription {
   clear: both;
   min-height: 1.5em;
 }
 
-form.mform .fdescription.required {
+.mform .fdescription.required {
   text-align:right;
 }
 
-form.mform input, form.mform select {
+.mform input, .mform select {
   width: auto;
 }
-form.mform ftextarea {
+.mform ftextarea {
 }
-form.mform br {
+.mform br {
   clear: left;
 }
-form.mform div.fhtmleditor {
+.mform div.fhtmleditor {
   margin: 0 auto 10px auto;
   width : 600px;
   clear:both;
   float:none;
   padding: 25px 0 20px 0;
 }
-form.mform span.error, form.mform span.required {
+.mform span.error, .mform span.required {
   color: red;
 }
-form.mform div.error,form.mform fieldset.error {
+.mform div.error,.mform fieldset.error {
   border: 1px solid red;
   padding: 5px;
   color: inherit;
 }
-form.mform .fcheckbox input {
+.mform .fcheckbox input {
   margin-left: 0px;
 }
-form.mform .fpassword .unmask {
+.mform .fpassword .unmask {
   display:inline;
 }
-form.mform .fpassword .unmask input {
+.mform .fpassword .unmask input {
   margin-left:5px;
   margin-right:3px;
 }
@@ -576,7 +576,14 @@ form#adminsettings div.htmlarea {
   cursor: help;  
 }
 
-#admin-register form.mform .fsubmit {
+/* form frozen */
+div.mform div.fitem div.fstatic{
+	border-color : lightgrey;
+	border-style : dashed;
+	border-width : thin;
+}
+
+#admin-register .mform .fsubmit {
   padding:20px;
   text-align:center;
 }
