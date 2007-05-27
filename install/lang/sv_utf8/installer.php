@@ -35,6 +35,7 @@ $string['configfilewritten'] = 'config.php har skapats framgångsrikt';
 $string['configurationcompletehead'] = 'Konfigurationen är  genomförd';
 $string['configurationcompletesub'] = 'Moodle gjorde ett försök att spara Din konfiguration i en fil i roten (root) på Din installation av Moodle.';
 $string['continue'] = 'Nästa';
+$string['curlrecommended'] = 'Vi rekommenderar starkt att Du installerar det valfria Curl-biblioteket för att aktivera Moodles funktionalitet för nätverkande.';
 $string['database'] = 'Databas';
 $string['databasecreationsettingshead'] = 'Nu behöver Du konfigurera inställningarna för den databas där den största delen av Moodles data kommer att lagras. Den här databasen kommer att skapas automatiskt av installationsprogrammet med de inställningar som är angivna här nedan.';
 $string['databasecreationsettingssub'] = '<b>Type (typ):</b> fixerad till \"mysql\" av installationsprogrammet<br />
@@ -42,14 +43,50 @@ $string['databasecreationsettingssub'] = '<b>Type (typ):</b> fixerad till \"mysq
 <b>Name (namn):</b> namn på databasen, t ex moodle<br />
 <b>User (användare):</b> fixerad till \"root\" av installationsprogrammet<br />
 <b>Password (lösenord):</b> Lösenordet till Din databas<br />
-<b>Tables Prefix:</b> valfritt prefix att användas som inledning till alla namn på tabeller.';
+<b>Tables Prefix (prefix för tabeller):</b> valfritt prefix att användas som inledning till alla namn på tabeller.';
 $string['databasesettingshead'] = 'Nu behöver Du konfigurera inställningarna för den databas där den största delen av Moodles data kommer att lagras. Den här databasen måste redan finnas och det måste också finnas ett färdigt användarnamn och ett lösenord som Du kan använda för att få tillgång till den.';
 $string['databasesettingssub'] = '<b>Type (typ):</b> mysql or postgres7<br />
 <b>Host (värd):</b> t ex localhost eller db.isp.com<br />
 <b>Name (namn):</b> namn på databasen, t ex moodle<br />
 <b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
 <b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
-<b>Tables Prefix:</b> oett valfritt prefix som kopplas till alla namn på tabeller';
+<b>Tables Prefix (prefix för tabeller):</b> ett valfritt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_mssql'] = '<b>Type (typ):</b>SQL*Server (non UTF-8)<b><font color=\"red\">Experimentell! (verksamhetskritisk användning rekommenderas inte)</font></b> <br />
+<b>Host (värd):</b> t ex localhost eller db.isp.com<br />
+<b>Name (namn):</b> namn på databasen, t ex moodle<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett obligatoriskt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_mssql_n'] = '<b>Type (typ):</b>SQL*Server (med UTF-8 aktiverat) <br />
+<b>Host (värd):</b> t ex localhost eller db.isp.com<br />
+<b>Name (namn):</b> namn på databasen, t ex moodle<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett obligatoriskt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_mysql'] = '<b>Type (typ):</b>MySQL <br />
+<b>Host (värd):</b> t ex localhost eller db.isp.com<br />
+<b>Name (namn):</b> namn på databasen, t ex moodle<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett valfritt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_oci8po'] = '<b>Type (typ):</b>Oracle <br />
+<b>Host (värd):</b>används inte, måste vara tomt<br />
+<b>Name (namn):</b> det givna namnet på tnsnames.ora anslutningen<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett 0bligatoriskt (2cc. max) prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_odbc_mssql'] = '<b>Type (typ):</b>SQL*Server (via ODBC)<b><font color=\"red\">Experimentell! (verksamhetskritisk användning rekommenderas inte)</font></b> <br />
+<b>Host (värd):</b> det givna namnet på DSN i kontrollpanelen för ODBC<br />
+<b>Name (namn):</b> namn på databasen, t ex moodle<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett obligatoriskt prefix som kopplas till alla namn på tabeller';
+$string['databasesettingssub_postgres7'] = '<b>Type (typ):</b>PostgreSQL<br />
+<b>Host (värd):</b> t ex localhost eller db.isp.com<br />
+<b>Name (namn):</b> namn på databasen, t ex moodle<br />
+<b>User (användare):</b> Ditt användarnamn för tillgång till databasen<br />
+<b>Password (lösenord):</b> Ditt lösenord för tillgång till databasen<br />
+<b>Tables Prefix (prefix för tabeller):</b> ett obligatoriskt prefix som kopplas till alla namn på tabeller';
 $string['dataroot'] = 'katalog för data';
 $string['datarooterror'] = 'Den \"katalog för data\" som Du har angivit gick inte att hitta eller skapa. Du får antingen korrigera sökvägen eller skapa katalogen manuellt.';
 $string['dbconnectionerror'] = 'Det gick inte att ansluta till den databas som Du har angivit. Var snäll och kontrollera inställningarna till Din databas.';
@@ -58,6 +95,9 @@ $string['dbhost'] = 'Värdserver';
 $string['dbprefix'] = 'Prefix för tabeller';
 $string['dbtype'] = 'Typ';
 $string['dbwrongencoding'] = 'Den valda databasen körs under en kodning ($a)(för teckenuppsättningar) som inte rekommenderas. Det skulle vara bättre att använda en databas som är kodad i Unicode (UTF-8)Unicode (UTF-8)istället. Du kan ändå skippa det här testet genom att välja \'Skippa Test av DB-kodning\' här nedan, men det kan leda till problem längre fram.';
+$string['dbwronghostserver'] = 'Du måste följa \'värd\'-reglerna så som de förklaras här ovan.';
+$string['dbwrongnlslang'] = 'Miljövariabeln NLS_LANG i Din webbserver måste använda teckenuppsättningen AL32UTF8. Se dokumentationen för PHP för att få veta hur Du ska konfigurera OCI8 på ett korrekt sätt.';
+$string['dbwrongprefix'] = 'Du måste följa reglerna för \'Prefix för tabeller\' så som de förklaras här ovan.';
 $string['directorysettingshead'] = 'Var snäll och bekräfta placeringen av Din installation av Moodle.';
 $string['directorysettingssub'] = '<b>Webbadress:</b>
 Ange den fullständiga webbadressen till Moodle.
@@ -79,7 +119,7 @@ $string['downloadlanguagehead'] = 'Ladda ner språkpaket';
 $string['downloadlanguagenotneeded'] = 'Du kan fullfölja installationsprocessen samtidigt som Du använder standardpaketet för språk, \"$a\".';
 $string['downloadlanguagesub'] = 'Du har nu möjligheten att ladda ner ett språkpaket och fortsätta installationen av det här språket.<br /><br />Om Du inte kan ladda ner språkpaketet så kommer installationen att fortsätta på engelska. Så snart installationen är klar så kan Du ladda ner och installera ytterligare språkpaket.';
 $string['environmenterrortodo'] = 'Du måste lösa de problem som har med den tekniska miljön att göra innan Du fortsätter med att installera den här versionen av Moodle!';
-$string['environmenthead'] = 'Undersöker DIn miljö...';
+$string['environmenthead'] = 'Undersöker Din miljö...';
 $string['environmentrecommendinstall'] = 'rekommenderas att bli installerad/aktiverad';
 $string['environmentrecommendversion'] = 'version $a->needed rekommenderas och Du använder  $a->current';
 $string['environmentrequireinstall'] = 'är nödvändig att installera/aktivera';
@@ -113,27 +153,38 @@ $string['memorylimit'] = 'Minnesbegränsning';
 $string['memorylimiterror'] = 'Minnesbegränsningen för PHP på Din server är f n inställt till ett ganska lågt värde... Detta kan leda till problem senare.';
 $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f n inställt till $a.</p>
 <p>Detta kan förorsaka att Moodle får minnesproblem senare, särskilt om Du har aktiverat många moduler och/eller har många användare.</p>
-<p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 40M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
+<p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 16M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
 <li>Om Du har möjlighet till det så kan Du kompilera om PHP med<i>--enable-memory-limit </i>Detta gör det möjligt för Moodle att ställa in minnesbegränsningen själv. </li>
-<li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 40M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
-<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 40M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
+<li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
+<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
 </ol>';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
-$string['moodledocslink'] = 'Moodle Docs för den här sidan';
+$string['moodledocslink'] = 'Moodle Docs för den här sidan.';
+$string['mssql'] = 'SQL*Server (mssql)';
+$string['mssql_n'] = 'SQL*Server med UTF-8 support (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på rätt sätt med tillägget MSSQL. Därför kan det inte kommunicera med SQL*Server. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
+$string['mysql'] = 'MySQL';
 $string['mysql416bypassed'] = 'Om Du emellertid på Din webbplats använder BARA språk som är kodade enligt ISO-8859-1 så kan Du fortsätta att använda Din aktuella installation av MySQL 4.1.12 (eller högre).';
 $string['mysql416required'] = 'MySQL 4.1.16 är den äldsta version som Du kan använda tillsammans med Moodle 1.6 om Du vill säkerställa att alla data kan konverteras till UTF-8 i framtiden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på det sätt som måste i förhållande till MySQL-extensionen för att kunna kommunicera med MySQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
 $string['name'] = 'Namn';
 $string['next'] = 'Nästa';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på rätt sätt med tillägget OCI8. Därför kan det inte kommunicera med Oracle. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
+$string['odbc_mssql'] = 'SQL*Server över ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på rätt sätt med tillägget ODBC. Därför kan det inte kommunicera med SQL*Server. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
 $string['ok'] = 'OK';
+$string['opensslrecommended'] = 'Vi rekommenderar starkt att Du installerar det valfria OpenSSL-biblioteket - det möjliggör funktionaliteten för nätverk med Moodle.';
 $string['pass'] = 'Pass';
 $string['password'] = 'Lösenord';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på rätt sätt med tillägget PGSQL. Därför kan det inte kommunicera med PostgreSQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
 $string['php50restricted'] = 'PHP 5.0.x har ett antal kända problem. Var snäll och uppgradera till 5.1.x eller nedgradera till 4.3.x eller 4.4.x';
 $string['phpversion'] = 'PHP-version';
 $string['phpversionerror'] = 'PHP-versionen måste vara minst 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle kräver minst PHP 4.1.0</p>
 <p>Du använder f n verion $a</p>
 <p>Du måste uppgradera PHP eller flytta till en värd som har en nyare version av PHP!</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Tidigare';
 $string['remotedownloadnotallowed'] = 'De är inte tillåtet att ladda upp komponenter till Din server (allow_url_fopen är avaktiverad). Du måste ladda ner filen <a href=\"$a->url\">$a->url</a> manuellt, kopiera den till \"$a->dest\" på Din server och packa upp den där.';
 $string['report'] = 'Rapport';
@@ -146,6 +197,8 @@ $string['skipdbencodingtest'] = 'Hoppa över Test av DB Encoding';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thislanguage'] = 'Svenska';
+$string['unicoderecommended'] = 'Vi rekommenderar att Du lagrar alla Dina data i Unicode (UTF-8). Nya installationer bör genomföras i databaser som har Unicode som förvald standardinställning för teckenuppsättningar. Om Du uppgraderar så bör Du genomföra processen för migration till UTF-8 (se sidan för administration).';
+$string['unicoderequired'] = 'Det är ett krav att Du lagrar alla Dina data i Unicode (UTF-8). Nya installationer måste genomföras i databaser som har Unicode som förvald standardinställning för teckenuppsättningar. Om Du uppgraderar så bör Du genomföra processen för migration till UTF-8 (se sidan för administration).';
 $string['user'] = 'Användare';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Du ser detta eftersom Du framgångsrikt har installerat och börjat använda språkpaketet <strong>$a->packname $a->packversion</strong> på Din dator. Gratulerar!';
