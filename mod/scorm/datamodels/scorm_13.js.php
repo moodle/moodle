@@ -13,7 +13,7 @@
         }
     }
 ?>
-//    var cmi = new Object(); // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
+    var cmi = new Object(); // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
 
 //
 // SCORM 1.3 API Implementation
@@ -35,7 +35,7 @@ function SCORMapi1_3() {
     CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
     CMIIdentifier = '^\\S{0,200}[a-zA-Z0-9]$';
     CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
-    CMIFeedback = CMIString200; // This must be redefined
+    CMIFeedback = '^.*$'; // This must be redefined
     CMIIndex = '[._](\\d+).';
     CMIIndexStore = '.N(\\d+).';
     // Vocabulary Data Type Definition
@@ -134,7 +134,7 @@ function SCORMapi1_3() {
     //
     // Datamodel inizialization
     //
-    var cmi = new Object();
+//    var cmi = new Object();
         cmi.comments_from_learner = new Object();
         cmi.comments_from_learner._count = 0;
         cmi.comments_from_lms = new Object();
@@ -472,6 +472,7 @@ function SCORMapi1_3() {
                                                 }
                                             }
                                         } else {
+//alert(element+"\n"+subelement+"\n"+typeof eval(subelement)+"\n"+errorCode);
 
                                             parentmodel = 'cmi.interactions';
 
@@ -502,10 +503,6 @@ function SCORMapi1_3() {
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
-//alert(element+"\n"+subelement);
-                                                    if ((elementmodel=='cmi.interactions.n.learner_response') && (typeof eval(parentelement+'.type') == "undefined")) {
-                                                        errorCode="408";
-                                                    }
                                                     if (typeof eval(subelement) == "undefined") {
                                                         if ((elementmodel=='cmi.interactions.n.objectives.n.id') && (typeof eval(parentelement) != "undefined")) {
                                                            if (!duplicatedID(parentelement,value)) {
@@ -519,8 +516,7 @@ function SCORMapi1_3() {
                                                                errorCode="351";
                                                                diagnostic = "Data Model Element ID Already Exists";
                                                            }
-                                                        } else 
-                                                        if ((elementmodel=='cmi.interactions.n.correct_responses.n.pattern') && (typeof eval(parentelement) != "undefined")) {
+                                                        } else if ((elementmodel=='cmi.interactions.n.correct_responses.n.pattern') && (typeof eval(parentelement) != "undefined")) {
                                                             if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                                 eval(parentelement+'._count++;');
 
@@ -530,14 +526,7 @@ function SCORMapi1_3() {
                                                             errorCode="408";
                                                         }
                                                     } else {
-//alert('element = '+element+"\nparentmodel = "+parentmodel+"\nparentelement = "+parentelement+"\nvalue = "+value);
-                                                        if ((elementmodel==parentmodel+'.n.type') && (errorCode=="0")) { 
-                                                            subobject = eval(subelement);
-                                                            subobject.correct_responses = new Object();
-                                                            subobject.correct_responses._count = 0;
-                                                        } else {
-                                                            errorCode="408";
-                                                        }
+                                                        errorCode="408";
                                                     }
                                                 }
                                             } else {
@@ -563,6 +552,7 @@ function SCORMapi1_3() {
                                              }
                                          } else {
 
+//alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+parentmodel+"\nparentelement = "+parentelement+"\nvalue = "+value);
                                              parentmodel = 'cmi.interactions';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
@@ -571,6 +561,18 @@ function SCORMapi1_3() {
                                                          diagnostic = "Write Once Violation";
                                                      }
                                                  }
+                                                if (elementmodel=='cmi.interactions.n.learner_response') {
+                                                    if (typeof eval(subelement+'.type') == "undefined") {
+                                                        errorCode="408";
+                                                    } else {
+                                                       // if (
+                                                    }
+                                                }
+                                                if ((elementmodel==parentmodel+'.n.type') && (errorCode=="0")) { 
+                                                    subobject = eval(subelement);
+                                                    subobject.correct_responses = new Object();
+                                                    subobject.correct_responses._count = 0;
+                                                } 
                                              }
                                          }
                                      }
