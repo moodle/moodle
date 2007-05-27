@@ -72,7 +72,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setAdvanced('whatgrade');
 
 // Activation period
-        $mform->addElement('static', '', '' ,'<hr />');
+/*        $mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'activation', get_string('activation','scorm'));
         $datestartgrp = array();
         $datestartgrp[] = &$mform->createElement('date_time_selector', 'startdate');
@@ -89,7 +89,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('enddate', 0);
         $mform->setDefault('enddisabled', 1);
         $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
-
+*/
 // Stage Size
         $mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'stagesize', get_string('stagesize','scorm'));
