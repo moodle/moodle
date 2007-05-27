@@ -497,21 +497,27 @@ function stripslashes_safe($mixed) {
  * @return mixed
  */
 function stripslashes_recursive($var) {
-    if(is_object($var)) {
+    if (is_object($var)) {
+        $new_var = new object();
         $properties = get_object_vars($var);
         foreach($properties as $property => $value) {
-            $var->$property = stripslashes_recursive($value);
+            $new_var->$property = stripslashes_recursive($value);
         }
-    }
-    else if(is_array($var)) {
+
+    } else if(is_array($var)) {
+        $new_var = array();
         foreach($var as $property => $value) {
-            $var[$property] = stripslashes_recursive($value);
+            $new_var[$property] = stripslashes_recursive($value);
         }
+
+    } else if(is_string($var)) {
+        $new_var = stripslashes($var);
+
+    } else {
+        $new_var = $var;
     }
-    else if(is_string($var)) {
-        $var = stripslashes($var);
-    }
-    return $var;
+
+    return $new_var;
 }
 
 /**
@@ -526,21 +532,27 @@ function stripslashes_recursive($var) {
  * @return mixed
  */
 function addslashes_recursive($var) {
-    if(is_object($var)) {
+    if (is_object($var)) {
+        $new_var = new object();
         $properties = get_object_vars($var);
         foreach($properties as $property => $value) {
-            $var->$property = addslashes_recursive($value);
+            $new_var->$property = addslashes_recursive($value);
         }
-    }
-    else if(is_array($var)) {
+
+    } else if (is_array($var)) {
+        $new_var = array();
         foreach($var as $property => $value) {
-            $var[$property] = addslashes_recursive($value);
+            $new_var[$property] = addslashes_recursive($value);
         }
+
+    } else if (is_string($var)) {
+        $new_var = addslashes($var);
+
+    } else {
+        $new_var = $var;
     }
-    else if(is_string($var)) {
-        $var = addslashes($var);
-    }
-    return $var;
+
+    return $new_var;
 }
 
 /**
@@ -6157,6 +6169,12 @@ function debugging($message='', $level=DEBUG_NORMAL) {
             $callers = debug_backtrace();
             $from = '<ul style="text-align: left">';
             foreach ($callers as $caller) {
+                if (!isset($caller['line'])) {
+                    $caller['line'] = '?'; // probably call_user_func()
+                }
+                if (!isset($caller['file'])) {
+                    $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()   
+                }
                 $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
                 if (isset($caller['function'])) {
                     $from .= ': call to ';
