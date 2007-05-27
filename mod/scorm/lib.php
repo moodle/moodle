@@ -9,7 +9,7 @@
 * @param mixed $scorm Form data
 * @return int
 */
-require_once('locallib.php');
+//require_once('locallib.php');
 function scorm_add_instance($scorm) {
     global $CFG;
 
@@ -76,6 +76,7 @@ function scorm_update_instance($scorm) {
 
     require_once('locallib.php');
 
+    $scorm->parse = 0;
     if (($packagedata = scorm_check_package($scorm)) != null) {
         $scorm->pkgtype = $packagedata->pkgtype;
         if ($packagedata->launch == 0) {
@@ -88,9 +89,6 @@ function scorm_update_instance($scorm) {
                 $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
                 $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
             }
-            mtrace($scorm->md5hash);
-        } else {
-            $scorm->parse = 0;
         }
     }
 
