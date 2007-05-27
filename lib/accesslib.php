@@ -356,9 +356,8 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
 
 /**
  * This function returns whether the current user has the capability of performing a function
- * For example, we can do has_capability('mod/forum:replypost',$cm) in forum
- * only one of the 4 (moduleinstance, courseid, site, userid) would be set at 1 time
- * This is a recursive funciton.
+ * For example, we can do has_capability('mod/forum:replypost',$context) in forum
+ * This is a recursive function.
  * @uses $USER
  * @param string $capability - name of the capability (or debugcache or clearcache)
  * @param object $context - a context object (record from context table)
@@ -2588,9 +2587,21 @@ function update_capabilities($component='moodle') {
             return false;
         }
 
+        
+        if (isset($capdef['clonepermissionsfrom']) && in_array($capdef['clonepermissionsfrom'], $storedcaps)){
+            if ($rolecapabilities = get_records('role_capabilities', 'capability', $capdef['clonepermissionsfrom'])){
+                foreach ($rolecapabilities as $rolecapability){
+                    //assign_capability will update rather than insert if capability exists
+                    if (!assign_capability($capname, $rolecapability->permission, 
+                                            $rolecapability->roleid, $rolecapability->contextid, true)){
+                         notify('Could not clone capabilities for '.$capname);
+                    }               
+                }
+            }   
         // Do we need to assign the new capabilities to roles that have the
         // legacy capabilities moodle/legacy:* as well?
-        if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
+        // we ignore legacy key if we have cloned permissions
+        } else if (isset($capdef['legacy']) && is_array($capdef['legacy']) &&
                     !assign_legacy_capabilities($capname, $capdef['legacy'])) {
             notify('Could not assign legacy capabilities for '.$capname);
         }
