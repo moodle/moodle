@@ -35,6 +35,13 @@ global $CFG;
 require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
 class grade_tree_test extends gradelib_test {
+    function test_grade_tree_renumber() {
+        $tree = new grade_tree($this->courseid);
+        $tree1 = $tree;
+        $tree->renumber();
+        $this->assertEqual($tree1->tree_array[1]['object'], $tree->tree_array[1]['object']);
+        $this->assertTrue(empty($tree->need_update));
+    }
     
     function test_grade_tree_locate_element() {
         $tree = new grade_tree($this->courseid);
@@ -188,14 +195,6 @@ class grade_tree_test extends gradelib_test {
         $this->assertEqual(48, count($tree->tree_array, COUNT_RECURSIVE));
     }
     
-    function test_grade_tree_renumber() {
-        $tree = new grade_tree($this->courseid);
-        $tree1 = $tree;
-        $tree->renumber();
-        $this->assertEqual($tree1->tree_array[1]['object'], $tree->tree_array[1]['object']);
-        $this->assertTrue(empty($tree->need_update));
-    }
-
     function test_grade_tree_remove_element() {
         $tree = new grade_tree($this->courseid);
 
@@ -289,5 +288,4 @@ class grade_tree_test extends gradelib_test {
         $tree = new grade_tree($this->courseid);
         echo $tree->get_edit_tree(); 
     }
-
 }

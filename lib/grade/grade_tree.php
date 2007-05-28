@@ -93,7 +93,7 @@ class grade_tree {
         if (!empty($tree)) {
             $this->tree_array = $tree;
         } else {
-            $this->tree_array = $this->get_tree($include_grades);
+            $this->tree_array = $this->get_tree();
         }
         
         if (!empty($this->tree_array)) {
@@ -316,7 +316,7 @@ class grade_tree {
         if (isset($indices[2])) {
             $element_to_splice .= '[' . $indices[1] . "]['children']";
         }
-
+        
         eval("array_splice($element_to_splice, \$position + \$offset, 0, \$destination_array);");
 
         if (!is_object($new_element)) {
@@ -372,87 +372,59 @@ class grade_tree {
     }
 
     /**
-     * One at a time, re-assigns new sort orders for every element in the tree, starting 
-     * with a base number.
+     * One at a time, re-assigns new sort orders for every element in the tree, recursively moving
+     * down and across the tree.
+     * @param int $starting_sortorder Used by recursion to "seed" the first element in each sub-tree
+     * @param array $element A sub-tree given to each layer of recursion. If null, level 0 of recursion is assumed.
      * @return array A debugging array which shows the progression of variables throughout this method. This is very useful
      * to identify problems and implement new functionality.
      */
-    function renumber($starting_sortorder=NULL) {
+    function renumber($starting_sortorder=NULL, $elements=NULL) {
         $sortorder = $starting_sortorder;
         
-        if (empty($starting_sortorder)) { 
+        if (empty($elements) && empty($starting_sortorder)) {
             if (empty($this->first_sortorder)) {
                 debugging("The tree's first_order variable isn't set, you must provide a starting_sortorder to the renumber method.");
                 return false;
             }
             $sortorder = $this->first_sortorder - 1; 
+            $elements = $this->tree_array;
+        } elseif(!empty($elements) && empty($starting_sortorder)) {
+            debugging("Entered second level of recursion without a starting_sortorder.");
         }
-        
+
         $newtree = array();
-        $topcatsortorder = 0;
-        $debug = array();
+        $this->first_sortorder = $sortorder;
 
-        foreach ($this->tree_array as $topcat) {
-            $sortorder++; 
-            $subcatsortorder = 0;
+        foreach ($elements as $key => $element) {
+            $this->first_sortorder++;
 
-            if (!empty($topcat['children'])) {
-                $topcatsortorder = $sortorder;
-
-                foreach ($topcat['children'] as $subcat) {
-                    $sortorder++; 
-                    
-                    if (!empty($subcat['children'])) {
-                        $subcatsortorder = $sortorder;
-                        
-                        foreach ($subcat['children'] as $item) {
-                            $sortorder++;
-                            
-                            $newtree[$topcatsortorder]['children'][$subcatsortorder]['children'][$sortorder] = $item;
-                           
-                            if ($sortorder != $item['object']->sortorder) {
-                                $this->need_update[$item['object']->id] = 
-                                    array('old_sortorder' => $item['object']->sortorder, 
-                                          'new_sortorder' => $sortorder, 
-                                          'previous_sortorder' => $this->get_neighbour_sortorder($item, 'previous'),
-                                          'next_sortorder' => $this->get_neighbour_sortorder($item, 'next'));
-                            }
-                        }
-                        $newtree[$topcatsortorder]['children'][$subcatsortorder]['object'] = $subcat['object'];
-                        $newsortorder = $subcatsortorder; 
-                    } else {
-                        $newtree[$topcatsortorder]['children'][$sortorder] = $subcat; 
-                        $newsortorder = $sortorder; 
-                    } 
-
-                    if ($newsortorder != $subcat['object']->sortorder) {
-                        $this->need_update[$subcat['object']->id] = 
-                            array('old_sortorder' => $subcat['object']->sortorder, 
-                                  'new_sortorder' => $newsortorder, 
-                                  'previous_sortorder' => $this->get_neighbour_sortorder($subcat, 'previous'),
-                                  'next_sortorder' => $this->get_neighbour_sortorder($subcat, 'next'));
-                    }
+            if (!empty($element['children'])) {
+                $newtree[$this->first_sortorder] = $element;
+                $newtree[$this->first_sortorder]['children'] = $this->renumber($this->first_sortorder, $element['children']); 
+            }  else { 
+                
+                $element['object']->previous_sortorder = $this->get_neighbour_sortorder($element, 'previous');
+                $element['object']->next_sortorder = $this->get_neighbour_sortorder($element, 'next');
+                $newtree[$this->first_sortorder] = $element; 
+                
+                if ($this->first_sortorder != $element['object']->sortorder) {
+                    $this->need_update[$element['object']->get_item_id()] = 
+                        array('old_sortorder' => $element['object']->sortorder, 
+                              'new_sortorder' => $this->first_sortorder);
                 }
-                $newtree[$topcatsortorder]['object'] = $topcat['object'];
-                $newsortorder = $topcatsortorder; 
-            } else { 
-                $newsortorder = $sortorder; 
-                $newtree[$sortorder] = $topcat; 
             } 
-            
-            if ($newsortorder != $topcat['object']->sortorder) {
-                $this->need_update[$topcat['object']->id] = 
-                    array('old_sortorder' => $topcat['object']->sortorder, 
-                          'new_sortorder' => $newsortorder, 
-                          'previous_sortorder' => $this->get_neighbour_sortorder($topcat, 'previous'),
-                          'next_sortorder' => $this->get_neighbour_sortorder($topcat, 'next'));
-            }
         }
         
-        $this->tree_array = $newtree;
-        unset($this->first_sortorder);
-        $this->build_tree_filled();
-        return $debug;
+        // If no starting sortorder was given, it means we have finished building the tree, so assign it to this->tree_array. Otherwise return the new tree.
+        if (empty($starting_sortorder)) {
+            $this->tree_array = $newtree;
+            unset($this->first_sortorder);
+            $this->build_tree_filled(); 
+            return true;
+        } else {
+            return $newtree;
+        }
     }
   
     /**
@@ -532,6 +504,9 @@ class grade_tree {
     /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
      * a given course, or for the entire site if no courseid is given.
+     * @TODO Break this up in more nuclear methods
+     * @TODO Apply recursion to tree-building code (get_tree($first_parent=NULL))
+     *  NOTE the above todos are tricky in this instance because we are building two arrays simultaneously: tree_array and tree_filled
      * @return array
      */
     function get_tree() {
@@ -596,7 +571,7 @@ class grade_tree {
         }
             
         $last_topsortorder = null;
-
+        
         foreach ($topcats as $topcatid => $topcat) {
             $last_subsortorder = null;
 
@@ -945,10 +920,11 @@ class grade_tree {
         $this->need_delete = array();
         $this->need_insert = array();
 
-        foreach ($this->need_update as $id => $sortorders) {
-            if (!set_field('grade_items', 'sortorder', $sortorders['new_sortorder'], 'id', $id)) {
+        // The items' sortorder are updated
+        foreach ($this->need_update as $id => $element) {
+            if (!set_field('grade_items', 'sortorder', $element['new_sortorder'], 'id', $id)) {
                 debugging("Could not update the grade_item's sortorder in DB.");
-            }
+            } 
         } 
 
         $this->need_update = array();

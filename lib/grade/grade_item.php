@@ -479,6 +479,12 @@ class grade_item extends grade_object {
             $this->grademin = 0;
             $this->gradetype = GRADE_TYPE_SCALE;
         }
+
+        // If not set, infer courseid from referenced category
+        if (empty($this->courseid) && (!empty($this->iteminstance) || !empty($this->categoryid))) {
+            $this->load_category();
+            $this->courseid = $this->category->courseid;
+        }
        
         // If sortorder not given, extrapolate one
         if (empty($this->sortorder)) {
@@ -924,5 +930,15 @@ class grade_item extends grade_object {
     function get_name() {
         return $this->itemname;
     } 
+    
+    /**
+     * Returns this grade_item's id. This is specified for cases where we do not
+     * know an object's type, and want to get either an item's id or a category's item's id.
+     *
+     * @return int
+     */
+    function get_item_id() {
+        return $this->id;
+    }
 }
 ?>

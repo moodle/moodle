@@ -672,6 +672,11 @@ class grade_category extends grade_object {
      * @return object Grade_item
      */
     function get_grade_item() {
+        if (empty($this->id)) {
+            debugging("Attempt to obtain a grade_category's associated grade_item without the category's ID being set.");
+            return false;
+        }
+
         $grade_items = get_records_select('grade_items', "iteminstance = $this->id AND itemtype = 'category'", null, '*', 0, 1);
         
         if ($grade_items){ 
@@ -718,11 +723,12 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Sets this category as the parent for the given children.
+     * Sets this category as the parent for the given children. If the category's courseid isn't set, it uses that of the children items.
      * A number of constraints are necessary:
      *    - The children must all be of the same type and at the same level
      *    - The children cannot already be top categories
-     *    - The children cannot already have a top category
+     *    - The children cannot already have a top categorya
+     *    - The children all belong to the same course
      * @param array $children An array of fully instantiated grade_category OR grade_item objects
      * @return boolean Success or Failure
      */
@@ -732,6 +738,7 @@ class grade_category extends grade_object {
         // Check type and sortorder of first child
         $first_child = current($children);
         $first_child_type = get_class($first_child);
+        $first_child_courseid = $first_child->courseid;
 
         foreach ($children as $child) {
             if (get_class($child) != $first_child_type) {
@@ -760,6 +767,11 @@ class grade_category extends grade_object {
                 debugging("Attempted to set a category over children that are neither grade_items nor grade_categories.");
                 return false;
             }                
+
+            if ($child->courseid != $first_child_courseid) {
+                debugging("Attempted to set a category over children which do not belong to the same course.");
+                return false;
+            }
         } 
 
         // We passed all the checks, time to set the category as a parent.
@@ -783,6 +795,11 @@ class grade_category extends grade_object {
         $this->load_grade_item();
         $this->grade_item->sortorder = $first_child->get_sortorder();
         
+        // If this->courseid is not set, set it to the first child's courseid
+        if (empty($this->courseid)) {
+            $this->courseid = $first_child_courseid;
+        }
+
         if (!$this->update()) {
             debugging("Could not update this category's sortorder in DB.");
             return false;
@@ -804,6 +821,17 @@ class grade_category extends grade_object {
      */
     function get_name() {
         return $this->fullname;
+    }
+
+    /**
+     * Returns this category's grade_item's id. This is specified for cases where we do not
+     * know an object's type, and want to get either an item's id or a category's item's id.
+     *
+     * @return int
+     */
+    function get_item_id() {
+        $this->load_grade_item();
+        return $this->grade_item->id;
     }
 } 
 ?>
