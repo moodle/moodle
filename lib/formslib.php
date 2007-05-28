@@ -1339,7 +1339,9 @@ function validate_' . $this->_formName . '(frm) {
         return true;
     }
     /**
-     * This function also removes all previously defined rules.
+     * Hard freeze all elements in a form except those whose names are in $elementList or hidden elements in a form.
+     *  
+     * This function also removes all previously defined rules of elements it freezes.
      *
      * @param    array   $elementList       array or string of element(s) not to be frozen
      * @since     1.0
