@@ -1337,7 +1337,39 @@ function validate_' . $this->_formName . '(frm) {
             return PEAR::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Nonexistant element(s): '" . implode("', '", array_keys($elementList)) . "' in HTML_QuickForm::freeze()", 'HTML_QuickForm_Error', true);
         }
         return true;
-    } // end func hardFreeze
+    }
+    /**
+     * This function also removes all previously defined rules.
+     *
+     * @param    array   $elementList       array or string of element(s) not to be frozen
+     * @since     1.0
+     * @access   public
+     * @throws   HTML_QuickForm_Error
+     */
+    function hardFreezeAllVisibleExcept($elementList)
+    {
+        $elementList = array_flip($elementList);
+        foreach (array_keys($this->_elements) as $key) {
+            $name = $this->_elements[$key]->getName();
+            $type = $this->_elements[$key]->getType();
+
+            if ($type == 'hidden'){
+                // leave hidden types as they are
+            } elseif (!isset($elementList[$name])) {
+                $this->_elements[$key]->freeze();
+                $this->_elements[$key]->setPersistantFreeze(false);
+
+                // remove all rules
+                $this->_rules[$name] = array();
+                // if field is required, remove the rule
+                $unset = array_search($name, $this->_required);
+                if ($unset !== false) {
+                    unset($this->_required[$unset]);
+                }
+            }
+        }
+        return true;
+    }
    /**
     * Tells whether the form was already submitted
     *
