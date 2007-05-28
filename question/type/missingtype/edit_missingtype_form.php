@@ -32,7 +32,7 @@ class question_edit_missingtype_form extends question_edit_form {
         } else {
             $countanswers = 0;
         }
-        if (!$mform->isFrozen()){
+        if ($this->question->formoptions->repeatelements){
             $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
                                 QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
         } else {
@@ -66,7 +66,7 @@ class question_edit_missingtype_form extends question_edit_form {
     }
 
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
         $answers = $data['answer'];
         $answercount = 0;
 

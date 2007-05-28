@@ -36,7 +36,7 @@ class question_edit_match_form extends question_edit_form {
         } else {
             $countsubquestions = 0;
         }
-        if (!$mform->isFrozen()){
+        if ($this->question->formoptions->repeatelements){
             $repeatsatstart = (QUESTION_NUMANS_START > ($countsubquestions + QUESTION_NUMANS_ADD))?
                                 QUESTION_NUMANS_START : ($countsubquestions + QUESTION_NUMANS_ADD);
         } else {
@@ -71,7 +71,7 @@ class question_edit_match_form extends question_edit_form {
     }
 
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
         $answers = $data['subanswers'];
         $questions = $data['subquestions'];
         $questioncount = 0;
