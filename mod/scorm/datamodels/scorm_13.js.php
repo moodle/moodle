@@ -387,7 +387,7 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        if (eval(datamodel["'+elementmodel+'"].format) != 'CMIFeedback') {
+                        if (eval('datamodel["'+elementmodel+'"].format') != 'CMIFeedback') {
                             expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
                         } else {
                             // cmi.interactions.n.type depending format accept everything at this stage
