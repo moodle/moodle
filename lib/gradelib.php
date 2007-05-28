@@ -92,7 +92,12 @@ function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=
 */
 function grade_create_item($params) {
     $grade_item = new grade_item($params);
-    return $grade_item->insert();
+    
+    if (empty($grade_item->id)) {
+        return $grade_item->insert();
+    } else {
+        return $grade_item->id;
+    }
 }
 
 /**
@@ -107,7 +112,12 @@ function grade_create_item($params) {
 */
 function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN) {
     $grade_category = new grade_category(compact('courseid', 'fullname', 'items', 'aggregation'));
-    return $grade_category->insert();
+    
+    if (empty($grade_category->id)) {
+        return $grade_category->insert();
+    } else {
+        return $grade_category->id;
+    }
 }
 
 

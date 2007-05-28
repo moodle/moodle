@@ -96,7 +96,6 @@ class grade_raw_test extends gradelib_test {
         // Check the grade_item's needsupdate variable first
         $grade_grades_raw->load_grade_item();
         $this->assertFalse($grade_grades_raw->grade_item->needsupdate);
-
         $this->assertTrue($grade_grades_raw->update(89));
         $gradevalue = get_field('grade_grades_raw', 'gradevalue', 'id', $this->grade_grades_raw[0]->id);
         $this->assertEqual($grade_grades_raw->gradevalue, $gradevalue); 

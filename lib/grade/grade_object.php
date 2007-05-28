@@ -90,7 +90,7 @@ class grade_object {
             $this->usermodified = $USER->id;
         }
 
-        return update_record($this->table, $this);
+        return update_record($this->table, addslashes_recursive($this));
     }
 
     /**
@@ -108,7 +108,8 @@ class grade_object {
         global $USER;
 
         if (!empty($this->id)) {   // Object already exists, so let's do an update instead
-            $this->update();
+            debugging("Grade object already exists!");
+            return false;
         }
 
         $this->timecreated = $this->timemodified = time();
@@ -126,7 +127,7 @@ class grade_object {
             }
         }
         
-        return $this->id = insert_record($this->table, $clonethis, true);
+        return $this->id = insert_record($this->table, addslashes_recursive($clonethis), true);
     }
 
     /**

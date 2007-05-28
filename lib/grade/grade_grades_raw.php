@@ -37,7 +37,7 @@ class grade_grades_raw extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'scale');
+    var $nonfields = array('table', 'nonfields', 'scale', 'grade_grades_text', 'grade_item', 'feedback', 'feedbackformat');
     
     /**
      * The id of the grade_item this raw grade belongs to.
@@ -168,8 +168,6 @@ class grade_grades_raw extends grade_object {
                 return $this;
             } else {
                 $object = new grade_grades_raw($object);
-
-                $object->load_text();
                 return $object;
             }
         } else {
@@ -180,31 +178,41 @@ class grade_grades_raw extends grade_object {
     /**
      * Updates this grade with the given textual information. This will create a new grade_grades_text entry
      * if none was previously in DB for this raw grade, or will update the existing one.
-     * @param string $information Further info like forum rating distribution 4/5/7/0/1
+     * @param string $information Further info like forum rating distribution 4/5/7/0/1; null means keep as is
      * @param int $informationformat Text format for information
-     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'.
+     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'; null means keep as is
      * @param int $feedbackformat Text format for the feedback
      * @return boolean Success or Failure
      */
-    function annotate($information, $informationformat=FORMAT_PLAIN, $feedback=NULL, $feedbackformat=FORMAT_PLAIN) {
-        $grade_text = new grade_grades_text();
-
-        $grade_text->itemid            = $this->itemid;
-        $grade_text->userid            = $this->userid;
-        $grade_text->information       = $information;
-        $grade_text->informationformat = $informationformat;
-        $grade_text->feedback          = $feedback;
-        $grade_text->feedbackformat    = $feedbackformat;
-
-        $result = true;
-
-        if (empty($this->text)) {
-            $result = $grade_text->insert();
-        } else {
-            $result = $grade_text->update();
+    function annotate($information=NULL, $informationformat=FORMAT_PLAIN, $feedback=NULL, $feedbackformat=FORMAT_PLAIN) {
+        if (is_null($information) && is_null($feedback)) {
+            // Nothing to do
+            return true;
         }
 
-        $this->text = $grade_text;
+        if (!$grade_text = $this->load_text()) {
+            $grade_text = new grade_grades_text();
+
+            $grade_text->itemid            = $this->itemid;
+            $grade_text->userid            = $this->userid;
+            $grade_text->information       = $information;
+            $grade_text->informationformat = $informationformat;
+            $grade_text->feedback          = $feedback;
+            $grade_text->feedbackformat    = $feedbackformat;
+
+            $result = $grade_text->insert();
+
+        } else {
+            if (!is_null($informationformat)) {
+                $grade_text->information       = $information;
+                $grade_text->informationformat = $feedbackformat;
+            }
+            if (!is_null($feedback)) {
+                $grade_text->feedback       = $feedback;
+                $grade_text->feedbackformat = $feedbackformat;
+            }
+            $result = $grade_text->update();
+        }
 
         return $result;
     }
@@ -214,15 +222,13 @@ class grade_grades_raw extends grade_object {
      * its pre-update value and its new value in the grade_history table. The grade_item
      * object is also flagged for update.
      *
-     * @param float $newgrade The new gradevalue of this object
+     * @param float $newgrade The new gradevalue of this object, false if no change
      * @param string $howmodified What caused the modification? manual/module/import/cron...
      * @param string $note A note attached to this modification.
      * @return boolean Success or Failure.
      */
     function update($newgrade, $howmodified='manual', $note=NULL) {
         global $USER;
-        $oldgrade = $this->gradevalue;
-        $this->gradevalue = $newgrade;
         
         if (!empty($this->scale->id)) {
             $this->scaleid = $this->scale->id;
@@ -230,26 +236,33 @@ class grade_grades_raw extends grade_object {
             $this->scale->load_items();
             $this->grademax = count($this->scale->scale_items);
         }
+        
+        $trackhistory = false;
+
+        if ($newgrade != $this->gradevalue) {
+            $trackhistory = true;
+            $oldgrade = $this->gradevalue;
+            $this->gradevalue = $newgrade;
+        }
 
         $result = parent::update();
        
         // Update grade_grades_text if changed
-        if (!empty($this->text)) {
-            $grade_text = grade_grades_text::fetch('userid', $this->userid, 'itemid', $this->itemid);
-            if ($this->text != $grade_text && $this->text->id == $grade_text->id) {
-                $result = $result & $this->text->update();
-            }
+        if ($result && !empty($this->feedback)) {
+            $result = $this->annotate(NULL, NULL, $this->feedback, $this->feedbackformat);
         }
 
-        if ($result) {
+        if ($result && $trackhistory) {
             // TODO Handle history recording error, such as displaying a notice, but still return true
             grade_history::insert_change($this, $oldgrade, $howmodified, $note);
 
             // Notify parent grade_item of need to update
             $this->load_grade_item();
-            $result = $result && $this->grade_item->flag_for_update();
-
-            return $result;
+            $result = $this->grade_item->flag_for_update();
+        }
+        
+        if ($result) {
+            return true;
         } else {
             debugging("Could not update a raw grade in the database.");
             return false;
@@ -275,8 +288,13 @@ class grade_grades_raw extends grade_object {
         // Notify parent grade_item of need to update
         $this->load_grade_item();
         $result = $result && $this->grade_item->flag_for_update();
+        
+        // Update grade_grades_text if specified
+        if ($result && !empty($this->feedback)) {
+            $result = $this->annotate(NULL, NULL, $this->feedback, $this->feedbackformat);
+        }
 
-        return $result;
+        return $result && $this->grade_item->flag_for_update();
     }
 
     /**
