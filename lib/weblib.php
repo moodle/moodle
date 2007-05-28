@@ -368,13 +368,16 @@ class moodle_url {
     }
 
    
-    function get_query_string($overrideparams = array()){
+    function get_query_string($seperator='', $overrideparams = array()){
         $arr = array();
+        if ($seperator==''){
+            $seperator = '&amp;';
+        }
         $params = $overrideparams + $this->params;
         foreach ($params as $key => $val){
            $arr[] = urlencode($key)."=".urlencode($val);
         }
-        return implode($arr, "&amp;");
+        return implode($arr, $seperator);
     }
     /**
      * Outputs params as hidden form elements.
@@ -401,14 +404,14 @@ class moodle_url {
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string url
      */
-    function out($noquerystring = false, $overrideparams = array()) { 
+    function out($seperator='', $noquerystring = false, $overrideparams = array()) { 
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
         if (!$noquerystring){
-            $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($overrideparams) : '';
+            $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($seperator, $overrideparams) : '';
         }
         $uri .= $this->fragment ? '#'.$this->fragment : '';
         return $uri; 
@@ -419,9 +422,9 @@ class moodle_url {
      * @param boolean $noquerystring whether to output page params as a query string in the url.
      * @return string url
      */
-    function out_action($overrideparams = array()) { 
+    function out_action($seperator='', $overrideparams = array()) { 
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
-        return $this->out(false, $overrideparams);
+        return $this->out($seperator, false, $overrideparams);
     }
 }
 
@@ -5602,7 +5605,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             if (!is_a($baseurl, 'moodle_url')){
                 $output .= '&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('previous') .'</a>)&nbsp;';
             } else {
-                $output .= '&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
+                $output .= '&nbsp;(<a href="'. $baseurl->out('', false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
             }
         }
         $lastpage = ceil($totalcount / $perpage);
@@ -5611,7 +5614,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             if (!is_a($baseurl, 'moodle_url')){
                 $output .= '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
             } else {
-                $output .= '&nbsp;<a href="'. $baseurl->out(false, array($pagevar => 0)).'">1</a>&nbsp;...';
+                $output .= '&nbsp;<a href="'. $baseurl->out('', false, array($pagevar => 0)).'">1</a>&nbsp;...';
             }
         } else {
             $startpage = 0;
@@ -5626,7 +5629,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
                 if (!is_a($baseurl, 'moodle_url')){
                     $output .= '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
                 } else {
-                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl->out(false, array($pagevar => $currpage)).'">'. $displaypage .'</a>';
+                    $output .= '&nbsp;&nbsp;<a href="'. $baseurl->out('', false, array($pagevar => $currpage)).'">'. $displaypage .'</a>';
                 }
                             
             }
@@ -5638,7 +5641,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             if (!is_a($baseurl, 'moodle_url')){
                 $output .= '&nbsp;...<a href="'. $baseurl . $pagevar .'='. $lastpageactual .'">'. $lastpage .'</a>&nbsp;';
             } else {
-                $output .= '&nbsp;...<a href="'. $baseurl->out(false, array($pagevar => $lastpageactual)).'">'. $lastpage .'</a>&nbsp;';
+                $output .= '&nbsp;...<a href="'. $baseurl->out('', false, array($pagevar => $lastpageactual)).'">'. $lastpage .'</a>&nbsp;';
             }
         }
         $pagenum = $page + 1;
@@ -5646,7 +5649,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
             if (!is_a($baseurl, 'moodle_url')){
                 $output .= '&nbsp;&nbsp;(<a href="'. $baseurl . $pagevar .'='. $pagenum .'">'. get_string('next') .'</a>)';
             } else {
-                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
+                $output .= '&nbsp;&nbsp;(<a href="'. $baseurl->out('', false, array($pagevar => $pagenum)) .'">'. get_string('next') .'</a>)';
             }
         }
         $output .= '</div>';
