@@ -215,7 +215,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('choosecoursefile', 'mediafile', get_string('mediafile', 'lesson'), array('courseid'=>$COURSE->id));
         $mform->setHelpButton('mediafile', array('mediafile', get_string('mediafile', 'lesson'), 'lesson'));
         $mform->setDefault('mediafile', '');
-        $mform->setType('mediafile', PARAM_PATH);
+        $mform->setType('mediafile', PARAM_RAW);
 
         $mform->addElement('selectyesno', 'mediaclose', get_string('mediaclose', 'lesson'));
         $mform->setDefault('mediaclose', 0);
