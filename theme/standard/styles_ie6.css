@@ -41,9 +41,4 @@
   padding: 0.2em 0;
 }
 
-/*fix for misalignment of text fields in ie */
-form.mform input {
-  margin-left: -10px;
-  margin-right: 10px;
-}
 

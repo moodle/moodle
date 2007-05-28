@@ -42,9 +42,4 @@
   word-wrap: break-word;
 }
 
-/*fix for misalignment of text fields in ie */
-form.mform input {
-  margin-left: -10px;
-  margin-right: 10px;
-}
 
