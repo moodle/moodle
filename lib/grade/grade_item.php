@@ -221,7 +221,11 @@ class grade_item extends grade_object {
     function load_scale() {
         if (!empty($this->scaleid)) {
             $this->scale = grade_scale::fetch('id', $this->scaleid);
-            $this->scale->load_items();
+            if (method_exists($this->scale, 'load_items')) {
+                $this->scale->load_items();
+            } else { 
+                $this->scale = null;
+            } 
         } 
         return $this->scale;
     }
@@ -355,6 +359,12 @@ class grade_item extends grade_object {
         // Retrieve scale and infer grademax from it
         if (!empty($this->scaleid)) {
             $this->load_scale();
+
+            if (!method_exists($this->scale, 'load_items')) {
+                debugging("The scale referenced by this grade_item ($this->scaleid) does not exist in the database. Grademax cannot be infered from the missing scale.");
+                return false;
+            }
+
             $this->scale->load_items();
             $this->grademax = count ($this->scale->scale_items);
             $this->grademin = 0;

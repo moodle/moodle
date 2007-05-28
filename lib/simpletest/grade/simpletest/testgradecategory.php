@@ -83,7 +83,7 @@ class grade_category_test extends gradelib_test {
         $grade_category->parent      = $this->grade_categories[0]->id;
 
         $grade_category->insert();
-
+        
         $last_grade_category = end($this->grade_categories);
         
         $this->assertFalse(empty($grade_category->grade_item));
@@ -194,7 +194,7 @@ class grade_category_test extends gradelib_test {
         
         for ($i = 0; $i < 3; $i++) {
             for ($j = 0; $j < 200; $j++) {
-                $grade_sets[$i][] = $this->generate_random_raw_grade($this->grade_items[$i], $j);
+                $grade_sets[$i][] = $this->generate_random_raw_grade(new grade_item($this->grade_items[$i]), $j);
             }
         }
         

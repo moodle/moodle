@@ -53,14 +53,14 @@ class grade_final_test extends gradelib_test {
         $this->assertTrue(method_exists($grade_grades_final, 'insert'));
         
         $grade_grades_final->itemid = $this->grade_items[0]->id;
-        $grade_grades_final->userid = 1;
+        $grade_grades_final->userid = 4;
         $grade_grades_final->gradevalue = 88;
 
-        $grade_grades_final->insert();
+        $this->assertTrue($grade_grades_final->insert()); 
 
         $last_grade_grades_final = end($this->grade_grades_final);
 
-        $this->assertEqual($grade_grades_final->id, $last_grade_grades_final->id + 1);
+        $this->assertEqual($last_grade_grades_final->id + 1, $grade_grades_final->id);
         $this->assertFalse(empty($grade_grades_final->timecreated));
         $this->assertFalse(empty($grade_grades_final->timemodified));
     }

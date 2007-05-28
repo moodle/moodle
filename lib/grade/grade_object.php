@@ -112,12 +112,12 @@ class grade_object {
         }
 
         $this->timecreated = $this->timemodified = time();
-
+        
         if (empty($this->usermodified)) {
             $this->usermodified = $USER->id;
         }
 
-        $clonethis = clone($this);
+        $clonethis = fullclone($this);
 
         // Unset non-set fields
         foreach ($clonethis as $var => $val) {

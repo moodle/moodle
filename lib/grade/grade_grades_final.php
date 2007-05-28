@@ -159,6 +159,9 @@ class grade_grades_final extends grade_object {
     function insert() {
         $exists = count_records('grade_grades_final', 'userid', $this->userid, 'itemid', $this->itemid);
         if ($exists) {
+            // Retrieve id number from DB
+            $record = get_record('grade_grades_final', 'userid', $this->userid, 'itemid', $this->itemid); 
+            $this->id = $record->id;
             return $this->update();
         } else {
             return parent::insert();

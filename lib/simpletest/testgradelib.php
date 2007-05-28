@@ -54,9 +54,9 @@ class gradelib_test extends UnitTestCase {
      * crucial, because of the interrelationships between objects.
      */
     var $tables = array('grade_categories',
+                        'scale',
                         'grade_items',
                         'grade_calculations',
-                        'scale',
                         'grade_grades_raw',
                         'grade_grades_final',
                         'grade_grades_text',
@@ -376,6 +376,72 @@ class gradelib_test extends UnitTestCase {
     }
    
     /**
+     * Load scale data into the database, and adds the corresponding objects to this class' variable.
+     */
+    function load_scale() {
+        $scale = new stdClass();
+        
+        $scale->name        = 'unittestscale1';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
+        $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        } 
+
+        $scale = new stdClass();
+        
+        $scale->name        = 'unittestscale2';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
+        $scale->description = 'This scale is used to mark standard assignments.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        } 
+
+        $scale = new stdClass();
+        
+        $scale->name        = 'unittestscale3';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Loner, Contentious, Disinterested, Participative, Follower, Leader';
+        $scale->description = 'Describes the level of teamwork of a student.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        } 
+
+        $scale->name        = 'unittestscale4';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Does not understand theory, Understands theory but fails practice, Manages through, Excels';
+        $scale->description = 'Level of expertise at a technical task, with a theoretical framework.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        }
+
+        $scale->name        = 'unittestscale5';
+        $scale->courseid    = $this->courseid;
+        $scale->userid      = $this->userid;
+        $scale->scale       = 'Insufficient, Acceptable, Excellent.';
+        $scale->description = 'Description of skills.';
+        $scale->timemodified = mktime();
+        
+        if ($scale->id = insert_record('scale', $scale)) {
+            $this->scale[] = $scale;
+        }
+    }
+
+    /**
      * Load grade_category data into the database, and adds the corresponding objects to this class' variable.
      */
     function load_grade_categories() {
@@ -507,7 +573,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
         $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid = 1;
+        $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
         $grade_item->grademax = 7;
         $grade_item->iteminfo = 'Grade item used for unit testing';
@@ -609,7 +675,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemmodule = 'forum';
         $grade_item->iteminstance = 3;
         $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid = 1;
+        $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
         $grade_item->grademax = 7;
         $grade_item->iteminfo = 'Grade item used for unit testing';
@@ -705,72 +771,6 @@ class gradelib_test extends UnitTestCase {
             $this->grade_calculations[] = $grade_calculation;
             $this->grade_items[2]->calculation = $grade_calculation;
         } 
-    }
-
-    /**
-     * Load scale data into the database, and adds the corresponding objects to this class' variable.
-     */
-    function load_scale() {
-        $scale = new stdClass();
-        
-        $scale->name        = 'unittestscale1';
-        $scale->courseid    = $this->courseid;
-        $scale->userid      = $this->userid;
-        $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
-        $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
-        $scale->timemodified = mktime();
-        
-        if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
-        } 
-
-        $scale = new stdClass();
-        
-        $scale->name        = 'unittestscale2';
-        $scale->courseid    = $this->courseid;
-        $scale->userid      = $this->userid;
-        $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
-        $scale->description = 'This scale is used to mark standard assignments.';
-        $scale->timemodified = mktime();
-        
-        if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
-        } 
-
-        $scale = new stdClass();
-        
-        $scale->name        = 'unittestscale3';
-        $scale->courseid    = $this->courseid;
-        $scale->userid      = $this->userid;
-        $scale->scale       = 'Loner, Contentious, Disinterested, Participative, Follower, Leader';
-        $scale->description = 'Describes the level of teamwork of a student.';
-        $scale->timemodified = mktime();
-        
-        if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
-        } 
-
-        $scale->name        = 'unittestscale4';
-        $scale->courseid    = $this->courseid;
-        $scale->userid      = $this->userid;
-        $scale->scale       = 'Does not understand theory, Understands theory but fails practice, Manages through, Excels';
-        $scale->description = 'Level of expertise at a technical task, with a theoretical framework.';
-        $scale->timemodified = mktime();
-        
-        if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
-        }
-
-        $scale->name        = 'unittestscale5';
-        $scale->courseid    = $this->courseid;
-        $scale->userid      = $this->userid;
-        $scale->scale       = 'Insufficient, Acceptable, Excellent.';
-        $scale->description = 'Description of skills.';
-        $scale->timemodified = mktime();
-        
-        if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
-        }
     }
 
     /**

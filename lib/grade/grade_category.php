@@ -738,7 +738,10 @@ class grade_category extends grade_object {
                 debugging("Violated constraint: Attempted to set a category as a parent over children of 2 different types.");
                 return false;
             }
-            if (grade_tree::get_element_type($child) == 'topcat') {
+            
+            $grade_tree = new grade_tree();
+
+            if ($grade_tree->get_element_type($child) == 'topcat') {
                 debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
                 return false;
             }
