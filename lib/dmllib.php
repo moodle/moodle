@@ -1538,7 +1538,7 @@ function update_record($table, $dataobject) {
     // Pull out data matching these fields
     $ddd = array();
     foreach ($columns as $column) {
-        if ($column->name <> 'id' and isset($data[$column->name]) ) {
+        if ($column->name <> 'id' and array_key_exists($column->name, $data)) {
             $ddd[$column->name] = $data[$column->name];
             // PostgreSQL bytea support
             if ($CFG->dbfamily == 'postgres' && $column->type == 'bytea') {
@@ -1557,7 +1557,11 @@ function update_record($table, $dataobject) {
     if ($numddd) {
         foreach ($ddd as $key => $value) {
             $count++;
-            $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
+            if ($value === NULL) {
+                $update .= $key .' = NULL'; // previosly NULLs were not updated
+            } else {
+                $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
+            }
             if ($count < $numddd) {
                 $update .= ', ';
             }
