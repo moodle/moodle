@@ -7,8 +7,8 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class assignment_online extends assignment_base {
 
-    function assignment_online($cmid=0) {
-        parent::assignment_base($cmid);
+    function assignment_online($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
+        parent::assignment_base($cmid, $assignment, $cm, $course);
     }
 
     function view() {

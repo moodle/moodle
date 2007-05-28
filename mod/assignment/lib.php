@@ -5,6 +5,8 @@
  * This class provides all the functionality for an assignment
  */
 
+require_once($CFG->libdir.'/gradelib.php');
+
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 
@@ -47,53 +49,59 @@ class assignment_base {
      * @param cm   object, usually null, but if we have it we pass it to save db access
      * @param course   object, usually null, but if we have it we pass it to save db access
      */
-    function assignment_base($cmid=0, $assignment=NULL, $cm=NULL, $course=NULL) {
+    function assignment_base($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
+        if ($cmid == 'staticonly') {
+            //use static functions only!
+            return;
+        }
 
         global $CFG;
 
-        if ($cmid) {
-            if ($cm) {
-                $this->cm = $cm;
-            } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
-                error('Course Module ID was incorrect');
-            }
-
-            $this->context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
-
-            if ($course) {
-                $this->course = $course;
-            } else if (! $this->course = get_record('course', 'id', $this->cm->course)) {
-                error('Course is misconfigured');
-            }
-
-            if ($assignment) {
-                $this->assignment = $assignment;
-            } else if (! $this->assignment = get_record('assignment', 'id', $this->cm->instance)) {
-                error('assignment ID was incorrect');
-            }
-
-            $this->strassignment = get_string('modulename', 'assignment');
-            $this->strassignments = get_string('modulenameplural', 'assignment');
-            $this->strsubmissions = get_string('submissions', 'assignment');
-            $this->strlastmodified = get_string('lastmodified');
-            
-            $this->navigation[] = array('name' => $this->strassignments, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
-                      
-            $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
-
-            // visibility
-            $context = get_context_instance(CONTEXT_MODULE, $cmid);
-            if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-                $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
-                $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
-                $navigation = build_navigation($this->navigation);
-                
-                print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment", 
-                             "", "", true, '', navmenu($this->course, $this->cm));
-                notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
-            }
-            $this->currentgroup = get_current_group($this->course->id);
+        if ($cm) {
+            $this->cm = $cm;
+        } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
+            debugging('grr');
+            error('Course Module ID was incorrect');
         }
+
+        $this->context = get_context_instance(CONTEXT_MODULE,$this->cm->id);
+
+        if ($course) {
+            $this->course = $course;
+        } else if (! $this->course = get_record('course', 'id', $this->cm->course)) {
+            error('Course is misconfigured');
+        }
+
+        if ($assignment) {
+            $this->assignment = $assignment;
+        } else if (! $this->assignment = get_record('assignment', 'id', $this->cm->instance)) {
+            error('assignment ID was incorrect');
+        }
+
+        $this->assignment->cmidnumber = $cm->id;     // compatibility with modedit assignment obj
+        $this->assignment->courseid   = $course->id; // compatibility with modedit assignment obj
+
+        $this->strassignment = get_string('modulename', 'assignment');
+        $this->strassignments = get_string('modulenameplural', 'assignment');
+        $this->strsubmissions = get_string('submissions', 'assignment');
+        $this->strlastmodified = get_string('lastmodified');
+        
+        $this->navigation[] = array('name' => $this->strassignments, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
+                  
+        $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
+
+        // visibility
+        $context = get_context_instance(CONTEXT_MODULE, $cmid);
+        if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+            $pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment);
+            $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
+            $navigation = build_navigation($this->navigation);
+            
+            print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment", 
+                         "", "", true, '', navmenu($this->course, $this->cm));
+            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
+        }
+        $this->currentgroup = get_and_set_current_group($this->course, groupmode($this->course, $this->cm));
 
     /// Set up things for a HTML editor if it's needed
         if ($this->usehtmleditor = can_use_html_editor()) {
@@ -155,7 +163,11 @@ class assignment_base {
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment), 
                      navmenu($this->course, $this->cm));
 
+        $groupmode = groupmode($this->course, $this->cm);
+        $currentgroup = setup_and_print_groups($this->course, $groupmode, 'view.php?id=' . $this->cm->id);
+        
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
+        echo '<div class="clearer"></div>';
     }
 
 
@@ -317,82 +329,6 @@ class assignment_base {
     }
 
     /**
-     * Print the setup form for the current assignment type
-     *
-     * Includes common.html and the assignment type's mod.html
-     * This will be suitable for all assignment types
-     *
-     * @param $form object The object used to fill the form
-     * @param $action url Default destination for this form
-     */
-    function setup(&$form, $action='') {
-        global $CFG, $THEME;
-
-        if (empty($this->course)) {
-            if (! $this->course = get_record("course", "id", $form->course)) {
-                error("Course is misconfigured");
-            }
-        }
-
-        if (empty($action)) {   // Default destination for this form
-            $action = $CFG->wwwroot.'/course/mod.php';
-        }
-
-        if (empty($form->assignmenttype)) {
-            $form->assignmenttype = '';
-        } else {
-            $form->assignmenttype = clean_param($form->assignmenttype, PARAM_SAFEDIR);
-        }
-
-        if (empty($form->name)) {
-            $form->name = '';
-        } else {
-            $form->name = stripslashes($form->name);
-        }
-
-        if (empty($form->description)) {
-            $form->description = '';
-        } else {
-            $form->description = stripslashes($form->description);
-        }
-
-        $strname    = get_string('name');
-        $strassignments = get_string('modulenameplural', 'assignment');
-        $strheading = empty($form->name) ? get_string("type$form->assignmenttype",'assignment') : s(format_string(stripslashes($form->name),true));
-        
-        print_header($this->course->shortname.': '.$strheading, $this->course->fullname,
-                "<a href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname} </a> -> ".
-                "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id={$this->course->id}\">$strassignments</a> -> $strheading");
-
-        print_simple_box_start('center', '70%');
-        print_heading(get_string('type'.$form->assignmenttype,'assignment'));
-        print_simple_box(get_string('help'.$form->assignmenttype, 'assignment'), 'center');
-        include("$CFG->dirroot/mod/assignment/type/common.html");
-
-        include("$CFG->dirroot/mod/assignment/type/".$form->assignmenttype."/mod.html");
-        $this->setup_end(); 
-    }
-
-    /**
-     * Print the end of the setup form for the current assignment type
-     *
-     * Includes common_end.html
-     */
-    function setup_end() {
-        global $CFG;
-
-        include($CFG->dirroot.'/mod/assignment/type/common_end.html');
-
-        print_simple_box_end();
-
-        if ($this->usehtmleditor) {
-            use_html_editor();
-        }
-
-        print_footer($this->course);
-    }
-
-    /**
      * Create a new assignment activity
      *
      * Given an object containing all the necessary data,
@@ -406,13 +342,16 @@ class assignment_base {
      * @return int The id of the assignment
      */
     function add_instance($assignment) {
+        global $COURSE;
 
         $assignment->timemodified = time();
+        $assignment->courseid = $assignment->course;
 
         if ($returnid = insert_record("assignment", $assignment)) {
+            $assignment->id = $returnid;
 
             if ($assignment->timedue) {
-                $event = NULL;
+                $event = new object();
                 $event->name        = $assignment->name;
                 $event->description = $assignment->description;
                 $event->courseid    = $assignment->course;
@@ -426,7 +365,12 @@ class assignment_base {
 
                 add_event($event);
             }
+
+            $assignment = stripslashes_recursive($assignment);
+            assignment_base::create_grade_item($assignment);
+
         }
+
 
         return $returnid;
     }
@@ -485,44 +429,134 @@ class assignment_base {
      * @return int The assignment id
      */
     function update_instance($assignment) {
+        global $COURSE;
 
         $assignment->timemodified = time();
 
         $assignment->id = $assignment->instance;
+        $assignment->courseid = $assignment->course;
 
-        if ($returnid = update_record('assignment', $assignment)) {
-
-            if ($assignment->timedue) {
-                $event = NULL;
-
-                if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
-
-                    $event->name        = $assignment->name;
-                    $event->description = $assignment->description;
-                    $event->timestart   = $assignment->timedue;
-
-                    update_event($event);
-                } else {
-                    $event = NULL;
-                    $event->name        = $assignment->name;
-                    $event->description = $assignment->description;
-                    $event->courseid    = $assignment->course;
-                    $event->groupid     = 0;
-                    $event->userid      = 0;
-                    $event->modulename  = 'assignment';
-                    $event->instance    = $assignment->id;
-                    $event->eventtype   = 'due';
-                    $event->timestart   = $assignment->timedue;
-                    $event->timeduration = 0;
-
-                    add_event($event);
-                }
-            } else {
-                delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id);
-            }
+        if (!update_record('assignment', $assignment)) {
+            return false;
         }
 
-        return $returnid;
+        if ($assignment->timedue) {
+            $event = new object();
+
+            if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+
+                $event->name        = $assignment->name;
+                $event->description = $assignment->description;
+                $event->timestart   = $assignment->timedue;
+
+                update_event($event);
+            } else {
+                $event = new object();
+                $event->name        = $assignment->name;
+                $event->description = $assignment->description;
+                $event->courseid    = $assignment->course;
+                $event->groupid     = 0;
+                $event->userid      = 0;
+                $event->modulename  = 'assignment';
+                $event->instance    = $assignment->id;
+                $event->eventtype   = 'due';
+                $event->timestart   = $assignment->timedue;
+                $event->timeduration = 0;
+
+                add_event($event);
+            }
+        } else {
+            delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id);
+        }
+
+        // get existing grade item
+        $assignment = stripslashes_recursive($assignment);
+        $grade_item = assignment_base::get_grade_item($assignment);
+        $grade_item->idnumber = $assignment->cmidnumber;
+
+        if ($assignment->grade > 0) { 
+            $grade_item->gradetype = GRADE_TYPE_VALUE;
+            $grade_item->grademax  = $assignment->grade;
+            $grade_item->grademin  = 0;
+            $grade_item->scaleid   = 0;
+            $grade_item->update();
+
+        } else if ($assignment->grade < 0) {
+            $grade_item->gradetype = GRADE_TYPE_SCALE;
+            $grade_item->scaleid   = -$assignment->grade;
+            $grade_item->update();
+
+        } else {
+            //how to indicate no grading?
+            $grade_item->gradetype = GRADE_TYPE_TEXT; 
+            $grade_item->grademax  = 0;
+            $grade_item->grademin  = 0;
+            $grade_item->scaleid   = 0;
+            $grade_item->update();
+        }
+
+        return true;
+    }
+
+    /**
+     * Creates grade item for assignment.
+     * Static method - do not override!
+     */
+    function create_grade_item($assignment) {
+        $params = array('courseid'=>$assignment->courseid,
+                        'itemname'=>'assignment',
+                        'itemtype'=>'mod',
+                        'itemmodule'=>'assignment',
+                        'iteminstance'=>$assignment->id,
+                        'idnumber'=>$assignment->cmidnumber);
+
+        if ($assignment->grade > 0) {
+            $params['gradetype'] = GRADE_TYPE_VALUE; 
+            $params['grademax']  = $assignment->grade;
+
+        } else if ($assignment->grade < 0) {
+            $params['gradetype'] = GRADE_TYPE_SCALE; 
+            $params['scaleid']   = -$assignment->grade;
+
+        } else {
+            //how to indicate no grading?
+            $params['gradetype'] = GRADE_TYPE_TEXT; 
+            $params['grademax']  = $assignment->grade;
+            $params['grademax']  = 0;
+            $params['grademin']  = 0;
+        }
+
+        $itemid = grade_create_item($params);
+        return $itemid;
+    }
+
+    /**
+     * Returns grade item for assignment.
+     * Final static method - do not override!
+     */
+    function get_grade_item($assignment) {
+        if ($items = grade_get_items($assignment->courseid, NULL, 'mod', 'assignment', $assignment->id)) {
+            $grade_item = reset($items);
+            return $grade_item;
+        }
+        // create new one
+        if (!$itemid = assignment_base::create_grade_item($assignment)) {
+            error('Can not create grade item!');
+        }
+        return grade_item::fetch('id', $itemid);
+    }
+
+    /**
+     * Update grade item for assignment.
+     * Final static method - do not override!
+     */
+    function update_grade($sid) {
+        $grade_item = assignment_base::get_grade_item($this->assignment);
+        $sub = get_record('assignment_submissions', 'id', $sid);
+        if ($sub->grade <0 ) {
+            $sub->grade = null;
+        }
+        events_trigger('grade_added', array('itemid'=>$grade_item->id, 'gradevalue'=>$sub->grade, 'userid'=>$sub->userid, 'feedback'=>$sub->submissioncomment, 'feedbackformat'=>$sub->format));
     }
 
     /**
@@ -620,14 +654,19 @@ class assignment_base {
 
                     if ($updatedb){
                         if ($newsubmission) {
-                            if (!insert_record('assignment_submissions', $submission)) {
+                            if (!$sid = insert_record('assignment_submissions', $submission)) {
                                 return false;
                             }
+                            $submission->id = $sid;
                         } else {
                             if (!update_record('assignment_submissions', $submission)) {
                                 return false;
                             }
-                        }            
+                        }
+
+                        // triger grade event
+                        $this->update_grade($submission->id);
+
                         //add to log only if updating
                         add_to_log($this->course->id, 'assignment', 'update grades', 
                                    'submissions.php?id='.$this->assignment->id.'&user='.$submission->userid, 
@@ -795,16 +834,11 @@ class assignment_base {
         $cm         = $this->cm;
         $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    /// Get all teachers and students
+        /// Get all ppl that can submit assignments
 
-        $currentgroup = get_current_group($course->id);
+        $currentgroup = get_and_set_current_group($course, groupmode($course, $cm));
 
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup);
-        } else {
-            $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '',
-                                 '', '', '', '', false);
-        }
+        $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '', '', '', $currentgroup, '', false);
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment, 
@@ -1001,45 +1035,15 @@ class assignment_base {
         $navigation = build_navigation($crumbs);
         
         print_header_simple(format_string($this->assignment->name,true), "", $navigation, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
-    
-    ///Position swapped
-    /*
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
-        } else {
-            $currentgroup = false;
-        }
-    */
-        
-        /// copied code from assignment module, if this is not the way to do this please change it
-        /// the above code does not work
-        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
-        /// and function groups_instance_print_group_selector() are missing.
-       
+
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+
+        /// find out current groups mode
         $groupmode = groupmode($course, $cm);
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
-    
-        /// Now we need a menu for separategroups as well!
-        if ($groupmode == VISIBLEGROUPS || ($groupmode
-            && has_capability('moodle/site:accessallgroups', $context))) {
-        
-            //the following query really needs to change
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_box_start('groupmenu');
-                print_group_menu($groups, $groupmode, $currentgroup, 'submissions.php?id='.$this->cm->id);
-                print_box_end(); // groupmenu
-            }
-        }
-   
-    /// Get all teachers and students
-        if ($currentgroup) {
-            $users = get_group_users($currentgroup);
-        } else {
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $users = get_users_by_capability($context, 'mod/assignment:submit'); // everyone with this capability set to non-prohibit
-        }
+        $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id=' . $this->cm->id);
+
+        /// Get all ppl that are allowed to submit assignments
+        $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
         $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
@@ -1301,6 +1305,9 @@ class assignment_base {
             return false;
         }
 
+        // triger grade event
+        $this->update_grade($submission->id);
+
         add_to_log($this->course->id, 'assignment', 'update grades', 
                    'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
         
@@ -1426,8 +1433,8 @@ class assignment_base {
      */
     function get_graders($user) {
         //potential graders
-        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', $fields='', $sort='', $limitfrom='', 
-                                               $limitnum='', $groups='', $exceptions='', $doanything=false, $view=false);
+        $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', '', '', '', '', '', '', false, false);
+
         $graders = array();
         if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
             if ($groups = user_group($this->course->id, $user->id)) {  // Try to find all groups
@@ -2253,7 +2260,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     global $CFG;
 
     if ($groupid) {     /// How many in a particular group?
-        return count_records_sql("SELECT COUNT(DISTINCT g.userid, g.groupid)
+        return count_records_sql("SELECT COUNT(DISTINCT gm.userid, gm.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
                                           ".groups_members_from_sql()."
                                     WHERE a.assignment = $assignment->id 
@@ -2264,7 +2271,7 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // this is all the users with this capability set, in this context or higher
-        if ($users = get_users_by_capability($context, 'mod/assignment:submit')) {
+        if ($users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
             foreach ($users as $user) {
                 $array[] = $user->id;
             }
@@ -2483,8 +2490,8 @@ function assignment_print_overview($courses, &$htmlarray) {
             
             // count how many people can submit
             $submissions = 0; // init
-            if ($students = get_users_by_capability($context, 'mod/assignment:submit')) {
-                foreach ($students as $student) {
+            if ($students = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
+                 foreach ($students as $student) {
                     if (get_records_sql("SELECT id,id FROM {$CFG->prefix}assignment_submissions
                                          WHERE assignment = $assignment->id AND
                                                userid = $student->id AND

@@ -39,8 +39,8 @@ class assignment_uploadsingle extends assignment_base {
         return $output;    
     }
 
-    function assignment_uploadsingle($cmid=0) {
-        parent::assignment_base($cmid);
+    function assignment_uploadsingle($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
+        parent::assignment_base($cmid, $assignment, $cm, $course);
 
     }
 

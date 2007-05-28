@@ -6,8 +6,8 @@
  */
 class assignment_offline extends assignment_base {
 
-    function assignment_offline($cmid=0) {
-        parent::assignment_base($cmid);
+    function assignment_offline($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
+        parent::assignment_base($cmid, $assignment, $cm, $course);
     }
 
     function display_lateness($timesubmitted) {
@@ -74,6 +74,9 @@ class assignment_offline extends assignment_base {
         if (! update_record('assignment_submissions', $submission)) {
             return false;
         }
+
+        // triger grade event
+        $this->update_grade($submission->id);
 
         add_to_log($this->course->id, 'assignment', 'update grades', 
                    'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);

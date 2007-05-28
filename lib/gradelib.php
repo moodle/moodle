@@ -283,7 +283,7 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
 }
 
 
-/*
+/**
  * Handles all grade_added and grade_updated events
  *
  * @param object $eventdata contains all the data for the event
@@ -291,33 +291,67 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
  *
  */
 function grade_handler($eventdata) {
+    $eventdata = (array)$eventdata;
+
+/// each grade must belong to some user
+    if (empty($eventdata['userid'])) {
+        debugging('Missing user id in event data!');
+        return true;
+    }
 
 /// First let's make sure a grade_item exists for this grade
-    $gradeitem = new grade_item($eventdata);
-    
-    if (empty($gradeitem->id)) {                      // Doesn't exist yet
-        if (!$gradeitem->id = $gradeitem->insert()) { // Try to create a new item...
-            debugging('Could not create a grade_item!');
-            return false;
+    if (!empty($eventdata['itemid'])) { // if itemid specified, do not use searching
+        $gradeitem = new grade_item(array('id'=>$eventdata['itemid']));
+
+        if (empty($gradeitem->id)) { // Item with itemid doesn't exist yet
+            debugging('grade_item does not exist! id:'.$eventdata['itemid']);
+             // this $eventadata can not be fixed, do not block the queue
+             // we should log the error somewhere on production servers
+            return true;
+        }
+
+    } else {
+        $gradeitem = new grade_item($eventdata);
+        if (empty($gradeitem->id)) {                      // Doesn't exist yet
+            if (!$gradeitem->id = $gradeitem->insert()) { // Try to create a new item...
+                debugging('Could not create a new grade_item!');
+                // do we need false here? - it would stop all other grades indefinitelly!
+                // we shouuld not IMO block other events, one silly bug in 3rd party module would disable all grading
+                // if we return false we must to notify admin and add some gui to fix the trouble
+                // skodak
+                return true; //for now
+            }
         }
     }
 
-    $eventdata->itemid = $gradeitem->id;
+    $rawgrade = new grade_grades_raw(array('itemid'=>$gradeitem->id, 'userid'=>$eventdata['userid'])); 
+    $rawgrade->grade_item = &$gradeitem; // we already have it, so let's use it
 
-/// Grade_item exists, now we can insert the new raw grade
+    // store these to keep track of original grade item settings
+    $rawgrade->grademax = $gradeitem->grademax;
+    $rawgrade->grademin = $gradeitem->grademin;
+    $rawgrade->scaleid  = $gradeitem->scaleid;
 
-    $rawgrade = new grade_grades_raw($eventdata); 
+    if (isset($eventdata['feedback'])) {
+        $rawgrade->feedback = $eventdata['feedback'];
+        if (isset($eventdata['feedbackformat'])) {
+            $rawgrade->feedbackformat = $eventdata['feedbackformat'];
+        } else {
+            $rawgrade->feedbackformat = FORMAT_PLAIN;
+        }
 
+    }
+    if (!isset($eventdata['gradevalue'])) {
+        $eventdata['gradevalue'] = null; // means no grade yet
+    }
     if ($rawgrade->id) {
-        $rawgrade->update($eventdata->gradevalue, 'event');
+        $rawgrade->update($eventdata['gradevalue'], 'event');
     } else {
+        $rawgrade->gradevalue = $eventdata['gradevalue'];
         $rawgrade->insert();
     }
-    
-    // Check how it went
 
-/// Are there other checks to do?
-
+    // everything ok :-)
     return true;
 
 }
