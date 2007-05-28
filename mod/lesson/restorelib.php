@@ -812,6 +812,15 @@
             }
         }
 
+        // Remap activity links
+        if ($lessons = get_records_select('lesson', "activitylink != 0 AND course = $restore->course_id", '', 'id, activitylink')) {
+            foreach ($lessons as $lesson) {
+                if ($newcmid = backup_getid($restore->backup_unique_code, 'course_modules', $lesson->activitylink)) {
+                    $status = $status and set_field('lesson', 'activitylink', $newcmid->new_id, 'id', $lesson->id);
+                }
+            }
+        }
+
         return $status;
     }
 
