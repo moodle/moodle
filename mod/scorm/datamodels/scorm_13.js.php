@@ -88,9 +88,9 @@ function SCORMapi1_3() {
         'cmi.interactions.n.objectives.n.id':{'pattern':CMIIndex, 'format':CMILongIdentifier, 'mod':'rw'},
         'cmi.interactions.n.timestamp':{'pattern':CMIIndex, 'format':CMITime, 'mod':'rw'},
         'cmi.interactions.n.correct_responses._count':{'defaultvalue':'0', 'pattern':CMIIndex, 'mod':'r'},
-        'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'rw'},
+        'cmi.interactions.n.correct_responses.n.pattern':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
         'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'rw'},
-        'cmi.interactions.n.learner_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'rw'},
+        'cmi.interactions.n.learner_response':{'pattern':CMIIndex, 'format':'CMIFeedback', 'mod':'rw'},
         'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'rw'},
         'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'rw'},
         'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
@@ -387,7 +387,12 @@ function SCORMapi1_3() {
                 elementmodel = element.replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                        expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
+                        if (eval(datamodel["'+elementmodel+'"].format) != 'CMIFeedback') {
+                            expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
+                        } else {
+                            // cmi.interactions.n.type depending format accept everything at this stage
+                            expression = new RegExp(CMIFeedback);
+                        }
                         value = value+'';
                         matches = value.match(expression);
                         if ((matches != null) && ((matches.join('').length > 0) || (value.length == 0))) {
@@ -426,8 +431,6 @@ function SCORMapi1_3() {
                                     }
                                 }
 
-
-
                                 if (errorCode == "0") {
 
                                     element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
@@ -439,7 +442,7 @@ function SCORMapi1_3() {
 
                                              if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
-                                                //This is a parentmodel.n.id element
+                                                //This is a cmi.objectives.n.id element
                                                 if (!duplicatedID(parentmodel,value)) {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
                                                         eval(parentmodel+'._count++;');
@@ -472,7 +475,6 @@ function SCORMapi1_3() {
                                                 }
                                             }
                                         } else {
-//alert(element+"\n"+subelement+"\n"+typeof eval(subelement)+"\n"+errorCode);
 
                                             parentmodel = 'cmi.interactions';
 
@@ -480,7 +482,7 @@ function SCORMapi1_3() {
 
                                                 if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
 
-                                                    //This is a parentmodel.n.id element
+                                                    //This is a cmi.interactions.n.id element
                                                     if (!duplicatedID(parentmodel,value)) {
 
                                                         if (elementIndexes[elementIndexes.length-2] == eval(parentmodel+'._count')) {
@@ -492,17 +494,13 @@ function SCORMapi1_3() {
                                                             subobject = eval(subelement);
                                                             subobject.objectives = new Object();
                                                             subobject.objectives._count = 0;
-                                                            //subobject.correct_responses = new Object();
-                                                            //subobject.correct_responses._count = 0;
-
-                                                            
                                                         } 
                                                     } else {
-
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element ID Already Exists";
                                                     }
                                                 } else {
+alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+parentmodel+"\nparentelement = "+parentelement+"\nvalue = "+value);
                                                     if (typeof eval(subelement) == "undefined") {
                                                         if ((elementmodel=='cmi.interactions.n.objectives.n.id') && (typeof eval(parentelement) != "undefined")) {
                                                            if (!duplicatedID(parentelement,value)) {
@@ -516,12 +514,15 @@ function SCORMapi1_3() {
                                                                errorCode="351";
                                                                diagnostic = "Data Model Element ID Already Exists";
                                                            }
-                                                        } else if ((elementmodel=='cmi.interactions.n.correct_responses.n.pattern') && (typeof eval(parentelement) != "undefined")) {
-                                                            if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                                eval(parentelement+'._count++;');
-
-                                                                eval(subelement+' = new Object();');
+                                                        } else if (elementmodel=='cmi.interactions.n.correct_responses.n.pattern') {
+                                                            if (typeof eval(parentelement) != "undefined") {
+                                                                if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+                                                                    eval(parentelement+'._count++;');
+                                                                    eval(subelement+' = new Object();');
+                                                                }
                                                             }
+                                                            // Use cmi.interactions.n.type value to check the right dataelement format
+
                                                         } else {
                                                             errorCode="408";
                                                         }
@@ -552,7 +553,6 @@ function SCORMapi1_3() {
                                              }
                                          } else {
 
-//alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+parentmodel+"\nparentelement = "+parentelement+"\nvalue = "+value);
                                              parentmodel = 'cmi.interactions';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
@@ -565,7 +565,7 @@ function SCORMapi1_3() {
                                                     if (typeof eval(subelement+'.type') == "undefined") {
                                                         errorCode="408";
                                                     } else {
-                                                       // if (
+                                                        // Use cmi.interactions.n.type value to check the right dataelement format
                                                     }
                                                 }
                                                 if ((elementmodel==parentmodel+'.n.type') && (errorCode=="0")) { 
@@ -613,11 +613,9 @@ function SCORMapi1_3() {
                                 }
                             }
                         } else {
-                            //errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
                             errorCode = "406";
                         }
                     } else {
-                        //errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
                         errorCode = "404";
                     }
                 } else {
