@@ -30,19 +30,22 @@
         error('Course module is incorrect');
     }
 
-    print_header($course->shortname);
+    if (!is_url($lesson->mediafile)) {
+        print_header($course->shortname);
+    }
 
     if ($printclose) {  // this is for framesets
         if ($lesson->mediaclose) {
-        echo '<div class="lessonmediafilecontrol">
-            <form>
-            <div">
-            <input type="button" onclick="top.close();" value="'.get_string("closewindow").'" />
-            </div>
-            </form>
-            </div>';
+            print_header($course->shortname);
+            echo '<div class="lessonmediafilecontrol">
+                <form>
+                <div>
+                <input type="button" onclick="top.close();" value="'.get_string("closewindow").'" />
+                </div>
+                </form>
+                </div>';
+            print_footer();
         }
-        print_footer();
         exit();
     }
 
@@ -155,13 +158,11 @@
 
     } else if (is_url($lesson->mediafile) or $mimetype == 'text/html' or $mimetype == 'text/plain') {
         // might be dangerous to handle all of these in the same fasion.  It is being set by a teacher though.
-        /*
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
         echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
         echo "<title>{$course->shortname}</title></head>\n";
-        */
         if ($lesson->mediaclose) {
             echo "<frameset rows=\"90%,*\">";
             echo "<frame src=\"$fullurl\" />";
@@ -172,7 +173,7 @@
             echo "<frame src=\"$fullurl\" />";
             echo "</frameset>";
         }
-        print_footer();
+        echo '</html>';
         exit();
 
     } else if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // Image
