@@ -162,6 +162,7 @@ class grade_object {
         
         foreach ($variables as $var => $value) {
             if (!empty($value) && !in_array($var, $this->nonfields)) {
+                $value = addslashes($value);
                 $wheresql .= " $var = '$value' AND ";
             }
         }
