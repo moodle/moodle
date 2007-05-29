@@ -318,7 +318,7 @@ class moodle_url {
                 error('invalidurl');
             }
             if (isset($parts['query'])){
-                parse_str($parts['query'], $this->params);
+                parse_str(str_replace('&amp;', '&', $parts['query']), $this->params);
             }
             unset($parts['query']);
             foreach ($parts as $key => $value){
