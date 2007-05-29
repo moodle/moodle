@@ -398,22 +398,22 @@ class grade_tree {
 
         foreach ($elements as $key => $element) {
             $this->first_sortorder++;
+            $new_sortorder = $this->first_sortorder;
 
             if (!empty($element['children'])) {
                 $newtree[$this->first_sortorder] = $element;
                 $newtree[$this->first_sortorder]['children'] = $this->renumber($this->first_sortorder, $element['children']); 
             }  else { 
-                
                 $element['object']->previous_sortorder = $this->get_neighbour_sortorder($element, 'previous');
                 $element['object']->next_sortorder = $this->get_neighbour_sortorder($element, 'next');
                 $newtree[$this->first_sortorder] = $element; 
-                
-                if ($this->first_sortorder != $element['object']->sortorder) {
-                    $this->need_update[$element['object']->get_item_id()] = 
-                        array('old_sortorder' => $element['object']->sortorder, 
-                              'new_sortorder' => $this->first_sortorder);
-                }
             } 
+            
+            if ($new_sortorder != $element['object']->sortorder) {
+                $this->need_update[$element['object']->get_item_id()] = 
+                    array('old_sortorder' => $element['object']->sortorder, 
+                          'new_sortorder' => $new_sortorder);
+            }
         }
         
         // If no starting sortorder was given, it means we have finished building the tree, so assign it to this->tree_array. Otherwise return the new tree.
@@ -459,7 +459,7 @@ class grade_tree {
      * @param array $array of elements to search. Defaults to $this->tree_array
      * @return int Sortorder (or null if none found)
      */
-    function get_neighbour_sortorder($element, $position, $array=null) {
+    function get_neighbour_sortorder($element, $position, $array=null, $lastsortorder=null) {
         if (empty($this->tree_array) || empty($element) || empty($position) || !in_array($position, array('previous', 'next'))) {
             return null;
         }
@@ -469,36 +469,44 @@ class grade_tree {
         if (empty($object)) {
             debugging("Invalid element given to grade_tree::get_neighbour_sortorder.");
             return false;
-        }
-        
+        } 
         if (empty($array)) {
             $array = $this->tree_array;
-        }
-
-        $lastsortorder = null;
+        } 
+        $result = null;
+    
         $returnnextelement = false;
+        $count = 0;
 
         foreach ($array as $sortorder => $child) {
+            
             if ($returnnextelement) {
                 return $sortorder;
             }
-
+            
             if ($object->get_sortorder() == $sortorder) {
                 if ($position == 'previous') {
-                    return $lastsortorder;
+                    if ($count > 0) {
+                        return $lastsortorder;
+                    } 
                 } elseif ($position == 'next') {
                     $returnnextelement = true;
                 }
                 continue;
             }
+            
+            $lastsortorder = $sortorder;
 
             if (!empty($child['children'])) {
-                return $this->get_neighbour_sortorder($element, $position, $child['children']);
-            }
+                $result = $this->get_neighbour_sortorder($element, $position, $child['children'], $lastsortorder);
+                if ($result) {
+                    break;
+                }
+            } 
 
-            $lastsortorder = $sortorder;
+            $count++;
         }
-        return null;
+        return $result;
     }
 
     /**

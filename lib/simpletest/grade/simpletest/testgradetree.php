@@ -35,6 +35,31 @@ global $CFG;
 require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
 class grade_tree_test extends gradelib_test {
+    function test_grade_tree_get_neighbour_sortorder() {
+        $tree = new grade_tree($this->courseid);
+        
+        $element = $tree->locate_element(4);
+        $this->assertEqual(3, $tree->get_neighbour_sortorder($element, 'previous'));
+        $this->assertNull($tree->get_neighbour_sortorder($element, 'next'));
+        
+        $element = $tree->locate_element(3);
+        $this->assertEqual(4, $tree->get_neighbour_sortorder($element, 'next'));
+        $this->assertNull($tree->get_neighbour_sortorder($element, 'previous'));
+        
+        $element = $tree->locate_element(1);
+        $this->assertNull($tree->get_neighbour_sortorder($element, 'previous'));
+        $this->assertEqual(7, $tree->get_neighbour_sortorder($element, 'next'));
+        
+        $element = $tree->locate_element(7);
+        $this->assertEqual(1, $tree->get_neighbour_sortorder($element, 'previous'));
+        $this->assertEqual(8, $tree->get_neighbour_sortorder($element, 'next'));
+        
+        $element = $tree->locate_element(8);
+        $this->assertEqual(7, $tree->get_neighbour_sortorder($element, 'previous'));
+        $this->assertNull($tree->get_neighbour_sortorder($element, 'next'));
+        
+    }
+    
     function test_grade_tree_renumber() {
         $tree = new grade_tree($this->courseid);
         $tree1 = $tree;
@@ -56,26 +81,6 @@ class grade_tree_test extends gradelib_test {
         $this->assertEqual('8/9', $element->index);
         $this->assertNotNull($element->element);
         $this->assertEqual('singleparentitem1', $element->element['object']->itemname); 
-    }
-    
-    function test_grade_tree_get_neighbour_sortorder() {
-        $tree = new grade_tree($this->courseid);
-        
-        $element = $tree->locate_element(4);
-        $this->assertEqual(3, $tree->get_neighbour_sortorder($element, 'previous'));
-        $this->assertNull($tree->get_neighbour_sortorder($element, 'next'));
-        
-        $element = $tree->locate_element(1);
-        $this->assertNull($tree->get_neighbour_sortorder($element, 'previous'));
-        $this->assertEqual(7, $tree->get_neighbour_sortorder($element, 'next'));
-        
-        $element = $tree->locate_element(7);
-        $this->assertEqual(1, $tree->get_neighbour_sortorder($element, 'previous'));
-        $this->assertEqual(8, $tree->get_neighbour_sortorder($element, 'next'));
-        
-        $element = $tree->locate_element(8);
-        $this->assertEqual(7, $tree->get_neighbour_sortorder($element, 'previous'));
-        $this->assertNull($tree->get_neighbour_sortorder($element, 'next'));
     }
     
     function test_grade_tree_insert_grade_subcategory() {
@@ -288,4 +293,5 @@ class grade_tree_test extends gradelib_test {
         $tree = new grade_tree($this->courseid);
         echo $tree->get_edit_tree(); 
     }
+    
 }
