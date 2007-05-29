@@ -1164,305 +1164,407 @@
         $status = true;
         //Check it exists
         if (!file_exists($xml_file)) {
-            $status = false;
+            return false;
         }
-        //Get info from xml
-        if ($status) {
-            //info will contain the number of record to process
-            $info = restore_read_xml_gradebook($restore, $xml_file);
+        
+        // Get info from xml
+        // info will contain the number of record to process
+        $info = restore_read_xml_gradebook($restore, $xml_file);
 
-        //If we have info, then process preferences, letters & categories
-            if ($info > 0) {
-                //Count how many we have
-                $preferencescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_preferences');
-                $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letter');
-                $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_category');
+        // If we have info, then process
+        if ($info <= 0) {
+            return $status;  
+        }
+            
+        // Count how many we have
+        $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories');
+        $itemscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items');
+        $outcomecount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes');
+    
+        // return if nothing to restore
+        if (!$itemscount && !$categoriescount && !outcomecount) {
+            return $status;  
+        }
+            
+        // Start ul
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<ul>';
+        }
+        // Number of records to get in every chunk
+        $recordset_size = 2;
+        // Flag to mark if we must continue
+        $continue = true;
 
-                if ($preferencescount || $letterscount || $categoriescount) {
-                    //Start ul
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo '<ul>';
-                    }
-                    //Number of records to get in every chunk
-                    $recordset_size = 2;
-                    //Flag to mark if we must continue
-                    $continue = true;
-
-                    //If there aren't preferences, stop
-                    if (!$preferencescount) {
-                        $continue = false;
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('backupwithoutgradebook','grade').'</li>';
-                        }
-                    }
-
-                    //If we are restoring to an existing course and it has advanced disabled, stop
-                    if ($restore->restoreto != 2) {
-                        //Fetch the 'use_advanced' preferences (id = 0)
-                        if ($pref_rec = get_record('grade_preferences','courseid',$restore->course_id,'preference',0)) {
-                            if ($pref_rec->value == 0) {
-                                $continue = false;
-                                if (!defined('RESTORE_SILENTLY')) {
-                                    echo '<li>'.get_string('respectingcurrentdata','grade').'</li>';
-                                }
-                            }
-                        }
-                    }
-
-                    //Process preferences
-                    if ($preferencescount && $continue) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('preferences','grades').'</li>';
-                        }
-                        $counter = 0;
-                        while ($counter < $preferencescount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'grade_preferences' AND backup_code = '$restore->backup_unique_code'",
-                                                       "old_id",
-                                                       "old_id, old_id",
-                                                       $counter,
-                                                       $recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,'grade_preferences',$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the GRADE_PREFERENCES record structure
-                                        $dbrec->courseid   = $restore->course_id;
-                                        $dbrec->preference = backup_todb($info['GRADE_PREFERENCE']['#']['PREFERENCE']['0']['#']);
-                                        $dbrec->value      = backup_todb($info['GRADE_PREFERENCE']['#']['VALUE']['0']['#']);
+        //Process categories
+        if ($categoriescount && $continue) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradecategories','grades').'</li>';
+            }
+            $counter = 0;
+            while ($counter < $categoriescount) {
+                //Fetch recordset_size records in each iteration
+                $recs = get_records_select("backup_ids","table_name = 'grade_categories' AND backup_code = '$restore->backup_unique_code'",
+                                            "old_id",
+                                            "old_id, old_id",
+                                            $counter,
+                                            $recordset_size);
+                if ($recs) {
+                    foreach ($recs as $rec) {
+                        //Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,'grade_categories',$rec->old_id);
+                        if ($data) {
+                            //Now get completed xmlized object
+                            $info = $data->info;
+                            //traverse_xmlize($info);                            //Debug
+                            //print_object ($GLOBALS['traverse_array']);         //Debug
+                            //$GLOBALS['traverse_array']="";                     //Debug
+                            //Now build the GRADE_PREFERENCES record structure
+                            
+                            $dbrec->courseid   = $restore->course_id;
+                            $dbrec->parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
+                            $dbrec->fullname = backup_todb($info['GRADE_CATEGORY']['#']['FULLNAME']['0']['#']);
+                            $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
+                            $dbrec->keephigh = backup_todb($info['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#']);
+                            $dbrec->droplow = backup_todb($info['GRADE_CATEGORY']['#']['DROPLOW']['0']['#']);
+                            $dbrec->hidden = backup_todb($info['GRADE_CATEGORY']['#']['HIDDEN']['0']['#']);
    
-                                        //Structure is equal to db, insert record
-                                        //if the preference doesn't exist
-                                        if (!$prerec = get_record('grade_preferences','courseid',$dbrec->courseid,'preference',$dbrec->preference)) {
-                                            $status = insert_record('grade_preferences',$dbrec);
-                                        }
-                                    }
-                                    //Increment counters
-                                    $counter++;
-                                    //Do some output
-                                    if ($counter % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
+                            //Structure is equal to db, insert record
+                            //if the fullname doesn't exist
+                            if (!$prerec = get_record('grade_categories','courseid',$dbrec->courseid,'fullname',$dbrec->fullname)) {
+                                $newid = insert_record('grade_categories',$dbrec);
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->oldid,$newid);
+                            } else {
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->oldid,$rec->oldid); 
                             }
                         }
-                    }
-
-                    //Process letters
-                    //If destination course has letters, skip restoring letters
-                    $hasletters = get_records('grade_letter', 'courseid', $restore->course_id);
-
-                    if ($letterscount && $continue && !$hasletters) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('letters','grades').'</li>';
-                        }
-                        $counter = 0;
-                        while ($counter < $letterscount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'grade_letter' AND backup_code = '$restore->backup_unique_code'",
-                                                       "old_id",
-                                                       "old_id, old_id",
-                                                       $counter,
-                                                       $recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,'grade_letter',$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the GRADE_LETTER record structure
-                                        $dbrec->courseid   = $restore->course_id;
-                                        $dbrec->letter     = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
-                                        $dbrec->grade_high = backup_todb($info['GRADE_LETTER']['#']['GRADE_HIGH']['0']['#']);
-                                        $dbrec->grade_low  = backup_todb($info['GRADE_LETTER']['#']['GRADE_LOW']['0']['#']);
-
-                                        //Structure is equal to db, insert record
-                                        $status = insert_record('grade_letter',$dbrec);
-                                    }
-                                    //Increment counters
-                                    $counter++;
-                                    //Do some output
-                                    if ($counter % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
+                        //Increment counters
+                        $counter++;
+                        //Do some output
+                        if ($counter % 1 == 0) {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo ".";
+                                if ($counter % 20 == 0) {
+                                    echo "<br />";
                                 }
                             }
+                            backup_flush(300);
                         }
-                    }
-
-                    //Process categories
-                    if ($categoriescount && $continue) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('categories','grades').'</li>';
-                        }
-                        $counter = 0;
-                        $countercat = 0;
-                        while ($countercat < $categoriescount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
-                                                       "old_id",
-                                                       "old_id, old_id",
-                                                       $countercat,
-                                                       $recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,'grade_category',$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the GRADE_CATEGORY record structure
-                                        $dbrec->courseid     = $restore->course_id;
-                                        $dbrec->name         = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#']);
-                                        $dbrec->drop_x_lowest= backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#']);
-                                        $dbrec->bonus_points = backup_todb($info['GRADE_CATEGORY']['#']['BONUS_POINTS']['0']['#']);
-                                        $dbrec->hidden       = backup_todb($info['GRADE_CATEGORY']['#']['HIDDEN']['0']['#']);
-                                        $dbrec->weight       = backup_todb($info['GRADE_CATEGORY']['#']['WEIGHT']['0']['#']);
-
-                                        //If the grade_category exists in the course (by name), don't insert anything
-                                        $catex = get_record('grade_category','courseid',$dbrec->courseid,'name',$dbrec->name);
-
-                                        if (!$catex) {
-                                            //Structure is equal to db, insert record
-                                            $categoryid = insert_record('grade_category',$dbrec);
-                                        } else {
-                                            //Simply remap category
-                                            $categoryid = $catex->id;
-                                        }
-
-                                        //Now, restore grade_item
-                                        $items = $info['GRADE_CATEGORY']['#']['GRADE_ITEMS']['0']['#']['GRADE_ITEM'];
-
-                                        //Iterate over items
-                                        for($i = 0; $i < sizeof($items); $i++) {
-                                            $ite_info = $items[$i];
-                                            //traverse_xmlize($ite_info);                                                                 //Debug
-                                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                                            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-                                            //Now build the GRADE_ITEM record structure
-                                            $item->courseid     = $restore->course_id;
-                                            $item->category     = $categoryid;
-                                            $item->module_name  = backup_todb($ite_info['#']['MODULE_NAME']['0']['#']);
-                                            $item->cminstance   = backup_todb($ite_info['#']['CMINSTANCE']['0']['#']);
-                                            $item->scale_grade  = backup_todb($ite_info['#']['SCALE_GRADE']['0']['#']);
-                                            $item->extra_credit = backup_todb($ite_info['#']['EXTRA_CREDIT']['0']['#']);
-                                            $item->sort_order   = backup_todb($ite_info['#']['SORT_ORDER']['0']['#']);
-
-                                            //Check that the module has been included in the restore
-                                            if ($restore->mods[$item->module_name]->restore) {
-                                                //Get the id of the moduletype
-                                                if ($module = get_record('modules','name',$item->module_name)) {
-                                                    $item->modid = $module->id;
-                                                    //Get the instance id
-                                                    if ($instance = backup_getid($restore->backup_unique_code,$item->module_name,$item->cminstance)) {
-                                                        $item->cminstance = $instance->new_id;
-                                                        //Structure is equal to db, insert record
-                                                        $itemid = insert_record('grade_item',$item);
-
-                                                        //Now process grade_exceptions
-                                                        if (!empty($ite_info['#']['GRADE_EXCEPTIONS'])) {
-                                                            $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
-                                                        } else {
-                                                            $exceptions = array();
-                                                        }
-
-                                                        //Iterate over exceptions
-                                                        for($j = 0; $j < sizeof($exceptions); $j++) {
-                                                            $exc_info = $exceptions[$j];
-                                                            //traverse_xmlize($exc_info);                                                                 //Debug
-                                                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                                                            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-                                                            //Now build the GRADE_EXCEPTIONS record structure
-                                                            $exception->courseid     = $restore->course_id;
-                                                            $exception->grade_itemid = $itemid;
-                                                            $exception->userid       = backup_todb($exc_info['#']['USERID']['0']['#']);
-
-                                                            //We have to recode the useridto field
-                                                            $user = backup_getid($restore->backup_unique_code,"user",$exception->userid);
-                                                            if ($user) {
-                                                                $exception->userid = $user->new_id;
-                                                                //Structure is equal to db, insert record
-                                                                $exceptionid = insert_record('grade_exceptions',$exception);
-                                                                //Do some output
-                                                                $counter++;
-                                                                if ($counter % 20 == 0) {
-                                                                    if (!defined('RESTORE_SILENTLY')) {
-                                                                        echo ".";
-                                                                        if ($counter % 400 == 0) {
-                                                                            echo "<br />";
-                                                                        }
-                                                                    }
-                                                                    backup_flush(300);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        //Re-sort all the grade_items because we can have duplicates
-                                        if ($grade_items = get_records ('grade_item','courseid',$restore->course_id,'sort_order','id,sort_order')) {
-                                            $order = 1;
-                                            foreach ($grade_items as $grade_item) {
-                                                $grade_item->sort_order = $order;
-                                                set_field ('grade_item','sort_order',$grade_item->sort_order,'id',$grade_item->id);
-                                                $order++;
-                                            }
-                                        }
-                                    }
-                                    //Increment counters
-                                    $countercat++;
-                                    //Do some output
-                                    if ($countercat % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($countercat % 20 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!defined('RESTORE_SILENTLY')) {
-                    //End ul
-                        echo '</ul>';
                     }
                 }
             }
-        }                
-     
-        return $status;
+        }
+
+        // process outcomes
+        if ($outcomecount && $continue) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradeoutcomes','grades').'</li>';
+            }
+            $counter = 0;
+            while ($counter < $outcomecount) {
+                //Fetch recordset_size records in each iteration
+                $recs = get_records_select("backup_ids","table_name = 'grade_outcomes' AND backup_code = '$restore->backup_unique_code'",
+                                            "old_id",
+                                            "old_id, old_id",
+                                            $counter,
+                                            $recordset_size);
+                if ($recs) {
+                    foreach ($recs as $rec) {
+                        //Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,'grade_outcomes',$rec->old_id);
+                        if ($data) {
+                            //Now get completed xmlized object
+                            $info = $data->info;
+                            //traverse_xmlize($info);                            //Debug
+                            //print_object ($GLOBALS['traverse_array']);         //Debug
+                            //$GLOBALS['traverse_array']="";                     //Debug
+                            //Now build the GRADE_PREFERENCES record structure
+                            
+                            $dbrec->courseid   = $restore->course_id;
+                            $dbrec->shortname =  backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
+                            $dbrec->fullname =  backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#']);
+                            
+                            if ($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']) {
+                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']));
+                                $derec->scaleid = $scale->new_id;
+                            }
+
+                            $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']));            
+                            $derec->usermodified = $modifier->new_id;
+   
+                            // Structure is equal to db, insert record
+                            // If the shortname doesn't exist
+                            if (!$prerec = get_record('grade_outcomes','courseid',$dbrec->courseid,'shortname',$dbrec->shortname)) {
+                                $status = insert_record('grade_outcomes',$dbrec);
+                            }
+                        }
+                        //Increment counters
+                        $counter++;
+                        //Do some output
+                        if ($counter % 1 == 0) {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo ".";
+                                if ($counter % 20 == 0) {
+                                    echo "<br />";
+                                }
+                            }
+                            backup_flush(300);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Process grade items (grade_raw, grade_final, grade_history and grade_text)
+        if ($itemscount && $continue) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradeitems','grades').'</li>';
+            }
+            $counter = 0;
+            $countercat = 0;
+            while ($countercat < $itemscount) {
+                //Fetch recordset_size records in each iteration
+                $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
+                                            "old_id",
+                                            "old_id, old_id",
+                                            $countercat,
+                                            $recordset_size);
+                if ($recs) {
+                    foreach ($recs as $rec) {
+                        //Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id);
+                        if ($data) {
+                            //Now get completed xmlized object
+                            $info = $data->info;
+                            //traverse_xmlize($info);                            //Debug
+                            //print_object ($GLOBALS['traverse_array']);         //Debug
+                            //$GLOBALS['traverse_array']="";                     //Debug
+            
+                            $dbrec->courseid = $restore->course_id;
+                            
+                            if ($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']) {
+                                $dbrec->categoryid = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
+                            }
+
+                            $dbrec->itemname = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#']);
+                            $dbrec->itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
+                            /// this needs to point to either the new mod id
+                            /// or the category id
+                            $dbrec->iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
+                            $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
+                            $dbrec->iteminfo = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#']);
+                            $dbrec->idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#']);
+                            $dbrec->grademax = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#']);
+                            $dbrec->grademin = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#']);
+                            /// needs to be restored first
+                            
+                            if ($info['GRADE_ITEM']['#']['SCALEID']['0']['#']) {
+                                $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#']));
+                                $derec->scaleid = $scale->new_id;
+                            }
+                            
+                            /// needs to be restored first
+                            $dbrec->outcomeid = backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']);
+                            $dbrec->gradepass = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#']);
+                            $dbrec->multfactor = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#']);
+                            $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
+                            $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);                                                                      
+                            
+                            /// if thesse 5 all match then we know this item is already in db                                                  
+                           
+                            /*
+                            $itemex = get_record_sql('SELECT id,id FROM grade_items 
+                                                      WHERE courseid = '.$dbrec->courseid.' 
+                                                      AND itemtype = '.$dbrec->itemtype.' 
+                                                      AND itemmodule = '.$dbrec->itemmodule.'
+                                                      AND iteminstance = '.$dbrec->iteminstance.'
+                                                      AND itemnumber = '.$dbrec->itemnumber);
+
+                            if (!$itemex) {
+                                //Structure is equal to db, insert record
+                                $itemid = insert_record('grade_items',$dbrec);
+                            } else {
+                                //Simply remap category
+                                $itemid = $itemex->id;
+                            }
+                            */
+                            
+                            // always insert, since modules restored to existing courses are always inserted
+                            $itemid = insert_record('grade_items',$dbrec);
+                            /// now, restore grade_calculations, grade_raw, grade_final, grade_text, and grade_history
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']) && ($raws = $info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']['GRADE_RAW'])) {
+                                //Iterate over items
+                                for($i = 0; $i < sizeof($raws); $i++) {
+                                    $ite_info = $raws[$i];
+                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                                    //Now build the GRADE_ITEM record structure
+                                    $raw->itemid       = $itemid;
+                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));            
+                                    $raw->userid = $user->new_id;
+                                    $raw->gradevalue = backup_todb($ite_info['#']['GRADEVALUE']['0']['#']);
+                                    $raw->grademax = backup_todb($ite_info['#']['GRADEMAX']['0']['#']);
+                                    $raw->grademin = backup_todb($ite_info['#']['GRADEMIN']['0']['#']);
+                                    // need to find scaleid
+                                
+                                    if ($ite_info['#']['SCALEID']['0']['#']) {
+                                        $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['SCALEID']['0']['#']));
+                                        $raw->scaleid = $scale->new_id;
+                                    }
+                                
+                                    insert_record('grade_grades_raw', $raw);
+                                    
+                                    $counter++;
+                                    if ($counter % 20 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 400 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                            
+                            /// processing grade_grades_final   
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_FINAL']['0']['#']) && ($finals = $info['GRADE_ITEM']['#']['GRADE_GRADES_FINAL']['0']['#']['GRADE_FINAL'])) {
+                                //Iterate over items
+                                for($i = 0; $i < sizeof($finals); $i++) {
+                                    $ite_info = $finals[$i];
+                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                                    $final->itemid       = $itemid;
+                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));            
+                                    $final->userid = $user->new_id;
+                                    $final->gradevalue = backup_todb($ite_info['#']['GRADEVALUE']['0']['#']);
+                                    $final->hidden = backup_todb($ite_info['#']['HIDDEN']['0']['#']);
+                                    $final->locked = backup_todb($ite_info['#']['LOCKED']['0']['#']);
+                                    $final->exported = backup_todb($ite_info['#']['EXPORTED']['0']['#']);
+                                    
+                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
+                                    $final->usermodified = $modifier->new_id;
+                                
+                                    insert_record('grade_grades_final', $final);
+                                    
+                                    $counter++;
+                                    if ($counter % 20 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 400 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }    
+                               
+                            /// processing grade_calculations
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']) && ($calcs = $info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']['GRADE_CALCULATION'])) {
+                                //Iterate over items
+                                for($i = 0; $i < sizeof($calcs); $i++) {
+                                    $ite_info = $calcs[$i];
+                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                                    $calc->itemid       = $itemid;
+
+                                    $calc->calculation = backup_todb($ite_info['#']['CALCULATION']['0']['#']);
+                                    
+                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
+                                    $calc->usermodified = $modifier->new_id;
+                                
+                                    insert_record('grade_calculations', $calc);
+                                    
+                                    $counter++;
+                                    if ($counter % 20 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 400 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+
+                            /// processing grade_grades_text
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_TEXT']['0']['#']) && ($texts = $info['GRADE_ITEM']['#']['GRADE_GRADES_TEXT']['0']['#']['GRADE_TEXT'])) {
+                                //Iterate over items
+                                for($i = 0; $i < sizeof($texts); $i++) {
+                                    $ite_info = $texts[$i];
+                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                                    $text->itemid       = $itemid;
+                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));
+                                    $text->userid = $user->new_id;
+                                    $text->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
+                                    $text->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
+                                    $text->feedback = backup_todb($ite_info['#']['FEEDBACK']['0']['#']);
+                                    $text->feedbackformat = backup_todb($ite_info['#']['FEEDBACKFORMAT']['0']['#']);                                                                        
+                                
+                                    insert_record('grade_grades_text', $text);
+                                    
+                                    $counter++;
+                                    if ($counter % 20 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 400 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }                                                   
+
+                            /// processing grade_history
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_HISTORY']['0']['#']) && ($histories = $info['GRADE_ITEM']['#']['GRADE_GRADES_HISTORY']['0']['#']['GRADE_HISTORY'])) {
+                                //Iterate over items
+                                for($i = 0; $i < sizeof($histories); $i++) {
+                                    $ite_info = $histories[$i];
+                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //$GLOBALS['traverse_array']="";                                                              //Debug
+                                    $history->itemid       = $itemid;
+                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));
+                                    $history->userid = $user->new_id;
+                                    $history->oldgrade = backup_todb($ite_info['#']['OLDGRADE']['0']['#']);
+                                    $history->newgrade = backup_todb($ite_info['#']['NEWGRADE']['0']['#']);
+                                    $history->note = backup_todb($ite_info['#']['NOTE']['0']['#']);
+                                    $history->howmodified = backup_todb($ite_info['#']['HOWMODIFIED']['0']['#']);                                                                        
+                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
+                                    $history->usermodified = $modifier->new_id;
+                                    insert_record('grade_history', $text);
+                                    
+                                    $counter++;
+                                    if ($counter % 20 == 0) {
+                                        if (!defined('RESTORE_SILENTLY')) {
+                                            echo ".";
+                                            if ($counter % 400 == 0) {
+                                                echo "<br />";
+                                            }
+                                        }
+                                        backup_flush(300);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            $countercat++;
+            }
+        }
+
+        if (!defined('RESTORE_SILENTLY')) {
+        //End ul
+            echo '</ul>';
+        }
+        return $status;        
     }
 
     //This function creates all the user, user_students, user_teachers
@@ -3372,7 +3474,7 @@
 
             //If we are under a GRADE_PREFERENCE, GRADE_LETTER or GRADE_CATEGORY tag under a GRADEBOOK zone, accumule it
             if (isset($this->tree[5]) and isset($this->tree[3])) {
-                if (($this->tree[5] == "GRADE_PREFERENCE" || $this->tree[5] == "GRADE_LETTER" || $this->tree[5] == "GRADE_CATEGORY" ) && ($this->tree[3] == "GRADEBOOK")) {
+                if (($this->tree[5] == "GRADE_ITEM" || $this->tree[5] == "GRADE_CATEGORY" || $this->tree[5] == "GRADE_OUTCOME") && ($this->tree[3] == "GRADEBOOK")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -4444,13 +4546,13 @@
                     $this->temp = "";
                 }
                 $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
-                //We have finished preferences, letters or categories, reset accumulated
-                //data because they are close tags
+                // We have finished outcome, grade_category or grade_item, reset accumulated
+                // data because they are close tags
                 if ($this->level == 4) {
                     $this->temp = "";
                 }
                 //If we've finished a message, xmlize it an save to db
-                if (($this->level == 5) and ($tagName == "GRADE_PREFERENCE")) {
+                if (($this->level == 5) and ($tagName == "GRADE_ITEM")) {
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one PREFERENCE)
@@ -4462,37 +4564,16 @@
                     //$GLOBALS['traverse_array']="";                                                  //Debug
                     //Now, save data to db. We'll use it later
                     //Get id and status from data
-                    $preference_id = $data["GRADE_PREFERENCE"]["#"]["ID"]["0"]["#"];
+                    $item_id = $data["GRADE_ITEM"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_preferences', $preference_id, 
+                    
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_items', $item_id, 
                                            null,$data);
                     //Create returning info
                     $this->info = $this->counter;
                     //Reset temp
-                    unset($this->temp);
-                }
-                //If we've finished a grade_letter, xmlize it an save to db
-                if (($this->level == 5) and ($tagName == "GRADE_LETTER")) {
-                    //Prepend XML standard header to info gathered
-                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
-                    //Call to xmlize for this portion of xml data (one LETTER)
-                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
-                    $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
-                    $letter_id = $data["GRADE_LETTER"]["#"]["ID"]["0"]["#"];
-                    $this->counter++;
-                    //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_letter' ,$letter_id, 
-                                           null,$data);
-                    //Create returning info
-                    $this->info = $this->counter;
-                    //Reset temp
+                    
                     unset($this->temp);
                 }
 
@@ -4512,7 +4593,31 @@
                     $category_id = $data["GRADE_CATEGORY"]["#"]["ID"]["0"]["#"];
                     $this->counter++;
                     //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_category' ,$category_id,
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_categories' ,$category_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                
+                //If we've finished a grade_category, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_OUTCOME")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one CATECORY)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $outcome_id = $data["GRADE_OUTCOME"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_outcomes' ,$outcome_id,
                                            null,$data);
                     //Create returning info
                     $this->info = $this->counter;
