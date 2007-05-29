@@ -556,7 +556,7 @@ alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+paren
                                              parentmodel = 'cmi.interactions';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
-                                                     if (eval(element) != value) {
+                                                     if (eval(element) == value) {
                                                          errorCode = "351";
                                                          diagnostic = "Write Once Violation";
                                                      }
