@@ -172,6 +172,7 @@ class qformat_xml extends qformat_default {
         $single = $this->getpath( $question, array('#','single',0,'#'), 'true' );
         $qo->single = $this->trans_single( $single );
         $shuffleanswers = $this->getpath( $question, array('#','shuffleanswers',0,'#'), 'false' );
+        $qo->answernumbering = $this->getpath( $question, array('#','answernumbering',0,'#'), 'abc' );
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
         $qo->correctfeedback = $this->getpath( $question, array('#','correctfeedback',0,'#','text',0,'#'), '', true );
         $qo->partiallycorrectfeedback = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
@@ -872,6 +873,7 @@ class qformat_xml extends qformat_default {
             $expout .= "    <correctfeedback>".$this->writetext($question->options->correctfeedback, 3)."</correctfeedback>\n";
             $expout .= "    <partiallycorrectfeedback>".$this->writetext($question->options->partiallycorrectfeedback, 3)."</partiallycorrectfeedback>\n";
             $expout .= "    <incorrectfeedback>".$this->writetext($question->options->incorrectfeedback, 3)."</incorrectfeedback>\n";
+            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
             foreach($question->options->answers as $answer) {
                 $percent = $answer->fraction * 100;
                 $expout .= "      <answer fraction=\"$percent\">\n";
