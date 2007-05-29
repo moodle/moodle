@@ -261,11 +261,11 @@
             }
         }
         
-        // attemps to grab grades from third party/non-stard mods, or mods with no event
-        // implemented for 1.9 and above.
-        mtrace("Grabbing grades from modules if required...");
+        // attemps to grab grades from third party/non-stard mods that still have xxx_grades() in lib.php
+        // which was obsoleted in 1.9.
+        mtrace("Grabbing grades from older modules if required...");
         include_once($CFG->dirroot.'/lib/gradelib.php');
-        grades_grab_grades();
+        grade_grab_legacy_grades();
 
     } // End of occasional clean-up tasks
 

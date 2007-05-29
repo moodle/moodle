@@ -60,7 +60,7 @@ if ( $formdata = $mform->get_data() ) {
             $eventdata->userid = $result['#']['student'][0]['#'];
             $eventdata->gradevalue = $result['#']['score'][0]['#'];
             
-            trigger_event('grade_added', $eventdata);           
+            trigger_event('grade_updated_external', $eventdata);           
             echo "<br/>triggering event for $eventdata->idnumber... student id is $eventdata->userid and grade is $eventdata->gradevalue";          
         }      
     }    

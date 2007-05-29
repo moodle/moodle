@@ -106,9 +106,9 @@ class eventslib_test extends UnitTestCase {
         global $CFG;
 
         $dbcount = count_records('events_handlers', 'handlermodule', 'unittest');
-        $events = array();
+        $handlers = array();
         require($CFG->libdir.'/simpletest/fixtures/events.php');
-        $filecount = count($events);
+        $filecount = count($handlers);
         $this->assertEqual($dbcount, $filecount, 'Equal number of handlers in file and db: %s');
     }
 

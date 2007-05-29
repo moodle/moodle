@@ -32,7 +32,7 @@ function xmldb_assignment_upgrade($oldversion=0) {
             $db->debug = false;
             if ($rs->RecordCount() > 0) {
                 while ($assignment = rs_fetch_next_record($rs)) {
-                    $item = grade_get_items($assignment->course, 'grade', 'mod', 'assignment', $assignment->id);
+                    $item = grade_get_items($assignment->course, 'mod', 'assignment', $assignment->id);
                     if (!empty($item)) {
                         //already converted, it should not happen - probably interrupted upgrade?
                         continue;
@@ -41,10 +41,10 @@ function xmldb_assignment_upgrade($oldversion=0) {
                     if ($rs2 = get_recordset('assignment_submissions', 'assignment', $assignment->id)) {
                         while ($sub = rs_fetch_next_record($rs2)) {
                             if ($sub->grade != -1 or !empty($sub->submissioncomment)) {
-                                if ($sub->grade <0 ) {
+                                if ($sub->grade < 0) {
                                     $sub->grade = null;
                                 }
-                                events_trigger('grade_added', array('itemid'=>$itemid, 'gradevalue'=>$sub->grade, 'userid'=>$sub->userid, 'feedback'=>$sub->submissioncomment, 'feedbackformat'=>$sub->format));
+                                events_trigger('grade_updated', array('itemid'=>$itemid, 'gradevalue'=>$sub->grade, 'userid'=>$sub->userid, 'feedback'=>$sub->submissioncomment, 'feedbackformat'=>$sub->format));
                             }
                         }
                         rs_close($rs2);

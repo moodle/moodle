@@ -53,13 +53,13 @@ function events_load_def($component) {
         }
     }
 
-    $events = array(); // TODO: $handlers might be better here ;-)
+    $handlers = array();
 
     if (file_exists($defpath)) {
         require($defpath);
     }
 
-    return $events;
+    return $handlers;
 }
 
 /**

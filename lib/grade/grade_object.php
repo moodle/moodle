@@ -107,7 +107,7 @@ class grade_object {
     function insert() {
         global $USER;
 
-        if (!empty($this->id)) {   // Object already exists, so let's do an update instead
+        if (!empty($this->id)) {
             debugging("Grade object already exists!");
             return false;
         }
@@ -120,7 +120,7 @@ class grade_object {
 
         $clonethis = fullclone($this);
 
-        // Unset non-set fields
+        // Unset non-set and null fields
         foreach ($clonethis as $var => $val) {
             if (!isset($val)) {
                 unset($clonethis->$var);

@@ -1,13 +1,15 @@
 <?php // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
+// Defines core event handlers                                           //
+///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
 //                                                                       //
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.org                                            //
 //                                                                       //
-// Copyright (C) 1999-2007  Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 1999 onwards  Martin Dougiamas  http://moodle.com       //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -25,16 +27,15 @@
 
 
 $handlers = array (
-   'test_instant' => array (
-        'handlerfile'      => '/lib/simpletest/testeventslib.php',
-        'handlerfunction'  => 'sample_function_handler',
-        'schedule'         => 'instant'
-    ),
 
-   'test_cron' => array (
-        'handlerfile'      => '/lib/simpletest/testeventslib.php',
-        'handlerfunction'  => array('sample_handler_class', 'static_method'),
-        'schedule'         => 'cron'
+/*
+ * Grades created/modified outside of activities (import, gradebook overrides, etc.)
+ * see description in lib/db/events.php
+ */
+    'grade_updated_external' => array (
+        'handlerfile'      => '/mod/assignment/lib.php',
+        'handlerfunction'  => array('assignment_base', 'external_grade_handler'), 
+        'schedule'         => 'instant'
     )
 );
 

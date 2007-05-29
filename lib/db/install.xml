@@ -1189,10 +1189,10 @@
         <INDEX NAME="mnethostid_username" UNIQUE="true" FIELDS="mnet_host_id, username"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="events_handlers" COMMENT="This table is for storing which components requests what type of event, and the location of the responsible handlers. For example, the grade book can register 'grade_added' event with a function add_grade() that should be called event time an 'grade_added' event is triggered by a module." PREVIOUS="mnet_sso_access_control" NEXT="events_queue">
+    <TABLE NAME="events_handlers" COMMENT="This table is for storing which components requests what type of event, and the location of the responsible handlers. For example, the grade book can register 'grade_updated' event with a function grade_handler() that should be called event time an 'grade_updated' event is triggered by a module." PREVIOUS="mnet_sso_access_control" NEXT="events_queue">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventname"/>
-        <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="name of the event, e.g. 'grade_added'" PREVIOUS="id" NEXT="handlermodule"/>
+        <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="handlermodule"/>
         <FIELD NAME="handlermodule" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="e.g. moodle, mod/forum, block/rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
         <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="handlermodule" NEXT="handlerfunction"/>
         <FIELD NAME="handlerfunction" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized string or array describing function, suitable to be passed to call_user_func()" PREVIOUS="handlerfile" NEXT="schedule"/>

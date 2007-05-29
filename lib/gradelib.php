@@ -66,28 +66,26 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
 *       type will be returned, etc...
 * 
 * @param int $courseid The id of the course to which the grade items belong
-* @param string $itemname The name of the grade item
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
 * @param int $iteminstance id of the item module
+* @param string $itemname The name of the grade item
 * @param int $itemnumber Can be used to distinguish multiple grades for an activity
 * @param int $idnumber grade item Primary Key
 * @return array An array of grade items
 */
-function grade_get_items($courseid, $itemname=NULL, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $idnumber=NULL) {
-    $grade_item = new grade_item(compact('courseid', 'itemname', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber', 'idnumber'), false);
+function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemname=NULL, $itemnumber=NULL, $idnumber=NULL) {
+    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemname', 'itemnumber', 'idnumber'), false);
     $grade_items = $grade_item->fetch_all_using_this();
     return $grade_items;
 }
 
 
 /**
-* Creates a new grade_item in case it doesn't exist. This function would be called when a module
-* is created or updates, for example, to ensure grade_item entries exist.
-* It's not essential though--if grades are being added later and a matching grade_item doesn't
-* yet exist, the gradebook will create them on the fly.
-* 
-* @param 
+* Creates a new grade_item in case it doesn't exist.
+* This function is called when a new module is created.
+*
+* @param mixed $params array or object
 * @return mixed New grade_item id if successful
 */
 function grade_create_item($params) {
@@ -96,6 +94,7 @@ function grade_create_item($params) {
     if (empty($grade_item->id)) {
         return $grade_item->insert();
     } else {
+        debugging('Grade item already exists - id:'.$grade_item->id);
         return $grade_item->id;
     }
 }
@@ -171,14 +170,14 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
     return $count;
 }
 
-/*
+/**
  * For backward compatibility with old third-party modules, this function is called
  * via to admin/cron.php to search all mod/xxx/lib.php files for functions named xxx_grades(),
  * if the current modules does not have grade events registered with the grade book.
  * Once the data is extracted, the events_trigger() function can be called to initiate 
  * an event as usual and copy/ *upgrade the data in the gradebook tables. 
  */
-function grades_grab_grades() {
+function grade_grab_legacy_grades() {
     
     global $CFG, $db;
 
@@ -197,55 +196,57 @@ function grades_grab_grades() {
         // include the module lib once
         if (file_exists($fullmod.'/lib.php')) {
             include_once($fullmod.'/lib.php');
-            // look for mod_grades() function - old grade book pulling function
-            // to see if module supports grades, and check for event registration status
+            // look for modname_grades() function - old gradebook pulling function
+            // if present sync the grades with new grading system
             $gradefunc = $mod.'_grades';
-            // if this mod has grades, but grade_added event is not registered
-            // then we need to pull grades into the new gradebook
-            if (function_exists($gradefunc) && !events_is_registered($gradefunc, $mod)) {//TODO: the use of $gradefunct as eventname here does not seem to be correct
-                // get all instance of the mod
-                $module = get_record('modules', 'name', $mod);
-                if ($module && $modinstances = get_records_select('course_modules cm, '.$CFG->prefix.$mod.' m', 'cm.module = '.$module->id.' AND m.id = cm.instance')) {
+            if (function_exists($gradefunc)) {
+
+                // get all instance of the activity
+                $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid, m.name as modname FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                        WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id";
+
+                if ($modinstances = get_records_sql($sql)) {
                     foreach ($modinstances as $modinstance) {
                         // for each instance, call the xxx_grades() function
-                        if ($grades = $gradefunc($modinstance->instance)) {
-                            
-                            $maxgrade = $grades->maxgrade;
-                            if (is_numeric($maxgrade)) { 
-                                // no scale used
-                                $scaleid = null;
-                            } else {
+                        if ($grades = $gradefunc($modinstance->id)) {
+
+                            $grademax = $grades->maxgrade;
+                            $scaleid = 0;
+                            if (!is_numeric($grademax)) { 
                                 // scale name is provided as a string, try to find it
-                                $scale = get_record('scale', 'name', $maxgrade);
+                                if (!$scale = get_record('scale', 'name', $grademax)) {
+                                    debugging('Incorrect scale name! name:'.$grademax);
+                                    continue;
+                                }
                                 $scaleid = $scale->id;
-                                $maxgrade = null;
+                            }
+
+                            if (!$grade_item = grade_get_legacy_grade_item($modinstance, $grademax, $scaleid)) {
+                                debugging('Can not get/create legacy grade item!');
+                                continue;
                             }
 
                             foreach ($grades->grades as $userid=>$usergrade) {                              
                                 // make the grade_added eventdata
-
                                 $eventdata = new object();
-                                $eventdata->courseid =  $modinstance->course;
-                                $eventdata->itemmodule = $mod;
-                                $eventdata->iteminstance = $modinstance->instance;
-                                $eventdata->gradetype = 0;
+                                $eventdata->itemid = $grade_item->id;
                                 $eventdata->userid = $userid;
-                                
-                                if ($scaleid) {
+
+                                if ($usergrade == '-') {
+                                    // no grade
+                                    $eventdata->gradevalue = null;
+
+                                } else if ($scaleid) {
                                     // scale in use, words used
                                     $gradescale = explode(",", $scale->scale);
                                     $eventdata->gradevalue = array_search($usergrade, $gradescale) + 1;
+
                                 } else {
                                     // good old numeric value
                                     $eventdata->gradevalue = $usergrade;
                                 }
 
-                                $eventdata->itemname = $modinstance->name;
-
-                                $eventdata->grademax = $maxgrade;
-                                $eventdata->scaleid = $scaleid;
-
-                                events_trigger('grade_added', $eventdata);
+                                events_trigger('grade_updated', $eventdata);
                             }
                         }
                     }
@@ -253,6 +254,78 @@ function grades_grab_grades() {
             }
         }
     }
+}
+
+
+/**
+ * Get (create if needed) grade item for legacy modules.
+ */
+function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
+
+    // does it already exist?
+    if ($grade_items = grade_get_items($modinstances->courseid, 'mod', $modinstance->modname, $modinstances->id)) {
+        if (count($grade_items) > 1) {
+            return false;
+        }
+
+        $grade_item = reset($grade_items);
+        $updated = false;
+
+        if ($scaleid) {
+            if ($grade_item->scaleid != $scaleid) {
+                $grade_item->gradetype = GRADE_TYPE_SCALE;
+                $grade_item->scaleid   = $scaleid;
+                $updated = true;;
+            }
+
+        } else if ($grade_item->scaleid != $scaleid or $grade_item->grademax != $grademax) {
+           $grade_item->gradetype = GRADE_TYPE_VALUE;
+           $grade_item->scaleid   = 0;
+           $grade_item->grademax  = $grademax;
+           $grade_item->grademin  = 0;
+           $updated = true;;
+        }
+
+        if ($grade_item->itemname != $modinstance->name) {
+           $grade_item->itemname = $modinstance->name;
+           $updated = true;;
+        }
+
+        if ($grade_item->idnumber != $modinstance->cmidnumber) {
+           $grade_item->idnumber = $modinstance->cmidnumber;
+           $updated = true;;
+        }
+
+        if ($updated) {
+            $grade_item->update();
+        }
+
+        return $grade_item;
+    }
+    
+    // create new one
+    $params = array('courseid'    =>$modinstance->courseid,
+                    'itemtype'    =>'mod',
+                    'itemmodule'  =>$modinstance->modname,
+                    'iteminstance'=>$modinstance->id,
+                    'itemname'    =>$modinstance->name,
+                    'idnumber'    =>$modinstance->cmidnumber);
+
+    if ($scaleid) {
+        $params['gradetype'] = GRADE_TYPE_SCALE; 
+        $params['scaleid']   = $scaleid;
+
+    } else {
+        $params['gradetype'] = GRADE_TYPE_VALUE; 
+        $params['grademax']  = $grademax;
+        $params['grademin']  = 0;
+    }
+
+    if (!$itemid = grade_create_item($params)) {
+        return false;
+    }
+
+    return grade_item::fetch('id', $itemid);
 }
 
 /**
@@ -284,7 +357,8 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
 
 
 /**
- * Handles all grade_added and grade_updated events
+ * Handles all grade_updated and grade_updated_external events,
+ * see lib/db/events.php for description of $eventdata format.
  *
  * @param object $eventdata contains all the data for the event
  * @return boolean success
@@ -293,37 +367,25 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
 function grade_handler($eventdata) {
     $eventdata = (array)$eventdata;
 
-/// each grade must belong to some user
+    // each grade must belong to some user
     if (empty($eventdata['userid'])) {
         debugging('Missing user id in event data!');
         return true;
     }
 
-/// First let's make sure a grade_item exists for this grade
-    if (!empty($eventdata['itemid'])) { // if itemid specified, do not use searching
-        $gradeitem = new grade_item(array('id'=>$eventdata['itemid']));
-
-        if (empty($gradeitem->id)) { // Item with itemid doesn't exist yet
-            debugging('grade_item does not exist! id:'.$eventdata['itemid']);
-             // this $eventadata can not be fixed, do not block the queue
-             // we should log the error somewhere on production servers
-            return true;
-        }
-
-    } else {
-        $gradeitem = new grade_item($eventdata);
-        if (empty($gradeitem->id)) {                      // Doesn't exist yet
-            if (!$gradeitem->id = $gradeitem->insert()) { // Try to create a new item...
-                debugging('Could not create a new grade_item!');
-                // do we need false here? - it would stop all other grades indefinitelly!
-                // we shouuld not IMO block other events, one silly bug in 3rd party module would disable all grading
-                // if we return false we must to notify admin and add some gui to fix the trouble
-                // skodak
-                return true; //for now
-            }
-        }
+    // grade item must be specified or else it could be accidentally duplicated,
+    if (empty($eventdata['itemid'])) {
+        debugging('Missing grade item id in event!');
+        return true;
     }
 
+    // get the grade item from db
+    if (!$gradeitem = grade_item::fetch('id', $eventdata['itemid'])) {
+        debugging('Incorrect grade item id in event! id:'.$eventdata['itemid']);
+        return true;
+    } 
+
+    // get the raw grade if it exist
     $rawgrade = new grade_grades_raw(array('itemid'=>$gradeitem->id, 'userid'=>$eventdata['userid'])); 
     $rawgrade->grade_item = &$gradeitem; // we already have it, so let's use it
 
