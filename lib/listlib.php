@@ -275,7 +275,7 @@ class moodle_list{
                     $html .= " $currentpage \n";
                 }
                 else {
-                    $html .= "<a href=\"".$this->pageurl->out('', false, array($this->pageparamname => $currentpage))."\">";
+                    $html .= "<a href=\"".$this->pageurl->out(false, array($this->pageparamname => $currentpage))."\">";
                     $html .= " $currentpage </a>\n";
                 }
             }
@@ -429,7 +429,7 @@ class moodle_list{
             return false;
         }
 
-        redirect($this->pageurl->out('&'));
+        redirect($this->pageurl->out());
     }
 }
 
@@ -541,26 +541,26 @@ class list_item{
             } else {
                 $action = $strmoveleft;
             }
-            $icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action('', array('left'=>$this->id)), 'left'); 
+            $icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action(array('left'=>$this->id)), 'left'); 
         } else {
             $icons['left'] =  $this->image_spacer();
         }
 
         if (!$first) {
-             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action('', array('moveup'=>$this->id)), 'up');
+             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('moveup'=>$this->id)), 'up');
         } else {
             $icons['up'] =  $this->image_spacer();
         }
 
         if (!$last) {
-            $icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action('', array('movedown'=>$this->id)), 'down');
+            $icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action(array('movedown'=>$this->id)), 'down');
         } else {
             $icons['down'] =  $this->image_spacer();
         }
 
         if (!empty($lastitem)) {
             $makechildof = get_string('makechildof', 'question', $lastitem->name);
-            $icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action('', array('right'=>$this->id)), 'right'); 
+            $icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action(array('right'=>$this->id)), 'right'); 
         } else {
             $icons['right'] =  $this->image_spacer();
         }
