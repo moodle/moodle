@@ -321,7 +321,7 @@ class grade_category extends grade_object {
                 $wheresql .= "iteminstance = $categoryid OR ";
             }
             $wheresql = substr($wheresql, 0, strrpos($wheresql, 'OR'));
-            $grade_items = set_field_select('grade_items', 'needsupdate', '1', $wheresql);
+            $grade_items = set_field_select('grade_items', 'needsupdate', '1', $wheresql . ' AND courseid = ' . $this->courseid);
             $this->grade_item->update_from_db();
         }
         return $result;
@@ -689,6 +689,7 @@ class grade_category extends grade_object {
         // If the associated grade_item isn't yet created, do it now. But first try loading it, in case it exists in DB.
         if (empty($grade_item->id)) {
             $grade_item->iteminstance = $this->id;
+            $grade_item->courseid = $this->courseid;
             $grade_item->itemtype = 'category';
             $grade_item->insert();
             $grade_item->update_from_db();

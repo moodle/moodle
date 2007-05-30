@@ -37,7 +37,8 @@ require_once($CFG->libdir . '/simpletest/testgradelib.php');
 class grade_tree_test extends gradelib_test {
     function test_grade_tree_get_neighbour_sortorder() {
         $tree = new grade_tree($this->courseid);
-        
+        $tree->renumber();
+
         $element = $tree->locate_element(4);
         $this->assertEqual(3, $tree->get_neighbour_sortorder($element, 'previous'));
         $this->assertNull($tree->get_neighbour_sortorder($element, 'next'));
@@ -60,11 +61,13 @@ class grade_tree_test extends gradelib_test {
         
     }
     
+    // TODO write more thorough and useful tests here. The renumber method assigns previous_sortorder and next_sortorder variables
     function test_grade_tree_renumber() {
         $tree = new grade_tree($this->courseid);
-        $tree1 = $tree;
+        $this->assertTrue(empty($tree->tree_array[1]['object']->next_sortorder));
         $tree->renumber();
-        $this->assertEqual($tree1->tree_array[1]['object'], $tree->tree_array[1]['object']);
+        $this->assertFalse(empty($tree->tree_array[1]['object']->next_sortorder));
+
         $this->assertTrue(empty($tree->need_update));
     }
     
@@ -123,8 +126,21 @@ class grade_tree_test extends gradelib_test {
     }
 
     function test_grade_tree_move_element() {
+        /* 0. 
+         * Starting layout: 
+         *__________________
+         *|_________1_______|     ____________  
+         *|__2__|_____4_____|_____|_____8____|
+         *|__3__|__5__|__6__|__7__|__9__|_10_|
+         */
         $tree = new grade_tree($this->courseid);
-        
+        /* 1. 
+         * Desired result: 
+         *_____________
+         *|_____1_____|     _________________  
+         *|__2__|__4__|_____|________7_______|
+         *|__3__|__5__|__6__|__8__|__9__|_10_|
+         */
         $tree->move_element(4, 10);
         $this->assertFalse(empty($tree->tree_array[8]['children'][1]));
         $this->assertEqual('unittestgradeitem2', $tree->tree_array[8]['children'][1]['object']->itemname);
@@ -142,23 +158,48 @@ class grade_tree_test extends gradelib_test {
 
         $this->assertFalse(empty($tree->tree_array[1]['children'][4]['children'][5]));
         $this->assertEqual('unittestgradeitem3', $tree->tree_array[1]['children'][4]['children'][5]['object']->itemname);
-        
+        $tree->need_update = array();
+
+        /* 2. 
+         * Desired result: 
+         *___________________
+         *|________1________|_________________  
+         *|_____2_____|__5__|________7_______|
+         *|__3__|__4__|__6__|__8__|__9__|_10_|
+         */
         $tree->move_element(6, 3, 'after');
         $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][1]));
         $this->assertEqual('unittestorphangradeitem1', $tree->tree_array[1]['children'][2]['children'][1]['object']->itemname);
         $tree->renumber();
+        $this->assertEqual(4, count($tree->need_update));
         $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][4]));
         $this->assertEqual('unittestorphangradeitem1', $tree->tree_array[1]['children'][2]['children'][4]['object']->itemname);
+        $tree->need_update = array();
 
         // Try moving a subcategory
+        /* 3. 
+         * Desired result: 
+         *___________________
+         *|________1________|_________________  
+         *|__2__|_____4_____|________7_______|
+         *|__3__|__5__|__6__|__8__|__9__|_10_|
+         */
         $tree->move_element(2, 5, 'after');
         $this->assertFalse(empty($tree->tree_array[1]['children'][1]));
         $this->assertEqual('unittestcategory2', $tree->tree_array[1]['children'][1]['object']->fullname);
         $tree->renumber();
+        $this->assertEqual(5, count($tree->need_update));
         $this->assertFalse(empty($tree->tree_array[1]['children'][4]));
         $this->assertEqual('unittestcategory2', $tree->tree_array[1]['children'][4]['object']->fullname);
+        $tree->need_update = array();
 
-        // Try moving a subcategory
+        /* 4. 
+         * Desired result: 
+         *_________________________
+         *|___________1___________|____________  
+         *|__2__|________4________|_____8_____|
+         *|__3__|__5__|__6__|__7__|__9__|_10__|
+         */
         $tree = new grade_tree($this->courseid);
         $original_count = count($tree->tree_array, COUNT_RECURSIVE);
         $tree->move_element(8, 5);
@@ -167,16 +208,26 @@ class grade_tree_test extends gradelib_test {
         $this->assertFalse(empty($tree->tree_array[1]['children'][1]));
         $this->assertEqual('level1category', $tree->tree_array[1]['children'][1]['object']->fullname);
         $tree->renumber();
+        $this->assertEqual(4, count($tree->need_update));
         $this->assertFalse(empty($tree->tree_array[1]['children'][5]));
         $this->assertEqual('level1category', $tree->tree_array[1]['children'][5]['object']->fullname);
         $this->assertEqual('singleparentitem1', $tree->tree_array[1]['children'][5]['children'][6]['object']->itemname);
+        $tree->need_update = array();
 
         // Try moving a top category
+        /* 5. 
+         * Desired result: 
+         *      ___________________
+         *      |_________2_______|___________  
+         *______|__3__|_____5_____|_____8____|
+         *|__1__|__4__|__6__|__7__|__9__|_10_|
+         */
         $tree = new grade_tree($this->courseid);
         $tree->move_element(1, 8);
         $this->assertFalse(empty($tree->tree_array[1]));
         $this->assertEqual('unittestcategory1', $tree->tree_array[1]['object']->fullname);
         $tree->renumber();
+        $this->assertEqual(7, count($tree->need_update));
         $this->assertFalse(empty($tree->tree_array[2]));
         $this->assertEqual('unittestcategory1', $tree->tree_array[2]['object']->fullname);
     }
@@ -188,6 +239,7 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_display_grades() {
         $tree = new grade_tree($this->courseid);
+        $tree->build_tree_filled();
         $result_html = $tree->display_grades();
 
         $expected_html = '<table style="text-align: center" border="1"><tr><th colspan="3">unittestcategory1</th><td class="topfiller">&nbsp;</td><td colspan="2" class="topfiller">&nbsp;</td></tr><tr><td colspan="2">unittestcategory2</td><td colspan="1">unittestcategory3</td><td class="subfiller">&nbsp;</td><td colspan="2">level1category</td></tr><tr><td>unittestgradeitem1</td><td>unittestgradeitem2</td><td>unittestgradeitem3</td><td>unittestorphangradeitem1</td><td>singleparentitem1</td><td>singleparentitem2</td></tr></table>';
@@ -196,7 +248,6 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_get_tree() {
         $tree = new grade_tree($this->courseid, true);
-        $this->assertEqual(58, count($tree->tree_filled, COUNT_RECURSIVE));
         $this->assertEqual(48, count($tree->tree_array, COUNT_RECURSIVE));
     }
     
@@ -291,7 +342,6 @@ class grade_tree_test extends gradelib_test {
 
     function test_grade_tree_display_edit_tree() {
         $tree = new grade_tree($this->courseid);
-        echo $tree->get_edit_tree(); 
     }
     
 }
