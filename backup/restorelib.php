@@ -1320,13 +1320,14 @@
                 echo '<li>'.get_string('gradeitems','grades').'</li>';
             }
             $counter = 0;
-            $countercat = 0;
-            while ($countercat < $itemscount) {
+            $counteritems = 0;
+            while ($counteritems < $itemscount) {
+
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
                                             "old_id, old_id",
-                                            $countercat,
+                                            $counteritems,
                                             $recordset_size);
                 if ($recs) {
                     foreach ($recs as $rec) {
@@ -1341,7 +1342,7 @@
             
                             $dbrec->courseid = $restore->course_id;
                             
-                            if ($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']) {
+                            if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
                                 $dbrec->categoryid = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
                             }
 
@@ -1389,7 +1390,22 @@
                             */
                             
                             // always insert, since modules restored to existing courses are always inserted
-                            $itemid = insert_record('grade_items',$dbrec);
+                            
+                            // get the current sortorder, add 1 to it and use that
+                            
+                            if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
+                                                        WHERE courseid = $restore->course_id
+                                                        ORDER BY sortorder DESC ", true)) { 
+
+                                // we just need the first one
+                                $dbrec->sortorder = $lastitem->sortorder + 1;
+                            } else {
+                                // this is the first grade_item  
+                                $dbrec->sortorder = 0;
+                            }
+
+                            $itemid = insert_record('grade_items',$dbrec);                            
+                            
                             /// now, restore grade_calculations, grade_raw, grade_final, grade_text, and grade_history
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']) && ($raws = $info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']['GRADE_RAW'])) {
                                 //Iterate over items
@@ -1506,9 +1522,9 @@
                                     $text->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
                                     $text->feedback = backup_todb($ite_info['#']['FEEDBACK']['0']['#']);
                                     $text->feedbackformat = backup_todb($ite_info['#']['FEEDBACKFORMAT']['0']['#']);                                                                        
-                                
+
                                     insert_record('grade_grades_text', $text);
-                                    
+
                                     $counter++;
                                     if ($counter % 20 == 0) {
                                         if (!defined('RESTORE_SILENTLY')) {
@@ -1539,7 +1555,7 @@
                                     $history->howmodified = backup_todb($ite_info['#']['HOWMODIFIED']['0']['#']);                                                                        
                                     $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
                                     $history->usermodified = $modifier->new_id;
-                                    insert_record('grade_history', $text);
+                                    insert_record('grade_history', $history);
                                     
                                     $counter++;
                                     if ($counter % 20 == 0) {
@@ -1554,9 +1570,10 @@
                                 }
                             }
                         }
+                    $counteritems++; // increment item count
                     }
                 }
-            $countercat++;
+            
             }
         }
 

@@ -1416,9 +1416,12 @@
 
         $status = true;
 
-        // get all the grade_items
-        // might need to do it using sortorder
-        if ($grade_items = get_records('grade_items', 'courseid', $preferences->backup_course)) {
+        // get all the grade_items, ordered by sort order since upon restoring, it is not always
+        // possible to use the same sort order. We could at least preserve the sortorder by restoring
+        // grade_items in the original sortorder
+        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items 
+                                            WHERE courseid = $preferences->backup_course
+                                            ORDER BY sortorder ASC")) {
 
             //Begin grade_items tag
             fwrite ($bf,start_tag("GRADE_ITEMS",3,true)); 
@@ -1603,15 +1606,15 @@
             foreach ($histories as $history) {
                 fwrite ($bf,start_tag("GRADE_HISTORY",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$history->id));
-                fwrite ($bf,full_tag("USERID",7,false,$hisotry->userid));
-                fwrite ($bf,full_tag("OLDGRADE",7,false,$hisotry->oldgrade));                
+                fwrite ($bf,full_tag("USERID",7,false,$history->userid));
+                fwrite ($bf,full_tag("OLDGRADE",7,false,$history->oldgrade));                
                 fwrite ($bf,full_tag("NEWGRADE",7,false,$history->newgrade));
                 fwrite ($bf,full_tag("NOTE",7,false,$history->note));
-                fwrite ($bf,full_tag("HOWMODIFIED",7,false,$hisotry->howmodified));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$hisotry->usermodified));
+                fwrite ($bf,full_tag("HOWMODIFIED",7,false,$history->howmodified));
+                fwrite ($bf,full_tag("USERMODIFIED",7,false,$history->usermodified));
                 fwrite ($bf,end_tag("GRADE_HISTORY",6,true));
             }
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_HISOTRY",5,true));
+            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",5,true));
         }
         return $status;
     }
