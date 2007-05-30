@@ -16,6 +16,14 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+// See http://support.microsoft.com/kb/305144 to interprete these values.
+if (!defined('AUTH_AD_ACCOUNTDISABLE')) {
+    define('AUTH_AD_ACCOUNTDISABLE', 0x0002);
+}
+if (!defined('AUTH_AD_NORMAL_ACCOUNT')) {
+    define('AUTH_AD_NORMAL_ACCOUNT', 0x0200);
+}
+
 require_once($CFG->libdir.'/authlib.php');
 
 /**
@@ -271,11 +279,46 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $newuser['uniqueId']      = $extusername;
                 $newuser['logindisabled'] = "TRUE";
                 $newuser['userpassword']  = $extpassword;
+                $uadd = $this->ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
+                break;
+            case 'ad':
+                // User account creation is a two step process with AD. First you
+                // create the user object, then you set the password. If you try
+                // to set the password while creating the user, the operation
+                // fails.
+    
+                // Passwords in Active Directory must be encoded as Unicode
+                // strings (UCS-2 Little Endian format) and surrounded with
+                // double quotes. See http://support.microsoft.com/?kbid=269190
+                if (!function_exists('mb_convert_encoding')) {
+                    print_error ('auth_ldap_no_mbstring', 'auth');
+                }
+    
+                // First create the user account, and mark it as disabled.
+                $newuser['objectClass'] = array('top','person','user','organizationalPerson');
+                $newuser['sAMAccountName'] = $extusername;
+                $newuser['userAccountControl'] = AUTH_AD_NORMAL_ACCOUNT | 
+                                                 AUTH_AD_ACCOUNTDISABLE;
+                $userdn = 'cn=' .  $this->ldap_addslashes($extusername) .
+                          ',' . $this->config->create_context;
+                if (!ldap_add($ldapconnection, $userdn, $newuser)) {
+                    print_error ('auth_ldap_ad_create_req', 'auth');
+                }
+    
+                // Now set the password
+                unset($newuser);
+                $newuser['unicodePwd'] = mb_convert_encoding('"' . $extpassword . '"',
+                                                             "UCS-2LE", "UTF-8");
+                if(!ldap_modify($ldapconnection, $userdn, $newuser)) {
+                    // Something went wrong: delete the user account and error out
+                    ldap_delete ($ldapconnection, $userdn);
+                    print_error ('auth_ldap_ad_create_req', 'auth');
+                }
+                $uadd = true;
                 break;
             default:
                print_error('auth_ldap_unsupportedusertype','auth','',$this->config->user_type);
         }
-        $uadd = $this->ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
         ldap_close($ldapconnection);
         return $uadd;
 
@@ -843,6 +886,16 @@ class auth_plugin_ldap extends auth_plugin_base {
             case 'edir':
                 $newinfo['loginDisabled']="FALSE";
                 break;
+            case 'ad':
+                // We need to unset the ACCOUNTDISABLE bit in the
+                // userAccountControl attribute ( see
+                // http://support.microsoft.com/kb/305144 )
+                $sr = ldap_read($ldapconnection, $userdn, '(objectClass=*)',
+                                array('userAccountControl'));
+                $info = ldap_get_entries($ldapconnection, $sr);
+                $newinfo['userAccountControl'] = $info[0]['userAccountControl'][0]
+                                                 & (~AUTH_AD_ACCOUNTDISABLE);
+                break;
             default:
                 error ('auth: ldap user_activate() does not support selected usertype:"'.$this->config->user_type.'" (..yet)');
         }
@@ -867,6 +920,16 @@ class auth_plugin_ldap extends auth_plugin_base {
         switch ($this->config->user_type)  {
             case 'edir':
                 $newinfo['loginDisabled']="TRUE";
+                break;
+            case 'ad':
+                // We need to set the ACCOUNTDISABLE bit in the
+                // userAccountControl attribute ( see
+                // http://support.microsoft.com/kb/305144 )
+                $sr = ldap_read($ldapconnection, $userdn, '(objectClass=*)',
+                                array('userAccountControl'));
+                $info = auth_ldap_get_entries($ldapconnection, $sr);
+                $newinfo['userAccountControl'] = $info[0]['userAccountControl'][0]
+                                                 | AUTH_AD_ACCOUNTDISABLE;
                 break;
             default:
                 error ('auth: ldap user_disable() does not support selected usertype (..yet)');

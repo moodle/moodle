@@ -150,6 +150,7 @@ $string['auth_imapport_key'] = 'Port';
 $string['auth_imapchangepasswordurl_key'] = 'Password-change URL';
 
 // LDAP plugin
+$string['auth_ldap_ad_create_req'] = 'Cannot create the new account in Active Directory. Make sure you meet all the requirements for this to work (LDAPS connection, bind user with adequate rights, etc.)';
 $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Something like \'cn=ldapuser,ou=public,o=org\'';
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
@@ -167,6 +168,7 @@ $string['auth_ldap_ldap_encoding'] = 'Specify encoding used by LDAP server. Most
 $string['auth_ldap_login_settings'] = 'Login settings';
 $string['auth_ldap_memberattribute'] = 'Optional: Overrides user member attribute, when users belongs to a group. Usually \'member\'';
 $string['auth_ldap_memberattribute_isdn'] = 'Optional: Overrides handling of member attribute values, either 0 or 1';
+$string['auth_ldap_no_mbstring'] = 'You need the mbstring extension to create users in Active Directory.';
 $string['auth_ldap_objectclass'] = 'Optional: Overrides objectClass used to name/search users on ldap_user_type. Usually you dont need to chage this.';
 $string['auth_ldap_opt_deref'] = 'Determines how aliases are handled during search. Select one of the following values: \"No\" (LDAP_DEREF_NEVER) or \"Yes\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passtype'] = 'Specify the format of new or changed passwords in LDAP server.';
