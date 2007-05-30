@@ -104,6 +104,7 @@ class grade_tree {
         
         if (!empty($this->tree_array)) {
             $this->first_sortorder = key($this->tree_array);
+            $this->renumber();
         }
     }
 
@@ -389,7 +390,7 @@ class grade_tree {
         $sortorder = $starting_sortorder;
         
         if (empty($elements) && empty($starting_sortorder)) {
-            if (empty($this->first_sortorder)) {
+            if (!isset($this->first_sortorder)) {
                 debugging("The tree's first_order variable isn't set, you must provide a starting_sortorder to the renumber method.");
                 return false;
             }
@@ -405,6 +406,10 @@ class grade_tree {
         foreach ($elements as $key => $element) {
             $this->first_sortorder++;
             $new_sortorder = $this->first_sortorder;
+            $old_sortorder = $element['object']->sortorder;
+
+            // Assign new sortorder
+            $element['object']->sortorder = $new_sortorder;
             
             $element['object']->previous_sortorder = $this->get_neighbour_sortorder($element, 'previous');
             $element['object']->next_sortorder = $this->get_neighbour_sortorder($element, 'next');
@@ -416,10 +421,11 @@ class grade_tree {
                 $newtree[$this->first_sortorder] = $element; 
             } 
             
-            if ($new_sortorder != $element['object']->sortorder) {
+            if ($new_sortorder != $old_sortorder) {
                 $this->need_update[$element['object']->get_item_id()] = 
-                    array('old_sortorder' => $element['object']->sortorder, 
-                          'new_sortorder' => $new_sortorder);
+                    array('old_sortorder' => $old_sortorder, 
+                          'new_sortorder' => $new_sortorder,
+                          'name' => $element['object']->get_name());
             }
         }
         
@@ -558,7 +564,8 @@ class grade_tree {
 
                     $itemtree[$element['object']->sortorder] = array('object' => $element['object'], 'finalgrades' => $finals); 
                 }
-
+                
+                ksort($itemtree);
                 $element['children'] = $itemtree;
             } elseif (get_class($filler_object) == 'grade_item' && $this->include_grades) {
                 $final_grades = $filler_object->get_final();
@@ -605,19 +612,19 @@ class grade_tree {
                 } 
             }
         }
-
         return $objects;
     }
 
     /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
-     * a given course, or for the entire site if no courseid is given.
+     * a given course, or for the entire site if no courseid is given. This method is not recursive
+     * by design, because we want to limit the layers to 3, and because we want to avoid accessing
+     * the DB with recursive methods.
      * @return array
      */
     function get_tree() {
         global $CFG;
         $tree = array();
-        $fillers = array();
 
         $category_table = $CFG->prefix . 'grade_categories';
         $items_table = $CFG->prefix . 'grade_items';
@@ -653,7 +660,7 @@ class grade_tree {
             $topcats[0]->sortorder = 0;
             $topcats[0]->courseid = $this->courseid;
         }
-        
+
         // If any of these categories has grade_items as children, create a topcategory filler with colspan=count(children)
         $topcats = $this->add_fillers($topcats);
         
@@ -695,27 +702,30 @@ class grade_tree {
                     $itemtree[$item->sortorder] = array('object' => $item, 'finalgrades' => $finals);
                 }
                 
+                ksort($itemtree);
                 $sortorder = $subcat->sortorder;
                 $subcat = new grade_category($subcat, false);
                 $subcat->sortorder = $sortorder;
                 $subcattree[$subcat->sortorder] = array('object' => $subcat, 'children' => $itemtree); 
             }
-            
+
+            ksort($subcattree);
             $sortorder = $topcat->sortorder;
             $topcat = new grade_category($topcat, false);
             $topcat->sortorder = $sortorder;
-            
             $tree[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree); 
         }
 
         // If there are still grade_items or grade_categories without a top category, add another filler
         if (!empty($this->fillers)) {
+            ksort($this->fillers);
             foreach ($this->fillers as $sortorder => $object) { 
                 $tree = $this->include_fillers($tree); 
             }
         }
         
         $db->debug = false;
+        ksort($tree);
         return $tree;
     }
 
@@ -896,6 +906,8 @@ class grade_tree {
         } 
 
         $this->need_update = array();
+        $this->reset_first_sortorder();
+        $this->renumber();
     }
 
     /**

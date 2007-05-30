@@ -35,9 +35,151 @@ global $CFG;
 require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
 class grade_tree_test extends gradelib_test {
+    
+    function test_grade_tree_move_element() {
+        /* 0. 
+         * Starting layout: 
+         *__________________
+         *|_________1_______|     ____________  
+         *|_____2_____|__5__|_____|_____8____|
+         *|__3__|__4__|__6__|__7__|__9__|_10_|
+         */
+        $tree = new grade_tree($this->courseid);
+        /* 1. 
+         * Desired result: 
+         *_____________
+         *|_____1_____|     _________________  
+         *|__2__|__4__|_____|________7_______|
+         *|__3__|__5__|__6__|__8__|__9__|_10_|
+         */
+        $tree->move_element(4, 10);
+        $tree->renumber();
+
+        // Check need_? fields
+        $this->assertFalse(empty($tree->need_update));
+        $this->assertFalse(empty($tree->need_insert));
+        $this->assertFalse(empty($tree->need_delete));
+        $this->assertEqual(6, count($tree->need_update));
+        $this->assertEqual(1, count($tree->need_delete));
+        $this->assertEqual(1, count($tree->need_insert));
+        
+        // Check sortorders
+        $this->assertEqual(1, $tree->tree_array[1]['object']->sortorder);
+        $this->assertEqual(2, $tree->tree_array[1]['children'][2]['object']->sortorder);
+        $this->assertEqual(3, $tree->tree_array[1]['children'][2]['children'][3]['object']->sortorder);
+        $this->assertEqual(4, $tree->tree_array[1]['children'][4]['object']->sortorder);
+        $this->assertEqual(5, $tree->tree_array[1]['children'][4]['children'][5]['object']->sortorder);
+        $this->assertEqual(6, $tree->tree_array[6]['object']->sortorder);
+        $this->assertEqual(7, $tree->tree_array[7]['object']->sortorder);
+        $this->assertEqual(8, $tree->tree_array[7]['children'][8]['object']->sortorder);
+        $this->assertEqual(9, $tree->tree_array[7]['children'][9]['object']->sortorder);
+        $this->assertEqual(10, $tree->tree_array[7]['children'][10]['object']->sortorder);
+
+        $this->assertFalse(empty($tree->tree_array[1]['children'][4]['children'][5]));
+        $this->assertEqual('unittestgradeitem3', $tree->tree_array[1]['children'][4]['children'][5]['object']->itemname);
+        $tree->need_update = array();
+
+        /* 2. 
+         * Desired result: 
+         *___________________
+         *|________1________|_________________  
+         *|_____2_____|__5__|________7_______|
+         *|__3__|__4__|__6__|__8__|__9__|_10_|
+         */
+        $tree->move_element(6, 3, 'after');
+        $tree->renumber();
+        $this->assertEqual(3, count($tree->need_update));
+        $tree->need_update = array();
+
+        // Check sortorders
+        $this->assertEqual(1, $tree->tree_array[1]['object']->sortorder);
+        $this->assertEqual(2, $tree->tree_array[1]['children'][2]['object']->sortorder);
+        $this->assertEqual(3, $tree->tree_array[1]['children'][2]['children'][3]['object']->sortorder);
+        $this->assertEqual(4, $tree->tree_array[1]['children'][2]['children'][4]['object']->sortorder);
+        $this->assertEqual(5, $tree->tree_array[1]['children'][5]['object']->sortorder);
+        $this->assertEqual(6, $tree->tree_array[1]['children'][5]['children'][6]['object']->sortorder);
+        $this->assertEqual(7, $tree->tree_array[7]['object']->sortorder);
+        $this->assertEqual(8, $tree->tree_array[7]['children'][8]['object']->sortorder);
+        $this->assertEqual(9, $tree->tree_array[7]['children'][9]['object']->sortorder);
+        $this->assertEqual(10, $tree->tree_array[7]['children'][10]['object']->sortorder);
+        
+        // Try moving a subcategory
+        /* 3. 
+         * Desired result: 
+         *___________________
+         *|________1________|_________________  
+         *|__2__|_____4_____|________7_______|
+         *|__3__|__5__|__6__|__8__|__9__|_10_|
+         */
+        $tree->move_element(2, 5, 'after');
+        $tree->renumber();
+        $this->assertEqual(5, count($tree->need_update));
+        $tree->need_update = array();
+        
+        // Check sortorders
+        $this->assertEqual(1, $tree->tree_array[1]['object']->sortorder);
+        $this->assertEqual(2, $tree->tree_array[1]['children'][2]['object']->sortorder);
+        $this->assertEqual(3, $tree->tree_array[1]['children'][2]['children'][3]['object']->sortorder);
+        $this->assertEqual(4, $tree->tree_array[1]['children'][4]['object']->sortorder);
+        $this->assertEqual(5, $tree->tree_array[1]['children'][4]['children'][5]['object']->sortorder);
+        $this->assertEqual(6, $tree->tree_array[1]['children'][4]['children'][6]['object']->sortorder);
+        $this->assertEqual(7, $tree->tree_array[7]['object']->sortorder);
+        $this->assertEqual(8, $tree->tree_array[7]['children'][8]['object']->sortorder);
+        $this->assertEqual(9, $tree->tree_array[7]['children'][9]['object']->sortorder);
+        $this->assertEqual(10, $tree->tree_array[7]['children'][10]['object']->sortorder);
+
+        /* 4. 
+         * Desired result: 
+         *_________________________
+         *|___________1___________|____________  
+         *|__2__|________4________|_____8_____|
+         *|__3__|__5__|__6__|__7__|__9__|_10__|
+        */
+        $tree->move_element(8, 6);
+        $tree->renumber();
+        $this->assertEqual(3, count($tree->need_update)); 
+        $tree->need_update = array();
+
+        // Check sortorders
+        $this->assertEqual(1, $tree->tree_array[1]['object']->sortorder);
+        $this->assertEqual(2, $tree->tree_array[1]['children'][2]['object']->sortorder);
+        $this->assertEqual(3, $tree->tree_array[1]['children'][2]['children'][3]['object']->sortorder);
+        $this->assertEqual(4, $tree->tree_array[1]['children'][4]['object']->sortorder);
+        $this->assertEqual(5, $tree->tree_array[1]['children'][4]['children'][5]['object']->sortorder);
+        $this->assertEqual(6, $tree->tree_array[1]['children'][4]['children'][6]['object']->sortorder);
+        $this->assertEqual(7, $tree->tree_array[1]['children'][4]['children'][7]['object']->sortorder);
+        $this->assertEqual(8, $tree->tree_array[8]['object']->sortorder);
+        $this->assertEqual(9, $tree->tree_array[8]['children'][9]['object']->sortorder);
+        $this->assertEqual(10, $tree->tree_array[8]['children'][10]['object']->sortorder);
+        
+        // Try moving a top category
+        /* 5. 
+         * Desired result: 
+         *      ___________________
+         *      |_________2_______|___________  
+         *______|_____3_____|__6__|_____8____|
+         *|__1__|__4__|__5__|__7__|__9__|_10_|
+         */
+        $tree = new grade_tree($this->courseid);
+        $tree->move_element(1, 8);
+        $tree->renumber();
+        $this->assertEqual(7, count($tree->need_update));
+        
+        // Check sortorders
+        $this->assertEqual(1, $tree->tree_array[1]['object']->sortorder);
+        $this->assertEqual(2, $tree->tree_array[2]['object']->sortorder);
+        $this->assertEqual(3, $tree->tree_array[2]['children'][3]['object']->sortorder);
+        $this->assertEqual(4, $tree->tree_array[2]['children'][3]['children'][4]['object']->sortorder);
+        $this->assertEqual(5, $tree->tree_array[2]['children'][3]['children'][5]['object']->sortorder);
+        $this->assertEqual(6, $tree->tree_array[2]['children'][6]['object']->sortorder);
+        $this->assertEqual(7, $tree->tree_array[2]['children'][6]['children'][7]['object']->sortorder);
+        $this->assertEqual(8, $tree->tree_array[8]['object']->sortorder);
+        $this->assertEqual(9, $tree->tree_array[8]['children'][9]['object']->sortorder);
+        $this->assertEqual(10, $tree->tree_array[8]['children'][10]['object']->sortorder);
+    }
+    
     function test_grade_tree_get_neighbour_sortorder() {
         $tree = new grade_tree($this->courseid);
-        $tree->renumber();
 
         $element = $tree->locate_element(4);
         $this->assertEqual(3, $tree->get_neighbour_sortorder($element, 'previous'));
@@ -64,8 +206,6 @@ class grade_tree_test extends gradelib_test {
     // TODO write more thorough and useful tests here. The renumber method assigns previous_sortorder and next_sortorder variables
     function test_grade_tree_renumber() {
         $tree = new grade_tree($this->courseid);
-        $this->assertTrue(empty($tree->tree_array[1]['object']->next_sortorder));
-        $tree->renumber();
         $this->assertFalse(empty($tree->tree_array[1]['object']->next_sortorder));
 
         $this->assertTrue(empty($tree->need_update));
@@ -125,113 +265,6 @@ class grade_tree_test extends gradelib_test {
         $this->assertEqual(1, count($tree->need_insert));
     }
 
-    function test_grade_tree_move_element() {
-        /* 0. 
-         * Starting layout: 
-         *__________________
-         *|_________1_______|     ____________  
-         *|__2__|_____4_____|_____|_____8____|
-         *|__3__|__5__|__6__|__7__|__9__|_10_|
-         */
-        $tree = new grade_tree($this->courseid);
-        /* 1. 
-         * Desired result: 
-         *_____________
-         *|_____1_____|     _________________  
-         *|__2__|__4__|_____|________7_______|
-         *|__3__|__5__|__6__|__8__|__9__|_10_|
-         */
-        $tree->move_element(4, 10);
-        $this->assertFalse(empty($tree->tree_array[8]['children'][1]));
-        $this->assertEqual('unittestgradeitem2', $tree->tree_array[8]['children'][1]['object']->itemname);
-        $tree->renumber();
-
-        // Check need_? fields
-        $this->assertFalse(empty($tree->need_update));
-        $this->assertFalse(empty($tree->need_insert));
-        $this->assertFalse(empty($tree->need_delete));
-        $this->assertEqual(6, count($tree->need_update));
-        $this->assertEqual(1, count($tree->need_delete));
-        $this->assertEqual(1, count($tree->need_insert));
-        $this->assertEqual($this->grade_items[1]->itemname, $tree->need_delete[$this->grade_items[1]->id]->itemname);
-        $this->assertEqual($this->grade_items[1]->itemname, $tree->need_insert[$this->grade_items[1]->id]->itemname);
-
-        $this->assertFalse(empty($tree->tree_array[1]['children'][4]['children'][5]));
-        $this->assertEqual('unittestgradeitem3', $tree->tree_array[1]['children'][4]['children'][5]['object']->itemname);
-        $tree->need_update = array();
-
-        /* 2. 
-         * Desired result: 
-         *___________________
-         *|________1________|_________________  
-         *|_____2_____|__5__|________7_______|
-         *|__3__|__4__|__6__|__8__|__9__|_10_|
-         */
-        $tree->move_element(6, 3, 'after');
-        $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][1]));
-        $this->assertEqual('unittestorphangradeitem1', $tree->tree_array[1]['children'][2]['children'][1]['object']->itemname);
-        $tree->renumber();
-        $this->assertEqual(4, count($tree->need_update));
-        $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][4]));
-        $this->assertEqual('unittestorphangradeitem1', $tree->tree_array[1]['children'][2]['children'][4]['object']->itemname);
-        $tree->need_update = array();
-
-        // Try moving a subcategory
-        /* 3. 
-         * Desired result: 
-         *___________________
-         *|________1________|_________________  
-         *|__2__|_____4_____|________7_______|
-         *|__3__|__5__|__6__|__8__|__9__|_10_|
-         */
-        $tree->move_element(2, 5, 'after');
-        $this->assertFalse(empty($tree->tree_array[1]['children'][1]));
-        $this->assertEqual('unittestcategory2', $tree->tree_array[1]['children'][1]['object']->fullname);
-        $tree->renumber();
-        $this->assertEqual(5, count($tree->need_update));
-        $this->assertFalse(empty($tree->tree_array[1]['children'][4]));
-        $this->assertEqual('unittestcategory2', $tree->tree_array[1]['children'][4]['object']->fullname);
-        $tree->need_update = array();
-
-        /* 4. 
-         * Desired result: 
-         *_________________________
-         *|___________1___________|____________  
-         *|__2__|________4________|_____8_____|
-         *|__3__|__5__|__6__|__7__|__9__|_10__|
-         */
-        $tree = new grade_tree($this->courseid);
-        $original_count = count($tree->tree_array, COUNT_RECURSIVE);
-        $tree->move_element(8, 5);
-        $new_count = count($tree->tree_array, COUNT_RECURSIVE);
-        $this->assertEqual($original_count, $new_count);
-        $this->assertFalse(empty($tree->tree_array[1]['children'][1]));
-        $this->assertEqual('level1category', $tree->tree_array[1]['children'][1]['object']->fullname);
-        $tree->renumber();
-        $this->assertEqual(4, count($tree->need_update));
-        $this->assertFalse(empty($tree->tree_array[1]['children'][5]));
-        $this->assertEqual('level1category', $tree->tree_array[1]['children'][5]['object']->fullname);
-        $this->assertEqual('singleparentitem1', $tree->tree_array[1]['children'][5]['children'][6]['object']->itemname);
-        $tree->need_update = array();
-
-        // Try moving a top category
-        /* 5. 
-         * Desired result: 
-         *      ___________________
-         *      |_________2_______|___________  
-         *______|__3__|_____5_____|_____8____|
-         *|__1__|__4__|__6__|__7__|__9__|_10_|
-         */
-        $tree = new grade_tree($this->courseid);
-        $tree->move_element(1, 8);
-        $this->assertFalse(empty($tree->tree_array[1]));
-        $this->assertEqual('unittestcategory1', $tree->tree_array[1]['object']->fullname);
-        $tree->renumber();
-        $this->assertEqual(7, count($tree->need_update));
-        $this->assertFalse(empty($tree->tree_array[2]));
-        $this->assertEqual('unittestcategory1', $tree->tree_array[2]['object']->fullname);
-    }
-    
     function test_grade_tree_constructor() {
         $tree = new grade_tree($this->courseid);
 
@@ -343,5 +376,4 @@ class grade_tree_test extends gradelib_test {
     function test_grade_tree_display_edit_tree() {
         $tree = new grade_tree($this->courseid);
     }
-    
 }
