@@ -1431,8 +1431,9 @@
                 fwrite ($bf,start_tag("GRADE_ITEM",4,true)); 
                 //Output individual fields	
 
-                fwrite ($bf,full_tag("ID",5,false,$grade_item->id));                
+                fwrite ($bf,full_tag("ID",5,false,$grade_item->id));
                 fwrite ($bf,full_tag("ITEMNAME",5,false,$grade_item->itemname));
+                fwrite ($bf,full_tag("ITEMTYPE",5,false,$grade_item->itemtype));
                 fwrite ($bf,full_tag("ITEMMODULE",5,false,$grade_item->itemmodule));
                 fwrite ($bf,full_tag("ITEMINSTANCE",5,false,$grade_item->iteminstance));
                 fwrite ($bf,full_tag("ITEMNUMBER",5,false,$grade_item->itemnumber));

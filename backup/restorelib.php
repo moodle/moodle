@@ -1334,6 +1334,7 @@
                         //Get the full record from backup_ids
                         $data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id);
                         if ($data) {
+                       
                             //Now get completed xmlized object
                             $info = $data->info;
                             //traverse_xmlize($info);                            //Debug
@@ -1347,10 +1348,24 @@
                             }
 
                             $dbrec->itemname = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#']);
+                            $dbrec->itemtype = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#']);
                             $dbrec->itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
                             /// this needs to point to either the new mod id
                             /// or the category id
                             $dbrec->iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
+                            
+                            // do not restore if this grade_item is a mod, and 
+                            if ($dbrec->itemtype == 'mod') {
+                                // get the mod
+                                $mod = get_record('course_module', 'id', $dbrec->iteminstance);
+                                $modt = get_record('modules', 'id', $mod->module);
+                                if (!restore_userdata_selected($restore, $modt->name, $mod->id)) {
+                                    // module instance not restored using granular
+                                    $counteritems++;
+                                    continue;
+                                }
+                            }
+                            
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
                             $dbrec->iteminfo = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#']);
                             $dbrec->idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#']);
