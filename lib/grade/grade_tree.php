@@ -404,7 +404,7 @@ class grade_tree {
         $this->first_sortorder = $sortorder;
 
         foreach ($elements as $key => $element) {
-            $this->first_sortorder++;
+            $this->first_sortorder++; 
             $new_sortorder = $this->first_sortorder;
             $old_sortorder = $element['object']->sortorder;
 
@@ -439,7 +439,7 @@ class grade_tree {
             return $newtree;
         }
     }
-  
+
     /**
      * Because the $element referred to in this class is rather loosely defined, it 
      * may come in different flavours and forms. However, it will almost always contain
@@ -912,9 +912,14 @@ class grade_tree {
 
     /**
      * Returns a HTML list with sorting arrows and insert boxes. This is a recursive method.
+     * @param boolean $select_source Whether or not to display each element as a link to be selected as a source for an action
+     * @param int $level The level of recursion
+     * @param array $elements The elements to display in a list. Defaults to this->tree_array
+     * @param int $source_sortorder A source sortorder, given when an element needs to be moved or inserted.
+     * @param string $action 'move' or 'insert'
      * @return string HTML code
      */
-    function get_edit_tree($level=1, $elements=null) {
+    function get_edit_tree($select_source=false, $level=1, $elements=NULL, $source_sortorder=NULL, $action=NULL) {
         if (empty($this->tree_array)) {
             return null;
         } else {
@@ -923,17 +928,21 @@ class grade_tree {
 
             $strmoveup   = get_string("moveup");
             $strmovedown = get_string("movedown");
+
+            $sesskey_input = '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
+            $courseid_input = '<input type="hidden" name="courseid" value="' . $this->courseid . '" />';
             
             if (empty($elements)) {
-                $list = '<ul id="grade_edit_tree">';
+                $list = '<ul id="grade_edit_tree">' . "\n";
                 $elements = $this->tree_array;
             } else {
-                $list = '<ul class="level' . $level . 'children">';
+                $list = '<ul class="level' . $level . 'children">' . "\n";
             } 
             
             $first = true;
             $count = 1;
             $last = false;
+            $last_sortorder = null;
             
             if (count($elements) == 1) {
                 $last = true;
@@ -943,43 +952,84 @@ class grade_tree {
                 if (empty($element->next_sortorder)) {
                     $element->next_sortorder = null;
                 }
+
+                $object_name = $element['object']->get_name();
+                if ($select_source) {
+                    $formname = "select_source_$sortorder";
+                    $object_name = '<form id="' . $formname . '" class="movearrow" action="category.php" method="post"><div>
+                        <input type="hidden" name="source" value="' . $sortorder . '" />
+                        <input type="hidden" name="action" value="' . $action . '" />
+                        <a href="#" onclick="document.getElementById(\'' . $formname . '\').submit();" title="Select this element">'
+                      . $object_name . '</a></div></form>';
+                }
+
                 $list .= '<li class="level' . $level . 'element sortorder' 
-                      . $element['object']->get_sortorder() . '">' 
-                      . $element['object']->get_name();
+                      . $element['object']->get_sortorder() . '">' . "\n" 
+                      . $object_name;
                 
                 if (!$first) {
-                    $list .= '<a title="'.$strmoveup.'" href="category.php?courseid='.$this->courseid
-                          . '&amp;source=' . $sortorder . '&amp;moveup=' . $element['object']->previous_sortorder 
-                          . '&amp;sesskey='.$USER->sesskey.'">'
-                          . '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
+                    $formname = "moveup_$sortorder";
+                    $list .= '<form method="post" action="category.php" class="movearrow" id="' . $formname . '"><div>
+                        <input type="hidden" name="source" value="' . $sortorder . '" />
+                        <input type="hidden" name="moveup" value="' . $element['object']->previous_sortorder . '" />' . "\n";
+                    
+                    $list .= $sesskey_input . "\n" . $courseid_input;
+
+                    $list .= '<div class="moveuparrow">'
+                          . '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '
+                          . 'alt="'.$strmoveup.'" title="'.$strmoveup.'"' 
+                          . 'onclick="document.getElementById(\'' . $formname . '\').submit();" /> </div>'. "\n";
+                    $list .= '</div></form>';
                 } else {
-                    $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
+                    $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> '. "\n";
                 }
 
                 if (!$last) {
-                    $list .= '<a title="'.$strmovedown.'" href="category.php?courseid='.$this->courseid
-                          . '&amp;source=' . $sortorder . '&amp;movedown=' . $element['object']->next_sortorder 
-                          . '&amp;sesskey='.$USER->sesskey.'">'
-                          . '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
+                    $formname = "movedown_$sortorder";
+                    $list .= '<form method="post" action="category.php" class="movearrow" id="' . $formname . '"><div>
+                        <input type="hidden" name="source" value="' . $sortorder . '" />
+                        <input type="hidden" name="movedown" value="' . $element['object']->next_sortorder . '" />' . "\n";
+                    
+                    $list .= $sesskey_input . "\n" . $courseid_input;
+
+                    $list .= '<div class="movedownarrow">'
+                          . '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '
+                          . 'alt="'.$strmovedown.'" title="'.$strmovedown.'"' 
+                          . 'onclick="document.getElementById(\'' . $formname . '\').submit();" /></div>'. "\n";
+                    $list .= '</div></form>';
                 } else {
-                    $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ';
+                    $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
                 }
                 
                 if (!empty($element['children'])) {
-                    $list .= $this->get_edit_tree($level + 1, $element['children']);
+                    $list .= $this->get_edit_tree($select_source, $level + 1, $element['children'], $source_sortorder, $action);
                 }
                 
-                $list .= '</li>';
+                $list .= '</li>' . "\n";
 
                 $first = false;
                 $count++;
                 if ($count == count($elements)) {
                     $last = true;
                 } 
-            }
-                    
-            $list .= '</ul>';
 
+                $last_sortorder = $sortorder;
+            }
+            
+            // Add an insertion box if source_sortorder is given
+            if ($source_sortorder && !empty($action)) {
+                $list .= '<li class="insertion">
+                    <form method="post" action="category.php" id="insertion_' . $last_sortorder . '">
+                    <div>
+                        <input type="hidden" name="source" value="' . $source_sortorder . '" />
+                        <input type="hidden" name="' . $action . '" value="' . $last_sortorder . '" />
+                        <div class="insertion_box" onclick="document.getElementById(\'insertion_' . $last_sortorder . '\').submit();"></div>                        
+                    </div>
+                    </form>
+                </li>';
+            }
+
+            $list .= '</ul>' . "\n";
             return $list;
         }
 
