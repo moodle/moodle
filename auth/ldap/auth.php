@@ -1345,9 +1345,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      * depends on $this->config->user_type variable
      *
      * @param mixed time   Time stamp readed from ldap as it is.
+     * @param string $ldapconnection Just needed for Active Directory.
+     * @param string $user_dn User distinguished name for the user we are checking password expiration (just needed for Active Directory).
      * @return timestamp
      */
-    function ldap_expirationtime2unix ($time) {
+    function ldap_expirationtime2unix ($time, $ldapconnection, $user_dn) {
         $result = false;
         switch ($this->config->user_type) {
             case 'edir':
@@ -1361,6 +1363,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                 break;
             case 'posix':
                 $result = $time * DAYSECS; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
+                break;
+            case 'ad':
+                $result = $this->ldap_get_ad_pwdexpire($time, $ldapconnection, $user_dn);
                 break;
             default:
                 print_error('auth_ldap_usertypeundefined', 'auth');
@@ -1847,6 +1852,145 @@ class auth_plugin_ldap extends auth_plugin_base {
                             array('\\"', '\\00'), $text);
         return $text;
     }
+
+    /**
+     * Get password expiration time for a given user from Active Directory
+     *
+     * @param string $pwdlastset The time last time we changed the password.
+     * @param resource $lcapconn The open LDAP connection.
+     * @param string $user_dn The distinguished name of the user we are checking.
+     *
+     * @return string $unixtime
+     */
+    function ldap_get_ad_pwdexpire($pwdlastset, $ldapconn, $user_dn){
+        define ('ROOTDSE', '');
+        // UF_DONT_EXPIRE_PASSWD value taken from MSDN directly
+        define ('UF_DONT_EXPIRE_PASSWD', 0x00010000);
+    
+        global $CFG;
+
+        if (!function_exists('bcsub')) {
+            error_log ('You need the BCMath extension to use grace logins with Active Directory');
+            return 0;
+        }
+
+        // If UF_DONT_EXPIRE_PASSWD flag is set in user's
+        // userAccountControl attribute, the password doesn't expire.
+        $sr = ldap_read($ldapconn, $user_dn, 'objectclass=*',
+                        array('userAccountControl'));
+        if (!$sr) {
+            error_log("ldap: error getting userAccountControl for $user_dn");
+            // don't expire password, as we are not sure it has to be
+            // expired or not.
+            return 0;
+        }
+            
+        $info = $this->ldap_get_entries($ldapconn, $sr);
+        $useraccountcontrol = $info[0]['userAccountControl'][0];
+        if ($useraccountcontrol & UF_DONT_EXPIRE_PASSWD) {
+            // password doesn't expire.
+            return 0;
+        }
+    
+        // If pwdLastSet is zero, the user must change his/her password now
+        // (unless UF_DONT_EXPIRE_PASSWD flag is set, but we already
+        // tested this above)
+        if ($pwdlastset === '0') {
+            // password has expired
+            return -1;
+        }
+    
+        // ----------------------------------------------------------------
+        // Password expiration time in Active Directory is the composition of
+        // two values:
+        //
+        //   - User's pwdLastSet attribute, that stores the last time
+        //     the password was changed.
+        //
+        //   - Domain's maxPwdAge attribute, that sets how long
+        //     passwords last in this domain.
+        //
+        // We already have the first value (passed in as a parameter). We
+        // need to get the second one. As we don't know the domain DN, we
+        // have to query rootDSE's defaultNamingContext attribute to get
+        // it. Then we have to query that DN's maxPwdAge attribute to get
+        // the real value.
+        //
+        // Once we have both values, we just need to combine them. But MS
+        // chose to use a different base and unit for time measurements.
+        // So we need to convert the values to Unix timestamps (see
+        // details below).
+        // ----------------------------------------------------------------
+    
+        $sr = ldap_read($ldapconn, ROOTDSE, 'objectclass=*',
+                        array('defaultNamingContext'));
+        if (!$sr) {
+            error_log("ldap: error querying rootDSE for Active Directory");
+            return 0;
+        }
+    
+        $info = $this->ldap_get_entries($ldapconn, $sr);
+        $domaindn = $info[0]['defaultNamingContext'][0];
+    
+        $sr = ldap_read ($ldapconn, $domaindn, 'objectclass=*',
+                         array('maxPwdAge'));
+        $info = $this->ldap_get_entries($ldapconn, $sr);
+        $maxpwdage = $info[0]['maxPwdAge'][0];
+
+        // ----------------------------------------------------------------
+        // MSDN says that "pwdLastSet contains the number of 100 nanosecond
+        // intervals since January 1, 1601 (UTC), stored in a 64 bit integer".
+        //
+        // According to Perl's Date::Manip, the number of seconds between
+        // this date and Unix epoch is 11644473600. So we have to
+        // substract this value to calculate a Unix time, once we have
+        // scaled pwdLastSet to seconds. This is the script used to
+        // calculate the value shown above:
+        //
+        //    #!/usr/bin/perl -w
+        //
+        //    use Date::Manip;
+        //
+        //    $date1 = ParseDate ("160101010000 UTC");
+        //    $date2 = ParseDate ("197001010000 UTC");
+        //    $delta = DateCalc($date1, $date2, \$err);
+        //    $secs = Delta_Format($delta, 0, "%st");
+        //    print "$secs \n";
+        //
+        // MSDN also says that "maxPwdAge is stored as a large integer that
+        // represents the number of 100 nanosecond intervals from the time
+        // the password was set before the password expires." We also need
+        // to scale this to seconds. Bear in mind that this value is stored
+        // as a _negative_ quantity (at least in my AD domain).
+        //
+        // As a last remark, if the low 32 bits of maxPwdAge are equal to 0,
+        // the maximum password age in the domain is set to 0, which means
+        // passwords do not expire (see 
+        // http://msdn2.microsoft.com/en-us/library/ms974598.aspx)
+        //
+        // As the quantities involved are too big for PHP integers, we
+        // need to use BCMath functions to work with arbitrary precision
+        // numbers.
+        // ----------------------------------------------------------------
+    
+
+        // If the low order 32 bits are 0, then passwords do not expire in
+        // the domain. Just do '$maxpwdage mod 2^32' and check the result
+        // (2^32 = 4294967296)
+        if (bcmod ($maxpwdage, 4294967296) === '0') {
+            return 0;
+        }
+
+        // Add up pwdLastSet and maxPwdAge to get password expiration
+        // time, in MS time units. Remember maxPwdAge is stored as a
+        // _negative_ quantity, so we need to substract it in fact.
+        $pwdexpire = bcsub ($pwdlastset, $maxpwdage);
+    
+        // Scale the result to convert it to Unix time units and return
+        // that value.
+        return bcsub( bcdiv($pwdexpire, '10000000'), '11644473600');
+    }
+
 }
 
 ?>
