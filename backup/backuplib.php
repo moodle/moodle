@@ -1427,6 +1427,20 @@
             fwrite ($bf,start_tag("GRADE_ITEMS",3,true)); 
             //Iterate for each item
             foreach ($grade_items as $grade_item) {
+
+                // do not restore if this grade_item is a mod, and 
+                if ($grade_item->itemtype == 'mod') {
+
+                    // get module information
+                    $mod = get_record('course_modules', 'id', $grade_item->iteminstance);
+                    $modt = get_record('modules', 'id', $mod->module);
+
+                    // if no user data selected, we skip this grade_item
+                    if (!backup_userdata_selected($preferences,$modt->name,$mod->id)) {
+                        continue;
+                    }
+                }
+
                 //Begin grade_item
                 fwrite ($bf,start_tag("GRADE_ITEM",4,true)); 
                 //Output individual fields	

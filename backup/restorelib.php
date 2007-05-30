@@ -1358,16 +1358,16 @@
                             if ($dbrec->itemtype == 'mod') {
                                 
                                 // get the old mod
-                                $mod = get_record('course_module', 'id', $iteminstance);
-                                $modt = get_record('modules', 'id', $mod->module);                              
-                                
+                                $mod = get_record('course_modules', 'id', $iteminstance);
+                                $modt = get_record('modules', 'id', $mod->module);
+
                                 if (!restore_userdata_selected($restore, $modt->name, $mod->id)) {
                                     // module instance not selected when restored using granular
                                     // skip this item
                                     $counteritems++;
                                     continue;
                                 }
-                                                              
+
                                 // iteminstance should point to new mod
                                 $dbrec->iteminstance = backup_getid($restore->backup_unique_code,'course_modules', $iteminstance);
 
@@ -1395,12 +1395,12 @@
                             $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
                             $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);                                                                      
                             
-                            /// if thesse 5 all match then we know this item is already in db                                                  
-                           
+                            /// if thesse 5 all match then we know this item is already in db
+
                             /*
-                            $itemex = get_record_sql('SELECT id,id FROM grade_items 
-                                                      WHERE courseid = '.$dbrec->courseid.' 
-                                                      AND itemtype = '.$dbrec->itemtype.' 
+                            $itemex = get_record_sql('SELECT id,id FROM grade_items
+                                                      WHERE courseid = '.$dbrec->courseid.'
+                                                      AND itemtype = '.$dbrec->itemtype.'
                                                       AND itemmodule = '.$dbrec->itemmodule.'
                                                       AND iteminstance = '.$dbrec->iteminstance.'
                                                       AND itemnumber = '.$dbrec->itemnumber);
@@ -1420,23 +1420,24 @@
                             
                             if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
                                                         WHERE courseid = $restore->course_id
-                                                        ORDER BY sortorder DESC ", true)) { 
+                                                        ORDER BY sortorder DESC ", true)) {
 
                                 // we just need the first one
                                 $dbrec->sortorder = $lastitem->sortorder + 1;
                             } else {
-                                // this is the first grade_item  
+                                // this is the first grade_item
                                 $dbrec->sortorder = 0;
                             }
 
-                            $itemid = insert_record('grade_items',$dbrec);                            
+                            $itemid = insert_record('grade_items',$dbrec);
                             
                             /// now, restore grade_calculations, grade_raw, grade_final, grade_text, and grade_history
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']) && ($raws = $info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']['GRADE_RAW'])) {
                                 //Iterate over items
                                 for($i = 0; $i < sizeof($raws); $i++) {
                                     $ite_info = $raws[$i];
-                                    //traverse_xmlize($ite_info);                                                                 //Debug
+                                    //traverse_xmlize($ite_info);
+//Debug
                                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
                                     //Now build the GRADE_ITEM record structure
@@ -1507,8 +1508,10 @@
                                 //Iterate over items
                                 for($i = 0; $i < sizeof($calcs); $i++) {
                                     $ite_info = $calcs[$i];
-                                    //traverse_xmlize($ite_info);                                                                 //Debug
-                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                    //traverse_xmlize($ite_info);
+//Debug
+                                    //print_object ($GLOBALS['traverse_array']);
+//Debug
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
                                     $calc->itemid       = $itemid;
 
