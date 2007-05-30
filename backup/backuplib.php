@@ -1369,7 +1369,11 @@
         //Output grade_category
         
         // getting grade categories, but make sure parents come before children
-        $grade_categories = get_records("grade_categories", "courseid", $preferences->backup_course);
+        // because when we do restore, we need to recover the parents first
+        // we do this by getting the lowest depth first
+        $grade_categories = get_records_sql("SELECT * FROM {$CFG->prefix}grade_categories
+                                                      WHERE courseid = $preferences->backup_course
+                                                      ORDER BY depth ASC");
         if ($grade_categories) {
             //Begin grade_categories tag
             fwrite ($bf,start_tag("GRADE_CATEGORIES",3,true)); 
