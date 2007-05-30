@@ -1598,7 +1598,7 @@
         $status = true;
         
         // find all calculations belonging to this item
-        if ($histories = get_records('grades_history', 'itemid', $itemid)) {
+        if ($histories = get_records('grade_history', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",5,true));
             foreach ($histories as $history) {
                 fwrite ($bf,start_tag("GRADE_HISTORY",6,true));
