@@ -1352,18 +1352,28 @@
                             $dbrec->itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
                             /// this needs to point to either the new mod id
                             /// or the category id
-                            $dbrec->iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
+                            $iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);    
                             
                             // do not restore if this grade_item is a mod, and 
                             if ($dbrec->itemtype == 'mod') {
-                                // get the mod
-                                $mod = get_record('course_module', 'id', $dbrec->iteminstance);
-                                $modt = get_record('modules', 'id', $mod->module);
+                                
+                                // get the old mod
+                                $mod = get_record('course_module', 'id', $iteminstance);
+                                $modt = get_record('modules', 'id', $mod->module);                              
+                                
                                 if (!restore_userdata_selected($restore, $modt->name, $mod->id)) {
-                                    // module instance not restored using granular
+                                    // module instance not selected when restored using granular
+                                    // skip this item
                                     $counteritems++;
                                     continue;
                                 }
+                                                              
+                                // iteminstance should point to new mod
+                                $dbrec->iteminstance = backup_getid($restore->backup_unique_code,'course_modules', $iteminstance);
+
+                            } else if ($dbrec->itemtype == 'category') {
+                                // the item instance should point to the new grade category
+                                $dbrec->iteminstance = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance); 
                             }
                             
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
