@@ -60,7 +60,6 @@ class assignment_base {
         if ($cm) {
             $this->cm = $cm;
         } else if (! $this->cm = get_coursemodule_from_id('assignment', $cmid)) {
-            debugging('grr');
             error('Course Module ID was incorrect');
         }
 
@@ -78,8 +77,8 @@ class assignment_base {
             error('assignment ID was incorrect');
         }
 
-        $this->assignment->cmidnumber = $cm->id;     // compatibility with modedit assignment obj
-        $this->assignment->courseid   = $course->id; // compatibility with modedit assignment obj
+        $this->assignment->cmidnumber = $this->cm->id;     // compatibility with modedit assignment obj
+        $this->assignment->courseid   = $this->course->id; // compatibility with modedit assignment obj
 
         $this->strassignment = get_string('modulename', 'assignment');
         $this->strassignments = get_string('modulenameplural', 'assignment');
@@ -619,16 +618,20 @@ class assignment_base {
         }
 
         // Load up the required assignment class
-        require($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+        require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
         $assignmentclass = 'assignment_'.$assignment->assignmenttype;
         $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
         $sub = $assignmentinstance->get_submission((int)$eventdata['userid'], true);  // Get or make one
         $submission = new object();
-        $submission->id = $sub->id;
+        $submission->id     = $sub->id;
+        $submission->userid = $sub->userid;
 
         if (isset($eventdata['gradevalue'])) {
             $submission->grade = (int)$eventdata['gradevalue'];
+            if ($sub->grade != $submission->grade) {
+                $submission->mailed = 0;       // Make sure mail goes out (again, even)
+            }
         } else {
             $submission->grade = -1;
         }
@@ -638,12 +641,14 @@ class assignment_base {
             if (isset($eventdata['feedbackformat'])) {
                 $submission->format = (int)$eventdata['feedbackformat'];
             } else {
-                $submission->format = FORMAT_PLAINTEXT;
+                $submission->format = FORMAT_PLAIN;
+            }
+            if ($sub->submissioncomment != $submission->submissioncomment) {
+                $submission->mailed = 0;       // Make sure mail goes out (again, even)
             }
         }
             
         $submission->teacher    = $USER->id;
-        $submission->mailed     = 0;       // Make sure mail goes out (again, even)
         $submission->timemarked = time();
 
         update_record('assignment_submissions', $submission);
