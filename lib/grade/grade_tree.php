@@ -287,19 +287,18 @@ class grade_tree {
             $new_element = $element;
         }
         
+        $new_element_class = get_class($new_element->element['object']);
+        $has_final_grades = !empty($new_element->element['final_grades']);
+        
         // If the object is a grade_item, but the final_grades index isn't yet loaded, make the switch now. Same for grade_category and children
-        if (get_class($new_element->element['object']) == 'grade_item' && empty($new_element->element['final_grades']) && $this->include_grades) {
+        if ($new_element_class == 'grade_item' && !$has_final_grades && $this->include_grades) {
             $new_element->element['final_grades'] = $new_element->element['object']->load_final();
             unset($new_element->element['object']->grade_grades_final);
-        } elseif (get_class($new_element->element['object']) == 'grade_category' && 
-                    empty($new_element->element['children']) &&
-                    $new_element->element['object']->has_children()) {
+        } elseif ($new_element_class == 'grade_category' && empty($new_element->element['children']) && $new_element->element['object']->has_children()) {
             $new_element->element['children'] = $new_element->element['object']->get_children(1);
             unset($new_element->element['object']->children);
         }
 
-
-        // TODO Problem when moving topcategories: sortorder gets reindexed when splicing the array
         $destination_array = array($destination_sortorder => $new_element->element);
 
         // Get the position of the destination element
@@ -383,10 +382,11 @@ class grade_tree {
      * down and across the tree.
      * @param int $starting_sortorder Used by recursion to "seed" the first element in each sub-tree
      * @param array $element A sub-tree given to each layer of recursion. If null, level 0 of recursion is assumed.
+     * @param int $parentid The id of the element within which this iteration of the method is running. Used to reassign element parentage.
      * @return array A debugging array which shows the progression of variables throughout this method. This is very useful
      * to identify problems and implement new functionality.
      */
-    function renumber($starting_sortorder=NULL, $elements=NULL) {
+    function renumber($starting_sortorder=NULL, $elements=NULL, $parentid=NULL) {
         $sortorder = $starting_sortorder;
         
         if (empty($elements) && empty($starting_sortorder)) {
@@ -416,16 +416,15 @@ class grade_tree {
 
             if (!empty($element['children'])) {
                 $newtree[$this->first_sortorder] = $element;
-                $newtree[$this->first_sortorder]['children'] = $this->renumber($this->first_sortorder, $element['children']); 
+                $newtree[$this->first_sortorder]['children'] = $this->renumber($this->first_sortorder, $element['children'], $element['object']->id); 
             }  else { 
                 $newtree[$this->first_sortorder] = $element; 
             } 
             
             if ($new_sortorder != $old_sortorder) {
-                $this->need_update[$element['object']->get_item_id()] = 
-                    array('old_sortorder' => $old_sortorder, 
-                          'new_sortorder' => $new_sortorder,
-                          'name' => $element['object']->get_name());
+                $element['object']->set_parent_id($parentid);
+                $element['object']->set_sortorder($new_sortorder);
+                $this->need_update[] = $element['object'];
             }
         }
         
@@ -898,10 +897,10 @@ class grade_tree {
         $this->need_delete = array();
         $this->need_insert = array();
 
-        // The items' sortorder are updated
-        foreach ($this->need_update as $id => $element) {
-            if (!set_field('grade_items', 'sortorder', $element['new_sortorder'], 'id', $id)) {
-                debugging("Could not update the grade_item's sortorder in DB.");
+        // The objects are updated
+        foreach ($this->need_update as $object) {
+            if (!$object->update()) {
+                debugging("Could not update the object in DB.");
             } 
         } 
 

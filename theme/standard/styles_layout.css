@@ -2007,6 +2007,37 @@ body#grade-index .grades .weighted {
    margin:0px 20px 0px 20px;
 }
 
+#grade_edit_tree .insertion_box {
+  border: 1px #999999 solid;
+  background-color: #CCCCCC;
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+
+#grade_edit_tree li {
+  list-style: none;
+}
+
+#grade_edit_tree li.insertion {
+  cursor: pointer;
+}
+
+#grade_edit_tree .moveuparrow {
+  cursor: pointer;
+}
+
+#grade_edit_tree .movedownarrow {
+  cursor: pointer;
+}
+
+#grade_edit_tree form.movearrow div {
+  display: inline;
+}
+
+#grade_edit_tree form.movearrow {
+  display: inline;
+}
 /***
  *** Login
  ***/

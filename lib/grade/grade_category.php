@@ -193,6 +193,16 @@ class grade_category extends grade_object {
     function update() { 
         $qualifies = $this->qualifies_for_update();
 
+        // Update the grade_item's sortorder if needed
+        if (!empty($this->sortorder)) {
+            $this->load_grade_item();
+            if (!empty($this->grade_item)) {
+                $this->grade_item->sortorder = $this->sortorder;
+                $this->grade_item->update();
+            }
+            unset($this->sortorder);
+        } 
+
         $result = parent::update();
        
         // Use $this->path to update all parent categories
@@ -492,6 +502,57 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Given an array of stdClass children of a certain $object_type, returns a flat or nested
+     * array of these children, ready for appending to a tree built by get_children.
+     * @static
+     * @param array $children
+     * @param string $arraytype
+     * @param string $object_type
+     * @return array
+     */
+    function children_to_array($children, $arraytype='nested', $object_type='grade_item') {
+        $children_array = array();
+
+        foreach ($children as $id => $child) {
+            $child = new $object_type($child, false);
+            if ($arraytype == 'nested') {
+                $children_array[$child->get_sortorder()] = array('object' => $child);
+            } else {
+                $children_array[$child->get_sortorder()] = $child;
+            }
+        }        
+
+        return $children_array;
+    }
+
+    /**
+     * Returns true if this category has any child grade_category or grade_item.
+     * @return int number of direct children, or false if none found.
+     */
+    function has_children() {
+        return count_records('grade_categories', 'parent', $this->id) + count_records('grade_items', 'categoryid', $this->id);
+    }
+
+    /**
+     * This method checks whether an existing child exists for this
+     * category. If the new child is of a different type, the method will return false (not allowed).
+     * Otherwise it will return true.
+     * @param object $child This must be a complete object, not a stdClass
+     * @return boolean Success or failure
+     */
+    function can_add_child($child) {
+        if ($this->has_children()) {
+            if (get_class($child) != $this->get_childrentype()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Looks at a path string (e.g. /2/45/56) and returns the depth level represented by this path (in this example, 3).
      * If no string is given, it looks at the obect's path and assigns the resulting depth to its $depth variable.
      * @param string $path
@@ -567,74 +628,6 @@ class grade_category extends grade_object {
         return $children_array;
     }
   
-    /**
-     * Returns the sortorder of the associated grade_item. This method is also available in 
-     * grade_item, for cases where the object type is not know. It will act as a virtual 
-     * variable for a grade_category.
-     * @return int Sort order
-     */
-    function get_sortorder() {
-        if (empty($this->sortorder)) {
-            $this->load_grade_item();
-            if (!empty($this->grade_item)) {
-                return $this->grade_item->sortorder;
-            }
-        } else {
-            return $this->sortorder;
-        }
-    }
-
-    /**
-     * Given an array of stdClass children of a certain $object_type, returns a flat or nested
-     * array of these children, ready for appending to a tree built by get_children.
-     * @static
-     * @param array $children
-     * @param string $arraytype
-     * @param string $object_type
-     * @return array
-     */
-    function children_to_array($children, $arraytype='nested', $object_type='grade_item') {
-        $children_array = array();
-
-        foreach ($children as $id => $child) {
-            $child = new $object_type($child, false);
-            if ($arraytype == 'nested') {
-                $children_array[$child->get_sortorder()] = array('object' => $child);
-            } else {
-                $children_array[$child->get_sortorder()] = $child;
-            }
-        }        
-
-        return $children_array;
-    }
-
-    /**
-     * Returns true if this category has any child grade_category or grade_item.
-     * @return int number of direct children, or false if none found.
-     */
-    function has_children() {
-        return count_records('grade_categories', 'parent', $this->id) + count_records('grade_items', 'categoryid', $this->id);
-    }
-
-    /**
-     * This method checks whether an existing child exists for this
-     * category. If the new child is of a different type, the method will return false (not allowed).
-     * Otherwise it will return true.
-     * @param object $child This must be a complete object, not a stdClass
-     * @return boolean Success or failure
-     */
-    function can_add_child($child) {
-        if ($this->has_children()) {
-            if (get_class($child) != $this->get_childrentype()) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
     /**
      * Check the type of the first child of this category, to see whether it is a 
      * grade_category or a grade_item, and returns that type as a string (get_class).
@@ -834,5 +827,49 @@ class grade_category extends grade_object {
         $this->load_grade_item();
         return $this->grade_item->id;
     }
+
+    /**
+     * Returns this category's parent id. A generic method shared by objects that have a parent id of some kind.
+     * @return id $parentid
+     */
+    function get_parent_id() {
+        return $this->parent;
+    }
+
+    /**
+     * Sets this category's parent id. A generic method shared by objects that have a parent id of some kind.
+     * @param id $parentid
+     */
+    function set_parent_id($parentid) {
+        $this->parent = $parentid;
+    }
+    
+    /**
+     * Returns the sortorder of the associated grade_item. This method is also available in 
+     * grade_item, for cases where the object type is not know. It will act as a virtual 
+     * variable for a grade_category.
+     * @return int Sort order
+     */
+    function get_sortorder() {
+        if (empty($this->sortorder)) {
+            $this->load_grade_item();
+            if (!empty($this->grade_item)) {
+                return $this->grade_item->sortorder;
+            }
+        } else {
+            return $this->sortorder;
+        }
+    }
+
+    /**
+     * Sets a temporary sortorder variable for this category. It is used in the update() method to update the grade_item. 
+     * This method is also available in grade_item, for cases where the object type is not know. 
+     * @param int $sortorder
+     * @return void
+     */
+    function set_sortorder($sortorder) {
+        $this->sortorder = $sortorder;
+    }
+
 } 
 ?>

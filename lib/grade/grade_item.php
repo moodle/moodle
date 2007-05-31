@@ -214,141 +214,6 @@ class grade_item extends grade_object {
     }
    
     /**
-     * Instantiates a grade_scale object whose data is retrieved from the DB, 
-     * if this item's scaleid variable is set.
-     * @return object grade_scale
-     */
-    function load_scale() {
-        if (!empty($this->scaleid)) {
-            $this->scale = grade_scale::fetch('id', $this->scaleid);
-            if (method_exists($this->scale, 'load_items')) {
-                $this->scale->load_items();
-            } else { 
-                $this->scale = null;
-            } 
-        } 
-        return $this->scale;
-    }
-
-    /**
-     * Instantiates a grade_outcome object whose data is retrieved from the DB, 
-     * if this item's outcomeid variable is set.
-     * @return object grade_outcome
-     */
-    function load_outcome() {
-        if (!empty($this->outcomeid)) {
-            $this->outcome = grade_outcome::fetch('id', $this->outcomeid);
-        } 
-        return $this->outcome;
-    }
-    
-    /**
-     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
-     * @return array grade_grades_raw objects
-     */      
-    function load_raw() {
-        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
-
-        if (empty($grade_raw_array)) {
-            return null;
-        }
-
-        foreach ($grade_raw_array as $r) {
-            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
-        }
-        return $this->grade_grades_raw;
-    }
-
-    /**
-     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
-     * @param boolean $generatefakenullgrades If set to true, AND $CFG->usenullgrades is true, will replace missing grades with grades, gradevalue=grademin
-     * @return array grade_grades_final objects
-     */      
-    function load_final($generatefakenullgrades=false) {
-        global $CFG;
-
-        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
-        
-        if (empty($grade_final_array)) {
-            $this->generate_final();
-            $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
-        }
-        
-        if (empty($grade_final_array)) {
-            debugging("No final grades recorded for this grade_item");
-            return false;
-        }
-
-        foreach ($grade_final_array as $f) {
-            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
-        }
-
-        $returnarray = fullclone($this->grade_grades_final);
-
-        // If we are generating fake null grades, we have to get a list of users
-        if ($generatefakenullgrades && $CFG->usenullgrades) {
-            $users = get_records_sql_menu('SELECT userid AS "user", userid FROM ' . $CFG->prefix . 'grade_grades_final GROUP BY userid ORDER BY userid');
-            if (!empty($users) && is_array($users)) {
-                foreach ($users as $userid) {
-                    if (!isset($returnarray[$userid])) {
-                        $fakefinal = new grade_grades_final();
-                        $fakefinal->itemid = $this->id;
-                        $fakefinal->userid = $userid;
-                        $fakefinal->gradevalue = $this->grademin;
-                        $returnarray[$userid] = $fakefinal;
-                    }
-                }
-            }
-        }
-
-        return $returnarray;
-    }
-
-    /**
-     * Returns an array of values (NOT objects) standardised from the final grades of this grade_item. They are indexed by userid.
-     * @return array integers
-     */
-    function get_standardised_final() {
-        $standardised_finals = array();
-
-        $final_grades = $this->load_final(true);
-        foreach ($final_grades as $userid => $final) {
-            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
-        }
-
-        return $standardised_finals;
-    }
-
-    /**
-    * Returns the grade_category object this grade_item belongs to (if any).
-    * This category object may be the parent (referenced by categoryid) or the associated category 
-    * (referenced by iteminstance).
-    * 
-    * @return mixed grade_category object if applicable, NULL otherwise
-    */
-    function get_category() {
-        $category = null;
-        
-        if (!empty($this->categoryid)) {
-            $category = grade_category::fetch('id', $this->categoryid);
-        } elseif (!empty($this->iteminstance) && $this->itemtype == 'category') {
-            $category = grade_category::fetch('id', $this->iteminstance);
-        }
-        
-        return $category;
-    }
-    
-    /**
-     * Calls upon the get_category method to retrieve the grade_category object
-     * from the DB and assigns it to $this->category. It also returns the object.
-     * @return object Grade_category
-     */
-    function load_category() {
-        $this->category = $this->get_category();
-        return $this->category;
-    }
-
-    /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      */
     function update() {
@@ -515,26 +380,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the raw values for this grade item (as imported by module or other source).
-     * @param int $userid Optional: to retrieve a single raw grade
-     * @return mixed An array of all raw_grades (stdClass objects) for this grade_item, or a single raw_grade.
-     */
-    function get_raw($userid=NULL) {
-        if (empty($this->grade_grades_raw)) {
-            $this->load_raw();
-        }
-
-        $grade_raw_array = null;
-        if (!empty($userid)) {
-            $r = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
-            $grade_raw_array[$r->userid] = new grade_grades_raw($r);
-        } else {
-            $grade_raw_array = $this->grade_grades_raw;
-        }
-        return $grade_raw_array;
-    }
-    
-    /**
      * Takes an array of grade_grades_raw objects, indexed by userid, and saves each as a raw grade
      * under this grade_item. This replaces any existing grades, after having logged each change in the history table.
      * @param array $raw_grades
@@ -561,26 +406,6 @@ class grade_item extends grade_object {
             debugging("The data given to grade_item::save_raw($raw_grades) was not valid, it must be an array of raw grades.");
             return false;
         }
-    }
-
-    /**
-     * Returns the final values for this grade item (as imported by module or other source).
-     * @param int $userid Optional: to retrieve a single final grade
-     * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
-     */
-    function get_final($userid=NULL) {
-        if (empty($this->grade_grades_final)) {
-            $this->load_final();
-        }
-
-        $grade_final_array = null;
-        if (!empty($userid)) {
-            $f = get_record('grade_grades_final', 'itemid', $this->id, 'userid', $userid);
-            $grade_final_array[$f->userid] = new grade_grades_final($f);
-        } else {
-            $grade_final_array = $this->grade_grades_final;
-        }
-        return $grade_final_array;
     }
 
     /**
@@ -612,71 +437,6 @@ class grade_item extends grade_object {
         return $success;
     }
 
-    /**
-     * Returns this object's calculation.
-     * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
-     * @return mixed $calculation A string if found, false otherwise.
-     */
-    function get_calculation($fetch = false) {
-        if (!$fetch && get_class($this->calculation) == 'grade_calculation') {
-            return $this->calculation;
-        } 
-        $grade_calculation = grade_calculation::fetch('itemid', $this->id);
-            
-        if (empty($grade_calculation)) { // There is no calculation in DB
-            return false;
-        } elseif (empty($this->calculation) || !is_object($this->calculation)) { // The calculation isn't yet loaded
-            $this->calculation = $grade_calculation;
-            return $grade_calculation;
-        } elseif ($grade_calculation->calculation != $this->calculation->calculation) { // The object's calculation is not in sync with the DB (new value??)
-            $this->calculation = $grade_calculation;
-            return $grade_calculation;
-        } else { // The object's calculation is already in sync with the database
-            return $this->calculation;
-        }
-    }
-
-    /**
-     * Sets this item's calculation (creates it) if not yet set, or
-     * updates it if already set (in the DB). If no calculation is given,
-     * the method will attempt to retrieve one from the Database, based on
-     * the variables set in the current object.
-     * @param string $calculation
-     * @return boolean
-     */
-    function set_calculation($calculation = null) {
-        if (empty($calculation)) { // We are setting this item object's calculation variable from the DB
-            $grade_calculation = $this->get_calculation(true);
-            if (empty($grade_calculation)) {
-                debugging("No calculation to set for this grade_item.");
-                return false;
-            } else {
-                $this->calculation = $grade_calculation;
-            }
-        } else { // We are updating or creating the calculation entry in the DB
-            $grade_calculation = $this->get_calculation();
-            
-            if (empty($grade_calculation)) { // Creating
-                $grade_calculation = new grade_calculation();
-                $grade_calculation->calculation = $calculation;
-                $grade_calculation->itemid = $this->id;
-
-                if ($grade_calculation->insert()) {
-                    $this->calculation = $grade_calculation;
-                    return true;
-                } else {
-                    debugging("Could not save the calculation in the database, for this grade_item.");
-                    return false;
-                }                
-            } else { // Updating
-                $grade_calculation->calculation = $calculation;
-                $grade_calculation = new grade_calculation($grade_calculation);
-                $this->calculation = $grade_calculation;
-                return $grade_calculation->update();
-            }
-        }
-    }
-    
     /**
      * Returns the locked state of this grade_item (if the grade_item is locked OR no specific
      * $userid is given) or the locked state of a specific grade within this item if a specific
@@ -913,6 +673,246 @@ class grade_item extends grade_object {
     }
     
     /**
+     * Instantiates a grade_scale object whose data is retrieved from the DB, 
+     * if this item's scaleid variable is set.
+     * @return object grade_scale
+     */
+    function load_scale() {
+        if (!empty($this->scaleid)) {
+            $this->scale = grade_scale::fetch('id', $this->scaleid);
+            if (method_exists($this->scale, 'load_items')) {
+                $this->scale->load_items();
+            } else { 
+                $this->scale = null;
+            } 
+        } 
+        return $this->scale;
+    }
+
+    /**
+     * Instantiates a grade_outcome object whose data is retrieved from the DB, 
+     * if this item's outcomeid variable is set.
+     * @return object grade_outcome
+     */
+    function load_outcome() {
+        if (!empty($this->outcomeid)) {
+            $this->outcome = grade_outcome::fetch('id', $this->outcomeid);
+        } 
+        return $this->outcome;
+    }
+    
+    /**
+     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
+     * @return array grade_grades_raw objects
+     */      
+    function load_raw() {
+        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
+
+        if (empty($grade_raw_array)) {
+            return null;
+        }
+
+        foreach ($grade_raw_array as $r) {
+            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
+        }
+        return $this->grade_grades_raw;
+    }
+
+    /**
+     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
+     * @param boolean $generatefakenullgrades If set to true, AND $CFG->usenullgrades is true, will replace missing grades with grades, gradevalue=grademin
+     * @return array grade_grades_final objects
+     */      
+    function load_final($generatefakenullgrades=false) {
+        global $CFG;
+
+        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        
+        if (empty($grade_final_array)) {
+            $this->generate_final();
+            $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
+        }
+        
+        if (empty($grade_final_array)) {
+            debugging("No final grades recorded for this grade_item");
+            return false;
+        }
+
+        foreach ($grade_final_array as $f) {
+            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
+        }
+
+        $returnarray = fullclone($this->grade_grades_final);
+
+        // If we are generating fake null grades, we have to get a list of users
+        if ($generatefakenullgrades && $CFG->usenullgrades) {
+            $users = get_records_sql_menu('SELECT userid AS "user", userid FROM ' . $CFG->prefix . 'grade_grades_final GROUP BY userid ORDER BY userid');
+            if (!empty($users) && is_array($users)) {
+                foreach ($users as $userid) {
+                    if (!isset($returnarray[$userid])) {
+                        $fakefinal = new grade_grades_final();
+                        $fakefinal->itemid = $this->id;
+                        $fakefinal->userid = $userid;
+                        $fakefinal->gradevalue = $this->grademin;
+                        $returnarray[$userid] = $fakefinal;
+                    }
+                }
+            }
+        }
+
+        return $returnarray;
+    }
+
+    /**
+     * Returns an array of values (NOT objects) standardised from the final grades of this grade_item. They are indexed by userid.
+     * @return array integers
+     */
+    function get_standardised_final() {
+        $standardised_finals = array();
+
+        $final_grades = $this->load_final(true);
+        foreach ($final_grades as $userid => $final) {
+            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
+        }
+
+        return $standardised_finals;
+    }
+
+    /**
+    * Returns the grade_category object this grade_item belongs to (if any).
+    * This category object may be the parent (referenced by categoryid) or the associated category 
+    * (referenced by iteminstance).
+    * 
+    * @return mixed grade_category object if applicable, NULL otherwise
+    */
+    function get_category() {
+        $category = null;
+        
+        if (!empty($this->categoryid)) {
+            $category = grade_category::fetch('id', $this->categoryid);
+        } elseif (!empty($this->iteminstance) && $this->itemtype == 'category') {
+            $category = grade_category::fetch('id', $this->iteminstance);
+        }
+        
+        return $category;
+    }
+    
+    /**
+     * Calls upon the get_category method to retrieve the grade_category object
+     * from the DB and assigns it to $this->category. It also returns the object.
+     * @return object Grade_category
+     */
+    function load_category() {
+        $this->category = $this->get_category();
+        return $this->category;
+    }
+
+    /**
+     * Returns this object's calculation.
+     * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
+     * @return mixed $calculation A string if found, false otherwise.
+     */
+    function get_calculation($fetch = false) {
+        if (!$fetch && get_class($this->calculation) == 'grade_calculation') {
+            return $this->calculation;
+        } 
+        $grade_calculation = grade_calculation::fetch('itemid', $this->id);
+            
+        if (empty($grade_calculation)) { // There is no calculation in DB
+            return false;
+        } elseif (empty($this->calculation) || !is_object($this->calculation)) { // The calculation isn't yet loaded
+            $this->calculation = $grade_calculation;
+            return $grade_calculation;
+        } elseif ($grade_calculation->calculation != $this->calculation->calculation) { // The object's calculation is not in sync with the DB (new value??)
+            $this->calculation = $grade_calculation;
+            return $grade_calculation;
+        } else { // The object's calculation is already in sync with the database
+            return $this->calculation;
+        }
+    }
+
+    /**
+     * Sets this item's calculation (creates it) if not yet set, or
+     * updates it if already set (in the DB). If no calculation is given,
+     * the method will attempt to retrieve one from the Database, based on
+     * the variables set in the current object.
+     * @param string $calculation
+     * @return boolean
+     */
+    function set_calculation($calculation = null) {
+        if (empty($calculation)) { // We are setting this item object's calculation variable from the DB
+            $grade_calculation = $this->get_calculation(true);
+            if (empty($grade_calculation)) {
+                debugging("No calculation to set for this grade_item.");
+                return false;
+            } else {
+                $this->calculation = $grade_calculation;
+            }
+        } else { // We are updating or creating the calculation entry in the DB
+            $grade_calculation = $this->get_calculation();
+            
+            if (empty($grade_calculation)) { // Creating
+                $grade_calculation = new grade_calculation();
+                $grade_calculation->calculation = $calculation;
+                $grade_calculation->itemid = $this->id;
+
+                if ($grade_calculation->insert()) {
+                    $this->calculation = $grade_calculation;
+                    return true;
+                } else {
+                    debugging("Could not save the calculation in the database, for this grade_item.");
+                    return false;
+                }                
+            } else { // Updating
+                $grade_calculation->calculation = $calculation;
+                $grade_calculation = new grade_calculation($grade_calculation);
+                $this->calculation = $grade_calculation;
+                return $grade_calculation->update();
+            }
+        }
+    }
+    
+    /**
+     * Returns the raw values for this grade item (as imported by module or other source).
+     * @param int $userid Optional: to retrieve a single raw grade
+     * @return mixed An array of all raw_grades (stdClass objects) for this grade_item, or a single raw_grade.
+     */
+    function get_raw($userid=NULL) {
+        if (empty($this->grade_grades_raw)) {
+            $this->load_raw();
+        }
+
+        $grade_raw_array = null;
+        if (!empty($userid)) {
+            $r = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
+            $grade_raw_array[$r->userid] = new grade_grades_raw($r);
+        } else {
+            $grade_raw_array = $this->grade_grades_raw;
+        }
+        return $grade_raw_array;
+    }
+    
+    /**
+     * Returns the final values for this grade item (as imported by module or other source).
+     * @param int $userid Optional: to retrieve a single final grade
+     * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
+     */
+    function get_final($userid=NULL) {
+        if (empty($this->grade_grades_final)) {
+            $this->load_final();
+        }
+
+        $grade_final_array = null;
+        if (!empty($userid)) {
+            $f = get_record('grade_grades_final', 'itemid', $this->id, 'userid', $userid);
+            $grade_final_array[$f->userid] = new grade_grades_final($f);
+        } else {
+            $grade_final_array = $this->grade_grades_final;
+        }
+        return $grade_final_array;
+    }
+
+    /**
      * Returns the sortorder of this grade_item. This method is also available in 
      * grade_category, for cases where the object type is not know. It will act as a virtual 
      * variable for a grade_category.
@@ -920,6 +920,17 @@ class grade_item extends grade_object {
      */
     function get_sortorder() {
         return $this->sortorder;
+    }
+
+    /**
+     * Sets the sortorder of this grade_item. This method is also available in 
+     * grade_category, for cases where the object type is not know. It will act as a virtual 
+     * variable for a grade_category.
+     * @param int $sortorder
+     * @return void
+     */
+    function set_sortorder($sortorder) {
+        $this->sortorder = $sortorder;
     }
 
     /**
@@ -939,6 +950,22 @@ class grade_item extends grade_object {
      */
     function get_item_id() {
         return $this->id;
+    }
+
+    /**
+     * Returns this item's category id. A generic method shared by objects that have a parent id of some kind.
+     * @return int $parentid
+     */
+    function get_parent_id() {
+        return $this->categoryid;
+    }
+
+    /**
+     * Sets this item's categoryid. A generic method shared by objects that have a parent id of some kind.
+     * @param int $parentid
+     */
+    function set_parent_id($parentid) {
+        $this->categoryid = $parentid;
     }
 }
 ?>
