@@ -1195,14 +1195,14 @@
         // Flag to mark if we must continue
         $continue = true;
 
-        //Process categories
+        // Process categories
         if ($categoriescount && $continue) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradecategories','grades').'</li>';
             }
             $counter = 0;
             while ($counter < $categoriescount) {
-                //Fetch recordset_size records in each iteration
+                // Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_categories' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
                                             "old_id, old_id",
@@ -1210,18 +1210,24 @@
                                             $recordset_size);
                 if ($recs) {
                     foreach ($recs as $rec) {
-                        //Get the full record from backup_ids
+                        // Get the full record from backup_ids
                         $data = backup_getid($restore->backup_unique_code,'grade_categories',$rec->old_id);
                         if ($data) {
-                            //Now get completed xmlized object
+                            // Now get completed xmlized object
                             $info = $data->info;
                             //traverse_xmlize($info);                            //Debug
                             //print_object ($GLOBALS['traverse_array']);         //Debug
                             //$GLOBALS['traverse_array']="";                     //Debug
                             //Now build the GRADE_PREFERENCES record structure
                             
-                            $dbrec->courseid   = $restore->course_id;
-                            $dbrec->parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
+                            $dbrec->courseid   = $restore->course_id;                           
+                            
+                            // get the new grade category parent
+                            if (!empty($info['GRADE_CATEGORY']['#']['PARENT']['0']['#'])) {
+                                $parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
+                                $dbrec->parent = $parent->new_id;
+                            }
+
                             $dbrec->fullname = backup_todb($info['GRADE_CATEGORY']['#']['FULLNAME']['0']['#']);
                             $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
                             $dbrec->keephigh = backup_todb($info['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#']);
@@ -1232,9 +1238,22 @@
                             //if the fullname doesn't exist
                             if (!$prerec = get_record('grade_categories','courseid',$dbrec->courseid,'fullname',$dbrec->fullname)) {
                                 $newid = insert_record('grade_categories',$dbrec);
-                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->oldid,$newid);
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->old_id,$newid);                           
+                                // update this record so we can put in the right paths
+                                // this can only be done after we got the new id
+                                $dbrec->id = $newid;
+                                include_once($CFG->dirroot.'/lib/grade/grade_category.php');
+                                // rebuild the path, we need only parents info
+                                // the order of restoring should ensure that the parent and grandparent(s) 
+                                // are already restored
+                                $dbrec->path = grade_category::build_path($dbrec);
+                                // this is not needed in the xml because
+                                // given this parent and grandparent(s) we can recalculate the depth
+                                $dbrec->depth = grade_category::get_depth_from_path($dbrec->path);
+                                update_record('grade_categories', $dbrec);
                             } else {
-                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->oldid,$rec->oldid); 
+                                // if fullname already exists, we should keep the current grade category
+                                $status = backup_putid($restore->backup_unique_code,'grade_categories',$rec->old_id,$rec->oldid); 
                             }
                         }
                         //Increment counters
@@ -1344,7 +1363,9 @@
                             $dbrec->courseid = $restore->course_id;
                             
                             if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
-                                $dbrec->categoryid = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
+                                
+                                $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
+                                $dbrec->categoryid = $category->new_id;
                             }
 
                             $dbrec->itemname = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#']);
@@ -1369,11 +1390,14 @@
                                 }
 
                                 // iteminstance should point to new mod
-                                $dbrec->iteminstance = backup_getid($restore->backup_unique_code,'course_modules', $iteminstance);
+                                
+                                $cm = backup_getid($restore->backup_unique_code,'course_modules', $iteminstance);
+                                $dbrec->iteminstance = $cm->new_id;
 
                             } else if ($dbrec->itemtype == 'category') {
                                 // the item instance should point to the new grade category
-                                $dbrec->iteminstance = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance); 
+                                $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance); 
+                                $dbrec->iteminstance = $category->new_id;
                             }
                             
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
