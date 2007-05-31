@@ -561,6 +561,51 @@ alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+paren
                                                          diagnostic = "Write Once Violation";
                                                      }
                                                  }
+                                                 
+                                                 if (elementmodel=='cmi.interactions.n.objectives.n.id') {
+ 
+                                                    elementIndexesSubindexes = element.split('.');
+                                                    elementFirstindex = elementIndexesSubindexes [2];
+	                                                longit = elementFirstindex.length;
+	
+	                                                longit--;
+	                                                if (longit == 1){
+	 
+	                                                    ind = elementFirstindex.substring(1);
+	                                                }
+                                                    else{
+	                                                    ind = elementFirstindex.substring(1,longit);
+	                                                }
+	
+	                                                elementSubindex = elementIndexesSubindexes [4];
+	                                                longit2 = elementSubindex.length;
+	 
+	                                                longit2--;
+	                                                if (longit2 == 1){
+	     
+		                                               subind = elementSubindex.substring(1);
+		
+		                                            }
+		                                            else{
+    
+	                                                   subind = elementSubindex.substring(1,longit2);
+	                                                }
+	
+	                                                i=0;
+	                                                while (i<parseInt(subind)){
+		                                                elem = 'cmi.interactions.N'+ind+'.objectives.N'+i+'.id';
+		                                                if (eval(elem)==value){
+		                                                    errorCode = "351";
+                                                            diagnostic = "Write Once Violation";
+		                                                }
+	                                                    i++;
+	                                                }
+                      
+  
+												
+
+												}
+                                                 
                                                 if (elementmodel=='cmi.interactions.n.learner_response') {
                                                     if (typeof eval(subelement+'.type') == "undefined") {
                                                         errorCode="408";
