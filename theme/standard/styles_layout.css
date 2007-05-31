@@ -2007,12 +2007,10 @@ body#grade-index .grades .weighted {
    margin:0px 20px 0px 20px;
 }
 
-#grade_edit_tree .insertion_box {
-  border: 1px #999999 solid;
-  background-color: #CCCCCC;
+#grade_edit_tree .movetarget {
   position: relative;
-  width: 40px;
-  height: 20px;
+  width: 80px;
+  height: 16px;
 }
 
 #grade_edit_tree li {
@@ -2037,6 +2035,10 @@ body#grade-index .grades .weighted {
 
 #grade_edit_tree form.movearrow {
   display: inline;
+}
+
+#grade_edit_tree .selected_element {
+  background-color: #E8EEF7;
 }
 /***
  *** Login

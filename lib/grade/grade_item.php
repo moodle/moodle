@@ -61,6 +61,12 @@ class grade_item extends grade_object {
     var $category;
     
     /**
+     * A grade_category object this item used to belong to before getting updated. Will be deleted shortly.
+     * @var object $old_parent
+     */
+    var $old_parent;
+
+    /**
      * The name of this grade_item (pushed by the module).
      * @var string $itemname
      */
@@ -965,7 +971,24 @@ class grade_item extends grade_object {
      * @param int $parentid
      */
     function set_parent_id($parentid) {
+        if ($this->categoryid != $parentid) {
+            $this->old_parent = $this->get_category();
+        }
+
         $this->categoryid = $parentid;
     }
+    
+    /** 
+     * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
+     * deleting childless categories.
+     * @return boolean
+     */
+    function is_old_parent_childless() {
+        if (!empty($this->old_parent)) {
+            return !$this->old_parent->has_children();
+        } else {
+            return false;
+        }
+    } 
 }
 ?>

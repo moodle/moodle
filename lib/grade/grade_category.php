@@ -57,6 +57,12 @@ class grade_category extends grade_object {
     var $parent_category;
 
     /**
+     * A grade_category object this category used to belong to before getting updated. Will be deleted shortly.
+     * @var object $old_parent
+     */
+    var $old_parent;
+
+    /**
      * The number of parents this category has.
      * @var int $depth
      */
@@ -841,7 +847,13 @@ class grade_category extends grade_object {
      * @param id $parentid
      */
     function set_parent_id($parentid) {
+        if ($this->parent != $parentid) {
+            $this->old_parent = $this->get_parent_category();
+        }
+
         $this->parent = $parentid;
+        $this->path = grade_category::build_path($this);
+        $this->depth = $this->get_depth_from_path();
     }
     
     /**
@@ -870,6 +882,18 @@ class grade_category extends grade_object {
     function set_sortorder($sortorder) {
         $this->sortorder = $sortorder;
     }
-
+    
+    /** 
+     * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
+     * deleting childless categories.
+     * @return boolean
+     */
+    function is_old_parent_childless() {
+        if (!empty($this->old_parent)) {
+            return !$this->old_parent->has_children();
+        } else {
+            return false;
+        }
+    } 
 } 
 ?>

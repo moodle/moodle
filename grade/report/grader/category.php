@@ -34,16 +34,13 @@ $param->movedown = optional_param('movedown', 0, PARAM_INT);
 $param->source = optional_param('source', 0, PARAM_INT);
 $param->action = optional_param('action', 0, PARAM_ALPHA);
 $param->move = optional_param('move', 0, PARAM_INT);
+$param->type = optional_param('type', 0, PARAM_ALPHA);
 
 $tree = new grade_tree(641);
 $select_source = false;
 
 if (!empty($param->action)) {
-    if (empty($param->source)) {
-        $select_source = true;
-    } else {
-        print_heading("Select the destination for the selected element."); 
-    }
+    print_heading("Select the destination for the selected element."); 
 } elseif (!empty($param->source)) {
     if (!empty($param->moveup)) {
         $tree->move_element($param->source, $param->moveup); 
@@ -61,12 +58,7 @@ if ($select_source) {
     print_heading("Select an element to move");
 }
 
-echo $tree->get_edit_tree($select_source, 1, null, $param->source, $param->action);
-
-echo '<form id="move_button" action="category.php" method="post"><div>' . "\n";
-echo '<input type="hidden" name="action" value="move" />' . "\n";
-echo '<input type="submit" value="Move" />' . "\n";
-echo '</div></form>';
+echo $tree->get_edit_tree(1, null, $param->source, $param->action, $param->type);
 
 print_footer();
 ?>

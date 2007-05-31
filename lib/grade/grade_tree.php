@@ -533,7 +533,7 @@ class grade_tree {
      */
     function include_fillers($tree, $object=NULL) {
         if (empty($this->fillers)) {
-            return null;
+            return $tree;
         }
 
         // Look at the current key of the fillers array. It is a sortorder.
@@ -649,8 +649,8 @@ class grade_tree {
         
         // Get all top categories
         $query = "SELECT $category_table.*, sortorder FROM $category_table, $items_table 
-                  WHERE iteminstance = $category_table.id $catconstraint ORDER BY sortorder";
-
+                  WHERE iteminstance = $category_table.id AND itemtype = 'category' $catconstraint ORDER BY sortorder";
+        
         $topcats = get_records_sql($query);
         
         if (empty($topcats)) {
@@ -662,7 +662,7 @@ class grade_tree {
 
         // If any of these categories has grade_items as children, create a topcategory filler with colspan=count(children)
         $topcats = $this->add_fillers($topcats);
-        
+
         foreach ($topcats as $topcatid => $topcat) {
 
             // Check the fillers array, see if one must be inserted before this topcat
@@ -714,7 +714,7 @@ class grade_tree {
             $topcat->sortorder = $sortorder;
             $tree[$topcat->sortorder] = array('object' => $topcat, 'children' => $subcattree); 
         }
-
+        
         // If there are still grade_items or grade_categories without a top category, add another filler
         if (!empty($this->fillers)) {
             ksort($this->fillers);
@@ -773,7 +773,11 @@ class grade_tree {
                 
                 $children_for_tree[$itemid] = array('object' => $item, 'finalgrades' => $finals); 
             }
-
+            
+            if (empty($object->childrencount)) {
+                $object->childrencount = 1;
+            }
+            
             $filler_array = array('object' => 'filler', 'colspan' => $object->childrencount, 'children' =>
                 array(0 => array('object' => $object, 'children' => $children_for_tree)));
         } 
@@ -847,6 +851,7 @@ class grade_tree {
     /**
      * Using $this->tree_array, builds $this->tree_filled, which is the same array but with fake categories as
      * fillers. These are used by display_grades, to print out empty cells over orphan grade_items and grade_categories.
+     * Recursive method
      * @return boolean Success or Failure.
      */
     function build_tree_filled() {
@@ -856,7 +861,8 @@ class grade_tree {
         }
         
         $this->tree_filled = array();
-
+        
+        // Detect any category that is now child-less and delete it
         foreach ($this->tree_array as $level1order => $level1) {
             if ($this->get_element_type($level1) == 'item' || $this->get_element_type($level1) == 'subcat') {
                 $this->tree_filled[$level1order] = $this->get_filler($level1['object']);
@@ -876,7 +882,16 @@ class grade_tree {
      * @return boolean Success or Failure
      */
     function update_db() {
-        // Perform deletions first
+        // Updates
+        foreach ($this->need_update as $object) {
+            if (!$object->update()) {
+                debugging("Could not update the object in DB.");
+            } elseif ($object->is_old_parent_childless()) { 
+                $this->need_delete[$object->old_parent->id] = $object->old_parent;
+            }
+        } 
+
+        // Deletions 
         foreach ($this->need_delete as $id => $object) {
             // If an item is both in the delete AND insert arrays, it must be an existing object that only needs updating, so ignore it.
             if (empty($this->need_insert[$id])) {
@@ -886,6 +901,7 @@ class grade_tree {
             }
         }
 
+        // Insertions
         foreach ($this->need_insert as $id => $object) {
             if (empty($this->need_delete[$id])) {
                 if (!$object->insert()) {
@@ -894,45 +910,48 @@ class grade_tree {
             }
         }
 
+        $this->need_update = array();
         $this->need_delete = array();
         $this->need_insert = array();
 
-        // The objects are updated
-        foreach ($this->need_update as $object) {
-            if (!$object->update()) {
-                debugging("Could not update the object in DB.");
-            } 
-        } 
-
-        $this->need_update = array();
         $this->reset_first_sortorder();
         $this->renumber();
     }
 
     /**
      * Returns a HTML list with sorting arrows and insert boxes. This is a recursive method.
-     * @param boolean $select_source Whether or not to display each element as a link to be selected as a source for an action
      * @param int $level The level of recursion
      * @param array $elements The elements to display in a list. Defaults to this->tree_array
      * @param int $source_sortorder A source sortorder, given when an element needs to be moved or inserted.
      * @param string $action 'move' or 'insert'
+     * @param string $source_type 'topcat', 'subcat' or 'item'
      * @return string HTML code
      */
-    function get_edit_tree($select_source=false, $level=1, $elements=NULL, $source_sortorder=NULL, $action=NULL) {
+    function get_edit_tree($level=1, $elements=NULL, $source_sortorder=NULL, $action=NULL, $source_type=NULL) {
         if (empty($this->tree_array)) {
             return null;
         } else {
             global $USER;
             global $CFG;
 
+            $strmove     = get_string("move");
             $strmoveup   = get_string("moveup");
             $strmovedown = get_string("movedown");
+            $strmovehere = get_string("movehere");
+            $strcancel   = get_string("cancel");
 
-            $sesskey_input = '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
-            $courseid_input = '<input type="hidden" name="courseid" value="' . $this->courseid . '" />';
+            $list = '';
+
+            $commonvars = "&amp;sesskey=$USER->sesskey&amp;courseid=$this->courseid";
             
             if (empty($elements)) {
-                $list = '<ul id="grade_edit_tree">' . "\n";
+                if ($source_sortorder && $action) {
+                    $element = $this->locate_element($source_sortorder);
+                    $list .= 'Moving ' . $element->element['object']->get_name() . ' (';
+                    $list .= '<a href="category.php?cancelmove=true' . $commonvars . '">' . $strcancel . '</a>)' . "\n";
+                }
+
+                $list .= '<ul id="grade_edit_tree">' . "\n";
                 $elements = $this->tree_array;
             } else {
                 $list = '<ul class="level' . $level . 'children">' . "\n";
@@ -953,55 +972,46 @@ class grade_tree {
                 }
 
                 $object_name = $element['object']->get_name();
-                if ($select_source) {
-                    $formname = "select_source_$sortorder";
-                    $object_name = '<form id="' . $formname . '" class="movearrow" action="category.php" method="post"><div>
-                        <input type="hidden" name="source" value="' . $sortorder . '" />
-                        <input type="hidden" name="action" value="' . $action . '" />
-                        <a href="#" onclick="document.getElementById(\'' . $formname . '\').submit();" title="Select this element">'
-                      . $object_name . '</a></div></form>';
+                $object_class = get_class($element['object']); 
+                $object_parent = $element['object']->get_parent_id();
+                $element_type = $this->get_element_type($element);
+                
+                $highlight_class = '';
+                
+                if ($source_sortorder == $sortorder && !empty($action)) {
+                    $highlight_class = ' selected_element ';
                 }
 
                 $list .= '<li class="level' . $level . 'element sortorder' 
-                      . $element['object']->get_sortorder() . '">' . "\n" 
+                      . $element['object']->get_sortorder() . $highlight_class . '">' . "\n" 
                       . $object_name;
                 
+                // Print up arrow
                 if (!$first) {
-                    $formname = "moveup_$sortorder";
-                    $list .= '<form method="post" action="category.php" class="movearrow" id="' . $formname . '"><div>
-                        <input type="hidden" name="source" value="' . $sortorder . '" />
-                        <input type="hidden" name="moveup" value="' . $element['object']->previous_sortorder . '" />' . "\n";
-                    
-                    $list .= $sesskey_input . "\n" . $courseid_input;
-
-                    $list .= '<div class="moveuparrow">'
-                          . '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" '
-                          . 'alt="'.$strmoveup.'" title="'.$strmoveup.'"' 
-                          . 'onclick="document.getElementById(\'' . $formname . '\').submit();" /> </div>'. "\n";
-                    $list .= '</div></form>';
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;moveup={$element['object']->previous_sortorder}$commonvars\">\n"; 
+                    $list .= '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" ' . 'alt="'.$strmoveup.'" title="'.$strmoveup.'" /></a>'. "\n"; 
                 } else {
                     $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> '. "\n";
                 }
 
+                // Print down arrow
                 if (!$last) {
-                    $formname = "movedown_$sortorder";
-                    $list .= '<form method="post" action="category.php" class="movearrow" id="' . $formname . '"><div>
-                        <input type="hidden" name="source" value="' . $sortorder . '" />
-                        <input type="hidden" name="movedown" value="' . $element['object']->next_sortorder . '" />' . "\n";
-                    
-                    $list .= $sesskey_input . "\n" . $courseid_input;
-
-                    $list .= '<div class="movedownarrow">'
-                          . '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" '
-                          . 'alt="'.$strmovedown.'" title="'.$strmovedown.'"' 
-                          . 'onclick="document.getElementById(\'' . $formname . '\').submit();" /></div>'. "\n";
-                    $list .= '</div></form>';
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;movedown={$element['object']->next_sortorder}$commonvars\">\n"; 
+                    $list .= '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" ' . 'alt="'.$strmovedown.'" title="'.$strmovedown.'" /></a>'. "\n"; 
                 } else {
                     $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
                 }
                 
+                // Print move icon
+                if ($element_type != 'topcat') { 
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;action=move&amp;type=$element_type&amp;sesskey=$commonvars\">\n";
+                    $list .= '<img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'" /></a>'. "\n";                
+                } else {
+                    $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
+                }
+
                 if (!empty($element['children'])) {
-                    $list .= $this->get_edit_tree($select_source, $level + 1, $element['children'], $source_sortorder, $action);
+                    $list .= $this->get_edit_tree($level + 1, $element['children'], $source_sortorder, $action, $source_type);
                 }
                 
                 $list .= '</li>' . "\n";
@@ -1015,17 +1025,19 @@ class grade_tree {
                 $last_sortorder = $sortorder;
             }
             
-            // Add an insertion box if source_sortorder is given
+            // Add an insertion box if source_sortorder is given and a few other constraints are satisfied
             if ($source_sortorder && !empty($action)) {
-                $list .= '<li class="insertion">
-                    <form method="post" action="category.php" id="insertion_' . $last_sortorder . '">
-                    <div>
-                        <input type="hidden" name="source" value="' . $source_sortorder . '" />
-                        <input type="hidden" name="' . $action . '" value="' . $last_sortorder . '" />
-                        <div class="insertion_box" onclick="document.getElementById(\'insertion_' . $last_sortorder . '\').submit();"></div>                        
-                    </div>
-                    </form>
-                </li>';
+                $moving_item_near_subcat = $element_type == 'subcat' && $source_type == 'item' && $level > 1;
+                $moving_cat_to_lower_level = ($level == 2 && $source_type == 'topcat') || ($level > 2 && $source_type == 'subcat');
+                $moving_subcat_near_item_in_cat = $element_type == 'item' && $source_type == 'subcat' && $level > 1;
+                $moving_element_near_itself = $sortorder == $source_sortorder;
+                
+                if (!$moving_item_near_subcat && !$moving_cat_to_lower_level && !$moving_subcat_near_item_in_cat && !$moving_element_near_itself) { 
+                    $list .= '<li class="insertion">' . "\n";
+                    $list .= '<a href="category.php?' . "source=$source_sortorder&amp;$action=$last_sortorder$commonvars\">\n";
+                    $list .= '<img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" />' . "\n";
+                    $list .= "</a>\n</li>";
+                }
             }
 
             $list .= '</ul>' . "\n";
