@@ -106,8 +106,6 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->qtype->get_tolerance_interval($answer);
         $this->assertWithinMargin($answer->min, 0, $this->tolerance);
         $this->assertWithinMargin($answer->max, 0, $this->tolerance);
-        $this->assertTrue($answer->max - $answer->min > 0);
-        
 
         $answer = new stdClass; // Test default type nominal.
         $answer->tolerance = 1.0;
