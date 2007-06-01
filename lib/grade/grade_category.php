@@ -858,8 +858,7 @@ class grade_category extends grade_object {
     
     /**
      * Returns the sortorder of the associated grade_item. This method is also available in 
-     * grade_item, for cases where the object type is not know. It will act as a virtual 
-     * variable for a grade_category.
+     * grade_item, for cases where the object type is not known.
      * @return int Sort order
      */
     function get_sortorder() {
@@ -883,6 +882,66 @@ class grade_category extends grade_object {
         $this->sortorder = $sortorder;
     }
     
+    /**
+     * Returns the locked state/date of the associated grade_item. This method is also available in 
+     * grade_item, for cases where the object type is not known. 
+     * @return int 0, 1 or timestamp int(10)
+     */
+    function get_locked() {
+        $this->load_grade_item();
+        if (!empty($this->grade_item)) {
+            return $this->grade_item->locked;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the grade_item's locked variable and updates the grade_item.
+     * Method named after grade_item::set_locked().
+     * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @return void
+     */
+    function set_locked($locked) {
+        $this->load_grade_item();
+        if (!empty($this->grade_item)) {
+            $this->grade_item->locked = $locked;
+            return $this->grade_item->update();
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns the hidden state/date of the associated grade_item. This method is also available in 
+     * grade_item, for cases where the object type is not known. 
+     * @return int 0, 1 or timestamp int(10)
+     */
+    function get_hidden() {
+        $this->load_grade_item();
+        if (!empty($this->grade_item)) {
+            return $this->grade_item->hidden;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the grade_item's hidden variable and updates the grade_item. 
+     * Method named after grade_item::set_hidden().
+     * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
+     * @return void
+     */
+    function set_hidden($hidden) {
+        $this->load_grade_item();
+        if (!empty($this->grade_item)) {
+            $this->grade_item->hidden = $hidden;
+            return $this->grade_item->update();
+        } else {
+            return false;
+        }
+    }
+
     /** 
      * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
      * deleting childless categories.

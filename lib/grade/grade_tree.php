@@ -85,6 +85,12 @@ class grade_tree {
     var $include_grades;
 
     /**
+     * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
+     * @var string $commonvars
+     */ 
+    var $commonvars;
+
+    /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
      * objects for the given courseid or the entire site if no courseid given. Full objects are instantiated
      * by default, but this can be switched off. The tree is indexed by sortorder, to facilitate CRUD operations
@@ -94,8 +100,12 @@ class grade_tree {
      * @param array $tree
      */
     function grade_tree($courseid=NULL, $include_grades=false, $tree=NULL) {
+        global $USER;
+
         $this->courseid = $courseid;
-        $this->include_grades = $include_grades;
+        $this->include_grades = $include_grades; 
+        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;courseid=$this->courseid";
+
         if (!empty($tree)) {
             $this->tree_array = $tree;
         } else {
@@ -931,7 +941,6 @@ class grade_tree {
         if (empty($this->tree_array)) {
             return null;
         } else {
-            global $USER;
             global $CFG;
 
             $strmove     = get_string("move");
@@ -939,18 +948,16 @@ class grade_tree {
             $strmovedown = get_string("movedown");
             $strmovehere = get_string("movehere");
             $strcancel   = get_string("cancel");
+            $stredit     = get_string("edit");
+            $strdelete   = get_string("delete");
+            $strhide     = get_string("hide");
+            $strshow     = get_string("show");
+            $strlock     = get_string("lock", 'grades');
+            $strunlock   = get_string("unlock", 'grades');
 
             $list = '';
-
-            $commonvars = "&amp;sesskey=$USER->sesskey&amp;courseid=$this->courseid";
             
             if (empty($elements)) {
-                if ($source_sortorder && $action) {
-                    $element = $this->locate_element($source_sortorder);
-                    $list .= 'Moving ' . $element->element['object']->get_name() . ' (';
-                    $list .= '<a href="category.php?cancelmove=true' . $commonvars . '">' . $strcancel . '</a>)' . "\n";
-                }
-
                 $list .= '<ul id="grade_edit_tree">' . "\n";
                 $elements = $this->tree_array;
             } else {
@@ -981,14 +988,31 @@ class grade_tree {
                 if ($source_sortorder == $sortorder && !empty($action)) {
                     $highlight_class = ' selected_element ';
                 }
+                
+                // Add dimmed_text span around object name if set to hidden
+                $hide_show = 'hide';
+                if ($element['object']->get_hidden()) {
+                    $object_name = '<span class="dimmed_text">' . $object_name . '</span>';
+                    $hide_show = 'show';
+                }
+                
+                // Prepare lock/unlock string
+                $lock_unlock = 'lock';
+                if ($element['object']->get_locked()) {
+                    $lock_unlock = 'unlock';
+                }
+
+                // Print activity icon
 
                 $list .= '<li class="level' . $level . 'element sortorder' 
                       . $element['object']->get_sortorder() . $highlight_class . '">' . "\n" 
                       . $object_name;
                 
+                $list .= '<div class="icons">';
+
                 // Print up arrow
                 if (!$first) {
-                    $list .= '<a href="category.php?'."source=$sortorder&amp;moveup={$element['object']->previous_sortorder}$commonvars\">\n"; 
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;moveup={$element['object']->previous_sortorder}$this->commonvars\">\n"; 
                     $list .= '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" ' . 'alt="'.$strmoveup.'" title="'.$strmoveup.'" /></a>'. "\n"; 
                 } else {
                     $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> '. "\n";
@@ -996,7 +1020,7 @@ class grade_tree {
 
                 // Print down arrow
                 if (!$last) {
-                    $list .= '<a href="category.php?'."source=$sortorder&amp;movedown={$element['object']->next_sortorder}$commonvars\">\n"; 
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;movedown={$element['object']->next_sortorder}$this->commonvars\">\n"; 
                     $list .= '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" ' . 'alt="'.$strmovedown.'" title="'.$strmovedown.'" /></a>'. "\n"; 
                 } else {
                     $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
@@ -1004,11 +1028,32 @@ class grade_tree {
                 
                 // Print move icon
                 if ($element_type != 'topcat') { 
-                    $list .= '<a href="category.php?'."source=$sortorder&amp;action=move&amp;type=$element_type&amp;sesskey=$commonvars\">\n";
+                    $list .= '<a href="category.php?'."source=$sortorder&amp;action=move&amp;type=$element_type$this->commonvars\">\n";
                     $list .= '<img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'" /></a>'. "\n";                
                 } else {
                     $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
                 }
+                
+                // Print edit icon
+                $list .= '<a href="category.php?'."target=$sortorder&amp;action=edit$this->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                      .$stredit.'" title="'.$stredit.'" /></a>'. "\n";                
+                
+                // Print delete icon
+                $list .= '<a href="category.php?'."target=$sortorder&amp;action=delete$this->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                      .$strdelete.'" title="'.$strdelete.'" /></a>'. "\n";                
+
+                // Print hide/show icon
+                $list .= '<a href="category.php?'."target=$sortorder&amp;action=$hide_show$this->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+                      .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";                
+                // Print lock/unlock icon
+                $list .= '<a href="category.php?'."target=$sortorder&amp;action=$lock_unlock$this->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+                      .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";                
+                
+                $list .= '</div> <!-- end icons div -->';
 
                 if (!empty($element['children'])) {
                     $list .= $this->get_edit_tree($level + 1, $element['children'], $source_sortorder, $action, $source_type);
@@ -1034,7 +1079,7 @@ class grade_tree {
                 
                 if (!$moving_item_near_subcat && !$moving_cat_to_lower_level && !$moving_subcat_near_item_in_cat && !$moving_element_near_itself) { 
                     $list .= '<li class="insertion">' . "\n";
-                    $list .= '<a href="category.php?' . "source=$source_sortorder&amp;$action=$last_sortorder$commonvars\">\n";
+                    $list .= '<a href="category.php?' . "source=$source_sortorder&amp;$action=$last_sortorder$this->commonvars\">\n";
                     $list .= '<img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" />' . "\n";
                     $list .= "</a>\n</li>";
                 }

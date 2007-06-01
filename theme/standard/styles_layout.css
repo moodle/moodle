@@ -2007,14 +2007,20 @@ body#grade-index .grades .weighted {
    margin:0px 20px 0px 20px;
 }
 
+/* gradebook edit tree */
 #grade_edit_tree .movetarget {
   position: relative;
   width: 80px;
   height: 16px;
 }
 
+#content ul#grade_edit_tree {
+  width: auto;
+}
+
 #grade_edit_tree li {
   list-style: none;
+  margin-top: 8px;
 }
 
 #grade_edit_tree li.insertion {
@@ -2039,6 +2045,12 @@ body#grade-index .grades .weighted {
 
 #grade_edit_tree .selected_element {
   background-color: #E8EEF7;
+}
+
+#grade_edit_tree .icons {
+  position: relative;
+  display: inline;
+  margin-left: 10px;
 }
 /***
  *** Login

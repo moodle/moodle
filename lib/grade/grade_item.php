@@ -978,6 +978,44 @@ class grade_item extends grade_object {
         $this->categoryid = $parentid;
     }
     
+    /**
+     * Returns the locked state/date of this grade_item. This method is also available in 
+     * grade_category, for cases where the object type is not known. 
+     * @return int 0, 1 or timestamp int(10)
+     */
+    function get_locked() {
+        return $this->locked;
+    }
+
+    /**
+     * Sets the grade_item's locked variable and updates the grade_item.
+     * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @return success or failure of update() method
+     */
+    function set_locked($locked) {
+        $this->locked = $locked;
+        return $this->update();
+    }
+    
+    /**
+     * Returns the hidden state/date of this grade_item. This method is also available in 
+     * grade_category, for cases where the object type is not known. 
+     * @return int 0, 1 or timestamp int(10)
+     */
+    function get_hidden() {
+        return $this->hidden;
+    }
+
+    /**
+     * Sets the grade_item's hidden variable and updates the grade_item. 
+     * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
+     * @return void
+     */
+    function set_hidden($hidden) {
+        $this->hidden = $hidden;
+        return $this->update(); 
+    }
+
     /** 
      * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
      * deleting childless categories.
