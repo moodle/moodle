@@ -556,10 +556,30 @@ alert('element = '+element+"\nsubelement = "+subelement+"\nparentmodel = "+paren
                                              parentmodel = 'cmi.interactions';
                                              if (subelement.substr(0,parentmodel.length) == parentmodel) {
                                                  if ((elementmodel==parentmodel+'.n.id') && (errorCode=="0")) { 
-                                                     if (eval(element) == value) {
-                                                         errorCode = "351";
-                                                         diagnostic = "Write Once Violation";
-                                                     }
+                                                    elementIndexesSubindex = element.split('.');
+                                                    elementFirstind = elementIndexesSubindex [2];
+	                                                len = elementFirstind.length;
+	
+	                                                len--;
+	                                                if (len == 1){
+	 
+	                                                    ind = elementFirstind.substring(1);
+	                                                }
+                                                    else{
+	                                                    ind = elementFirstind.substring(1,len);
+	                                                }
+
+													i=0;
+	                                                while (i<parseInt(ind)){
+		                                                elem = 'cmi.interactions.N'+ind+'.id';
+		                                                if (eval(elem)==value){
+		                                                    errorCode = "351";
+                                                            diagnostic = "Write Once Violation";
+		                                                }
+														else{
+	                                                    i++;
+														}
+	                                                }
                                                  }
                                                  
                                                  if (elementmodel=='cmi.interactions.n.objectives.n.id') {
