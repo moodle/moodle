@@ -564,6 +564,7 @@ function process_tf($quest, &$questions) {
         $question->feedbacktrue = addslashes($fback->incorrect);
         $question->feedbackfalse = addslashes($fback->correct);
     }
+    $question->correctanswer = $question->answer;
     $questions[] = $question;
 }
 
