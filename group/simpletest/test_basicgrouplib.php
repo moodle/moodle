@@ -60,6 +60,15 @@ class basicgrouplib_test extends UnitTestCase {
         $this->assertTrue($this->courseid == groups_get_course($this->groupid));
     }
 
+    function test_group_matches(){
+      $groupinfo->name = 'Group Testname:' .  $this->getLabel();
+      $groupinfo->description  = 'Group Test Description:' . $this->getLabel();
+
+      $this->assertTrue($this->groupid = groups_create_group($this->courseid, $groupinfo));
+      $this->assertTrue(groups_group_matches($this->courseid, $groupinfo->name, $groupinfo->description));
+
+    }
+
     function test_add_member() {
         // NOTE, interface change on add_member, remove_member. 
         $this->assertTrue(groups_add_member($this->groupid, $this->userid));

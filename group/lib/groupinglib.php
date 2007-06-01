@@ -323,7 +323,7 @@ function groups_grouping_matches($courseid, $gg_name, $gg_description) {
     $records = get_records_sql($sql);
     $grouping = false;
     if ($records) {
-        $grouping = $records[0];
+        $grouping = array_shift($records);
     } 
     return $grouping;
 }

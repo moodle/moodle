@@ -64,6 +64,15 @@ class groupinglib_test extends UnitTestCase {
         $this->assertTrue(groups_set_grouping_settings($this->groupingid, $groupinginfo));
     }
 
+    function test_groups_grouping_matches(){
+      $groupinginfo->name = 'Grouping Testname:' .  $this->getLabel();
+      $groupinginfo->description  = 'Grouing Test Description:' . $this->getLabel();
+
+      $this->assertTrue($this->groupingid = groups_create_grouping($this->courseid, $groupinginfo));
+      $this->assertTrue(groups_grouping_matches($this->courseid, $groupinginfo->name, $groupinginfo->description));
+
+    }
+
     function test_add_group_to_grouping() {
         $this->assertTrue(groups_add_group_to_grouping($this->groupid, $this->groupingid));
         $this->assertTrue(groups_belongs_to_grouping($this->groupid, $this->groupingid));
