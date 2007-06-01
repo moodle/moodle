@@ -2023,6 +2023,16 @@ body#grade-index .grades .weighted {
   margin-top: 8px;
 }
 
+#grade_edit_tree li div.moduleicon {
+  margin-right: 5px;
+  display: inline;
+}
+
+#grade_edit_tree li div.select_checkbox {
+  margin-right: 5px;
+  display: inline;
+}
+
 #grade_edit_tree li.insertion {
   cursor: pointer;
 }

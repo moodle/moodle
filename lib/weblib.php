@@ -5342,6 +5342,7 @@ function notice ($message, $link='', $course=NULL) {
  * @param string $message The text to display
  * @param string $linkyes The link to take the user to if they choose "Yes"
  * @param string $linkno The link to take the user to if they choose "No"
+ * TODO Document remaining arguments
  */
 function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
 
