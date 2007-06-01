@@ -63,13 +63,13 @@ class grade_grades_final extends grade_object {
     var $gradevalue;
     
     /**
-     * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
+     * Date until which to hide this grade_final. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
     var $hidden;
     
     /**
-     * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
+     * Date until which to lock this grade_final. If null, 0 or false, grade_item is not locked. Locking prevents updating.
      * @var int $locked
      */
     var $locked = false;

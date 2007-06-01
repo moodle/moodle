@@ -100,12 +100,6 @@ class grade_category extends grade_object {
     var $droplow;
     
     /**
-     * Date until which to hide this category. If null, 0 or false, category is not hidden.
-     * @var int $hidden
-     */
-    var $hidden;
-    
-    /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
      * @var array $children
      */

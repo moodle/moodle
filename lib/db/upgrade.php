@@ -1302,6 +1302,29 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && drop_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007052300) {
+        require_once($CFG->dirroot . '/question/upgrade.php');
+        $result = $result && question_remove_rqp_qtype();
+    }
+
+    if ($result && $oldversion < 2007060100) {
+
+        /// Define field hidden to be dropped from grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('hidden');
+        
+        // Launch drop field hidden
+        $result = $result && drop_field($table, $field);
+
+        // Define field deleted to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('deleted');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'locked');
+
+        // Launch add field deleted
+        $result = $result && add_field($table, $field); 
+    }
+
     return $result; 
 }
 

@@ -187,6 +187,12 @@ class grade_item extends grade_object {
     var $locked = false;
     
     /**
+     * Whether or not the module instance referred to by this grade_item has been deleted.
+     * @var int $deleted
+     */
+    var $deleted;
+
+    /**
      * If set, the whole column will be recalculated, then this flag will be switched off.
      * @var boolean $needsupdate
      */
