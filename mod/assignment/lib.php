@@ -384,6 +384,8 @@ class assignment_base {
     function delete_instance($assignment) {
         global $CFG;
 
+        $assignment->courseid = $assignment->course;
+
         $result = true;
 
         if (! delete_records('assignment_submissions', 'assignment', $assignment->id)) {
@@ -411,6 +413,8 @@ class assignment_base {
         // delete file area with all attachments - ignore errors
         require_once($CFG->libdir.'/filelib.php');
         fulldelete($CFG->dataroot.'/'.$assignment->course.'/'.$CFG->moddata.'/assignment/'.$assignment->id);
+
+        assignment_base::delete_grade_item($assignment);
 
         return $result;
     }
@@ -530,6 +534,18 @@ class assignment_base {
 
         $itemid = grade_create_item($params);
         return $itemid;
+    }
+
+    /**
+     * Delete associated grade item.
+     * Static method - do not override!
+     */
+    function delete_grade_item($assignment) {
+        if ($items = grade_get_items($assignment->courseid, 'mod', 'assignment', $assignment->id)) {
+            foreach($items as $item) {
+                $item->delete();
+            }
+        }
     }
 
     /**
