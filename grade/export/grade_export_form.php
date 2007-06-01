@@ -6,6 +6,7 @@ class grade_export_form extends moodleform {
         global $CFG;
         include_once($CFG->libdir.'/pear/HTML/QuickForm/advcheckbox.php');
         $mform =& $this->_form;
+        $mform->addElement('header', 'general', 'Gradeitems to be included'); // TODO: localize
         $id = $this->_customdata['id']; // course id
         $mform->addElement('hidden', 'id', $id);
         if ($grade_items = grade_get_items($id)) {
