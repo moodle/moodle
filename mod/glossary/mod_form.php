@@ -165,19 +165,19 @@ class mod_glossary_mod_form extends moodleform_mod {
             $mainglossaryel->setPersistantFreeze(false);
 
         }
-
-
 	}
-	function data_preprocessing($default_values){
-        if (isset($default_values['assessed'])){
-	        $default_values['userating']=($default_values['assessed'])?true:false;
-	    }
-        if (isset($default_values['assessed'])){
-	        $default_values['ratingtime']=($default_values['assessed']
-        	                               && $default_values['assesstimestart']
-        	                               && $default_values['assesstimefinish'] )?1:0;
-	    }
-	}
+
+    function data_preprocessing(&$default_values){
+        
+        if (empty($default_values['assessed'])){
+            $default_values['userating'] = 0;
+            $default_values['ratingtime'] = 0;
+        } else {
+            $default_values['userating'] = 1;
+            $default_values['ratingtime']=
+                ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
+        }
+    }
 
 }
 ?>

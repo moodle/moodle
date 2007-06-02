@@ -52,7 +52,7 @@ function glossary_add_instance($glossary) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
-    if (!isset($glossary->userating) || !$glossary->userating) {
+    if (empty($glossary->userating)) {
         $glossary->assessed = 0;
     }
 
@@ -61,9 +61,11 @@ function glossary_add_instance($glossary) {
         $glossary->assesstimefinish = 0;
     }
 
-    if ( !isset($glossary->globalglossary) ) {
+    if (empty($glossary->globalglossary) ) {
         $glossary->globalglossary = 0;
-    } elseif (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    }
+
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
         $glossary->globalglossary = 0;
     }
 
@@ -86,17 +88,19 @@ function glossary_update_instance($glossary) {
 /// will update an existing instance with new data.
     global $CFG;
 
-    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        unset($glossary->globalglossary);
-    }
     if (empty($glossary->globalglossary)) {
         $glossary->globalglossary = 0;
+    }
+
+    if (!has_capability('mod/glossary:manageentries', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        // keep previous
+        unset($glossary->globalglossary);
     }
 
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
 
-    if (!isset($glossary->userating) || !$glossary->userating) {
+    if (empty($glossary->userating)) {
         $glossary->assessed = 0;
     }
 
@@ -1476,7 +1480,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<div class="boxaligncenter">';
     echo '<table class="glossarycomment" cellspacing="0">';
     echo '<tr valign="top">';
-    echo '<tr><td class="left picture">';
+    echo '<td class="left picture">';
     print_user_picture($user->id, $course->id, $user->picture);
     echo '</td>';
     echo '<td class="entryheader">';
