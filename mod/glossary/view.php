@@ -396,7 +396,8 @@
 
         $ratings = NULL;
         $ratingsmenuused = false;
-        if ($glossary->assessed and !empty($USER->id)) {
+        if ($glossary->assessed and isloggedin() and !isguestuser()) {
+            $ratings = new object();
             if ($ratings->scale = make_grades_menu($glossary->scale)) {
                 $ratings->assesstimestart = $glossary->assesstimestart;
                 $ratings->assesstimefinish = $glossary->assesstimefinish;
@@ -499,10 +500,9 @@
         }
         echo "</div>";    
     }
-    if ($entriesshown ) {
-        echo "</form>";
-    } else if (!empty($formsent)) {
-        // close the form properly if not  used
+
+    if (!empty($formsent)) {
+        // close the form properly if used
         echo "</div>";
         echo "</form>";  
     }
