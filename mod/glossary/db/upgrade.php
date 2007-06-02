@@ -41,6 +41,14 @@ function xmldb_glossary_upgrade($oldversion=0) {
     /// Launch drop field studentcanpost
         $result = $result && drop_field($table, $field);
     }  
+
+    if ($result && $oldversion < 2007060300) {
+        require_once($CFG->dirroot.'/mod/glossary/lib.php');
+        // too much debug output
+        $db->debug = false;
+        glossary_update_grades();
+        $db->debug = true;
+    }  
     
     return $result;
 }

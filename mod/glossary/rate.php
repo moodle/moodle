@@ -48,6 +48,12 @@
                     error('You can not rate items!');
                 }
 
+                // add extra info into glossary object
+                $glossary->courseid   = $course->id;
+                $glossary->cmidnumber = $cm->idnumber;
+
+                $grade_item = glossary_grade_item_get($glossary);
+
                 if (empty($returnurl)) {
                     $returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
                 }
@@ -73,12 +79,15 @@
                 //Check if we must delete the rate
                 if ($rating == -999) {
                     delete_records('glossary_ratings','userid',$oldrating->userid, 'entryid',$oldrating->entryid);
+                    glossary_update_grades($grade_item, $entry->userid);
+
                 } else if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
                     if (! update_record("glossary_ratings", $oldrating)) {
                         error("Could not update an old rating ($entry = $rating)");
                     }
+                    glossary_update_grades($grade_item, $entry->userid);
                 }
             } else if ($rating >= 0) {
                 $newrating = new object();
@@ -90,6 +99,7 @@
                 if (! insert_record("glossary_ratings", $newrating)) {
                     error("Could not insert a new rating ($entry->id = $rating)");
                 }
+                glossary_update_grades($grade_item, $entry->userid);
             }
         }
 

@@ -4,6 +4,7 @@
 /// (replace glossary with the name of your module and delete this line)
 
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
@@ -56,7 +57,7 @@ function glossary_add_instance($glossary) {
         $glossary->assessed = 0;
     }
 
-    if (empty($glossary->ratingtime)) {
+    if (empty($glossary->ratingtime) or empty($glossary->assessed)) {
         $glossary->assesstimestart  = 0;
         $glossary->assesstimefinish = 0;
     }
@@ -69,8 +70,9 @@ function glossary_add_instance($glossary) {
         $glossary->globalglossary = 0;
     }
 
-    $glossary->timecreated = time();
+    $glossary->timecreated  = time();
     $glossary->timemodified = $glossary->timecreated;
+    $glossary->courseid     = $glossary->course;
 
     //Check displayformat is a valid one
     $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
@@ -78,7 +80,12 @@ function glossary_add_instance($glossary) {
         error("This format doesn't exist!");
     }
 
-    return insert_record("glossary", $glossary);
+    if ($returnid = insert_record("glossary", $glossary)) {
+        $glossary->id = $returnid;
+        glossary_grade_item_create($glossary);
+    }
+
+    return $returnid;
 }
 
 
@@ -98,13 +105,14 @@ function glossary_update_instance($glossary) {
     }
 
     $glossary->timemodified = time();
-    $glossary->id = $glossary->instance;
+    $glossary->id           = $glossary->instance;
+    $glossary->courseid     = $glossary->course;
 
     if (empty($glossary->userating)) {
         $glossary->assessed = 0;
     }
 
-    if (empty($glossary->ratingtime)) {
+    if (empty($glossary->ratingtime) or empty($glossary->assessed)) {
         $glossary->assesstimestart  = 0;
         $glossary->assesstimefinish = 0;
     }
@@ -115,9 +123,11 @@ function glossary_update_instance($glossary) {
         error("This format doesn't exist!");
     }
 
-    $return = update_record("glossary", $glossary);
-    if ($return and $glossary->defaultapproval) {
-        execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
+    if ($return = update_record("glossary", $glossary)) {
+        if ($glossary->defaultapproval) {
+            execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
+        }
+        glossary_grade_item_update($glossary);
     }
 
     return $return;
@@ -172,6 +182,7 @@ function glossary_delete_instance($id) {
         glossary_delete_attachments($glossary);
         delete_records("glossary_entries", "glossaryid", "$glossary->id");
     }
+    glossary_grade_item_delete($glossary);
 
     return $result;
 }
@@ -184,6 +195,7 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
 /// $return->info = a short text description
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
+        $result = new object();
         $result->info = count($entries) . ' ' . get_string("entries", "glossary");
 
         $lastentry = array_pop($entries);
@@ -243,6 +255,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
 
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
+        $tempmod = new object();
         $tempmod->course = $log->course;
         $entry           = get_record('glossary_entries','id',$log->info);
         if (!$entry) {
@@ -297,77 +310,127 @@ function glossary_cron () {
     return true;
 }
 
-function glossary_grades($glossaryid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
-    if (!$glossary = get_record("glossary", "id", $glossaryid)) {
-        return false;
-    }
-    if (!$glossary->assessed) {
-        return false;
-    }
-    $scalemenu = make_grades_menu($glossary->scale);
+function glossary_get_user_grades($glossaryid, $userid=0) {
+    global $CFG;
 
-    $currentuser = 0;
-    $ratingsuser = array();
+    $user = $userid ? "AND u.id = $userid" : "";
 
-    if ($ratings = glossary_get_user_grades($glossaryid)) {
-        foreach ($ratings as $rating) {     // Ordered by user
-            if ($currentuser and $rating->userid != $currentuser) {
-                if (!empty($ratingsuser)) {
-                    if ($glossary->scale < 0) {
-                        $return->grades[$currentuser] = glossary_get_ratings_mean(0, $scalemenu, $ratingsuser);
-                        $return->grades[$currentuser] .= "<br />".glossary_get_ratings_summary(0, $scalemenu, $ratingsuser);
-                    } else {
-                        $total = 0;
-                        $count = 0;
-                        foreach ($ratingsuser as $ra) {
-                            $total += $ra;
-                            $count ++;
-                        }
-                        $return->grades[$currentuser] = (string) format_float($total/$count, 2);
-                        if ( count($ratingsuser) > 1 ) {
-                            $return->grades[$currentuser] .= " (" . count($ratingsuser) . ")";
-                        }
+    $sql = "SELECT u.id, avg(gr.rating) as rating
+              FROM {$CFG->prefix}user u, {$CFG->prefix}glossary_entries ge,
+                   {$CFG->prefix}glossary_ratings gr
+             WHERE u.id = ge.userid AND ge.id = gr.entryid
+                   AND gr.userid != u.id AND ge.glossaryid = $glossaryid
+                   $user
+          GROUP BY u.id";
+
+    return get_records_sql($sql);
+}
+
+function glossary_update_grades($grade_item=null, $userid=0) {
+    global $CFG;
+
+    if ($grade_item != null) {
+        if ($grades = glossary_get_user_grades($grade_item->iteminstance, $userid)) {
+            foreach ($grades as $grade) {
+                $eventdata = new object();
+                $eventdata->itemid     = $grade_item->id;
+                $eventdata->userid     = $grade->id;
+                $eventdata->gradevalue = $grade->rating;
+                events_trigger('grade_updated', $eventdata);
+            }
+        }
+
+    } else {
+        $sql = "SELECT g.*, cm.idnumber as cmidnumber, g.course as courseid FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($glossary = rs_fetch_next_record($rs)) {
+                    if (!$glossary->assessed) {
+                        continue; // no grading
                     }
-                } else {
-                    $return->grades[$currentuser] = "";
-                }
-                $ratingsuser = array();
-            }
-            $ratingsuser[] = $rating->rating;
-            $currentuser = $rating->userid;
-        }
-        if (!empty($ratingsuser)) {
-            if ($glossary->scale < 0) {
-                $return->grades[$currentuser] = glossary_get_ratings_mean(0, $scalemenu, $ratingsuser);
-                $return->grades[$currentuser] .= "<br />".glossary_get_ratings_summary(0, $scalemenu, $ratingsuser);
-            } else {
-                $total = 0;
-                $count = 0;
-                foreach ($ratingsuser as $ra) {
-                    $total += $ra;
-                    $count ++;
-                }
-                $return->grades[$currentuser] = (string) format_float((float)$total/(float)$count, 2);
-
-                if ( count($ratingsuser) > 1 ) {
-                    $return->grades[$currentuser] .= " (" . count($ratingsuser) . ")";
+                    $grade_item = glossary_grade_item_get($glossary);
+                    glossary_update_grades($grade_item);
                 }
             }
-        } else {
-            $return->grades[$currentuser] = "";
+            rs_close($rs);
         }
+    }
+}
+
+function glossary_grade_item_get($glossary) {
+    if ($items = grade_get_items($glossary->courseid, 'mod', 'glossary', $glossary->id)) {
+        if (count($items) > 1) {
+            debugging('Multiple grade items present!');
+        }
+        $grade_item = reset($items);
     } else {
-        $return->grades = array();
+        if (!$itemid = glossary_grade_item_create($glossary)) {
+            error('Can not create grade item!');
+        }
+        $grade_item = grade_item::fetch('id', $itemid);
+    }
+    return $grade_item;
+}
+
+function glossary_grade_item_update($glossary) {
+    $grade_item = glossary_grade_item_get($glossary);
+
+    $grade_item->name = $glossary->name;
+    $grade_item->cmidnumber = $glossary->cmidnumber;
+
+    if ($glossary->scale > 0) {
+        $grade_item->gradetype = GRADE_TYPE_VALUE; 
+        $grade_item->grademax  = $glossary->scale;
+        $grade_item->grademin  = 0;
+
+    } else if ($glossary->scale < 0) {
+        $grade_item->gradetype = GRADE_TYPE_SCALE; 
+        $grade_item->scaleid   = -$glossary->scale;
+
+    } else {
+        //how to indicate no grading?
+        $grade_item->gradetype = GRADE_TYPE_TEXT; 
+        $grade_item->grademax  = $glossary->scale;
+        $grade_item->grademax  = 0;
+        $grade_item->grademin  = 0;
     }
 
-    if ($glossary->scale < 0) {
-        $return->maxgrade = "";
+    $grade_item->update();
+}
+
+function glossary_grade_item_create($glossary) {
+    $params = array('courseid'    =>$glossary->courseid,
+                    'itemtype'    =>'mod',
+                    'itemmodule'  =>'glossary',
+                    'iteminstance'=>$glossary->id,
+                    'itemname'    =>$glossary->name,
+                    'idnumber'    =>$glossary->cmidnumber);
+
+    if ($glossary->scale > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE; 
+        $params['grademax']  = $glossary->scale;
+        $params['grademin']  = 0;
+
+    } else if ($glossary->scale < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE; 
+        $params['scaleid']   = -$glossary->scale;
+
     } else {
-        $return->maxgrade = $glossary->scale;
+        //how to indicate no grading?
+        $params['gradetype'] = GRADE_TYPE_TEXT; 
+        $params['grademax']  = $glossary->scale;
+        $params['grademax']  = 0;
+        $params['grademin']  = 0;
     }
-    return $return;
+
+    $itemid = grade_create_item($params);
+    return $itemid;
+}
+
+function glossary_grade_item_delete($glossary) {
+    $grade_item = glossary_grade_item_get($glossary);
+    $grade_item->delete();
 }
 
 function glossary_get_participants($glossaryid) {
@@ -427,6 +490,7 @@ function glossary_get_available_formats() {
                 //If the format doesn't exist in the table
                 if (!$rec = get_record('glossary_formats','name',$format)) {
                     //Insert the record in glossary_formats
+                    $gf = new object();
                     $gf->name = $format;
                     $gf->popupformatname = $format;
                     $gf->visible = 1;
@@ -1103,6 +1167,7 @@ function glossary_copy_attachments($entry, $newentry) {
 
     if ($entries = get_records_select("glossary_entries", "id = '$entry->id' AND attachment <> ''")) {
         foreach ($entries as $curentry) {
+            $oldentry = new object();
             $oldentry->id = $entry->id;
             $oldentry->course = $entry->course;
             $oldentry->glossaryid = $curentry->glossaryid;
@@ -1133,6 +1198,7 @@ function glossary_move_attachments($entry, $glossaryid) {
 
     if ($entries = get_records_select("glossary_entries", "glossaryid = '$entry->id' AND attachment <> ''")) {
         foreach ($entries as $entry) {
+            $oldentry = new object();
             $oldentry->course = $entry->course;
             $oldentry->glossaryid = $entry->glossaryid;
             $oldentrydir = "$CFG->dataroot/".glossary_file_area_name($oldentry);
@@ -1486,6 +1552,7 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     echo '<td class="entryheader">';
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+    $by = new object();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($comment->timemodified);
     echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
@@ -1757,18 +1824,6 @@ function glossary_get_ratings($entryid, $sort="u.firstname ASC") {
                              WHERE r.entryid = '$entryid'
                                AND r.userid = u.id
                              ORDER BY $sort");
-}
-
-function glossary_get_user_grades($glossaryid) {
-/// Get all user grades for a glossary
-    global $CFG;
-
-    return get_records_sql("SELECT r.id, e.userid, r.rating
-                              FROM {$CFG->prefix}glossary_entries e,
-                                   {$CFG->prefix}glossary_ratings r
-                             WHERE e.glossaryid = '$glossaryid'
-                               AND r.entryid = e.id
-                             ORDER by e.userid ");
 }
 
 function glossary_count_unrated_entries($glossaryid, $userid) {
