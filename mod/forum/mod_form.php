@@ -151,7 +151,11 @@ class mod_forum_mod_form extends moodleform_mod {
 
     }
 
-    function data_preprocessing($default_values){
+    function data_preprocessing(&$default_values){
+        if (empty($default_values['scale'])){
+            $default_values['assessed'] = 0;
+        }        
+
         if (empty($default_values['assessed'])){
             $default_values['ratingtime'] = 0;
         } else {

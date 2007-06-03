@@ -63,6 +63,11 @@ class mod_data_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    function data_preprocessing(&$default_values){
+        if (empty($default_values['scale'])){
+            $default_values['assessed'] = 0;
+        }        
+    }
 
 }
 ?>
