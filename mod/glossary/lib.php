@@ -343,7 +343,7 @@ function glossary_get_user_grades($glossaryid, $userid=0) {
  * @param object $grade_item null means all glossaries
  * @param int $userid specific user only, 0 mean all
  */
-function glossary_update_grades($grade_item=null, $userid=0) {
+function glossary_update_grades($grade_item=null, $userid=0, $deleteifnone=true) {
     global $CFG;
 
     if ($grade_item != null) {
@@ -355,6 +355,13 @@ function glossary_update_grades($grade_item=null, $userid=0) {
                 $eventdata->gradevalue = $grade->gradevalue;
                 events_trigger('grade_updated', $eventdata);
             }
+
+        } else if ($userid and $deleteifnone) {
+            $eventdata = new object();
+            $eventdata->itemid     = $grade_item->id;
+            $eventdata->userid     = $userid;
+            $eventdata->gradevalue = NULL;
+            events_trigger('grade_updated', $eventdata);
         }
 
     } else {
@@ -368,7 +375,7 @@ function glossary_update_grades($grade_item=null, $userid=0) {
                         continue; // no grading
                     }
                     $grade_item = glossary_grade_item_get($glossary);
-                    glossary_update_grades($grade_item);
+                    glossary_update_grades($grade_item, 0, false);
                 }
             }
             rs_close($rs);
