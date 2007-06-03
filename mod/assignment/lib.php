@@ -1829,7 +1829,8 @@ function assignment_get_user_grades($assignmentid, $userid=0) {
 
     $sql = "SELECT u.id, s.grade AS gradevalue, s.submissioncomment AS feedback, s.format AS feedbackformat
               FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
-             WHERE u.id = s.userid AND s.assignment = $assignmentid $user";
+             WHERE u.id = s.userid AND s.assignment = $assignmentid
+                   $user";
 
     return get_records_sql($sql);
 }
@@ -1861,8 +1862,9 @@ function assignment_update_grades($grade_item=null, $userid=0) {
         }
 
     } else {
-        $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
+        $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+                  FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($assignment = rs_fetch_next_record($rs)) {
