@@ -354,8 +354,9 @@ function glossary_update_grades($grade_item=null, $userid=0) {
         }
 
     } else {
-        $sql = "SELECT g.*, cm.idnumber as cmidnumber, g.course as courseid FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
+        $sql = "SELECT g.*, cm.idnumber as cmidnumber, g.course as courseid
+                  FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($glossary = rs_fetch_next_record($rs)) {
@@ -405,17 +406,17 @@ function glossary_grade_item_update($glossary) {
     $grade_item->cmidnumber = $glossary->cmidnumber;
 
     if ($glossary->scale > 0) {
-        $grade_item->gradetype = GRADE_TYPE_VALUE; 
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademax  = $glossary->scale;
         $grade_item->grademin  = 0;
 
     } else if ($glossary->scale < 0) {
-        $grade_item->gradetype = GRADE_TYPE_SCALE; 
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid   = -$glossary->scale;
 
     } else {
         //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT; 
+        $grade_item->gradetype = GRADE_TYPE_TEXT;
         $grade_item->grademax  = $glossary->scale;
         $grade_item->grademax  = 0;
         $grade_item->grademin  = 0;
@@ -439,17 +440,17 @@ function glossary_grade_item_create($glossary) {
                     'idnumber'    =>$glossary->cmidnumber);
 
     if ($glossary->scale > 0) {
-        $params['gradetype'] = GRADE_TYPE_VALUE; 
+        $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $glossary->scale;
         $params['grademin']  = 0;
 
     } else if ($glossary->scale < 0) {
-        $params['gradetype'] = GRADE_TYPE_SCALE; 
+        $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = -$glossary->scale;
 
     } else {
         //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT; 
+        $params['gradetype'] = GRADE_TYPE_TEXT;
         $params['grademax']  = $glossary->scale;
         $params['grademax']  = 0;
         $params['grademin']  = 0;
