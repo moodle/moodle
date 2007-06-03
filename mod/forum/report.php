@@ -56,16 +56,16 @@
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
         echo "<th scope=\"col\">&nbsp;</th>";
-        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\" scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
-        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
+        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a></th>";
+        echo "<th width=\"100%\" scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.rating\">$strrating</a></th>";
+        echo "<th scope=\"col\"><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a></th></tr>";
         foreach ($ratings as $rating) {
             echo '<tr class="forumpostheader">';
             echo "<td>";
             print_user_picture($rating->id, $forum->course, $rating->picture);
-            echo '<td nowrap="nowrap"><p><font size="-1">'.fullname($rating).'</p>';
-            echo '<td nowrap="nowrap" align="center"><p><font size="-1">'.$scalemenu[$rating->rating]."</p>";
-            echo '<td nowrap="nowrap" align="center"><p><font size="-1">'.userdate($rating->time)."</p>";
+            echo '</td><td nowrap="nowrap"><p>'.fullname($rating).'</p></td>';
+            echo '<td nowrap="nowrap" align="center"><p>'.$scalemenu[$rating->rating]."</p></td>";
+            echo '<td nowrap="nowrap" align="center"><p>'.userdate($rating->time)."</p></td>";
             echo "</tr>\n";
         }
         echo "</table>";
@@ -73,5 +73,7 @@
     }
 
     close_window_button();
+    
+    print_footer('none');
 
 ?>
