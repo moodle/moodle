@@ -16,9 +16,9 @@ class assignment_offline extends assignment_base {
     function print_student_answer($studentid){
         return '';//does nothing!
     }
-    
+
     function prepare_new_submission($userid) {
-        $submission = new Object; 
+        $submission = new Object;
         $submission->assignment   = $this->assignment->id;
         $submission->userid       = $userid;
         $submission->timecreated  = time(); // needed for offline assignments
@@ -34,7 +34,7 @@ class assignment_offline extends assignment_base {
         $submission->mailed       = 0;
         return $submission;
     }
-    
+
     // needed for the timemodified override
     function process_feedback() {
 
@@ -76,11 +76,11 @@ class assignment_offline extends assignment_base {
         }
 
         // triger grade event
-        $this->update_grade($submission->id);
+        $this->update_grade($submission);
 
-        add_to_log($this->course->id, 'assignment', 'update grades', 
+        add_to_log($this->course->id, 'assignment', 'update grades',
                    'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
-        
+
         return $submission;
 
     }
