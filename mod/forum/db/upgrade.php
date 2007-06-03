@@ -32,6 +32,14 @@ function xmldb_forum_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
+    if ($result && $oldversion < 2007060300) {
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
+        // too much debug output
+        $db->debug = false;
+        forum_update_grades();
+        $db->debug = true;
+    }  
+
     return $result;
 }
 

@@ -1,6 +1,7 @@
 <?php  // $Id$
 
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -97,11 +98,11 @@ function forum_add_instance($forum) {
 
     $forum->timemodified = time();
 
-    if (!isset($forum->assessed)) {
+    if (empty($forum->assessed)) {
         $forum->assessed = 0;
     }
 
-    if (empty($forum->ratingtime)) {
+    if (empty($forum->ratingtime) or empty($forum->assessed)) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
@@ -111,6 +112,7 @@ function forum_add_instance($forum) {
     }
 
     if ($forum->type == 'single') {  // Create related discussion.
+        $discussion = new object();
         $discussion->course   = $forum->course;
         $discussion->forum    = $forum->id;
         $discussion->name     = $forum->name;
@@ -131,6 +133,9 @@ function forum_add_instance($forum) {
         }
     }
 
+    $forum = stripslashes_recursive($forum);
+    forum_grade_item_create($forum);
+
     return $forum->id;
 }
 
@@ -142,13 +147,13 @@ function forum_add_instance($forum) {
 */
 function forum_update_instance($forum) {
     $forum->timemodified = time();
-    $forum->id = $forum->instance;
+    $forum->id           = $forum->instance;
 
     if (empty($forum->assessed)) {
         $forum->assessed = 0;
     }
 
-    if (empty($forum->ratingtime)) {
+    if (empty($forum->ratingtime) or empty($forum->assessed)) {
         $forum->assesstimestart  = 0;
         $forum->assesstimefinish = 0;
     }
@@ -170,18 +175,25 @@ function forum_update_instance($forum) {
         $post->message  = $forum->intro;
         $post->modified = $forum->timemodified;
 
-        if (! update_record('forum_posts', $post)) {
+        if (! update_record('forum_posts', ($post))) {
             error('Could not update the first post');
         }
 
         $discussion->name = $forum->name;
 
-        if (! update_record('forum_discussions', $discussion)) {
+        if (! update_record('forum_discussions', ($discussion))) {
             error('Could not update the discussion');
         }
     }
 
-    return update_record('forum', $forum);
+    if (!update_record('forum', $forum)) {
+        error('Can not update forum');
+    }
+
+    $forum = stripslashes_recursive($forum);
+    forum_grade_item_update($forum);
+
+    return true;
 }
 
 
@@ -215,6 +227,8 @@ function forum_delete_instance($id) {
     if (!delete_records('forum', 'id', $forum->id)) {
         $result = false;
     }
+
+    forum_grade_item_delete($forum);
 
     return $result;
 }
@@ -950,7 +964,7 @@ function forum_print_overview($courses,&$htmlarray) {
             ' JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
             ' LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$USER->id.' WHERE (';
         foreach ($trackingforums as $track) {
-            $sql .= '(d.forum = '.$track->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($track->course,false).')) OR ';
+            $sql .= '(d.forum = '.$track->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($track->course).')) OR ';
         }
         $sql = substr($sql,0,-3); // take off the last OR
         $sql .= ') AND p.modified >= '.$cutoffdate.' AND r.id is NULL GROUP BY d.forum,d.course';
@@ -1095,74 +1109,179 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
     return $content;
 }
 
+/**
+ * Return grade for given user or all users.
+ *
+ * @param int $forumid id of forum
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function forum_get_user_grades($forumid, $userid=0) {
+    global $CFG;
+
+    $user = $userid ? "AND u.id = $userid" : "";
+
+    $sql = "SELECT u.id, avg(fr.rating) AS gradevalue
+              FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
+                   {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
+             WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
+                   AND fr.userid != u.id AND fd.forum = $forumid
+                   $user
+          GROUP BY u.id";
+
+    return get_records_sql($sql);
+}
 
 /**
- * Must return an array of grades, indexed by user, and a max grade.
+ * Update grades by firing grade_updated event
+ *
+ * @param object $grade_item null means all forums
+ * @param int $userid specific user only, 0 mean all
  */
-function forum_grades($forumid) {
+function forum_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+    global $CFG;
 
-    if (!$forum = get_record("forum", "id", $forumid)) {
-        return false;
-    }
-    if (!$forum->assessed) {
-        return false;
-    }
-    $scalemenu = make_grades_menu($forum->scale);
+    if ($grade_item != null) {
+        if ($grades = forum_get_user_grades($grade_item->iteminstance, $userid)) {
+            foreach ($grades as $grade) {
+                $eventdata = new object();
+                $eventdata->itemid     = $grade_item->id;
+                $eventdata->userid     = $grade->id;
+                $eventdata->gradevalue = $grade->gradevalue;
+                events_trigger('grade_updated', $eventdata);
+            }
 
-    $currentuser = 0;
-    $ratingsuser = array();
+        } else if ($userid and $nullifnone) {
+            $eventdata = new object();
+            $eventdata->itemid     = $grade_item->id;
+            $eventdata->userid     = $userid;
+            $eventdata->gradevalue = NULL;
+            events_trigger('grade_updated', $eventdata);
+        }
 
-    if ($ratings = forum_get_user_grades($forumid)) {
-        foreach ($ratings as $rating) {     // Ordered by user
-            if ($currentuser and $rating->userid != $currentuser) {
-                if (!empty($ratingsuser)) {
-                    if ($forum->scale < 0) {
-                        $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
-                        $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
-                    } else {
-                        $total = 0;
-                        $count = 0;
-                        foreach ($ratingsuser as $ra) {
-                            $total += $ra;
-                            $count ++;
-                        }
-                        $return->grades[$currentuser] = format_float($total/$count, 2);
+    } else {
+        $sql = "SELECT f.*, cm.idnumber as cmidnumber
+                  FROM {$CFG->prefix}forum f, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($forum = rs_fetch_next_record($rs)) {
+                    if (!$forum->assessed) {
+                        continue; // no grading
                     }
-                } else {
-                    $return->grades[$currentuser] = "";
+                    $grade_item = forum_grade_item_get($forum);
+                    forum_update_grades($grade_item, 0, false);
                 }
-                $ratingsuser = array();
             }
-            $ratingsuser[] = $rating->rating;
-            $currentuser = $rating->userid;
+            rs_close($rs);
         }
-        if (!empty($ratingsuser)) {
-            if ($forum->scale < 0) {
-                $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
-                $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
-            } else {
-                $total = 0;
-                $count = 0;
-                foreach ($ratingsuser as $ra) {
-                    $total += $ra;
-                    $count ++;
-                }
-                $return->grades[$currentuser] = format_float((float)$total/(float)$count, 2);
-            }
-        } else {
-            $return->grades[$currentuser] = "";
+    }
+}
+
+/**
+ * Return (create if needed) grade item for given forum
+ *
+ * @param object $forum object with optional cmidnumber
+ * @return object grade_item
+ */
+function forum_grade_item_get($forum) {
+    if ($items = grade_get_items($forum->course, 'mod', 'forum', $forum->id)) {
+        if (count($items) > 1) {
+            debugging('Multiple grade items present!');
         }
+        $grade_item = reset($items);
+
     } else {
-        $return->grades = array();
+        if (!isset($forum->cmidnumber)) {
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+                error("Course Module ID was incorrect");
+            }
+            $forum->cmidnumber = $cm->idnumber;
+        }
+        if (!$itemid = forum_grade_item_create($forum)) {
+            error('Can not create grade item!');
+        }
+        $grade_item = grade_item::fetch('id', $itemid);
     }
 
-    if ($forum->scale < 0) {
-        $return->maxgrade = "";
-    } else {
-        $return->maxgrade = $forum->scale;
-    }
-    return $return;
+    return $grade_item;
 }
+
+/**
+ * Update grade item for given forum
+ *
+ * @param object $forum object with extra cmidnumber
+ * @return object grade_item
+ */
+function forum_grade_item_update($forum) {
+    $grade_item = forum_grade_item_get($forum);
+
+    $grade_item->name       = $forum->name;
+    $grade_item->idnumber = $forum->cmidnumber;
+
+    if (!$forum->assessed) {
+        //how to indicate no grading?
+        $grade_item->gradetype = GRADE_TYPE_TEXT;
+
+    } else if ($forum->scale > 0) {
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->grademax  = $forum->scale;
+        $grade_item->grademin  = 0;
+
+    } else if ($forum->scale < 0) {
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->scaleid   = -$forum->scale;
+    }
+
+    $grade_item->update();
+}
+
+/**
+ * Create grade item for given forum
+ *
+ * @param object $forum object with extra cmidnumber
+ * @return object grade_item
+ */
+function forum_grade_item_create($forum) {
+    $params = array('courseid'    =>$forum->course,
+                    'itemtype'    =>'mod',
+                    'itemmodule'  =>'forum',
+                    'iteminstance'=>$forum->id,
+                    'itemname'    =>$forum->name,
+                    'idnumber'    =>$forum->cmidnumber);
+
+    if (!$forum->assessed) {
+        //how to indicate no grading?
+        $params['gradetype'] = GRADE_TYPE_TEXT;
+
+    } else if ($forum->scale > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $forum->scale;
+        $params['grademin']  = 0;
+
+    } else if ($forum->scale < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid']   = -$forum->scale;
+    }
+
+    $itemid = grade_create_item($params);
+    return $itemid;
+}
+
+/**
+ * Delete grade item for given forum
+ *
+ * @param object $forum object
+ * @return object grade_item
+ */
+function forum_grade_item_delete($forum) {
+    if ($grade_items = grade_get_items($forum->course, 'mod', 'forum', $forum->id)) {
+        foreach($grade_items as $grade_item) {
+            $grade_item->delete();
+        }
+    }
+}
+
 
 /**
  * Returns the users with data in one forum
@@ -1652,24 +1771,6 @@ function forum_get_firstpost_from_discussion($discussionid) {
                               AND d.firstpost = p.id ");
 }
 
-
-/**
- * Get all user grades for a forum
- */
-function forum_get_user_grades($forumid) {
-    global $CFG;
-
-    return get_records_sql("SELECT r.id, p.userid, r.rating
-                              FROM {$CFG->prefix}forum_discussions d,
-                                   {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}forum_ratings r
-                             WHERE d.forum = '$forumid'
-                               AND p.discussion = d.id
-                               AND r.post = p.id
-                             ORDER by p.userid ");
-}
-
-
 /**
  * Returns an array of counts of replies to each discussion (optionally in one forum or course and/or user)
  */
@@ -1730,7 +1831,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
  * Get all discussions in a forum
  */
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
+                               $user=0, $fullpost=true, $currentgroup=-1, $limit=0, $userlastmodified=false) {
     global $CFG, $USER;
 
     $timelimit = '';
@@ -1764,10 +1865,14 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $limitnum = $limit;
     }
 
-    if ($visiblegroups == -1) {
+    if ($currentgroup == -1) {
+        $currentgroup = get_current_group($cm->course);
+    }
+
+    if ($currentgroup) {
+        $groupselect = " AND (d.groupid = '$currentgroup' OR d.groupid = -1) ";
+    } else {
         $groupselect = "";
-    } else  {
-        $groupselect = " AND (d.groupid = '$visiblegroups' OR d.groupid = '-1') ";
     }
 
     if (empty($forumsort)) {
@@ -3211,7 +3316,7 @@ function forum_user_has_posted($forumid, $did, $userid) {
 /**
  * TODO document
  */
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=false, $cm=NULL, $context=NULL) {
+function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1, $cm=NULL, $context=NULL) {
 // $forum is an object
     global $USER, $SESSION;
 
@@ -3222,6 +3327,17 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
     if (!$context) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    }
+
+    if ($currentgroup == -1) {
+        $currentgroup = get_current_group($cm->course);
+    }
+
+    if ($groupmode == -1) {
+        if (!$course = get_record('course', 'id', $cm->course)) {
+            error('Can not find course');
+        }
+        $groupmode = groupmode($course, $cm);
     }
 
     if ($forum->type == 'news') {
@@ -3235,17 +3351,23 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     }
 
     if ($forum->type == 'eachuser') {
-        return (!forum_user_has_posted_discussion($forum->id, $USER->id));
-    } else if ($currentgroup) {
-        return (has_capability('moodle/site:accessallgroups', $context)
-                or ismember($currentgroup));
+        if (forum_user_has_posted_discussion($forum->id, $USER->id)) {
+            return false;
+        }
+    }
+
+    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
+    if ($currentgroup) {
+        return ismember($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            return (ismember($currentgroup));
-        }
-        else {
             return true;
+        } else {
+            return false;
         }
     }
 }
@@ -3435,21 +3557,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 // Decide if current user is allowed to see ALL the current discussions or not
 
 // First check the group stuff
-
-    if ($groupmode == -1) {    // We need to reconstruct groupmode because none was given
-        $groupmode = groupmode($course, $cm);   // Works even if $cm is not valid
-    }
-
-    if ($currentgroup == -1) {    // We need to reconstruct currentgroup because none was given
-        $currentgroup = get_current_group($course->id);
-    }
-
-    if (!$currentgroup and 
-       ($groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $context)) ) {
-        $visiblegroups = -1;
-    } else {
-        $visiblegroups = $currentgroup;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
 // If the user can post discussions, then this is a good place to put the
 // button for it. We do not show the button if we are showing site news
@@ -3480,7 +3589,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
     $getuserlastmodified = ($displayformat == 'header');
 
-    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $visiblegroups,0,$getuserlastmodified) ) {
+    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $currentgroup,0,$getuserlastmodified) ) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
@@ -3676,7 +3785,6 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
             if ($ratings->allow) {
                 echo '<form id="form" method="post" action="rate.php">';
                 echo '<div class="ratingform">';
-                echo '<input type="hidden" name="id" value="'.$course->id.'" />';
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
                 $ratingsformused = true;
             }

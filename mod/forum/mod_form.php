@@ -152,10 +152,11 @@ class mod_forum_mod_form extends moodleform_mod {
     }
 
     function data_preprocessing($default_values){
-        if (isset($default_values['assessed'])){
-            $default_values['ratingtime']=($default_values['assessed']
-                && $default_values['assesstimestart']
-                && $default_values['assesstimefinish'] )?1:0;
+        if (empty($default_values['assessed'])){
+            $default_values['ratingtime'] = 0;
+        } else {
+            $default_values['ratingtime']=
+                ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
         }
     }
 
