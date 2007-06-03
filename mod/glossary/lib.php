@@ -339,7 +339,7 @@ function glossary_get_user_grades($glossaryid, $userid=0) {
  * @param object $grade_item null means all glossaries
  * @param int $userid specific user only, 0 mean all
  */
-function glossary_update_grades($grade_item=null, $userid=0, $deleteifnone=true) {
+function glossary_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
     global $CFG;
 
     if ($grade_item != null) {
@@ -352,7 +352,7 @@ function glossary_update_grades($grade_item=null, $userid=0, $deleteifnone=true)
                 events_trigger('grade_updated', $eventdata);
             }
 
-        } else if ($userid and $deleteifnone) {
+        } else if ($userid and $nullifnone) {
             $eventdata = new object();
             $eventdata->itemid     = $grade_item->id;
             $eventdata->userid     = $userid;
