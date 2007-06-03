@@ -310,12 +310,19 @@ function glossary_cron () {
     return true;
 }
 
+/**
+ * Return grade for given user or all users.
+ *
+ * @param int $glossaryid id of glossary
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
 function glossary_get_user_grades($glossaryid, $userid=0) {
     global $CFG;
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, avg(gr.rating) as rating
+    $sql = "SELECT u.id, avg(gr.rating) AS gradevalue
               FROM {$CFG->prefix}user u, {$CFG->prefix}glossary_entries ge,
                    {$CFG->prefix}glossary_ratings gr
              WHERE u.id = ge.userid AND ge.id = gr.entryid
@@ -326,6 +333,12 @@ function glossary_get_user_grades($glossaryid, $userid=0) {
     return get_records_sql($sql);
 }
 
+/**
+ * Update grades by firing grade_updated event
+ *
+ * @param object $grade_item null means all glossaries
+ * @param int $userid specific user only, 0 mean all
+ */
 function glossary_update_grades($grade_item=null, $userid=0) {
     global $CFG;
 
@@ -335,7 +348,7 @@ function glossary_update_grades($grade_item=null, $userid=0) {
                 $eventdata = new object();
                 $eventdata->itemid     = $grade_item->id;
                 $eventdata->userid     = $grade->id;
-                $eventdata->gradevalue = $grade->rating;
+                $eventdata->gradevalue = $grade->gradevalue;
                 events_trigger('grade_updated', $eventdata);
             }
         }
@@ -358,6 +371,12 @@ function glossary_update_grades($grade_item=null, $userid=0) {
     }
 }
 
+/**
+ * Return (create if needed) grade item for given glossary
+ *
+ * @param object $glossary object with extra cmidnumber and courseid property
+ * @return object grade_item
+ */
 function glossary_grade_item_get($glossary) {
     if ($items = grade_get_items($glossary->courseid, 'mod', 'glossary', $glossary->id)) {
         if (count($items) > 1) {
@@ -373,6 +392,12 @@ function glossary_grade_item_get($glossary) {
     return $grade_item;
 }
 
+/**
+ * Update grade item for given glossary
+ *
+ * @param object $glossary object with extra cmidnumber and courseid property
+ * @return object grade_item
+ */
 function glossary_grade_item_update($glossary) {
     $grade_item = glossary_grade_item_get($glossary);
 
@@ -399,6 +424,12 @@ function glossary_grade_item_update($glossary) {
     $grade_item->update();
 }
 
+/**
+ * Create grade item for given glossary
+ *
+ * @param object $glossary object with extra cmidnumber and courseid property
+ * @return object grade_item
+ */
 function glossary_grade_item_create($glossary) {
     $params = array('courseid'    =>$glossary->courseid,
                     'itemtype'    =>'mod',
@@ -428,9 +459,18 @@ function glossary_grade_item_create($glossary) {
     return $itemid;
 }
 
+/**
+ * Delete grade item for given glossary
+ *
+ * @param object $glossary object with extra cmidnumber and courseid property
+ * @return object grade_item
+ */
 function glossary_grade_item_delete($glossary) {
-    $grade_item = glossary_grade_item_get($glossary);
-    $grade_item->delete();
+    if ($grade_items = grade_get_items($glossary->courseid, 'mod', 'glossary', $glossary->id)) {
+        foreach($grade_items as $grade_item) {
+            $grade_item->delete();
+        }
+    }
 }
 
 function glossary_get_participants($glossaryid) {
