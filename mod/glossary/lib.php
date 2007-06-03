@@ -72,7 +72,6 @@ function glossary_add_instance($glossary) {
 
     $glossary->timecreated  = time();
     $glossary->timemodified = $glossary->timecreated;
-    $glossary->courseid     = $glossary->course;
 
     //Check displayformat is a valid one
     $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
@@ -107,7 +106,6 @@ function glossary_update_instance($glossary) {
 
     $glossary->timemodified = time();
     $glossary->id           = $glossary->instance;
-    $glossary->courseid     = $glossary->course;
 
     if (empty($glossary->userating)) {
         $glossary->assessed = 0;
@@ -144,8 +142,6 @@ function glossary_delete_instance($id) {
     if (! $glossary = get_record("glossary", "id", "$id")) {
         return false;
     }
-
-    $glossary->courseid = $glossary->course;
 
     $result = true;
 
@@ -365,7 +361,7 @@ function glossary_update_grades($grade_item=null, $userid=0, $deleteifnone=true)
         }
 
     } else {
-        $sql = "SELECT g.*, cm.idnumber as cmidnumber, g.course as courseid
+        $sql = "SELECT g.*, cm.idnumber as cmidnumber
                   FROM {$CFG->prefix}glossary g, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
                  WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
         if ($rs = get_recordset_sql($sql)) {
@@ -386,35 +382,43 @@ function glossary_update_grades($grade_item=null, $userid=0, $deleteifnone=true)
 /**
  * Return (create if needed) grade item for given glossary
  *
- * @param object $glossary object with extra cmidnumber and courseid property
+ * @param object $glossary object with optional cmidnumber
  * @return object grade_item
  */
 function glossary_grade_item_get($glossary) {
-    if ($items = grade_get_items($glossary->courseid, 'mod', 'glossary', $glossary->id)) {
+    if ($items = grade_get_items($glossary->course, 'mod', 'glossary', $glossary->id)) {
         if (count($items) > 1) {
             debugging('Multiple grade items present!');
         }
         $grade_item = reset($items);
+
     } else {
+        if (!isset($glossary->cmidnumber)) {
+            if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
+                error("Course Module ID was incorrect");
+            }
+            $glossary->cmidnumber = $cm->idnumber;
+        }
         if (!$itemid = glossary_grade_item_create($glossary)) {
             error('Can not create grade item!');
         }
         $grade_item = grade_item::fetch('id', $itemid);
     }
+
     return $grade_item;
 }
 
 /**
  * Update grade item for given glossary
  *
- * @param object $glossary object with extra cmidnumber and courseid property
+ * @param object $glossary object with extra cmidnumber
  * @return object grade_item
  */
 function glossary_grade_item_update($glossary) {
     $grade_item = glossary_grade_item_get($glossary);
 
-    $grade_item->name = $glossary->name;
-    $grade_item->cmidnumber = $glossary->cmidnumber;
+    $grade_item->name     = $glossary->name;
+    $grade_item->idnumber = $glossary->cmidnumber;
 
     if (!$glossary->assessed) {
         //how to indicate no grading?
@@ -436,11 +440,11 @@ function glossary_grade_item_update($glossary) {
 /**
  * Create grade item for given glossary
  *
- * @param object $glossary object with extra cmidnumber and courseid property
+ * @param object $glossary object with extra cmidnumber
  * @return object grade_item
  */
 function glossary_grade_item_create($glossary) {
-    $params = array('courseid'    =>$glossary->courseid,
+    $params = array('courseid'    =>$glossary->course,
                     'itemtype'    =>'mod',
                     'itemmodule'  =>'glossary',
                     'iteminstance'=>$glossary->id,
@@ -468,11 +472,11 @@ function glossary_grade_item_create($glossary) {
 /**
  * Delete grade item for given glossary
  *
- * @param object $glossary object with extra cmidnumber and courseid property
+ * @param object $glossary object
  * @return object grade_item
  */
 function glossary_grade_item_delete($glossary) {
-    if ($grade_items = grade_get_items($glossary->courseid, 'mod', 'glossary', $glossary->id)) {
+    if ($grade_items = grade_get_items($glossary->course, 'mod', 'glossary', $glossary->id)) {
         foreach($grade_items as $grade_item) {
             $grade_item->delete();
         }

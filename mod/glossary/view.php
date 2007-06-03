@@ -230,21 +230,21 @@
 /// If we are in approval mode, prit special header
     if ($tab == GLOSSARY_APPROVAL_VIEW) {
         require_capability('mod/glossary:approve', $context);
-        
+
         $crumbs[] = array('name' => $strwaitingapproval, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($crumbs);
-        
-        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true, 
+
+        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
         print_heading($strwaitingapproval);
     } else { /// Print standard header
         $navigation = build_navigation($crumbs);
-        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true, 
+        print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
     }
 
-/// All this depends if whe have $showcommonelements 
+/// All this depends if whe have $showcommonelements
     if ($showcommonelements) {
     /// To calculate available options
         $availableoptions = '';
@@ -263,7 +263,7 @@
                 $availableoptions .= '&nbsp;/&nbsp;';
             }
             $availableoptions .='<span class="helplink">' .
-                                '<a href="' . $CFG->wwwroot . '/mod/glossary/export.php?id=' . $cm->id . 
+                                '<a href="' . $CFG->wwwroot . '/mod/glossary/export.php?id=' . $cm->id .
                                 '&amp;mode='.$mode . '&amp;hook=' . urlencode($hook) . '"' .
                                 '  title="' . s(get_string('exportentries', 'glossary')) . '">' .
                                 get_string('exportentries', 'glossary') . '</a>' .
@@ -278,7 +278,7 @@
                     $availableoptions .= '<br />';
                 }
                 $availableoptions .='<span class="helplink">' .
-                                    '<a href="' . $CFG->wwwroot . '/mod/glossary/view.php?id=' . $cm->id . 
+                                    '<a href="' . $CFG->wwwroot . '/mod/glossary/view.php?id=' . $cm->id .
                                     '&amp;mode=approval' . '"' .
                                     '  title="' . s(get_string('waitingapproval', 'glossary')) . '">' .
                                     get_string('waitingapproval', 'glossary') . ' ('.$hiddenentries.')</a>' .
@@ -293,7 +293,7 @@
     /// If rss are activated at site and glossary level and this glossary has rss defined, show link
         if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
             $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds && $glossary->rsstype && $glossary->rssarticles) {
-    
+
             $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name,true));
             if (empty($USER->id)) {
                 $userid = 0;
@@ -302,7 +302,7 @@
             }
             print_box_start('rsslink');
             rss_print_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
-            print_box_end(); 
+            print_box_end();
         }
 
     /// The print icon
@@ -310,7 +310,7 @@
             if (has_capability('mod/glossary:manageentries', $context) or $glossary->allowprintview) {
                 print_box_start('printicon');
                 echo " <a title =\"". get_string("printerfriendly","glossary") ."\" href=\"print.php?id=$cm->id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;offset=$offset\"><img class=\"icon\" src=\"print.gif\" alt=\"". get_string("printerfriendly","glossary") . "\" /></a>";
-                print_box_end(); 
+                print_box_end();
             }
         }
     /// End glossary controls
@@ -411,7 +411,7 @@
 
             echo "<form method=\"post\" action=\"rate.php\">";
             echo "<div>";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
+            echo "<input type=\"hidden\" name=\"glossaryid\" value=\"$glossary->id\" />";
         }
 
         foreach ($allentries as $entry) {
@@ -422,8 +422,8 @@
             // Reduce pivot to 1cc if necessary
             if ( !$fullpivot ) {
                 $upperpivot = $textlib->substr($upperpivot, 0, 1);
-            }            
-            
+            }
+
             // if there's a group break
             if ( $currentpivot != $upperpivot ) {
 
@@ -498,15 +498,15 @@
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }
-        echo "</div>";    
+        echo "</div>";
     }
 
     if (!empty($formsent)) {
         // close the form properly if used
         echo "</div>";
-        echo "</form>";  
+        echo "</form>";
     }
-    
+
     if ( $paging ) {
         echo '<hr />';
         echo '<div class="paging">';
