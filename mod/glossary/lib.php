@@ -82,6 +82,7 @@ function glossary_add_instance($glossary) {
 
     if ($returnid = insert_record("glossary", $glossary)) {
         $glossary->id = $returnid;
+        $glossary = stripslashes_recursive($glossary);
         glossary_grade_item_create($glossary);
     }
 
@@ -127,6 +128,7 @@ function glossary_update_instance($glossary) {
         if ($glossary->defaultapproval) {
             execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
         }
+        $glossary = stripslashes_recursive($glossary);
         glossary_grade_item_update($glossary);
     }
 
