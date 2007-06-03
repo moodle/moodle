@@ -1841,7 +1841,7 @@ function assignment_get_user_grades($assignmentid, $userid=0) {
  * @param object $grade_item null means all assignments
  * @param int $userid specific user only, 0 mean all
  */
-function assignment_update_grades($grade_item=null, $userid=0) {
+function assignment_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
     global $CFG;
 
     if ($grade_item != null) {
@@ -1880,29 +1880,40 @@ function assignment_update_grades($grade_item=null, $userid=0) {
 /**
  * Return (create if needed) grade item for given assignment
  *
- * @param object $assignment object with extra cmidnumber and courseid property
+ * @param object $assignment object with optional cmidnumber
  * @return object grade_item
  */
 function assignment_grade_item_get($assignment) {
+    if (!isset($assignment->courseid)) {
+        $assignment->courseid = $assignment->course;
+    }
+
     if ($items = grade_get_items($assignment->courseid, 'mod', 'assignment', $assignment->id)) {
         if (count($items) > 1) {
             debugging('Multiple grade items present!');
         }
         $grade_item = reset($items);
-        return $grade_item;
+
     } else {
+        if (!isset($forum->cmidnumber)) {
+            if (!$cm = get_coursemodule_from_instance('assignment', $assignment->id)) {
+                error("Course Module ID was incorrect");
+            }
+            $assignment->cmidnumber = $cm->idnumber;
+        }
         if (!$itemid = assignment_grade_item_create($assignment)) {
             error('Can not create grade item!');
         }
         $grade_item = grade_item::fetch('id', $itemid);
     }
+
     return $grade_item;
 }
 
 /**
  * Update grade item for given assignment
  *
- * @param object $assignment object with extra cmidnumber and courseid property
+ * @param object $assignment object with extra cmidnumber
  * @return object grade_item
  */
 function assignment_grade_item_update($assignment) {
@@ -1935,10 +1946,14 @@ function assignment_grade_item_update($assignment) {
 /**
  * Create grade item for given assignment
  *
- * @param object $assignment object with extra cmidnumber and courseid property
+ * @param object $assignment object with extra cmidnumber
  * @return object grade_item
  */
 function assignment_grade_item_create($assignment) {
+    if (!isset($assignment->courseid)) {
+        $assignment->courseid = $assignment->course;
+    }
+
     $params = array('courseid'    =>$assignment->courseid,
                     'itemtype'    =>'mod',
                     'itemmodule'  =>'assignment',
@@ -1970,10 +1985,14 @@ function assignment_grade_item_create($assignment) {
 /**
  * Delete grade item for given assignment
  *
- * @param object $assignment object with extra cmidnumber and courseid property
+ * @param object $assignment object
  * @return object grade_item
  */
 function assignment_grade_item_delete($assignment) {
+    if (!isset($assignment->courseid)) {
+        $assignment->courseid = $assignment->course;
+    }
+
     if ($grade_items = grade_get_items($assignment->courseid, 'mod', 'assignment', $assignment->id)) {
         foreach($grade_items as $grade_item) {
             $grade_item->delete();
