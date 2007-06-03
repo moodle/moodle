@@ -145,6 +145,8 @@ function glossary_delete_instance($id) {
         return false;
     }
 
+    $glossary->courseid = $glossary->course;
+
     $result = true;
 
     # Delete any dependent records here #
