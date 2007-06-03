@@ -54,6 +54,16 @@ function xmldb_data_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+
+    if ($result && $oldversion < 2007060300) {
+        require_once($CFG->dirroot.'/mod/data/lib.php');
+        // too much debug output
+        $db->debug = false;
+        data_update_grades();
+        $db->debug = true;
+    }  
+
+
     return $result;
 }
 

@@ -22,6 +22,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->libdir.'/gradelib.php');
+
 /// Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
@@ -624,6 +626,9 @@ function data_add_instance($data) {
         return false;
     }
 
+    $data = stripslashes_recursive($data);
+    data_grade_item_create($data);
+
     return $data->id;
 }
 
@@ -633,18 +638,21 @@ function data_add_instance($data) {
 function data_update_instance($data) {
     global $CFG;
 
-    $data->id = $data->instance;
+    $data->timemodified = time();
+    $data->id           = $data->instance;
 
     if (empty($data->assessed)) {
         $data->assessed = 0;
     }
 
-    $data->timemodified = time();
-
-    if (! $data->instance = update_record('data', $data)) {
+    if (! update_record('data', $data)) {
         return false;
     }
-    return $data->instance;
+
+    $data = stripslashes_recursive($data);
+    data_grade_item_update($data);
+
+    return true;
 
 }
 
@@ -684,10 +692,11 @@ function data_delete_instance($id) {    //takes the dataid
 
     // Delete the instance itself
 
-    if (! delete_records('data', 'id', $id)) {
-        return false;
-    }
-    return true;
+    $result = delete_records('data', 'id', $id);
+
+    glossary_grade_item_delete($data);
+
+    return $result;
 }
 
 /************************************************************************
@@ -720,6 +729,180 @@ function data_user_complete($course, $user, $mod, $data) {
 
         data_print_template('singletemplate', $records, $data);
 
+    }
+}
+
+
+/**
+ * Return grade for given user or all users.
+ *
+ * @param int $dataid id of data
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function data_get_user_grades($dataid, $userid=0) {
+    global $CFG;
+
+    $user = $userid ? "AND u.id = $userid" : "";
+
+    $sql = "SELECT u.id, avg(drt.rating) AS gradevalue
+              FROM {$CFG->prefix}user u, {$CFG->prefix}data_records dr,
+                   {$CFG->prefix}data_ratings drt
+             WHERE u.id = dr.userid AND dr.id = drt.recordid
+                   AND drt.userid != u.id AND dr.dataid = $dataid
+                   $user
+          GROUP BY u.id";
+
+    return get_records_sql($sql);
+}
+
+/**
+ * Update grades by firing grade_updated event
+ *
+ * @param object $grade_item null means all databases
+ * @param int $userid specific user only, 0 mean all
+ */
+function data_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+    global $CFG;
+
+    if ($grade_item != null) {
+        if ($grades = data_get_user_grades($grade_item->iteminstance, $userid)) {
+            foreach ($grades as $grade) {
+                $eventdata = new object();
+                $eventdata->itemid     = $grade_item->id;
+                $eventdata->userid     = $grade->id;
+                $eventdata->gradevalue = $grade->gradevalue;
+                events_trigger('grade_updated', $eventdata);
+            }
+
+        } else if ($userid and $nullifnone) {
+            $eventdata = new object();
+            $eventdata->itemid     = $grade_item->id;
+            $eventdata->userid     = $userid;
+            $eventdata->gradevalue = NULL;
+            events_trigger('grade_updated', $eventdata);
+        }
+
+    } else {
+        $sql = "SELECT d.*, cm.idnumber as cmidnumber
+                  FROM {$CFG->prefix}data d, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($data = rs_fetch_next_record($rs)) {
+                    if (!$data->assessed) {
+                        continue; // no grading
+                    }
+                    $grade_item = data_grade_item_get($data);
+                    data_update_grades($grade_item, 0, false);
+                }
+            }
+            rs_close($rs);
+        }
+    }
+}
+
+/**
+ * Return (create if needed) grade item for given data
+ *
+ * @param object $data object with optional cmidnumber
+ * @return object grade_item
+ */
+function data_grade_item_get($data) {
+    if ($items = grade_get_items($data->course, 'mod', 'data', $data->id)) {
+        if (count($items) > 1) {
+            debugging('Multiple grade items present!');
+        }
+        $grade_item = reset($items);
+
+    } else {
+        if (!isset($data->cmidnumber)) {
+            if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
+                error("Course Module ID was incorrect");
+            }
+            $data->cmidnumber = $cm->idnumber;
+        }
+        if (!$itemid = data_grade_item_create($data)) {
+            error('Can not create grade item!');
+        }
+        $grade_item = grade_item::fetch('id', $itemid);
+    }
+
+    return $grade_item;
+}
+
+/**
+ * Update grade item for given data
+ *
+ * @param object $data object with extra cmidnumber
+ * @return object grade_item
+ */
+function data_grade_item_update($data) {
+    $grade_item = data_grade_item_get($data);
+
+    $grade_item->name     = $data->name;
+    $grade_item->idnumber = $data->cmidnumber;
+
+    if (!$data->assessed or $data->scale == 0) {
+        //how to indicate no grading?
+        $grade_item->gradetype = GRADE_TYPE_TEXT;
+
+    } else if ($data->scale > 0) {
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->grademax  = $data->scale;
+        $grade_item->grademin  = 0;
+
+    } else if ($data->scale < 0) {
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->scaleid   = -$data->scale;
+    }
+
+    $grade_item->update();
+}
+
+/**
+ * Create grade item for given data
+ *
+ * @param object $data object with extra cmidnumber
+ * @return object grade_item
+ */
+function data_grade_item_create($data) {
+    $params = array('courseid'    =>$data->course,
+                    'itemtype'    =>'mod',
+                    'itemmodule'  =>'data',
+                    'iteminstance'=>$data->id,
+                    'itemname'    =>$data->name,
+                    'idnumber'    =>$data->cmidnumber);
+
+    if (!$data->assessed or $data->scale == 0) {
+        //how to indicate no grading?
+        $params['gradetype'] = GRADE_TYPE_TEXT;
+
+    } else if ($data->scale > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $data->scale;
+        $params['grademin']  = 0;
+
+    } else if ($data->scale < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid']   = -$data->scale;
+    }
+
+    $itemid = grade_create_item($params);
+    return $itemid;
+}
+
+/**
+ * Delete grade item for given data
+ *
+ * @param object $data object
+ * @return object grade_item
+ */
+function data_grade_item_delete($data) {
+    if ($grade_items = grade_get_items($data->course, 'mod', 'data', $data->id)) {
+        foreach($grade_items as $grade_item) {
+            $grade_item->delete();
+        }
     }
 }
 
@@ -1094,6 +1277,7 @@ function data_print_ratings($data, $record) {
 
             echo '<div class="ratings" style="text-align:center">';
             echo '<form id="form" method="post" action="rate.php">';
+            echo '<input type="hidden" name="dataid" value="'.$data->id.'" />';
 
             if (has_capability('mod/data:rate', $context) and !data_isowner($record->id)) {
                 data_print_ratings_mean($record->id, $ratingsscale, has_capability('mod/data:viewrating', $context));
@@ -1191,14 +1375,14 @@ function data_print_rating_menu($recordid, $userid, $scale) {
     static $strrate;
 
     if (!$rating = get_record("data_ratings", "userid", $userid, "recordid", $recordid)) {
-        $rating->rating = 0;
+        $rating->rating = -999;
     }
 
     if (empty($strrate)) {
         $strrate = get_string("rate", "data");
     }
 
-    choose_from_menu($scale, $recordid, $rating->rating, "$strrate...");
+    choose_from_menu($scale, $recordid, $rating->rating, "$strrate...", '', -999);
 }
 
 
@@ -1583,11 +1767,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode);
-    } else {
-        $currentgroup = 0;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
     /// Print the tabs
 
@@ -1604,7 +1785,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     }
 }
 
-function data_user_can_add_entry($data, $currentgroup=false, $groupmode='') {
+function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     global $USER;
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
@@ -1616,16 +1797,18 @@ function data_user_can_add_entry($data, $currentgroup=false, $groupmode='') {
         return false;
     }
 
+    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
     if ($currentgroup) {
-        return (has_capability('moodle/site:accessallgroups', $context) or ismember($currentgroup));
+        return ismember($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
-            
-            $result = groups_is_member($currentgroup);
-            return $result;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 }

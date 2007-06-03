@@ -2,13 +2,42 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    if (!($data = data_submitted($CFG->wwwroot.'/mod/data/view.php')) or !confirm_sesskey()) {
+    $dataid = required_param('dataid', PARAM_INT); // The forum the rated posts are from
+
+    if (!$data = get_record('data', 'id', $dataid)) {
+        error("Incorrect data id");
+    }
+
+    if (!$course = get_record('course', 'id', $data->course)) {
+        error("Course ID was incorrect");
+    }
+
+    if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
+        error("Course Module ID was incorrect");
+    }
+
+    require_login($course, false, $cm);
+
+    if (isguestuser()) {
+        error("Guests are not allowed to rate entries.");
+    }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    require_capability('mod/data:rate', $context);
+
+    if (!$data->assessed) {
+        error("Rating of items not allowed!");
+    }
+
+    $grade_item = data_grade_item_get($data);
+
+    if (!$frmdata = data_submitted() or !confirm_sesskey()) {
         error("This page was not accessed correctly");
     }
 
     $count = 0;
 
-    foreach ((array)$data as $recordid => $rating) {
+    foreach ((array)$frmdata as $recordid => $rating) {
         if (!is_numeric($recordid)) {
             continue;
         }
@@ -16,38 +45,13 @@
         if (!$record = get_record('data_records', 'id', $recordid)) {
             error("Record ID is incorrect");
         }
-        if (!$data = get_record('data', 'id', $record->dataid)) {
-            error("Data ID is incorrect");
-        }
-        if (!$course = get_record('course', 'id', $data->course)) {
-            error("Course is misconfigured");
-        }
-        if (!$cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
 
-        require_login($course->id, false, $cm);
-
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-        if (isguest()) {
-            error("Guests are not allowed to rate posts");
-        }
-
-        if (!$data->assessed or !has_capability('mod/data:rate', $context)) {
-            error("Not allowed to rate.");
+        if ($data->id != $record->dataid) {
+            error("Incorrect record.");
         }
 
         if ($record->userid == $USER->id) {
-            error("You can not rate your own data");
-        }
-
-        if (!$scale = make_grades_menu($data->scale)) {
-            error("Icorrect scale");
-        }
-
-        if (!array_key_exists($rating, $scale)) {
-            error("Icorrect rating value");
+            continue;
         }
 
         // input validation ok
@@ -55,11 +59,17 @@
         $count++;
 
         if ($oldrating = get_record('data_ratings', 'userid', $USER->id, 'recordid', $record->id)) {
-            if ($rating != $oldrating->rating) {
+            if ($rating == -999) {
+                delete_records('data_ratings', 'userid', $oldrating->userid, 'recordid', $oldrating->recordid);
+                data_update_grades($grade_item, $record->userid);
+
+            } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
                 if (! update_record('data_ratings', $oldrating)) {
                     error("Could not update an old rating ($record->id = $rating)");
                 }
+                data_update_grades($grade_item, $record->userid);
+
             }
         } else if ($rating) {
             $newrating = new object();
@@ -69,6 +79,7 @@
             if (! insert_record('data_ratings', $newrating)) {
                 error("Could not insert a new rating ($record->id = $rating)");
             }
+            data_update_grades($grade_item, $record->userid);
         }
     }
 
