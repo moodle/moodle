@@ -420,7 +420,7 @@ function glossary_grade_item_update($glossary) {
     $grade_item->name     = $glossary->name;
     $grade_item->idnumber = $glossary->cmidnumber;
 
-    if (!$glossary->assessed) {
+    if (!$glossary->assessed or $glossary->scale == 0) {
         //how to indicate no grading?
         $grade_item->gradetype = GRADE_TYPE_TEXT;
 
@@ -451,7 +451,7 @@ function glossary_grade_item_create($glossary) {
                     'itemname'    =>$glossary->name,
                     'idnumber'    =>$glossary->cmidnumber);
 
-    if (!$glossary->assessed) {
+    if (!$glossary->assessed or $glossary->scale == 0) {
         //how to indicate no grading?
         $params['gradetype'] = GRADE_TYPE_TEXT;
 

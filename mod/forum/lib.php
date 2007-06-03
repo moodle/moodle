@@ -1219,7 +1219,7 @@ function forum_grade_item_update($forum) {
     $grade_item->name       = $forum->name;
     $grade_item->idnumber = $forum->cmidnumber;
 
-    if (!$forum->assessed) {
+    if (!$forum->assessed or $forum->scale == 0) {
         //how to indicate no grading?
         $grade_item->gradetype = GRADE_TYPE_TEXT;
 
@@ -1250,7 +1250,7 @@ function forum_grade_item_create($forum) {
                     'itemname'    =>$forum->name,
                     'idnumber'    =>$forum->cmidnumber);
 
-    if (!$forum->assessed) {
+    if (!$forum->assessed or $forum->scale == 0) {
         //how to indicate no grading?
         $params['gradetype'] = GRADE_TYPE_TEXT;
 
