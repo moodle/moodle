@@ -409,7 +409,11 @@ function glossary_grade_item_update($glossary) {
     $grade_item->name = $glossary->name;
     $grade_item->cmidnumber = $glossary->cmidnumber;
 
-    if ($glossary->scale > 0) {
+    if (!$glossary->assessed) {
+        //how to indicate no grading?
+        $grade_item->gradetype = GRADE_TYPE_TEXT;
+
+    } else if ($glossary->scale > 0) {
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademax  = $glossary->scale;
         $grade_item->grademin  = 0;
@@ -417,13 +421,6 @@ function glossary_grade_item_update($glossary) {
     } else if ($glossary->scale < 0) {
         $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid   = -$glossary->scale;
-
-    } else {
-        //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT;
-        $grade_item->grademax  = $glossary->scale;
-        $grade_item->grademax  = 0;
-        $grade_item->grademin  = 0;
     }
 
     $grade_item->update();
@@ -443,7 +440,11 @@ function glossary_grade_item_create($glossary) {
                     'itemname'    =>$glossary->name,
                     'idnumber'    =>$glossary->cmidnumber);
 
-    if ($glossary->scale > 0) {
+    if (!$glossary->assessed) {
+        //how to indicate no grading?
+        $params['gradetype'] = GRADE_TYPE_TEXT;
+
+    } else if ($glossary->scale > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $glossary->scale;
         $params['grademin']  = 0;
@@ -451,13 +452,6 @@ function glossary_grade_item_create($glossary) {
     } else if ($glossary->scale < 0) {
         $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = -$glossary->scale;
-
-    } else {
-        //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT;
-        $params['grademax']  = $glossary->scale;
-        $params['grademax']  = 0;
-        $params['grademin']  = 0;
     }
 
     $itemid = grade_create_item($params);
