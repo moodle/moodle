@@ -133,7 +133,7 @@ class quiz_report extends quiz_default_report {
         }
 
         if ($hasfeedback) {
-            $tablecolumns[] = 'feedback';
+            $tablecolumns[] = 'feedbacktext';
             $tableheaders[] = get_string('feedback', 'quiz');
         }
         
