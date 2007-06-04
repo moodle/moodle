@@ -63,26 +63,32 @@ function SCORMapi1_3() {
     var speed_range = '0#*';
     var text_range = '-1#1';
     var progress_range = '0#1';
+        //'choice':'^(\\S{0,250}[a-zA-Z0-9])((\\[\\,\\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
+        //'matching':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
+        //'sequencing':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
     var learner_response = {
         'true-false':'^true$|^false$',
-        'choice':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
+        'choice':'^([\\w\.]{0,250})((\\[\\,\\])[\\w\.]{1,250}){0,35}$',
         'fill-in':'^((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)(\[\,\]((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)){0,9}$',
         'long-fill-in':CMILangString4000,
-        'matching':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
-        'performance':'^.$',
-        'sequencing':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
+        'matching':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})((\\[\\,\\])\\w{1,250}(\\[\\.\\])\\w{1,250}){0,35}$',
+        'performance':'^.*$',
+        'sequencing':'^(\\w{1,250})((\\[\\,\\])\\w{1,250}){0,35}$',
         'likert':CMIIdentifier,
         'numeric':CMIDecimal,
         'other':CMIString4000
     }
+        //'choice':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])(\\S{0,250}[a-zA-Z0-9])){0,35}$', 'unique':true},
+        //'matching':{'format':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':false},
+        //'sequencing':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':true},
     var correct_responses = {
         'true-false':{'format':'^true$|^false$', 'unique':false, 'limit':1},
-        'choice':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])(\\S{0,250}[a-zA-Z0-9])){0,35}$', 'unique':true},
+        'choice':{'format':'^([\\w\.]{0,250})((\\[\\,\\])[\\w\.]{1,250}){0,35}$', 'unique':true},
         'fill-in':{'format':'^(\{case_matters=(true|false)\})?(\{order_matters=(true|false)\})?((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)((\[\,\])((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)){0,9}$', 'unique':false},
         'long-fill-in':{'format':'^(\{case_matters=(true|false)\})?(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,4000}$)?', 'unique':false},
-        'matching':{'format':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':false},
-        'performance':{'format':'^.$', 'unique':false},
-        'sequencing':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':true},
+        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})((\\[\\,\\])\\w{1,250}(\\[\\.\\])\\w{1,250}){0,35}$', 'unique':false},
+        'performance':{'format':'^.*$', 'unique':false},
+        'sequencing':{'format':'^(\\w{1,250})((\\[\\,\\])\\w{1,250}){0,35}$', 'unique':true},
         'likert':{'format':CMIIdentifier, 'unique':false, 'limit':1},
         'numeric':{'format':'^(-?([0-9]{1,4})(\\.[0-9]{1,18})?)?(\[\:\])(-?([0-9]{1,4})(\\.[0-9]{1,18})?)?$', 'unique':false, 'limit':1},
         'other':{'format':CMIString4000, 'unique':false, 'limit':1}
@@ -519,22 +525,19 @@ function SCORMapi1_3() {
                                                 if (typeof eval(parentelement) != "undefined") {
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     var interactiontype = eval(parentelement.replace('correct_responses','type'));
-//alert('type = '+interactiontype+"\nvalue = "+value);
-                                                    expression = new RegExp(correct_responses[interactiontype].format);
-//alert('type = '+interactiontype+"\nexpression = "+expression+"\nvalue = "+value);
-                                                    matches = value.match(expression);
-//alert('type = '+interactiontype+"\nexpression = "+expression+"\nmatches = "+matches.join("\n")+"\nvalue = "+value);
+//                                                    expression = new RegExp(correct_responses[interactiontype].format);
+//                                                    matches = value.match(expression);
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         if ((typeof correct_responses[interactiontype].limit == 'undefined') ||
                                                             (eval(parentelement+'._count') < correct_responses[interactiontype].limit)) {
                                                             if ((correct_responses[interactiontype].unique == false) || 
                                                                 (!duplicatedPA(element,parentelement,value))) {
-                                                                if ((matches == null) || (matches.join('').length == 0)) {
-                                                                    errorCode = "406";
-                                                                } else {
+//                                                                if ((matches == null) || (matches.join('').length == 0)) {
+//                                                                    errorCode = "406";
+//                                                                } else {
                                                                     eval(parentelement+'._count++;');
                                                                     eval(subelement+' = new Object();');
-                                                                }
+//                                                                }
                                                             } else {
                                                                 errorCode="351";
                                                                 diagnostic = "Data Model Element Pattern Already Exists";
@@ -591,30 +594,27 @@ function SCORMapi1_3() {
                                                 } else {
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     interactiontype = eval(subelement+'.type');
-                                                    expression = new RegExp(learner_response[interactiontype]);
-                                                    matches = value.match(expression);
-                                                    if ((matches == null) || (matches.join('').length == 0)) {
-                                                        errorCode = "406";
-                                                    }
+//                                                    expression = new RegExp(learner_response[interactiontype]);
+//                                                    matches = value.match(expression);
+//                                                    if ((matches == null) || (matches.join('').length == 0)) {
+//                                                        errorCode = "406";
+//                                                    }
                                                 }
                                              break;
                                              case 'cmi.interactions.n.correct_responses.n.pattern':
                                                  if (typeof eval(parentelement) != "undefined") {
                                                      // Use cmi.interactions.n.type value to check the right dataelement format
                                                      interactiontype = eval(parentelement.replace('correct_responses','type'));
-//alert('type = '+interactiontype+"\nvalue = "+value);
-                                                     expression = new RegExp(correct_responses[interactiontype].format);
-//alert('type = '+interactiontype+"\nexpression = "+expression+"\nvalue = "+value);
-                                                     matches = value.match(expression);
-//alert('type = '+interactiontype+"\nexpression = "+expression+"\nmatches = "+matches.join("\n")+"\nvalue = "+value);
+//                                                     expression = new RegExp(correct_responses[interactiontype].format);
+//                                                     matches = value.match(expression);
                                                      if ((correct_responses[interactiontype].unique == true) && 
                                                          (duplicatedPA(element,parentelement,value))) {
                                                          errorCode="351";
                                                          diagnostic = "Data Model Element Pattern Already Exists";
-                                                     } else {
-                                                         if ((matches == null) || (matches.join('').length == 0)) {
-                                                             errorCode = "406";
-                                                         }
+//                                                     } else {
+//                                                         if ((matches == null) || (matches.join('').length == 0)) {
+//                                                             errorCode = "406";
+//                                                         }
                                                      }
                                                  } else {
                                                      errorCode="408";
