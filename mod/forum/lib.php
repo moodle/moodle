@@ -392,25 +392,16 @@ function forum_cron() {
                 course_setup($course);   // More environment
 
                 // Make sure groups allow this user to see this email
-                $groupmode = false;
-                if (!empty($cm->id)) {
-                    if ($groupmode = groupmode($course, $cm) and $discussion->groupid > 0) {   // Groups are being used
-                        if (! groups_group_exists($discussion->groupid)) { // Can't find group //TODO:
-                            continue;                           // Be safe and don't send it to anyone
-                        }
+                if ($discussion->groupid > 0 and $groupmode = groupmode($course, $cm)) {   // Groups are being used
+                    if (! groups_group_exists($discussion->groupid)) { // Can't find group
+                        continue;                           // Be safe and don't send it to anyone
+                    }
+
+                    if (!ismember($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $modcontext)) {
+                        // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
+                        continue;
                     }
                 }
-
-                if ($groupmode) {    // Look for a reason not to send this email
-                    if (!empty($discussion->groupid)) {
-                        if (!ismember($discussion->groupid, $userto->id)) {
-                            if (!has_capability('moodle/site:accessallgroups', $modcontext)) {
-                                continue;
-                            }
-                        }
-                    }
-                }
-
 
                 // Make sure we're allowed to see it...
                 if (!forum_user_can_see_post($forum, $discussion, $post)) {
