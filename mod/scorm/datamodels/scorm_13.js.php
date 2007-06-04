@@ -36,6 +36,7 @@ function SCORMapi1_3() {
     var CMISInteger = '^-?([0-9]+)$';
     var CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
     var CMIIdentifier = '^\\S{0,250}[a-zA-Z0-9]$';
+    var CMIShortIdentifier = '^[\\w\.]{0,250}$';
     var CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
     var CMIFeedback = '^.*$'; // This must be redefined
     var CMIIndex = '[._](\\d+).';
@@ -63,20 +64,17 @@ function SCORMapi1_3() {
     var speed_range = '0#*';
     var text_range = '-1#1';
     var progress_range = '0#1';
-        //'choice':'^(\\S{0,250}[a-zA-Z0-9])((\\[\\,\\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
-        //'matching':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
-        //'sequencing':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$',
     var learner_response = {
-        'true-false':'^true$|^false$',
-        'choice':'^([\\w\.]{0,250})((\\[\\,\\])[\\w\.]{1,250}){0,35}$',
-        'fill-in':'^((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)(\[\,\]((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)){0,9}$',
-        'long-fill-in':CMILangString4000,
-        'matching':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})((\\[\\,\\])\\w{1,250}(\\[\\.\\])\\w{1,250}){0,35}$',
-        'performance':'^.*$',
-        'sequencing':'^(\\w{1,250})((\\[\\,\\])\\w{1,250}){0,35}$',
-        'likert':CMIIdentifier,
-        'numeric':CMIDecimal,
-        'other':CMIString4000
+        'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':''},
+        'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]'},
+        'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]'},
+        'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':''},
+        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})$', 'max':36, 'delimiter':'[,]'},
+        'performance':{'format':'^.*$', 'max':1, 'delimiter':''},
+        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]'},
+        'likert':{'format':CMIIdentifier, 'max':1, 'delimiter':''},
+        'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':''},
+        'other':{'format':CMIString4000, 'max':1, 'delimiter':''}
     }
         //'choice':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])(\\S{0,250}[a-zA-Z0-9])){0,35}$', 'unique':true},
         //'matching':{'format':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':false},
@@ -594,11 +592,31 @@ function SCORMapi1_3() {
                                                 } else {
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     interactiontype = eval(subelement+'.type');
-//                                                    expression = new RegExp(learner_response[interactiontype]);
-//                                                    matches = value.match(expression);
-//                                                    if ((matches == null) || (matches.join('').length == 0)) {
-//                                                        errorCode = "406";
-//                                                    }
+                                                    var nodes = new Array();
+                                                    if (learner_response[interactiontype].delimiter != '') {
+                                                        nodes = value.split(learner_response[interactiontype].delimiter);
+                                                    } else {
+                                                        nodes[0] = value;
+                                                    }
+                                                    if ((nodes.length > 0) && (nodes.length <= learner_response[interactiontype].max)) {
+                                                        expression = new RegExp(learner_response[interactiontype].format);
+                                                        for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
+                                                            matches = nodes[i].match(expression);
+                                                            if ((matches == null) || (matches.join('').length == 0)) {
+                                                                errorCode = "406";
+                                                            } else {
+                                                                for (var j=0; (j<i) && (errorCode=="0"); j++) {
+//alert(node[i]+"\n"+node[j]);
+                                                                    if (nodes[i] == nodes[j]) {
+                                                                        errorCode = "406";
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    } else if (nodes.length > learner_response[interactiontype].max) {
+                                                        errorCode = "351";
+                                                        diagnostic = "Data Model Element Pattern Too Long";
+                                                    }
                                                 }
                                              break;
                                              case 'cmi.interactions.n.correct_responses.n.pattern':
