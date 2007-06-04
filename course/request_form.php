@@ -7,11 +7,11 @@ class course_request_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('text', 'fullname', get_string('fullname'), 'maxlength="254" size="50"');
-        $mform->addRule('fullname', get_string('missingshortname'), 'required', null, 'client');
+        $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_TEXT);
 
         $mform->addElement('text', 'shortname', get_string('shortname'), 'maxlength="15" size="10"');
-        $mform->addRule('shortname', get_string('missingfullname'), 'required', null, 'client');
+        $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
         $mform->addElement('htmleditor', 'summary', get_string('summary'), array('rows'=>'15', 'cols'=>'50'));
