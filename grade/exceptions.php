@@ -12,7 +12,7 @@
 
     require_login($course->id);
 
-    require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_MODULE, $id));
+    require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $id));
 
     $group = get_current_group($course->id);
     
