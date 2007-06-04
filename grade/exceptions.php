@@ -12,7 +12,7 @@
 
     require_login($course->id);
 
-    require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_MODULE, $id));
+    require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $id));
 
     print_header("$course->shortname: ".get_string('grades'), $course->fullname, grade_nav($course, $action));
 
