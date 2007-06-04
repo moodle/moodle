@@ -51,7 +51,7 @@ if (!isset($CFG->resource_blockdeletingfile)) {
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
-                                 'menubar', 'toolbar', 'status', 'height', 'width');
+                                 'menubar', 'toolbar', 'status', 'width', 'height');
 
 foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     $popupoption = "resource_popup$popupoption";
