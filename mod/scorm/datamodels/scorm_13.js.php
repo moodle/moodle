@@ -71,7 +71,7 @@ function SCORMapi1_3() {
         'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false},
         'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})$', 'max':36, 'delimiter':'[,]', 'unique':false},
         'performance':{'format':'^.*$', 'max':1, 'delimiter':'', 'unique':false},
-        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
+        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':false},
         'likert':{'format':CMIShortIdentifier, 'max':1, 'delimiter':'', 'unique':false},
         'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
         'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
