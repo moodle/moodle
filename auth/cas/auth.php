@@ -92,8 +92,17 @@ class auth_plugin_cas extends auth_plugin_base {
       if (!empty($username)) {
           return;
         }
+
 // Connection to CAS server
 	 $this->connectCAS();
+
+	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
+	 if (phpCAS::checkAuthentication()) {
+		$frm->username=phpCAS::getUser();
+		$frm->password="cas";		  
+		return;
+	 }
+	 
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS");
           if ($authCAS=="NOCAS") 
@@ -102,19 +111,16 @@ class auth_plugin_cas extends auth_plugin_base {
 // choice authentication form for multi-authentication
 // test pgtIou parameter for proxy mode (https connection
 // in background from CAS server to the php server)
-      if ($authCAS!="CAS" && !isset($_GET["pgtIou"]))
-         {
+      if ($authCAS!="CAS" && !isset($_GET["pgtIou"])) {
             print_header("$site->fullname: $CASform", $site->fullname, $CASform);
             include($CFG->dirroot."/auth/cas/cas_form.html");
             print_footer();
             exit();
-         }
+		 }
      }
 // CAS authentication
      if (!phpCAS::isAuthenticated())
         {phpCAS::forceAuthentication();}
-     $frm->username=phpCAS::getUser();
-     $frm->password="cas";
 }
     /**
      * logout from the cas 
