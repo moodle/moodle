@@ -29,19 +29,20 @@ require_once $CFG->libdir . '/gradelib.php';
 print_header('Edit categories');
 
 $param = new stdClass();
-$param->courseid     = optional_param('courseid', 0 , PARAM_INT);
-$param->moveup       = optional_param('moveup', 0, PARAM_INT);
-$param->movedown     = optional_param('movedown', 0, PARAM_INT);
-$param->source       = optional_param('source', 0, PARAM_INT);
-$param->action       = optional_param('action', 0, PARAM_ALPHA);
-$param->move         = optional_param('move', 0, PARAM_INT);
-$param->type         = optional_param('type', 0, PARAM_ALPHA);
-$param->target       = optional_param('target', 0, PARAM_INT);
-$param->confirm      = optional_param('confirm', 0, PARAM_INT);
-$param->items        = optional_param('items', 0, PARAM_INT);
-$param->categories   = optional_param('categories', 0, PARAM_INT);
-$param->element_type = optional_param('element_type', 0, PARAM_ALPHA);
-$param->category_name= optional_param('category_name', 0, PARAM_ALPHA);
+
+$param->courseid      = optional_param('courseid', 0 , PARAM_INT);
+$param->moveup        = optional_param('moveup', 0, PARAM_INT);
+$param->movedown      = optional_param('movedown', 0, PARAM_INT);
+$param->source        = optional_param('source', 0, PARAM_INT);
+$param->action        = optional_param('action', 0, PARAM_ALPHA);
+$param->move          = optional_param('move', 0, PARAM_INT);
+$param->type          = optional_param('type', 0, PARAM_ALPHA);
+$param->target        = optional_param('target', 0, PARAM_INT);
+$param->confirm       = optional_param('confirm', 0, PARAM_INT);
+$param->items         = optional_param('items', 0, PARAM_INT);
+$param->categories    = optional_param('categories', 0, PARAM_INT);
+$param->element_type  = optional_param('element_type', 0, PARAM_ALPHA);
+$param->category_name = optional_param('category_name', 0, PARAM_ALPHA);
 
 $tree = new grade_tree($param->courseid);
 $select_source = false;
@@ -123,25 +124,30 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
             break;
     }
     unset($param->target);
-} elseif (!empty($param->element_type) && !empty($param->action) && $param->action == 'create' && confirm_sesskey() && !empty($param->category_name)) {
+} elseif (!empty($param->element_type) && 
+          !empty($param->action) && 
+          $param->action == 'create' && 
+          confirm_sesskey() && 
+          !empty($param->category_name)) {
     if ($param->element_type == 'items') {
         if (!empty($param->items)) {
             $category = new grade_category();
             $category->fullname = $param->category_name;
             $category->courseid = $tree->courseid;
+            $category->insert();
+
             $items = array();
+            
             foreach ($param->items as $sortorder => $useless_var) {
                 $element = $tree->locate_element($sortorder);
                 $items[$element->element['object']->id] = $element->element['object'];
             }
-            print_object($items);
-            /*
+            
             if ($category->set_as_parent($items) && $category->update()) {
                 $tree = new grade_tree($param->courseid);
             } else { // creation of category didn't work, print a message
                 debugging("Could not create a parent category over the items you selected..");
-            }
-            */
+            } 
 
         } else { // No items selected. Can't create a category over them...
             notice("Couldn't create a category, you did not select any grade items."); 
@@ -151,6 +157,8 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
             $category = new grade_category();
             $category->fullname = $param->category_name;
             $category->courseid = $tree->courseid;
+            $category->insert();
+
             $categories = array();
             foreach ($param->categories as $sortorder => $useless_var) {
                 $element = $tree->locate_element($sortorder);

@@ -724,7 +724,9 @@ class grade_category extends grade_object {
      *    - The children cannot already have a top categorya
      *    - The children all belong to the same course
      * @param array $children An array of fully instantiated grade_category OR grade_item objects
+     *
      * @return boolean Success or Failure
+     * @TODO big problem of performance
      */
     function set_as_parent($children) {
         global $CFG;
@@ -800,6 +802,8 @@ class grade_category extends grade_object {
         }
         
         $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= {$this->grade_item->sortorder}";
+        $query .= " AND courseid = $this->courseid";
+
         if (!execute_sql($query)) {
             debugging("Could not update the sortorder of grade_items listed after this category.");
             return false;
