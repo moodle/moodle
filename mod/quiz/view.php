@@ -382,24 +382,20 @@
                 if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
                     $attempturl = sid_process_url($attempturl);
                 }
-
-                // TODO eliminate this nasty JavaScript that prints the button.
-?>
-<script type="text/javascript">
-//<![CDATA[
-document.write('<input type="button" value="<?php echo $buttontext ?>" onclick="javascript: <?php
+                
+                echo '<input type="button" value="'.$buttontext.'" onclick="javascript:';
                 if ($strconfirmstartattempt) {
                     echo "if (confirm(\\'".addslashes_js($strconfirmstartattempt)."\\'))";
-                }
-?> window.open(\'<?php echo $attempturl ?>\', \'<?php echo $window ?>\', \'<?php echo $windowoptions ?>\'); " />');
-//]]>
-</script>
+                } 
+               echo " window.open('$attempturl','$window','$windowoptions'); ".' " />';   
+
+?>
 <noscript>
 <div>
     <?php print_heading(get_string('noscript', 'quiz')); ?>
 </div>
 </noscript>
-<?php
+<?php 
             }
 
             echo "</div>\n";
