@@ -366,7 +366,7 @@ class assignment_base {
             }
 
             $assignment = stripslashes_recursive($assignment);
-            assignment_grade_item_create($assignment);
+            assignment_grade_item_update($assignment);
 
         }
 
@@ -398,16 +398,6 @@ class assignment_base {
 
         if (! delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id)) {
             $result = false;
-        }
-
-        // Get the cm id to properly clean up the grade_items for this assignment
-        // bug 4976
-        if (! $cm = get_record('modules', 'name', 'assignment')) {
-            $result = false;
-        } else {
-            if (! delete_records('grade_item', 'modid', $cm->id, 'cminstance', $assignment->id)) {
-                $result = false;
-            }
         }
 
         // delete file area with all attachments - ignore errors
@@ -484,8 +474,7 @@ class assignment_base {
      * Update grade item for this submission.
      */
     function update_grade($submission) {
-        $grade_item = assignment_grade_item_get($this->assignment);
-        assignment_update_grades($grade_item, $submission->userid);
+        assignment_update_grades($this->assignment, $submission->userid);
     }
 
     /**
@@ -1822,14 +1811,14 @@ function assignment_cron () {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function assignment_get_user_grades($assignmentid, $userid=0) {
+function assignment_get_user_grades($assignment, $userid=0) {
     global $CFG;
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, s.grade AS gradevalue, s.submissioncomment AS feedback, s.format AS feedbackformat
+    $sql = "SELECT u.id, u.id AS userid, s.grade AS gradevalue, s.submissioncomment AS feedback, s.format AS feedbackformat
               FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
-             WHERE u.id = s.userid AND s.assignment = $assignmentid
+             WHERE u.id = s.userid AND s.assignment = $assignment->id
                    $user";
 
     return get_records_sql($sql);
@@ -1838,27 +1827,23 @@ function assignment_get_user_grades($assignmentid, $userid=0) {
 /**
  * Update grades by firing grade_updated event
  *
- * @param object $grade_item null means all assignments
+ * @param object $assignment null means all assignments
  * @param int $userid specific user only, 0 mean all
  */
-function assignment_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true) {
     global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
 
-    if ($grade_item != null) {
-        if ($grades = assignment_get_user_grades($grade_item->iteminstance, $userid)) {
-            foreach ($grades as $grade) {
-                $eventdata = new object();
-                $eventdata->itemid         = $grade_item->id;
-                $eventdata->userid         = $grade->id;
-                if ($grade->gradevalue < 0) {
-                    $eventdata->gradevalue = null;
-                } else {
-                    $eventdata->gradevalue = $grade->gradevalue;
+    if ($assignment != null) {
+        if ($grades = assignment_get_user_grades($assignment, $userid)) {
+            foreach($grades as $k=>$v) {
+                if ($v->gradevalue == -1) {
+                    $grades[$k]->gradevalue = null;
                 }
-                $eventdata->feedback       = $grade->feedback;
-                $eventdata->feedbackformat = $grade->feedbackformat;
-                events_trigger('grade_updated', $eventdata);
             }
+            grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
         }
 
     } else {
@@ -1868,8 +1853,10 @@ function assignment_update_grades($grade_item=null, $userid=0, $nullifnone=true)
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($assignment = rs_fetch_next_record($rs)) {
-                    $grade_item = assignment_grade_item_get($assignment);
-                    assignment_update_grades($grade_item);
+                    assignment_grade_item_update($assignment);
+                    if ($assignment->grade != 0) {
+                        assignment_update_grades($assignment);
+                    }
                 }
             }
             rs_close($rs);
@@ -1878,88 +1865,22 @@ function assignment_update_grades($grade_item=null, $userid=0, $nullifnone=true)
 }
 
 /**
- * Return (create if needed) grade item for given assignment
- *
- * @param object $assignment object with optional cmidnumber
- * @return object grade_item
- */
-function assignment_grade_item_get($assignment) {
-    if (!isset($assignment->courseid)) {
-        $assignment->courseid = $assignment->course;
-    }
-
-    if ($items = grade_get_items($assignment->courseid, 'mod', 'assignment', $assignment->id)) {
-        if (count($items) > 1) {
-            debugging('Multiple grade items present!');
-        }
-        $grade_item = reset($items);
-
-    } else {
-        if (!isset($forum->cmidnumber)) {
-            if (!$cm = get_coursemodule_from_instance('assignment', $assignment->id)) {
-                error("Course Module ID was incorrect");
-            }
-            $assignment->cmidnumber = $cm->idnumber;
-        }
-        if (!$itemid = assignment_grade_item_create($assignment)) {
-            error('Can not create grade item!');
-        }
-        $grade_item = grade_item::fetch('id', $itemid);
-    }
-
-    return $grade_item;
-}
-
-/**
- * Update grade item for given assignment
- *
- * @param object $assignment object with extra cmidnumber
- * @return object grade_item
- */
-function assignment_grade_item_update($assignment) {
-    $grade_item = assignment_grade_item_get($assignment);
-
-    $grade_item->itemname = $assignment->name;
-    $grade_item->idnumber = $assignment->cmidnumber;
-
-    if ($assignment->grade > 0) {
-        $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->grademax  = $assignment->grade;
-        $grade_item->grademin  = 0;
-        $grade_item->scaleid   = 0;
-
-    } else if ($assignment->grade < 0) {
-        $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid   = -$assignment->grade;
-
-    } else {
-        //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT;
-        $grade_item->grademax  = 0;
-        $grade_item->grademin  = 0;
-        $grade_item->scaleid   = 0;
-    }
-
-    $grade_item->update();
-}
-
-/**
  * Create grade item for given assignment
  *
  * @param object $assignment object with extra cmidnumber
- * @return object grade_item
+ * @return int 0 if ok, error code otherwise
  */
-function assignment_grade_item_create($assignment) {
+function assignment_grade_item_update($assignment) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
     if (!isset($assignment->courseid)) {
         $assignment->courseid = $assignment->course;
     }
 
-    $params = array('courseid'    =>$assignment->courseid,
-                    'itemtype'    =>'mod',
-                    'itemmodule'  =>'assignment',
-                    'iteminstance'=>$assignment->id,
-                    'itemname'    =>$assignment->name,
-                    'idnumber'    =>$assignment->cmidnumber);
+    $params = array('itemname'=>$assignment->name, 'idnumber'=>$assignment->cmidnumber);
 
     if ($assignment->grade > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -1971,33 +1892,27 @@ function assignment_grade_item_create($assignment) {
         $params['scaleid']   = -$assignment->grade;
 
     } else {
-        //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT;
-        $params['grademax']  = $assignment->grade;
-        $params['grademax']  = 0;
-        $params['grademin']  = 0;
+        $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    $itemid = grade_create_item($params);
-    return $itemid;
+    return grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, $params);
 }
 
 /**
  * Delete grade item for given assignment
  *
  * @param object $assignment object
- * @return object grade_item
+ * @return object assignment
  */
 function assignment_grade_item_delete($assignment) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
     if (!isset($assignment->courseid)) {
         $assignment->courseid = $assignment->course;
     }
 
-    if ($grade_items = grade_get_items($assignment->courseid, 'mod', 'assignment', $assignment->id)) {
-        foreach($grade_items as $grade_item) {
-            $grade_item->delete();
-        }
-    }
+    return grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, array('deleted'=>1));
 }
 
 /**
@@ -2006,92 +1921,10 @@ function assignment_grade_item_delete($assignment) {
  *
  * see eventdata description in lib/db/events.php
  */
-function assignment_external_grade_handler($eventdata) {
+function assignment_grade_update_handler($eventdata) {
     global $CFG, $USER;
 
-    $eventdata = (array)$eventdata;
-
-    // each grade must belong to some user
-    if (empty($eventdata['userid'])) {
-        debugging('Missing user id in event data!');
-        return true;
-    }
-
-    // grade item must be specified or else it could be accidentally duplicated,
-    if (empty($eventdata['itemid'])) {
-        debugging('Missing grade item id in event!');
-        return true;
-    }
-
-    // shortcut - try first without fetching the grade_item
-    if (!empty($eventdata['itemtype']) and !empty($eventdata['itemmodule'])) {
-        if ($eventdata['itemtype'] != 'mod' or $eventdata['itemmodule'] != 'assignment') {
-            // not our event
-            return true;
-        }
-    }
-
-    // get the grade item from db
-    if (!$grade_item = grade_item::fetch('id', $eventdata['itemid'])) {
-        debugging('Incorrect grade item id in event! id:'.$eventdata['itemid']);
-        return true;
-    }
-
-    //verify it is our event
-    if ($grade_item->itemtype != 'mod' or $grade_item->itemmodule != 'assignment') {
-        // not our event
-        return true;
-    }
-
-    if (!$assignment = get_record('assignment', 'id', $grade_item->iteminstance)) {
-        return true;
-    }
-    if (! $course = get_record('course', 'id', $assignment->course)) {
-        return true;
-    }
-    if (! $cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
-        return true;
-    }
-
-    // Load up the required assignment class
-    require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
-    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
-
-    $sub = $assignmentinstance->get_submission((int)$eventdata['userid'], true);  // Get or make one
-    $submission = new object();
-    $submission->id     = $sub->id;
-    $submission->userid = $sub->userid;
-
-    if (isset($eventdata['gradevalue'])) {
-        $submission->grade = (int)$eventdata['gradevalue'];
-        if ($sub->grade != $submission->grade) {
-            $submission->mailed = 0;       // Make sure mail goes out (again, even)
-        }
-    } else {
-        $submission->grade = -1;
-    }
-
-    if (isset($eventdata['feedback'])) {
-        $submission->submissioncomment = addslashes($eventdata['feedback']);
-        if (isset($eventdata['feedbackformat'])) {
-            $submission->format = (int)$eventdata['feedbackformat'];
-        } else {
-            $submission->format = FORMAT_PLAIN;
-        }
-        if ($sub->submissioncomment != $submission->submissioncomment) {
-            $submission->mailed = 0;       // Make sure mail goes out (again, even)
-        }
-    }
-
-    $submission->teacher    = $USER->id;
-    $submission->timemarked = time();
-
-    update_record('assignment_submissions', $submission);
-
-    // TODO: add proper logging
-    add_to_log($course->id, 'assignment', 'update grades',
-               'submissions.php?id='.$assignment->id.'&user='.$submission->userid, $submission->userid, $cm->id);
+    //TODO: ...
 
     return true;
 }

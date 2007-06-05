@@ -29,8 +29,6 @@
         error("Rating of items not allowed!");
     }
 
-    $grade_item = data_grade_item_get($data);
-
     if (!$frmdata = data_submitted() or !confirm_sesskey()) {
         error("This page was not accessed correctly");
     }
@@ -61,16 +59,17 @@
         if ($oldrating = get_record('data_ratings', 'userid', $USER->id, 'recordid', $record->id)) {
             if ($rating == -999) {
                 delete_records('data_ratings', 'userid', $oldrating->userid, 'recordid', $oldrating->recordid);
-                data_update_grades($grade_item, $record->userid);
+                data_update_grades($data, $record->userid);
 
             } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
                 if (! update_record('data_ratings', $oldrating)) {
                     error("Could not update an old rating ($record->id = $rating)");
                 }
-                data_update_grades($grade_item, $record->userid);
+                data_update_grades($data, $record->userid);
 
             }
+
         } else if ($rating) {
             $newrating = new object();
             $newrating->userid   = $USER->id;
@@ -79,7 +78,7 @@
             if (! insert_record('data_ratings', $newrating)) {
                 error("Could not insert a new rating ($record->id = $rating)");
             }
-            data_update_grades($grade_item, $record->userid);
+            data_update_grades($data, $record->userid);
         }
     }
 

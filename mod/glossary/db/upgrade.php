@@ -42,7 +42,7 @@ function xmldb_glossary_upgrade($oldversion=0) {
         $result = $result && drop_field($table, $field);
     }  
 
-    if ($result && $oldversion < 2007060300) {
+    if ($result && $oldversion < 2007060600) {
         require_once($CFG->dirroot.'/mod/glossary/lib.php');
         // too much debug output
         $db->debug = false;

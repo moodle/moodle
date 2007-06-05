@@ -34,7 +34,7 @@ $handlers = array (
  */
     'grade_updated_external' => array (
         'handlerfile'      => '/mod/assignment/lib.php',
-        'handlerfunction'  => 'assignment_external_grade_handler',
+        'handlerfunction'  => 'assignment_grade_update_handler',
         'schedule'         => 'instant'
     )
 );

@@ -36,14 +36,25 @@ define('GRADE_AGGREGATE_MEAN', 0);
 define('GRADE_AGGREGATE_MEDIAN', 1);
 define('GRADE_AGGREGATE_SUM', 2);
 define('GRADE_AGGREGATE_MODE', 3);
+
 define('GRADE_CHILDTYPE_ITEM', 0);
 define('GRADE_CHILDTYPE_CAT', 1);
+
 define('GRADE_ITEM', 0); // Used to compare class names with CHILDTYPE values
 define('GRADE_CATEGORY', 1); // Used to compare class names with CHILDTYPE values
+
 define('GRADE_TYPE_NONE', 0);
 define('GRADE_TYPE_VALUE', 1);
 define('GRADE_TYPE_SCALE', 2);
 define('GRADE_TYPE_TEXT', 3);
+
+define('GRADE_UPDATE_OK', 0);
+define('GRADE_UPDATE_FAILED', 1);
+define('GRADE_UPDATE_MULTIPLE', 2);
+define('GRADE_UPDATE_ITEM_DELETED', 3);
+define('GRADE_UPDATE_INVALID_GRADE', 4);
+define('GRADE_UPDATE_LOCKED', 5);
+
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
@@ -56,16 +67,166 @@ require_once($CFG->libdir . '/grade/grade_history.php');
 require_once($CFG->libdir . '/grade/grade_grades_text.php');
 require_once($CFG->libdir . '/grade/grade_tree.php');
 
+/***** PUBLIC GRADE API *****/
+
+function grade_update($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grade=NULL, $itemdetails=NULL) {
+
+    // only following grade_item properties can be changed/used in this function
+    $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'deleted');
+
+    if (is_null($courseid) or is_null($itemtype)) {
+        debugging('Missing courseid or itemtype');
+        return GRADE_UPDATE_FAILED;
+    }
+
+    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'), false);
+    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+        // create a new one
+        $grade_item = false;
+
+    } else if (count($grade_items) == 1){
+        $grade_item = reset($grade_items);
+        unset($grade_items); //release memory
+
+    } else {
+
+        debugging('Found more than one grading item');
+        return GRADE_UPDATE_MULTIPLE;
+    }
+
+/// Create or update the grade_item if needed
+    if (!$grade_item) {
+        $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');
+        if ($itemdetails) {
+            $itemdetails = (array)$itemdetails;
+            foreach ($itemdetails as $k=>$v) {
+                if (!in_array($k, $allowed)) {
+                    // ignore it
+                    continue;
+                }
+                if ($k == 'gradetype' and $v == GRADE_TYPE_NONE) {
+                    // no grade item needed!
+                    return GRADE_UPDATE_OK;
+                }
+                $params[$k] = $v;
+            }
+        }
+        $itemid = grade_create_item($params);
+        $grade_item = grade_item::fetch('id', $itemid);
+
+    } else {
+        if ($grade_item->locked) {
+            debugging('Grading item is locked!');
+            return GRADE_UPDATE_LOCKED;
+        }
+
+        if ($itemdetails) {
+            $itemdetails = (array)$itemdetails;
+            $update = false;
+            foreach ($itemdetails as $k=>$v) {
+                if (!in_array($k, $allowed)) {
+                    // ignore it
+                    continue;
+                }
+                if ($grade_item->{$k} != $v) {
+                    $grade_item->{$k} = $v;
+                    $update = true;
+                }
+            }
+            if ($update) {
+                $grade_item->update();
+            }
+        }
+    }
+
+/// Some extra checks
+    // do we use grading?
+    if ($grade_item->gradetype == GRADE_TYPE_NONE) {
+        return GRADE_UPDATE_OK;
+    }
+
+    // no grade submitted
+    if (empty($grade)) {
+        return GRADE_UPDATE_OK;
+    }
+
+    // no grading in deleted items
+    if ($grade_item->deleted) {
+        debugging('Grade item was already deleted!');
+        return GRADE_UPDATE_ITEM_DELETED;
+    }
+
+/// Finally start processing of grades
+    if (is_object($grade)) {
+        $grades = array($grade);
+    } else {
+        if (array_key_exists('userid', $grade)) {
+            $grades = array($grade);
+        } else {
+            $grades = $grade;
+        }
+    }
+
+    unset($grade);
+
+    foreach ($grades as $grade) {
+        $grade = (array)$grade;
+        if (empty($grade['userid'])) {
+            debugging('Invalid grade submitted');
+            return GRADE_UPDATE_INVALID_GRADE;
+        }
+
+        // get the raw grade if it exist
+        $rawgrade = new grade_grades_raw(array('itemid'=>$grade_item->id, 'userid'=>$grade['userid']));
+        $rawgrade->grade_item = &$grade_item; // we already have it, so let's use it
+
+        // store these to keep track of original grade item settings
+        $rawgrade->grademax = $grade_item->grademax;
+        $rawgrade->grademin = $grade_item->grademin;
+        $rawgrade->scaleid  = $grade_item->scaleid;
+
+        if (isset($grade['feedback'])) {
+            $rawgrade->feedback = $grade['feedback'];
+            if (isset($grade['feedbackformat'])) {
+                $rawgrade->feedbackformat = $grade['feedbackformat'];
+            } else {
+                $rawgrade->feedbackformat = FORMAT_PLAIN;
+            }
+        }
+
+        if (!isset($grade['gradevalue'])) {
+            $grade['gradevalue'] = null; // means no grade yet
+        }
+
+        if ($rawgrade->id) {
+            $rawgrade->update($grade['gradevalue'], 'event');
+        } else {
+            $rawgrade->gradevalue = $grade['gradevalue'];
+            $rawgrade->insert();
+        }
+
+        //trigger grade_updated event notification
+        $eventdata = new object();
+        $eventdata->itemid = $grade_item->id;
+        $eventdata->grade  = $grade;
+        events_trigger('grade_updated', $eventdata);
+    }
+
+    return GRADE_UPDATE_OK;
+}
+
+/***** END OF PUBLIC API *****/
+
 /**
-* Extracts from the gradebook all the grade items attached to the calling object. 
-* For example, an assignment may want to retrieve all the grade_items for itself, 
+* Extracts from the gradebook all the grade items attached to the calling object.
+* For example, an assignment may want to retrieve all the grade_items for itself,
 * and get three outcome scales in return. This will affect the grading interface.
 *
 * Note: Each parameter refines the search. So if you only give the courseid,
 *       all the grade_items for this course will be returned. If you add the
 *       itemtype 'mod', all grade_items for this courseif AND for the 'mod'
 *       type will be returned, etc...
-* 
+*
 * @param int $courseid The id of the course to which the grade items belong
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
@@ -91,7 +252,7 @@ function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminsta
 */
 function grade_create_item($params) {
     $grade_item = new grade_item($params);
-    
+
     if (empty($grade_item->id)) {
         return $grade_item->insert();
     } else {
@@ -112,7 +273,7 @@ function grade_create_item($params) {
 */
 function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN) {
     $grade_category = new grade_category(compact('courseid', 'fullname', 'items', 'aggregation'));
-    
+
     if (empty($grade_category->id)) {
         return $grade_category->insert();
     } else {
@@ -127,7 +288,7 @@ function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_
 * If it's locked to the current use then the module can print a nice message or prevent editing in the module.
 * If no $userid is given, the method will always return the grade_item's locked state.
 * If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
-* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will 
+* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
 * return the locked state of the specific grade.
 *
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
@@ -140,7 +301,7 @@ function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_
 function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL, $userid=NULL) {
     $grade_item = new grade_item(compact('itemtype', 'itemmodule', 'iteminstance', 'itemnumber'));
     return $grade_item->is_locked($userid);
-} 
+}
 
 /**
  * Updates all grade_grades_final for each grade_item matching the given attributes.
@@ -156,7 +317,7 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
     $grade_item->courseid = $courseid;
     $grade_item->id = $gradeitemid;
     $grade_items = $grade_item->fetch_all_using_this();
-    
+
     $count = 0;
 
     foreach ($grade_items as $gi) {
@@ -175,11 +336,11 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
  * For backward compatibility with old third-party modules, this function is called
  * via to admin/cron.php to search all mod/xxx/lib.php files for functions named xxx_grades(),
  * if the current modules does not have grade events registered with the grade book.
- * Once the data is extracted, the events_trigger() function can be called to initiate 
- * an event as usual and copy/ *upgrade the data in the gradebook tables. 
+ * Once the data is extracted, the events_trigger() function can be called to initiate
+ * an event as usual and copy/ *upgrade the data in the gradebook tables.
  */
 function grade_grab_legacy_grades() {
-    
+
     global $CFG, $db;
 
     if (!$mods = get_list_of_plugins('mod') ) {
@@ -213,7 +374,7 @@ function grade_grab_legacy_grades() {
 
                             $grademax = $grades->maxgrade;
                             $scaleid = 0;
-                            if (!is_numeric($grademax)) { 
+                            if (!is_numeric($grademax)) {
                                 // scale name is provided as a string, try to find it
                                 if (!$scale = get_record('scale', 'name', $grademax)) {
                                     debugging('Incorrect scale name! name:'.$grademax);
@@ -227,7 +388,7 @@ function grade_grab_legacy_grades() {
                                 continue;
                             }
 
-                            foreach ($grades->grades as $userid=>$usergrade) {                              
+                            foreach ($grades->grades as $userid=>$usergrade) {
                                 // make the grade_added eventdata
                                 $eventdata = new object();
                                 $eventdata->itemid = $grade_item->id;
@@ -303,7 +464,7 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
         return $grade_item;
     }
-    
+
     // create new one
     $params = array('courseid'    =>$modinstance->courseid,
                     'itemtype'    =>'mod',
@@ -313,11 +474,11 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
                     'idnumber'    =>$modinstance->cmidnumber);
 
     if ($scaleid) {
-        $params['gradetype'] = GRADE_TYPE_SCALE; 
+        $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = $scaleid;
 
     } else {
-        $params['gradetype'] = GRADE_TYPE_VALUE; 
+        $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $grademax;
         $params['grademin']  = 0;
     }
@@ -353,12 +514,12 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
                            'target_max' => $target_max,
                            'result'     => $standardised_value));
     }
-    return $standardised_value; 
+    return $standardised_value;
 }
 
 
 /**
- * Handles all grade_updated and grade_updated_external events,
+ * Handles some specific grade_update_request events,
  * see lib/db/events.php for description of $eventdata format.
  *
  * @param object $eventdata contains all the data for the event
@@ -374,45 +535,49 @@ function grade_handler($eventdata) {
         return true;
     }
 
-    // grade item must be specified or else it could be accidentally duplicated,
-    if (empty($eventdata['itemid'])) {
-        debugging('Missing grade item id in event!');
+    // grade item idnumber must be specified or else it could be accidentally duplicated,
+    if (empty($eventdata['idnumber'])) {
+        debugging('Missing grade item idnumber in event!');
         return true;
     }
 
     // get the grade item from db
-    if (!$gradeitem = grade_item::fetch('id', $eventdata['itemid'])) {
-        debugging('Incorrect grade item id in event! id:'.$eventdata['itemid']);
+    $grade_item = new grade_item(array('idnumber'=>$eventdata['idnumber']), false);
+    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+        // TODO: create a new one - tricky, watch out for duplicates !!
+        //       use only special type 'import'(y) or 'manual'(?)
+        debugging('Can not create new grade items yet :-(');
         return true;
-    } 
 
-    // get the raw grade if it exist
-    $rawgrade = new grade_grades_raw(array('itemid'=>$gradeitem->id, 'userid'=>$eventdata['userid'])); 
-    $rawgrade->grade_item = &$gradeitem; // we already have it, so let's use it
+    } else if (count($grade_items) == 1) {
+        $grade_item = reset($grade_items);
+        unset($grade_items); //release memory
 
-    // store these to keep track of original grade item settings
-    $rawgrade->grademax = $gradeitem->grademax;
-    $rawgrade->grademin = $gradeitem->grademin;
-    $rawgrade->scaleid  = $gradeitem->scaleid;
-
-    if (isset($eventdata['feedback'])) {
-        $rawgrade->feedback = $eventdata['feedback'];
-        if (isset($eventdata['feedbackformat'])) {
-            $rawgrade->feedbackformat = $eventdata['feedbackformat'];
-        } else {
-            $rawgrade->feedbackformat = FORMAT_PLAIN;
-        }
-
-    }
-    if (!isset($eventdata['gradevalue'])) {
-        $eventdata['gradevalue'] = null; // means no grade yet
-    }
-    if ($rawgrade->id) {
-        $rawgrade->update($eventdata['gradevalue'], 'event');
     } else {
-        $rawgrade->gradevalue = $eventdata['gradevalue'];
-        $rawgrade->insert();
+        debugging('More than one grade item matched, grade update request failed');
+        return true;
     }
+
+    // !! TODO: whitelist only some types such as 'import'(?) 'manual'(?) and ignore the rest!!
+    if ($grade_item->itemtype == 'mnod') {
+        // modules must have own handlers for grade update requests
+        return true;
+    }
+
+    $grade = new object();
+    $grade->userid = $eventdata['userid'];
+    if (isset($eventdata['gradevalue'])) {
+        $grade->feedback = $eventdata['gradevalue'];
+    }
+    if (isset($eventdata['feedback'])) {
+        $grade->feedback = $eventdata['feedback'];
+    }
+    if (isset($eventdata['feedbackformat'])) {
+        $grade->feedbackformat = $eventdata['feedbackformat'];
+    }
+
+    grade_update($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
+                 $grade_item->iteminstance, $grade_item->itemnumber, $grade, $eventdata);
 
     // everything ok :-)
     return true;

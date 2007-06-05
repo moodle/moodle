@@ -33,8 +33,6 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/forum:rate', $context);
 
-    $grade_item = forum_grade_item_get($forum);
-
     if ($data = data_submitted()) {
 
         $discussionid = false;
@@ -64,7 +62,7 @@
 
             if ($rating == FORUM_UNSET_POST_RATING) {
                 delete_records('forum_ratings', 'post', $postid, 'userid', $USER->id);
-                forum_update_grades($grade_item, $post->userid);
+                forum_update_grades($forum, $post->userid);
 
             } else if ($oldrating = get_record('forum_ratings', 'userid', $USER->id, 'post', $post->id)) {
                 if ($rating != $oldrating->rating) {
@@ -73,7 +71,7 @@
                     if (! update_record('forum_ratings', $oldrating)) {
                         error("Could not update an old rating ($post->id = $rating)");
                     }
-                    forum_update_grades($grade_item, $post->userid);
+                    forum_update_grades($forum, $post->userid);
                 }
 
             } else {
@@ -86,7 +84,7 @@
                 if (! insert_record('forum_ratings', $newrating)) {
                     error("Could not insert a new rating ($postid = $rating)");
                 }
-                forum_update_grades($grade_item, $post->userid);
+                forum_update_grades($forum, $post->userid);
             }
         }
 

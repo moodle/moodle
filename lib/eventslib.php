@@ -448,7 +448,7 @@ function events_trigger($eventname, $eventdata) {
             events_queue_handler($handler, $event, $errormessage);
         }
     } else {
-        debugging("No handler found for event: $eventname");
+        //debugging("No handler found for event: $eventname");
     }
 
     return $failedcount;

@@ -82,7 +82,7 @@ function glossary_add_instance($glossary) {
     if ($returnid = insert_record("glossary", $glossary)) {
         $glossary->id = $returnid;
         $glossary = stripslashes_recursive($glossary);
-        glossary_grade_item_create($glossary);
+        glossary_grade_item_update($glossary);
     }
 
     return $returnid;
@@ -317,16 +317,16 @@ function glossary_cron () {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function glossary_get_user_grades($glossaryid, $userid=0) {
+function glossary_get_user_grades($glossary, $userid=0) {
     global $CFG;
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, avg(gr.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(gr.rating) AS gradevalue
               FROM {$CFG->prefix}user u, {$CFG->prefix}glossary_entries ge,
                    {$CFG->prefix}glossary_ratings gr
              WHERE u.id = ge.userid AND ge.id = gr.entryid
-                   AND gr.userid != u.id AND ge.glossaryid = $glossaryid
+                   AND gr.userid != u.id AND ge.glossaryid = $glossary->id
                    $user
           GROUP BY u.id";
 
@@ -336,28 +336,22 @@ function glossary_get_user_grades($glossaryid, $userid=0) {
 /**
  * Update grades by firing grade_updated event
  *
- * @param object $grade_item null means all glossaries
+ * @param object $glossary null means all glossaries
  * @param int $userid specific user only, 0 mean all
  */
-function glossary_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
     global $CFG;
 
-    if ($grade_item != null) {
-        if ($grades = glossary_get_user_grades($grade_item->iteminstance, $userid)) {
-            foreach ($grades as $grade) {
-                $eventdata = new object();
-                $eventdata->itemid     = $grade_item->id;
-                $eventdata->userid     = $grade->id;
-                $eventdata->gradevalue = $grade->gradevalue;
-                events_trigger('grade_updated', $eventdata);
-            }
+    if ($glossary != null) {
+        if ($grades = glossary_get_user_grades($glossary, $userid)) {
+            grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
-            $eventdata = new object();
-            $eventdata->itemid     = $grade_item->id;
-            $eventdata->userid     = $userid;
-            $eventdata->gradevalue = NULL;
-            events_trigger('grade_updated', $eventdata);
+            $grade = new object();
+            $grade->itemid     = $glossary->id;
+            $grade->userid     = $userid;
+            $grade->gradevalue = NULL;
+            grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
         }
 
     } else {
@@ -367,11 +361,10 @@ function glossary_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($glossary = rs_fetch_next_record($rs)) {
-                    if (!$glossary->assessed) {
-                        continue; // no grading
+                    glossary_grade_item_update($glossary);
+                    if ($glossary->assessed) {
+                        glossary_update_grades($glossary, 0, false);
                     }
-                    $grade_item = glossary_grade_item_get($glossary);
-                    glossary_update_grades($grade_item, 0, false);
                 }
             }
             rs_close($rs);
@@ -380,80 +373,21 @@ function glossary_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Return (create if needed) grade item for given glossary
- *
- * @param object $glossary object with optional cmidnumber
- * @return object grade_item
- */
-function glossary_grade_item_get($glossary) {
-    if ($items = grade_get_items($glossary->course, 'mod', 'glossary', $glossary->id)) {
-        if (count($items) > 1) {
-            debugging('Multiple grade items present!');
-        }
-        $grade_item = reset($items);
-
-    } else {
-        if (!isset($glossary->cmidnumber)) {
-            if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-                error("Course Module ID was incorrect");
-            }
-            $glossary->cmidnumber = $cm->idnumber;
-        }
-        if (!$itemid = glossary_grade_item_create($glossary)) {
-            error('Can not create grade item!');
-        }
-        $grade_item = grade_item::fetch('id', $itemid);
-    }
-
-    return $grade_item;
-}
-
-/**
- * Update grade item for given glossary
+ * Create/update grade item for given glossary
  *
  * @param object $glossary object with extra cmidnumber
- * @return object grade_item
+ * @return int, 0 if ok, error code otherwise
  */
 function glossary_grade_item_update($glossary) {
-    $grade_item = glossary_grade_item_get($glossary);
-
-    $grade_item->name     = $glossary->name;
-    $grade_item->idnumber = $glossary->cmidnumber;
-
-    if (!$glossary->assessed or $glossary->scale == 0) {
-        //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT;
-
-    } else if ($glossary->scale > 0) {
-        $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->grademax  = $glossary->scale;
-        $grade_item->grademin  = 0;
-
-    } else if ($glossary->scale < 0) {
-        $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid   = -$glossary->scale;
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $grade_item->update();
-}
-
-/**
- * Create grade item for given glossary
- *
- * @param object $glossary object with extra cmidnumber
- * @return object grade_item
- */
-function glossary_grade_item_create($glossary) {
-    $params = array('courseid'    =>$glossary->course,
-                    'itemtype'    =>'mod',
-                    'itemmodule'  =>'glossary',
-                    'iteminstance'=>$glossary->id,
-                    'itemname'    =>$glossary->name,
-                    'idnumber'    =>$glossary->cmidnumber);
+    $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
 
     if (!$glossary->assessed or $glossary->scale == 0) {
-        //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT;
+        $params['gradetype'] = GRADE_TYPE_NONE;
 
     } else if ($glossary->scale > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -465,22 +399,19 @@ function glossary_grade_item_create($glossary) {
         $params['scaleid']   = -$glossary->scale;
     }
 
-    $itemid = grade_create_item($params);
-    return $itemid;
+    return grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, $params);
 }
 
 /**
  * Delete grade item for given glossary
  *
  * @param object $glossary object
- * @return object grade_item
  */
 function glossary_grade_item_delete($glossary) {
-    if ($grade_items = grade_get_items($glossary->course, 'mod', 'glossary', $glossary->id)) {
-        foreach($grade_items as $grade_item) {
-            $grade_item->delete();
-        }
-    }
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, array('deleted'=>1));
 }
 
 function glossary_get_participants($glossaryid) {

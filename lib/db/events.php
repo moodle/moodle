@@ -27,47 +27,23 @@
 
 
 $handlers = array (
-
-/*
- * Grades added by activities
- * 
- * required parameters (object or array):
- *  itemid         - if from grade_items table, grade item must already exist
- *  userid         - each grade must be associated to existing user
- *
- * optional params:
- *  gradevalue     - raw grade value
- *  feedback       - graders feedback
- *  feedbackformat - text format of the feedback
- */
-   'grade_updated' => array (
-        'handlerfile'      => '/lib/gradelib.php',
-        'handlerfunction'  => 'grade_handler', 
-        'schedule'         => 'instant'
-    ),
-
 /*
  * Grades created/modified outside of activities (import, gradebook overrides, etc.)
  * 
  * required parameters (object or array):
- *  itemid         - id from grade_items table, grade item must already exist
+ *  idnumber       - idnumber from grade_items table
  *  userid         - each grade must be associated with existing user
  *
  * optional params:
  *  gradevalue     - raw grade value
  *  feedback       - graders feedback
  *  feedbackformat - text format of the feedback
- *
- * optional params (improves performance):
- *  itemtype       - mod, block
- *  itemmodule     - assignment, etc.
  */
-   'grade_updated_external' => array (
+   'grade_update_request' => array (
         'handlerfile'      => '/lib/gradelib.php',
         'handlerfunction'  => 'grade_handler', 
         'schedule'         => 'instant'
     )
 );
-
 
 ?>

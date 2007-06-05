@@ -627,7 +627,7 @@ function data_add_instance($data) {
     }
 
     $data = stripslashes_recursive($data);
-    data_grade_item_create($data);
+    data_grade_item_update($data);
 
     return $data->id;
 }
@@ -732,7 +732,6 @@ function data_user_complete($course, $user, $mod, $data) {
     }
 }
 
-
 /**
  * Return grade for given user or all users.
  *
@@ -740,16 +739,16 @@ function data_user_complete($course, $user, $mod, $data) {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function data_get_user_grades($dataid, $userid=0) {
+function data_get_user_grades($data, $userid=0) {
     global $CFG;
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, avg(drt.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(drt.rating) AS gradevalue
               FROM {$CFG->prefix}user u, {$CFG->prefix}data_records dr,
                    {$CFG->prefix}data_ratings drt
              WHERE u.id = dr.userid AND dr.id = drt.recordid
-                   AND drt.userid != u.id AND dr.dataid = $dataid
+                   AND drt.userid != u.id AND dr.dataid = $data->id
                    $user
           GROUP BY u.id";
 
@@ -759,28 +758,25 @@ function data_get_user_grades($dataid, $userid=0) {
 /**
  * Update grades by firing grade_updated event
  *
- * @param object $grade_item null means all databases
+ * @param object $data null means all databases
  * @param int $userid specific user only, 0 mean all
  */
-function data_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+function data_update_grades($data=null, $userid=0, $nullifnone=true) {
     global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
 
-    if ($grade_item != null) {
-        if ($grades = data_get_user_grades($grade_item->iteminstance, $userid)) {
-            foreach ($grades as $grade) {
-                $eventdata = new object();
-                $eventdata->itemid     = $grade_item->id;
-                $eventdata->userid     = $grade->id;
-                $eventdata->gradevalue = $grade->gradevalue;
-                events_trigger('grade_updated', $eventdata);
-            }
+    if ($data != null) {
+        if ($grades = data_get_user_grades($data, $userid)) {
+            grade_update($data->course, 'mod', 'data', $data->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
-            $eventdata = new object();
-            $eventdata->itemid     = $grade_item->id;
-            $eventdata->userid     = $userid;
-            $eventdata->gradevalue = NULL;
-            events_trigger('grade_updated', $eventdata);
+            $grade = new object();
+            $grade->itemid     = $data->id;
+            $grade->userid     = $userid;
+            $grade->gradevalue = NULL;
+            grade_update($data->course, 'mod', 'data', $data->id, 0, $grade);
         }
 
     } else {
@@ -790,11 +786,10 @@ function data_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($data = rs_fetch_next_record($rs)) {
-                    if (!$data->assessed) {
-                        continue; // no grading
+                    data_grade_item_update($data);
+                    if ($data->assessed) {
+                        data_update_grades($data, 0, false);
                     }
-                    $grade_item = data_grade_item_get($data);
-                    data_update_grades($grade_item, 0, false);
                 }
             }
             rs_close($rs);
@@ -803,80 +798,21 @@ function data_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Return (create if needed) grade item for given data
- *
- * @param object $data object with optional cmidnumber
- * @return object grade_item
- */
-function data_grade_item_get($data) {
-    if ($items = grade_get_items($data->course, 'mod', 'data', $data->id)) {
-        if (count($items) > 1) {
-            debugging('Multiple grade items present!');
-        }
-        $grade_item = reset($items);
-
-    } else {
-        if (!isset($data->cmidnumber)) {
-            if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-                error("Course Module ID was incorrect");
-            }
-            $data->cmidnumber = $cm->idnumber;
-        }
-        if (!$itemid = data_grade_item_create($data)) {
-            error('Can not create grade item!');
-        }
-        $grade_item = grade_item::fetch('id', $itemid);
-    }
-
-    return $grade_item;
-}
-
-/**
- * Update grade item for given data
+ * Update/create grade item for given data
  *
  * @param object $data object with extra cmidnumber
  * @return object grade_item
  */
 function data_grade_item_update($data) {
-    $grade_item = data_grade_item_get($data);
-
-    $grade_item->name     = $data->name;
-    $grade_item->idnumber = $data->cmidnumber;
-
-    if (!$data->assessed or $data->scale == 0) {
-        //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT;
-
-    } else if ($data->scale > 0) {
-        $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->grademax  = $data->scale;
-        $grade_item->grademin  = 0;
-
-    } else if ($data->scale < 0) {
-        $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid   = -$data->scale;
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $grade_item->update();
-}
-
-/**
- * Create grade item for given data
- *
- * @param object $data object with extra cmidnumber
- * @return object grade_item
- */
-function data_grade_item_create($data) {
-    $params = array('courseid'    =>$data->course,
-                    'itemtype'    =>'mod',
-                    'itemmodule'  =>'data',
-                    'iteminstance'=>$data->id,
-                    'itemname'    =>$data->name,
-                    'idnumber'    =>$data->cmidnumber);
+    $params = array('itemname'    =>$data->name, 'idnumber'    =>$data->cmidnumber);
 
     if (!$data->assessed or $data->scale == 0) {
-        //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT;
+        $params['gradetype'] = GRADE_TYPE_NONE;
 
     } else if ($data->scale > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -888,8 +824,7 @@ function data_grade_item_create($data) {
         $params['scaleid']   = -$data->scale;
     }
 
-    $itemid = grade_create_item($params);
-    return $itemid;
+    return grade_update($data->course, 'mod', 'data', $data->id, 0, NULL, $params);
 }
 
 /**
@@ -899,11 +834,10 @@ function data_grade_item_create($data) {
  * @return object grade_item
  */
 function data_grade_item_delete($data) {
-    if ($grade_items = grade_get_items($data->course, 'mod', 'data', $data->id)) {
-        foreach($grade_items as $grade_item) {
-            $grade_item->delete();
-        }
-    }
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update($data->course, 'mod', 'data', $data->id, 0, NULL, array('deleted'=>1));
 }
 
 /************************************************************************

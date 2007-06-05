@@ -134,7 +134,7 @@ function forum_add_instance($forum) {
     }
 
     $forum = stripslashes_recursive($forum);
-    forum_grade_item_create($forum);
+    forum_grade_item_update($forum);
 
     return $forum->id;
 }
@@ -1107,16 +1107,16 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function forum_get_user_grades($forumid, $userid=0) {
+function forum_get_user_grades($forum, $userid=0) {
     global $CFG;
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, avg(fr.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(fr.rating) AS gradevalue
               FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
                    {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
              WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
-                   AND fr.userid != u.id AND fd.forum = $forumid
+                   AND fr.userid != u.id AND fd.forum = $forum->id
                    $user
           GROUP BY u.id";
 
@@ -1126,28 +1126,22 @@ function forum_get_user_grades($forumid, $userid=0) {
 /**
  * Update grades by firing grade_updated event
  *
- * @param object $grade_item null means all forums
+ * @param object $forum null means all forums
  * @param int $userid specific user only, 0 mean all
  */
-function forum_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
+function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
     global $CFG;
 
-    if ($grade_item != null) {
-        if ($grades = forum_get_user_grades($grade_item->iteminstance, $userid)) {
-            foreach ($grades as $grade) {
-                $eventdata = new object();
-                $eventdata->itemid     = $grade_item->id;
-                $eventdata->userid     = $grade->id;
-                $eventdata->gradevalue = $grade->gradevalue;
-                events_trigger('grade_updated', $eventdata);
-            }
+    if ($forum != null) {
+        if ($grades = forum_get_user_grades($forum, $userid)) {
+            grade_update($forum->course, 'mod', 'forum', $forum->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
-            $eventdata = new object();
-            $eventdata->itemid     = $grade_item->id;
-            $eventdata->userid     = $userid;
-            $eventdata->gradevalue = NULL;
-            events_trigger('grade_updated', $eventdata);
+            $grade = new object();
+            $grade->itemid     = $forum->id;
+            $grade->userid     = $userid;
+            $grade->gradevalue = NULL;
+            grade_update($data->course, 'mod', 'forum', $forum->id, 0, $grade);
         }
 
     } else {
@@ -1157,11 +1151,10 @@ function forum_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 while ($forum = rs_fetch_next_record($rs)) {
-                    if (!$forum->assessed) {
-                        continue; // no grading
+                    forum_grade_item_update($forum);
+                    if ($forum->assessed) {
+                        forum_update_grades($forum, 0, false);
                     }
-                    $grade_item = forum_grade_item_get($forum);
-                    forum_update_grades($grade_item, 0, false);
                 }
             }
             rs_close($rs);
@@ -1170,80 +1163,21 @@ function forum_update_grades($grade_item=null, $userid=0, $nullifnone=true) {
 }
 
 /**
- * Return (create if needed) grade item for given forum
- *
- * @param object $forum object with optional cmidnumber
- * @return object grade_item
- */
-function forum_grade_item_get($forum) {
-    if ($items = grade_get_items($forum->course, 'mod', 'forum', $forum->id)) {
-        if (count($items) > 1) {
-            debugging('Multiple grade items present!');
-        }
-        $grade_item = reset($items);
-
-    } else {
-        if (!isset($forum->cmidnumber)) {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                error("Course Module ID was incorrect");
-            }
-            $forum->cmidnumber = $cm->idnumber;
-        }
-        if (!$itemid = forum_grade_item_create($forum)) {
-            error('Can not create grade item!');
-        }
-        $grade_item = grade_item::fetch('id', $itemid);
-    }
-
-    return $grade_item;
-}
-
-/**
- * Update grade item for given forum
+ * Create/update grade item for given forum
  *
  * @param object $forum object with extra cmidnumber
- * @return object grade_item
+ * @return int 0 if ok
  */
 function forum_grade_item_update($forum) {
-    $grade_item = forum_grade_item_get($forum);
-
-    $grade_item->name       = $forum->name;
-    $grade_item->idnumber = $forum->cmidnumber;
-
-    if (!$forum->assessed or $forum->scale == 0) {
-        //how to indicate no grading?
-        $grade_item->gradetype = GRADE_TYPE_TEXT;
-
-    } else if ($forum->scale > 0) {
-        $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->grademax  = $forum->scale;
-        $grade_item->grademin  = 0;
-
-    } else if ($forum->scale < 0) {
-        $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->scaleid   = -$forum->scale;
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $grade_item->update();
-}
-
-/**
- * Create grade item for given forum
- *
- * @param object $forum object with extra cmidnumber
- * @return object grade_item
- */
-function forum_grade_item_create($forum) {
-    $params = array('courseid'    =>$forum->course,
-                    'itemtype'    =>'mod',
-                    'itemmodule'  =>'forum',
-                    'iteminstance'=>$forum->id,
-                    'itemname'    =>$forum->name,
-                    'idnumber'    =>$forum->cmidnumber);
+    $params = array('itemname'=>$forum->name, 'idnumber'=>$forum->cmidnumber);
 
     if (!$forum->assessed or $forum->scale == 0) {
-        //how to indicate no grading?
-        $params['gradetype'] = GRADE_TYPE_TEXT;
+        $params['gradetype'] = GRADE_TYPE_NONE;
 
     } else if ($forum->scale > 0) {
         $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -1255,8 +1189,7 @@ function forum_grade_item_create($forum) {
         $params['scaleid']   = -$forum->scale;
     }
 
-    $itemid = grade_create_item($params);
-    return $itemid;
+    return grade_update($forum->course, 'mod', 'forum', $forum->id, 0, NULL, $params);
 }
 
 /**
@@ -1266,11 +1199,10 @@ function forum_grade_item_create($forum) {
  * @return object grade_item
  */
 function forum_grade_item_delete($forum) {
-    if ($grade_items = grade_get_items($forum->course, 'mod', 'forum', $forum->id)) {
-        foreach($grade_items as $grade_item) {
-            $grade_item->delete();
-        }
-    }
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update($forum->course, 'mod', 'forum', $forum->id, 0, NULL, array('deleted'=>1));
 }
 
 

@@ -36,8 +36,6 @@
         require_capability('mod/glossary:rate', $context);
     }
 
-    $grade_item = glossary_grade_item_get($glossary);
-
     if (!empty($_SERVER['HTTP_REFERER'])) {
         $returnurl = $_SERVER['HTTP_REFERER'];
     } else {
@@ -73,7 +71,7 @@
                 //Check if we must delete the rate
                 if ($rating == -999) {
                     delete_records('glossary_ratings','userid',$oldrating->userid, 'entryid',$oldrating->entryid);
-                    glossary_update_grades($grade_item, $entry->userid);
+                    glossary_update_grades($glossary, $entry->userid);
 
                 } else if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
@@ -81,7 +79,7 @@
                     if (! update_record("glossary_ratings", $oldrating)) {
                         error("Could not update an old rating ($entry = $rating)");
                     }
-                    glossary_update_grades($grade_item, $entry->userid);
+                    glossary_update_grades($glossary, $entry->userid);
                 }
 
             } else if ($rating >= 0) {
@@ -94,7 +92,7 @@
                 if (! insert_record("glossary_ratings", $newrating)) {
                     error("Could not insert a new rating ($entry->id = $rating)");
                 }
-                glossary_update_grades($grade_item, $entry->userid);
+                glossary_update_grades($glossary, $entry->userid);
             }
         }
 

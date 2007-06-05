@@ -232,9 +232,17 @@ class grade_item extends grade_object {
         if (!empty($this->outcome->id)) {
             $this->outcomeid = $this->outcome->id;
         }
-        
+
+        if (!isset($this->gradetype)) {
+            $this->gradetype = GRADE_TYPE_VALUE;
+        }
+
+        if (empty($this->scaleid) and !empty($this->scale->id)) {
+            $this->scaleid = $this->scale->id;
+        }
+
         // Retrieve scale and infer grademax from it
-        if (!empty($this->scaleid)) {
+        if ($this->gradetype == GRADE_TYPE_SCALE and !empty($this->scaleid)) {
             $this->load_scale();
 
             if (!method_exists($this->scale, 'load_items')) {
@@ -245,11 +253,9 @@ class grade_item extends grade_object {
             $this->scale->load_items();
             $this->grademax = count ($this->scale->scale_items);
             $this->grademin = 0;
-            $this->gradetype = GRADE_TYPE_SCALE;
-        }
-        
-        if (!empty($this->scale->id)) {
-            $this->scaleid = $this->scale->id;
+        } else {
+            $this->scaleid = NULL;
+            unset($this->scale);
         }
         
         $qualifies = $this->qualifies_for_update();
@@ -348,13 +354,23 @@ class grade_item extends grade_object {
     function insert() {
         global $CFG;
 
+        if (!isset($this->gradetype)) {
+            $this->gradetype = GRADE_TYPE_VALUE;
+        }
+
+        if (empty($this->scaleid) and !empty($this->scale->id)) {
+            $this->scaleid = $this->scale->id;
+        }
+
         // Retrieve scale and infer grademax from it
-        if (!empty($this->scaleid)) {
+        if ($this->gradetype == GRADE_TYPE_SCALE and !empty($this->scaleid)) {
             $this->load_scale();
             $this->scale->load_items();
             $this->grademax = count ($this->scale->scale_items);
             $this->grademin = 0;
-            $this->gradetype = GRADE_TYPE_SCALE;
+        } else {
+            $this->scaleid = NULL;
+            unset($this->scale);
         }
 
         // If not set, infer courseid from referenced category

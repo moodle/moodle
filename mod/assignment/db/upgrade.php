@@ -23,7 +23,7 @@ function xmldb_assignment_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($result && $oldversion < 2007052700) {
+    if ($result && $oldversion < 2007060600) {
         require_once $CFG->dirroot.'/mod/assignment/lib.php';
         // too much debug output
         $db->debug = false;
