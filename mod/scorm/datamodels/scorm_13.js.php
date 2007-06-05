@@ -36,7 +36,7 @@ function SCORMapi1_3() {
     var CMISInteger = '^-?([0-9]+)$';
     var CMIDecimal = '^-?([0-9]{1,4})(\\.[0-9]{1,18})?$';
     var CMIIdentifier = '^\\S{0,250}[a-zA-Z0-9]$';
-    var CMIShortIdentifier = '^[\\w\.]{0,250}$';
+    var CMIShortIdentifier = '^[\\w\.]{1,250}$';
     var CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
     var CMIFeedback = '^.*$'; // This must be redefined
     var CMIIndex = '[._](\\d+).';
@@ -65,20 +65,17 @@ function SCORMapi1_3() {
     var text_range = '-1#1';
     var progress_range = '0#1';
     var learner_response = {
-        'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':''},
-        'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]'},
-        'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]'},
-        'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':''},
-        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})$', 'max':36, 'delimiter':'[,]'},
-        'performance':{'format':'^.*$', 'max':1, 'delimiter':''},
-        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]'},
-        'likert':{'format':CMIIdentifier, 'max':1, 'delimiter':''},
-        'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':''},
-        'other':{'format':CMIString4000, 'max':1, 'delimiter':''}
+        'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':'', 'unique':false},
+        'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
+        'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]', 'unique':false},
+        'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false},
+        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})$', 'max':36, 'delimiter':'[,]', 'unique':false},
+        'performance':{'format':'^.*$', 'max':1, 'delimiter':'', 'unique':false},
+        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
+        'likert':{'format':CMIShortIdentifier, 'max':1, 'delimiter':'', 'unique':false},
+        'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
+        'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
     }
-        //'choice':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])(\\S{0,250}[a-zA-Z0-9])){0,35}$', 'unique':true},
-        //'matching':{'format':'^(\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9](\[\\.\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':false},
-        //'sequencing':{'format':'^(\\S{0,250}[a-zA-Z0-9])((\[\,\])\\S{0,250}[a-zA-Z0-9]){0,35}$', 'unique':true},
     var correct_responses = {
         'true-false':{'format':'^true$|^false$', 'unique':false, 'limit':1},
         'choice':{'format':'^([\\w\.]{0,250})((\\[\\,\\])[\\w\.]{1,250}){0,35}$', 'unique':true},
@@ -602,13 +599,16 @@ function SCORMapi1_3() {
                                                         expression = new RegExp(learner_response[interactiontype].format);
                                                         for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
                                                             matches = nodes[i].match(expression);
-                                                            if ((matches == null) || (matches.join('').length == 0)) {
+                                                            //if ((matches == null) || (matches.join('').length == 0)) {
+                                                            if (matches == null) {
                                                                 errorCode = "406";
                                                             } else {
-                                                                for (var j=0; (j<i) && (errorCode=="0"); j++) {
+                                                                if ((nodes[i] != '') && (learner_response[interactiontype].unique)) {
+                                                                    for (var j=0; (j<i) && (errorCode=="0"); j++) {
 //alert(node[i]+"\n"+node[j]);
-                                                                    if (nodes[i] == nodes[j]) {
-                                                                        errorCode = "406";
+                                                                        if (nodes[i] == nodes[j]) {
+                                                                            errorCode = "406";
+                                                                        }
                                                                     }
                                                                 }
                                                             }
