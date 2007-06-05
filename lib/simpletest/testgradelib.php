@@ -363,17 +363,6 @@ class gradelib_test extends UnitTestCase {
         } 
         $CFG->prefix = $CFG->old_prefix;
     }
-
-    /**
-     * In PHP5, this is called to drop the test tables after all the tests have been performed. 
-     * Until we move to PHP5, I know no easy way to accomplish this.
-     */
-    function __destruct() {
-        foreach ($this->tables as $table) {
-            $xmldbtable = new XMLDBTable($table);
-            drop_table($xmldbtable, true, false);
-        }
-    }
    
     /**
      * Load scale data into the database, and adds the corresponding objects to this class' variable.

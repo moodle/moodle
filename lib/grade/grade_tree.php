@@ -416,7 +416,7 @@ class grade_tree {
         foreach ($elements as $key => $element) {
             $this->first_sortorder++; 
             $new_sortorder = $this->first_sortorder;
-            $old_sortorder = $element['object']->sortorder;
+            $old_sortorder = $element['object']->get_sortorder();
 
             // Assign new sortorder
             $element['object']->sortorder = $new_sortorder;
@@ -501,7 +501,7 @@ class grade_tree {
         $count = 0;
 
         foreach ($array as $key => $child) {
-            $sortorder = $child['object']->sortorder;
+            $sortorder = $child['object']->get_sortorder();
             if ($returnnextelement) {
                 return $sortorder;
             }
@@ -547,7 +547,7 @@ class grade_tree {
         }
 
         // Look at the current key of the fillers array. It is a sortorder.
-        if (key($this->fillers) < $object->sortorder || empty($object)) {
+        if (empty($object) || key($this->fillers) < $object->sortorder) {
             $sortorder = key($this->fillers);
             $filler_object = current($this->fillers);
 
