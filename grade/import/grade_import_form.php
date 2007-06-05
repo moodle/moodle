@@ -7,11 +7,16 @@ class grade_import_form extends moodleform {
 
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
-
+        $mform->addElement('header', 'general', get_string('importfile'));
         // file upload
         $mform->addElement('file', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
+        $textlib = new textlib();
+        $encodings = $textlib->get_encodings();
+        $mform->addElement('select', 'encoding', get_string('encoding'), $encodings);
 
+        $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000); 
+        $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
         $this->add_action_buttons(false, get_string('uploadgrades'));
     }
 

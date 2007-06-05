@@ -332,5 +332,26 @@ class textlib {
         }
         return $str;
     }
+    
+    /**
+     * Returns encoding options for select boxes, utf-8 and platform encoding first
+     * @return array encodings     
+     */
+    function get_encodings() {
+        $encodings = array();
+        $encodings['UTF-8'] = 'UTF-8';
+        $winenc = strtoupper(get_string('localewincharset'));
+        if ($winenc != '') {
+            $encodings[$winenc] = $winenc;
+        }
+        $nixenc = strtoupper(get_string('oldcharset'));
+        $encodings[$nixenc] = $nixenc;
+        
+        foreach ($this->typo3cs->synonyms as $enc) {
+            $enc = strtoupper($enc);
+            $encodings[$enc] = $enc;
+        }
+        return $encodings;
+    }
 }
 ?>
