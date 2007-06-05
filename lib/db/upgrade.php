@@ -1324,6 +1324,25 @@ function xmldb_main_upgrade($oldversion=0) {
         // Launch add field deleted
         $result = $result && add_field($table, $field); 
     }
+    
+    if ($result && $oldversion < 2007060500) {
+
+    /// Define field usermodified to be added to post
+        $table = new XMLDBTable('post');
+        $field = new XMLDBField('usermodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'created');
+
+    /// Launch add field usermodified
+        $result = $result && add_field($table, $field);
+        
+    /// Define key usermodified (foreign) to be added to post
+        $table = new XMLDBTable('post');
+        $key = new XMLDBKey('usermodified');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+
+    /// Launch add key usermodified
+        $result = $result && add_key($table, $key);
+    }
 
     return $result; 
 }
