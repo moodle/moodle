@@ -534,9 +534,8 @@ class grade_category extends grade_object {
     }
 
     /**
-     * This method checks whether an existing child exists for this
-     * category. If the new child is of a different type, the method will return false (not allowed).
-     * Otherwise it will return true.
+     * Checks whether an existing child exists for this category. If the new child is of a 
+     * different type, the method will return false (not allowed). Otherwise it will return true.
      * @param object $child This must be a complete object, not a stdClass
      * @return boolean Success or failure
      */
@@ -721,7 +720,6 @@ class grade_category extends grade_object {
      * A number of constraints are necessary:
      *    - The children must all be of the same type and at the same level
      *    - The children cannot already be top categories
-     *    - The children cannot already have a top categorya
      *    - The children all belong to the same course
      * @param array $children An array of fully instantiated grade_category OR grade_item objects
      *
@@ -730,6 +728,11 @@ class grade_category extends grade_object {
      */
     function set_as_parent($children) {
         global $CFG;
+
+        if (empty($children) || !is_array($children)) {
+            debugging("Passed an empty or non-array variable to grade_category::set_as_parent()");
+            return false;
+        }
 
         // Check type and sortorder of first child
         $first_child = current($children);
@@ -748,13 +751,8 @@ class grade_category extends grade_object {
                 debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
                 return false;
             }
-            if ($first_child_type == 'grade_item') {
-                $child->load_category();
-                if (!empty($child->category->parent)) {
-                    debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
-                    return false;
-                }
-            } elseif ($first_child_type == 'grade_category') {
+            
+            if ($first_child_type == 'grade_category') {
                 if (!empty($child->parent)) {
                     debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
                     return false; 

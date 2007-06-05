@@ -191,12 +191,12 @@ class grade_category_test extends gradelib_test {
         
         // Generate 3 random data sets
         $grade_sets = array();
-        
+  
         for ($i = 0; $i < 3; $i++) {
             for ($j = 0; $j < 200; $j++) {
                 $grade_sets[$i][] = $this->generate_random_raw_grade(new grade_item($this->grade_items[$i]), $j);
             }
-        }
+        } 
         
         $aggregated_grades = $category->aggregate_grades($grade_sets);
         $this->assertEqual(200, count($aggregated_grades)); 
@@ -244,10 +244,12 @@ class grade_category_test extends gradelib_test {
         $this->assertFalse($grade_category->set_as_parent(array($child1)));
         $CFG->debug = $debuglevel;
 
-        // 3. Child already has a top category
+        // 3. Children belong to different courses
         $child1 = new grade_item($this->grade_items[0]);
+        $child2 = new grade_item($this->grade_items[1]);
+        $child2->courseid = 543;
         $CFG->debug = 2;
-        $this->assertFalse($grade_category->set_as_parent(array($child1)));
+        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
         $CFG->debug = $debuglevel;
 
         // Now test setting parent correctly

@@ -100,21 +100,29 @@ class grade_tree {
      * @param array $tree
      */
     function grade_tree($courseid=NULL, $include_grades=false, $tree=NULL) {
-        global $USER;
-
-        $this->courseid = $courseid;
-        $this->include_grades = $include_grades; 
-        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;courseid=$this->courseid";
-
-        if (!empty($tree)) {
-            $this->tree_array = $tree;
+        if (empty($courseid)) {
+            // empty object, do nothing
         } else {
-            $this->tree_array = $this->get_tree();
-        }
-        
-        if (!empty($this->tree_array)) {
-            $this->first_sortorder = key($this->tree_array);
-            $this->renumber();
+            if ($courseid == 0) {
+                $courseid = null;
+            }
+
+            global $USER;
+
+            $this->courseid = $courseid;
+            $this->include_grades = $include_grades; 
+            $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;courseid=$this->courseid";
+
+            if (!empty($tree)) {
+                $this->tree_array = $tree;
+            } else {
+                $this->tree_array = $this->get_tree();
+            }
+            
+            if (!empty($this->tree_array)) {
+                $this->first_sortorder = key($this->tree_array);
+                $this->renumber();
+            }
         }
     }
 
@@ -1001,10 +1009,6 @@ class grade_tree {
 
             foreach ($elements as $sortorder => $element) {
                 $object = $element['object'];
-
-                if (empty($element->next_sortorder)) {
-                    $element->next_sortorder = null;
-                }
 
                 $object_name = $object->get_name();
                 $object_class = get_class($object); 

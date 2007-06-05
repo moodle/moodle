@@ -373,6 +373,15 @@ class grade_item extends grade_object {
             }
         }
 
+        // If not set, generate an idnumber from itemmodule and iteminstance
+        if (empty($this->idnumber)) {
+            if (!empty($this->itemmodule) && !empty($this->iteminstance)) {
+                $this->idnumber = "$this->itemmodule.$this->iteminstance";
+            } else { // No itemmodule or iteminstance, generate a random idnumber
+                $this->idnumber = rand(0,9999999999); // TODO replace rand() with proper random generator 
+            }
+        }
+
         $result = parent::insert();
 
         // Notify parent category of need to update. Note that a grade_item may not have a categoryid.

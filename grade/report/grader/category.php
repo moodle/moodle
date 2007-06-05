@@ -44,6 +44,8 @@ $param->categories    = optional_param('categories', 0, PARAM_INT);
 $param->element_type  = optional_param('element_type', 0, PARAM_ALPHA);
 $param->category_name = optional_param('category_name', 0, PARAM_ALPHA);
 
+print_object($param);
+
 $tree = new grade_tree($param->courseid);
 $select_source = false;
 
@@ -75,14 +77,13 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
         case 'edit':
             break;
         case 'delete':
-            if ($param->confirm == 1) { 
+            if ($param->confirm == 1) { // Perform the deletion
                 $tree->remove_element($param->target);
                 $tree->renumber();
                 $tree->update_db();
                 // Print result message
                 
-            } else {
-                // Print confirmation dialog
+            } else { // Print confirmation dialog
                 $strdeletecheckfull = get_string('deletecheck', '', $element->element['object']->get_name());
                 $linkyes = "category.php?target=$param->target&amp;action=delete&amp;confirm=1$tree->commonvars";
                 $linkno = "category.php?$tree->commonvars";
@@ -124,12 +125,11 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
             break;
     }
     unset($param->target);
-} elseif (!empty($param->element_type) && 
-          !empty($param->action) && 
-          $param->action == 'create' && 
-          confirm_sesskey() && 
-          !empty($param->category_name)) {
-    if ($param->element_type == 'items') {
+} elseif (!empty($param->element_type) && !empty($param->action) && $param->action == 'create' && confirm_sesskey()) {
+    if (empty($param->category_name)) {
+        notice(get_string('createcategoryerror', 'grades') . ': ' . get_string('nocategoryname', 'grades'));
+    } elseif ($param->element_type == 'items') {
+
         if (!empty($param->items)) {
             $category = new grade_category();
             $category->fullname = $param->category_name;
@@ -150,7 +150,7 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
             } 
 
         } else { // No items selected. Can't create a category over them...
-            notice("Couldn't create a category, you did not select any grade items."); 
+            notice(get_string('createcategoryerror', 'grades') . ': ' . get_string('noselecteditems', 'grades'));
         }
     } elseif ($param->element_type == 'categories') {
         if (!empty($param->categories)) {
@@ -172,7 +172,7 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
             }
 
         } else { // No categories selected. Can't create a category over them...
-            notice("Couldn't create a category, you did not select any sub-categories.");
+            notice(get_string('createcategoryerror', 'grades') . ': ' . get_string('noselectedcategories', 'grades'));
         }
 
     } else { // The element_type wasn't set properly, throw up an error

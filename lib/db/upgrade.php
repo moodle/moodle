@@ -1324,6 +1324,7 @@ function xmldb_main_upgrade($oldversion=0) {
         // Launch add field deleted
         $result = $result && add_field($table, $field); 
     }
+
     
     if ($result && $oldversion < 2007060500) {
 
@@ -1343,7 +1344,18 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key usermodified
         $result = $result && add_key($table, $key);
     }
+    
+    if ($result && $oldversion < 2007060501) {
 
+        /// Changing the default of field gradetype on table grade_items to 1
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('gradetype');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1', 'idnumber');
+        
+        /// Launch change of default for field gradetype
+        $result = $result && change_field_default($table, $field);
+    }
+    
     return $result; 
 }
 
