@@ -54,7 +54,7 @@ class quiz_report extends quiz_default_report {
                 }
             break;
         }
-        
+
         // Print information on the number of existing attempts
         if (!$download) { //do not print notices when downloading
             if ($attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
@@ -62,7 +62,7 @@ class quiz_report extends quiz_default_report {
                 $a->attemptnum = $attemptnum;
                 $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
                 $a->studentstring = $course->students;
-    
+
                 notify(get_string('numattempts', 'quiz', $a));
             }
         }
@@ -136,7 +136,7 @@ class quiz_report extends quiz_default_report {
             $tablecolumns[] = 'feedbacktext';
             $tableheaders[] = get_string('feedback', 'quiz');
         }
-        
+
         if (!$download) {
             // Set up the table
 
@@ -290,7 +290,7 @@ class quiz_report extends quiz_default_report {
             }
             echo $headers." \n";
         }
-        
+
         $contextlists = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $course->id));
 
         // Construct the SQL
@@ -304,10 +304,10 @@ class quiz_report extends quiz_default_report {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
                     groups_members_join_sql().
                     'JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE ra.contextid ' . $contextlists . ' AND '. groups_members_where_sql($currentgroup) .' AND qa.preview = 0';            
+                $where = ' WHERE ra.contextid ' . $contextlists . ' AND '. groups_members_where_sql($currentgroup) .' AND qa.preview = 0';
             } else if (!empty($currentgroup) && !empty($noattempts)) {
                 // We want a particular group and we want to do something funky with attempts
-                // So join on groups_members and left join on attempts... 
+                // So join on groups_members and left join on attempts...
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
                     groups_members_join_sql().
                     'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
@@ -353,7 +353,7 @@ class quiz_report extends quiz_default_report {
                     $countsql .= ' AND '.$table->get_sql_where();
                 }
                 $total  = count_records_sql($countsql);
-                
+
             }
 
             // Add extra limits due to sorting by question grade
@@ -386,7 +386,7 @@ class quiz_report extends quiz_default_report {
             if (empty($sort)) {
                 $sort = ' ORDER BY uniqueid';
             }
-            
+
             $table->pagesize($pagesize, $total);
         }
 
@@ -402,7 +402,7 @@ class quiz_report extends quiz_default_report {
         if (!empty($from)) { // if we're in the site course and displaying no attempts, it makes no sense to do the query.
             if (!$download) {
                 $attempts = get_records_sql($select.$from.$where.$sort,
-                                        $table->get_page_start(), $table->get_page_size());                
+                                        $table->get_page_start(), $table->get_page_size());
             } else {
                 $attempts = get_records_sql($select.$from.$where.$sort);
             }
@@ -418,9 +418,9 @@ class quiz_report extends quiz_default_report {
         if(!empty($attempts) || !empty($noattempts)) {
             if ($attempts) {
                 foreach ($attempts as $attempt) {
-    
+
                     $picture = print_user_picture($attempt->userid, $course->id, $attempt->picture, false, true);
-    
+
                     // uncomment the commented lines below if you are choosing to show unenrolled users and
                     // have uncommented the corresponding lines earlier in this script
                     //if (in_array($attempt->userid, $unenrolledusers)) {
@@ -445,7 +445,7 @@ class quiz_report extends quiz_default_report {
                                 empty($attempt->attempt) ? '-' : (empty($attempt->timefinish) ? get_string('unfinished', 'quiz') : format_time($attempt->duration))
                         );
                     }
-    
+
                     if ($quiz->grade and $quiz->sumgrades) {
                         if (!$download) {
                             $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
@@ -523,7 +523,7 @@ class quiz_report extends quiz_default_report {
                 // Close form
                 echo '</div>';
                 echo '</form></div>';
-                
+
                 if (!empty($attempts)) {
                     echo '<table class="boxaligncenter"><tr>';
                     $options = array();
