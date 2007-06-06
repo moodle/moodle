@@ -24,10 +24,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setHelpButton('summary', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
 // Reference
-        $mform->addElement('choosecoursefile', 'reference', get_string('coursepacket','scorm'));
+        $mform->addElement('choosecoursefile', 'reference', get_string('package','scorm'));
         $mform->setType('reference', PARAM_RAW);  // We need to find a better PARAM
         $mform->addRule('reference', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('reference',array('package', get_string('coursepacket', 'scorm')), 'scorm');
+        $mform->setHelpButton('reference',array('package', get_string('package', 'scorm')), 'scorm');
 
 //-------------------------------------------------------------------------------
 // Other Settings
@@ -53,6 +53,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('static', 'attempts', get_string('attempts','scorm'));
 
 // Max Attempts
+        $attempts = array(0 => get_string('nolimit','scorm'));
         for ($i=1; $i<=$CFG->scorm_maxattempts; $i++) {
             if ($i == 1) {
                 $attempts[$i] = $i . ' ' . get_string('attempt','scorm');
@@ -72,7 +73,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setAdvanced('whatgrade');
 
 // Activation period
-        $mform->addElement('static', '', '' ,'<hr />');
+        /*$mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'activation', get_string('activation','scorm'));
         $datestartgrp = array();
         $datestartgrp[] = &$mform->createElement('date_time_selector', 'startdate');
@@ -88,7 +89,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addGroup($dateendgrp, 'dateendgrp', get_string('to'), ' ', false);
         $mform->setDefault('enddate', 0);
         $mform->setDefault('enddisabled', 1);
-        $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
+        $mform->disabledIf('dateendgrp', 'enddisabled', 'checked'); */
 
 // Stage Size
         $mform->addElement('static', '', '' ,'<hr />');
