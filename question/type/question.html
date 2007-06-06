@@ -5,7 +5,7 @@
 ?>
 <div id="q<?php echo $question->id; ?>" class="que <?php echo $question->qtype; ?> clearfix">
   <div class="info">
-    <span class="no"><?php echo $number; ?></span>
+    <span class="no"><span class="accesshide">Question </span><?php echo $number; ?></span>
     <?php if ($editlink) { ?>
       <span class="edit"><?php echo $editlink; ?></span>
     <?php }
