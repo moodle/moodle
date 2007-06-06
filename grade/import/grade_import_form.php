@@ -82,7 +82,7 @@ class grade_import_mapping_form extends moodleform {
                 //echo '<input type="hidden" name="maps[]" value="'.$h.'"/>';
                 // this is what they map to
         
-                $mapfromoptions = array_merge(array('0'=>'ignore'), $gradeitems);
+                $mapfromoptions = array_merge(array('0'=>'ignore', 'new'=>'new gradeitem'), $gradeitems);
                 $mform->addElement('select', 'mapping[]', $h, $mapfromoptions);
                 //choose_from_menu($mapfromoptions, 'mapping[]', $h);
 

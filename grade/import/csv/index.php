@@ -35,8 +35,11 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 // they are somehow not returned with get_data()
 // if ($formdata = $mform2->get_data()) {
     
+    
     foreach ($formdata->maps as $i=>$header) {
-        $map[$header] = $formdata->mapping[$i];  
+        $map[$header] = $formdata->mapping[$i];
+        
+        echo "<br/>mapping header ".$header.' to '.$formdata->mapping[$i];
     }    
 
     $map[$formdata->mapfrom] = $formdata->mapto;
@@ -53,10 +56,11 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         @apache_child_terminate();
     }
     
-    $text = my_file_get_contents($filename);    
-    
     // we only operate if file is readable
     if ($fp = fopen($filename, "r")) {
+    
+        // use current time stamp
+        $importcode = time();   
     
         // --- get header (field names) ---
         $header = split($csv_delimiter, fgets($fp,1024));
@@ -64,7 +68,8 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
         }
-    
+        
+        $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         while (!feof ($fp)) {
             // add something
             $line = split($csv_delimiter, fgets($fp,1024));            
@@ -72,11 +77,11 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             // each line is a student record
             unset ($studentid);
             unset ($studentgrades);
-
-            foreach ($line as $key => $value) {
-                   
+            $newgrades = array();
+            foreach ($line as $key => $value) {  
                 //decode encoded commas
                 $value = preg_replace($csv_encode,$csv_delimiter2,trim($value));
+                
                 switch ($map[$header[$key]]) {
                     case 'userid': // 
                         $studentid = $value;
@@ -93,15 +98,58 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         $user = get_record('user', 'username', $value);
                         $studentid = $user->id;
                     break;
-                    // might need to add columns for comments
+                    case 'new':
+                        // first check if header is already in temp database
+                        
+                        if (empty($newgradeitems[$key])) {            
+                            
+                            $newgradeitem->itemname = $header[$key];
+                            $newgradeitem->import_code = $importcode;
+                            $newgradeitems[$key] = insert_record('grade_import_newitem', $newgradeitem);
+                            // add this to grade_import_newitem table
+                            // add the new id to $newgradeitem[$key]  
+                        } 
+                        unset($newgrade);
+                        $newgrade -> newgradeitem = $newgradeitems[$key];
+                        $newgrade -> gradevalue = $value;                        
+                        $newgrades[] = $newgrade;
+                        // if not, put it in
+                        
+                        // else, insert grade into the table
+                    break;
                     default:
+                        // existing grade items
                         if (!empty($map[$header[$key]])) {
-                            // case of an idnumber, only maps idnumber of a grade_item
-                            $studentgrades[$map[$header[$key]]] = $value;
+                            // case of an id, only maps idnumber of a grade_item
+                            //$studentgrades[$map[$header[$key]]] = $value;
+                            
+                            include_once($CFG->libdir.'/grade/grade_item.php');
+                            $gradeitem = new grade_item(array('idnumber'=>$map[$header[$key]]));
+                            unset($newgrade);
+                            $newgrade -> itemid = $gradeitem->id;
+                            $newgrade -> gradevalue = $value;                            
+                            $newgrades[] = $newgrade;
                         } // otherwise, we ignore this column altogether (e.g. institution, address etc)
                     break;  
                 }
+                
+ 
             }
+            // insert results of this students into buffer
+            if (!empty($newgrades)) {
+                foreach ($newgrades as $newgrade) {
+                    $newgrade->import_code = $importcode;
+                    $newgrade->userid = $studentid;
+                    insert_record('grade_import_values', $newgrade);
+                }
+            }  
+            
+                       
+            /// put all the imported grades for this user into grade_import_values table
+            
+            
+            
+            /*
             if (!empty($studentgrades)) {
                 foreach ($studentgrades as $idnumber => $studentgrade) {
                 
@@ -114,7 +162,14 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     debugging("triggering event for $idnumber... student id is $studentid and grade is $studentgrade");            
                 }
             }
+            */
         }
+    
+        /// at this stage if things are all ok, we commit the changes from temp table 
+        /// via events
+    
+    
+    
     
         // temporary file can go now
         unlink($filename);
@@ -137,7 +192,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
     $text = my_file_get_contents($filename);
     // trim utf-8 bom
-    $textlib = new textlib();
+    $textlib = new textlib();    
+    /// normalize line endings and do the encoding conversion    
+    $text = $textlib->convert($text, $formdata->encoding);    
     $text = $textlib->trim_utf8_bom($text);
     // Fix mac/dos newlines
     $text = preg_replace('!\r\n?!',"\n",$text);
@@ -145,8 +202,8 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     fwrite($fp,$text);
     fclose($fp);
 
-    $fp = fopen($filename, "r");
-    
+    $fp = fopen($filename, "r");        
+  
     // --- get header (field names) ---
     $header = split($csv_delimiter, fgets($fp,1024));
     
