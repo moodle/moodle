@@ -41,4 +41,10 @@
   padding: 0.2em 0;
 }
 
+form.mform input {
+  margin-left: expression((this.type=="text"||this.type=="password")?'-10px':'0');
+}
 
+form.mform textarea {
+ margin-left: -10px;
+}
