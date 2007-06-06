@@ -46,3 +46,6 @@ form.mform input[type=text],
 form.mform input[type=password] {
  margin-left: -10px;
 }
+form.mform textarea {
+ margin-left: -10px;
+}
