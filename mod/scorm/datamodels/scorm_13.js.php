@@ -64,14 +64,15 @@ function SCORMapi1_3() {
     var speed_range = '0#*';
     var text_range = '-1#1';
     var progress_range = '0#1';
+        //'performance':{'format':'^.*$', 'max':250, 'delimiter':'[,]', 'unique':false},
     var learner_response = {
         'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':'', 'unique':false},
         'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true},
         'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]', 'unique':false},
         'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false},
-        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})$', 'max':36, 'delimiter':'[,]', 'unique':false},
-        'performance':{'format':'^.*$', 'max':1, 'delimiter':'', 'unique':false},
-        'sequencing':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':false},
+        'matching':{'format':CMIShortIdentifier, 'format2':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
+        'performance':{'format':'^$|'+CMIShortIdentifier, 'format2':CMIDecimal+'|^$|'+CMIShortIdentifier, 'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false},
+        'sequencing':{'format':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'unique':false},
         'likert':{'format':CMIShortIdentifier, 'max':1, 'delimiter':'', 'unique':false},
         'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false},
         'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
@@ -488,7 +489,7 @@ function SCORMapi1_3() {
                                                 }
                                             break;
                                             case 'cmi.interactions.n.id':
-                                                if (!duplicatedID(element,parentelement,value)) {
+                                                //if (!duplicatedID(element,parentelement,value)) {
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
                                                         eval(parentelement+'._count++;');
                                                         eval(subelement+' = new Object();');
@@ -496,10 +497,10 @@ function SCORMapi1_3() {
                                                         subobject.objectives = new Object();
                                                         subobject.objectives._count = 0;
                                                     } 
-                                                } else {
-                                                    errorCode="351";
-                                                    diagnostic = "Data Model Element ID Already Exists";
-                                                }
+                                                //} else {
+                                                //    errorCode="351";
+                                                //    diagnostic = "Data Model Element ID Already Exists";
+                                                //}
                                             break;
                                             case 'cmi.interactions.n.objectives.n.id':
                                                 if (typeof eval(parentelement) != "undefined") {
@@ -571,7 +572,7 @@ function SCORMapi1_3() {
                                                     diagnostic = "Write Once Violation";
                                                 }
                                             break; 
-                                            case 'cmi.interactions.n.id':
+                                            //case 'cmi.interactions.n.id':
                                             case 'cmi.interactions.n.objectives.n.id':
                                                 if (duplicatedID(element,parentelement,value)) {
                                                     errorCode = "351";
@@ -598,16 +599,33 @@ function SCORMapi1_3() {
                                                     if ((nodes.length > 0) && (nodes.length <= learner_response[interactiontype].max)) {
                                                         expression = new RegExp(learner_response[interactiontype].format);
                                                         for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
-                                                            matches = nodes[i].match(expression);
-                                                            //if ((matches == null) || (matches.join('').length == 0)) {
-                                                            if (matches == null) {
-                                                                errorCode = "406";
-                                                            } else {
-                                                                if ((nodes[i] != '') && (learner_response[interactiontype].unique)) {
-                                                                    for (var j=0; (j<i) && (errorCode=="0"); j++) {
-//alert(node[i]+"\n"+node[j]);
-                                                                        if (nodes[i] == nodes[j]) {
+                                                            if (typeof learner_response[interactiontype].delimiter2 != 'undefined') {
+                                                                values = nodes[i].split(learner_response[interactiontype].delimiter2);
+                                                                if (values.length == 2) {
+                                                                    matches = values[0].match(expression);
+                                                                    if (matches == null) {
+                                                                        errorCode = "406";
+                                                                    } else {
+                                                                        var expression2 = new RegExp(learner_response[interactiontype].format2);
+                                                                        matches = values[1].match(expression2);
+                                                                        if (matches == null) {
                                                                             errorCode = "406";
+                                                                        }
+                                                                    }
+                                                                } else {
+                                                                    errorCode = "406";
+                                                                }
+                                                            } else {
+                                                                matches = nodes[i].match(expression);
+                                                                //if ((matches == null) || (matches.join('').length == 0)) {
+                                                                if (matches == null) {
+                                                                    errorCode = "406";
+                                                                } else {
+                                                                    if ((nodes[i] != '') && (learner_response[interactiontype].unique)) {
+                                                                        for (var j=0; (j<i) && (errorCode=="0"); j++) {
+                                                                            if (nodes[i] == nodes[j]) {
+                                                                                errorCode = "406";
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
