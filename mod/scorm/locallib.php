@@ -596,10 +596,10 @@ function scorm_simple_play($scorm,$user) {
        if ($scorm->skipview >= 1) {
            $sco = current($scoes);
            if (scorm_get_tracks($sco->id,$user->id) === false) {
-				header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
                $result = true;
            } else if ($scorm->skipview == 2) {
-               header('Location: player.php?a='.$scorm->id.'&scoid= '.$sco->id);
+               header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
                $result = true;
            }
        }
