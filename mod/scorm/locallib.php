@@ -85,6 +85,7 @@ $repositorybrowser = '/mod/resource/type/ims/finder.php';
 function scorm_delete_files($directory) {
     if (is_dir($directory)) {
         $files=scorm_scandir($directory);
+        set_time_limit(0);
         foreach($files as $file) {
             if (($file != '.') && ($file != '..')) {
                 if (!is_dir($directory.'/'.$file)) {
@@ -93,7 +94,6 @@ function scorm_delete_files($directory) {
                     scorm_delete_files($directory.'/'.$file);
                 }
             }
-         set_time_limit(5);
         }
         rmdir($directory);
         return true;
