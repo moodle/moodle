@@ -1384,7 +1384,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Adding fields to table grade_import_newitem
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('import_cpde', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
     /// Adding keys to table grade_import_newitem
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
