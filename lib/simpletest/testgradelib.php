@@ -583,6 +583,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitemcategory1';
         $grade_item->needsupdate = true;
         $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
@@ -601,6 +602,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminstance = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitemcategory2';
         $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->needsupdate = true;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
@@ -620,6 +622,7 @@ class gradelib_test extends UnitTestCase {
         $grade_item->iteminstance = $this->grade_categories[2]->id;
         $grade_item->itemname = 'unittestgradeitemcategory3';
         $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->needsupdate = true;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
