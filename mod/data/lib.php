@@ -769,14 +769,14 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
 
     if ($data != null) {
         if ($grades = data_get_user_grades($data, $userid)) {
-            grade_update($data->course, 'mod', 'data', $data->id, 0, $grades);
+            grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->itemid     = $data->id;
             $grade->userid     = $userid;
             $grade->gradevalue = NULL;
-            grade_update($data->course, 'mod', 'data', $data->id, 0, $grade);
+            grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grade);
         }
 
     } else {
@@ -824,7 +824,7 @@ function data_grade_item_update($data) {
         $params['scaleid']   = -$data->scale;
     }
 
-    return grade_update($data->course, 'mod', 'data', $data->id, 0, NULL, $params);
+    return grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, NULL, $params);
 }
 
 /**
@@ -837,7 +837,7 @@ function data_grade_item_delete($data) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update($data->course, 'mod', 'data', $data->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, NULL, array('deleted'=>1));
 }
 
 /************************************************************************

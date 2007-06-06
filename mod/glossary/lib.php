@@ -344,14 +344,14 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
 
     if ($glossary != null) {
         if ($grades = glossary_get_user_grades($glossary, $userid)) {
-            grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, $grades);
+            grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->itemid     = $glossary->id;
             $grade->userid     = $userid;
             $grade->gradevalue = NULL;
-            grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
+            grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
         }
 
     } else {
@@ -399,7 +399,7 @@ function glossary_grade_item_update($glossary) {
         $params['scaleid']   = -$glossary->scale;
     }
 
-    return grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, $params);
+    return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, $params);
 }
 
 /**
@@ -411,7 +411,7 @@ function glossary_grade_item_delete($glossary) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update($glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, NULL, array('deleted'=>1));
 }
 
 function glossary_get_participants($glossaryid) {

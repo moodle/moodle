@@ -69,7 +69,7 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
 
 /***** PUBLIC GRADE API *****/
 
-function grade_update($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grade=NULL, $itemdetails=NULL) {
+function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
 
     // only following grade_item properties can be changed/used in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'deleted');
@@ -146,7 +146,7 @@ function grade_update($courseid, $itemtype, $itemmodule, $iteminstance, $itemnum
     }
 
     // no grade submitted
-    if (empty($grade)) {
+    if (empty($grades)) {
         return GRADE_UPDATE_OK;
     }
 
@@ -157,17 +157,13 @@ function grade_update($courseid, $itemtype, $itemmodule, $iteminstance, $itemnum
     }
 
 /// Finally start processing of grades
-    if (is_object($grade)) {
-        $grades = array($grade);
+    if (is_object($grades)) {
+        $grades = array($grades);
     } else {
-        if (array_key_exists('userid', $grade)) {
-            $grades = array($grade);
-        } else {
-            $grades = $grade;
+        if (array_key_exists('userid', $grades)) {
+            $grades = array($grades);
         }
     }
-
-    unset($grade);
 
     foreach ($grades as $grade) {
         $grade = (array)$grade;
@@ -205,15 +201,45 @@ function grade_update($courseid, $itemtype, $itemmodule, $iteminstance, $itemnum
             $rawgrade->insert();
         }
 
-        //trigger grade_updated event notification
+        // trigger grade_updated event notification
         $eventdata = new object();
-        $eventdata->itemid = $grade_item->id;
-        $eventdata->grade  = $grade;
+        $eventdata->source       = $source;
+        $eventdata->itemid       = $grade_item->id;
+        $eventdata->courseid     = $grade_item->courseid;
+        $eventdata->itemtype     = $grade_item->itemtype;
+        $eventdata->itemmodule   = $grade_item->itemmodule;
+        $eventdata->iteminstance = $grade_item->iteminstance;
+        $eventdata->itemnumber    = $grade_item->itemnumber;
+        $eventdata->idnumber     = $grade_item->idnumber;
+        $eventdata->grade        = $grade;
         events_trigger('grade_updated', $eventdata);
     }
 
     return GRADE_UPDATE_OK;
 }
+
+
+/**
+* Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
+* This is a combination of the actual settings in the grade tables and a check on moodle/course:editgradeswhenlocked.
+* If it's locked to the current use then the module can print a nice message or prevent editing in the module.
+* If no $userid is given, the method will always return the grade_item's locked state.
+* If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
+* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
+* return the locked state of the specific grade.
+*
+* @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
+* @param string $itemmodule 'forum, 'quiz', 'csv' etc
+* @param int $iteminstance id of the item module
+* @param int $itemnumber Optional number of the item to check
+* @param int $userid ID of the user who owns the grade
+* @return boolean Whether the grade is locked or not
+*/
+function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL, $userid=NULL) {
+    $grade_item = new grade_item(compact('itemtype', 'itemmodule', 'iteminstance', 'itemnumber'));
+    return $grade_item->is_locked($userid);
+}
+
 
 /***** END OF PUBLIC API *****/
 
@@ -279,28 +305,6 @@ function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_
     } else {
         return $grade_category->id;
     }
-}
-
-
-/**
-* Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
-* This is a combination of the actual settings in the grade tables and a check on moodle/course:editgradeswhenlocked.
-* If it's locked to the current use then the module can print a nice message or prevent editing in the module.
-* If no $userid is given, the method will always return the grade_item's locked state.
-* If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
-* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
-* return the locked state of the specific grade.
-*
-* @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
-* @param string $itemmodule 'forum, 'quiz', 'csv' etc
-* @param int $iteminstance id of the item module
-* @param int $itemnumber Optional number of the item to check
-* @param int $userid ID of the user who owns the grade
-* @return boolean Whether the grade is locked or not
-*/
-function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL, $userid=NULL) {
-    $grade_item = new grade_item(compact('itemtype', 'itemmodule', 'iteminstance', 'itemnumber'));
-    return $grade_item->is_locked($userid);
 }
 
 /**
@@ -515,73 +519,6 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
                            'result'     => $standardised_value));
     }
     return $standardised_value;
-}
-
-
-/**
- * Handles some specific grade_update_request events,
- * see lib/db/events.php for description of $eventdata format.
- *
- * @param object $eventdata contains all the data for the event
- * @return boolean success
- *
- */
-function grade_handler($eventdata) {
-    $eventdata = (array)$eventdata;
-
-    // each grade must belong to some user
-    if (empty($eventdata['userid'])) {
-        debugging('Missing user id in event data!');
-        return true;
-    }
-
-    // grade item idnumber must be specified or else it could be accidentally duplicated,
-    if (empty($eventdata['idnumber'])) {
-        debugging('Missing grade item idnumber in event!');
-        return true;
-    }
-
-    // get the grade item from db
-    $grade_item = new grade_item(array('idnumber'=>$eventdata['idnumber']), false);
-    if (!$grade_items = $grade_item->fetch_all_using_this()) {
-        // TODO: create a new one - tricky, watch out for duplicates !!
-        //       use only special type 'import'(y) or 'manual'(?)
-        debugging('Can not create new grade items yet :-(');
-        return true;
-
-    } else if (count($grade_items) == 1) {
-        $grade_item = reset($grade_items);
-        unset($grade_items); //release memory
-
-    } else {
-        debugging('More than one grade item matched, grade update request failed');
-        return true;
-    }
-
-    // !! TODO: whitelist only some types such as 'import'(?) 'manual'(?) and ignore the rest!!
-    if ($grade_item->itemtype == 'mod') {
-        // modules must have own handlers for grade update requests
-        return true;
-    }
-
-    $grade = new object();
-    $grade->userid = $eventdata['userid'];
-    if (isset($eventdata['gradevalue'])) {
-        $grade->feedback = $eventdata['gradevalue'];
-    }
-    if (isset($eventdata['feedback'])) {
-        $grade->feedback = $eventdata['feedback'];
-    }
-    if (isset($eventdata['feedbackformat'])) {
-        $grade->feedbackformat = $eventdata['feedbackformat'];
-    }
-
-    grade_update($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
-                 $grade_item->iteminstance, $grade_item->itemnumber, $grade, $eventdata);
-
-    // everything ok :-)
-    return true;
-
 }
 
 

@@ -28,13 +28,13 @@
 
 $handlers = array (
 
-/*
- * Grades created/modified outside of activities (import, gradebook overrides, etc.)
- * see description in lib/db/events.php
- */
-    'grade_updated_external' => array (
+ /*
+  * Grade created or modified notification.
+  * See event format in lib/gradelib.php function update_grade()
+  */
+    'grade_updated' => array (
         'handlerfile'      => '/mod/assignment/lib.php',
-        'handlerfunction'  => 'assignment_grade_update_handler',
+        'handlerfunction'  => 'assignment_grade_handler',
         'schedule'         => 'instant'
     )
 );

@@ -1134,14 +1134,14 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
 
     if ($forum != null) {
         if ($grades = forum_get_user_grades($forum, $userid)) {
-            grade_update($forum->course, 'mod', 'forum', $forum->id, 0, $grades);
+            grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $grades);
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
             $grade->itemid     = $forum->id;
             $grade->userid     = $userid;
             $grade->gradevalue = NULL;
-            grade_update($data->course, 'mod', 'forum', $forum->id, 0, $grade);
+            grade_update('mod/forum', $data->course, 'mod', 'forum', $forum->id, 0, $grade);
         }
 
     } else {
@@ -1189,7 +1189,7 @@ function forum_grade_item_update($forum) {
         $params['scaleid']   = -$forum->scale;
     }
 
-    return grade_update($forum->course, 'mod', 'forum', $forum->id, 0, NULL, $params);
+    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, NULL, $params);
 }
 
 /**
@@ -1202,7 +1202,7 @@ function forum_grade_item_delete($forum) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update($forum->course, 'mod', 'forum', $forum->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, NULL, array('deleted'=>1));
 }
 
 

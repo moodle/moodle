@@ -1843,7 +1843,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                     $grades[$k]->gradevalue = null;
                 }
             }
-            grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
+            grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
         }
 
     } else {
@@ -1895,7 +1895,7 @@ function assignment_grade_item_update($assignment) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    return grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, $params);
+    return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, $params);
 }
 
 /**
@@ -1912,19 +1912,18 @@ function assignment_grade_item_delete($assignment) {
         $assignment->courseid = $assignment->course;
     }
 
-    return grade_update($assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, NULL, array('deleted'=>1));
 }
 
 /**
- * Something wants to change the grade from outside using "grade_updated_external" event.
- * Final static method - do not override!
+ * Something wants to change the grade from outside using "grade_updated" event.
  *
- * see eventdata description in lib/db/events.php
  */
-function assignment_grade_update_handler($eventdata) {
+function assignment_grade_handler($eventdata) {
     global $CFG, $USER;
 
     //TODO: ...
+    // check source to prevent infinite loops ;-)
 
     return true;
 }
