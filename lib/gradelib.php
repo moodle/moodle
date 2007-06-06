@@ -559,7 +559,7 @@ function grade_handler($eventdata) {
     }
 
     // !! TODO: whitelist only some types such as 'import'(?) 'manual'(?) and ignore the rest!!
-    if ($grade_item->itemtype == 'mnod') {
+    if ($grade_item->itemtype == 'mod') {
         // modules must have own handlers for grade update requests
         return true;
     }
