@@ -53,6 +53,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('static', 'attempts', get_string('attempts','scorm'));
 
 // Max Attempts
+        $attempts = array(0 => get_string('nolimit','scorm'));
         for ($i=1; $i<=$CFG->scorm_maxattempts; $i++) {
             if ($i == 1) {
                 $attempts[$i] = $i . ' ' . get_string('attempt','scorm');
