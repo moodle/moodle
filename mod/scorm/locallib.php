@@ -562,7 +562,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string('mode','scorm');
-                      echo '<input type="hidden" name="scoid" value="$sco->id" />'."\n";
+                      echo '<input type="hidden" name="scoid" value="'.$sco->id.'" />'."\n";
                       echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
                       echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
                   } else {
