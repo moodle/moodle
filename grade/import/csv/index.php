@@ -109,7 +109,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     $eventdata->idnumber = $idnumber;
                     $eventdata->userid = $studentid;
                     $eventdata->gradevalue = $studentgrade;
-                    events_trigger('grade_updated_external', $eventdata);               
+                    events_trigger('grade_update_request', $eventdata);               
                 
                     debugging("triggering event for $idnumber... student id is $studentid and grade is $studentgrade");            
                 }
