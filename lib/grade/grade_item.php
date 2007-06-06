@@ -109,7 +109,7 @@ class grade_item extends grade_object {
     var $idnumber;
 
     /**
-     * The type of grade (0 = value, 1 = scale, 2 = text)
+     * The type of grade (0 = none, 1 = value, 2 = scale, 3 = text)
      * @var int $gradetype
      */
     var $gradetype;
@@ -255,7 +255,7 @@ class grade_item extends grade_object {
             $this->grademin = 0;
         } else {
             $this->scaleid = NULL;
-            unset($this->scale);
+            $this->scale = NULL;
         }
         
         $qualifies = $this->qualifies_for_update();
@@ -370,7 +370,7 @@ class grade_item extends grade_object {
             $this->grademin = 0;
         } else {
             $this->scaleid = NULL;
-            unset($this->scale);
+            $this->scale = NULL;
         }
 
         // If not set, infer courseid from referenced category
