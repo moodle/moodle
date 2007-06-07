@@ -6466,13 +6466,15 @@ function moodle_request_shutdown() {
 
     // initially, we are only ever called under apache 
     // but check just in case 
-    if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')) {
+    if (function_exists('apache_child_terminate') 
+        && function_exists('memory_get_usage')
+        && ini_get_bool('child_terminate')) {
         if (empty($CFG->apachemaxmem)) {
             $CFG->apachemaxmem = 10000000; // default 10MiB
         }
         if (memory_get_usage() > (int)$CFG->apachemaxmem) {
             trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
-            apache_child_terminate();
+            @apache_child_terminate();
         }
     }
 }
