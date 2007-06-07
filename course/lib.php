@@ -395,19 +395,11 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 
     /// Getting all members of a group.
     if ($groupid and !$user) {
-        if ($gusers = groups_get_members($groupid)) { //TODO:check.
-            $first = true;
-            foreach($gusers as $guser) {
-                if ($first) {
-                    $gselect = '(l.userid='.$guser->userid;
-                    $first = false;
-                }
-                else {
-                    $gselect .= ' OR l.userid='.$guser->userid;
-                }
-            }
-            if (!$first) $gselect .= ')';
-            $joins[] = $gselect;
+        $gusers = groups_get_members($groupid);
+        if (!empty($gusers)) {
+            $joins[] = 'l.userid IN (' . implode(',', $gusers) . ')';
+        } else {
+            $joins[] = 'l.userid = 0'; // No users in groups, so we want something that will always by false.
         }
     }
     else if ($user) {
@@ -419,13 +411,9 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
         $joins[] = "l.time > '$date' AND l.time < '$enddate'";
     }
 
-    $selector = '';
-    for ($i = 0; $i < count($joins); $i++) {
-        $selector .= $joins[$i] . (($i == count($joins)-1) ? " " : " AND ");
-    }
+    $selector = implode(' AND ', $joins);
 
     $totalcount = 0;  // Initialise
-
     $result = array();
     $result['logs'] = get_logs($selector, $order, $limitfrom, $limitnum, $totalcount);
     $result['totalcount'] = $totalcount;
@@ -485,11 +473,11 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     echo "<th class=\"c5 header\" scope=\"col\">".get_string('info')."</th>\n";
     echo "</tr>\n";
 
+    // Make sure that the logs array is an array, even it is empty, to avoid warnings from the foreach.
     if (empty($logs['logs'])) {
-        echo "</table>\n";
-        return;
+        $logs['logs'] = array();
     }
-
+    
     $row = 1;
     foreach ($logs['logs'] as $log) {
 
