@@ -2652,7 +2652,7 @@ function update_course($data) {
 
         $course = get_record('course', 'id', $data->id);
 
-        add_to_log($course->id, "course", "update", "edit.php?id=$course->id", "");
+        add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
 
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             update_restricted_mods($course, $allowedmods);
