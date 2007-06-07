@@ -3427,7 +3427,7 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
         $user = $USER;
     }
 
-    if (!has_capability('mod/forum:viewdiscussion', $context, $user->id, false)) {
+    if (!has_capability('mod/forum:viewdiscussion', $context, $user->id)) {
         return false;
     }
 
