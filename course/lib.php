@@ -501,7 +501,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld && !empty($log->info)) {
+        if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
             if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
@@ -1415,7 +1415,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
 
                 if ($isediting) {
-                    if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource') {
+                    // TODO: we must define this as mod property!
+                    if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource' and $mod->modname != 'glossary') {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
                         }
