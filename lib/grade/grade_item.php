@@ -229,6 +229,11 @@ class grade_item extends grade_object {
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      */
     function update() {
+        // If item is flagged as deleted, only update that flag in DB. The other changes are ignored.
+        if (!empty($this->deleted) && $this->deleted) {
+            return set_field('grade_items', 'deleted', 1, 'id', $this->id);
+        }
+
         if (!empty($this->outcome->id)) {
             $this->outcomeid = $this->outcome->id;
         }
@@ -397,6 +402,22 @@ class grade_item extends grade_object {
                 $this->idnumber = rand(0,9999999999); // TODO replace rand() with proper random generator 
             }
         }
+        
+        // If a grade_item already exists with these itemtype, itemmodule and iteminstance
+        // but not itemnumber, generate an itemnumber.  
+        if (empty($this->itemnumber) && !empty($this->itemtype) && !empty($this->itemmodule) && !empty($this->iteminstance)) {
+            $existing_item = get_record('grade_items', 
+                'iteminstance', $this->iteminstance, 
+                'itemmodule', $this->itemmodule, 
+                'itemtype', $this->itemtype);
+
+            if (empty($existing_item->itemnumber)) {
+                $existing_item->itemnumber = 0;
+            }
+
+            $this->itemnumber = $existing_item->itemnumber + 1;
+        }
+
 
         $result = parent::insert();
 
@@ -708,7 +729,18 @@ class grade_item extends grade_object {
 
         return $result;
     }
-    
+
+    /**
+     * Disassociates this item from its category parent(s). The object is then updated in DB.
+     * @return boolean Success or Failure
+     */
+    function divorce_parent() {
+        $this->old_parent = $this->get_category();
+        $this->category = null;
+        $this->categoryid = null;
+        return $this->update();        
+    }
+
     /**
      * Instantiates a grade_scale object whose data is retrieved from the DB, 
      * if this item's scaleid variable is set.
@@ -808,8 +840,11 @@ class grade_item extends grade_object {
         $standardised_finals = array();
 
         $final_grades = $this->load_final(true);
-        foreach ($final_grades as $userid => $final) {
-            $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
+        
+        if (!empty($final_grades)) {
+            foreach ($final_grades as $userid => $final) {
+                $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
+            }
         }
 
         return $standardised_finals;
@@ -1002,10 +1037,6 @@ class grade_item extends grade_object {
      * @param int $parentid
      */
     function set_parent_id($parentid) {
-        if ($this->categoryid != $parentid) {
-            $this->old_parent = $this->get_category();
-        }
-
         $this->categoryid = $parentid;
     }
     

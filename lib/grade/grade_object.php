@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 2001-2003  Martin Dougiamas  http://dougiamas.com       //
+// Copyright (C) 2001-2007  Martin Dougiamas  http://dougiamas.com       //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
 // it under the terms of the GNU General Public License as published by  //
@@ -144,7 +144,7 @@ class grade_object {
             $class = get_class($this);
             $object = new $class(array('id' => $this->id));
             foreach ($object as $var => $val) {
-                if ($this->$var != $val) {
+                if (!in_array($var, $this->nonfields) && $this->$var != $val) {
                     $this->$var = $val;
                 }
             }

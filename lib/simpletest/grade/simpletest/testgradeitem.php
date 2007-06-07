@@ -82,6 +82,35 @@ class grade_item_test extends gradelib_test {
         $this->assertEqual(11, $grade_item->sortorder);
     }
 
+    function test_grade_item_generate_itemnumber() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $copy_grade_item = fullclone($grade_item);
+        $copy_grade_item->itemnumber = null;
+        $result_id = $copy_grade_item->insert();
+        $this->assertEqual(1, $copy_grade_item->itemnumber);
+
+    }
+
+    function test_grade_item_generate_idnumber() {
+
+    }
+
+    function test_grade_item_update_when_flagged_as_deleted() {
+        
+    }
+
+    function test_grade_item_update_guess_outcomeid() {
+
+    }
+
+    function test_grade_item_update_default_gradetype() {
+
+    }
+
+    function test_grade_item_update_guess_scaleid() {
+
+    }
+
     function test_grade_item_delete() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));

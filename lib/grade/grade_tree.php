@@ -95,12 +95,12 @@ class grade_tree {
      * objects for the given courseid or the entire site if no courseid given. Full objects are instantiated
      * by default, but this can be switched off. The tree is indexed by sortorder, to facilitate CRUD operations
      * and renumbering.
-     * @param int $courseid
+     * @param int $courseid If null, a blank object is instantiated. If 0, all courses are retrieved in the entire site (can be very slow!)
      * @param boolean $include_grades
      * @param array $tree
      */
     function grade_tree($courseid=NULL, $include_grades=false, $tree=NULL) {
-        if (empty($courseid)) {
+        if (is_null($courseid)) {
             // empty object, do nothing
         } else {
             if ($courseid == 0) {

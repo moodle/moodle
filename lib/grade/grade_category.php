@@ -552,6 +552,19 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Disassociates this category from its category parent(s). The object is then updated in DB.
+     * @return boolean Success or Failure
+     */
+    function divorce_parent() {
+        $this->old_parent = $this->get_parent_category(); 
+        $this->parent = null;
+        $this->parent_category = null;
+        $this->depth = 1;
+        $this->path = '/' . $this->id;
+        return $this->update();        
+    }
+
+    /**
      * Looks at a path string (e.g. /2/45/56) and returns the depth level represented by this path (in this example, 3).
      * If no string is given, it looks at the obect's path and assigns the resulting depth to its $depth variable.
      * @param string $path
@@ -770,19 +783,12 @@ class grade_category extends grade_object {
 
         // We passed all the checks, time to set the category as a parent.
         foreach ($children as $child) {
-            if ($first_child_type == 'grade_item') {
-                $child->categoryid = $this->id;
-                if (!$child->update()) {
-                    debugging("Could not set this category as a parent for one of its child grade_items, DB operation failed.");
-                    return false;
-                }
-            } elseif ($first_child_type == 'grade_category') {
-                $child->parent = $this->id;
-                if (!$child->update()) {
-                    debugging("Could not set this category as a parent for one of its child categories, DB operation failed.");
-                    return false;
-                }
-            }
+            $child->divorce_parent();
+            $child->set_parent_id($this->id);
+            if (!$child->update()) {
+                debugging("Could not set this category as a parent for one of its children, DB operation failed.");
+                return false;
+            } 
         }
 
         // TODO Assign correct sortorders to the newly assigned children and parent. Simply add 1 to all of them!
@@ -843,10 +849,6 @@ class grade_category extends grade_object {
      * @param id $parentid
      */
     function set_parent_id($parentid) {
-        if ($this->parent != $parentid) {
-            $this->old_parent = $this->get_parent_category();
-        }
-
         $this->parent = $parentid;
         $this->path = grade_category::build_path($this);
         $this->depth = $this->get_depth_from_path();
