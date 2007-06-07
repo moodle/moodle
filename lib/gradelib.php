@@ -69,9 +69,26 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
 
 /***** PUBLIC GRADE API *****/
 
+/**
+ * Submit new or update grade; update/create grade_item definition. Grade must have userid specified,
+ * gradevalue and feedback with format are optional. gradevalue NULL means 'Not graded', missing property
+ * or key means do not change existing.
+ * 
+ * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
+ * 'grademin', 'scaleid', 'deleted'.
+ * 
+ * @param string $source source of the grade such as 'mod/assignment', often used to prevent infinite loops when processing grade_updated events
+ * @param int $courseid id of course
+ * @param string $itemtype type of grade item - mod, block, gradecategory, calculated
+ * @param string $itemmodule more specific then $itemtype - assignment, forum, etc.; maybe NULL for some item types
+ * @param int $iteminstance instance it of graded subject
+ * @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
+ * @param mixed $grades grade (object, array) or several grades (arrays of arrays or objects), NULL if updating rgade_item definition only\
+ * @param mixed $itemdetails object or array describing the grading item, NULL if no change
+ */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
 
-    // only following grade_item properties can be changed/used in this function
+    // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'deleted');
 
     if (is_null($courseid) or is_null($itemtype)) {
@@ -209,7 +226,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $eventdata->itemtype     = $grade_item->itemtype;
         $eventdata->itemmodule   = $grade_item->itemmodule;
         $eventdata->iteminstance = $grade_item->iteminstance;
-        $eventdata->itemnumber    = $grade_item->itemnumber;
+        $eventdata->itemnumber   = $grade_item->itemnumber;
         $eventdata->idnumber     = $grade_item->idnumber;
         $eventdata->grade        = $grade;
         events_trigger('grade_updated', $eventdata);
