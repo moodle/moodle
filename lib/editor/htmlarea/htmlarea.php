@@ -875,7 +875,11 @@ HTMLArea.prototype.setMode = function(mode) {
         this._iframe.style.display = "none";
         this._textArea.style.display = "block";
         if (this.config.statusBar) {
-            this._statusBar.innerHTML = HTMLArea.I18N.msg["TEXT_MODE"];
+            while(this._statusBar.childNodes.length>0) {
+                this._statusBar.removeChild(this._statusBar.childNodes[0]);
+            }
+
+            this._statusBar.appendChild(document.createTextNode(HTMLArea.I18N.msg["TEXT_MODE"]));
         }
         break;
         case "wysiwyg":
