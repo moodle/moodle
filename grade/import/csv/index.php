@@ -21,6 +21,7 @@ if (isset($CFG->CSV_DELIMITER)) {
 
 require_once('../grade_import_form.php');
 require_once($CFG->dirroot.'/grade/lib.php');
+require_once('../lib.php');
 
 $course = get_record('course', 'id', $id);
 $action = 'importcsv';
@@ -38,8 +39,6 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     
     foreach ($formdata->maps as $i=>$header) {
         $map[$header] = $formdata->mapping[$i];
-        
-        echo "<br/>mapping header ".$header.' to '.$formdata->mapping[$i];
     }    
 
     $map[$formdata->mapfrom] = $formdata->mapto;
@@ -132,9 +131,14 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         } // otherwise, we ignore this column altogether (e.g. institution, address etc)
                     break;  
                 }
-                
- 
             }
+
+            if (empty($studentid) || !is_numeric($studentid)) {
+                // user not found, abort whold import
+                import_cleanup($importcode);
+                error('user mapping error, could not find user!'); 
+            }
+            
             // insert results of this students into buffer
             if (!empty($newgrades)) {
                 foreach ($newgrades as $newgrade) {
@@ -142,12 +146,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     $newgrade->userid = $studentid;
                     insert_record('grade_import_values', $newgrade);
                 }
-            }  
-            
+            }            
                        
-            /// put all the imported grades for this user into grade_import_values table
-            
-            
+            /// put all the imported grades for this user into grade_import_values table            
             
             /*
             if (!empty($studentgrades)) {
@@ -167,8 +168,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     
         /// at this stage if things are all ok, we commit the changes from temp table 
         /// via events
-    
-    
+        grade_import_commit($course->id, $importcode);
     
     
         // temporary file can go now
