@@ -46,15 +46,16 @@
         $content0 = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content0); // Remove multiple spaces.
         $content = preg_replace('/\n|\r/i', ' ', $content);
         $content = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content);
-
+        
         /// Replace <p>&nbsp;</p>
-        $content0 = preg_replace('#(<p.*>(&nbsp;|\s+)</p>|<p.*></p>)#i', "\n", $content0);
-        $content = preg_replace('#(<p.*>(&nbsp;|\s+)</p>|<p.*></p>)#i', "\n", $content);
+        $content0 = preg_replace('#(<p( [^>]*)?>(&nbsp;|\s+)</p>)|(<p( [^>]*)?></p>)#i', "\n", $content0);
+        $content = preg_replace('#(<p( [^>]*)?>(&nbsp;|\s+)</p>)|(<p( [^>]*)?></p>)#i', "\n", $content);
+        
 
         /// Place new line characters at logical HTML positions.
-        $htmlendings = array('+(<br.*>)+iU', '+(<p.*>)+iU', '+(</p>)+i', '+(<hr.*>)+iU', '+(<ol.*>)+iU',
-                             '+(</ol>)+i', '+(<ul.*>)+iU', '+(</ul>)+i', '+(<li.*>)+iU', '+(</li>)+i', 
-                             '+(</tr>)+i', '+(<div.*>)+iU', '+(</div>)+i');
+        $htmlendings = array('+(<br.*?>)+iU', '+(<p( [^>]*)?>)+iU', '+(</p>)+i', '+(<hr.*?>)+iU', '+(<ol.*?>)+iU',
+                             '+(</ol>)+i', '+(<ul.*?>)+iU', '+(</ul>)+i', '+(<li.*?>)+iU', '+(</li>)+i', 
+                             '+(</tr>)+i', '+(<div.*?>)+iU', '+(</div>)+i');
         $htmlrepl = array("\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
                           "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
                           "\n\$1\n", "\n\$1\n", "\n\$1\n");
