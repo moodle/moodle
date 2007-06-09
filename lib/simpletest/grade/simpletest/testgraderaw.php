@@ -149,7 +149,11 @@ class grade_raw_test extends gradelib_test {
         $this->assertEqual($note, $history_log->note);
     }
     
-    function test_grade_raw_annotate() {
+    function test_grade_raw_update_feedback() {
+
+    }
+
+    function test_grade_raw_update_information() {
 
     }
 

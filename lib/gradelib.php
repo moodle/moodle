@@ -52,8 +52,7 @@ define('GRADE_UPDATE_OK', 0);
 define('GRADE_UPDATE_FAILED', 1);
 define('GRADE_UPDATE_MULTIPLE', 2);
 define('GRADE_UPDATE_ITEM_DELETED', 3);
-define('GRADE_UPDATE_INVALID_GRADE', 4);
-define('GRADE_UPDATE_LOCKED', 5);
+define('GRADE_UPDATE_ITEM_LOCKED', 4);
 
 
 require_once($CFG->libdir . '/grade/grade_category.php');
@@ -73,10 +72,10 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
  * Submit new or update grade; update/create grade_item definition. Grade must have userid specified,
  * gradevalue and feedback with format are optional. gradevalue NULL means 'Not graded', missing property
  * or key means do not change existing.
- * 
+ *
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
  * 'grademin', 'scaleid', 'deleted'.
- * 
+ *
  * @param string $source source of the grade such as 'mod/assignment', often used to prevent infinite loops when processing grade_updated events
  * @param int $courseid id of course
  * @param string $itemtype type of grade item - mod, block, gradecategory, calculated
@@ -134,7 +133,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     } else {
         if ($grade_item->locked) {
             debugging('Grading item is locked!');
-            return GRADE_UPDATE_LOCKED;
+            return GRADE_UPDATE_ITEM_LOCKED;
         }
 
         if ($itemdetails) {
@@ -182,11 +181,13 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
     }
 
+    $failed = false;
     foreach ($grades as $grade) {
         $grade = (array)$grade;
         if (empty($grade['userid'])) {
-            debugging('Invalid grade submitted');
-            return GRADE_UPDATE_INVALID_GRADE;
+            $failed = true;
+            debugging('Invalid userid in grade submitted');
+            continue;
         }
 
         // get the raw grade if it exist
@@ -198,41 +199,66 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $rawgrade->grademin = $grade_item->grademin;
         $rawgrade->scaleid  = $grade_item->scaleid;
 
-        if (isset($grade['feedback'])) {
+        if (array_key_exists('feedback', $grade)) {
             $rawgrade->feedback = $grade['feedback'];
             if (isset($grade['feedbackformat'])) {
                 $rawgrade->feedbackformat = $grade['feedbackformat'];
             } else {
-                $rawgrade->feedbackformat = FORMAT_PLAIN;
+                $rawgrade->feedbackformat = FORMAT_MOODLE;
             }
         }
 
-        if (!isset($grade['gradevalue'])) {
-            $grade['gradevalue'] = null; // means no grade yet
+        $result = true;
+        if ($rawgrade->id) {
+            if (array_key_exists('gradevalue', $grade)) {
+                $result = $rawgrade->update($grade['gradevalue'], $source);
+            } else {
+                $result = $rawgrade->update($rawgrade->gradevalue, $source);
+            }
+
+        } else {
+            if (array_key_exists('gradevalue', $grade)) {
+                $rawgrade->gradevalue = $grade['gradevalue'];
+            } else {
+                $rawgrade->gradevalue = null;
+            }
+            $result = $rawgrade->insert();
         }
 
-        if ($rawgrade->id) {
-            $rawgrade->update($grade['gradevalue'], 'event');
-        } else {
-            $rawgrade->gradevalue = $grade['gradevalue'];
-            $rawgrade->insert();
+        if (!$result) {
+            $failed = true;
+            debugging('Grade not updated');
+            continue;
         }
+
+        // load existing text annotation
+        $rawgrade->load_text();
 
         // trigger grade_updated event notification
         $eventdata = new object();
-        $eventdata->source       = $source;
-        $eventdata->itemid       = $grade_item->id;
-        $eventdata->courseid     = $grade_item->courseid;
-        $eventdata->itemtype     = $grade_item->itemtype;
-        $eventdata->itemmodule   = $grade_item->itemmodule;
-        $eventdata->iteminstance = $grade_item->iteminstance;
-        $eventdata->itemnumber   = $grade_item->itemnumber;
-        $eventdata->idnumber     = $grade_item->idnumber;
-        $eventdata->grade        = $grade;
+        $eventdata->source            = $source;
+        $eventdata->itemid            = $grade_item->id;
+        $eventdata->courseid          = $grade_item->courseid;
+        $eventdata->itemtype          = $grade_item->itemtype;
+        $eventdata->itemmodule        = $grade_item->itemmodule;
+        $eventdata->iteminstance      = $grade_item->iteminstance;
+        $eventdata->itemnumber        = $grade_item->itemnumber;
+        $eventdata->idnumber          = $grade_item->idnumber;
+        $eventdata->userid            = $rawgrade->userid;
+        $eventdata->gradevalue        = $rawgrade->gradevalue;
+        $eventdata->feedback          = $rawgrade->feedback;
+        $eventdata->feedbackformat    = (int)$rawgrade->feedbackformat;
+        $eventdata->information       = $rawgrade->information;
+        $eventdata->informationformat = (int)$rawgrade->informationformat;
+
         events_trigger('grade_updated', $eventdata);
     }
 
-    return GRADE_UPDATE_OK;
+    if (!$failed) {
+        return GRADE_UPDATE_OK;
+    } else {
+        return GRADE_UPDATE_FAILED;
+    }
 }
 
 

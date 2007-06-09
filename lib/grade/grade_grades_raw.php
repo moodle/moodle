@@ -26,19 +26,19 @@
 require_once('grade_object.php');
 
 class grade_grades_raw extends grade_object {
-    
+
     /**
      * The DB table.
      * @var string $table
      */
     var $table = 'grade_grades_raw';
-    
+
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'scale', 'grade_grades_text', 'grade_item', 'feedback', 'feedbackformat');
-    
+    var $nonfields = array('table', 'nonfields', 'scale', 'grade_grades_text', 'grade_item', 'feedback', 'feedbackformat', 'information', 'informationformat');
+
     /**
      * The id of the grade_item this raw grade belongs to.
      * @var int $itemid
@@ -50,19 +50,19 @@ class grade_grades_raw extends grade_object {
      * @var object $grade_item
      */
     var $grade_item;
-    
+
     /**
      * The id of the user this raw grade belongs to.
      * @var int $userid
      */
     var $userid;
-    
+
     /**
      * The grade value of this raw grade, if such was provided by the module.
      * @var float $gradevalue
      */
     var $gradevalue;
-   
+
     /**
      * The maximum allowable grade when this grade was created.
      * @var float $grademax
@@ -80,7 +80,7 @@ class grade_grades_raw extends grade_object {
      * @var int $scaleid
      */
     var $scaleid;
-   
+
     /**
      * A grade_scale object (referenced by $this->scaleid).
      * @var object $scale
@@ -94,7 +94,7 @@ class grade_grades_raw extends grade_object {
     var $usermodified;
 
     /**
-     * Additional textual information about this grade. It can be automatically generated 
+     * Additional textual information about this grade. It can be automatically generated
      * from the module or entered manually by the teacher. This is kept in its own table
      * for efficiency reasons, so it is encapsulated in its own object, and included in this raw grade object.
      * @var object $grade_grades_text
@@ -109,9 +109,9 @@ class grade_grades_raw extends grade_object {
     function grade_grades_raw($params=NULL, $fetch=true) {
         $this->grade_object($params, $fetch);
     }
-    
+
     /**
-     * Instantiates a grade_scale object whose data is retrieved from the DB, 
+     * Instantiates a grade_scale object whose data is retrieved from the DB,
      * if this raw grade's scaleid variable is set.
      * @return object grade_scale
      */
@@ -119,19 +119,50 @@ class grade_grades_raw extends grade_object {
         if (!empty($this->scaleid)) {
             $this->scale = grade_scale::fetch('id', $this->scaleid);
             $this->scale->load_items();
-        } 
+        }
         return $this->scale;
     }
-    
+
     /**
      * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
      * saves it as a class variable for this final object.
+     * If not already set initializes $this->feedback, $this->feedbackformat, $this->inforamtion, $this->informationformat.
      * @return object
      */
     function load_text() {
         if (empty($this->grade_grades_text)) {
-            $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
-        } 
+            if ($this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid)) {
+                // set defaul $this properties if not already there
+                if (!array_key_exists('feedback', $this)) {
+                    $this->feedback = $this->grade_grades_text->feedback;
+                }
+                if (!array_key_exists('feedbackformat', $this)) {
+                    $this->feedbackformat = $this->grade_grades_text->feedbackformat;
+                }
+                if (!array_key_exists('information', $this)) {
+                    $this->information = $this->grade_grades_text->information;
+                }
+                if (!array_key_exists('informationformat', $this)) {
+                    $this->informationformat = $this->grade_grades_text->informationformat;
+                }
+
+            } else {
+                // set defaul $this properties if not already there
+                if (!array_key_exists('feedback', $this)) {
+                    $this->feedback = null;
+                }
+                if (!array_key_exists('feedbackformat', $this)) {
+                    $this->feedbackformat = FORMAT_MOODLE;
+                }
+                if (!array_key_exists('information', $this)) {
+                    $this->information = null;
+                }
+                if (!array_key_exists('informationformat', $this)) {
+                    $this->informationformat = FORMAT_MOODLE;
+                }
+            }
+        }
+
         return $this->grade_grades_text;
     }
 
@@ -158,7 +189,7 @@ class grade_grades_raw extends grade_object {
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($object = get_record('grade_grades_raw', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_grades_raw') {
                 foreach ($object as $param => $value) {
@@ -173,48 +204,72 @@ class grade_grades_raw extends grade_object {
         } else {
             return false;
         }
-    } 
-    
+    }
+
     /**
      * Updates this grade with the given textual information. This will create a new grade_grades_text entry
      * if none was previously in DB for this raw grade, or will update the existing one.
-     * @param string $information Further info like forum rating distribution 4/5/7/0/1; null means keep as is
-     * @param int $informationformat Text format for information
-     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'; null means keep as is
+     * @param string $information Manual information from the teacher. Could be a code like 'mi'
+     * @param int $informationformat Text format for the information
+     * @return boolean Success or Failure
+     */
+    function update_information($information, $informationformat) {
+        $this->load_text();
+
+        if (empty($this->grade_grades_text)) {
+            $this->grade_grades_text = new grade_grades_text();
+
+            $this->grade_grades_text->itemid            = $this->itemid;
+            $this->grade_grades_text->userid            = $this->userid;
+            $this->grade_grades_text->information       = $this->information       = $information;
+            $this->grade_grades_text->informationformat = $this->informationformat = $informationformat;
+
+            return $this->grade_grades_text->insert();
+
+        } else {
+            if ($this->grade_grades_text->information != $information
+              or $this->grade_grades_text->informationformat != $informationformat) {
+
+                $this->grade_grades_text->information       = $this->information       = $information;
+                $this->grade_grades_text->informationformat = $this->informationformat = $informationformat;
+                return  $this->grade_grades_text->update();
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Updates this grade with the given textual information. This will create a new grade_grades_text entry
+     * if none was previously in DB for this raw grade, or will update the existing one.
+     * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'
      * @param int $feedbackformat Text format for the feedback
      * @return boolean Success or Failure
      */
-    function annotate($information=NULL, $informationformat=FORMAT_PLAIN, $feedback=NULL, $feedbackformat=FORMAT_PLAIN) {
-        if (is_null($information) && is_null($feedback)) {
-            // Nothing to do
-            return true;
-        }
+    function update_feedback($feedback, $feedbackformat) {
+        $this->load_text();
 
-        if (!$grade_text = $this->load_text()) {
-            $grade_text = new grade_grades_text();
+        if (empty($this->grade_grades_text)) {
+            $this->grade_grades_text = new grade_grades_text();
 
-            $grade_text->itemid            = $this->itemid;
-            $grade_text->userid            = $this->userid;
-            $grade_text->information       = $information;
-            $grade_text->informationformat = $informationformat;
-            $grade_text->feedback          = $feedback;
-            $grade_text->feedbackformat    = $feedbackformat;
+            $this->grade_grades_text->itemid         = $this->itemid;
+            $this->grade_grades_text->userid         = $this->userid;
+            $this->grade_grades_text->feedback       = $this->feedback       = $feedback;
+            $this->grade_grades_text->feedbackformat = $this->feedbackformat = $feedbackformat;
 
-            $result = $grade_text->insert();
+            return $this->grade_grades_text->insert();
 
         } else {
-            if (!is_null($informationformat)) {
-                $grade_text->information       = $information;
-                $grade_text->informationformat = $feedbackformat;
-            }
-            if (!is_null($feedback)) {
-                $grade_text->feedback       = $feedback;
-                $grade_text->feedbackformat = $feedbackformat;
-            }
-            $result = $grade_text->update();
-        }
+            if ($this->grade_grades_text->feedback != $feedback
+              or $this->grade_grades_text->feedbackformat != $feedbackformat) {
 
-        return $result;
+                $this->grade_grades_text->feedback       = $this->feedback       = $feedback;
+                $this->grade_grades_text->feedbackformat = $this->feedbackformat = $feedbackformat;
+                return  $this->grade_grades_text->update();
+            } else {
+                return true;
+            }
+        }
     }
 
     /**
@@ -229,14 +284,14 @@ class grade_grades_raw extends grade_object {
      */
     function update($newgrade, $howmodified='manual', $note=NULL) {
         global $USER;
-        
+
         if (!empty($this->scale->id)) {
             $this->scaleid = $this->scale->id;
             $this->grademin = 0;
             $this->scale->load_items();
             $this->grademax = count($this->scale->scale_items);
         }
-        
+
         $trackhistory = false;
 
         if ($newgrade != $this->gradevalue) {
@@ -246,10 +301,16 @@ class grade_grades_raw extends grade_object {
         }
 
         $result = parent::update();
-       
-        // Update grade_grades_text if changed
-        if ($result && !empty($this->feedback)) {
-            $result = $this->annotate(NULL, NULL, $this->feedback, $this->feedbackformat);
+
+        // Update grade_grades_text if specified
+        if ($result) {
+            // we do this to prevent some db queries in load_text()
+            if (array_key_exists('feedback', $this) or array_key_exists('feedbackformat', $this)
+             or array_key_exists('information', $this) or array_key_exists('informationformat', $this)) {
+                $this->load_text();
+                $result = $this->update_feedback($this->feedback, $this->feedbackformat);
+                $result = $result && $this->update_information($this->information, $this->informationformat);
+            }
         }
 
         if ($result && $trackhistory) {
@@ -260,15 +321,15 @@ class grade_grades_raw extends grade_object {
             $this->load_grade_item();
             $result = $this->grade_item->flag_for_update();
         }
-        
+
         if ($result) {
             return true;
         } else {
             debugging("Could not update a raw grade in the database.");
             return false;
-        } 
+        }
     }
-    
+
     /**
      * In addition to perform parent::insert(), this infers the grademax from the scale if such is given, and
      * sets grademin to 0 if scale is given.
@@ -282,16 +343,22 @@ class grade_grades_raw extends grade_object {
             $this->grademax = count ($this->scale->scale_items);
             $this->grademin = 0;
         }
-        
+
         $result = parent::insert();
 
         // Notify parent grade_item of need to update
         $this->load_grade_item();
         $result = $result && $this->grade_item->flag_for_update();
-        
+
         // Update grade_grades_text if specified
-        if ($result && !empty($this->feedback)) {
-            $result = $this->annotate(NULL, NULL, $this->feedback, $this->feedbackformat);
+        if ($result) {
+            // we do this to prevent some db queries in load_text()
+            if (array_key_exists('feedback', $this) or array_key_exists('feedbackformat', $this)
+             or array_key_exists('information', $this) or array_key_exists('informationformat', $this)) {
+                $this->load_text();
+                $result = $this->update_feedback($this->feedback, $this->feedbackformat);
+                $result = $result && $this->update_information($this->information, $this->informationformat);
+            }
         }
 
         return $result && $this->grade_item->flag_for_update();
