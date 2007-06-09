@@ -12,7 +12,6 @@
 require_once(dirname(__FILE__) . '/../../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 class question_numerical_qtype_test extends UnitTestCase {

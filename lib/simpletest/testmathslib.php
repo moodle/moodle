@@ -5,7 +5,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/mathslib.php');
 
 /**

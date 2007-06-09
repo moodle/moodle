@@ -37,7 +37,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 class modforumlib_test extends UnitTestCase {

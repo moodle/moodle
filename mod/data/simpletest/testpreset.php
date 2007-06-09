@@ -35,7 +35,6 @@
 require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->dirroot . '/mod/data/preset_class.php');
 
 class data_preset_test extends UnitTestCase {

@@ -10,9 +10,9 @@
  */
 
 /** */
-require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->libdir . '/moodlelib.php');
+require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/simpletestlib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 

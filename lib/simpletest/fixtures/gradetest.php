@@ -32,7 +32,6 @@
  */
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
 require_once($CFG->libdir . '/ddllib.php');

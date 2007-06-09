@@ -36,7 +36,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->libdir . '/ajax/ajaxlib.php');
 

@@ -14,7 +14,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot . '/group/lib/utillib.php');
 

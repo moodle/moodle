@@ -10,7 +10,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 require_once($CFG->dirroot . '/group/lib/groupinglib.php');
 
 class groupinglib_test extends UnitTestCase {

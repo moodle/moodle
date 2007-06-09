@@ -7,7 +7,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 
 // test handler function
 function sample_function_handler($eventdata) {

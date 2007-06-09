@@ -12,7 +12,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php');
 
 class slow_code_test extends UnitTestCase {
     var $php_code_extensions = array('php', 'html', 'php\.inc');
