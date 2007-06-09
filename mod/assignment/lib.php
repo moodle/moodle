@@ -1922,8 +1922,61 @@ function assignment_grade_item_delete($assignment) {
 function assignment_grade_handler($eventdata) {
     global $CFG, $USER;
 
-    //TODO: ...
-    // check source to prevent infinite loops ;-)
+    if ($eventdata->source == 'mod/assignment') {
+        // event from assignment itself
+        return true;
+    }
+
+    if ($eventdata->itemtype != 'mod' or $eventdata->itemmodule != 'assignment') {
+        //not for us - ignore it
+        return true;
+    }
+
+    if (!$assignment = get_record('assignment', 'id', $eventdata->iteminstance)) {
+        return true;
+    }
+    if (! $course = get_record('course', 'id', $assignment->course)) {
+        return true;
+    }
+    if (! $cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
+        return true;
+    }
+
+    // Load up the required assignment class
+    require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+
+    $old = $assignmentinstance->get_submission($eventdata->userid, true);  // Get or make one
+    $submission = new object();
+    $submission->id         = $old->id;
+    $submission->userid     = $old->userid;
+    $submission->teacher    = $USER->id;
+    $submission->timemarked = time();
+
+    if (is_null($eventdata->gradevalue)) {
+        $submission->grade  = -1;
+    } else {
+        $submission->grade  = (int)$eventdata->gradevalue; // round it for now
+        if ($old->grade != $submission->grade) {
+            $submission->mailed = 0;       // Make sure mail goes out (again, even)
+        }
+    }
+
+    $submission->submissioncomment = addslashes($eventdata->feedback);
+    $submission->format            = (int)$eventdata->feedbackformat;
+
+    if ($old->submissioncomment != $eventdata->feedback or $old->format != $submission->format) {
+        $submission->mailed = 0;       // Make sure mail goes out (again, even)
+    }
+
+    if (!update_record('assignment_submissions', $submission)) {
+        //return false;
+    }
+
+    // TODO: add proper logging
+    add_to_log($course->id, 'assignment', 'update grades',
+               'submissions.php?id='.$assignment->id.'&user='.$submission->userid, $submission->userid, $cm->id);
 
     return true;
 }
