@@ -279,7 +279,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $newuser['uniqueId']      = $extusername;
                 $newuser['logindisabled'] = "TRUE";
                 $newuser['userpassword']  = $extpassword;
-                $uadd = $this->ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
+                $uadd = ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
                 break;
             case 'ad':
                 // User account creation is a two step process with AD. First you
