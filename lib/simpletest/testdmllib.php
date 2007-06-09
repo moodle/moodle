@@ -233,6 +233,8 @@ class datalib_test extends prefix_changing_test_case {
 
 //function insert_record($table, $dataobject, $returnid=true, $primarykey='id', $feedback=true) {
     function test_insert_record() {
+        global $CFG;
+
         // Simple insert with $returnid
         $obj = new stdClass;
         $obj->textfield = 'new entry';
@@ -273,16 +275,18 @@ class datalib_test extends prefix_changing_test_case {
         $obj->textfield = 'new entry';
         $obj->numberfield = 123;
         $this->assertFalse(insert_record('nonexistant_table', $obj), 'Insert into nonexistant table');
-        
-        // Insert bad data - error should be printed.
-        $obj = new stdClass;
-        $obj->textfield = 'new entry';
-        $obj->numberfield = 'not a number';
-        ob_start();
-        $this->assertFalse(insert_record($this->table, $obj), 'Insert bad data - should fail.');
-        $result = ob_get_contents();
-        ob_end_clean();
-        $this->assert(new TextExpectation('ERROR:'), $result, 'Insert bad data - error should have been printed. This is known not to work on MySQL.');
+
+        // Insert bad data - error should be printed - mysql not tested
+        if ($CFG->dbfamily != 'mysql') {
+            $obj = new stdClass;
+            $obj->textfield = 'new entry';
+            $obj->numberfield = 'not a number';
+            ob_start();
+            $this->assertFalse(insert_record($this->table, $obj), 'Insert bad data - should fail.');
+            $result = ob_get_contents();
+            ob_end_clean();
+            $this->assert(new TextExpectation('ERROR:'), $result, 'Insert bad data - error should have been printed. This is known not to work on MySQL.');
+        }
     }
 }
 
