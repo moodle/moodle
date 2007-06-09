@@ -91,8 +91,9 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $copy_grade_item = fullclone($grade_item);
         $copy_grade_item->itemnumber = null;
+        unset($copy_grade_item->id);
         $result_id = $copy_grade_item->insert();
-        $this->assertEqual(1, $copy_grade_item->itemnumber);
+        $this->assertEqual($grade_item->itemnumber+1, $copy_grade_item->itemnumber);
 
     }
 
