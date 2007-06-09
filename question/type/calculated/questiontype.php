@@ -8,6 +8,7 @@
 
 require_once("$CFG->dirroot/question/type/datasetdependent/abstractqtype.php");
 
+
 class question_calculated_qtype extends question_dataset_dependent_questiontype {
 
     // Used by the function custom_generator_tools:
@@ -372,6 +373,25 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         $numericalquestion->questiontext = parent::substitute_variables(
         $numericalquestion->questiontext, $state->options->dataset);
+        //evaluate the equations i.e {=5+4)   
+        $qtext = "";
+        $qtextremaining = $numericalquestion->questiontext ;
+        while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+            if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+                    if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
+                        $str=$formulaerrors ;
+                    }else {  
+                        eval('$str = '.$regs1[1].';');            
+                    }
+                }
+                $qtext = $qtext.$str ; 
+        } 
+        $numericalquestion->questiontext = $qtext.$qtextremaining ; // end replace equations
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -892,7 +912,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         if (empty($formula)) {
             $str = '';
         } else {
-            eval('$str = '.$formula.';');
+            eval('$str = '.$formula.';');            
         }
         return $str;
     }
@@ -1197,7 +1217,6 @@ function qtype_calculated_find_formula_errors($formula) {
 /// Validates the formula submitted from the question edit page.
 /// Returns false if everything is alright.
 /// Otherwise it constructs an error message
-
     // Strip away dataset names
     while (ereg('\\{[[:alpha:]][^>} <{"\']*\\}', $formula, $regs)) {
         $formula = str_replace($regs[0], '1', $formula);
@@ -1283,6 +1302,7 @@ function qtype_calculated_find_formula_errors($formula) {
         // Formula just might be valid
         return false;
     }
+
 }
 
 function dump($obj) {
