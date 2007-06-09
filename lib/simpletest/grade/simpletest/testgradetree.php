@@ -30,11 +30,11 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
-require_once(dirname(__FILE__) . '/../../../../config.php');
-global $CFG;
-require_once($CFG->libdir . '/simpletest/testgradelib.php');
 
-class grade_tree_test extends gradelib_test {
+global $CFG;
+require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
+
+class grade_tree_test extends grade_test {
     
     function test_grade_tree_move_element() {
         /* 0. 
