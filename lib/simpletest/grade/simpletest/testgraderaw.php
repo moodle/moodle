@@ -161,8 +161,16 @@ class grade_raw_test extends gradelib_test {
         $grade_grades_raw = new grade_grades_raw($this->grade_grades_raw[0]);
         $this->assertTrue(method_exists($grade_grades_raw, 'load_text'));
         $this->assertNull($grade_grades_raw->grade_grades_text);
+        $this->assertFalse(array_key_exists('feedback', $grade_grades_raw));
+        $this->assertFalse(array_key_exists('feedbackformat', $grade_grades_raw));
+        $this->assertFalse(array_key_exists('information', $grade_grades_raw));
+        $this->assertFalse(array_key_exists('informationformat', $grade_grades_raw));
         $this->assertNotNull($grade_grades_raw->load_text());
         $this->assertNotNull($grade_grades_raw->grade_grades_text);
+        $this->assertTrue(array_key_exists('feedback', $grade_grades_raw));
+        $this->assertTrue(array_key_exists('feedbackformat', $grade_grades_raw));
+        $this->assertTrue(array_key_exists('information', $grade_grades_raw));
+        $this->assertTrue(array_key_exists('informationformat', $grade_grades_raw));
         $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades_raw->grade_grades_text->id); 
     }
 
