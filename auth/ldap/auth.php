@@ -275,7 +275,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             default:
                print_error('auth_ldap_unsupportedusertype','auth',$this->config->user_type);
         }
-        $uadd = $this->ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
+        $uadd = ldap_add($ldapconnection, $this->config->user_attribute.'="'.$this->ldap_addslashes($userobject->username).','.$this->config->create_context.'"', $newuser);
         ldap_close($ldapconnection);
         return $uadd;
 
