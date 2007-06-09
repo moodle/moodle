@@ -24,13 +24,13 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Unit tests for (some of) ../moodlelib.php.
+ * Unit tests for (some of) ../mod/forum/lib.php.
  *
  * @copyright &copy; 2006 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @author nicolas@moodle.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @package mod/forum
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -48,8 +48,13 @@ class modforumlib_test extends UnitTestCase {
     }
 
     function test_forum_cron() {
+        // watch out: forum_cron() should not be called from here,
+        // it relies on special environment setup used in admin/cron.php,
+        // mainly special cookieless session and $USER object
+        /*
         forum_cron();
         $this->assertTrue(false);
+        */
     }
 }
 
