@@ -32,10 +32,10 @@
  * @package moodlecore
  */
 
-/** $Id */
-require_once(dirname(__FILE__) . '/../../config.php');
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
-global $CFG;
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->libdir . '/ajax/ajaxlib.php');
 

@@ -8,10 +8,10 @@
  * @package question
  */
 
-/** */
-require_once(dirname(__FILE__) . '/../../../../config.php');
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
-global $CFG;
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 class question_numerical_qtype_test extends UnitTestCase {

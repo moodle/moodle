@@ -458,6 +458,7 @@
          */
         function _requireWithError($file) {
             $this->_enableErrorReporting();
+            global $CFG; // Moodle patch for $CFG global in unit test files
             include($file);
             $error = isset($php_errormsg) ? $php_errormsg : false;
             $this->_disableErrorReporting();

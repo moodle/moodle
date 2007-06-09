@@ -23,6 +23,10 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 /**
  * Shared code for all grade related tests.
  *
@@ -30,8 +34,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
-
-global $CFG;
 require_once($CFG->libdir . '/gradelib.php');
 require_once($CFG->libdir . '/dmllib.php');
 require_once($CFG->libdir . '/ddllib.php');

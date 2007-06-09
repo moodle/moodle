@@ -11,9 +11,11 @@
  *
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
-require_once(dirname(__FILE__) . '/../../config.php');
 
-global $CFG;
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
 require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot . '/group/lib/utillib.php');
 
