@@ -121,8 +121,10 @@ $string['downloadlanguagenotneeded'] = 'Sie können die Installation mit dem Spr
 $string['downloadlanguagesub'] = 'Sie haben nun die Möglichkeit, ein Sprachpaket herunterzuladen und den Installationsprozess mit dieser Sprache fortzusetzen. <br /><br /> Falls sie keinen Download durchführen können, wird die Installation auf Englisch fortgeführt. (Wenn die Installation abgeschlossen ist, haben Sie die Option weitere Sprachpakete herunterzuladen.)';
 $string['environmenterrortodo'] = 'Sie müssen zunächst alle Probleme mit der Server-Konfiguration beheben, bevor Sie mit der Installation dieser Moodle-Version fortfahren können.';
 $string['environmenthead'] = 'Prüfung der Installationsvoraussetzungen';
+$string['environmentrecommendcustomcheck'] = 'Wenn dieser Test fehlschlägt, dann ist ein  mögliches Problem vorhanden.';
 $string['environmentrecommendinstall'] = 'sollte installiert und aktiviert sein.';
 $string['environmentrecommendversion'] = 'Version $a->needed wird empfohlen - aktuell ist $a->current installiert.';
+$string['environmentrequirecustomcheck'] = 'Dieser Test muss erfolgreich verlaufen.';
 $string['environmentrequireinstall'] = 'muss installiert und aktiviert sein.';
 $string['environmentrequireversion'] = 'Version $a->needed ist erforderlich - aktuell ist $a->current installiert.';
 $string['environmentsub'] = 'Es wird geprüft, ob die verschiedenen Komponenten Ihres Systems die Installationsanforderungen erfüllen.';
@@ -191,6 +193,8 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 (Im Falle von 5.0.x könnten Sie auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Frühere';
+$string['qtyperqpwillberemoved'] = 'Während des Updates wird der Fragentyp RQP entfernt. Da Sie diesen Fragentyp nicht benutzen, sollten Sie keinerlei Probleme bekommen.';
+$string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragentyp RQP entfernt. Sie haben einige RQP Fragen in Ihrer Datenbank, die nicht mehr funktionieren werden, falls Sie nicht den dafür notwendigen Code vor der Fortsetzung dieses Updates installieren. http://moodle.org/mod/data/view.php?d=13&amp;rid=797';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf Ihren Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopieren Sie die Datei nach \"$a->dest\" auf Ihren Server und entpacken Sie sie dort.';
 $string['report'] = 'Bericht';
 $string['restricted'] = 'Eingeschränkt';
