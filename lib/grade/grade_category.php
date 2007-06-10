@@ -750,7 +750,13 @@ class grade_category extends grade_object {
         // Check type and sortorder of first child
         $first_child = current($children);
         $first_child_type = get_class($first_child);
-        $first_child_courseid = $first_child->courseid;
+
+        // If this->courseid is not set, set it to the first child's courseid
+        if (empty($this->courseid)) {
+            $this->courseid = $first_child->courseid;
+        }
+
+        $grade_tree = new grade_tree();
 
         foreach ($children as $child) {
             if (get_class($child) != $first_child_type) {
@@ -758,14 +764,12 @@ class grade_category extends grade_object {
                 return false;
             }
             
-            $grade_tree = new grade_tree();
-
             if ($grade_tree->get_element_type($child) == 'topcat') {
                 debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
                 return false;
             }
             
-            if ($first_child_type == 'grade_category') {
+            if ($first_child_type == 'grade_category' or $first_child_type == 'grade_item') {
                 if (!empty($child->parent)) {
                     debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
                     return false; 
@@ -775,7 +779,7 @@ class grade_category extends grade_object {
                 return false;
             }                
 
-            if ($child->courseid != $first_child_courseid) {
+            if ($child->courseid != $this->courseid) {
                 debugging("Attempted to set a category over children which do not belong to the same course.");
                 return false;
             }
@@ -795,11 +799,6 @@ class grade_category extends grade_object {
         $this->load_grade_item();
         $this->grade_item->sortorder = $first_child->get_sortorder();
         
-        // If this->courseid is not set, set it to the first child's courseid
-        if (empty($this->courseid)) {
-            $this->courseid = $first_child_courseid;
-        }
-
         if (!$this->update()) {
             debugging("Could not update this category's sortorder in DB.");
             return false;

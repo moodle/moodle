@@ -262,6 +262,8 @@ class grade_category_test extends grade_test {
         $child2->itemname = 'new grade_item';
         $child1->sortorder = 1;
         $child2->sortorder = 2;
+        $child1->courseid = $grade_category->courseid;
+        $child2->courseid = $grade_category->courseid;
         $child1->insert();
         $child2->insert();
         $this->assertTrue($grade_category->set_as_parent(array($child1, $child2)));
