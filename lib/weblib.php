@@ -2452,6 +2452,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' drag';
     }
 
+    if (!empty($CFG->langdirection)) {
+        $pageclass .= ' ' . $CFG->langdirection;
+    }
+    
     $pageclass .= ' lang-'.$currentlanguage;
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
