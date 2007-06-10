@@ -1,5 +1,5 @@
 <?php // $Id$
-require_once ('moodleform_mod.php');
+require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_label_mod_form extends moodleform_mod {
 

@@ -1,5 +1,5 @@
 <?php
-require_once ('moodleform_mod.php');
+require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_resource_mod_form extends moodleform_mod {
     var $_resinstance;
@@ -43,7 +43,7 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('header', 'typedesc', get_string('resourcetype'.$type,'resource'));
         $this->_resinstance->setup_elements($mform);
 
-        $this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements(false);
 
         $this->add_action_buttons();
     }

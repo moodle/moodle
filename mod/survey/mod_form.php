@@ -1,5 +1,5 @@
 <?php
-require_once ('moodleform_mod.php');
+require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_survey_mod_form extends moodleform_mod {
 
