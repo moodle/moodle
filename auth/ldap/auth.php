@@ -281,6 +281,10 @@ class auth_plugin_ldap extends auth_plugin_base {
 
     }
 
+    function can_reset_password() {
+        return !empty($this->config->stdchangepassword);
+    }
+
     /**
      * return number of days to user password expires
      *
