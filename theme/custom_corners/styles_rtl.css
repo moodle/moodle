@@ -1,0 +1,110 @@
+div.sideblock div.header div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+div.sideblock div.header div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+div.sideblock div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+div.sideblock div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+td#middle-column div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+td#middle-column div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+td#middle-column div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+td#middle-column div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+div#footer div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+div#footer div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+  text-align: right;
+}
+div#footer div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+div#footer div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+  text-align: right;
+}
+div#header div.bt div {
+  background-position: 100% 0;
+  right: -13px;
+}
+div#header div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+div#header div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+div#header div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+div#header-home div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+div#header-home div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+div#header-home div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+div#header-home div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+body.nocoursepage div#content div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+body.nocoursepage div#content div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
+body.nocoursepage div#content div.bb  div {
+  background-position: 100% 100%;
+  right: -13px;
+}
+body.nocoursepage div#content div.bb {
+  background-position: 0 100%;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
