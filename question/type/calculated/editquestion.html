@@ -1,24 +1,30 @@
 <?php
 $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course, $usehtmleditor);
+
+// Answers.
+    for ($i=1; $i<=count($answers); $i++) {
+        $answer = $answers[$i-1];
 ?>
 <tr valign="top">
 <td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
     <td align="left">
-    <input align="left" type="text" id="formula0" name="answers[]" size="20" value="<?php  p($answers[0]->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
-    <input type="hidden" name="fraction[]" value="1.0" />
+    <input align="left" type="text" id="formula0" name="answers[]" size="20" value="<?php  p($answer->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
+        <?php print_string("grade");
+           echo ":&nbsp;";
+           choose_from_menu($gradeoptions, "fraction[]", $answer->fraction,""); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("tolerance", "quiz"); ?>:</b></td>
     <td align="left">
-    <input align="left" type="text" id="tolerance0" name="tolerance[]" size="15" value="<?php  p($answers[0]->tolerance) ?>" alt="<?php  print_string("tolerance", "quiz"); ?>" />&plusmn;
+    <input align="left" type="text" id="tolerance0" name="tolerance[]" size="15" value="<?php  p($answer->tolerance) ?>" alt="<?php  print_string("tolerance", "quiz"); ?>" />&plusmn;
     </td>
 </tr>
 <tr valign="top">
 <td align="right"><b><?php  print_string("tolerancetype", "quiz"); ?>:</b></td>
     <td align="left">
     <?php choose_from_menu($qtypeobj->tolerance_types(),
-            'tolerancetype[]', $answers[0]->tolerancetype, false); ?>
+            'tolerancetype[]', $answer->tolerancetype, false); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -29,17 +35,27 @@ $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course
                                  '4' => ' 4 ', '5' => ' 5 ', '6' => ' 6 ',
                                  '7' => ' 7 ', '8' => ' 8 ', '9' => ' 9 '),
                            'correctanswerlength[]',
-                           $answers[0]->correctanswerlength, false); ?>
+                           $answer->correctanswerlength, false); ?>
     <?php choose_from_menu(array('1' => get_string('decimalformat', 'quiz'),
                                  '2' => get_string('significantfiguresformat', 'quiz')),
                            'correctanswerformat[]',
-                           $answers[0]->correctanswerformat, false); ?>
+                           $answer->correctanswerformat, false); ?>
     </td>
 </tr>
 <tr valign="top">
     <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
     <td align="left">
-        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[0]->feedback) ?></textarea>
+        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answer->feedback) ?></textarea>
+    </td>
+</tr>
+<?php
+    }
+// Units.
+$addmoreanswerblanks=get_string('addmoreanswerblanks', 'qtype_calculated');
+?>
+<tr valign="top">    
+    <td align="center" colspan="2">
+        <input name ='addanswers' type="submit"   value="<?php p($addmoreanswerblanks) ?>" />
     </td>
 </tr>
 <tr valign="top">
@@ -78,37 +94,17 @@ for ($i=1; $i<count($units); $i++) {
 </tr>
 <?php
 } /// END for
-
+$addmoreanswerblanks=get_string('addmoreunitblanks', 'qtype_calculated');
+?>
+<tr valign="top">    
+    <td align="center" colspan="2">
+        <input name ='addunits' type="submit"  value="<?php p($addmoreanswerblanks) ?>" />
+    </td>
+</tr>
+<?php
 $QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
 $QTYPES[$question->qtype]->print_question_form_end($question,
-        'onclick="return determineMinAndMax();"',
+        '',
         '<input type="hidden" name="wizardpage" value="question" />');
 ?>
-<script language="javascript" type="text/javascript">
-function determineMinAndMax() {
-    // This client-side script will determine the values for min and max
-    // based on the input for answer and acceptederror.
-    with(document.theform) {
-        if (formula0.value=='') {
-            alert('<?php  print_string("missingformula","quiz") ?>');
-            return false;
-            /* It could perhaps be an idea to parse the formula here
-             * but as it is necessary at the server anyway, we can
-             * it leave like this for the moment. */
 
-        } else if (''!=defaultunit.value && !isNaN(defaultunit.value)) {
-            alert('<?php  print_string("unitmustnotbenumeric","quiz") ?>');
-            return false;
-        } else if (isNaN(tolerance0.value)) {
-            alert('<?php  print_string("tolerancemustbenumeric","quiz") ?>');
-            return false;
-        } else if ('2' == document.theform['correctanswerformat[]'].value
-                && '0' == document.theform['correctanswerlength[]'].value) {
-            alert('<?php  print_string("zerosignificantfiguresnotallowed","quiz") ?>');
-            return false;
-        } else {
-            return true;
-        }
-    }
-}
-</script>

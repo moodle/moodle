@@ -1,6 +1,7 @@
 <?php // $Id$
 // Allows a teacher to create, edit and delete datasets
-
+// max datasets = 100 items
+		$max100 = 100 ;
 // Set up strings
     $strdatasetnumber = get_string("datasetnumber", "quiz");
     $strnumberinfo = get_string("categoryinfo", "quiz");
@@ -19,6 +20,8 @@
     $strforceregeneration = get_string('forceregeneration', 'quiz');
     $strdataitemneed = get_string('dataitemneed', 'quiz');
 
+	  $strcondensedtable =get_string('switchtocondensedtable', 'qtype_datasetdependent');
+	  $strnormaltable =get_string('switchtonormaltable', 'qtype_datasetdependent');
     if (empty($question->id)) {
         $datasetdefs = $this->get_dataset_definitions(
          $SESSION->datasetdependent->definitionform);
@@ -26,7 +29,7 @@
         if (empty($question->options)) {
             $this->get_question_options($question);
         }
-        $datasetdefs = $this->get_dataset_definitions($form);
+        $datasetdefs = $this->get_dataset_definitions($question->id, array());
     }
 
     // Handle generator options...
@@ -49,14 +52,29 @@
 
 // Handle adding and removing of dataset items
     // This twisted condition should effectively stop resubmits caused by reloads
+    //pp adding more than one record
+
     if (isset($form->addbutton) && $maxnumber + 1 == $form->numbertoadd) {
         $addeditem->itemnumber = $form->numbertoadd;
         foreach ($form->definition as $key => $defid) {
             $addeditem->definition = $datasetdefs[$defid]->id;
             $addeditem->value = $form->value[$key];
             if ($form->itemid[$key]) {
-                // Reuse an previously used record
                 $addeditem->id = $form->itemid[$key];
+                // Reuse an previously used record
+                if (empty($form->forceregeneration) && (
+              				isset($form->regenerateddefid) &&
+              					$form->regenerateddefid != $defid ||
+              					isset($form->deletebutton))) {
+              					//	echo "<p>Reuse an previously used record un".$addeditem->id."</p>";
+                } else {
+                    if ($this->supports_dataset_item_generation()) {
+                        $addeditem->value = $this->generate_dataset_item($datasetdefs[$defid]->options);
+                    } else {
+                        $addeditem->value = '';
+                    }
+                }
+               //echo "<p>update le dataset_items".$addeditem->id."</p>";
                 if (!update_record('question_dataset_items', $addeditem)) {
                     error("Error: Unable to update dataset item");
                 }
@@ -66,31 +84,79 @@
                     error("Error: Unable to insert dataset item");
                 }
             }
-
+	}
+       $maxnumber = $addeditem->itemnumber;
+       $numbertoadd =0;
+	if ($form->selectadd > 1 && $maxnumber < $max100 ) {
+	    $numbertoadd =$form->selectadd-1 ;
+	    if ( $max100 - $maxnumber < $numbertoadd ) {
+	        $numbertoadd = $max100 - $maxnumber ;
+	    }
+            //add the other items.
+            // tout d'abord le définit
+            // Generate a new dataset item (or reuse an old one)
+            foreach ($datasetdefs as $defid => $datasetdef) {
+                if (isset($datasetdef->id)) {
+                    $datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
+                          " SELECT itemnumber, definition, id, value
+                            FROM {$CFG->prefix}question_dataset_items
+                            WHERE definition = $datasetdef->id ORDER BY itemnumber");
+                }
+                // echo "<pre>"; print_r($datasetdefs[$defid]->items);
+    	    for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
+                    if (isset($datasetdefs[$defid]->items[$numberadded]) && (
+                      empty($form->forceregeneration) 
+                      // && isset($form->regenerateddefid) &&
+                      // $form->regenerateddefid != $defid || no
+                       || isset($form->deletebutton))) {
+                    //  echo "<p>Reuse an previously used record".$numberadded."id".$datasetdef->id."</p>";
+                    } else {
+                        $datasetitem = new stdClass;
+                        $datasetitem->definition = $datasetdef->id ;
+                        $datasetitem->itemnumber = $numberadded;
+                        if ($this->supports_dataset_item_generation()) {
+                            $datasetitem->value = $this->generate_dataset_item($datasetdef->options);
+                        } else {
+                            $datasetitem->value = '';
+                        }
+                        //pp  echo "<pre>"; print_r( $datasetitem );
+                        //insere le nouveau
+                        if (!insert_record('question_dataset_items', $datasetitem)) {
+                            error("Error: Unable to insert new dataset item");
+                        }
+                        $datasetdefs[$defid]->items[$numberadded] = clone($datasetitem);
+                    }
+     		}//for number added   	
+    	    }// datasetsdefs end										
+        }
+	$maxnumber += $numbertoadd ;
             foreach ($datasetdefs as $key => $newdef) {
                 if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
-                    $newdef->itemcount = $maxnumber+1;
+                    $newdef->itemcount = $maxnumber;
                     // Save the new value for options
                     update_record('question_dataset_definitions', $newdef);
                 }
             }
-        }
-        // else Success:
-        $maxnumber = $addeditem->itemnumber;
+        //}	// if select >
+		
 
     } else if (isset($form->deletebutton)
                && $maxnumber == $form->numbertodelete)  {
         // Simply decrease itemcount where == $maxnumber
+        // selectedelete<p align="center"></p>
+        if(isset($form->selectdelete)) $newmaxnumber = $maxnumber-$form->selectdelete ;
+        else $newmaxnumber = $maxnumber-1 ;
+        if ($newmaxnumber < 0 ) $newmaxnumber = 0 ;
         foreach ($datasetdefs as $datasetdef) {
             if ($datasetdef->itemcount == $maxnumber) {
-                $datasetdef->itemcount--;
+                $datasetdef->itemcount= $newmaxnumber ;        //pp--;
                 if (!update_record('question_dataset_definitions',
                                    $datasetdef)) {
                      error("Error: Unable to update itemcount");
                 }
             }
         }
-        --$maxnumber;
+        $maxnumber= $newmaxnumber;
     }
 
     make_upload_directory("$course->id");  // Just in case
@@ -106,7 +172,7 @@
 // Generate a new dataset item (or reuse an old one)
     foreach ($datasetdefs as $defid => $datasetdef) {
         if (isset($datasetdef->id)) {
-            $datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
+            $datasetdefs[$defid]->items = get_records_sql( // Use itemnumber as key!!
                     " SELECT itemnumber, definition, id, value
                       FROM {$CFG->prefix}question_dataset_items
                       WHERE definition = $datasetdef->id ");
@@ -160,13 +226,17 @@
                 . '<br/><input type="radio" name="forceregeneration" value="1" '
                 . $force . ' />' . $strforceregeneration;
     }
+				//pp limit 
+				if ($maxnumber < $max100) {
 
     $addline[] = '<input type="hidden" name="numbertoadd" value="'.
                  ($maxnumber+1).'"/><input type="submit" name="addbutton" '.
-                 'value="'.$stradd.'"/>'.$forceregeneration;
+                 'value="'.$stradd.'"/>'.'<select name="selectadd"><option value="1" selected>1</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option><option value="100">100</option></select>' .$forceregeneration;
     $addline[] = $maxnumber+1;
-
-
+				} else {
+						$addline[] ='<input type="hidden" name="numbertoadd" value="'.($maxnumber+1).'"/>';
+						$addline[] = "&gt;".$max100;
+				}
     foreach ($datasetdefs as $defid => $datasetdef) {
         if ($datasetdef->name) {
             $table->head[] = $datasetdef->name;
@@ -197,8 +267,10 @@
     }
 
     if ($strquestionheader) {
-        $table->head[] = $strquestionheader;
-        $addtable->head[] = $strquestionheader;
+        foreach($strquestionheader as $header){
+        $table->head[] = $header;
+        $addtable->head[] = $header;
+        }
         if (empty($question->id) &&
             isset($SESSION->datasetdependent->questionform)) {
             $tmp = &$SESSION->datasetdependent->questionform;
@@ -212,10 +284,14 @@
             }
             $question->options->answers = $answers;
         }
-        $addline[] = $this->comment_on_datasetitems($question, $data, $maxnumber + 1);
+        $comment =$this->comment_on_datasetitems($question, $data, $maxnumber + 1);
+        foreach($comment as $comm){
+             $addline[] =  $comm ;
+        }  
     }
 
-// Set up the table showing existing datasets
+    // Set up the table showing existing datasets
+	
     $table->data = array();
     $table->align = $addtable->align;
     for ($number = $maxnumber ; $number > 0  ; --$number) {
@@ -223,7 +299,7 @@
         if ($maxnumber == $number) {
             $columns[] =
                     "<input type=\"hidden\" name=\"numbertodelete\" value=\"$number\"/>
-                     <input type=\"submit\" name=\"deletebutton\" value=\"$strdelete\"/>";
+                     <input type=\"submit\" name=\"deletebutton\" value=\"$strdelete\"/>".'<select name="selectdelete"><option value="1" selected>1</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option><option value="100">100</option></select>';
         } else {
             $columns[] = '';
         }
@@ -237,7 +313,10 @@
                 ($data[$datasetdef->name] = $datasetdef->items[$number]->value) ;
         }
         if ($strquestionheader) {
-            $columns[] = $this->comment_on_datasetitems($question, $data, $number);
+            $comment =$this->comment_on_datasetitems($question, $data, $number);
+            foreach($comment as $comm){
+              $columns[] =  $comm ;
+            }              
         }
         $table->data[] = $columns;
     }
