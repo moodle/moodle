@@ -87,7 +87,7 @@
             if (! $authplugin->user_update($user, $userform->get_data(false))) {
                 // auth update failed, rollback for moodle
                 update_record('user', addslashes_object($user));
-                error('Failed to update user data on external auth: '.$usernew->auth.
+                error('Failed to update user data on external auth: '.$user->auth.
                         '. See the server logs for more details.');
             }
 
