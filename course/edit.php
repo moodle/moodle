@@ -60,6 +60,7 @@
     $editform = new course_edit_form('edit.php', compact('course', 'category'));
     // now override defaults if course already exists
     if (!empty($course)) {
+        $course->enrolpassword = $course->password; // we need some other name for password field MDL-9929
         $editform->set_data($course);
     }
     if ($editform->is_cancelled()){
@@ -70,7 +71,8 @@
         }
 
     } else if ($data = $editform->get_data()) {
-    
+
+        $data->password = $data->enrolpassword;  // we need some other name for password field MDL-9929
 /// process data if submitted
 
         //preprocess data

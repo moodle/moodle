@@ -277,10 +277,10 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('visible', array('courseavailability', get_string('availability')), true);
         $mform->setDefault('visible', 1);
 
-        $mform->addElement('passwordunmask', 'password', get_string('enrolmentkey'), 'size="25"');
-        $mform->setHelpButton('password', array('enrolmentkey', get_string('enrolmentkey')), true);
-        $mform->setDefault('password', '');
-        $mform->setType('password', PARAM_RAW);
+        $mform->addElement('passwordunmask', 'enrolpassword', get_string('enrolmentkey'), 'size="25"');
+        $mform->setHelpButton('enrolpassword', array('enrolmentkey', get_string('enrolmentkey')), true);
+        $mform->setDefault('enrolpassword', '');
+        $mform->setType('enrolpassword', PARAM_RAW);
 
         $choices = array();
         $choices['0'] = get_string('guestsno');
