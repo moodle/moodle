@@ -42,6 +42,7 @@ $string['gradeexceptions'] = 'Grade Exceptions';
 $string['gradeexceptionshelp'] = 'Grade Exceptions Help';
 $string['gradehelp'] = 'Grade Help';
 $string['gradeitem'] = 'Grade Item';
+$string['gradeitemlocked'] = 'Grading locked';
 $string['gradeitemaddusers'] = 'Exclude from Grading';
 $string['gradeitemmembersselected'] = 'Excluded from Grading';
 $string['gradeitemnonmembers'] = 'Included in Grading';

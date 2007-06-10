@@ -101,9 +101,9 @@ class gradelib_test extends grade_test {
     function test_grade_is_locked() {
         if (get_class($this) == 'gradelib_test') { 
             $grade_item = $this->grade_items[0];
-            $this->assertFalse(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
+            $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
             $grade_item = $this->grade_items[1];
-            $this->assertTrue(grade_is_locked($grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
+            $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
         }
     }
 

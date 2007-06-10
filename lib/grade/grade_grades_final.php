@@ -36,7 +36,7 @@ class grade_grades_final extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('nonfields', 'table');
+    var $nonfields = array('nonfields', 'table', 'grade_grades_text', 'grade_item');
     
     /**
      * The id of the grade_item this final grade belongs to.

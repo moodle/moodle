@@ -106,7 +106,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     } else {
 
-        debugging('Found more than one grading item');
+        debugging('Found more than one grade item');
         return GRADE_UPDATE_MULTIPLE;
     }
 
@@ -271,20 +271,37 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 * the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
 * return the locked state of the specific grade.
 *
+* @param int $courseid id of course
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
 * @param int $iteminstance id of the item module
-* @param int $itemnumber Optional number of the item to check
-* @param int $userid ID of the user who owns the grade
+* @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
+* @param int $userid ID of the graded user
 * @return boolean Whether the grade is locked or not
 */
-function grade_is_locked($itemtype, $itemmodule, $iteminstance, $itemnumber=NULL, $userid=NULL) {
-    $grade_item = new grade_item(compact('itemtype', 'itemmodule', 'iteminstance', 'itemnumber'));
-    return $grade_item->is_locked($userid);
+function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $userid=NULL) {
+
+    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'), false);
+    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+        return false;
+
+    } else if (count($grade_items) == 1){
+        $grade_item = reset($grade_items);
+        return $grade_item->is_locked($userid);
+
+    } else {
+        debugging('Found more than one grade item');
+        foreach ($grade_items as $grade_item) {
+            if ($grade_item->is_locked($userid)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
-
 /***** END OF PUBLIC API *****/
+
 
 /**
 * Extracts from the gradebook all the grade items attached to the calling object.
