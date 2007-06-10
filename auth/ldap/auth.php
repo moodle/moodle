@@ -324,6 +324,10 @@ class auth_plugin_ldap extends auth_plugin_base {
 
     }
 
+    function can_reset_password() {
+        return !empty($this->config->stdchangepassword);
+    }
+
     function can_signup() {
         return (!empty($this->config->auth_user_create) and !empty($this->config->create_context));
     }
