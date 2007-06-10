@@ -5,8 +5,20 @@
 /// how Moodle uses this theme.
 ////////////////////////////////////////////////////////////////////////////////
 
+trigger_error('custom_corners/config.php - $CFG->langdirection: '.$CFG->langdirection, E_USER_NOTICE);
 
-$THEME->sheets = array('user_styles');
+if ($CFG->langdirection == 'rtl') {
+    $THEME->sheets = array('user_styles', 'styles_rtl');
+    trigger_error('custom_corners/config.php - is rtl ::: ', E_USER_NOTICE);
+} else {
+    $THEME->sheets = array('user_styles');
+    trigger_error('custom_corners/config.php - is not rtl ::: ', E_USER_NOTICE);
+}
+
+trigger_error('custom_corners/config.php - $THEME->sheets: '.$THEME->sheets[0].', '.$THEME->sheets[1], E_USER_NOTICE);
+
+// $THEME->sheets = array('user_styles');
+
 // $THEME->sheets = array('user_styles', 'adminpage_correct');
 
 /// This variable is an array containing the names of all the 
