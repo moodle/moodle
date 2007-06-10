@@ -8,7 +8,7 @@
  * @package lesson
  **/
 
-require_once('moodleform_mod.php');
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once('locallib.php');
 
 class mod_lesson_mod_form extends moodleform_mod {
