@@ -391,6 +391,8 @@ $moodle_capabilities = array(
 
     'moodle/category:create' => array(
 
+        'riskbitmask' => RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
         'legacy' => array(
@@ -408,6 +410,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/category:update' => array(
+
+        'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
