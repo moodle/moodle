@@ -50,6 +50,7 @@ class quiz_report extends quiz_default_report {
                         } else {
                             quiz_save_best_grade($quiz, $userid);
                         }
+                        quiz_update_grades($quiz, $userid);
                     }
                 }
             break;

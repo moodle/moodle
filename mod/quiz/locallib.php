@@ -386,6 +386,10 @@ function quiz_set_grade($newgrade, &$quiz) {
         ", false);
     }
 
+    // update grade item and send all grades to gradebook
+    quiz_grade_item_update($quiz);
+    quiz_update_grades($quiz);
+
     if ($success) {
         return commit_sql();
     } else {
@@ -436,6 +440,8 @@ function quiz_save_best_grade($quiz, $userid = null) {
             return false;
         }
     }
+
+    quiz_update_grades($quiz, $userid);
     return true;
 }
 

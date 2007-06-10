@@ -164,6 +164,8 @@ function quiz_delete_instance($id) {
         }
     }
 
+    quiz_grade_item_delete($quiz);
+
     return $result;
 }
 
@@ -223,19 +225,112 @@ function quiz_cron () {
     return true;
 }
 
-function quiz_grades($quizid) {
-/// Must return an array of grades, indexed by user, and a max grade.
 
-    $quiz = get_record('quiz', 'id', intval($quizid));
-    if (empty($quiz) || empty($quiz->grade)) {
-        return NULL;
+/**
+ * Return grade for given user or all users.
+ *
+ * @param int $quizid id of quiz
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function quiz_get_user_grades($quiz, $userid=0) {
+    global $CFG;
+
+    $user = $userid ? "AND u.id = $userid" : "";
+
+    $sql = "SELECT u.id, u.id AS userid, g.grade AS gradevalue
+              FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g
+             WHERE u.id = g.userid AND g.quiz = $quiz->id
+                   $user";
+
+    return get_records_sql($sql);
+}
+
+/**
+ * Update grades in central gradebook
+ *
+ * @param object $quiz null means all quizs
+ * @param int $userid specific user only, 0 mean all
+ */
+function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $return = new stdClass;
-    $return->grades = get_records_menu('quiz_grades', 'quiz', $quiz->id, '', 'userid, grade');
-    $return->maxgrade = get_field('quiz', 'grade', 'id', $quiz->id);
-    return $return;
+    if ($quiz != null) {
+        if ($grades = quiz_get_user_grades($quiz, $userid)) {
+            grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades);
+
+        } else if ($userid and $nullifnone) {
+            $grade = new object();
+            $grade->itemid     = $quiz->id;
+            $grade->userid     = $userid;
+            $grade->gradevalue = NULL;
+            grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grade);
+        }
+
+    } else {
+        $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+                  FROM {$CFG->prefix}quiz a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($quiz = rs_fetch_next_record($rs)) {
+                    quiz_grade_item_update($quiz);
+                    if ($quiz->grade != 0) {
+                        quiz_update_grades($quiz, 0, false);
+                    }
+                }
+            }
+            rs_close($rs);
+        }
+    }
 }
+
+/**
+ * Create grade item for given quiz
+ *
+ * @param object $quiz object with extra cmidnumber
+ * @return int 0 if ok, error code otherwise
+ */
+function quiz_grade_item_update($quiz) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    if (array_key_exists('cmidnumber', $quiz)) { //it may not be always present
+        $params = array('itemname'=>$quiz->name, 'idnumber'=>$quiz->cmidnumber);
+    } else {
+        $params = array('itemname'=>$quiz->name);
+    }
+
+    if ($quiz->grade > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $quiz->grade;
+        $params['grademin']  = 0;
+
+    } else {
+        $params['gradetype'] = GRADE_TYPE_NONE;
+    }
+
+    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, $params);
+}
+
+/**
+ * Delete grade item for given quiz
+ *
+ * @param object $quiz object
+ * @return object quiz
+ */
+function quiz_grade_item_delete($quiz) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, array('deleted'=>1));
+}
+
 
 function quiz_get_participants($quizid) {
 /// Returns an array of users who have data in a given quiz
@@ -694,6 +789,9 @@ function quiz_after_add_or_update($quiz) {
             add_event($event);
         }
     }
+
+    //update related grade item
+    quiz_grade_item_update($quiz);
 }
 
 function quiz_get_view_actions() {
