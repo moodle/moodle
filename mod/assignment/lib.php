@@ -5,8 +5,6 @@
  * This class provides all the functionality for an assignment
  */
 
-require_once($CFG->libdir.'/gradelib.php');
-
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 

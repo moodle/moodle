@@ -22,8 +22,6 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once($CFG->libdir.'/gradelib.php');
-
 /// Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);

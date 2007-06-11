@@ -1,7 +1,6 @@
 <?php  // $Id$
 
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/gradelib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
