@@ -40,7 +40,7 @@ class question_edit_calculated_form extends question_edit_form {
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
 
-        $repeated[] =& $mform->createElement('text', 'answers', get_string('correctanswerformula', 'quiz'));
+        $repeated[] =& $mform->createElement('text', 'answers', get_string('correctanswerformula', 'quiz').'=', array('size' => 50));
         $repeatedoptions['answers']['type'] = PARAM_NOTAGS;
 
         $creategrades = get_grade_options();
@@ -159,6 +159,26 @@ class question_edit_calculated_form extends question_edit_form {
 
     function validation($data){
         $errors = array();
+        //verifying for errors in {=...} in question text;
+        $qtext = "";
+        $qtextremaining = $data['questiontext'] ;
+        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']);
+            foreach ($possibledatasets as $name => $value) {
+            $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
+        }
+    //     echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets); 
+        while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+            if (!empty($regs1[1]) && $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
+                if(!isset($errors['questiontext'])){
+                    $errors['questiontext'] = $formulaerrors.':'.$regs1[1] ;
+                }else {
+                    $errors['questiontext'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
+                }                    
+            }
+        }             
         $answers = $data['answers'];
         $answercount = 0;
         $maxgrade = false;
