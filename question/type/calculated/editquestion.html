@@ -6,9 +6,9 @@ $QTYPES[$question->qtype]->print_question_form_start($question, array(), $course
         $answer = $answers[$i-1];
 ?>
 <tr valign="top">
-<td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
+<td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>=</b></td>
     <td align="left">
-    <input align="left" type="text" id="formula0" name="answers[]" size="20" value="<?php  p($answer->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
+    <input align="left" type="text" id="formula0" name="answers[]" size="50" value="<?php  p($answer->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
         <?php print_string("grade");
            echo ":&nbsp;";
            choose_from_menu($gradeoptions, "fraction[]", $answer->fraction,""); ?>
@@ -103,8 +103,31 @@ $addmoreanswerblanks=get_string('addmoreunitblanks', 'qtype_calculated');
 </tr>
 <?php
 $QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
-$QTYPES[$question->qtype]->print_question_form_end($question,
-        '',
-        '<input type="hidden" name="wizardpage" value="question" />');
 ?>
-
+  <tr valign="top">
+    <td colspan="2" align="center">
+      <input type="submit"  value="<?php print_string('nextpage', 'qtype_calculated') ?>" />
+      <?php
+      if ($question->id) {
+        ?>
+        <input type="submit" name="makecopy"  value="<?php print_string('makecopynextpage', 'qtype_calculated')?>" /> 
+        <?php
+      }
+      ?>
+      <input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
+      <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
+      <input type="hidden" name="id" value="<?php p($question->id) ?>" />
+      <input type="hidden" name="qtype" value="<?php p($question->qtype) ?>" />
+      <input type="hidden" name="wizardpage" value="question" />
+      <input type="hidden" name="inpopup" value="<?php echo optional_param('inpopup', 0, PARAM_INT) ?>" />
+      <?php
+      
+      // The following hidden field indicates that the versioning code should be turned on, i.e.,
+      // that old versions should be kept if necessary
+      ?>
+      <input type="hidden" name="versioning" value="on" />
+    </td>
+  </tr>
+</table>
+</center>
+</form>
