@@ -195,11 +195,136 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 delete_records('question_calculated', 'id', $oo->id);
             }
         }
+        // validating data but not on import
+       if( !isset($question->import_process)){
+            $mandatorydatasets = array();
+                foreach ($question->answers as $answer) {
+                    $mandatorydatasets += $this->find_dataset_names($answer);
+                }
+            // do not proceed further if no mandatorydataset    
+            if (count($mandatorydatasets) < 1) { // check there are at lest 2 answers for multiple choice
+                $result->notice = get_string('atleastonewildcard', 'qtype_datasetdependent');//get_string("notenoughanswers", "qtype_multichoice", "2");
+                return $result;
+            }  
+            $calculatedmessages = array();
+                        //evaluate the equations i.e {=5+4) eval(  
+          $qtext = "";
+         $qtextremaining = $question->questiontext ;
+         $possibledatasets = $this->find_dataset_names($question->questiontext);
+            foreach ($possibledatasets as $name => $value) {
+            $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
+        }
+    //     echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets); 
 
+//         echo "test<pre>";print_r($numericalquestion);
+           while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+             // echo "testsplit0".$qtextsplits[0]."<br/>";
+             // echo "test".$regs1[0]."<br/>";            
+             // echo "qtext".$qtext."<br/>";       
+            //    echo "test<pre>";print_r($regs1);
+            if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+                    // could put here an equation verification
+                     if ($formulaerrors =
+                     qtype_calculated_find_formula_errors($regs1[1])) {
+                        $calculatedmessages[] = $formulaerrors;
+                        $str = '';
+                    }                  
+                }
+            } 
+            // import from 1.8 to be tested
+            $answercount=0 ;
+        $maxgrade = false;
+        $mandatorydatasets = array();
+        foreach ($question->answers as $key => $answer){
+            $mandatorydatasets += $this->find_dataset_names($answer);
+        }      
+        if ( count($mandatorydatasets )==0){
+          //  $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
+ //           foreach ($answers as $key => $answer){
+               $calculatedmessages[] = get_string('atleastonewildcard', 'qtype_datasetdependent');
+//            }      
+        }  
+        foreach ($question->answers as $key => $answer){
+            //check no of choices
+            // the * for everykind of answer not actually implemented
+            $trimmedanswer = trim($answer);
+            if (($trimmedanswer!='')||$answercount==0){
+                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
+                if (FALSE !== $eqerror){
+                    $calculatedmessages[] = $eqerror.":".$answer;
+                }
+            }
+            
+            if ($trimmedanswer!=''){
+            /*    if ('2' == $data['correctanswerformat'][$key]
+                        && '0' == $data['correctanswerlength'][$key]) {
+                    $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                }
+                if (!is_numeric($data['tolerance'][$key])){
+                    $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
+                }
+                if ($data['fraction'][$key] == 1) {
+                   $maxgrade = true;
+                }
+*/
+                $answercount++;
+            }
+        } 
+        if ($answercount == 0) {
+            $calculatedmessages[]=get_string('atleastoneanswer', 'qtype_calculated');
+        }
+          /*              $calculatedmessages = array();
+                if (empty($form->name)) {
+                    $calculatedmessages[] = get_string('missingname', 'quiz');
+                }
+                if (empty($form->questiontext)) {
+                    $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
+                }
+                // Verify formulas
+                foreach ($form->answers as $key => $answer) {
+                    if ('' === trim($answer)) {
+                        $calculatedmessages[] =
+                            get_string('missingformula', 'quiz');
+                    }
+                    if ($formulaerrors =
+                     qtype_calculated_find_formula_errors($answer)) {
+                        $calculatedmessages[] = $formulaerrors;
+                    }
+                    if (! isset($form->tolerance[$key])) {
+                        $form->tolerance[$key] = 0.0;
+                    }
+                    if (! is_numeric($form->tolerance[$key])) {
+                        $calculatedmessages[] =
+                            get_string('tolerancemustbenumeric', 'quiz');
+                    }
+                }
 
+                if (!empty($calculatedmessages)) {
+                    $errorstring = "The following errors were found:<br />";
+                    foreach ($calculatedmessages as $msg) {
+                        $errorstring .= $msg . '<br />';
+                    }
+                    error($errorstring);
+                }
+      */
+
+        }
         if( isset($question->import_process)&&$question->import_process){
             $this->import_datasets($question);
          }   
+            if (!empty($calculatedmessages)) {
+                    $errorstring = "The following errors were found:<br />";
+                    foreach ($calculatedmessages as $msg) {
+                        $errorstring .= $msg . '<br />';
+                    }
+                    $result->notice=$errorstring;
+                }
+  
         // Report any problems.
         if (!empty($result->notice)) {
             return $result;
@@ -261,7 +386,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $datasetitem->number = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
                     if (!insert_record('question_dataset_items', $datasetitem)) {
-                        error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
+                        error("Unable to insert dataset item $datasetitem->number with $item->value for $datasetdef->name");
                     }
                 }     
             }                                
@@ -273,6 +398,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $question->options->answers = array();
         foreach ($form->answers as $key => $answer) {
             $a->answer              = trim($form->answer[$key]);
+            $a->fraction              = $form->fraction[$key];//new
             $a->tolerance           = $form->tolerance[$key];
             $a->tolerancetype       = $form->tolerancetype[$key];
             $a->correctanswerlength = $form->correctanswerlength[$key];
@@ -365,6 +491,25 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         $numericalquestion->questiontext = parent::substitute_variables(
          $numericalquestion->questiontext, $state->options->dataset);
+        //evaluate the equations i.e {=5+4)   
+          $qtext = "";
+         $qtextremaining = $numericalquestion->questiontext ;
+           while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
+             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
+            $qtext =$qtext.$qtextsplits[0];
+            $qtextremaining = $qtextsplits[1];
+            if (empty($regs1[1])) {
+                    $str = '';
+                } else {
+                    if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
+                        $str=$formulaerrors ;
+                    }else {                    
+                        eval('$str = '.$regs1[1].';');
+                    }
+                }
+                $qtext = $qtext.$str ; 
+            } 
+             $numericalquestion->questiontext = $qtext.$qtextremaining ; // end replace equations
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
 
@@ -590,7 +735,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function comment_header($question) {
         //$this->get_question_options($question);
         global $SESSION;
-        $strheader = '';
+        $strheader = Array();
         $delimiter = '';
         if (empty($question->id)) {
             $answers = $SESSION->datasetdependent->questionform->answers;
@@ -599,9 +744,9 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         foreach ($answers as $answer) {
             if (is_string($answer)) {
-                $strheader .= $delimiter.$answer;
+                $strheader[] = $answer;
             } else {
-                $strheader .= $delimiter.$answer->answer;
+                $strheader[]= $answer->answer;
             }
             $delimiter = ',';
         }
@@ -624,6 +769,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $errors = '';
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
+        $column =Array();
         foreach ($answers as $answer) {
             $calculated = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
@@ -639,12 +785,13 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 $errors .= " -$calculated->answer";
                 $stranswers .= $delimiter;
             } else {
-                $stranswers .= $delimiter.$calculated->answer;
-                $strmin     .= $delimiter.$calculated->min;
-                $strmax     .= $delimiter.$calculated->max;
+              //  $stranswers .= $delimiter.$calculated->answer;
+              //  $strmin     .= $delimiter.$calculated->min;
+              //  $strmax     .= $delimiter.$calculated->max;
+                $column[]=$stranswers.$delimiter.$calculated->answer.'<br/>'.$strmin.$delimiter.$calculated->min.'<br/>'.$strmax.$delimiter.$calculated->max ;
             }
         }
-        return "$stranswers<br/>$strmin<br/>$strmax<br/>$errors";
+        return $column;
     }
 
     function tolerance_types() {
@@ -653,18 +800,25 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                      '3'  => get_string('geometric', 'quiz'));
     }
 
-    function dataset_options($form, $name, $renameabledatasets=false) {
+    function dataset_options($form, $name, $mandatory=true,$renameabledatasets=false) {
     // Takes datasets from the parent implementation but
     // filters options that are currently not accepted by calculated
     // It also determines a default selection...
-        list($options, $selected) = parent::dataset_options($form, $name);
+    //$renameabledatasets not implemented anmywhere 
+        list($options, $selected) = parent::dataset_options($form, $name,'','qtype_calculated');
+  //  list($options, $selected) = $this->dataset_optionsa($form, $name);
+
         foreach ($options as $key => $whatever) {
             if (!ereg('^'.LITERAL.'-', $key) && $key != '0') {
                 unset($options[$key]);
             }
         }
         if (!$selected) {
+            if ($mandatory){             
             $selected = LITERAL . "-0-$name"; // Default
+            }else {
+                $selected = "0"; // Default
+            }    
         }
         return array($options, $selected);
     }
@@ -721,6 +875,100 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return $str;
     }
     
+    /**
+    * This function retrieve the item count of the available category shareable
+    * wild cards that is added as a comment displayed when a wild card with 
+    * the same name is displayed in datasetdefinitions_form.php
+    */ 
+    function get_dataset_definitions_category($form) {
+        global $CFG;
+        $datasetdefs = array();
+        $lnamemax = 30;
+        if (!empty($form->category)) {            
+            $sql = "SELECT i.*,d.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i    
+                  WHERE i.id = d.datasetdefinition
+                    AND i.category = '$form->category'
+                    ;
+                   ";
+             if ($records = get_records_sql($sql)) {
+                   foreach ($records as $r) {
+                       if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
+                    }
+                }
+        }  
+        return  $datasetdefs ;
+    }  
+
+    /**
+    * This function build a table showing the available category shareable
+    * wild cards, their name, their definition (Min, Max, Decimal) , the item count
+    * and the name of the question where they are used.
+    * This table is intended to be add before the question text to help the user use 
+    * these wild cards
+    */                          
+        
+    function print_dataset_definitions_category($form) {
+        global $CFG;
+        $datasetdefs = array();
+        $lnamemax = 22;
+        $namestr =get_string('name', 'quiz');
+        $minstr=get_string('min', 'quiz');
+        $maxstr=get_string('max', 'quiz');
+        $rangeofvaluestr=get_string('minmax','qtype_datasetdependent');
+        $questionusingstr = get_string('usedinquestion','qtype_calculated');
+        $wildcardstr =  get_string('wildcard', 'qtype_calculated');
+        $itemscountstr = get_string('itemscount','qtype_datasetdependent');
+       $text ='';
+        if (!empty($form->category)) {           
+            $sql = "SELECT i.*,d.*
+                    FROM {$CFG->prefix}question_datasets d,
+                         {$CFG->prefix}question_dataset_definitions i    
+                    WHERE i.id = d.datasetdefinition
+                    AND i.category = '$form->category'; 
+                    " ;
+            if ($records = get_records_sql($sql)) {
+                foreach ($records as $r) {
+                    $sql1 = "SELECT q.*
+                        FROM  {$CFG->prefix}question q                    
+                             WHERE q.id = $r->question                    
+                    ";                  
+                    if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
+                        $datasetdefs["$r->type-$r->category-$r->name"]= $r;
+                    }
+                    if ($questionb = get_records_sql($sql1)) {
+                        $datasetdefs["$r->type-$r->category-$r->name"]->questions[$r->question]->name =$questionb[$r->question]->name ;
+                    }
+                }
+            }
+        }
+        if (!empty ($datasetdefs)){
+            
+            $text ="<table width=\"100%\" border=\"1\"><tr><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\" >$namestr</th><th   style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$rangeofvaluestr</th><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$itemscountstr</th><th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$questionusingstr</th></tr>";  
+            foreach ($datasetdefs as $datasetdef){
+                list($distribution, $min, $max,$dec) = explode(':', $datasetdef->options, 4);
+                $text .="<tr><td valign=\"top\" align=\"center\"> $datasetdef->name </td><td align=\"center\" valign=\"top\"> $min <strong>-</strong> $max </td><td align=\"right\" valign=\"top\">$datasetdef->itemcount&nbsp;&nbsp;</td><td align=\"left\">";
+                foreach ($datasetdef->questions as $qu) {
+                    //limit the name length displayed
+                    if (!empty($qu->name)) {
+                        $qu->name = (strlen($qu->name) > $lnamemax) ?
+                        substr($qu->name, 0, $lnamemax).'...' : $qu->name;
+                    } else {
+                        $qu->name = '';
+                    }
+                    $text .=" &nbsp;&nbsp; $qu->name <br/>";  
+                }  
+                $text .="</td></tr>";
+            }
+            $text .="</table>";
+        }else{
+             $text .=get_string('nosharedwildcard', 'qtype_calculated'); 
+        }
+        return  $text ;
+    }    
+
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

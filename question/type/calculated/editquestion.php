@@ -3,7 +3,7 @@
 // Get a handle to the question type we are dealing with here
 $qtypeobj = $QTYPES['calculated'];
 
-if (empty($form)) {
+if (empty($form)|| isset($form->addanswers) || isset($form->addunits)) {
 /****************************************************************/
 /***** First page in question wizard - editquestion.html.html! **/
 /****************************************************************/
@@ -14,7 +14,7 @@ if (empty($form)) {
     // However, the code behind supports up to six formulas
     // and the database store and attempt/review framework
     // does not have any limit.
-    $answers= array();
+/*    $answers= array();
     for ($i=0; $i<6; $i++) {
         // Make answer slots with default values
         $answers[$i]->answer              = "";
@@ -38,15 +38,52 @@ if (empty($form)) {
             }
         }
     }
+    */
+        $emptyanswer = new stdClass;
+    $emptyanswer->answer = '';
+        $emptyanswer->feedback            = "";
+        $emptyanswer->fraction            = "1.0";
+        $emptyanswer->tolerance           = "0.01";
+        $emptyanswer->tolerancetype       = "1";
+        $emptyanswer->correctanswerlength = "2"; // Defaults to two ...
+        $emptyanswer->correctanswerformat = "1"; // ... decimals
+
+    if (!empty($question->id) && isset($question->qtype) &&
+            $QTYPES[$question->qtype]->get_question_options($question)) {
+
+        $answers = array_values($question->options->answers);
+    /*    $units  = array_values($question->options->units);
+        usort($units, create_function('$a, $b', // make sure the default unit is at index 0
+                'if (1.0 === (float)$a->multiplier) { return -1; } else '.
+                'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
+      */          
+    } else {
+        $answers = array();
+        $answers[] = $emptyanswer;
+   //     $units     = array();
+    }
+
+    // Add blank answers to make the number up to QUESTION_NUMANS
+    // or one more than current, if there are already lots.
+    $emptyanswer = new stdClass;
+    $emptyanswer->answer = '';
+        $emptyanswer->feedback            = "";
+        $emptyanswer->fraction            = "1.0";
+        $emptyanswer->tolerance           = "0.01";
+        $emptyanswer->tolerancetype       = "1";
+        $emptyanswer->correctanswerlength = "2"; // Defaults to two ...
+        $emptyanswer->correctanswerformat = "1"; // ... decimals
+ //   $i = count($answers);
+ //   $limit = QUESTION_NUMANS;
+//    $limit = $limit <= $i ? $i+1 : $limit;
+//    for (; $i < $limit; $i++) {
+        $answers[] = $emptyanswer;
+ //   }
 
     // Units are handled the same way
     // as for numerical questions
     $units = array();
-    for ($i=0 ; $i<6 ; $i++) {
-        // Make unit slots, default as blank...
-        $units[$i]->multiplier = '';
-        $units[$i]->unit = '';
-    }
+
     if (!empty($question->id) and $unitsraw = get_records(
             'question_numerical_units', 'question', $question->id)) {
         /// Find default unit and have it put in the zero slot
@@ -70,8 +107,9 @@ if (empty($form)) {
         }
     } else {
         $units[0]->multiplier = 1.0;
+        $units[0]->unit= '';
     }
-
+        
     // Strip trailing zeros from multipliers
     foreach ($units as $i => $unit) {
         if (ereg('^(.*\\..(.*[^0])?)0+$', $unit->multiplier, $regs1)) {
@@ -81,6 +119,13 @@ if (empty($form)) {
                 $units[$i]->multiplier = $regs1[1];
             }
         }
+    }
+    if (isset($form->addunits)){
+         $emptyunit = new stdClass;
+         $emptyunit->multiplier = '';
+          $emptyunit->unit = '';
+          $units[]=$emptyunit;
+          $units[]=$emptyunit;
     }
     print_heading_with_help(get_string("editingcalculated", "quiz"), "calculated", "quiz");
     require("$CFG->dirroot/question/type/calculated/editquestion.html");
