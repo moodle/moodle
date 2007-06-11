@@ -56,6 +56,14 @@ function xmldb_lesson_upgrade($oldversion=0) {
         $result = $result && change_field_notnull($table, $field);
     }
 
+    if ($result && $oldversion < 2007061100) {
+        require_once($CFG->dirroot.'/mod/lesson/lib.php');
+        // too much debug output
+        $db->debug = false;
+        lesson_update_grades();
+        $db->debug = true;
+    }
+
     return $result;
 }
 

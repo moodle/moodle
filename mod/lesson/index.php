@@ -87,11 +87,8 @@
             } else {
                 // it's a student, show their grade
                 $grade_value = 0;
-                if ($return = lesson_grades($lesson->id)) {
-                    // grades are stored as percentages
-                    if (isset($return->grades[$USER->id])) {
-                        $grade_value = $return->grades[$USER->id];
-                    }
+                if ($return = lesson_get_user_grades($lesson, $USER->id)) {
+                    $grade_value = $return[$USER->id]->gradevalue;
                 }
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);

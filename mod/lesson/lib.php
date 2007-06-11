@@ -100,6 +100,8 @@ function lesson_add_instance($lesson) {
 
     add_event($event);
 
+    lesson_grade_item_update(stripslashes_recursive($lesson));
+
     return $lesson->id;
 }
 
@@ -193,7 +195,15 @@ function lesson_update_instance($lesson) {
 
     add_event($event);
 
-    return update_record("lesson", $lesson);
+    $result = update_record("lesson", $lesson);
+
+    // update grade item definition
+    lesson_grade_item_update(stripslashes_recursive($lesson));
+
+    // update grades - TODO: do it only when grading style changes
+    lesson_update_grades(stripslashes_recursive($lesson), 0, false);
+
+    return $result;
 }
 
 
@@ -244,6 +254,8 @@ function lesson_delete_instance($id) {
             $result = false;
         }
     }
+
+    lesson_grade_item_delete($lesson);
 
     return $result;
 }
@@ -385,47 +397,139 @@ function lesson_cron () {
     return true;
 }
 
-/*******************************************************************/
-function lesson_grades($lessonid) {
-/// Must return an array of grades for a given instance of this module,
-/// indexed by user.  It also returns a maximum allowed grade.
+/**
+ * Return grade for given user or all users.
+ *
+ * @param int $lessonid id of lesson
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG;
 
-    if (!$lesson = get_record("lesson", "id", $lessonid)) {
-        return NULL;
-    }
+    $user = $userid ? "AND u.id = $userid" : "";
+    $fuser = $userid ? "AND uu.id = $userid" : "";
+
     if ($lesson->retake) {
         if ($lesson->usemaxgrade) {
-            $grades = get_records_sql_menu("SELECT userid,MAX(grade) FROM {$CFG->prefix}lesson_grades WHERE
-            lessonid = $lessonid GROUP BY userid");
+            $sql = "SELECT u.id, u.id AS userid, MAX(g.grade) AS gradevalue
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
+                     WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                           $user
+                  GROUP BY u.id";
         } else {
-            $grades = get_records_sql_menu("SELECT userid,AVG(grade) FROM {$CFG->prefix}lesson_grades WHERE
-            lessonid = $lessonid GROUP BY userid");
+            $sql = "SELECT u.id, u.id AS userid, AVG(g.grade) AS gradevalue
+                      FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
+                     WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                           $user
+                  GROUP BY u.id";
         }
-    } else {
-        // Retakes is turned Off; only count first attempt
-        $firstgrades = get_records_sql("SELECT userid, MIN(completed), grade FROM {$CFG->prefix}lesson_grades WHERE lessonid = $lessonid GROUP BY userid");
-        $grades = array();
-        if (!empty($firstgrades)) {
-            foreach($firstgrades as $userid => $info) {
-                $grades[$userid] = $info->grade;
-            }
-        }
-    }
-    // convert grades from percentages and tidy the numbers
-    if (!$lesson->practice) {  // dont display practice lessons
-        if ($grades) {
-            foreach ($grades as $userid => $grade) {
-                $return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);
-            }
-        }
-        $return->maxgrade = $lesson->grade;
 
-        return $return;
     } else {
-        return NULL;
+        // use only first attempts (with lowest id in lesson_grades table)
+        $firstonly = "SELECT uu.id AS userid, MIN(gg.id) AS firstcompleted
+                        FROM {$CFG->prefix}user uu, {$CFG->prefix}lesson_grades gg
+                       WHERE uu.id = gg.userid AND gg.lessonid = $lesson->id
+                             $fuser
+                       GROUP BY uu.id";
+
+        $sql = "SELECT u.id, u.id AS userid, g.grade AS gradevalue
+                  FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g, ($firstonly) f
+                 WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                       AND g.id = f.firstcompleted AND g.userid=f.userid
+                       $user";
+    }
+
+    return get_records_sql($sql);
+}
+
+/**
+ * Update grades in central gradebook
+ *
+ * @param object $lesson null means all lessons
+ * @param int $userid specific user only, 0 mean all
+ */
+function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    if ($lesson != null) {
+        if ($grades = lesson_get_user_grades($lesson, $userid)) {
+            grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grades);
+
+        } else if ($userid and $nullifnone) {
+            $grade = new object();
+            $grade->itemid     = $lesson->id;
+            $grade->userid     = $userid;
+            $grade->gradevalue = NULL;
+            grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grade);
+        }
+
+    } else {
+        $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
+                  FROM {$CFG->prefix}lesson l, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($lesson = rs_fetch_next_record($rs)) {
+                    lesson_grade_item_update($lesson);
+                    if ($lesson->grade != 0) {
+                        lesson_update_grades($lesson, 0, false);
+                    }
+                }
+            }
+            rs_close($rs);
+        }
     }
 }
+
+/**
+ * Create grade item for given lesson
+ *
+ * @param object $lesson object with extra cmidnumber
+ * @return int 0 if ok, error code otherwise
+ */
+function lesson_grade_item_update($lesson) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    if (array_key_exists('cmidnumber', $lesson)) { //it may not be always present
+        $params = array('itemname'=>$lesson->name, 'idnumber'=>$lesson->cmidnumber);
+    } else {
+        $params = array('itemname'=>$lesson->name);
+    }
+
+    if ($lesson->grade > 0) {
+        $params['gradetype']  = GRADE_TYPE_VALUE;
+        $params['grademax']   = 100; //means 100%
+        $params['grademin']   = 0;
+        $params['multfactor'] = $lesson->grade / 100.0;
+
+    } else {
+        $params['gradetype']  = GRADE_TYPE_NONE;
+        $params['multfactor'] = 1.0;
+    }
+
+    return grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, NULL, $params);
+}
+
+/**
+ * Delete grade item for given lesson
+ *
+ * @param object $lesson object
+ * @return object lesson
+ */
+function lesson_grade_item_delete($lesson) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, NULL, array('deleted'=>1));
+}
+
 
 /*******************************************************************/
 function lesson_get_participants($lessonid) {

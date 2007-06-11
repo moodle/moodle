@@ -114,6 +114,10 @@
                 } else {
                     lesson_set_message(get_string('updatefailed', 'lesson'));
                 }
+
+                // update central gradebook
+                lesson_update_grades($lesson, $grade->userid);
+
                 redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             } else {
                 error('Something is wrong with the form data');

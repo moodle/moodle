@@ -911,7 +911,11 @@
                 } else {
                     echo get_string("welldone", "lesson");
                 }
-            }   
+            }
+
+            // update central gradebook
+            lesson_update_grades($lesson, $USER->id);
+
         } else { 
             // display for teacher
             echo "<p style=\"text-align:center;\">".get_string("displayofgrade", "lesson")."</p>\n";

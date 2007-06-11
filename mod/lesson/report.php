@@ -8,6 +8,7 @@
  **/
 
     require_once('../../config.php');
+    require_once('lib.php');
     require_once('locallib.php');
 
     $id     = required_param('id', PARAM_INT);    // Course Module ID
@@ -71,7 +72,10 @@
                 /// Remove seen branches and update the retry number    
                     delete_records('lesson_branch', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
                     execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
-                
+
+                /// update central gradebook
+                    lesson_update_grades($lesson, $userid);
+
                     $modifier++;
                 }
             }
