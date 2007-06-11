@@ -791,7 +791,7 @@ function quiz_after_add_or_update($quiz) {
     }
 
     //update related grade item
-    quiz_grade_item_update($quiz);
+    quiz_grade_item_update(stripslashes_recursive($quiz));
 }
 
 function quiz_get_view_actions() {
