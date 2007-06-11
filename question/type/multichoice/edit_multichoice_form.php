@@ -44,7 +44,7 @@ class question_edit_multichoice_form extends question_edit_form {
         $gradeoptions = $creategrades->gradeoptionsfull;
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_multichoice', '{no}'));
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
 
