@@ -1359,9 +1359,8 @@ a.skip-block, .skip-block {
 
 #calendar .maincalendar .bottom {
   width: 100%;
-  position: absolute;
-  bottom: 0;
   text-align: center;
+  padding:5px 0 0;
 }
 
 #calendar .sidecalendar {
