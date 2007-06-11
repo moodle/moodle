@@ -86,9 +86,9 @@
         $answer = $answers[$i-1];
 ?>
 <tr valign="top">
-<td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
+<td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>=</b></td>
     <td align="left">
-    <input align="left" type="text" id="formula0" name="answers[]" size="20" value="<?php  p($answer->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
+    <input align="left" type="text" id="formula0" name="answers[]" size="50" value="<?php  p($answer->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
         <?php print_string("grade");
            echo ":&nbsp;";
            choose_from_menu($gradeoptions, "fraction[]", $answer->fraction,""); ?>
