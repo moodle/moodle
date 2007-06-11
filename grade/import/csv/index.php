@@ -1,11 +1,17 @@
 <?php
-
 require_once('../../../config.php');
 
-// capability check
 $id = required_param('id', PARAM_INT); // course id
-// require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
+$course = get_record('course', 'id', $id); // actual course
 
+// capability check
+require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id));
+
+require_once('../grade_import_form.php');
+require_once($CFG->dirroot.'/grade/lib.php');
+require_once('../lib.php');
+
+// sort out delimiter
 $csv_encode = '/\&\#44/';
 if (isset($CFG->CSV_DELIMITER)) {
     $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
@@ -19,24 +25,19 @@ if (isset($CFG->CSV_DELIMITER)) {
     $csv_delimiter2 = ",";
 }
 
-require_once('../grade_import_form.php');
-require_once($CFG->dirroot.'/grade/lib.php');
-require_once('../lib.php');
-
-$course = get_record('course', 'id', $id);
 $action = 'importcsv';
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 
 $mform = new grade_import_form();
 
 //if ($formdata = $mform2->get_data() ) {
-
-if (($formdata = data_submitted()) && !empty($formdata->map)) {
 // i am not able to get the mapping[] and map[] array using the following line
 // they are somehow not returned with get_data()
 // if ($formdata = $mform2->get_data()) {
-    
-    
+if (($formdata = data_submitted()) && !empty($formdata->map)) {
+  
+    // if mapping informatioin is supplied
+
     foreach ($formdata->maps as $i=>$header) {
         $map[$header] = $formdata->mapping[$i];
     }    
@@ -59,7 +60,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     if ($fp = fopen($filename, "r")) {
     
         // use current time stamp
-        $importcode = time();   
+        $importcode = time();
     
         // --- get header (field names) ---
         $header = split($csv_delimiter, fgets($fp,1024));
@@ -73,10 +74,10 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             // add something
             $line = split($csv_delimiter, fgets($fp,1024));            
         
-            // each line is a student record
-            unset ($studentid);
-            unset ($studentgrades);
+            // array to hold all grades to be inserted
             $newgrades = array();
+            
+            // each line is a student record
             foreach ($line as $key => $value) {  
                 //decode encoded commas
                 $value = preg_replace($csv_encode,$csv_delimiter2,trim($value));
@@ -119,16 +120,16 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     default:
                         // existing grade items
                         if (!empty($map[$header[$key]])) {
-                            // case of an id, only maps idnumber of a grade_item
-                            //$studentgrades[$map[$header[$key]]] = $value;
                             
+                            // case of an id, only maps idnumber of a grade_item                            
                             include_once($CFG->libdir.'/grade/grade_item.php');
                             $gradeitem = new grade_item(array('idnumber'=>$map[$header[$key]]));
                             unset($newgrade);
                             $newgrade -> itemid = $gradeitem->id;
                             $newgrade -> gradevalue = $value;                            
                             $newgrades[] = $newgrade;
-                        } // otherwise, we ignore this column altogether (e.g. institution, address etc)
+                        } // otherwise, we ignore this column altogether 
+                          // because user has chosen to ignore them (e.g. institution, address etc)
                     break;  
                 }
             }
@@ -146,30 +147,11 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     $newgrade->userid = $studentid;
                     insert_record('grade_import_values', $newgrade);
                 }
-            }            
-                       
-            /// put all the imported grades for this user into grade_import_values table            
-            
-            /*
-            if (!empty($studentgrades)) {
-                foreach ($studentgrades as $idnumber => $studentgrade) {
-                
-                    unset($eventdata);
-                    $eventdata->idnumber = $idnumber;
-                    $eventdata->userid = $studentid;
-                    $eventdata->gradevalue = $studentgrade;
-                    events_trigger('grade_update_request', $eventdata);               
-                
-                    debugging("triggering event for $idnumber... student id is $studentid and grade is $studentgrade");            
-                }
             }
-            */
         }
     
         /// at this stage if things are all ok, we commit the changes from temp table 
-        /// via events
         grade_import_commit($course->id, $importcode);
-    
     
         // temporary file can go now
         unlink($filename);
@@ -177,8 +159,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         error ('import file '.$filename.' not readable');  
     }
 
-} else if ($formdata = $mform->get_data() ) {
-
+} else if ($formdata = $mform->get_data()) {
+    // else if file is just uploaded
+    
     $filename = $mform->get_userfile_name();
     
     // Large files are likely to take their time and memory. Let PHP know
@@ -207,25 +190,12 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     // --- get header (field names) ---
     $header = split($csv_delimiter, fgets($fp,1024));
     
-    // print mapping form
+    // display the mapping form with header info processed
     $mform2 = new grade_import_mapping_form(qualified_me(), array('id'=>$id, 'header'=>$header, 'filename'=>$filename));
     $mform2->display();
 } else {
+    // display the standard upload file form
     $mform->display();
 }
 print_footer();
-
-function my_file_get_contents($filename, $use_include_path = 0) {
-    /// Returns the file as one big long string
-
-    $data = "";
-    $file = @fopen($filename, "rb", $use_include_path);
-    if ($file) {
-        while (!feof($file)) {
-            $data .= fread($file, 1024);
-        }
-        fclose($file);
-    }
-    return $data;
-}
 ?>

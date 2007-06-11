@@ -129,4 +129,18 @@ function import_cleanup($importcode) {
     delete_records('grade_import_values', 'import_code', $importcode);
     delete_records('grade_import_newitem', 'import_code', $importcode);  
 }
+
+/// Returns the file as one big long string
+function my_file_get_contents($filename, $use_include_path = 0) {
+
+    $data = "";
+    $file = @fopen($filename, "rb", $use_include_path);
+    if ($file) {
+        while (!feof($file)) {
+            $data .= fread($file, 1024);
+        }
+        fclose($file);
+    }
+    return $data;
+}
 ?>
