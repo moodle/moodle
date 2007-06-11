@@ -74,7 +74,7 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
  * or key means do not change existing.
  *
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
- * 'grademin', 'scaleid', 'deleted'.
+ * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted'.
  *
  * @param string $source source of the grade such as 'mod/assignment', often used to prevent infinite loops when processing grade_updated events
  * @param int $courseid id of course
@@ -88,7 +88,7 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
 
     // only following grade_item properties can be changed in this function
-    $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'deleted');
+    $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted');
 
     if (is_null($courseid) or is_null($itemtype)) {
         debugging('Missing courseid or itemtype');
