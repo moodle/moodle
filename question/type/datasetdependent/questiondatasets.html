@@ -1,35 +1,73 @@
 <form name="theform" method="post" action="question.php">
 <center>
+        <div align=\"center\"><?php  print_string('datasetrole', 'qtype_datasetdependent','numerical') ;?></div>
+<div><br/></div>
+    	<fieldset class="clearfix"  id="mandatoryhdr">
+		<legend><strong><?php  print_string('mandatoryhdr', 'qtype_calculated'); ?><strong></legend>
+
 <table cellpadding="5">
-<?php if (!empty($datasets)) { ?>
+<?php if (!empty($mandatorydatasets)) { foreach($mandatorydatasets as $name ){?>
 <tr valign="top">
-    <td align="right"><b><?php  print_string("wildcard", "quiz") ?> </b></td>
-    <td align="right">{<?php foreach($datasets as $name => $tmp){break;} p($name) ?>}</td>
-    <td><b> - <?php  print_string("substitutedby", "quiz") ?></b></td>
-    <td align="left"><?php echo array_shift($datasets) ?></td>
+    <td align="right"><?php  print_string("wildcard", "quiz") ?> </td>
+    <td align="right"><strong><?php  
+        p($name); ?></strong></td>
+    
+    <td align="left"><?php echo $datasetmenus[$name] ;?></td>
 </tr>
-<?php   foreach ($datasets as $name => $menu) { ?>
+ <?php            if (isset($datadefscat[$name])){?>
 <tr valign="top">
-    <td/>
-    <td align="right">{<?php p($name) ?>}</td>
-    <td/>
+    <td align="right"><?php  print_string("sharedwildcard", "qtype_datasetdependent"); ?> </td>
+    <td align="right"><strong><?php  
+        p($name); ?></strong></td>
+    
+    <td align="left"><?php print_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$name]) ;?></td>
+</tr> 
+<?php            }?>
+
+<?php  unset ($datasetmenus[$name]) ;
+}  ?>
+</table>
+</fieldset> 
+<div><br/></div>
+       
+    	<fieldset class="clearfix"  id="mandatoryhdr">
+		<legend><strong><?php  print_string('possiblehdr', 'qtype_calculated'); ?></strong></legend>
+
+<table cellpadding="5">
+<?php   foreach ($datasetmenus as $name => $menu) { ?>
+<tr valign="top">
+    <td align="right"><?php  print_string("wildcard", "quiz") ?> </td>
+    <td align="right"><strong><?php  
+        p($name); ?></strong></td>
     <td align="left"><?php echo $menu ?>
 </tr>
-<?php   }
-      } else { ?>
+ <?php            if (isset($datadefscat[$name])){?>
+<tr valign="top">
+    <td align="right"><?php  print_string("sharedwildcard", "qtype_datasetdependent"); ?> </td>
+    <td align="right"><strong><?php  
+        p($name); ?></strong></td>    
+    <td align="left"><?php print_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$name]) ;?></td>
+</tr> 
+<?php            }?>
+<?php   } ?>
+</table>
+</fieldset>
+<?php      } else { ?>
+<table cellpadding="5">
 <tr>
 <td colspan="4"><?php print_string('nopossibledatasets', 'quiz') ?>
 <input type="hidden" name="dataset[]" value="0"/>
 </td>
 </tr>
-<?php } ?>
 </table>
+<?php } ?>
+
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
 <input type="hidden" name="category" value="<?php  p($question->category) ?>" />
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="wizardpage" value="datasetdefinitions" />
-<input type="submit"      value="<?php  print_string("savechanges") ?>" />
+<input type="submit"      value="<?php  print_string('nextpage', 'qtype_calculated')  ?>" />
 </center>
 </form>
 
