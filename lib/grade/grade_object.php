@@ -102,6 +102,8 @@ class grade_object {
     
     /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
+     * If successful this function also fetches the new object data from database and stores it
+     * in object properties.
      * @return int PK ID if successful, false otherwise
      */
     function insert() {
@@ -127,7 +129,15 @@ class grade_object {
             }
         }
         
-        return $this->id = insert_record($this->table, addslashes_recursive($clonethis), true);
+        if (!$this->id = insert_record($this->table, addslashes_recursive($clonethis), true)) {
+            debugging("Could not insert object into db");
+            return false;
+        }
+
+        // set all object properties from real db data
+        $this->update_from_db();
+
+        return $this->id;
     }
 
     /**
@@ -140,15 +150,15 @@ class grade_object {
         if (empty($this->id)) {
             debugging("The object could not be used in its state to retrieve a matching record from the DB, because its id field is not set.");
             return false;
-        } else {
-            $class = get_class($this);
-            $object = new $class(array('id' => $this->id));
-            foreach ($object as $var => $val) {
-                if (!in_array($var, $this->nonfields) && $this->$var != $val) {
-                    $this->$var = $val;
-                }
-            }
         }
+
+        if (!$params = get_record($this->table, 'id', $this->id)) {
+            debugging("Object with this id does not exist, can not update from db!");
+            return false;
+        }
+
+        $this->assign_to_this($params);
+
         return true;
     }
     

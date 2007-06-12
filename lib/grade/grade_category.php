@@ -697,7 +697,6 @@ class grade_category extends grade_object {
             $grade_item->courseid = $this->courseid;
             $grade_item->itemtype = 'category';
             $grade_item->insert();
-            $grade_item->update_from_db();
         }
 
         return $grade_item;
