@@ -52,30 +52,6 @@ class gradelib_test extends grade_test {
             $this->assertEqual(count($grade_items), 10);
         }
     }
-    
-    function test_grade_create_item() {
-        if (get_class($this) == 'gradelib_test') { 
-            $params = new stdClass();
-
-            $params->courseid = $this->courseid;
-            $params->categoryid = $this->grade_categories[0]->id;
-            $params->itemname = 'unittestgradeitem4';
-            $params->itemtype = 'mod';
-            $params->itemmodule = 'database';
-            $params->grademin = 0;
-            $params->grademax = 100;
-            $params->iteminstance = 4;
-            $params->iteminfo = 'Grade item used for unit testing';
-            $params->timecreated = mktime();
-            $params->timemodified = mktime();
-
-            $params->id = grade_create_item($params);
-            $last_grade_item = end($this->grade_items);
-
-            $this->assertEqual($params->id, $last_grade_item->id + 1);
-            $this->grade_items[] = $params;
-        }
-    }
 
     function test_grade_create_category() {
         if (get_class($this) == 'gradelib_test') { 

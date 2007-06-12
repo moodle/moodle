@@ -127,8 +127,8 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
                 $params[$k] = $v;
             }
         }
-        $itemid = grade_create_item($params);
-        $grade_item = grade_item::fetch('id', $itemid);
+        $grade_item = new grade_item($params);
+        $grade_item->insert();
 
     } else {
         if ($grade_item->locked) {
@@ -317,8 +317,8 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
 * @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
 * @param string $itemmodule 'forum, 'quiz', 'csv' etc
 * @param int $iteminstance id of the item module
-* @param string $itemname The name of the grade item
 * @param int $itemnumber Can be used to distinguish multiple grades for an activity
+* @param string $itemname The name of the grade item
 * @param int $idnumber grade item Primary Key
 * @return array An array of grade items
 */
@@ -326,25 +326,6 @@ function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminsta
     $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemname', 'itemnumber', 'idnumber'), false);
     $grade_items = $grade_item->fetch_all_using_this();
     return $grade_items;
-}
-
-
-/**
-* Creates a new grade_item in case it doesn't exist.
-* This function is called when a new module is created.
-*
-* @param mixed $params array or object
-* @return mixed New grade_item id if successful
-*/
-function grade_create_item($params) {
-    $grade_item = new grade_item($params);
-
-    if (empty($grade_item->id)) {
-        return $grade_item->insert();
-    } else {
-        debugging('Grade item already exists - id:'.$grade_item->id);
-        return $grade_item->id;
-    }
 }
 
 /**
@@ -582,12 +563,10 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
         $params['grademin']  = 0;
     }
 
-    if (!$itemid = grade_create_item($params)) {
-        debugging('Can not create new legacy grade item');
-        return false;
-    }
+    $grade_item = new grade_item($params);
+    $grade_item->insert();
 
-    return grade_item::fetch('id', $itemid);
+    return $grade_item;
 }
 
 /**
