@@ -9,8 +9,12 @@ foreach ($form->answers as $answer) {
     $mandatorydatasets += $this
             ->find_dataset_names($answer);
 }
-$datasets = $this->construct_dataset_menus(
+$datasetmenus = $this->construct_dataset_menus(
         $form, $mandatorydatasets, $possibledatasets);
+// prepare shared wild card display
+        $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
+        $datadefscat= array();
+        $datadefscat  = $this->get_dataset_definitions_category($form);
 
 // Print the page
 print_heading_with_help(get_string("choosedatasetproperties", "quiz"), "questiondatasets", "quiz");
