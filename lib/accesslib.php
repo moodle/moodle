@@ -3955,7 +3955,8 @@ function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
     // first check validity
     // MDL-9057
     if (!validate_context($context->contextlevel, $context->instanceid)) {
-        debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
+        debugging('Error: Invalid context creation request for level "' .
+                s($context->contextlevel) . '", instance "' . s($context->instanceid) . '".');
         return NULL;  
     }
     
