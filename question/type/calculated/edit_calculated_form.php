@@ -108,6 +108,7 @@ class question_edit_calculated_form extends question_edit_form {
                     $default_values['answers['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['tolerance['.$key.']'] = $answer->tolerance;
+                    $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
                     $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
                     $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
                     $default_values['feedback['.$key.']'] = $answer->feedback;
