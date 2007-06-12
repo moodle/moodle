@@ -535,12 +535,16 @@
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     
     echo '<td class="sidecalendar">';
-    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="sideblock">';
+    echo '<div class="header">'.get_string('eventskey', 'calendar').'</div>';
     echo '<div class="filters">';
     echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
     echo '</div>';
+    echo '</div>';
     
-    echo '<div class="minicalendarblock">';
+    echo '<div class="sideblock">';
+    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
+    echo '<div class="minicalendarblock minicalendartop">';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
     echo '</div><div class="minicalendarblock">';
@@ -549,6 +553,7 @@
     echo '</div><div class="minicalendarblock">';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+    echo '</div>';
     echo '</div>';
 
     echo '</td>';
