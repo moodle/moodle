@@ -400,10 +400,6 @@
         $rolenames = array(0 => get_string('all')) + $rolenames;
         popup_form("$CFG->wwwroot/user/index.php?contextid=$context->id&amp;sifirst=&amp;silast=&amp;roleid=", $rolenames,
                    'rolesform', $roleid, '');
-        // Link to Groups page
-        echo "\n".'<input type="button" onclick="window.location=\'' . $CFG->wwwroot . '/group/index.php?id='
-                . $course->id . '\';" value="' . get_string('groups') . '" />';
-        echo '</div>';
     }
 
     if ($roleid) {
