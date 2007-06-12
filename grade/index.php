@@ -5,7 +5,6 @@
     $id       = required_param('id');              // course id
     $download = optional_param('download');
     $user     = optional_param('user', -1);
-    $group    = optional_param('group', -1);
     $action   = optional_param('action', 'grades');
     $cview    = optional_param('cview', -1);
 
@@ -14,15 +13,7 @@
     }
 
     require_login($course->id);
-    
-    /* 
-    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
-        $group = get_and_set_current_group($course, $course->groupmode, $group);
-    } else {
-        $group = get_current_group($course->id);
-    }
-    */
-   
+
     // if the user set new prefs make sure they happen now
     if ($action == 'set_grade_preferences' && $prefs = data_submitted()) {
         if (!confirm_sesskey()) {
@@ -50,29 +41,15 @@
     }
 
     print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
-    
-    grade_preferences_menu($action, $course, $group);
 
-    /// copied code from assignment module, if this is not the way to do this please change it
-    /// the above code does not work
-    /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
-    /// and function groups_instance_print_group_selector() are missing. 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+    print_heading('This old gradebook may not work properly.  See the <a href="report.php?id='.$course->id.'">new 1.9 gradebook</a>');
+
+    /// find out current groups mode
     $groupmode = groupmode($course);
-    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
-    
-    /// Now we need a menu for separategroups as well!
-    if ($groupmode == VISIBLEGROUPS || ($groupmode
-        && has_capability('moodle/site:accessallgroups', $context))) {
-        
-        //the following query really needs to change
-        if ($groups = groups_get_groups_names($course->id)) { //TODO:
-            print_box_start('groupmenu');
-            print_group_menu($groups, $groupmode, $currentgroup, 'index.php?id='.$course->id);
-            print_box_end(); // groupmenu
-        }
-    }
+    $currentgroup = setup_and_print_groups($course, $groupmode, 'index.php?id=' . $course->id);
+    echo '<div class="clearer"></div>';
+
+    grade_preferences_menu($action, $course);
 
     grade_set_uncategorized();
 
