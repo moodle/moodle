@@ -7,17 +7,17 @@ class grade_import_form extends moodleform {
 
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
-        $mform->addElement('header', 'general', get_string('importfile'));
+        $mform->addElement('header', 'general', get_string('importfile', 'grades'));
         // file upload
         $mform->addElement('file', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
         $textlib = new textlib();
         $encodings = $textlib->get_encodings();
-        $mform->addElement('select', 'encoding', get_string('encoding'), $encodings);
+        $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000); 
         $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
-        $this->add_action_buttons(false, get_string('uploadgrades'));
+        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 
     function get_userfile_name(){
@@ -44,7 +44,7 @@ class grade_import_mapping_form extends moodleform {
         // course id
         $id = $this->_customdata['id'];
 
-        $mform->addElement('header', 'general', get_string('identifier'));
+        $mform->addElement('header', 'general', get_string('identifier', 'grades'));
         $mapfromoptions = array();
         
         if ($header) {
@@ -52,14 +52,14 @@ class grade_import_mapping_form extends moodleform {
                 $mapfromoptions[$h] = $h;
             }
         }
-        $mform->addElement('select', 'mapfrom', get_string('mapfrom'), $mapfromoptions);
+        $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
         //choose_from_menu($mapfromoptions, 'mapfrom');    
         
         $maptooptions = array('userid'=>'userid', 'username'=>'username', 'useridnumber'=>'useridnumber', 'useremail'=>'useremail', '0'=>'ignore');
         //choose_from_menu($maptooptions, 'mapto');
-        $mform->addElement('select', 'mapto', get_string('mapto'), $maptooptions);
+        $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
         
-        $mform->addElement('header', 'general', get_string('mappings'));
+        $mform->addElement('header', 'general', get_string('mappings', 'grades'));
         
         $gradeitems = array();
     
@@ -97,7 +97,7 @@ class grade_import_mapping_form extends moodleform {
         //echo '<input name="filename" value='.$newfilename.' type="hidden" />';
         $mform->addElement('hidden', 'filename', $newfilename);
         
-        $this->add_action_buttons(false, get_string('uploadgrades'));        
+        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));        
         
     }
 }

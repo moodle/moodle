@@ -115,8 +115,11 @@ class grade_export {
         // if grade_item ids are specified
         if ($itemids) {
             foreach ($itemids as $iid) {
-                $params->id = $iid;
-                $gradeitems[] = new grade_item($params);               
+                
+                if ($iid) {
+                    $params->id = $iid;
+                    $gradeitems[] = new grade_item($params);
+                }              
             }  
         } else {
             // else we get all items for this course
@@ -124,7 +127,6 @@ class grade_export {
         }
         
         if ($gradeitems) {
-            
             foreach ($gradeitems as $gradeitem) {
               
                 $gradeitem -> generate_final();

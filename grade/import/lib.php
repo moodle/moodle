@@ -113,7 +113,7 @@ function grade_import_commit($courseid, $importcode) {
         }
     }
     
-    notify(get_string('importsuccess'));
+    notify(get_string('importsuccess', 'grades'));
     print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
     // clean up
     import_cleanup($importcode);

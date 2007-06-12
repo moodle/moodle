@@ -85,8 +85,8 @@ if ( $formdata = $mform->get_data()) {
                     // no user found, abort
                     $status = false;
                     import_cleanup($importcode);
-                    notify(get_string('baduserid', 'grade'));
-                    notify(get_string('importfailed', 'grade'));
+                    notify(get_string('baduserid', 'grades'));
+                    notify(get_string('importfailed', 'grades'));
                     break;
                 }
           
@@ -94,7 +94,7 @@ if ( $formdata = $mform->get_data()) {
                 if (!is_numeric($newgrade->gradevalue)) {
                     $status = false;
                     import_cleanup($importcode);
-                    notify(get_string('badgrade', 'grade'));
+                    notify(get_string('badgrade', 'grades'));
                     break;
                 }
 
@@ -104,7 +104,7 @@ if ( $formdata = $mform->get_data()) {
                     $status = false;
                     // could not insert into temp table
                     import_cleanup($importcode);
-                    notify(get_string('importfailed', 'grade'));
+                    notify(get_string('importfailed', 'grades'));
                     break;
                 }
             }

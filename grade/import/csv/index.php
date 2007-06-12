@@ -70,6 +70,8 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         }
         
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
+        $status = true;
+        
         while (!feof ($fp)) {
             // add something
             $line = split($csv_delimiter, fgets($fp,1024));            
@@ -83,19 +85,42 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 $value = preg_replace($csv_encode,$csv_delimiter2,trim($value));
                 
                 switch ($map[$header[$key]]) {
-                    case 'userid': // 
+                    case 'userid': //
+                        if (!$user = get_record('user','id', $value)) {
+                            // user not found, abort whold import
+                            import_cleanup($importcode);
+                            notify("user mapping error, could not find user with id \"$value\"");
+                            $status = false;
+                            break 3;                             
+                        }
                         $studentid = $value;
                     break;
                     case 'useridnumber':
-                        $user = get_record('user', 'idnumber', $value);
+                        if (!$user = get_record('user', 'idnumber', $value)) {
+                             // user not found, abort whold import
+                            import_cleanup($importcode);
+                            notify("user mapping error, could not find user with idnumber \"$value\"");
+                            $status = false;
+                            break 3;   
+                        }
                         $studentid = $user->id;
                     break;
                     case 'useremail':
-                        $user = get_record('user', 'email', $value);
+                        if (!$user = get_record('user', 'email', $value)) {
+                            import_cleanup($importcode);
+                            notify("user mapping error, could not find user with email address \"$value\"");
+                            $status = false;
+                            break 3;                            
+                        }
                         $studentid = $user->id;                
                     break;
                     case 'username':
-                        $user = get_record('user', 'username', $value);
+                        if (!$user = get_record('user', 'username', $value)) {
+                            import_cleanup($importcode);
+                            notify("user mapping error, could not find user with username \"$value\"");
+                            $status = false;
+                            break 3;                              
+                        }
                         $studentid = $user->id;
                     break;
                     case 'new':
@@ -104,8 +129,15 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         if (empty($newgradeitems[$key])) {            
                             
                             $newgradeitem->itemname = $header[$key];
-                            $newgradeitem->import_code = $importcode;
-                            $newgradeitems[$key] = insert_record('grade_import_newitem', $newgradeitem);
+                            $newgradeitem->import_code = $importcode;                          
+                            
+                            // failed to insert into new grade item buffer
+                            if (!$newgradeitems[$key] = insert_record('grade_import_newitem', $newgradeitem)) {
+                                $status = false;
+                                import_cleanup($importcode);
+                                notify(get_string('importfailed', 'grades'));
+                                break 3;        
+                            }
                             // add this to grade_import_newitem table
                             // add the new id to $newgradeitem[$key]  
                         } 
@@ -113,17 +145,33 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         $newgrade -> newgradeitem = $newgradeitems[$key];
                         $newgrade -> gradevalue = $value;                        
                         $newgrades[] = $newgrade;
-                        // if not, put it in
                         
+                        // if not, put it in                        
                         // else, insert grade into the table
                     break;
                     default:
                         // existing grade items
                         if (!empty($map[$header[$key]])) {
                             
+                            // non numeric grade value supplied, possibly mapped wrong column
+                            if (!is_numeric($value)) {
+                                $status = false;
+                                import_cleanup($importcode);
+                                notify(get_string('badgrade', 'grades'));
+                                break 3;
+                            }
+                            
                             // case of an id, only maps idnumber of a grade_item                            
                             include_once($CFG->libdir.'/grade/grade_item.php');
-                            $gradeitem = new grade_item(array('idnumber'=>$map[$header[$key]]));
+                            if (!$gradeitem = new grade_item(array('idnumber'=>$map[$header[$key]]))) {
+                                // supplied bad mapping, should not be possible since user
+                                // had to pick mapping
+                                $status = false;
+                                import_cleanup($importcode);
+                                notify(get_string('importfailed', 'grades'));
+                                break 3;                             
+                            }                            
+                            
                             unset($newgrade);
                             $newgrade -> itemid = $gradeitem->id;
                             $newgrade -> gradevalue = $value;                            
@@ -133,11 +181,14 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                     break;  
                 }
             }
-
+            
+            // no user mapping supplied at all, or user mapping failed
             if (empty($studentid) || !is_numeric($studentid)) {
                 // user not found, abort whold import
+                $status = false;
                 import_cleanup($importcode);
-                error('user mapping error, could not find user!'); 
+                notify('user mapping error, could not find user!');
+                break; 
             }
             
             // insert results of this students into buffer
@@ -145,14 +196,21 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 foreach ($newgrades as $newgrade) {
                     $newgrade->import_code = $importcode;
                     $newgrade->userid = $studentid;
-                    insert_record('grade_import_values', $newgrade);
+                    if (!insert_record('grade_import_values', $newgrade)) {
+                        // could not insert into temporary table
+                        $status = false;
+                        import_cleanup($importcode);
+                        notify(get_string('importfailed', 'grades'));   
+                        break 2;                   
+                    }
                 }
             }
         }
     
         /// at this stage if things are all ok, we commit the changes from temp table 
-        grade_import_commit($course->id, $importcode);
-    
+        if ($status) {
+            grade_import_commit($course->id, $importcode);
+        }
         // temporary file can go now
         unlink($filename);
     } else {

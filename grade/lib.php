@@ -1163,7 +1163,7 @@ function grade_nav($course, $action='grades') {
             case 'exportxls':
             case 'importcsv':
             case 'importxml':
-                $strcurpage = get_string($action);
+                $strcurpage = get_string($action, 'grades');
                 break;
             default:
                 unset($strcurpage);
