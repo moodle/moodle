@@ -117,6 +117,18 @@
         calendar_set_filters($courses, $groups, $users);
     }
 
+    // Sort courses for consistent colour highlighting
+    // Effectively ignoring SITEID as setting as last course id
+    // Consider inside calendar_set_filters() and SITEID always last
+    $key = array_search(SITEID, $courses);
+    if ($key !== false) {
+        unset($courses[$key]);
+        sort($courses);
+        $courses[] = SITEID;
+    } else {
+        sort($courses);
+    }
+
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
     if ($SESSION->cal_course_referer != SITEID &&
@@ -273,7 +285,13 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
                 echo calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).' ('.$timeend.')';
 */
                 //unset($event->time);
-                $event->time = calendar_format_event_time($event, time(), '', false);
+
+                // Set event course class if a course event
+                if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
+                    $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+                }
+
+                $event->time = calendar_format_event_time($event, time(), '', false, $starttime);
                 calendar_print_event($event);
 
             } else {                                                                 // Save this for later
@@ -285,7 +303,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
         if (!empty($underway)) {
             echo '<h3>'.get_string('spanningevents', 'calendar').':</h3>';
             foreach ($underway as $event) {
-                $event->time = calendar_format_event_time($event, time(), '', false);
+                $event->time = calendar_format_event_time($event, time(), '', false, $starttime);
                 calendar_print_event($event);
             }
         }
@@ -400,7 +418,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     // Paddding (the first week may have blank days in the beginning)
     for($i = $display->minwday; $i < $startwday; ++$i) {
-        echo '<td>&nbsp;</td>'."\n";
+        echo '<td class="nottoday">&nbsp;</td>'."\n";
     }
 
     // Now display all the calendar
@@ -427,18 +445,6 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
         // Special visual fx if an event is defined
         if(isset($eventsbyday[$day])) {
-            if(isset($typesbyday[$day]['startglobal'])) {
-                $class .= ' event_global';
-            }
-            else if(isset($typesbyday[$day]['startcourse'])) {
-                $class .= ' event_course';
-            }
-            else if(isset($typesbyday[$day]['startgroup'])) {
-                $class .= ' event_group';
-            }
-            else if(isset($typesbyday[$day]['startuser'])) {
-                $class .= ' event_user';
-            }
             if(count($eventsbyday[$day]) == 1) {
                 $title = get_string('oneevent', 'calendar');
             }
@@ -468,6 +474,8 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         // Special visual fx for today
         if($display->thismonth && $day == $d) {
             $class .= ' today';
+        } else {
+            $class .= ' nottoday';
         }
 
         // Just display it
@@ -479,7 +487,14 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
         if(isset($eventsbyday[$day])) {
             echo '<ul class="events-new">';
             foreach($eventsbyday[$day] as $eventindex) {
-                echo '<li><a href="'.$dayhref.'#event_'.$events[$eventindex]->id.'">'.format_string($events[$eventindex]->name, true).'</a></li>';
+
+                // If event has a class set then add it to the event <li> tag
+                $eventclass = '';
+                if (!empty($events[$eventindex]->class)) {
+                    $eventclass = ' class="'.$events[$eventindex]->class.'"';
+                }
+
+                echo '<li'.$eventclass.'><a href="'.$dayhref.'#event_'.$events[$eventindex]->id.'">'.format_string($events[$eventindex]->name, true).'</a></li>';
             }
             echo '</ul>';
         }
@@ -495,61 +510,12 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
 
     // Paddding (the last week may have blank days at the end)
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
-        echo '<td>&nbsp;</td>';
+        echo '<td class="nottoday">&nbsp;</td>';
     }
     echo "</tr>\n"; // Last row ends
 
     echo "</table>\n"; // Tabular display of days ends
 
-    // OK, now for the filtering display
-    echo '<div class="filters"><table><tr>';
-
-    // Global events
-    if($SESSION->cal_show_global) {
-        echo '<td class="event_global" style="width: 8px;"></td><td><strong>'.get_string('globalevents', 'calendar').':</strong> ';
-        echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-    }
-    else {
-        echo '<td style="width: 8px;"></td><td><strong>'.get_string('globalevents', 'calendar').':</strong> ';
-        echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showglobal&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
-    }
-
-    // Course events
-    if(!empty($SESSION->cal_show_course)) {
-        echo '<td class="event_course" style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
-        echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-    }
-    else {
-        echo '<td style="width: 8px;"></td><td><strong>'.get_string('courseevents', 'calendar').':</strong> ';
-        echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showcourses&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
-    }
-
-    echo "</tr>\n";
-
-    if(!empty($USER->id) && !isguest()) {
-        echo '<tr>';
-        // Group events
-        if($SESSION->cal_show_groups) {
-            echo '<td class="event_group" style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
-            echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-        }
-        else {
-            echo '<td style="width: 8px;"></td><td><strong>'.get_string('groupevents', 'calendar').':</strong> ';
-            echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showgroups&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
-        }
-        // User events
-        if($SESSION->cal_show_user) {
-            echo '<td class="event_user" style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
-            echo get_string('shown', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickhide', 'calendar').'</a>)</td>'."\n";
-        }
-        else {
-            echo '<td style="width: 8px;"></td><td><strong>'.get_string('userevents', 'calendar').':</strong> ';
-            echo get_string('hidden', 'calendar').' (<a href="'.CALENDAR_URL.'set.php?var=showuser&amp;'.$getvars.'">'.get_string('clickshow', 'calendar').'</a>)</td>'."\n";
-        }
-        echo "</tr>\n";
-    }
-
-    echo '</table></div>';
 }
 
 function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $maxevents) {
@@ -577,8 +543,23 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
     echo '<div class="header">'.$text.'</div>';
 
     if ($events) {
+
+        // Sort courses for consistent colour highlighting (ignoring SITEID)
+        $courseids = $courses;
+        $key = array_search(SITEID, $courseids);
+        if ($key !== false) {
+            unset($courseids[$key]);
+        }
+        sort($courseids);
+
         echo '<div class="eventlist">';
         foreach ($events as $event) {
+
+            // Set event course class if a course event
+            if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
+                $event->class = 'event_course'.array_search($event->courseid, $courseids) % 3;
+            }
+
             calendar_print_event($event);
         }
         echo '</div>';

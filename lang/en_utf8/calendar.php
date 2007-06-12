@@ -1,6 +1,7 @@
 <?PHP // $Id$ 
       // calendar.php - created with Moodle 1.7 beta + (2006101003)
 
+$string['allday'] = 'All day';
 $string['advancedoptions'] = 'Advanced options';
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '$a Calendar';

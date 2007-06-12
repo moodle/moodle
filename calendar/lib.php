@@ -148,6 +148,15 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $events = get_records_select('event', $whereclause, 'timestart');
     }
 
+    // Set event course class for course events
+    if (!empty($events)) {
+        foreach ($events as $event) {
+            if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+            }
+        }
+    }
+
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
     // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
@@ -281,6 +290,21 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         }
         else if(isset($typesbyday[$day]['durationuser'])) {
             $class .= ' duration_user';
+        }
+
+        // If event has a class set then add it to the table day <td> tag
+        // Note: only one colour for minicalendar
+        if(isset($eventsbyday[$day])) {
+            foreach($eventsbyday[$day] as $eventid) {
+                if (!isset($events[$eventid])) {
+                    continue;
+                }
+                $event = $events[$eventid];
+                if (!empty($event->class)) {
+                    $class .= ' '.$event->class;
+                }
+                break;
+            }
         }
 
         // Special visual fx for today
@@ -481,7 +505,14 @@ function calendar_print_event($event) {
 
     echo '</td></tr>';
     echo '<tr><td class="side">&nbsp;</td>';
-    echo '<td class="description '.$event->cssclass.'">';
+
+    // If event has a class set then add it to the event <td> tag
+    $eventclass='';
+    if (!empty($event->class)) {
+        $eventclass = ' '.$event->class;
+    }
+
+    echo '<td class="description '.$event->cssclass.$eventclass.'">';
     echo format_text($event->description, FORMAT_HTML);
     if (calendar_edit_event_allowed($event)) {
         echo '<div class="commands">';
@@ -580,7 +611,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     }
 
     if($withduration) {
-        $timeclause = 'timestart + timeduration >= '.$tstart.' AND timestart <= '.$tend;
+        $timeclause = '(timestart >= '.$tstart.' OR timestart + timeduration > '.$tstart.') AND timestart <= '.$tend;
     }
     else {
         $timeclause = 'timestart >= '.$tstart.' AND timestart <= '.$tend;
@@ -689,7 +720,7 @@ function calendar_top_controls($type, $data) {
     return $content;
 }
 
-function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
+function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses = NULL) {
     global $CFG, $SESSION, $USER;
 
     $groupevents = true;
@@ -725,51 +756,113 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
     $content .= '<tr>';
     if($SESSION->cal_show_global) {
         $content .= '<td class="event_global" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
     }
     else {
         $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('globalevents', 'calendar').'</a></td>'."\n";
+        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
     }
-    if($SESSION->cal_show_course) {
-        $content .= '<td class="event_course" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
-    }
-    else {
-        $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-        $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('courseevents', 'calendar').'</a></td>'."\n";
-    }
+    $tr = '';
 
     if(!empty($USER->id) && !isguest()) {
-        $content .= "</tr>\n<tr>";
-
         if($groupevents) {
+
+            $content .= $tr;
+            $tr = $tr ? '' : "</tr>\n<tr>";
+
             // This course MIGHT have group events defined, so show the filter
             if($SESSION->cal_show_groups) {
                 $content .= '<td class="event_group" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
             } else {
                 $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_showgroups', 'calendar').'">'.get_string('groupevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_showgroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
             }
+
+            $content .= $tr;
+            $tr = $tr ? '' : "</tr>\n<tr>";
+
             if ($SESSION->cal_show_user) {
                 $content .= '<td class="event_user" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
             } else {
                 $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
             }
 
         } else {
+
+            $content .= $tr;
+            $tr = $tr ? '' : "</tr>\n<tr>";
+
             // This course CANNOT have group events, so lose the filter
             $content .= '<td style="width: 11px;"></td><td>&nbsp;</td>'."\n";
 
+            $content .= $tr;
+            $tr = $tr ? '' : "</tr>\n<tr>";
+
             if($SESSION->cal_show_user) {
                 $content .= '<td class="event_user" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
             } else {
                 $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('userevents', 'calendar').'</a></td>'."\n";
+                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
+            }
+        }
+    }
+
+    // Remove global SITE ID from courses array as do not want to display this
+    if (!empty($courses)) {
+        $key = array_search(SITEID, $courses);
+        if ($key !== false) {
+            unset($courses[$key]);
+        }
+    }
+
+    if (empty($courses) || count($courses) == 1) {
+
+        // If not multiple courses then just display default single course colour highlighting
+        $content .= $tr;
+        $tr = $tr ? '' : "</tr>\n<tr>";
+
+        if($SESSION->cal_show_course) {
+            $content .= '<td class="event_course" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+            $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
+        }
+        else {
+            $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+            $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
+        }
+    } else {
+
+        // Otherwise display list of course shortnames and relevant colours
+        // Get list of course shortnames (Limit to 12 for now - who would have more than that?)
+        $select = 'id in ('.implode(',', $courses).')';
+        $sort = 'id';
+        $fields = 'id, shortname';
+        $courseshortnames = get_records_select('course', $select, $sort, $fields, 0, 12);
+
+        for ($i = 0; $i < 3; $i++) {
+
+            // Concatenate shortnames if there are more than 3 courses
+            $strshortnames = '';
+            for ($j = $i; $j < count($courses); $j += 3) {
+                $strshortnames .= ', '.(!empty($courseshortnames[$courses[$j]]->shortname) ? $courseshortnames[$courses[$j]]->shortname : $courses[$j]);
+            }
+
+            if (!empty($strshortnames)) {
+        
+                $content .= $tr;
+                $tr = $tr ? '' : "</tr>\n<tr>";
+        
+                if($SESSION->cal_show_course) {
+                    $content .= '<td class="event_course'.$i.'" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.substr($strshortnames, 2).'</a></td>'."\n";
+                }
+                else {
+                    $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.substr($strshortnames, 2).'</a></td>'."\n";
+                }
             }
         }
     }
@@ -948,10 +1041,18 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
         return;
     }
 
+    // Define array of course id's
+    $courseids = array();
+
     foreach($events as $event) {
 
         $startdate = usergetdate($event->timestart);
-        $enddate   = usergetdate($event->timestart + $event->timeduration);
+        // Set end date = start date if no duration
+        if ($event->timeduration) {
+            $enddate   = usergetdate($event->timestart + $event->timeduration - 1);
+        } else {
+            $enddate = $startdate;
+        }
 
         // Simple arithmetic: $year * 13 + $month is a distinct integer for each distinct ($year, $month) pair
         if(!($startdate['year'] * 13 + $startdate['mon'] <= $year * 13 + $month) && ($enddate['year'] * 13 + $enddate['mon'] >= $year * 13 + $month)) {
@@ -968,15 +1069,26 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             // Mark the day as having such an event
             if($event->courseid == SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startglobal'] = true;
+                // Set event class for global event
+                $events[$event->id]->class = 'event_global';
             }
             else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
+                // Set event class for course event
+                if (!in_array($event->courseid, $courseids)) {
+                    $courseids[] = $event->courseid;
+                }
+                $events[$event->id]->class = 'event_course'.array_search($event->courseid, $courseids) % 3;
             }
             else if($event->groupid) {
                 $typesbyday[$eventdaystart]['startgroup'] = true;
+                // Set event class for group event
+                $events[$event->id]->class = 'event_group';
             }
             else if($event->userid) {
                 $typesbyday[$eventdaystart]['startuser'] = true;
+                // Set event class for user event
+                $events[$event->id]->class = 'event_user';
             }
         }
 
@@ -1066,9 +1178,11 @@ function calendar_session_vars() {
     if(!isset($SESSION->cal_show_user)) {
         $SESSION->cal_show_user = true;
     }
-   // if(empty($SESSION->cal_courses_shown)) {
+    // Version 1.76 to version 1.77 change, which commented out following if
+    // statement prevented individual course from being selected! Investigate
+    if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-    //}
+    }
     if(empty($SESSION->cal_users_shown)) {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs
@@ -1294,7 +1408,7 @@ function calendar_preferences_button() {
            "<div><input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></div></form>";
 }
 
-function calendar_format_event_time($event, $now, $morehref, $usecommonwords = true) {
+function calendar_format_event_time($event, $now, $morehref, $usecommonwords = true, $showtime=0) {
     $startdate = usergetdate($event->timestart);
     $enddate = usergetdate($event->timestart + $event->timeduration);
     $usermidnightstart = usergetmidnight($event->timestart);
@@ -1310,47 +1424,70 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
     // OK, now to get a meaningful display...
     // First of all we have to construct a human-readable date/time representation
 
-    if($event->timestart + $event->timeduration < $now) {
-        // It has expired, so we don't care about duration
-        $day = calendar_day_representation($event->timestart + $event->timeduration, $now, $usecommonwords);
-        $time = calendar_time_representation($event->timestart + $event->timeduration);
-
-        // This var always has the printable time representation
-        $eventtime = '<span class="dimmed_text"><a class="dimmed" href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).'">'.$day.'</a> ('.$time.')</span>';
-
-    }
-    else if($event->timeduration) {
+    if($event->timeduration) {
         // It has a duration
-        if($usermidnightstart == $usermidnightend) {
+        if($usermidnightstart == $usermidnightend ||
+           ($event->timestart == $usermidnightstart) && ($event->timeduration == 86400 || $event->timeduration == 86399) ||
+           ($event->timestart + $event->timeduration <= $usermidnightstart + 86400)) {
             // But it's all on the same day
-            $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
             $timestart = calendar_time_representation($event->timestart);
             $timeend = calendar_time_representation($event->timestart + $event->timeduration);
+            $time = $timestart.' <strong>&raquo;</strong> '.$timeend;
+
+            if ($event->timestart == $usermidnightstart && ($event->timeduration == 86400 || $event->timeduration == 86399)) {
+                $time = get_string('allday', 'calendar');
+            }
 
             // Set printable representation
-            $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                ' ('.$timestart.' <strong>&raquo;</strong> '.$timeend.')';
-        }
-        else {
+            if (!$showtime) {
+                $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
+                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).', '.$time;
+            } else {
+                $eventtime = $time;
+            }
+        } else {
             // It spans two or more days
-            $daystart = calendar_day_representation($event->timestart, $now, $usecommonwords);
-            $dayend = calendar_day_representation($event->timestart + $event->timeduration, $now, $usecommonwords);
+            $daystart = calendar_day_representation($event->timestart, $now, $usecommonwords).', ';
+            if ($showtime == $usermidnightstart) {
+                $daystart = '';
+            }
             $timestart = calendar_time_representation($event->timestart);
+            $dayend = calendar_day_representation($event->timestart + $event->timeduration, $now, $usecommonwords).', ';
+            if ($showtime == $usermidnightend) {
+                $dayend = '';
+            }
             $timeend = calendar_time_representation($event->timestart + $event->timeduration);
 
             // Set printable representation
-            $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                ' ('.$timestart.') <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                ' ('.$timeend.')';
+            if ($now >= $usermidnightstart && $now < ($usermidnightstart + 86400)) {
+                $eventtime = $timestart.' <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                $timeend;
+            } else {
+                $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
+                $timestart.' <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
+                $timeend;
+            }
         }
-    }
-    else {
+    } else {
         // It's an "instantaneous" event
-        $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
-        $time = calendar_time_representation($event->timestart);
+        if ($event->timestart != usergetmidnight($event->timestart)) {
+            $time = ', '.calendar_time_representation($event->timestart);
+        } else {
+            $time = ' ';
+        }
 
         // Set printable representation
-        $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).' ('.$time.')';
+        if (!$showtime) {
+            $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
+            $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).trim($time);
+        } else {
+            $eventtime = $time;
+        }
+    }
+
+    if($event->timestart + $event->timeduration < $now) {
+        // It has expired
+        $eventtime = '<span class="dimmed_text">'.str_replace(' href=', ' class="dimmed" href=', $eventtime).'</span>';
     }
 
     return $eventtime;
