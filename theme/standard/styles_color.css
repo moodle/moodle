@@ -463,6 +463,34 @@ table.minicalendar {
   background-color:#FFD3BD;
 }
 
+#calendar .event_course0,
+.minicalendar .event_course0,
+.block_calendar_month .event_course0 {
+  border-color:#FFD3BD !important; /* #EEC2AC */
+  background-color:#FFD3BD;
+}
+
+#calendar .event_course1,
+.minicalendar .event_course1,
+.block_calendar_month .event_course1 {
+  border-color:#99CCFF !important; /* #EEC2AC */
+  background-color:#99CCFF;
+}
+
+#calendar .event_course2,
+.minicalendar .event_course2,
+.block_calendar_month .event_course2 {
+  border-color:#FFFFCC !important; /* #EEC2AC */
+  background-color:#FFFFCC;
+}
+
+#calendar .event_course3,
+.minicalendar .event_course3,
+.block_calendar_month .event_course3 {
+  border-color:#FF6699 !important; /* #EEC2AC */
+  background-color:#FF6699;
+}
+
 #calendar .event_group,
 .minicalendar .event_group,
 .block_calendar_month .event_group {
@@ -489,6 +517,30 @@ table.minicalendar {
   border-bottom-color:#FF9966 !important;
 }
 
+#calendar .duration_course0,
+.minicalendar .duration_course0 {
+  border-top-color:#FF9966 !important;
+  border-bottom-color:#FF9966 !important;
+}
+
+#calendar .duration_course1,
+.minicalendar .duration_course1 {
+  border-top-color:#0099FF !important;
+  border-bottom-color:#0099FF !important;
+}
+
+#calendar .duration_course2,
+.minicalendar .duration_course2 {
+  border-top-color:#FFFF00 !important;
+  border-bottom-color:#FFFF00 !important;
+}
+
+#calendar .duration_course3,
+.minicalendar .duration_course3 {
+  border-top-color:#FF0033 !important;
+  border-bottom-color:#FF0033 !important;
+}
+
 #calendar .duration_group,
 .minicalendar .duration_group {
   border-top-color:#FBBB23 !important;
@@ -511,6 +563,11 @@ table.minicalendar {
   border-color:#444444;
 }
 
+#calendar .nottoday,
+.minicalendar .nottoday {
+  border-color:#eeeeee;
+}
+
 .cal_popup_fg {
   background-color:#FFFFFF;
 }
@@ -526,6 +583,9 @@ table.minicalendar {
   background-color: #EEEEEE;
 }
 
+#calendar td.sidecalendar .sideblock {
+  border-color: #DDDDDD;
+}
 
 
 /***

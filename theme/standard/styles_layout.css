@@ -1543,6 +1543,11 @@ table.minicalendar th {
   border:2px solid;
 }
 
+#calendar .nottoday,
+.minicalendar .today {
+  border:1px solid;
+}
+
 .cal_popup_bg {
   padding:0px;
   margin:0px;
@@ -1589,6 +1594,26 @@ table.minicalendar th {
 
 #calendar .indent {
   padding-left: 20px;
+}
+
+#calendar td.sidecalendar {
+border-width:0px;
+padding-top:1px;
+}
+
+#calendar td.sidecalendar .sideblock {
+  border: 1px solid;
+  margin-bottom:10px;
+}
+
+#calendar td.sidecalendar .minicalendartop {
+  padding-top:10px;
+}
+
+.sideblock .content h3.eventskey {
+    margin-top:0.5em;
+    margin-bottom:0;
+    margin-left:0.5em;
 }
 
 /***

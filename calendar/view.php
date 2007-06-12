@@ -182,17 +182,21 @@
 
     // START: Last column (3-month display)
     echo '<td class="sidecalendar">';
-    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
-
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
     $getvars = 'cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
+    echo '<div class="sideblock">';
+    echo '<div class="header">'.get_string('eventskey', 'calendar').'</div>';
     echo '<div class="filters">';
-    echo calendar_filter_controls($view, $getvars);
+    echo calendar_filter_controls($view, $getvars, NULL, $courses);
+    echo '</div>';
     echo '</div>';
 
-    echo '<div class="minicalendarblock">';
+    echo '<div class="sideblock">';
+    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
+
+    echo '<div class="minicalendarblock minicalendartop">';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
     echo '</div><div class="minicalendarblock">';
@@ -201,6 +205,7 @@
     echo '</div><div class="minicalendarblock">';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
+    echo '</div>';
     echo '</div>';
 
     echo '</td>';

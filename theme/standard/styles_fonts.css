@@ -867,3 +867,7 @@ body#mod-forum-index .generalbox .cell {
   background-color: #cccccc;
   color: #000000;
 }
+
+.sideblock .content h3.eventskey {
+    font-size:0.8em;
+}

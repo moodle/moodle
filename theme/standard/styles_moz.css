@@ -160,6 +160,11 @@
   -moz-border-radius-bottomleft:20px;
 }
 
+#calendar td.sidecalendar .sideblock {
+  -moz-border-radius-bottomright:20px;
+  -moz-border-radius-bottomleft:20px;
+}
+
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
 .sideblock.block_calendar_month .filters table
