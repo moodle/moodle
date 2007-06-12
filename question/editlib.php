@@ -401,7 +401,7 @@ function question_list($course, $pageurl, $categoryid, $cm = null,
  * @param moodle_url $pageurl object representing this pages url.
  */
 function question_showbank($pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){  
-    global $COURSE;  
+    global $COURSE, $USER;  
 
 /// Now, check for commands on this page and modify variables as necessary
     if (isset($_REQUEST['move']) and confirm_sesskey()) { /// Move selected questions to new category
