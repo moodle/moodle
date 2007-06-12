@@ -1791,8 +1791,10 @@ function validate_context($contextlevel, $instanceid) {
 /**
  * Get the context instance as an object. This function will create the
  * context instance if it does not exist yet.
- * @param $level
- * @param $instance
+ * @param integer $level The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
+ * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
+ *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on.
+ * @return object The context object.
  */
 function get_context_instance($contextlevel=NULL, $instance=0) {
 
@@ -1853,8 +1855,9 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
 
 
 /**
- * Get a context instance as an object, from a given id.
- * @param $id
+ * Get a context instance as an object, from a given context id.
+ * @param $id a context id.
+ * @return object The context object.
  */
 function get_context_instance_by_id($id) {
 
