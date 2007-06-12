@@ -322,7 +322,7 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
 * @param int $idnumber grade item Primary Key
 * @return array An array of grade items
 */
-function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemname=NULL, $itemnumber=NULL, $idnumber=NULL) {
+function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $itemname=NULL, $idnumber=NULL) {
     $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemname', 'itemnumber', 'idnumber'), false);
     $grade_items = $grade_item->fetch_all_using_this();
     return $grade_items;
@@ -397,11 +397,8 @@ function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
 }
 
 /**
- * For backward compatibility with old third-party modules, this function is called
- * via to admin/cron.php to search all mod/xxx/lib.php files for functions named xxx_grades(),
- * if the current modules does not have grade events registered with the grade book.
- * Once the data is extracted, the events_trigger() function can be called to initiate
- * an event as usual and copy/ *upgrade the data in the gradebook tables.
+ * For backwards compatibility with old third-party modules, this function can
+ * be used to import all grades from activities with legacy grading.
  */
 function grade_grab_legacy_grades() {
 
@@ -417,7 +414,17 @@ function grade_grab_legacy_grades() {
             continue;
         }
 
-        $fullmod = $CFG->dirroot .'/mod/'. $mod;
+        if (!$module = get_record('modules', 'name', $mod)) {
+            //not installed
+            continue;
+        }
+
+        if (!$module->visible) {
+            //disabled module
+            continue;
+        }
+
+        $fullmod = $CFG->dirroot.'/mod/'.$mod;
 
         // include the module lib once
         if (file_exists($fullmod.'/lib.php')) {
@@ -428,53 +435,13 @@ function grade_grab_legacy_grades() {
             if (function_exists($gradefunc)) {
 
                 // get all instance of the activity
-                $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid, m.name as modname FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                        WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id";
+                $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
+                          FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                         WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id";
 
                 if ($modinstances = get_records_sql($sql)) {
                     foreach ($modinstances as $modinstance) {
-                        // for each instance, call the xxx_grades() function
-                        if ($grades = $gradefunc($modinstance->id)) {
-
-                            $grademax = $grades->maxgrade;
-                            $scaleid = 0;
-                            if (!is_numeric($grademax)) {
-                                // scale name is provided as a string, try to find it
-                                if (!$scale = get_record('scale', 'name', $grademax)) {
-                                    debugging('Incorrect scale name! name:'.$grademax);
-                                    continue;
-                                }
-                                $scaleid = $scale->id;
-                            }
-
-                            if (!$grade_item = grade_get_legacy_grade_item($modinstance, $grademax, $scaleid)) {
-                                debugging('Can not get/create legacy grade item!');
-                                continue;
-                            }
-
-                            foreach ($grades->grades as $userid=>$usergrade) {
-                                // make the grade_added eventdata
-                                $eventdata = new object();
-                                $eventdata->itemid = $grade_item->id;
-                                $eventdata->userid = $userid;
-
-                                if ($usergrade == '-') {
-                                    // no grade
-                                    $eventdata->gradevalue = null;
-
-                                } else if ($scaleid) {
-                                    // scale in use, words used
-                                    $gradescale = explode(",", $scale->scale);
-                                    $eventdata->gradevalue = array_search($usergrade, $gradescale) + 1;
-
-                                } else {
-                                    // good old numeric value
-                                    $eventdata->gradevalue = $usergrade;
-                                }
-
-                                events_trigger('grade_updated', $eventdata);
-                            }
-                        }
+                        grade_update_mod_grades($modinstance);
                     }
                 }
             }
@@ -482,62 +449,130 @@ function grade_grab_legacy_grades() {
     }
 }
 
+/**
+ * Force full update of module grades in central gradebook - works for both legacy and converted activities.
+ * @param object $modinstance object with extra cmidnumber and modname property
+ * @return boolean success
+ */
+function grade_update_mod_grades($modinstance) {
+    global $CFG;
+
+    $fullmod = $CFG->dirroot.'/mod/'.$modinstance->modname;
+    if (!file_exists($fullmod.'/lib.php')) {
+        debugging('missing lib.php file in module');
+        return false;
+    }
+    include_once($fullmod.'/lib.php');
+
+    // does it use legacy grading?
+    $gradefunc        = $modinstance->modname.'_grades';
+    $updategradesfunc = $modinstance->modname.'_update_grades';
+    $updateitemfunc   = $modinstance->modname.'_grade_item_update';
+
+    if (function_exists($gradefunc)) {
+        if ($oldgrades = $gradefunc($modinstance->id)) {
+
+            $grademax = $oldgrades->maxgrade;
+            $scaleid = NULL;
+            if (!is_numeric($grademax)) {
+                // scale name is provided as a string, try to find it
+                if (!$scale = get_record('scale', 'name', $grademax)) {
+                    debugging('Incorrect scale name! name:'.$grademax);
+                    return false;
+                }
+                $scaleid = $scale->id;
+            }
+
+            if (!$grade_item = grade_get_legacy_grade_item($modinstance, $grademax, $scaleid)) {
+                debugging('Can not get/create legacy grade item!');
+                return false;
+            }
+
+            $grades = array();
+            foreach ($oldgrades->grades as $userid=>$usergrade) {
+                $grade = new object();
+                $grade->userid = $userid;
+
+                if ($usergrade == '-') {
+                    // no grade
+                    $grade->gradevalue = null;
+
+                } else if ($scaleid) {
+                    // scale in use, words used
+                    $gradescale = explode(",", $scale->scale);
+                    $grade->gradevalue = array_search($usergrade, $gradescale) + 1;
+
+                } else {
+                    // good old numeric value
+                    $grade->gradevalue = $usergrade;
+                }
+                $grades[] = $grade;
+            }
+
+            grade_update('legacygrab', $grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule,
+                         $grade_item->iteminstance, $grade_item->itemnumber, $grades);
+        }
+
+    } else if (function_exists($updategradesfunc) and function_exists($updateitemfunc)) {
+        //new grading supported, force updating of grades
+        $updateitemfunc($modinstance);
+        $updategradesfunc($modinstance);
+
+    } else {
+        // mudule does not support grading
+    }
+
+    return true;
+}
 
 /**
- * Get (create if needed) grade item for legacy modules.
+ * Get and update/create grade item for legacy modules.
  */
 function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
     // does it already exist?
-    if ($grade_items = grade_get_items($modinstances->courseid, 'mod', $modinstance->modname, $modinstances->id)) {
+    if ($grade_items = grade_get_items($modinstance->course, 'mod', $modinstance->modname, $modinstance->id, 0)) {
         if (count($grade_items) > 1) {
+            debugging('Multiple legacy grade_items found.');
             return false;
         }
 
         $grade_item = reset($grade_items);
-        $updated = false;
 
-        if ($scaleid) {
-            if ($grade_item->scaleid != $scaleid) {
-                $grade_item->gradetype = GRADE_TYPE_SCALE;
-                $grade_item->scaleid   = $scaleid;
-                $updated = true;;
-            }
+        if (is_null($grademax) and is_null($scaleid)) {
+           $grade_item->gradetype  = GRADE_TYPE_NONE;
 
-        } else if ($grade_item->scaleid != $scaleid or $grade_item->grademax != $grademax) {
-           $grade_item->gradetype = GRADE_TYPE_VALUE;
-           $grade_item->scaleid   = 0;
-           $grade_item->grademax  = $grademax;
-           $grade_item->grademin  = 0;
-           $updated = true;;
+        } else if ($scaleid) {
+            $grade_item->gradetype = GRADE_TYPE_SCALE;
+            $grade_item->scaleid   = $scaleid;
+
+        } else {
+           $grade_item->gradetype  = GRADE_TYPE_VALUE;
+           $grade_item->grademax   = $grademax;
+           $grade_item->grademin   = 0;
         }
 
-        if ($grade_item->itemname != $modinstance->name) {
-           $grade_item->itemname = $modinstance->name;
-           $updated = true;;
-        }
+        $grade_item->itemname = $modinstance->name;
+        $grade_item->idnumber = $modinstance->cmidnumber;
 
-        if ($grade_item->idnumber != $modinstance->cmidnumber) {
-           $grade_item->idnumber = $modinstance->cmidnumber;
-           $updated = true;;
-        }
-
-        if ($updated) {
-            $grade_item->update();
-        }
+        $grade_item->update();
 
         return $grade_item;
     }
 
     // create new one
-    $params = array('courseid'    =>$modinstance->courseid,
+    $params = array('courseid'    =>$modinstance->course,
                     'itemtype'    =>'mod',
                     'itemmodule'  =>$modinstance->modname,
                     'iteminstance'=>$modinstance->id,
+                    'itemnumber'  =>0,
                     'itemname'    =>$modinstance->name,
                     'idnumber'    =>$modinstance->cmidnumber);
 
-    if ($scaleid) {
+    if (is_null($grademax) and is_null($scaleid)) {
+        $params['gradetype'] = GRADE_TYPE_NONE;
+
+    } else if ($scaleid) {
         $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = $scaleid;
 
@@ -548,6 +583,7 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     }
 
     if (!$itemid = grade_create_item($params)) {
+        debugging('Can not create new legacy grade item');
         return false;
     }
 
