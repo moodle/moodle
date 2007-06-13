@@ -300,6 +300,43 @@ class textlib {
     }
 
     /**
+     * Converts all the numeric entities &#nnnn; or &#xnnn; to UTF-8
+     * Original from laurynas dot butkus at gmail at:
+     * http://php.net/manual/en/function.html-entity-decode.php#75153
+     * with some custom mods to provide more functionality
+     * 
+     * @param    string    $str      input string
+     * @param    boolean   $htmlent  convert also html entities (defaults to true)
+     *
+     * NOTE: we could have used typo3 entities_to_utf8() here
+     *       but the direct alternative used runs 400% quicker
+     *       and uses 0.5Mb less memory, so, let's use it
+     *       (tested agains 10^6 conversions)
+     */
+    function entities_to_utf8($str, $htmlent=true) {
+
+        static $trans_tbl; /// Going to use static translit table
+
+    /// Replace numeric entities
+        $result = preg_replace('~&#x([0-9a-f]+);~ei', 'textlib::code2utf8(hexdec("\\1"))', $str);
+        $result = preg_replace('~&#([0-9]+);~e', 'textlib::code2utf8(\\1)', $result);
+
+    /// Replace literal entities (if desired)
+        if ($htmlent) {
+        /// Generate/create $trans_tbl
+            if (!isset($trans_tbl)) {
+                $trans_tbl = array();
+                foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) {
+                    $trans_tbl[$key] = utf8_encode($val);
+                }
+            }
+            $result = strtr($result, $trans_tbl);
+        }
+    /// Return utf8-ised string
+        return $result;
+    }
+
+    /**
      * Converts all Unicode chars > 127 to numeric entities &#nnnn; or &#xnnn;.
      *
      * @param    string         input string
@@ -331,6 +368,29 @@ class textlib {
             return substr($str, strlen($bom));
         }
         return $str;
+    }
+
+    /**
+     * Returns the utf8 string corresponding to the unicode value 
+     * (from php.net, courtesy - romans@void.lv)
+     * 
+     * @param  int    $num one unicode value
+     * @return string the UTF-8 char corresponding to the unicode value
+     */
+    function code2utf8($num) {
+        if ($num < 128) {
+            return chr($num);
+        }
+        if ($num < 2048) {
+            return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+        }
+        if ($num < 65536) {
+            return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+        }
+        if ($num < 2097152) {
+            return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+        }
+        return '';
     }
 }
 ?>
