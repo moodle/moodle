@@ -935,14 +935,18 @@
                             // Yu: This part is called repeatedly for every instance, 
                             // so it is necessary to set the granular flag and check isset() 
                             // when the first instance of this type of mod is processed.
-                            if (!isset($restore->mods[$mod->type]->granular) && isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {
-                                // This defines whether we want to restore specific
-                                // instances of the modules (granular restore), or
-                                // whether we don't care and just want to restore
-                                // all module instances (non-granular).
-                                $restore->mods[$mod->type]->granular = true;
-                            } else {
-                                $restore->mods[$mod->type]->granular = false;
+                            //if (!isset($restore->mods[$mod->type]->granular) && isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {
+                            
+                            if (!isset($restore->mods[$mod->type]->granular)) {
+                                if (isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {                              
+                                    // This defines whether we want to restore specific
+                                    // instances of the modules (granular restore), or
+                                    // whether we don't care and just want to restore
+                                    // all module instances (non-granular).
+                                    $restore->mods[$mod->type]->granular = true;
+                                } else {
+                                    $restore->mods[$mod->type]->granular = false;
+                                }
                             }
                           
                             //Check if we've to restore this module (and instance) 
