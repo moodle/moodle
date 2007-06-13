@@ -570,9 +570,11 @@ function validate_form(&$form, &$err) {
     if(empty($form->name)) {
         $err['name'] = get_string('errornoeventname', 'calendar');
     }
+/* Allow events without a description
     if(empty($form->description)) {
         $err['description'] = get_string('errornodescription', 'calendar');
     }
+*/
     if(!checkdate($form->startmon, $form->startday, $form->startyr)) {
         $err['timestart'] = get_string('errorinvaliddate', 'calendar');
     }
