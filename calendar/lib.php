@@ -1474,12 +1474,7 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
             }
         }
     } else {
-        // It's an "instantaneous" event
-        if ($event->timestart != usergetmidnight($event->timestart)) {
-            $time = ', '.calendar_time_representation($event->timestart);
-        } else {
-            $time = ' ';
-        }
+        $time = ' ';
 
         // Set printable representation
         if (!$showtime) {
