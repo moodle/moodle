@@ -755,59 +755,45 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
 
     $content .= '<tr>';
     if($SESSION->cal_show_global) {
-        $content .= '<td class="event_global" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+        $content .= '<td class="event_global" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hideglobal', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showglobal'.$getvars."'".'" /></td>';
         $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_hideglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
     }
     else {
-        $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
+        $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showglobal', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showglobal'.$getvars."'".'" /></td>';
         $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showglobal'.$getvars.'" title="'.get_string('tt_showglobal', 'calendar').'">'.get_string('global', 'calendar').'</a></td>'."\n";
     }
     $tr = '';
 
     if(!empty($USER->id) && !isguest()) {
-        if($groupevents) {
 
-            $content .= $tr;
-            $tr = $tr ? '' : "</tr>\n<tr>";
+        $content .= $tr;
+        $tr = $tr ? '' : "</tr>\n<tr>";
+
+        if($groupevents) {
 
             // This course MIGHT have group events defined, so show the filter
             if($SESSION->cal_show_groups) {
-                $content .= '<td class="event_group" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+                $content .= '<td class="event_group" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hidegroups', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showgroups'.$getvars."'".'" /></td>';
                 $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_hidegroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
             } else {
-                $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
+                $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showgroups', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showgroups'.$getvars."'".'" /></td>';
                 $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showgroups'.$getvars.'" title="'.get_string('tt_showgroups', 'calendar').'">'.get_string('group', 'calendar').'</a></td>'."\n";
             }
-
-            $content .= $tr;
-            $tr = $tr ? '' : "</tr>\n<tr>";
-
-            if ($SESSION->cal_show_user) {
-                $content .= '<td class="event_user" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-            } else {
-                $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-            }
-
         } else {
-
-            $content .= $tr;
-            $tr = $tr ? '' : "</tr>\n<tr>";
 
             // This course CANNOT have group events, so lose the filter
             $content .= '<td style="width: 11px;"></td><td>&nbsp;</td>'."\n";
+        }
 
-            $content .= $tr;
-            $tr = $tr ? '' : "</tr>\n<tr>";
+        $content .= $tr;
+        $tr = $tr ? '' : "</tr>\n<tr>";
 
-            if($SESSION->cal_show_user) {
-                $content .= '<td class="event_user" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-            } else {
-                $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" /></td>';
-                $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
-            }
+        if ($SESSION->cal_show_user) {
+            $content .= '<td class="event_user" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hideuser', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showuser'.$getvars."'".'" /></td>';
+            $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_hideuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
+        } else {
+            $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('show').'" title="'.get_string('tt_showuser', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showuser'.$getvars."'".'" /></td>';
+            $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showuser'.$getvars.'" title="'.get_string('tt_showuser', 'calendar').'">'.get_string('user', 'calendar').'</a></td>'."\n";
         }
     }
 
@@ -826,11 +812,11 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
         $tr = $tr ? '' : "</tr>\n<tr>";
 
         if($SESSION->cal_show_course) {
-            $content .= '<td class="event_course" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+            $content .= '<td class="event_course" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hidecourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showcourses'.$getvars."'".'" /></td>';
             $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
         }
         else {
-            $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
+            $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_showcourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showcourses'.$getvars."'".'" /></td>';
             $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.get_string('course', 'calendar').'</a></td>'."\n";
         }
     } else {
@@ -846,22 +832,30 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
 
             // Concatenate shortnames if there are more than 3 courses
             $strshortnames = '';
+            $n = 0;
             for ($j = $i; $j < count($courses); $j += 3) {
-                $strshortnames .= ', '.(!empty($courseshortnames[$courses[$j]]->shortname) ? $courseshortnames[$courses[$j]]->shortname : $courses[$j]);
+                $strshortnames .= ', <a title="" href="'.$CFG->wwwroot.'/course/view.php?id='.$courses[$j].'">'.(!empty($courseshortnames[$courses[$j]]->shortname) ? $courseshortnames[$courses[$j]]->shortname : $courses[$j]).'</a>';
+                $n++;
             }
 
-            if (!empty($strshortnames)) {
+            if ($n) {
         
                 $content .= $tr;
                 $tr = $tr ? '' : "</tr>\n<tr>";
         
+                if ($n < 2) {
+                    $strcourse = get_string('course', 'calendar');
+                } else {
+                    $strcourse = get_string('courses', 'calendar');
+                }
+
                 if($SESSION->cal_show_course) {
-                    $content .= '<td class="event_course'.$i.'" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.substr($strshortnames, 2).'</a></td>'."\n";
+                    $content .= '<td class="event_course'.$i.'" style="width: 11px;"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_hidecourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showcourses'.$getvars."'".'" /></td>';
+                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_hidecourse', 'calendar').'">'.$strcourse.'</a>: '.substr($strshortnames, 2).'</td>'."\n";
                 }
                 else {
-                    $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" /></td>';
-                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.substr($strshortnames, 2).'</a></td>'."\n";
+                    $content .= '<td style="width: 11px;"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.get_string('hide').'" title="'.get_string('tt_showcourse', 'calendar').'" style="cursor:pointer" onclick="location.href='."'".CALENDAR_URL.'set.php?var=showcourses'.$getvars."'".'" /></td>';
+                    $content .= '<td><a href="'.CALENDAR_URL.'set.php?var=showcourses'.$getvars.'" title="'.get_string('tt_showcourse', 'calendar').'">'.$strcourse.'</a>: '.substr($strshortnames, 2).'</td>'."\n";
                 }
             }
         }
