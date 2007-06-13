@@ -269,9 +269,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     * @param int $course
     * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
     */
-    function save_question($question, $form, $course, $wizardnow='') {
-                echo "<pre> wizarnow $wizardnow form enter";print_r($form);
-               
+    function save_question($question, $form, $course) {
         $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
         $id = optional_param('id', 0, PARAM_INT); // question id
         // in case 'question' 
@@ -370,7 +368,6 @@ class question_dataset_dependent_questiontype extends default_questiontype {
          foreach ($defids as $defid) {
             $datasetdef = &$datasetdefinitions[$defid];
             if (isset($datasetdef->id)) {
-                
                 if (!isset($tmpdatasets[$defid])) {
                 // This dataset is not used any more, delete it    
                     delete_records('question_datasets',
@@ -382,7 +379,6 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         delete_records('question_dataset_items',
                          'definition', $datasetdef->id);
                     }
-                   
                 }
                 // This has already been saved or just got deleted
                 unset($datasetdefinitions[$defid]);
