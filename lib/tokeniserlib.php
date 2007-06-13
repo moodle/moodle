@@ -312,7 +312,7 @@ function tokenise_simplify($text, $overlap_cjk, $join_numbers) {
     $textlib = textlib_get_instance();
 
     // Decode entities to UTF-8
-    $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+    $text = $textlib->entities_to_utf8($text, true);
 
     // Lowercase
     $text = $textlib->strtolower($text);
