@@ -117,18 +117,6 @@
         calendar_set_filters($courses, $groups, $users);
     }
 
-    // Sort courses for consistent colour highlighting
-    // Effectively ignoring SITEID as setting as last course id
-    // Consider inside calendar_set_filters() and SITEID always last
-    $key = array_search(SITEID, $courses);
-    if ($key !== false) {
-        unset($courses[$key]);
-        sort($courses);
-        $courses[] = SITEID;
-    } else {
-        sort($courses);
-    }
-
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
     if ($SESSION->cal_course_referer != SITEID &&
@@ -274,6 +262,12 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
         // First, print details about events that start today
         foreach ($events as $event) {
+
+            // Set event course class if a course event
+            if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+            }
+
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
 
 
@@ -285,11 +279,6 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
                 echo calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).' ('.$timeend.')';
 */
                 //unset($event->time);
-
-                // Set event course class if a course event
-                if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
-                    $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
-                }
 
                 $event->time = calendar_format_event_time($event, time(), '', false, $starttime);
                 calendar_print_event($event);
@@ -379,7 +368,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     }
 
     // Extract information: events vs. time
-    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $courses);
 
     $text = '';
     if(!isguest() && !empty($USER->id)) {
@@ -544,20 +533,12 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
     if ($events) {
 
-        // Sort courses for consistent colour highlighting (ignoring SITEID)
-        $courseids = $courses;
-        $key = array_search(SITEID, $courseids);
-        if ($key !== false) {
-            unset($courseids[$key]);
-        }
-        sort($courseids);
-
         echo '<div class="eventlist">';
         foreach ($events as $event) {
 
             // Set event course class if a course event
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
-                $event->class = 'event_course'.array_search($event->courseid, $courseids) % 3;
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
             }
 
             calendar_print_event($event);

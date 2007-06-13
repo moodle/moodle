@@ -173,7 +173,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     // We want to have easy access by day, since the display is on a per-day basis.
     // Arguments passed by reference.
     //calendar_events_by_day($events, $display->tstart, $eventsbyday, $durationbyday, $typesbyday);
-    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
+    calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $courses);
 
     //Accessibility: added summary and <abbr> elements.
     ///global $CALENDARDAYS; appears to be broken.
@@ -1032,7 +1032,7 @@ function calendar_sub_month($month, $year) {
     }
 }
 
-function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday) {
+function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday, &$courses) {
     $eventsbyday = array();
     $typesbyday = array();
     $durationbyday = array();
@@ -1040,9 +1040,6 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
     if($events === false) {
         return;
     }
-
-    // Define array of course id's
-    $courseids = array();
 
     foreach($events as $event) {
 
@@ -1075,10 +1072,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
                 // Set event class for course event
-                if (!in_array($event->courseid, $courseids)) {
-                    $courseids[] = $event->courseid;
-                }
-                $events[$event->id]->class = 'event_course'.array_search($event->courseid, $courseids) % 3;
+                $events[$event->id]->class = 'event_course'.array_search($event->courseid, $courses) % 3;
             }
             else if($event->groupid) {
                 $typesbyday[$eventdaystart]['startgroup'] = true;
@@ -1251,6 +1245,17 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     if (is_array($courses)) {
         foreach ($courses as $index => $value) {
             if (empty($value)) unset($courses[$index]);
+        }
+
+        // Sort courses for consistent colour highlighting
+        // Effectively ignoring SITEID as setting as last course id
+        $key = array_search(SITEID, $courses);
+        if ($key !== false) {
+            unset($courses[$key]);
+            sort($courses);
+            $courses[] = SITEID;
+        } else {
+            sort($courses);
         }
     }
 
