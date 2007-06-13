@@ -946,14 +946,19 @@
                             // Yu: This part is called repeatedly for every instance, 
                             // so it is necessary to set the granular flag and check isset() 
                             // when the first instance of this type of mod is processed.
-                            if (!isset($restore->mods[$mod->type]->granular) && isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {
-                                // This defines whether we want to restore specific
-                                // instances of the modules (granular restore), or
-                                // whether we don't care and just want to restore
-                                // all module instances (non-granular).
-                                $restore->mods[$mod->type]->granular = true;
-                            } else {
-                                $restore->mods[$mod->type]->granular = false;
+                            
+                            //if (!isset($restore->mods[$mod->type]->granular) && isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {
+                            
+                            if (!isset($restore->mods[$mod->type]->granular)) {
+                                if (isset($restore->mods[$mod->type]->instances) && is_array($restore->mods[$mod->type]->instances)) {                              
+                                    // This defines whether we want to restore specific
+                                    // instances of the modules (granular restore), or
+                                    // whether we don't care and just want to restore
+                                    // all module instances (non-granular).
+                                    $restore->mods[$mod->type]->granular = true;
+                                } else {
+                                    $restore->mods[$mod->type]->granular = false;
+                                }
                             }
                           
                             //Check if we've to restore this module (and instance) 
@@ -1180,12 +1185,45 @@
         $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories');
         $itemscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items');
         $outcomecount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes');
-    
+   
+        // we need to know if all grade items that were backed up are being restored
+        // if that is not the case, we do not restore grade categories nor gradeitems of category type
+        // i.e. the aggregated grades of that category
+        
+        $restoreall = true; // set to false if any grade_item is not selected/restored
+        
+        if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'", "old_id", "old_id, old_id")) {
+            foreach ($recs as $rec) {
+              
+              
+                if ($data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id)) { 
+
+                    $info = $data->info;
+                    // do not restore if this grade_item is a mod, and 
+                    $itemtype = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#']);
+                    
+                    
+                    if ($itemtype == 'mod') {
+
+                        $iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);               
+                        $itemmodule = backup_todb($info['GRADE_ITEM']['#']['ITEMMODULE']['0']['#']);
+                        if (!restore_userdata_selected($restore, $itemmodule, $iteminstance)) {
+                            // module instance not selected when restored using granular
+                            // we are not restoring all grade items, set flag to false
+                            // so that we do not process grade categories and related grade items/grades
+                            $restoreall = false;
+                            break;
+                        }
+                    }
+                }
+             }
+        }
+   
         // return if nothing to restore
         if (!$itemscount && !$categoriescount && !outcomecount) {
             return $status;  
         }
-            
+
         // Start ul
         if (!defined('RESTORE_SILENTLY')) {
             echo '<ul>';
@@ -1196,7 +1234,7 @@
         $continue = true;
 
         // Process categories
-        if ($categoriescount && $continue) {
+        if ($categoriescount && $continue && $restoreall) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradecategories','grades').'</li>';
             }
@@ -1377,12 +1415,8 @@
                             
                             // do not restore if this grade_item is a mod, and 
                             if ($dbrec->itemtype == 'mod') {
-                                
-                                // get the old mod
-                                $mod = get_record('course_modules', 'id', $iteminstance);
-                                $modt = get_record('modules', 'id', $mod->module);
 
-                                if (!restore_userdata_selected($restore, $modt->name, $mod->id)) {
+                                if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
                                     // module instance not selected when restored using granular
                                     // skip this item
                                     $counteritems++;
@@ -1396,8 +1430,16 @@
 
                             } else if ($dbrec->itemtype == 'category') {
                                 // the item instance should point to the new grade category
-                                $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance); 
-                                $dbrec->iteminstance = $category->new_id;
+                                
+                                // only proceed if we are restoring all grade items
+                                if ($restoreall) {
+                                    $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance); 
+                                    $dbrec->iteminstance = $category->new_id;
+                                } else {
+                                    // otherwise we can safely ignore this grade item and subsequent 
+                                    // grade_raws, grade_finals etc
+                                    continue;  
+                                }
                             }
                             
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
@@ -5883,6 +5925,8 @@
             return array_key_exists($modid,$restore->mods[$modname]->instances) 
                 && !empty($restore->mods[$modname]->instances[$modid]->userinfo);
         }
+        
+        print_object($restore->mods[$modname]);
         return !empty($restore->mods[$modname]->userinfo);
     }
 

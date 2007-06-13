@@ -1363,9 +1363,51 @@
 
         $status = true;
 
+        // see if ALL grade items of type mod of this course are being backed up
+        // if not, we do not need to backup grade category and associated grade items/grades
+        $backupall = true;        
+        
+        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items 
+                                            WHERE courseid = $preferences->backup_course
+                                            ORDER BY sortorder ASC")) { 
+            foreach ($grade_items as $grade_item) {
+
+                // do not restore if this grade_item is a mod, and 
+                if ($grade_item->itemtype == 'mod') {
+
+                    // get module information
+                    // if no user data selected, we skip this grade_item
+                    if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                        //print_object($grade_item);
+                        $backupall = false;
+                        break;
+                    }
+                }
+            }
+        }
+        
         //Gradebook header
         fwrite ($bf,start_tag("GRADEBOOK",2,true));
+        
+        // Now backup grade_item (inside grade_category)
+        if ($backupall) {
+            $status = backup_gradebook_category_info($bf,$preferences);
+        }
+        $status = backup_gradebook_item_info($bf,$preferences, $backupall);
+        $status = backup_gradebook_outcomes_info($bf, $preferences);
+        // back up grade outcomes
 
+        //Gradebook footer
+        $status = fwrite ($bf,end_tag("GRADEBOOK",2,true));
+        return $status;
+    }
+
+
+    function backup_gradebook_category_info($bf,$preferences) {
+        global $CFG;
+        
+        $status = true;
+        
         //Output grade_category
         
         // getting grade categories, but make sure parents come before children
@@ -1399,18 +1441,13 @@
             $status = fwrite ($bf,end_tag("GRADE_CATEGORIES",3,true));
         }
         
-        // Now backup grade_item (inside grade_category)
-        $status = backup_gradebook_item_info($bf,$preferences);
-        $status = backup_gradebook_outcomes_info($bf, $preferences);
-        // back up grade outcomes
-
-        //Gradebook footer
-        $status = fwrite ($bf,end_tag("GRADEBOOK",2,true));
         return $status;
+      
     }
 
+
     //Backup gradebook_item (called from backup_gradebook_info
-    function backup_gradebook_item_info($bf,$preferences) {
+    function backup_gradebook_item_info($bf,$preferences, $backupall) {
 
         global $CFG;
 
@@ -1431,14 +1468,16 @@
                 // do not restore if this grade_item is a mod, and 
                 if ($grade_item->itemtype == 'mod') {
 
-                    // get module information
-                    $mod = get_record('course_modules', 'id', $grade_item->iteminstance);
-                    $modt = get_record('modules', 'id', $mod->module);
-
                     // if no user data selected, we skip this grade_item
-                    if (!backup_userdata_selected($preferences,$modt->name,$mod->id)) {
+                    if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
                         continue;
                     }
+                } else if ($grade_item->itemtype == 'category') {
+                    // if not all grade items are being backed up
+                    // we ignore this type of grade_item and grades associated
+                    if (!$backupall) {
+                        continue;      
+                    }            
                 }
 
                 //Begin grade_item
