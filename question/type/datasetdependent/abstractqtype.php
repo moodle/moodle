@@ -148,7 +148,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
      * @param object $form
      * @param int $questionfromid default = '0'
      */  
-    function preparedatasets($form , $questionfromid='0'){
+    function preparedatasets(&$form , $questionfromid='0'){
         // the dataset names present in the edit_question_form and edit_calculated_form are retrieved
         $possibledatasets = $this->find_dataset_names($form->questiontext);
         $mandatorydatasets = array();
@@ -228,20 +228,20 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 if (empty($form->id)) { // for a new question $form->id is empty
                     $question = parent::save_question($question, $form, $course);
                    //prepare the datasets using default $questionfromid
-                   $form->datasets = $this->preparedatasets($form);
+                    $this->preparedatasets($form);
                    $form->id = $question->id;
                    $this->save_dataset_definitions($form);
                 } else if (!empty($form->makecopy)){ 
                    $questionfromid =  $form->id ;
                    $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
-                    $form->datasets = $this->preparedatasets($form,$questionfromid);                   
+                    $this->preparedatasets($form,$questionfromid);                   
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form,$questionfromid );
                 }  else {// editing a question 
                     $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
-                    $form->datasets = $this->preparedatasets($form,$question->id);
+                    $this->preparedatasets($form,$question->id);
                     $form->id = $question->id; 
                     $this->save_dataset_definitions($form);
                 }
@@ -309,8 +309,8 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         foreach ($defids as $defid) {
             $datasetdef = &$datasetdefinitions[$defid];
             if (isset($datasetdef->id)) {
-                // This dataset is not used any more, delete it
                 if (!isset($tmpdatasets[$defid])) {
+                // This dataset is not used any more, delete it    
                     delete_records('question_datasets',
                                'question', $form->id,
                                'datasetdefinition', $datasetdef->id);
