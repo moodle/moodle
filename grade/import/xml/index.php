@@ -56,7 +56,24 @@ if ( $formdata = $mform->get_data()) {
         $importcode = time();
         $status = true;
         
-        foreach ($results as $result) {
+        $numlines = 0;
+        
+        // print some previews
+        print_heading(get_string('importpreview', 'grades'));
+        
+        echo '<table cellpadding="5">'; 
+        foreach ($results as $i => $result) {
+            if ($numlines < $formdata->previewrows && isset($results[$i+1])) {
+                echo '<tr>';
+                foreach ($result['#'] as $fieldname => $val) {
+                    echo '<td>'.$fieldname.' > '.$val[0]['#'].'</td>';
+                }
+                echo '</tr>';
+                $numlines ++;
+            } else if ($numlines == $formdata->previewrows || !isset($results[$i+1])) {
+                echo '</table>';
+                $numlines ++;
+            }
 
             include_once($CFG->libdir.'/grade/grade_item.php');
             if (!$gradeitem = new grade_item(array('idnumber'=>$result['#']['assignment'][0]['#']))) {

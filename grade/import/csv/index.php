@@ -222,6 +222,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     
     $filename = $mform->get_userfile_name();
     
+    
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
@@ -247,6 +248,28 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
   
     // --- get header (field names) ---
     $header = split($csv_delimiter, fgets($fp,1024));
+    
+    // print some preview
+    $numlines = 0; // 0 preview lines displayed
+
+    print_heading(get_string('importpreview', 'grades'));
+    echo '<table>';
+    echo '<tr>';
+    foreach ($header as $h) {
+        echo '<th>'.$h.'</th>'; 
+    }
+    echo '</tr>';
+    while (!feof ($fp) && $numlines <= $formdata->previewrows) {
+        $lines = split($csv_delimiter, fgets($fp,1024));     
+        echo '<tr>';
+        foreach ($lines as $line) {
+            echo '<td>'.$line.'</td>';;
+        }
+        $numlines ++;
+        echo '</tr>';
+    }
+    echo '</table>';
+        
     
     // display the mapping form with header info processed
     $mform2 = new grade_import_mapping_form(qualified_me(), array('id'=>$id, 'header'=>$header, 'filename'=>$filename));
