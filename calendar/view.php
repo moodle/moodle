@@ -265,7 +265,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 
             // Set event course class if a course event
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
-                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
 
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
@@ -538,7 +538,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
             // Set event course class if a course event
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
-                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
 
             calendar_print_event($event);

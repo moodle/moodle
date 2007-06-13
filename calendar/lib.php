@@ -62,6 +62,8 @@ define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
 define ('CALENDAR_TF_12', '%I:%M %p');
 
+define ('CALENDAR_MAXCOURSES', 3);
+
 $CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
 
 
@@ -152,7 +154,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     if (!empty($events)) {
         foreach ($events as $event) {
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
-                $event->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+                $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
         }
     }
@@ -828,12 +830,12 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL, $courses 
         $fields = 'id, shortname';
         $courseshortnames = get_records_select('course', $select, $sort, $fields, 0, 12);
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < CALENDAR_MAXCOURSES; $i++) {
 
             // Concatenate shortnames if there are more than 3 courses
             $strshortnames = '';
             $n = 0;
-            for ($j = $i; $j < count($courses); $j += 3) {
+            for ($j = $i; $j < count($courses); $j += CALENDAR_MAXCOURSES) {
                 $strshortnames .= ', <a title="" href="'.$CFG->wwwroot.'/course/view.php?id='.$courses[$j].'">'.(!empty($courseshortnames[$courses[$j]]->shortname) ? $courseshortnames[$courses[$j]]->shortname : $courses[$j]).'</a>';
                 $n++;
             }
@@ -1066,7 +1068,7 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
             else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $typesbyday[$eventdaystart]['startcourse'] = true;
                 // Set event class for course event
-                $events[$event->id]->class = 'event_course'.array_search($event->courseid, $courses) % 3;
+                $events[$event->id]->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
             else if($event->groupid) {
                 $typesbyday[$eventdaystart]['startgroup'] = true;
