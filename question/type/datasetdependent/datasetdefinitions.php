@@ -12,7 +12,6 @@ foreach ($form->answers as $answer) {
 $datasetmenus = $this->construct_dataset_menus(
         $form, $mandatorydatasets, $possibledatasets);
 // prepare shared wild card display
-        $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
         $datadefscat= array();
         $datadefscat  = $this->get_dataset_definitions_category($form);
 
