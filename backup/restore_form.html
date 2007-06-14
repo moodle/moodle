@@ -92,10 +92,9 @@
         }
 
     if (!isset($restore_restoreto)) {
-        if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        if (!user_can_create_courses()) {
             $restore_restoreto = 1;
-        }
-        if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        } else {
             $restore_restoreto = 2;
         }
     }
@@ -171,18 +170,52 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo get_string("restoreto").":</b>";
     echo "</td><td colspan=\"3\">";
     
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    // permission should have been checked already
+    
+    /**
+     * if user has manageactivities in any course, we show 
+     *      existingcoursedeleting 
+     *      existingcourseadding
+     * else we show
+     *      currentcoursedeleting
+     *      currentcourse
+     * if user has course:create in any category, we show
+     *      newcourse
+     */
+    
+    $mycourses = get_capability_courses('moodle/site:restore');
+    // if the user can manage 2 or more courses,
+    // or if the only course the user can manage is not the current course
+    // we show options for existing courses
+    if (count($mycourses) > 1 || !in_array($id, $mycourses)) {
+        // if user can manage more than 1 course, or if user can restore to a single different course
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
-        $restore_restoreto_options[2] = get_string("newcourse"); 
-    } else { // fix for MDL-7773
+    // else if the user can write to current course
+    } else if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
-        $restore_restoreto_options[1] = get_string("currentcourseadding");
+        $restore_restoreto_options[1] = get_string("currentcourseadding");   
+    }
+    
+    // if user can create any course at all, give the option
+    if (user_can_create_courses()) {
+        $restore_restoreto_options[2] = get_string("newcourse"); 
     }
    
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
-    if (iscreator()) {  //display these fields conditionally
+    if (user_can_create_courses()) {  //display these fields conditionally
+        
+        // find the list of cates user can edit
+        echo "<tr valign=\"top\" >";
+        echo "<td align=\"right\">";
+        print_string('category');
+        echo " :</td>";
+        echo "<td>";
+        choose_from_menu(get_creatable_categories(), "restore_restorecatto", $course_header->category->id, "");        
+        echo "</td>";
+        echo "</tr>";
+        
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
         print_string("shortname");

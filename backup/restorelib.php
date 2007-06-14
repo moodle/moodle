@@ -533,8 +533,18 @@
         $course_header->course_shortname = $currentshortname;
         
         //Now calculate the category
-        $category = get_record("course_categories","id",$course_header->category->id,
-                                                   "name",addslashes($course_header->category->name));
+        
+        // first try to get it from restore
+        if ($restore->restore_restorecatto) {
+            $category = get_record('course_categories', 'id', $restore->restore_restorecatto);
+        }
+        
+        // else we try to get it from the xml file
+        //Now calculate the category
+        if (!$category) {
+            $category = get_record("course_categories","id",$course_header->category->id,
+                                   "name",addslashes($course_header->category->name));
+        }
         //If no exists, try by name only
         if (!$category) {
             $category = get_record("course_categories","name",addslashes($course_header->category->name));

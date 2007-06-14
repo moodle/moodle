@@ -1761,5 +1761,61 @@ function xmldb_debug($message, $object) {
     error_log($message);
 }
 
+/**
+ * Get the lists of courses the current user has $cap capability in
+ * I am not sure if this is needed, it loops through all courses so 
+ * could cause performance problems. 
+ * If it's not used, we can use a faster function to detect 
+ * capability in restorelib.php
+ * @param string $cap
+ * @return array
+ */
+function get_capability_courses($cap) {
+    global $USER;
+    
+    $mycourses = array();
+    if ($courses = get_records('course')) {
+        foreach ($courses as $course) {
+            if (has_capability($cap, get_context_instance(CONTEXT_COURSE, $course->id))) {
+                $mycourses[] = $course->id;  
+            }
+        }
+    }
+  
+    return $mycourses;
+} 
+ 
+/**
+ * true or false function to see if user can create any courses at all
+ * @return bool
+ */
+function user_can_create_courses() {
+    global $USER;
+    // if user has course creation capability at any site or course cat, then return true;
+    
+    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+        return true;  
+    } else {
+        return (bool) count(get_creatable_categories());  
+    }
+      
+}
+
+/**
+ * get the list of categories the current user can create courses in
+ * @return array
+ */
+function get_creatable_categories() {
+    
+    $creatablecats = array();
+    if ($cats = get_records('course_categories')) {
+        foreach ($cats as $cat) {
+            if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
+                $creatablecats[$cat->id] = $cat->name;
+            }
+        }
+    }
+    return $creatablecats;
+}
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
