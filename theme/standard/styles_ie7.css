@@ -43,6 +43,7 @@
 }
 
 form.mform input[type=text],
+form.mform input[type=file],
 form.mform input[type=password] {
  margin-left: -10px;
 }

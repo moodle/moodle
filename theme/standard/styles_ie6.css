@@ -42,7 +42,7 @@
 }
 
 form.mform input {
-  margin-left: expression((this.type=="text"||this.type=="password")?'-10px':'0');
+  margin-left: expression((this.type=="text"||this.type=="file"||this.type=="password")?'-10px':'0');
 }
 
 form.mform textarea {
