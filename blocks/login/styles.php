@@ -6,9 +6,8 @@
   display:inline;
 }
 
-
 .block_login .loginform .c1 input {
-  width: 6em;
+  width:5em;
 }
 
 .block_login .loginform div {
