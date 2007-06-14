@@ -222,8 +222,8 @@
     }
 
     //Now, select the course if needed
-    //if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0)) {    
+    //if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and get_capability_courses('moodle/site:restore')) {
+    if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0)) {
 
         if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname,c.visible")) {
             print_heading(get_string("choosecourse"));

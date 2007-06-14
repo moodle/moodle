@@ -184,7 +184,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
      *      newcourse
      */
     
-    $mycourses = get_capability_courses('moodle/course:restore');
+    $mycourses = get_capability_courses('moodle/site:restore');
     
     // if the user can manage 2 or more courses,
     // or if the only course the user can manage is not the current course
@@ -194,7 +194,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
     // else if the user can write to current course
-    } else if (has_capability('moodle/course:restore', get_context_instance(CONTEXT_COURSE, $id))){
+    } else if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");   
     }
