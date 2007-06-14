@@ -18,6 +18,11 @@
 
     require_login();
     require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_COURSE, $id));
+    
+    // fix for MDL-10112
+    if (empty($CFG->messaging)) {
+        error("Messaging is disabled on this site");  
+    }
 
     if (empty($SESSION->emailto)) {
         $SESSION->emailto = array();
