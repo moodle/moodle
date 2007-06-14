@@ -43,9 +43,14 @@
 }
 
 /*fix for misalignment of text fields in ie */
-form.mform input {
-  margin-left: -10px;
-  margin-right: 10px;
+form.mform input[type=text],
+form.mform input[type=file],
+form.mform input[type=password] {
+ margin-left: -10px;
+}
+
+form.mform textarea {
+ margin-left: -10px;
 }
 
 form.mform .fcheckbox input {
