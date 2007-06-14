@@ -484,13 +484,6 @@ table.minicalendar {
   background-color:#FFFFCC;
 }
 
-#calendar .event_course3,
-.minicalendar .event_course3,
-.block_calendar_month .event_course3 {
-  border-color:#FF6699 !important; /* #EEC2AC */
-  background-color:#FF6699;
-}
-
 #calendar .event_group,
 .minicalendar .event_group,
 .block_calendar_month .event_group {
@@ -533,12 +526,6 @@ table.minicalendar {
 .minicalendar .duration_course2 {
   border-top-color:#FFFF00 !important;
   border-bottom-color:#FFFF00 !important;
-}
-
-#calendar .duration_course3,
-.minicalendar .duration_course3 {
-  border-top-color:#FF0033 !important;
-  border-bottom-color:#FF0033 !important;
 }
 
 #calendar .duration_group,
