@@ -594,7 +594,7 @@
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
         $displaylist = array();
         // fix for MDL-8885, only show this if user has capability
-        if (has_capability('moodle/site:readallmessages', $context)) {
+        if (has_capability('moodle/site:readallmessages', $context) && !empty($CFG->messaging)) {
             $displaylist['messageselect.php'] = get_string('messageselectadd');
         }
         
