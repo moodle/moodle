@@ -78,16 +78,17 @@ function SCORMapi1_3() {
         'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false}
     }
     var correct_responses = {
-        'true-false':{'format':'^true$|^false$', 'unique':false, 'limit':1},
-        'choice':{'format':'^([\\w\.]{0,250})((\\[\\,\\])[\\w\.]{1,250}){0,35}$', 'unique':true},
-        'fill-in':{'format':'^(\{case_matters=(true|false)\})?(\{order_matters=(true|false)\})?((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)((\[\,\])((\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,250})?)){0,9}$', 'unique':false},
-        'long-fill-in':{'format':'^(\{case_matters=(true|false)\})?(\{lang=([a-zA-Z]{2,3}|i|x)(\-[a-zA-Z0-9\-]{2,8})?\})?([^\{].{0,4000}$)?', 'unique':false},
-        'matching':{'format':'^(\\w{1,250}(\\[\\.\\])\\w{1,250})((\\[\\,\\])\\w{1,250}(\\[\\.\\])\\w{1,250}){0,35}$', 'unique':false},
-        'performance':{'format':'^.*$', 'unique':false},
-        'sequencing':{'format':'^(\\w{1,250})((\\[\\,\\])\\w{1,250}){0,35}$', 'unique':true},
-        'likert':{'format':CMIIdentifier, 'unique':false, 'limit':1},
-        'numeric':{'format':'^(-?([0-9]{1,4})(\\.[0-9]{1,18})?)?(\[\:\])(-?([0-9]{1,4})(\\.[0-9]{1,18})?)?$', 'unique':false, 'limit':1},
-        'other':{'format':CMIString4000, 'unique':false, 'limit':1}
+        'true-false':{'format':'^true$|^false$', 'max':1, 'delimiter':'', 'unique':false, 'limit':1,'uniquein':true},
+        'choice':{'format':CMIIdentifier, 'max':36, 'delimiter':'[,]', 'unique':true, 'limit':10,'uniquein':true},
+		
+        'fill-in':{'format':CMILangString250, 'max':10, 'delimiter':'[,]', 'unique':false,'limit':5,'uniquein':true},
+        'long-fill-in':{'format':CMILangString4000, 'max':1, 'delimiter':'', 'unique':false,'limit':5,'uniquein':true},
+        'matching':{'format':CMIShortIdentifier, 'format2':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false,'limit':5,'uniquein':true},
+        'performance':{'format':'^$|'+CMIShortIdentifier, 'format2':CMIDecimal+'|^$|'+CMIShortIdentifier, 'max':250, 'delimiter':'[,]', 'delimiter2':'[.]', 'unique':false, 'maxset':5,'uniquein':true},
+        'sequencing':{'format':CMIShortIdentifier, 'max':36, 'delimiter':'[,]', 'unique':false, 'limit':5,'uniquein':true},
+        'likert':{'format':CMIShortIdentifier, 'max':1, 'delimiter':'', 'unique':false,'limit':1,'uniquein':true},
+        'numeric':{'format':CMIDecimal, 'max':1, 'delimiter':'', 'unique':false, 'limit':1,'uniquein':true},
+        'other':{'format':CMIString4000, 'max':1, 'delimiter':'', 'unique':false, 'limit':1,'uniquein':true}
     }
     // The SCORM 1.3 data model
     var datamodel =  {
@@ -519,11 +520,13 @@ function SCORMapi1_3() {
                                             break;
                                             case 'cmi.interactions.n.correct_responses.n.pattern':
                                                 if (typeof eval(parentelement) != "undefined") {
+	
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     var interactiontype = eval(parentelement.replace('correct_responses','type'));
 //                                                    expression = new RegExp(correct_responses[interactiontype].format);
 //                                                    matches = value.match(expression);
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
+
                                                         if ((typeof correct_responses[interactiontype].limit == 'undefined') ||
                                                             (eval(parentelement+'._count') < correct_responses[interactiontype].limit)) {
                                                             if ((correct_responses[interactiontype].unique == false) || 
@@ -535,14 +538,16 @@ function SCORMapi1_3() {
                                                                     eval(subelement+' = new Object();');
 //                                                                }
                                                             } else {
-                                                                errorCode="351";
+		                                                        errorCode="351";
                                                                 diagnostic = "Data Model Element Pattern Already Exists";
                                                             }
                                                         } else {
+		
                                                             errorCode="351";
                                                             diagnostic = "Data Model Element Collection Limit Reached";
                                                         }
                                                     } else {
+	
                                                         errorCode="351";
                                                         diagnostic = "Data Model Element Collection Set Out Of Order";
                                                     }
@@ -637,24 +642,84 @@ function SCORMapi1_3() {
                                                     }
                                                 }
                                              break;
-                                             case 'cmi.interactions.n.correct_responses.n.pattern':
-                                                 if (typeof eval(parentelement) != "undefined") {
-                                                     // Use cmi.interactions.n.type value to check the right dataelement format
-                                                     interactiontype = eval(parentelement.replace('correct_responses','type'));
-//                                                     expression = new RegExp(correct_responses[interactiontype].format);
-//                                                     matches = value.match(expression);
-                                                     if ((correct_responses[interactiontype].unique == true) && 
-                                                         (duplicatedPA(element,parentelement,value))) {
-                                                         errorCode="351";
-                                                         diagnostic = "Data Model Element Pattern Already Exists";
-//                                                     } else {
-//                                                         if ((matches == null) || (matches.join('').length == 0)) {
-//                                                             errorCode = "406";
-//                                                         }
-                                                     }
-                                                 } else {
-                                                     errorCode="408";
-                                                 }
+                                            case 'cmi.interactions.n.correct_responses.n.pattern':
+											 subel= subelement.split('.');
+											 subel1= 'cmi.interactions.'+subel[2];
+							
+
+                                                 if (typeof eval(subel1+'.type') == "undefined") {
+
+                                                    errorCode="408";
+                                                } else {
+			
+	
+                                                    // Use cmi.interactions.n.type value to check the right //dataelement format
+                                                    interactiontype = eval(subel1+'.type');
+                                                    var nodes = new Array();
+                                                    if (correct_responses[interactiontype].delimiter != '') {
+                                                        nodes = value.split(correct_responses[interactiontype].delimiter);
+                                                    } else {
+                                                        nodes[0] = value;
+                                                    }
+	
+      
+	
+	
+
+	
+	
+                                                    if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
+                                                        expression = new RegExp(correct_responses[interactiontype].format);
+                                                        for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
+                                                            if (typeof correct_responses[interactiontype].delimiter2 != 'undefined') {
+		
+	
+                                                                values = nodes[i].split(correct_responses[interactiontype].delimiter2);
+                                                                if (values.length == 2) {
+		
+                                                                    matches = values[0].match(expression);
+                                                                    if (matches == null) {
+		
+                                                                        errorCode = "406";
+                                                                    } else {
+		
+                                                                        var expression2 = new RegExp(correct_responses[interactiontype].format2);
+                                                                        matches = values[1].match(expression2);
+                                                                        if (matches == null) {
+	
+                                                                            errorCode = "406";
+                                                                        }
+                                                                    }
+                                                                } else {
+	                                                                 errorCode = "406";
+                                                                }
+                                                            } else {
+
+                                                                matches = nodes[i].match(expression);
+                                                                //if ((matches == null) || (matches.join('').length == 0)) {
+                                                                if (matches == null && value != "") {
+
+                                                                    errorCode = "406";
+                                                                } else {
+
+                                                                    if ((nodes[i] != '') && (correct_responses[interactiontype].unique)) {
+                                                                        for (var j=0; (j<i) && (errorCode=="0"); j++) {
+                                                                            if (nodes[i] == nodes[j]) {
+	
+                                                                                errorCode = "406";
+                                                                            }
+                                                                        }
+                                                                    }
+	                                                            }
+                                                            }
+                                                        }
+                                                    } else if (nodes.length > correct_responses[interactiontype].max) {
+	
+                                                        errorCode = "351";
+                                                        diagnostic = "Data Model Element Pattern Too Long";
+                                                    }
+	
+                                                }
                                              break;
                                         } 
                                     }
