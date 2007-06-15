@@ -28,7 +28,7 @@ function get_module_from_cmid($cmid){
         error('cmunknown');
     }
     $modrec->instance = $modrec->id;
-    $modrec->cmid = $modrec->id;
+    $modrec->cmid = $cmrec->id;
     
     return array($modrec, $cmrec);
 }
