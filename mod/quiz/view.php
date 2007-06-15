@@ -395,7 +395,7 @@
     <?php print_heading(get_string('noscript', 'quiz')); ?>
 </div>
 </noscript>
-<?php 
+<?php
             }
 
             echo "</div>\n";
