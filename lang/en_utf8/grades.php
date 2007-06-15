@@ -70,6 +70,7 @@ $string['identifier'] = 'Identify user by';
 $string['importcsv'] = 'Import CSV';
 $string['importfailed'] = 'Import failed';
 $string['importfile'] = 'Import file';
+$string['importpreview'] = 'Import preview';
 $string['importsuccess'] = 'Grade import success';
 $string['importxml'] = 'Import XML';
 $string['incorrectcourseid'] = 'Course ID was incorrect';
