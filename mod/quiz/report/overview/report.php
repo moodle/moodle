@@ -68,7 +68,6 @@ class quiz_report extends quiz_default_report {
             }
         }
 
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         /// find out current groups mode
         if ($groupmode = groupmode($course, $cm)) { // Groups are being used
             if (!$download) {
