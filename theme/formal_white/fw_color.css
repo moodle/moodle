@@ -107,6 +107,10 @@ background-color:#E3DFD4;
   border-color:#C6BDA8;
 }
 
+h1.headermain {
+  background-color: transparent;
+}
+
 /***
  *** Login
  ***/
