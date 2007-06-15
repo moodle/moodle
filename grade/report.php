@@ -27,26 +27,83 @@
     require_once("../lib/gradelib.php");
 
     $id       = required_param('id');              // course id
-    $report   = optional_param('report', '', PARAM_FILE);              // course id
+    $report   = optional_param('report', 'user', PARAM_FILE);              // course id
+
+
+/// Make sure they can even access this course
 
     if (!$course = get_record('course', 'id', $id)) {
-        errorcode('nocourseid');
+        print_error('nocourseid');
     }
 
     require_login($course->id);
 
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+
+/// Now check what reports are available
+  
+    if ($reports = get_list_of_plugins('grade/report', 'CVS')) {         // Get all installed reports
+        foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
+            if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+                unset($reports[$key]);
+            }
+        }  
+    }
+
+    if (!$reports) {
+        print_error('nogradereports', 'grade');
+    }
+
+
+/// Make sure the currently selected one makes sense
+
+    if (!in_array($report, $reports)) {
+        reset($reports);
+        list($key, $report) = each($reports);  // Just pick the first one
+    }
+
+
+/// Create menu of reports
+
+    $reportnames = array();
+
+    if (count($reports) > 1) {
+        foreach ($reports as $plugin) { 
+            $reportnames[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
+        }
+    }
+
+    asort($reportnames);    // Alphabetical sort
+
+
+/// Print the header
+
     $strgrades = get_string('grades');
 
-    $crumbs[] = array('name' => $strgrades, 'link' => "view.php?f=$forum->id", 'type' => 'misc');
+    $crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
+    $crumbs[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
     
     $navigation = build_navigation($crumbs);
     
-    print_header_simple($strgrades, "", $navigation, "", "", true, '', navmenu($course));
+    print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation, 
+                        '', '', true, '', navmenu($course));
 
 
-    print_heading('New interface under construction');
+/// Print the report selector at the top if there is more than one report
 
-    
+    if ($reportnames) {
+        popup_form($CFG->wwwroot.'/grade/report.php?id='.$course->id.'&amp;report=', $reportnames, 
+                   'choosegradereport', $report, '', '', '', false, 'self', get_string('gradereports', 'grades').':');
+    }
+
+
+/// Now simply include the report here and we're done
+
+    print_heading('(New interface under construction)');
+
+    include_once($CFG->dirroot.'/grade/report/'.$report.'/index.php');
+
     print_footer($course);
 
 

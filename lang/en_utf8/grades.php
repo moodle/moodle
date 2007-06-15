@@ -60,6 +60,7 @@ $string['gradeletterhelp'] = 'Grade Letter Help';
 $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br /> three text areas for that letter and click submit.';
 $string['gradepreferenceshelp'] = 'Grade Preferences Help';
 $string['grades'] = 'Grades';
+$string['gradereports'] = 'Grades report';
 $string['gradeweighthelp'] = 'Grade Weight Help';
 $string['hideadvanced'] = 'Hide Advanced Features';
 $string['hidecategory'] = 'Hidden';
