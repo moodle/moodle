@@ -263,7 +263,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= '<a href="javascript:expandCollide(img'.$sublist.','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
@@ -372,13 +372,13 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                   var w3c=document.getElementById?true:false
                   var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
                   var mid=w3c?").style":".style";
-
+                  which = which.substring(0,(which.length));
                   if (eval(beg+list+mid+".display") != "none") {
-                      which.src = "'.$scormpixdir.'/plus.gif";
+                      document.getElementById(which).src = "'.$scormpixdir.'/plus.gif";
                       eval(beg+list+mid+".display=\'none\';");
                       new cookie("hide:SCORMitem" + item, 1, 356, "/").set();
                   } else {
-                      which.src = "'.$scormpixdir.'/minus.gif";
+                      document.getElementById(which).src = "'.$scormpixdir.'/minus.gif";
                       eval(beg+list+mid+".display=\'block\';");
                       new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
                   }
