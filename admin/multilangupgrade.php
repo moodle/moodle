@@ -38,7 +38,7 @@ while(@ob_end_flush());
 
 echo '<strong>Progress:</strong>';
 $i = 0;
-$skiptables = array($CFG->prefix.'config');//, $CFG->prefix.'sessions2');
+$skiptables = array($CFG->prefix.'config', $CFG->prefix.'user_students', $CFG->prefix.'user_teachers');//, $CFG->prefix.'sessions2');
 
 foreach ($tables as $table) {
     if (($CFG->prefix && strpos($table, $CFG->prefix) !== 0)
