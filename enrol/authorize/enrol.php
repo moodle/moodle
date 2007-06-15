@@ -27,7 +27,7 @@ class enrolment_plugin extends enrolment_base {
         }
 
         // I want to paid on SSL.
-        if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
+        if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 443) { // MDL-9836
             if (empty($CFG->loginhttps)) {
                 error(get_string("httpsrequired", "enrol_authorize"));
             } else {
