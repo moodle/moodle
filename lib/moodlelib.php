@@ -7025,7 +7025,7 @@ function setup_lang_from_browser() {
  */
 function build_navigation($extrabreadcrumbs) {
     global $CFG, $COURSE;
-    
+
     $navigation = '';
 
     //Site name
@@ -7033,7 +7033,7 @@ function build_navigation($extrabreadcrumbs) {
         $breadcrumbs[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
     }
 
-    
+
     if ($COURSE) {
         if ($COURSE->id != SITEID) {
             //Course
@@ -7043,15 +7043,16 @@ function build_navigation($extrabreadcrumbs) {
 
     //Merge in extra bread crumbs
     $breadcrumbs = array_merge($breadcrumbs, $extrabreadcrumbs);
-           
+
     //Construct an unordered list from $breadcrumbs
-    $navigation = "<ul>\n";
+    //Accessibility: heading hidden from visual browsers by default.
+    $navigation = '<h2 class="accesshide">'.get_string('youarehere','access')."</h2> <ul>\n";
     $countcrumb = count($breadcrumbs);
-   
+
     for($i=0;$i<$countcrumb;$i++) {
-   
+
         // Check the link type to see if this link should appear in the trail
-        if ($breadcrumbs[$i]['type'] == 'activity' && $i+1 < $countcrumb && ($CFG->hideactivitytypecrumb == 2  || ($CFG->hideactivitytypecrumb == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
+        if ($breadcrumbs[$i]['type'] == 'activity' && $i+1 < $countcrumb  && ($CFG->hideactivitytypecrumb == 2 || ($CFG->hideactivitytypecrumb == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
             continue;
         }
         $navigation .= '<li class="first">';
@@ -7065,14 +7066,13 @@ function build_navigation($extrabreadcrumbs) {
         if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
             $navigation .= "</a>";
         }
-               
+
         $navigation .= "</li>";
     }
-    
+
     $navigation .= "</ul>";
 
-    return(array('newnav' => true, 'breadcrumbs' => $navigation)); 
-
+    return(array('newnav' => true, 'breadcrumbs' => $navigation));
 }
 
 function is_newnav($navigation) {
