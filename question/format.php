@@ -193,7 +193,7 @@ class qformat_default {
                     }
                 }
                 if (!$answersvalid) {
-                    notify( get_string('matcherror','quiz') ); 
+                    notify(get_string('matcherror', 'quiz'));
                     continue;
                 }
                 else {

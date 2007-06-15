@@ -26,11 +26,8 @@ class question_edit_description_form extends question_edit_form {
         $mform->addElement('hidden', 'defaultgrade', 0);
     }
 
-
     function qtype() {
         return 'description';
     }
-
-
 }
 ?>
