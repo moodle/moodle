@@ -74,7 +74,7 @@ class enrolment_plugin_authorize
             return;
         }
 
-        if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
+        if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 443) { // MDL-9836
             if (empty($CFG->loginhttps)) {
                 error(get_string('httpsrequired', 'enrol_authorize'));
             } else {
@@ -425,7 +425,7 @@ class enrolment_plugin_authorize
             $a->url = "$CFG->wwwroot/$CFG->admin/config.php#configsectionsecurity";
             notice(get_string('adminconfighttps', 'enrol_authorize', $a));
         }
-        elseif (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') {
+        elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 443) { // MDL-9836
             $wwwsroot = qualified_me();
             $wwwsroot = str_replace('http:', 'https:', $wwwsroot);
             $a = new stdClass;
