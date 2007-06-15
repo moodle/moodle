@@ -430,7 +430,8 @@
     }
 
     // Start the form
-    echo "<form id=\"responseform\" method=\"post\" action=\"attempt.php\" onclick=\"this.autocomplete='off'\">\n";
+    echo '<form id="responseform" method="post" action="attempt.php" ',
+            'enctype="multipart/form-data" onclick="this.autocomplete=\'off\'">', "\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
