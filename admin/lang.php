@@ -282,13 +282,12 @@
         print_heading_with_help($streditstrings, "langedit");
 
         print_box_start('generalbox editstrings');
+        $menufiles = array();
         foreach ($stringfiles as $file) {
-            if ($file == $currentfile) {
-                echo "<b>$file</b> &nbsp; ";
-            } else {
-                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
-            }
+            $menufiles[$file] = $file;
         }
+        popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare&amp;currentfile=", $menufiles, "choosefile",
+            $currentfile, $strchoosefiletoedit);
         print_box_end();
 
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>", "center", 4); // one-click way back
@@ -475,7 +474,7 @@
 
         } else {
             // no $currentfile specified
-            print_heading($strchoosefiletoedit, "", 4);
+            // no useful information to display - maybe some help? instructions?
         }
     }
 
@@ -702,6 +701,45 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
         //negative $length. Omit $length characters from end
         return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start);
     }
+}
+
+/**
+* Find all language location.
+*
+* Taken from lib/moodlelib.php::get_strig()
+*
+* @todo This is here just because I started to work on MDL-9361. It is not used yet. And maybe will not.
+*/
+function lang_locations($module = '') {
+    global $CFG;
+
+    // Default language packs locations
+    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+
+    // Extra places to look for strings
+    $rules = places_to_search_for_lang_strings();
+    $exceptions = $rules['__exceptions'];
+    unset($rules['__exceptions']);
+
+    // Add all other possible locations
+    if (!in_array($module, $exceptions)) {
+        $dividerpos = strpos($module, '_');
+        if ($dividerpos === false) {
+            $type = '';
+            $plugin = $module;
+        } else {
+            $type = substr($module, 0, $dividerpos + 1);
+            $plugin = substr($module, $dividerpos + 1);
+        }
+        if (!empty($rules[$type])) {
+            foreach ($rules[$type] as $location) {
+                $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
+            }
+        }
+    }
+
+    return $locations;
+
 }
 
 
