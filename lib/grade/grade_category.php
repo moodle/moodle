@@ -31,25 +31,25 @@ class grade_category extends grade_object {
      * @var string $table
      */
     var $table = 'grade_categories';
-    
+
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
     var $nonfields = array('table', 'nonfields', 'children', 'all_children');
-    
+
     /**
      * The course this category belongs to.
      * @var int $courseid
      */
     var $courseid;
-    
+
     /**
      * The category this category belongs to (optional).
-     * @var int $parent 
+     * @var int $parent
      */
     var $parent;
-    
+
     /**
      * The grade_category object referenced by $this->parent (PK).
      * @var object $parent_category
@@ -80,25 +80,25 @@ class grade_category extends grade_object {
      * @var string $fullname
      */
     var $fullname;
-    
+
     /**
      * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
-     * @var int $aggregation 
+     * @var int $aggregation
      */
     var $aggregation;
-    
+
     /**
      * Keep only the X highest items.
      * @var int $keephigh
      */
     var $keephigh;
-    
+
     /**
      * Drop the X lowest items.
      * @var int $droplow
      */
     var $droplow;
-    
+
     /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
      * @var array $children
@@ -106,7 +106,7 @@ class grade_category extends grade_object {
     var $children;
 
     /**
-     * A hierarchical array of all children below this category. This is stored separately from 
+     * A hierarchical array of all children below this category. This is stored separately from
      * $children because it is more memory-intensive and may not be used as often.
      * @var array $all_children
      */
@@ -138,7 +138,7 @@ class grade_category extends grade_object {
         $this->path = grade_category::build_path($this);
     }
 
-    
+
     /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
@@ -171,7 +171,7 @@ class grade_category extends grade_object {
      * @param string $fields
      * @return object grade_category object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_category') {
                 foreach ($grade_category as $param => $value) {
@@ -190,7 +190,7 @@ class grade_category extends grade_object {
     /**
      * In addition to update() as defined in grade_object, call flag_for_update of parent categories, if applicable.
      */
-    function update() { 
+    function update() {
         $qualifies = $this->qualifies_for_update();
 
         // Update the grade_item's sortorder if needed
@@ -201,44 +201,49 @@ class grade_category extends grade_object {
                 $this->grade_item->update();
             }
             unset($this->sortorder);
-        } 
+        }
 
         $result = parent::update();
-       
+
         // Use $this->path to update all parent categories
         if ($result && $qualifies) {
             $this->flag_for_update();
-        } 
+        }
         return $result;
     }
-    
+
     /**
      * If parent::delete() is successful, send flag_for_update message to parent category.
      * @return boolean Success or failure.
      */
     function delete() {
         $result = parent::delete();
-        
+
         if ($result) {
             $this->load_parent_category();
             if (!empty($this->parent_category)) {
                 $result = $result && $this->parent_category->flag_for_update();
             }
+
+            // Update children's categoryid/parent field
+            global $db;
+            $set_field_result = set_field('grade_items', 'categoryid', null, 'categoryid', $this->id);
+            $set_field_result = set_field('grade_categories', 'parent', null, 'parent', $this->id);
         }
 
         return $result;
     }
-    
+
     /**
      * In addition to the normal insert() defined in grade_object, this method sets the depth
      * and path for this object, and update the record accordingly. The reason why this must
      * be done here instead of in the constructor, is that they both need to know the record's
-     * id number, which only gets created at insertion time.      
+     * id number, which only gets created at insertion time.
      * This method also creates an associated grade_item if this wasn't done during construction.
      */
     function insert() {
         $result = parent::insert();
-        
+
         $this->path = grade_category::build_path($this);
 
         // Build path and depth variables
@@ -247,22 +252,22 @@ class grade_category extends grade_object {
         } else {
             $this->depth = 1;
         }
-        
+
         $this->update();
-        
+
         if (empty($this->grade_item)) {
             $grade_item = new grade_item();
             $grade_item->iteminstance = $this->id;
             $grade_item->itemtype = 'category';
-            
+
             if (!$grade_item->insert()) {
                 debugging("Could not insert this grade_item in the database: " . print_r($grade_item, true));
                 return false;
             }
-            
+
             $this->grade_item = $grade_item;
         }
-        
+
         // Notify parent category of need to update.
         if ($result) {
             $this->load_parent_category();
@@ -272,10 +277,10 @@ class grade_category extends grade_object {
                     return false;
                 }
             }
-        } 
+        }
         return $result;
     }
-    
+
     /**
      * Compares the values held by this object with those of the matching record in DB, and returns
      * whether or not these differences are sufficient to justify an update of all parent objects.
@@ -288,7 +293,7 @@ class grade_category extends grade_object {
         }
 
         $db_item = new grade_category(array('id' => $this->id));
-        
+
         $aggregationdiff = $db_item->aggregation != $this->aggregation;
         $keephighdiff = $db_item->keephigh != $this->keephigh;
         $droplowdiff = $db_item->droplow != $this->droplow;
@@ -311,22 +316,22 @@ class grade_category extends grade_object {
      */
     function flag_for_update() {
         $result = true;
-        
+
         $this->load_grade_item();
 
         if (empty($this->grade_item)) {
-            die("Associated grade_item object does not exist for this grade_category!" . print_object($this)); 
+            die("Associated grade_item object does not exist for this grade_category!" . print_object($this));
             // TODO Send error message, this is a critical error: each category MUST have a matching grade_item object and load_grade_item() is supposed to create one!
         }
 
         $paths = explode('/', $this->path);
-        
+
         // Remove the first index, which is always empty
         unset($paths[0]);
-        
+
         if (!empty($paths)) {
             $wheresql = '';
-            
+
             foreach ($paths as $categoryid) {
                 $wheresql .= "iteminstance = $categoryid OR ";
             }
@@ -338,12 +343,12 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Generates and saves raw_grades, based on this category's immediate children, then uses the 
+     * Generates and saves raw_grades, based on this category's immediate children, then uses the
      * associated grade_item to generate matching final grades. These immediate children must first have their own
      * raw and final grades, which means that ultimately we must get grade_items as children. The category's aggregation
      * method is used to generate these raw grades, which can then be used by the category's associated grade_item
      * to apply calculations to and generate final grades.
-     * Steps to follow: 
+     * Steps to follow:
      *  1. If the children are categories, AND their grade_item's needsupdate is true call generate_grades() on each of them (recursion)
      *  2. Get final grades from immediate children (if the children are categories, get the final grades from their grade_item)
      *  3. Aggregate these grades
@@ -353,7 +358,7 @@ class grade_category extends grade_object {
     function generate_grades() {
         // 1. Get immediate children
         $children = $this->get_children(1, 'flat');
-        
+
         if (empty($children)) {
             debugging("Could not generate grades for this category, it has no children.");
             return false;
@@ -361,19 +366,19 @@ class grade_category extends grade_object {
 
         // This assumes that all immediate children are of the same type (category OR item)
         $childrentype = get_class(current($children));
-        
+
         $final_grades_for_aggregation = array();
-        
+
         // 2. Get final grades from immediate children, after generating them if needed.
         // NOTE: Make sure that the arrays of final grades are indexed by userid. The resulting arrays are unlikely to match in sizes.
         if ($childrentype == 'grade_category') {
             foreach ($children as $id => $category) {
                 $category->load_grade_item();
-                
+
                 if ($category->grade_item->needsupdate) {
                     $category->generate_grades();
                 }
-                
+
                 $final_grades_for_aggregation[] = $category->grade_item->get_standardised_final();
             }
         } elseif ($childrentype == 'grade_item') {
@@ -381,14 +386,14 @@ class grade_category extends grade_object {
                 if ($item->needsupdate) {
                     $item->generate_final();
                 }
-                
+
                 $final_grades_for_aggregation[] = $item->get_standardised_final();
             }
         }
 
         // 3. Aggregate the grades
         $aggregated_grades = $this->aggregate_grades($final_grades_for_aggregation);
-        
+
         // 4. Save the resulting array of grades as raw grades
         $this->load_grade_item();
         $this->grade_item->save_raw($aggregated_grades);
@@ -411,9 +416,9 @@ class grade_category extends grade_object {
             for ($i = 0; $i < $this->droplow; $i++) {
                 array_pop($grades);
             }
-        } elseif (!empty($this->keephigh)) { 
+        } elseif (!empty($this->keephigh)) {
             while (count($grades) > $this->keephigh) {
-                array_pop($grades);                    
+                array_pop($grades);
             }
         }
         sort($grades, SORT_NUMERIC);
@@ -421,9 +426,9 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Given an array of arrays of values, standardised from 0 to 1 and indexed by userid, 
-     * uses this category's aggregation method to 
-     * compute and return a single array of grade_raw objects with the aggregated gradevalue. 
+     * Given an array of arrays of values, standardised from 0 to 1 and indexed by userid,
+     * uses this category's aggregation method to
+     * compute and return a single array of grade_raw objects with the aggregated gradevalue.
      * @param array $raw_grade_sets
      * @return array Raw grade objects
      */
@@ -432,7 +437,7 @@ class grade_category extends grade_object {
             debugging("Could not aggregate grades: no array of grades given to aggregate.");
             return null;
         }
-        
+
         $aggregated_grades = array();
         $pooled_grades = array();
 
@@ -446,9 +451,9 @@ class grade_category extends grade_object {
 
         foreach ($pooled_grades as $userid => $grades) {
             $aggregated_value = null;
-            
+
             $grades = $this->apply_limit_rules($grades);
-            
+
             if (count($grades) > 1) {
 
                 switch ($this->aggregation) {
@@ -461,11 +466,11 @@ class grade_category extends grade_object {
                         sort($grades);
                         $num = count($grades);
                         $halfpoint = intval($num / 2);
-                        
-                        if($num % 2 == 0) { 
-                            $aggregated_value = ($grades[ceil($halfpoint)] + $grades[floor($halfpoint)]) / 2; 
-                        } else { 
-                            $aggregated_value = $grades[$halfpoint]; 
+
+                        if($num % 2 == 0) {
+                            $aggregated_value = ($grades[ceil($halfpoint)] + $grades[floor($halfpoint)]) / 2;
+                        } else {
+                            $aggregated_value = $grades[$halfpoint];
                         }
 
                         break;
@@ -478,7 +483,7 @@ class grade_category extends grade_object {
                     default:
                         $num = count($grades);
                         $sum = array_sum($grades);
-                        $aggregated_value = $sum / $num; 
+                        $aggregated_value = $sum / $num;
                         break;
                 }
             } elseif (count($grades) == 1) {
@@ -487,9 +492,9 @@ class grade_category extends grade_object {
                 // TODO what happens if the droplow and keephigh rules have deleted all grades?
                 $aggregated_value = 0;
             }
-            
+
             $grade_raw = new grade_grades_raw();
-            
+
             $grade_raw->userid = $userid;
             $grade_raw->gradevalue = $aggregated_value;
             $grade_raw->grademin = $this->grade_item->grademin;
@@ -497,7 +502,7 @@ class grade_category extends grade_object {
             $grade_raw->itemid = $this->grade_item->id;
             $aggregated_grades[$userid] = $grade_raw;
         }
-        
+
         return $aggregated_grades;
     }
 
@@ -520,7 +525,7 @@ class grade_category extends grade_object {
             } else {
                 $children_array[$child->get_sortorder()] = $child;
             }
-        }        
+        }
 
         return $children_array;
     }
@@ -534,7 +539,7 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Checks whether an existing child exists for this category. If the new child is of a 
+     * Checks whether an existing child exists for this category. If the new child is of a
      * different type, the method will return false (not allowed). Otherwise it will return true.
      * @param object $child This must be a complete object, not a stdClass
      * @return boolean Success or failure
@@ -556,12 +561,12 @@ class grade_category extends grade_object {
      * @return boolean Success or Failure
      */
     function divorce_parent() {
-        $this->old_parent = $this->get_parent_category(); 
+        $this->old_parent = $this->get_parent_category();
         $this->parent = null;
         $this->parent_category = null;
         $this->depth = 1;
         $this->path = '/' . $this->id;
-        return $this->update();        
+        return $this->update();
     }
 
     /**
@@ -581,8 +586,8 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Fetches and returns all the children categories and/or grade_items belonging to this category. 
-     * By default only returns the immediate children (depth=1), but deeper levels can be requested, 
+     * Fetches and returns all the children categories and/or grade_items belonging to this category.
+     * By default only returns the immediate children (depth=1), but deeper levels can be requested,
      * as well as all levels (0). The elements are indexed by sort order.
      * @param int $depth 1 for immediate children, 0 for all children, and 2+ for specific levels deeper than 1.
      * @param string $arraytype Either 'nested' or 'flat'. A nested array represents the true hierarchy, but is more difficult to work with.
@@ -590,15 +595,15 @@ class grade_category extends grade_object {
      */
     function get_children($depth=1, $arraytype='nested') {
         $children_array = array();
-        
+
         // Set up $depth for recursion
         $newdepth = $depth;
         if ($depth > 1) {
             $newdepth--;
         }
-        
+
         $childrentype = $this->get_childrentype();
-        
+
         if ($childrentype == 'grade_item') {
             $children = get_records('grade_items', 'categoryid', $this->id);
             // No need to proceed with recursion
@@ -606,7 +611,7 @@ class grade_category extends grade_object {
             $this->children = $this->children_to_array($children, 'flat', 'grade_item');
         } elseif ($childrentype == 'grade_category') {
             $children = get_records('grade_categories', 'parent', $this->id, 'id');
-            
+
             if ($depth == 1) {
                 $children_array = $this->children_to_array($children, $arraytype, 'grade_category');
                 $this->children = $this->children_to_array($children, 'flat', 'grade_category');
@@ -639,9 +644,9 @@ class grade_category extends grade_object {
 
         return $children_array;
     }
-  
+
     /**
-     * Check the type of the first child of this category, to see whether it is a 
+     * Check the type of the first child of this category, to see whether it is a
      * grade_category or a grade_item, and returns that type as a string (get_class).
      * @return string
      */
@@ -649,7 +654,7 @@ class grade_category extends grade_object {
         if (empty($this->children)) {
             $count_item_children = count_records('grade_items', 'categoryid', $this->id);
             $count_cat_children = count_records('grade_categories', 'parent', $this->id);
-            
+
             if ($count_item_children > 0) {
                 return 'grade_item';
             } elseif ($count_cat_children > 0) {
@@ -670,7 +675,7 @@ class grade_category extends grade_object {
         $this->grade_item = $this->get_grade_item();
         return $this->grade_item;
     }
-    
+
     /**
      * Retrieves from DB and instantiates the associated grade_item object.
      * If no grade_item exists yet, create one.
@@ -683,14 +688,14 @@ class grade_category extends grade_object {
         }
 
         $grade_items = get_records_select('grade_items', "iteminstance = $this->id AND itemtype = 'category'", null, '*', 0, 1);
-        
-        if ($grade_items){ 
+
+        if ($grade_items){
             $params = current($grade_items);
             $grade_item = new grade_item($params);
         } else {
             $grade_item = new grade_item();
         }
-        
+
         // If the associated grade_item isn't yet created, do it now. But first try loading it, in case it exists in DB.
         if (empty($grade_item->id)) {
             $grade_item->iteminstance = $this->id;
@@ -712,8 +717,8 @@ class grade_category extends grade_object {
             $this->parent_category = $this->get_parent_category();
         }
         return $this->parent_category;
-    } 
-    
+    }
+
     /**
      * Uses $this->parent to instantiate and return a grade_category object.
      * @return object Parent_category
@@ -721,7 +726,7 @@ class grade_category extends grade_object {
     function get_parent_category() {
         if (!empty($this->parent)) {
             $parent_category = new grade_category(array('id' => $this->parent));
-            return $parent_category; 
+            return $parent_category;
         } else {
             return null;
         }
@@ -762,27 +767,27 @@ class grade_category extends grade_object {
                 debugging("Violated constraint: Attempted to set a category as a parent over children of 2 different types.");
                 return false;
             }
-            
+
             if ($grade_tree->get_element_type($child) == 'topcat') {
                 debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
                 return false;
             }
-            
+
             if ($first_child_type == 'grade_category' or $first_child_type == 'grade_item') {
                 if (!empty($child->parent)) {
                     debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
-                    return false; 
+                    return false;
                 }
             } else {
                 debugging("Attempted to set a category over children that are neither grade_items nor grade_categories.");
                 return false;
-            }                
+            }
 
             if ($child->courseid != $this->courseid) {
                 debugging("Attempted to set a category over children which do not belong to the same course.");
                 return false;
             }
-        } 
+        }
 
         // We passed all the checks, time to set the category as a parent.
         foreach ($children as $child) {
@@ -791,18 +796,18 @@ class grade_category extends grade_object {
             if (!$child->update()) {
                 debugging("Could not set this category as a parent for one of its children, DB operation failed.");
                 return false;
-            } 
+            }
         }
 
         // TODO Assign correct sortorders to the newly assigned children and parent. Simply add 1 to all of them!
         $this->load_grade_item();
         $this->grade_item->sortorder = $first_child->get_sortorder();
-        
+
         if (!$this->update()) {
             debugging("Could not update this category's sortorder in DB.");
             return false;
         }
-        
+
         $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= {$this->grade_item->sortorder}";
         $query .= " AND courseid = $this->courseid";
 
@@ -815,7 +820,7 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Returns the most descriptive field for this object. This is a standard method used 
+     * Returns the most descriptive field for this object. This is a standard method used
      * when we do not know the exact type of an object.
      * @return string name
      */
@@ -851,9 +856,9 @@ class grade_category extends grade_object {
         $this->path = grade_category::build_path($this);
         $this->depth = $this->get_depth_from_path();
     }
-    
+
     /**
-     * Returns the sortorder of the associated grade_item. This method is also available in 
+     * Returns the sortorder of the associated grade_item. This method is also available in
      * grade_item, for cases where the object type is not known.
      * @return int Sort order
      */
@@ -869,18 +874,18 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Sets a temporary sortorder variable for this category. It is used in the update() method to update the grade_item. 
-     * This method is also available in grade_item, for cases where the object type is not know. 
+     * Sets a temporary sortorder variable for this category. It is used in the update() method to update the grade_item.
+     * This method is also available in grade_item, for cases where the object type is not know.
      * @param int $sortorder
      * @return void
      */
     function set_sortorder($sortorder) {
         $this->sortorder = $sortorder;
     }
-    
+
     /**
-     * Returns the locked state/date of the associated grade_item. This method is also available in 
-     * grade_item, for cases where the object type is not known. 
+     * Returns the locked state/date of the associated grade_item. This method is also available in
+     * grade_item, for cases where the object type is not known.
      * @return int 0, 1 or timestamp int(10)
      */
     function get_locked() {
@@ -907,10 +912,10 @@ class grade_category extends grade_object {
             return false;
         }
     }
-    
+
     /**
-     * Returns the hidden state/date of the associated grade_item. This method is also available in 
-     * grade_item, for cases where the object type is not known. 
+     * Returns the hidden state/date of the associated grade_item. This method is also available in
+     * grade_item, for cases where the object type is not known.
      * @return int 0, 1 or timestamp int(10)
      */
     function get_hidden() {
@@ -923,7 +928,7 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Sets the grade_item's hidden variable and updates the grade_item. 
+     * Sets the grade_item's hidden variable and updates the grade_item.
      * Method named after grade_item::set_hidden().
      * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
      * @return void
@@ -938,7 +943,7 @@ class grade_category extends grade_object {
         }
     }
 
-    /** 
+    /**
      * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
      * deleting childless categories.
      * @return boolean
@@ -949,6 +954,6 @@ class grade_category extends grade_object {
         } else {
             return false;
         }
-    } 
-} 
+    }
+}
 ?>
