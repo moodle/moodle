@@ -46,8 +46,8 @@
     $strfilecreated = get_string('filecreated', 'admin');
     $strprev = get_string('previous');
     $strnext = get_string('next');
-
-
+    $strlocalstringcustomization = 'Local string customization';          // TODO / FIXME
+    $strlangpackmaintaining = 'Language pack maintaining';   // TODO / FIXME
     $currentlang = current_language();
 
     switch ($mode) {
@@ -79,14 +79,39 @@
 
     admin_externalpage_print_header($adminroot);
 
+    // Prepare and render menu tabs
+    $firstrow = array();
+    $secondrow = array();
+    $inactive = NULL;
+    $activated = NULL;
+    $currenttab = $mode;
+    if ($uselocal) {
+        $inactive = array('uselocal');
+        $activated = array('uselocal');
+    } else {
+        $inactive = array('usemaster');
+        $activated = array('usemaster');
+    }
+    $firstrow[] = new tabobject('uselocal', 
+        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1", 
+        $strlocalstringcustomization );
+    $firstrow[] = new tabobject('usemaster',
+        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0", 
+        $strlangpackmaintaining );
+    $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
+    $secondrow[] = new tabobject('compare', $CFG->wwwroot.'/admin/lang.php?mode=compare', $streditstrings );
+    // TODO
+    // langdoc.php functionality is planned to be merged into lang.php
+    $secondrow[] = new tabobject('langdoc', $CFG->wwwroot.'/admin/langdoc.php', $stredithelpdocs );
+    $tabs = array($firstrow, $secondrow);
+    print_tabs($tabs, $currenttab, $inactive, $activated);
+    
+
     if (!$mode) {
         print_box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
         popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", false, 'self', $strcurrentlanguage.':');
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
-        print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
-        print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
         print_box_end();
         admin_externalpage_print_footer($adminroot);
         exit;
@@ -279,8 +304,6 @@
             unset($packstring);
         } 
 
-        print_heading_with_help($streditstrings, "langedit");
-
         print_box_start('generalbox editstrings');
         $menufiles = array();
         foreach ($stringfiles as $file) {
@@ -288,22 +311,14 @@
         }
         popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare&amp;currentfile=", $menufiles, "choosefile",
             $currentfile, $strchoosefiletoedit);
-        print_box_end();
 
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>", "center", 4); // one-click way back
-
-        print_box_start();
+        echo '<div class="filestorageinfobox">';
         echo $strfilestoredin;
+        echo '<code class="path">';
         echo $uselocal ? "{$currentlang}_local" : $currentlang;
+        echo '</code>';
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
-        
-        echo '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-             '<div>'.
-             '<input type="hidden" name="mode" value="compare" />'.
-             '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
-             '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.
-             '<input type="submit" value="'.$strswitchlang.'" />'.
-             '</div></form>';
+        echo '</div>';
         print_box_end();
        
         if ($currentfile <> '') {
