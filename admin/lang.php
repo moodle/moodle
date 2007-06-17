@@ -46,8 +46,12 @@
     $strfilecreated = get_string('filecreated', 'admin');
     $strprev = get_string('previous');
     $strnext = get_string('next');
-    $strlocalstringcustomization = 'Local string customization';          // TODO / FIXME
-    $strlangpackmaintaining = 'Language pack maintaining';   // TODO / FIXME
+    $strlocalstringcustomization = 'Local string customization';            // TODO / FIXME
+    $strlangpackmaintaining = 'Language pack maintaining';                  // TODO / FIXME
+    $strnomissingstrings = 'No missing strings';                            // TODO / FIXME
+    // TODO/FIXME add into en_utf8/admin.php:
+    // $string['numberofmissingstrings'] = 'Number of missing strings: $a';
+    
     $currentlang = current_language();
 
     switch ($mode) {
@@ -343,11 +347,7 @@
             }
             error_reporting($CFG->debug);
             
-            print_heading("$currentfile", "", 4);
-            if (LANG_DISPLAY_MISSING_LINKS && $editable) {
-                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
-            }
-
+            $o = '';    // stores the HTML output to be echo-ed
             unset($string);
             include("$enlangdir/$currentfile");
             $enstring = $string;  
@@ -368,36 +368,36 @@
             @include("$langdir/$currentfile");
 
             if ($editable) {
-                echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
-                echo '<div>';
+                $o .= "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+                $o .= '<div>';
             }
-            echo "<table summary=\"\" width=\"100%\" class=\"translator\">";
+            $o .= "<table summary=\"\" width=\"100%\" class=\"translator\">";
             $linescounter = 0;
             $missingcounter = 0;
             foreach ($enstring as $key => $envalue) {
                 $linescounter++ ;
                 if (LANG_SUBMIT_REPEAT &&  $editable && $linescounter % LANG_SUBMIT_REPEAT_EVERY == 0) {
-                    echo '<tr><td>&nbsp;</td><td><br />';
-                    echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
-                    echo '<br />&nbsp;</td></tr>';
+                    $o .= '<tr><td>&nbsp;</td><td><br />';
+                    $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                    $o .= '<br />&nbsp;</td></tr>';
                 }
                 $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
                 $envalue = str_replace("%%","%",$envalue);
                 $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-                echo "\n\n".'<tr class="';
+                $o .= "\n\n".'<tr class="';
                 if ($linescounter % 2 == 0) {
-                    echo 'r0';
+                    $o .= 'r0';
                 } else {
-                    echo 'r1';
+                    $o .= 'r1';
                 }
-                echo '">';
-                echo '<td dir="ltr" lang="en">';
-                echo '<span class="stren">'.$envalue.'</span>';
-                echo '<br />'."\n";
-                echo '<span class="strkey">'.$key.'</span>';
-                echo '</td>'."\n";
+                $o .= '">';
+                $o .= '<td dir="ltr" lang="en">';
+                $o .= '<span class="stren">'.$envalue.'</span>';
+                $o .= '<br />'."\n";
+                $o .= '<span class="strkey">'.$key.'</span>';
+                $o .= '</td>'."\n";
 
                 // Missing array keys are not bugs here but missing strings
                 error_reporting(E_ALL ^ E_NOTICE);
@@ -447,7 +447,7 @@
                 }
 
                 if ($editable) {
-                    echo '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
+                    $o .= '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -456,36 +456,48 @@
                     $cols=40;
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
-                        echo '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
                     } else {
                         if ($valuelen) {
                             $cols = $valuelen + 5;
                         }
-                        echo '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
+                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
                     }
                     if ($value2 <> '' && $value <> $value2) {
-                        echo '<br /><span style="font-size:small">'.$value2.'</span>';
+                        $o .= '<br /><span style="font-size:small">'.$value2.'</span>';
                     }
-                    echo $missingnext . '</td>';
+                    $o .= $missingnext . '</td>';
 
                 } else {
-                    echo '<td '.$cellcolour.' valign="top">'.$value.'</td>';
+                    $o .= '<td '.$cellcolour.' valign="top">'.$value.'</td>';
                 }
-                echo '</tr>'."\n";
+                $o .= '</tr>'."\n";
             }
             if ($editable) {
-                echo '<tr><td>&nbsp;</td><td><br />';
-                echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-                echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
-                echo '    <input type="hidden" name="mode" value="compare" />';
-                echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
-                echo '</td></tr>';
+                $o .= '<tr><td>&nbsp;</td><td><br />';
+                $o .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+                $o .= '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
+                $o .= '<input type="hidden" name="mode" value="compare" />';
+                $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                $o .= '</td></tr>';
             }
-            echo '</table>';
+            $o .= '</table>';
             if ($editable) {
-                echo '</div>'; 
-                echo '</form>'; 
+                $o .= '</div>'; 
+                $o .= '</form>';
             }
+
+            if (LANG_DISPLAY_MISSING_LINKS) {
+                if ($missingcounter > 0) {
+                    print_heading(get_string('numberofmissingstrings', 'admin', $missingcounter), '', 4);
+                    if ($editable) {
+                        print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
+                    }
+                } else {
+                    print_heading($strnomissingstrings, '', 4, 'notifysuccess');
+                }
+            }
+            echo $o;
 
         } else {
             // no $currentfile specified
