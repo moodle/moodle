@@ -5,8 +5,8 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-
-    admin_externalpage_setup('langedit');    
+    $adminroot = admin_get_root();
+    admin_externalpage_setup('langedit', $adminroot);    
 
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
@@ -46,8 +46,12 @@
     $strfilecreated = get_string('filecreated', 'admin');
     $strprev = get_string('previous');
     $strnext = get_string('next');
-
-
+    $strlocalstringcustomization = 'Local string customization';            // TODO / FIXME
+    $strlangpackmaintaining = 'Language pack maintaining';                  // TODO / FIXME
+    $strnomissingstrings = 'No missing strings';                            // TODO / FIXME
+    // TODO/FIXME add into en_utf8/admin.php:
+    // $string['numberofmissingstrings'] = 'Number of missing strings: $a';
+    
     $currentlang = current_language();
 
     switch ($mode) {
@@ -77,18 +81,43 @@
     }
 
 
-    admin_externalpage_print_header();
+    admin_externalpage_print_header($adminroot);
+
+    // Prepare and render menu tabs
+    $firstrow = array();
+    $secondrow = array();
+    $inactive = NULL;
+    $activated = NULL;
+    $currenttab = $mode;
+    if ($uselocal) {
+        $inactive = array('uselocal');
+        $activated = array('uselocal');
+    } else {
+        $inactive = array('usemaster');
+        $activated = array('usemaster');
+    }
+    $firstrow[] = new tabobject('uselocal', 
+        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1", 
+        $strlocalstringcustomization );
+    $firstrow[] = new tabobject('usemaster',
+        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0", 
+        $strlangpackmaintaining );
+    $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
+    $secondrow[] = new tabobject('compare', $CFG->wwwroot.'/admin/lang.php?mode=compare', $streditstrings );
+    // TODO
+    // langdoc.php functionality is planned to be merged into lang.php
+    $secondrow[] = new tabobject('langdoc', $CFG->wwwroot.'/admin/langdoc.php', $stredithelpdocs );
+    $tabs = array($firstrow, $secondrow);
+    print_tabs($tabs, $currenttab, $inactive, $activated);
+    
 
     if (!$mode) {
         print_box_start();
         $currlang = current_language();
         $langs = get_list_of_languages(false, true);
         popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", false, 'self', $strcurrentlanguage.':');
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
-        print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
-        print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
         print_box_end();
-        admin_externalpage_print_footer();
+        admin_externalpage_print_footer($adminroot);
         exit;
     }
 
@@ -191,7 +220,7 @@
     
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<a href=\"$CFG->wwwroot/$CFG->admin/langdoc.php?sesskey=$USER->sesskey&amp;currentfile=help/$file\">" .get_string("filemissing", "", "$currentlang/help/$file") . "</a>" . "<br />\n";
+                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -202,7 +231,7 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                echo "<a href=\"$CFG->wwwroot/$CFG->admin/langdoc.php?sesskey=$USER->sesskey&amp;currentfile=docs/$file\">" .get_string("filemissing", "", "$currentlang/docs/$file") . "</a>" . "<br />\n";
+                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/docs/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -211,7 +240,7 @@
         if (!empty($somethingfound)) {
             print_continue("lang.php");
         } else {
-            notice(get_string("languagegood"), "lang.php");
+            notice(get_string("languagegood"), "lang.php", '', $adminroot);
         }
 
     } else if ($mode == "compare") {
@@ -279,32 +308,21 @@
             unset($packstring);
         } 
 
-        print_heading_with_help($streditstrings, "langedit");
-
         print_box_start('generalbox editstrings');
+        $menufiles = array();
         foreach ($stringfiles as $file) {
-            if ($file == $currentfile) {
-                echo "<b>$file</b> &nbsp; ";
-            } else {
-                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
-            }
+            $menufiles[$file] = $file;
         }
-        print_box_end();
+        popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare&amp;currentfile=", $menufiles, "choosefile",
+            $currentfile, $strchoosefiletoedit);
 
-        print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>", "center", 4); // one-click way back
-
-        print_box_start();
+        echo '<div class="filestorageinfobox">';
         echo $strfilestoredin;
+        echo '<code class="path">';
         echo $uselocal ? "{$currentlang}_local" : $currentlang;
+        echo '</code>';
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
-        
-        echo '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-             '<div>'.
-             '<input type="hidden" name="mode" value="compare" />'.
-             '<input type="hidden" name="currentfile" value="'.$currentfile.'" />'.
-             '<input type="hidden" name="uselocal" value="'.(1 - $uselocal % 2).'" />'.
-             '<input type="submit" value="'.$strswitchlang.'" />'.
-             '</div></form>';
+        echo '</div>';
         print_box_end();
        
         if ($currentfile <> '') {
@@ -329,11 +347,7 @@
             }
             error_reporting($CFG->debug);
             
-            print_heading("$currentfile", "", 4);
-            if (LANG_DISPLAY_MISSING_LINKS && $editable) {
-                print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
-            }
-
+            $o = '';    // stores the HTML output to be echo-ed
             unset($string);
             include("$enlangdir/$currentfile");
             $enstring = $string;  
@@ -354,36 +368,36 @@
             @include("$langdir/$currentfile");
 
             if ($editable) {
-                echo "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
-                echo '<div>';
+                $o .= "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
+                $o .= '<div>';
             }
-            echo "<table summary=\"\" width=\"100%\" class=\"translator\">";
+            $o .= "<table summary=\"\" width=\"100%\" class=\"translator\">";
             $linescounter = 0;
             $missingcounter = 0;
             foreach ($enstring as $key => $envalue) {
                 $linescounter++ ;
                 if (LANG_SUBMIT_REPEAT &&  $editable && $linescounter % LANG_SUBMIT_REPEAT_EVERY == 0) {
-                    echo '<tr><td>&nbsp;</td><td><br />';
-                    echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
-                    echo '<br />&nbsp;</td></tr>';
+                    $o .= '<tr><td>&nbsp;</td><td><br />';
+                    $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                    $o .= '<br />&nbsp;</td></tr>';
                 }
                 $envalue = nl2br(htmlspecialchars($envalue));
                 $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
                 $envalue = str_replace("%%","%",$envalue);
                 $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-                echo "\n\n".'<tr class="';
+                $o .= "\n\n".'<tr class="';
                 if ($linescounter % 2 == 0) {
-                    echo 'r0';
+                    $o .= 'r0';
                 } else {
-                    echo 'r1';
+                    $o .= 'r1';
                 }
-                echo '">';
-                echo '<td dir="ltr" lang="en">';
-                echo '<span class="stren">'.$envalue.'</span>';
-                echo '<br />'."\n";
-                echo '<span class="strkey">'.$key.'</span>';
-                echo '</td>'."\n";
+                $o .= '">';
+                $o .= '<td dir="ltr" lang="en">';
+                $o .= '<span class="stren">'.$envalue.'</span>';
+                $o .= '<br />'."\n";
+                $o .= '<span class="strkey">'.$key.'</span>';
+                $o .= '</td>'."\n";
 
                 // Missing array keys are not bugs here but missing strings
                 error_reporting(E_ALL ^ E_NOTICE);
@@ -433,7 +447,7 @@
                 }
 
                 if ($editable) {
-                    echo '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
+                    $o .= '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -442,44 +456,56 @@
                     $cols=40;
                     if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                         $rows = ceil($valuelen / $cols);
-                        echo '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                        $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
                     } else {
                         if ($valuelen) {
                             $cols = $valuelen + 5;
                         }
-                        echo '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
+                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" />';
                     }
                     if ($value2 <> '' && $value <> $value2) {
-                        echo '<br /><span style="font-size:small">'.$value2.'</span>';
+                        $o .= '<br /><span style="font-size:small">'.$value2.'</span>';
                     }
-                    echo $missingnext . '</td>';
+                    $o .= $missingnext . '</td>';
 
                 } else {
-                    echo '<td '.$cellcolour.' valign="top">'.$value.'</td>';
+                    $o .= '<td '.$cellcolour.' valign="top">'.$value.'</td>';
                 }
-                echo '</tr>'."\n";
+                $o .= '</tr>'."\n";
             }
             if ($editable) {
-                echo '<tr><td>&nbsp;</td><td><br />';
-                echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-                echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
-                echo '    <input type="hidden" name="mode" value="compare" />';
-                echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
-                echo '</td></tr>';
+                $o .= '<tr><td>&nbsp;</td><td><br />';
+                $o .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
+                $o .= '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
+                $o .= '<input type="hidden" name="mode" value="compare" />';
+                $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                $o .= '</td></tr>';
             }
-            echo '</table>';
+            $o .= '</table>';
             if ($editable) {
-                echo '</div>'; 
-                echo '</form>'; 
+                $o .= '</div>'; 
+                $o .= '</form>';
             }
+
+            if (LANG_DISPLAY_MISSING_LINKS) {
+                if ($missingcounter > 0) {
+                    print_heading(get_string('numberofmissingstrings', 'admin', $missingcounter), '', 4);
+                    if ($editable) {
+                        print_heading('<a href="#missing1">'.$strgotofirst.'</a>', "", 4);
+                    }
+                } else {
+                    print_heading($strnomissingstrings, '', 4, 'notifysuccess');
+                }
+            }
+            echo $o;
 
         } else {
             // no $currentfile specified
-            print_heading($strchoosefiletoedit, "", 4);
+            // no useful information to display - maybe some help? instructions?
         }
     }
 
-    admin_externalpage_print_footer();
+    admin_externalpage_print_footer($adminroot);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -702,6 +728,45 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
         //negative $length. Omit $length characters from end
         return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start);
     }
+}
+
+/**
+* Find all language location.
+*
+* Taken from lib/moodlelib.php::get_strig()
+*
+* @todo This is here just because I started to work on MDL-9361. It is not used yet. And maybe will not.
+*/
+function lang_locations($module = '') {
+    global $CFG;
+
+    // Default language packs locations
+    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+
+    // Extra places to look for strings
+    $rules = places_to_search_for_lang_strings();
+    $exceptions = $rules['__exceptions'];
+    unset($rules['__exceptions']);
+
+    // Add all other possible locations
+    if (!in_array($module, $exceptions)) {
+        $dividerpos = strpos($module, '_');
+        if ($dividerpos === false) {
+            $type = '';
+            $plugin = $module;
+        } else {
+            $type = substr($module, 0, $dividerpos + 1);
+            $plugin = substr($module, $dividerpos + 1);
+        }
+        if (!empty($rules[$type])) {
+            foreach ($rules[$type] as $location) {
+                $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
+            }
+        }
+    }
+
+    return $locations;
+
 }
 
 
