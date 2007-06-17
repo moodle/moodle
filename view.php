@@ -1,4 +1,4 @@
-<?PHP // $Id: view.php,v 1.3 2007/05/20 06:00:29 skodak Exp $
+<?PHP // $Id: view.php,v 1.4 2007/06/17 10:41:25 stronk7 Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -173,7 +173,9 @@ if ($edit) {
 }
 
 $doimport = ($allowedit and $edit) ? '<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>' : '';
-$doexport = ($allowedit and $edit) ? '<a href="generateimscp.php?id='.$cm->id.'">'.get_string('doexport', 'book').'</a>' : '';
+
+/// Enable the IMS CP button
+$generateimscp = ($allowedit) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="pix/generateimscp.gif" height="24" width="24" border="0"></img></a>' : '';
 
 
 // =====================================================
@@ -189,15 +191,15 @@ $doexport = ($allowedit and $edit) ? '<a href="generateimscp.php?id='.$cm->id.'"
         <?php
         print_string('toc', 'book');
         if (!empty($doimport)) {
-            echo "<br/>($doimport, $doexport)";
+            echo "<br/>($doimport)";
         }
         ?>
     </td>
     <td valign="top">
         <table border="0" cellspacing="0" width="100%" valign="top" cellpadding="0">
         <tr>
-            <td nowrap align="left"><?php echo $printbook.$printchapter ?></td>
-            <td nowrap align="right"><?php echo $chnavigation ?></td>
+            <td nowrap="nowrap" align="left"><?php echo $printbook.$printchapter.$generateimscp ?></td>
+            <td nowrap ="nowrap" align="right"><?php echo $chnavigation ?></td>
         </tr>
         </table>
     </td>
