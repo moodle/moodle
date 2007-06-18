@@ -2,105 +2,121 @@
 
 /// This creates and handles the whole user report interface, sans header and footer
 
-print_heading('User Grades Report');
-
+require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
-$courseid = required_param('id', PARAM_INT);
 
-if (!$userid = optional_param('user', 9, PARAM_INT)) {
+// get the params
+$courseid = required_param('id', PARAM_INT);
+if (!$userid = optional_param('user', 0, PARAM_INT)) {
     // current user
     $userid = $USER->id;  
 }
 
 // get all the grade_items
-$gradeitems = grade_get_items($courseid);
-$gradetotal = 0;
-$gradesum = 0;
-/*
- *
- * Table has 6 columns 
- *| pic  | itemname/description | grade (grade_final) | percentage | rank | feedback |
- *
- */
-echo '<table><tr>
-      <th></th>
-      <th>'.get_string('gradeitem', 'grades').'</th>
-      <th>'.get_string('grade','grades').'</th>
-      <th>'.get_string('percentage', 'grades').'</th>
-      <th>'.get_string('rank', 'grades').'</th>
-      <th>'.get_string('feedback').'</th>
-      </tr>';
+if ($gradeitems = grade_get_items($courseid)) {
+    $gradetotal = 0;
+    $gradesum = 0;
     
-foreach ($gradeitems as $gradeitem) {
-    
-    echo '<tr>';
+    /*
+    * Table has 6 columns 
+    *| pic  | itemname/description | grade (grade_final) | percentage | rank | feedback |
+    */
+    $baseurl = $CFG->wwwroot.'/grade/report?id='.$id.'&amp;userid='.$userid;
+ 
+    // setting up table headers
+    $tablecolumns = array('itempic', 'itemname', 'grade', 'percentage', 'rank', 'feedback');
+    $tableheaders = array('',get_string('gradeitem', 'grades'), get_string('grade'),get_string('percent', 'grades'), get_string('rank', 'grades'),get_string('feedback'));
 
-    $params->itemid = $gradeitem->id;
-    $params->userid = $userid;
-    $grade_grades_final = new grade_grades_final($params);
-    $grade_text = $grade_grades_final->load_text();
+    $table = new flexible_table('grade-report-user-'.$course->id);
+
+    $table->define_columns($tablecolumns);
+    $table->define_headers($tableheaders);
+    $table->define_baseurl($baseurl);
+ 
+    $table->set_attribute('cellspacing', '0');
+    $table->set_attribute('id', 'user-grade');
+    $table->set_attribute('class', 'generaltable generalbox');
     
-    /// prints mod icon if available
-    echo '<td>';
-    if ($gradeitem->itemtype == 'mod') {
-        $iconpath = $CFG->dirroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
-        $icon = $CFG->wwwroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
-        if (file_exists($iconpath)) {
-            echo '<img src = "'.$icon.'" alt="'.$gradeitem->itemname.'" class="activityicon"/>';  
-        }  
-    }
-    echo '</td>';
-  
-    /// prints grade item name
-    if ($gradeitem->itemtype == 'category') {
-        echo '<td><b>'.$gradeitem->itemname.'</b></td>';
-    } else {
-        echo '<td>'.$gradeitem->itemname.'</td>';
-    }
-    
-    /// prints the grade 
-    echo '<td>'.$grade_grades_final->gradevalue.'</td>';
-    
-    /// prints percentage
-   
-    if ($gradeitem->gradetype == 1) {
-        // processing numeric grade
-        if ($grade_grades_final->gradevalue) {
-            $percentage = $grade_grades_final->gradevalue / $gradeitem->grademax * 100 .'%';
+    // not sure tables should be sortable or not, because if we allow it then sorted resutls distort grade category structure and sortorder
+    $table->set_control_variables(array(
+            TABLE_VAR_SORT    => 'ssort',
+            TABLE_VAR_HIDE    => 'shide',
+            TABLE_VAR_SHOW    => 'sshow',
+            TABLE_VAR_IFIRST  => 'sifirst',
+            TABLE_VAR_ILAST   => 'silast',
+            TABLE_VAR_PAGE    => 'spage'
+            ));
+
+    $table->setup();
+
+    // loop through grade items to extra data
+    foreach ($gradeitems as $gradeitem) {
+        $data = array();
+
+        $params->itemid = $gradeitem->id;
+        $params->userid = $userid;
+        $grade_grades_final = new grade_grades_final($params);
+        $grade_text = $grade_grades_final->load_text();
+
+        /// prints mod icon if available
+        if ($gradeitem->itemtype == 'mod') {
+            $iconpath = $CFG->dirroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
+            $icon = $CFG->wwwroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
+            if (file_exists($iconpath)) {
+                $data[] = '<img src = "'.$icon.'" alt="'.$gradeitem->itemname.'" class="activityicon"/>';  
+            }  
         } else {
-            $percentage = '-';
+            $data[] = '';
         }
-        $gradetotal += $gradeitem->grademax;
-        $gradesum += $grade_grades_final->gradevalue;
-    } else if ($gradeitem->gradetype == 2) {
-        // processing scale grade
-        $scale = get_record('scale', 'id', $gradeitem->scaleid);
-        $scalevals = explode(",", $scale->scale);
-        $percentage = ($grade_grades_final->gradevalue -1) / count($scalevals);        
-        $gradesum += count($scalevals);
-        $gradetotal += $grade_grades_final->gradevalue;
-    } else {
-        // text grade
-        $percentage = '-';  
-    }
+  
+        /// prints grade item name
+        if ($gradeitem->itemtype == 'category') {
+            $data[] = '<b>'.$gradeitem->itemname.'</b>';
+        } else {
+            $data[] = $gradeitem->itemname;
+        }
+    
+        /// prints the grade 
+        $data[] = $grade_grades_final->gradevalue;
+    
+        /// prints percentage
    
-    echo '<td>'.$percentage.'</td>';
+        if ($gradeitem->gradetype == 1) {
+            // processing numeric grade
+            if ($grade_grades_final->gradevalue) {
+                $percentage = $grade_grades_final->gradevalue / $gradeitem->grademax * 100 .'%';
+            } else {
+                $percentage = '-';
+            }
+            $gradetotal += $gradeitem->grademax;
+            $gradesum += $grade_grades_final->gradevalue;
+        } else if ($gradeitem->gradetype == 2) {
+            // processing scale grade
+            $scale = get_record('scale', 'id', $gradeitem->scaleid);
+            $scalevals = explode(",", $scale->scale);
+            $percentage = ($grade_grades_final->gradevalue -1) / count($scalevals);        
+            $gradesum += count($scalevals);
+            $gradetotal += $grade_grades_final->gradevalue;
+        } else {
+            // text grade
+            $percentage = '-';  
+        }
+   
+        $data[] = $percentage;
     
-    /// prints rank
-    echo '<td></td>';
+        /// prints rank
+        $data[] = '';
     
-    /// prints notes
-    echo '<td>'.$grade_text->feedback.'</td>';
+        /// prints notes
+        $data[] = $grade_text->feedback;
     
-    /// close row <tr> tag   
-    echo '</tr>';  
-}      
-      
-/// prints the total
-echo '<tr><td colspan="2">'.get_string('total').'</td>';
-echo '<td>'.$gradesum.'/'.$gradetotal.'</td>';
-echo '<td colspan="3">&nbsp;</td>';
-echo '</tr>';
-echo '</table>';
+        $table->add_data($data);  
+    }
+    
+    $table->add_data(array('', get_string('total'), $gradesum.'/'.$gradetotal));
 
+    // print the page
+    print_heading(get_string('userreport', 'grades'));
+    $table->print_html();
+}
 ?>
