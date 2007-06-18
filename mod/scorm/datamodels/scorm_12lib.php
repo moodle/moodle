@@ -263,7 +263,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
