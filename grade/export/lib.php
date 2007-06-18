@@ -82,6 +82,10 @@ class grade_export {
         $this->id = $id;
         $this->course = $course;
 
+        // first make sure we have all final grades
+        // TODO: check that no grade_item has needsupdate set
+        grade_update_final_grades();
+
         /// Check to see if groups are being used in this course
         if ($groupmode = groupmode($course)) {   // Groups are being used
             
@@ -129,7 +133,6 @@ class grade_export {
         if ($gradeitems) {
             foreach ($gradeitems as $gradeitem) {
               
-                $gradeitem -> generate_final();
                 // load as an array of grade_final objects
                 if ($itemgrades = $gradeitem -> load_final()) {                    
                     

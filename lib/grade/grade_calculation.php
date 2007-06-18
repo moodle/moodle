@@ -40,8 +40,8 @@ class grade_calculation extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields');
-    
+    var $nonfields = array('table', 'nonfields', 'formula', 'useditems', 'grade_item');
+
     /**
      * A reference to the grade_item this calculation belongs to.
      * @var int $itemid
@@ -59,21 +59,133 @@ class grade_calculation extends grade_object {
      * @var int $usermodified
      */
     var $usermodified;
-    
-    /**
-     * A formula parser object.
-     * @var object $parser
-     * @TODO implement parsing of formula and calculation MDL-9643
-     */
-    var $parser;
 
     /**
-     * Applies the formula represented by this object to the value given, and returns the result.
-     * @param float $oldvalue
-     * @return float result
+     * Calculation formula object
      */
-    function compute($oldvalue) {
-        return $oldvalue; // TODO implement computation using parser
+    var $formula;
+
+    /**
+     * List of other items this calculation depends on
+     */
+    var $useditems;
+
+    /**
+     * Grade item object
+     */
+    var $grade_item;
+
+    /**
+     * Applies the formula represented by this object. The parameteres are taken from final
+     * grades of grade items in current course only.
+     * @return boolean false if error
+     */
+    function compute() {
+        global $CFG;
+        require_once($CFG->libdir.'/mathslib.php');
+
+        if (empty($this->id) or empty($this->itemid)) {
+            debugging('Can not initialize calculation!');
+            return false;
+        }
+
+        // init grade_item
+        $this->grade_item = grade_item::fetch('id', $this->itemid);
+
+        //init used items
+        $this->useditems = $this->dependson();
+
+        // init maths library
+        $this->formula = new calc_formula($this->calculation);
+
+        // where to look for final grades
+        $gis = implode(',', array_merge($this->useditems, array($this->itemid)));
+
+        $sql = "SELECT f.*
+                  FROM {$CFG->prefix}grade_grades_final f, {$CFG->prefix}grade_items gi
+                 WHERE gi.id = f.itemid AND gi.courseid={$this->grade_item->courseid} AND gi.id IN ($gis)
+              ORDER BY f.userid";
+
+        $return = true;
+
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                $prevuser = 0;
+                $grades   = array();
+                $final    = null;
+                while ($subfinal = rs_fetch_next_record($rs)) {
+                    if ($subfinal->userid != $prevuser) {
+                        if (!$this->_use_formula($prevuser, $grades, $final)) {
+                            $return = false;
+                        }
+                        $prevuser = $subfinal->userid;
+                        $grades   = array();
+                        $final    = null;
+                    }
+                    if ($subfinal->itemid == $this->grade_item->id) {
+                        $final = grade_grades_final::fetch('id', $subfinal->id);
+                    }
+                    $grades['gi'.$subfinal->itemid] = $subfinal->gradevalue;
+                }
+                if (!$this->_use_formula($prevuser, $grades, $final)) {
+                    $return = false;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * internal function - does the final grade calculation
+     */
+    function _use_formula($userid, $params, $final) {
+        if (empty($userid)) {
+            return true;
+        }
+
+        // add missing final grade values - use 0
+        foreach($this->useditems as $gi) {
+            if (!array_key_exists('gi'.$gi, $params)) {
+                $params['gi'.$gi] = 0;
+            } else {
+                $params['gi'.$gi] = (float)$params[$gi];
+            }
+        }
+
+        // can not use own final grade during calculation
+        unset($params['gi'.$this->grade_item->id]);
+
+        // do the calculation
+        $this->formula->set_params($params);
+        $result = $this->formula->evaluate();
+
+        // insert final grade if needed
+        if (empty($final)) {
+            $this->grade_item->grade_grades_final[$userid] = new grade_grades_final(array('itemid'=>$this->grade_item->id, 'userid'=>$userid));
+            $this->grade_item->grade_grades_final[$userid]->insert();
+        }
+
+        // store the result
+        if ($result === false) {
+            $final->grade_value = null;
+            $final->update();
+            return false;
+
+        } else {
+            $final = $result;
+            $this->grade_item->grade_grades_final[$userid]->update();
+            return true;
+        }
+    }
+
+    /**
+     * Finds out on which other items does this calculation depend
+     * @return array of grade_item ids this one depends on
+     */
+    function dependson() {
+        preg_match_all('/gi([0-9]+)/i', $this->calculation, $matches);
+        return ($matches[1]);
     }
 
     /**
@@ -89,7 +201,7 @@ class grade_calculation extends grade_object {
      * @param string $fields
      * @return object grade_calculation object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_calculation = get_record('grade_calculations', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_calculation') {
                 print_object($this);

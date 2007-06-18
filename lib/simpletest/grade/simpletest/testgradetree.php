@@ -284,7 +284,7 @@ class grade_tree_test extends grade_test {
 
     function test_grade_tree_get_tree() {
         $tree = new grade_tree($this->courseid, true);
-        $this->assertEqual(48, count($tree->tree_array, COUNT_RECURSIVE));
+        $this->assertEqual(47, count($tree->tree_array, COUNT_RECURSIVE));
     }
     
     function test_grade_tree_remove_element() {

@@ -65,6 +65,15 @@ class mathsslib_test extends UnitTestCase {
         $this->assertEqual($res, 30, 'maximum is: %s');
     }
 
+    /**
+     * Tests special chars
+     */
+    function test__specialchars() {
+        $formula = new calc_formula('=gi1 + gi2 + gi11', array('gi1'=>10,'gi2'=>20,'gi11'=>30));
+        $res = $formula->evaluate();
+        $this->assertEqual($res, 60, 'sum is: %s');
+    }
+
 }
 
 ?>

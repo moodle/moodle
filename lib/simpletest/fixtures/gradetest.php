@@ -357,9 +357,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
         $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
         $scale->timemodified = mktime();
+        $temp  = explode(',', $scale->scale);
+        $scale->max         = count($temp) -1;
         
         if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
+            $this->scale[0] = $scale;
         } 
 
         $scale = new stdClass();
@@ -370,9 +372,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $scale->description = 'This scale is used to mark standard assignments.';
         $scale->timemodified = mktime();
+        $temp  = explode(',', $scale->scale);
+        $scale->max         = count($temp) -1;
         
         if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
+            $this->scale[1] = $scale;
         } 
 
         $scale = new stdClass();
@@ -383,9 +387,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Loner, Contentious, Disinterested, Participative, Follower, Leader';
         $scale->description = 'Describes the level of teamwork of a student.';
         $scale->timemodified = mktime();
+        $temp  = explode(',', $scale->scale);
+        $scale->max         = count($temp) -1;
         
         if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
+            $this->scale[2] = $scale;
         } 
 
         $scale->name        = 'unittestscale4';
@@ -394,9 +400,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Does not understand theory, Understands theory but fails practice, Manages through, Excels';
         $scale->description = 'Level of expertise at a technical task, with a theoretical framework.';
         $scale->timemodified = mktime();
+        $temp  = explode(',', $scale->scale);
+        $scale->max         = count($temp) -1;
         
         if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
+            $this->scale[3] = $scale;
         }
 
         $scale->name        = 'unittestscale5';
@@ -405,9 +413,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Insufficient, Acceptable, Excellent.';
         $scale->description = 'Description of skills.';
         $scale->timemodified = mktime();
+        $temp  = explode(',', $scale->scale);
+        $scale->max         = count($temp) -1;
         
         if ($scale->id = insert_record('scale', $scale)) {
-            $this->scale[] = $scale;
+            $this->scale[4] = $scale;
         }
     }
 
@@ -419,7 +429,7 @@ class grade_test extends UnitTestCase {
         
         $grade_category->fullname    = 'unittestcategory1';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
@@ -428,14 +438,14 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 1;
         
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $this->grade_categories[] = $grade_category;
+            $this->grade_categories[0] = $grade_category;
         } 
         
         $grade_category = new stdClass();
         
         $grade_category->fullname    = 'unittestcategory2';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
@@ -445,14 +455,14 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 2;
         
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $this->grade_categories[] = $grade_category;
+            $this->grade_categories[1] = $grade_category;
         } 
         
         $grade_category = new stdClass();
         
         $grade_category->fullname    = 'unittestcategory3';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
@@ -462,7 +472,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 2;
         
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $this->grade_categories[] = $grade_category;
+            $this->grade_categories[2] = $grade_category;
         } 
         
         // A category with no parent, but grade_items as children
@@ -471,7 +481,7 @@ class grade_test extends UnitTestCase {
         
         $grade_category->fullname    = 'level1category';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
         $grade_category->hidden      = 0;
@@ -480,7 +490,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 1;
         
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $this->grade_categories[] = $grade_category;
+            $this->grade_categories[3] = $grade_category;
         } 
     }
 
@@ -499,7 +509,7 @@ class grade_test extends UnitTestCase {
         $grade_item->iteminstance = 1;
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 30;
-        $grade_item->grademax = 140;
+        $grade_item->grademax = 110;
         $grade_item->itemnumber = 1;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
@@ -507,7 +517,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 3;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[0] = $grade_item;
         }
         
         // id = 1
@@ -530,7 +540,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 4;
         
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[1] = $grade_item;
         }
 
         // id = 2
@@ -545,14 +555,14 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
-        $grade_item->grademax = 7;
+        $grade_item->grademax = $this->scale[0]->max;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 6;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[2] = $grade_item;
         }
 
         // Load grade_items associated with the 3 categories
@@ -573,7 +583,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 1;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[3] = $grade_item;
         }
         
         // id = 4
@@ -593,7 +603,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 2;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[4] = $grade_item;
         }
 
         // id = 5
@@ -613,7 +623,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 5;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[5] = $grade_item;
         }
 
         // Orphan grade_item
@@ -634,7 +644,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 7;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[6] = $grade_item;
         }
 
         // 2 grade items under level1category
@@ -650,14 +660,14 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
-        $grade_item->grademax = 7;
+        $grade_item->grademax = $this->scale[0]->max;
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 9;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[7] = $grade_item;
         }
         
         // id = 8
@@ -678,7 +688,7 @@ class grade_test extends UnitTestCase {
         $grade_item->sortorder = 10;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[8] = $grade_item;
         }
         
         // Grade_item for level1category
@@ -692,15 +702,15 @@ class grade_test extends UnitTestCase {
         $grade_item->iteminstance = $this->grade_categories[3]->id;
         $grade_item->needsupdate = true;
         $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->grademin = 10;
-        $grade_item->grademax = 120;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Orphan Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 8;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
-            $this->grade_items[] = $grade_item;
+            $this->grade_items[9] = $grade_item;
         }
 
     }
@@ -709,40 +719,16 @@ class grade_test extends UnitTestCase {
      * Load grade_calculation data into the database, and adds the corresponding objects to this class' variable.
      */
     function load_grade_calculations() {
-        // Calculation for grade_item 1
-        $grade_calculation = new stdClass();
-        $grade_calculation->itemid = $this->grade_items[0]->id;
-        $grade_calculation->calculation = '[unittestgradeitem1] * 1.4 - 3';
-        $grade_calculation->timecreated = mktime();
-        $grade_calculation->timemodified = mktime();
-        
-        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
-            $this->grade_calculations[] = $grade_calculation;
-            $this->grade_items[0]->calculation = $grade_calculation;
-        } 
-        
         // Calculation for grade_item 2
         $grade_calculation = new stdClass();
         $grade_calculation->itemid = $this->grade_items[1]->id;
-        $grade_calculation->calculation = '[unittestgradeitem2] + 3';
+        $grade_calculation->calculation = '= gi'.$this->grade_items[0]->id.'* + 30 ';
         $grade_calculation->timecreated = mktime();
         $grade_calculation->timemodified = mktime();
         
         if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
-            $this->grade_calculations[] = $grade_calculation;
+            $this->grade_calculations[0] = $grade_calculation;
             $this->grade_items[1]->calculation = $grade_calculation;
-        } 
-        
-        // Calculation for grade_item 3
-        $grade_calculation = new stdClass();
-        $grade_calculation->itemid = $this->grade_items[2]->id;
-        $grade_calculation->calculation = '[unittestgradeitem3] / 2 + 40';
-        $grade_calculation->timecreated = mktime();
-        $grade_calculation->timemodified = mktime();
-        
-        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
-            $this->grade_calculations[] = $grade_calculation;
-            $this->grade_items[2]->calculation = $grade_calculation;
         } 
     }
 
@@ -754,7 +740,7 @@ class grade_test extends UnitTestCase {
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[0]->id;
         $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 72;
+        $grade_raw->gradevalue = 15; // too small
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -765,7 +751,7 @@ class grade_test extends UnitTestCase {
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[0]->id;
         $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 78;
+        $grade_raw->gradevalue = 40;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -776,7 +762,7 @@ class grade_test extends UnitTestCase {
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[0]->id;
         $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 68;
+        $grade_raw->gradevalue = 170; // too big
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -784,40 +770,8 @@ class grade_test extends UnitTestCase {
             $this->grade_grades_raw[] = $grade_raw;
         }
 
-        // Grades for grade_item 2
+        // No raw grades for grade_item 2 - it is calculated
 
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[1]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 66;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
-
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
-        }
-        
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[1]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 84;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
-
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
-        }
-        
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[1]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 91;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
-
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
-        }
 
         // Grades for grade_item 3
 
@@ -896,43 +850,32 @@ class grade_test extends UnitTestCase {
 
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[7]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 97;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
-
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
-        }
-        
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[7]->id;
         $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 49;
+        $grade_raw->gradevalue = 3;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
         if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
             $this->grade_grades_raw[] = $grade_raw;
         }
-        
+    
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[7]->id;
         $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 67;
+        $grade_raw->gradevalue = 6;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
         if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
             $this->grade_grades_raw[] = $grade_raw;
         }
-        
+  
         // Grades for grade_item 9
 
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[8]->id;
         $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 49;
+        $grade_raw->gradevalue = 20;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -943,7 +886,7 @@ class grade_test extends UnitTestCase {
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[8]->id;
         $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 93;
+        $grade_raw->gradevalue = 50;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -954,7 +897,7 @@ class grade_test extends UnitTestCase {
         $grade_raw = new stdClass();
         $grade_raw->itemid = $this->grade_items[7]->id;
         $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 76;
+        $grade_raw->gradevalue = 100;
         $grade_raw->timecreated = mktime();
         $grade_raw->timemodified = mktime();
 
@@ -972,7 +915,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[0]->id;
         $grade_final->userid = 1;
-        $grade_final->gradevalue = 97.8;
+        $grade_final->gradevalue = 30;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
 
@@ -983,7 +926,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[0]->id;
         $grade_final->userid = 2;
-        $grade_final->gradevalue = 106.2;
+        $grade_final->gradevalue = 40;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -995,7 +938,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[0]->id;
         $grade_final->userid = 3;
-        $grade_final->gradevalue = 92.2;
+        $grade_final->gradevalue = 110;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = false; 
@@ -1009,7 +952,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[1]->id;
         $grade_final->userid = 1;
-        $grade_final->gradevalue = 69;
+        $grade_final->gradevalue = 70;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -1021,7 +964,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[1]->id;
         $grade_final->userid = 2;
-        $grade_final->gradevalue = 87;
+        $grade_final->gradevalue = 100;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -1122,20 +1065,8 @@ class grade_test extends UnitTestCase {
 
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[7]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 69;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[7]->id;
         $grade_final->userid = 2;
-        $grade_final->gradevalue = 87;
+        $grade_final->gradevalue = 3;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -1147,7 +1078,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[7]->id;
         $grade_final->userid = 3;
-        $grade_final->gradevalue = 94;
+        $grade_final->gradevalue = 6;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = false; 
@@ -1161,7 +1092,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[8]->id;
         $grade_final->userid = 1;
-        $grade_final->gradevalue = 69;
+        $grade_final->gradevalue = 20;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -1173,7 +1104,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[8]->id;
         $grade_final->userid = 2;
-        $grade_final->gradevalue = 87;
+        $grade_final->gradevalue = 50;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
@@ -1185,7 +1116,7 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[8]->id;
         $grade_final->userid = 3;
-        $grade_final->gradevalue = 94;
+        $grade_final->gradevalue = 100;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = false; 

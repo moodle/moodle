@@ -32,10 +32,11 @@
  * @package moodlecore
  */
 
-define('GRADE_AGGREGATE_MEAN', 0);
+define('GRADE_AGGREGATE_MEAN_ALL', 0);
 define('GRADE_AGGREGATE_MEDIAN', 1);
-define('GRADE_AGGREGATE_SUM', 2);
-define('GRADE_AGGREGATE_MODE', 3);
+define('GRADE_AGGREGATE_MEAN_GRADED', 2);
+define('GRADE_AGGREGATE_MIN', 3);
+define('GRADE_AGGREGATE_MAX', 4);
 
 define('GRADE_CHILDTYPE_ITEM', 0);
 define('GRADE_CHILDTYPE_CAT', 1);
@@ -338,6 +339,8 @@ function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminsta
 * @param string $aggregation
 * @return mixed New grade_category id if successful
 */
+/*
+// TODO: this should be obsoleted by grade_update() or removed completely - modules must not use any IDs or grade_item objects directly!
 function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN) {
     $grade_category = new grade_category(compact('courseid', 'fullname', 'items', 'aggregation'));
 
@@ -347,34 +350,133 @@ function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_
         return $grade_category->id;
     }
 }
+*/
 
 /**
- * Updates all grade_grades_final for each grade_item matching the given attributes.
- * The search is further restricted, so that only grade_items that have needs_update == TRUE
- * or that use calculation are retrieved.
+ * Updates all grade_grades_final in course.
  *
  * @param int $courseid
- * @param int $gradeitemid
- * @return int Number of grade_items updated
+ * @return boolean true if ok, array of errors if problems found
  */
-function grade_update_final_grades($courseid=NULL, $gradeitemid=NULL) {
+function grade_update_final_grades($courseid) {
+    $errors = array();
     $grade_item = new grade_item();
     $grade_item->courseid = $courseid;
-    $grade_item->id = $gradeitemid;
-    $grade_items = $grade_item->fetch_all_using_this();
+    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+        return true;
+    }
 
-    $count = 0;
-
-    foreach ($grade_items as $gi) {
-        $calculation = $gi->get_calculation();
-        if (!empty($calculation) || $gi->needsupdate) {
-            if ($gi->update_final_grade()) {
-                $count++;
-            }
+    $needsupdate = false;
+    $calculated = false;
+    foreach ($grade_items as $gid=>$gitem) {
+        $grade_item =& $grade_items[$gid];
+        if ($grade_item->needsupdate) {
+            $needsupdate = true;
+        }
+        if ($grade_item->get_calculation()) {
+            $calculated = true;
         }
     }
 
-    return $count;
+    // no update needed
+    if (!$needsupdate) {
+        return true;
+    }
+
+    // the easy way
+    if (!$calculated) {
+        foreach ($grade_items as $gid=>$gitem) {
+            $grade_item =& $grade_items[$gid];
+            if ($grade_item->needsupdate) {
+                $result = $grade_item->update_final_grade();
+                if ($result !== true) {
+                    $errors = array_merge($errors, $result);
+                }
+            }
+        }
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
+    }
+
+    // now the hard way with calculated grade_items or categories
+    $finalitems = array();
+    $finalids = array();
+    while (count($grade_items) > 0) {
+        $count = 0;
+        foreach ($grade_items as $gid=>$gitem) {
+            $grade_item =& $grade_items[$gid];
+            if (!$grade_item->needsupdate and $grade_item->itemtype!='category' and !$grade_item->get_calculation()) {
+                $finalitems[$gid] = $grade_item;
+                $finalids[] = $gid;
+                unset($grade_items[$gid]);
+                continue;
+            }
+
+            $dependson = $grade_item->dependson();
+
+            //are we dealing with category with no calculated items?
+            // we can not trust the needsupdate flag because category might contain calculated items
+            if ($grade_item->itemtype=='category' and !$grade_item->needsupdate) {
+                $forceupdate = false;
+                foreach ($dependson as $childid) {
+                    if (in_array($childid, $finalids)) {
+                        $child = $finalitems[$childid];
+                    } else {
+                        $child = $grade_items[$childid];
+                    }
+                    if ($child->itemtype == 'category' or $child->get_calculation()) {
+                        $forceupdate = true;
+                    }
+                }
+
+                if ($forceupdate) {
+                    $grade_item->flag_for_update();
+                } else {
+                    $finalitems[$gid] = $grade_item;
+                    $finalids[] = $gid;
+                    unset($grade_items[$gid]);
+                    continue;
+                }
+            }
+
+            //do we have all data for this item?
+            $doupdate = true;
+            foreach ($dependson as $did) {
+                if (!in_array($did, $finalids)) {
+                    $doupdate = false;
+                }
+            }
+
+            //oki - let's update, calculate or aggregate :-)
+            if ($doupdate) {
+                $result = $grade_item->update_final_grade();
+                if ($result !== true) {
+                    $errors = array_merge($errors, $result);
+                } else {
+                    $finalitems[$gid] = $grade_item;
+                    $finalids[] = $gid;
+                    unset($grade_items[$gid]);
+                }
+            }
+        }
+
+        if ($count == 0) {
+            foreach($grade_items as $grade_item) {
+                $errors[] = 'Probably circular reference in grade_item id:'.$grade_item->id; // TODO: localize
+            }
+            break;
+        }
+    }
+
+    if (count($errors) == 0) {
+        return true;
+    } else {
+        return $errors;
+    }
 }
 
 /**
@@ -596,5 +698,61 @@ function standardise_score($gradevalue, $source_min, $source_max, $target_min, $
     return $standardised_value;
 }
 
+/**
+ * This function is used to migrade old date and settings from old gradebook into new grading system.
+ *
+ * TODO:
+ *   - category weight not used - we would have to create extra top course grade calculated category
+ *   - exta_credit item flag not used - does not fit all our aggregation types, could be used in SUM only
+ */
+function grade_oldgradebook_upgrade($courseid) {
+    global $CFG;
+
+    $categories = array();
+    if ($oldcats = get_records('grade_category', 'courseid', $courseid)) {
+        foreach ($oldcats as $oldcat) {
+            $newcat = new grade_category(array('courseid'=>$courseid, 'fullname'=>$oldcat->name));
+            $newcat->droplow     = $oldcat->drop_x_lowest;
+            $newcat->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+
+            if (empty($newcat->id)) {
+                $newcat->insert();
+            } else {
+                $newcat->update();
+            }
+
+            $categories[$oldcat->id] = $newcat;
+
+            $catitem = $newcat->get_grade_item();
+            $catitem->gradetype  = GRADE_TYPE_VALUE;
+            $catitem->plusfactor = $oldcat->bonus_points;
+            $catitem->hidden     = $oldcat->hidden;
+            $catitem->update();
+        }
+    }
+
+    // get all grade items with mod details
+    $sql = "SELECT gi.*, cm.idnumber as cmidnumber, m.name as modname
+              FROM {$CFG->prefix}grade_item gi, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+             WHERE gi.courseid=$courseid AND m.id=gi.modid AND cm.instance=gi.cminstance
+          ORDER BY gi.sortorder ASC";
+
+    if ($olditems = get_records_sql($sql)) {
+        foreach ($olditems as $olditem) {
+            $newitem = new grade_item(array('courseid'=>$olditem->courseid, 'itemtype'=>'mod', 'itemmodule'=>$olditem->modname, 'iteminstance'=>$olditem->cminstance, 'itemnumber'=>0));
+            if (!empty($olditem->category)) {
+                // we do this low level stuff to get some speedup during upgrade
+                $newitem->set_parent_id($categories[$olditem->category]->id);
+            }
+            $newitem->gradetype = GRADE_TYPE_NONE;
+            $newitem->multfactor = $olditem->scale_grade;
+            if (empty($newitem->id)) {
+                $newitem->insert();
+            } else {
+                $newitem->update();
+            }
+        }
+    }
+}
 
 ?>

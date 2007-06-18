@@ -88,7 +88,7 @@ class grade_raw_test extends grade_test {
 
         $grade_grades_raw->insert();
 
-        $this->assertEqual(7, $grade_grades_raw->grademax);
+        $this->assertEqual(6, $grade_grades_raw->grademax);
         $this->assertEqual(0, $grade_grades_raw->grademin); 
     }
 

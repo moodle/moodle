@@ -289,7 +289,7 @@ class grade_grades_raw extends grade_object {
             $this->scaleid = $this->scale->id;
             $this->grademin = 0;
             $this->scale->load_items();
-            $this->grademax = count($this->scale->scale_items);
+            $this->grademax = count($this->scale->scale_items) - 1;
         }
 
         $trackhistory = false;
@@ -340,7 +340,7 @@ class grade_grades_raw extends grade_object {
         if (!empty($this->scaleid)) {
             $this->load_scale();
             $this->scale->load_items();
-            $this->grademax = count ($this->scale->scale_items);
+            $this->grademax = count ($this->scale->scale_items) - 1;
             $this->grademin = 0;
         }
 

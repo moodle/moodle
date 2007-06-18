@@ -79,7 +79,7 @@ class grade_category_test extends grade_test {
         
         $grade_category->fullname    = 'unittestcategory4';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
@@ -166,47 +166,31 @@ class grade_category_test extends grade_test {
     }
     
     function test_grade_category_generate_grades() {
-        global $CFG;
-        $CFG->usenullgrades = true;
-
-        $category = new grade_category($this->grade_categories[0]);
+        $category = new grade_category($this->grade_categories[3]);
         $this->assertTrue(method_exists($category, 'generate_grades'));
-        $category->generate_grades();
         $category->load_grade_item();
-        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
-        $final_grades = get_records('grade_grades_final', 'itemid', $category->grade_item->id);
 
+        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
+        $this->assertFalse($raw_grades);
+
+        $category->generate_grades();
+        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
         $this->assertEqual(3, count($raw_grades));
-        $this->assertEqual(3, count($final_grades));
-        
+
+        $rawvalues = array();
         foreach ($raw_grades as $grade) {
             $this->assertWithinMargin($grade->gradevalue, $grade->grademin, $grade->grademax);
+            $rawvalues[] = (int)$grade->gradevalue;
         }
-        
-        foreach ($final_grades as $grade) {
-            $this->assertWithinMargin($grade->gradevalue, 0, 100);
-        }
+        sort($rawvalues);
+        // calculated mean results
+        $this->assertEqual($rawvalues, array(20,50,100));
     }
     
     function test_grade_category_aggregate_grades() {
         $category = new grade_category($this->grade_categories[0]);
-        $this->assertTrue(method_exists($category, 'aggregate_grades'));
-        
-        // Generate 3 random data sets
-        $grade_sets = array();
-  
-        for ($i = 0; $i < 3; $i++) {
-            for ($j = 0; $j < 200; $j++) {
-                $grade_sets[$i][] = $this->generate_random_raw_grade(new grade_item($this->grade_items[$i]), $j);
-            }
-        } 
-        
-        $aggregated_grades = $category->aggregate_grades($grade_sets);
-        $this->assertEqual(200, count($aggregated_grades)); 
-        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
-        $this->assertWithinMargin($aggregated_grades[rand(1, count($aggregated_grades) - 1)]->gradevalue, 0, 100);
+        $this->assertTrue(method_exists($category, 'aggregate_grades')); 
+        // tested above in test_grade_category_generate_grades()
     }
     
     function generate_random_raw_grade($item, $userid) {
@@ -274,13 +258,17 @@ class grade_category_test extends grade_test {
         $grades = array(5.374, 9.4743, 2.5474, 7.3754);
         
         $category->droplow = 2;
-        $result = $category->apply_limit_rules(fullclone($grades));
-        $this->assertEqual(array(7.3754, 9.4743), $result);
-        
+        $category->apply_limit_rules($grades);
+        sort($grades, SORT_NUMERIC);
+        $this->assertEqual(array(7.3754, 9.4743), $grades);
+
+        $category = new grade_category();
+        $grades = array(5.374, 9.4743, 2.5474, 7.3754);
+
         $category->keephigh = 1;
         $category->droplow = 0;
-        $result = $category->apply_limit_rules(fullclone($grades));
-        $this->assertEqual(array(9.4743), $result); 
+        $category->apply_limit_rules($grades);
+        $this->assertEqual(array(9.4743), $grades); 
     }
 } 
 ?>

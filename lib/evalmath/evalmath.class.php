@@ -124,7 +124,7 @@ class EvalMath {
         if (substr($expr, -1, 1) == ';') $expr = substr($expr, 0, strlen($expr)-1); // strip semicolons at the end
         //===============
         // is it a variable assignment?
-        if (preg_match('/^\s*([a-z]\w*)\s*=\s*(.+)$/', $expr, $matches)) {
+        if (preg_match('/^\s*([a-z][a-z0-9]*)\s*=\s*(.+)$/', $expr, $matches)) {
             if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
                 return $this->trigger("cannot assign to constant '$matches[1]'");
             }
@@ -133,7 +133,7 @@ class EvalMath {
             return $this->v[$matches[1]]; // and return the resulting value
         //===============
         // is it a function assignment?
-        } elseif (preg_match('/^\s*([a-z]\w*)\s*\(\s*([a-z]\w*(?:\s*,\s*[a-z]\w*)*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
+        } elseif (preg_match('/^\s*([a-z][a-z0-9]*)\s*\(\s*([a-z][a-z0-9]*(?:\s*,\s*[a-z][a-z0-9]*)*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
             $fnn = $matches[1]; // get the function name
             if (in_array($matches[1], $this->fb)) { // make sure it isn't built in
                 return $this->trigger("cannot redefine built-in function '$matches[1]()'");
@@ -142,7 +142,7 @@ class EvalMath {
             if (($stack = $this->nfx($matches[3])) === false) return false; // see if it can be converted to postfix
             for ($i = 0; $i<count($stack); $i++) { // freeze the state of the non-argument variables
                 $token = $stack[$i];
-                if (preg_match('/^[a-z]\w*$/', $token) and !in_array($token, $args)) {
+                if (preg_match('/^[a-z][a-z0-9]*$/', $token) and !in_array($token, $args)) {
                     if (array_key_exists($token, $this->v)) {
                         $stack[$i] = $this->v[$token];
                     } else {
@@ -193,7 +193,7 @@ class EvalMath {
         while(1) { // 1 Infinite Loop ;)
             $op = substr($expr, $index, 1); // get the first character at the current index
             // find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
-            $ex = preg_match('/^([a-z]\w*\(?|\d+(?:\.\d*)?|\.\d+|\()/', substr($expr, $index), $match);
+            $ex = preg_match('/^([a-z][a-z0-9]*\(?|\d+(?:\.\d*)?|\.\d+|\()/', substr($expr, $index), $match);
             //===============
             if ($op == '-' and !$expecting_op) { // is it a negation instead of a minus?
                 $stack->push('_'); // put a negation on the stack
@@ -220,7 +220,7 @@ class EvalMath {
                     if (is_null($o2)) return $this->trigger("unexpected ')'");
                     else $output[] = $o2;
                 }
-                if (preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) { // did we just close a function?
+                if (preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(2), $matches)) { // did we just close a function?
                     $fnn = $matches[1]; // get the function name
                     $arg_count = $stack->pop(); // see how many arguments there were (cleverly stored on the stack, thank you)
                     $fn = $stack->pop();
@@ -248,7 +248,7 @@ class EvalMath {
                     else $output[] = $o2; // pop the argument expression stuff and push onto the output
                 }
                 // make sure there was a function
-                if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches))
+                if (!preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(2), $matches))
                     return $this->trigger("unexpected ','");
                 $stack->push($stack->pop()+1); // increment the argument count
                 $stack->push('('); // put the ( back on, we'll need to pop back to it again
@@ -263,7 +263,7 @@ class EvalMath {
             } elseif ($ex and !$expecting_op) { // do we now have a function/variable/number?
                 $expecting_op = true;
                 $val = $match[1];
-                if (preg_match("/^([a-z]\w*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
+                if (preg_match("/^([a-z][a-z0-9]*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
                     if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f) or array_key_exists($matches[1], $this->fc)) { // it's a func
                         $stack->push($val);
                         $stack->push(1);
@@ -281,7 +281,7 @@ class EvalMath {
             } elseif ($op == ')') {
                 //it could be only custom function with no params or general error
                 if ($stack->last() != '(' or $stack->last(2) != 1) return $this->trigger("unexpected ')'");
-                if (preg_match("/^([a-z]\w*)\($/", $stack->last(3), $matches)) { // did we just close a function?
+                if (preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(3), $matches)) { // did we just close a function?
                     $stack->pop();// (
                     $stack->pop();// 1
                     $fn = $stack->pop();

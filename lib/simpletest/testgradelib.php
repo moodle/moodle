@@ -53,6 +53,8 @@ class gradelib_test extends grade_test {
         }
     }
 
+/*
+// obsolted function, should be replaced by grade_update() or removed completely
     function test_grade_create_category() {
         if (get_class($this) == 'gradelib_test') { 
             $grade_category = new stdClass();
@@ -73,7 +75,7 @@ class gradelib_test extends grade_test {
             $this->grade_items[] = $db_grade_category->grade_item;
         }
     }
-
+*/
     function test_grade_is_locked() {
         if (get_class($this) == 'gradelib_test') { 
             $grade_item = $this->grade_items[0];
