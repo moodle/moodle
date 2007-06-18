@@ -172,17 +172,11 @@
 
     $newattempt = false;
     if (!$attempt) {
-        // Check if this is a preview request from a teacher
-        // in which case the previous previews should be deleted
-        if ($ispreviewing) {
-            if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
-             AND userid = '$USER->id'")) {
-                delete_records('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id);
-                delete_records('quiz_grades', 'quiz', $quiz->id, 'userid', $USER->id);
-                foreach ($oldattempts as $oldattempt) {
-                    // there should only be one but we loop just in case
-                    delete_attempt($oldattempt->uniqueid);
-                }
+        // Delete any previous preview attempts belonging to this user.
+        if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
+                AND userid = '$USER->id'")) {
+            foreach ($oldattempts as $oldattempt) {
+                quiz_delete_attempt($oldattempt, $quiz);
             }
         }
         $newattempt = true;

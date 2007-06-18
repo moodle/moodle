@@ -117,6 +117,37 @@ function quiz_get_user_attempts($quizid, $userid, $status = 'finished') {
     }
 }
 
+/**
+ * Delete a quiz attempt.
+ */
+function quiz_delete_attempt($attempt, $quiz) {
+    if (is_numeric($attempt)) {
+        if (!$attempt = get_record('quiz_attempts', 'id', $attempt)) {
+            return;
+        }
+    }
+    
+    if ($attempt->quiz != $quiz->id) {
+        debugging("Trying to delete attempt $attempt->id which belongs to quiz $attempt->quiz " .
+                "but was passed quiz $quiz->id.");
+        return;
+    }
+    
+    delete_records('quiz_attempts', 'id', $attempt->id);
+    delete_attempt($attempt->uniqueid);
+
+    // Search quiz_attempts for other instances by this user.
+    // If none, then delete record for this quiz, this user from quiz_grades
+    // else recalculate best grade
+
+    $userid = $attempt->userid;
+    if (!record_exists('quiz_attempts', 'userid', $userid, 'quiz', $quiz->id)) {
+        delete_records('quiz_grades', 'userid', $userid,'quiz', $quiz->id);
+    } else {
+        quiz_save_best_grade($quiz, $userid);
+    }
+}
+
 /// Functions to do with quiz layout and pages ////////////////////////////////
 
 /**

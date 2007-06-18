@@ -36,22 +36,8 @@ class quiz_report extends quiz_default_report {
                 $attemptids = optional_param('attemptid', array(), PARAM_INT);
 
                 foreach($attemptids as $attemptid) {
-                    if ($attemptid && $todelete = get_record('quiz_attempts', 'id', $attemptid)) {
-                        delete_records('quiz_attempts', 'id', $attemptid);
-                        delete_attempt($todelete->uniqueid);
-
-                        // Search quiz_attempts for other instances by this user.
-                        // If none, then delete record for this quiz, this user from quiz_grades
-                        // else recalculate best grade
-
-                        $userid = $todelete->userid;
-                        if (!record_exists('quiz_attempts', 'userid', $userid, 'quiz', $quiz->id)) {
-                            delete_records('quiz_grades', 'userid', $userid,'quiz', $quiz->id);
-                        } else {
-                            quiz_save_best_grade($quiz, $userid);
-                        }
-                        quiz_update_grades($quiz, $userid);
-                    }
+                    quiz_delete_attempt($attemptid, $quiz);
+                    quiz_update_grades($quiz, $USER->id);
                 }
             break;
         }
