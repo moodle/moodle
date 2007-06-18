@@ -165,7 +165,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
     
     $result = new stdClass();
-    $result->toc = "<ul id='0' class='$liststyle'>\n";
+    $result->toc = "<ul id='s0' class='$liststyle'>\n";
     $tocmenus = array();
     $result->prerequisites = true;
     $incomplete = false;
@@ -239,7 +239,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         if (isset($_COOKIE['hide:SCORMitem'.$sco->id])) {
                             $style = ' style="display: none;"';
                         }
-                        $result->toc .= "\t\t<li><ul id='$sublist' class='$liststyle'$style>\n";
+                        $result->toc .= "\t\t<li><ul id='s$sublist' class='$liststyle'$style>\n";
                         $level++;
                     } else {
                         $result->toc .= $closelist;
@@ -264,7 +264,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-               $result->toc .= $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+               $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\','.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
                // $result->toc .= '<a href="#" onclick="elementToggleHide(\''.$sublist.'\',true);"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
