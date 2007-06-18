@@ -17,7 +17,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/authlib.php');
-require_once('CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
 /**
  * CAS authentication plugin.
  */
