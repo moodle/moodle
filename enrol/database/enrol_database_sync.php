@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 
     if(!empty($_SERVER['GATEWAY_INTERFACE'])){
         error_log("should not be called from apache!");
