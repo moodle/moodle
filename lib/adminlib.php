@@ -246,6 +246,8 @@ function upgrade_activity_modules($return) {
 
         $module->name = $mod;   // The name MUST match the directory
 
+        include_once($fullmod.'/lib.php');  // defines upgrading and/or installing functions
+
         if ($currmodule = get_record('modules', 'name', $module->name)) {
             if ($currmodule->version == $module->version) {
                 // do nothing
@@ -335,14 +337,27 @@ function upgrade_activity_modules($return) {
             }
 
             $db->debug = false;
-        /// Continue with the instalation, roles and other stuff
+
+        /// Continue with the installation, roles and other stuff
             if ($status) {
                 if ($module->id = insert_record('modules', $module)) {
+
+                /// Capabilities 
                     if (!update_capabilities('mod/'.$module->name)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
                     }
                     
+                /// Events
                     events_update_definition('mod/'.$module->name);
+
+                /// Run local install function if there is one
+                    $installfunction = $module->name.'_install';
+                    if (function_exists($installfunction)) {
+                        if (! $installfunction() ) {
+                            notify('Encountered a problem running install function for '.$module->name.'!');
+                        }
+                    }
+
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     echo '<hr />';
                 } else {
@@ -354,8 +369,6 @@ function upgrade_activity_modules($return) {
         }
 
     /// Check submodules of this module if necessary
-
-        include_once($fullmod.'/lib.php');  // defines upgrading function
 
         $submoduleupgrade = $module->name.'_upgrade_submodules';
         if (function_exists($submoduleupgrade)) {
