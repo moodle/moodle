@@ -1403,6 +1403,11 @@ table.minicalendar td {
   padding: 5px;
 }
 
+#calendar .sideblock div.header
+{
+  border:none;
+}
+
 #calendar .maincalendar .buttons {
   float: right;
 }
@@ -1594,11 +1599,6 @@ table.minicalendar th {
 
 #calendar .indent {
   padding-left: 20px;
-}
-
-#calendar td.sidecalendar {
-border-width:0px;
-padding-top:1px;
 }
 
 #calendar td.sidecalendar .sideblock {
