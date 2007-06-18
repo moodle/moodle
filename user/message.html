@@ -46,7 +46,7 @@
     </td>
 </tr>
 
-<tr><td align="center" colspan="2"><input type="submit" name="preview" value="Preview" /></td></tr>
+<tr><td align="center" colspan="2"><input type="submit" name="preview" value="<?php print_string('preview'); ?>" /></td></tr>
 </table>
 <?php print_simple_box_end(); ?>
 <table align="center"><tr><th colspan="4" scope="row"><?php print_string('currentlyselectedusers'); ?></th></tr>
@@ -69,7 +69,7 @@
                 echo '<img src="'.$CFG->pixpath.'/t/emailno.gif" alt="'.$error.'" title="'.$error.'"/>';
                 unset($error);
             }
-            echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="remove" /></td></tr>';
+            echo '</td><td><input type="submit" onClick="this.form.deluser.value='.$user->id.';" value="' . get_string('remove') . '" /></td></tr>';
         }
     }
     else {
