@@ -779,24 +779,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns an array of values (NOT objects) standardised from the final grades of this grade_item. They are indexed by userid.
-     * @return array integers
-     */
-    function get_standardised_final() {
-        $standardised_finals = array();
-
-        $final_grades = $this->load_final();
-
-        if (!empty($final_grades)) {
-            foreach ($final_grades as $userid => $final) {
-                $standardised_finals[$userid] = standardise_score($final->gradevalue, $this->grademin, $this->grademax, 0, 1);
-            }
-        }
-
-        return $standardised_finals;
-    }
-
-    /**
     * Returns the grade_category object this grade_item belongs to (if any).
     * This category object may be the parent (referenced by categoryid) or the associated category
     * (referenced by iteminstance).
