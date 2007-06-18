@@ -448,13 +448,21 @@ class grade_category extends grade_object {
                 $gradevalue = array_pop($grades);
                 break;
 
-            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including event NULLs; NULL grade caunted as minimum
-                $num = count($dependson);     // you can calculate sum from this one if you multiply it with count($this->dependson();-)
+            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade caunted as minimum
+                $num = count($dependson);     // you can calculate sum from this one if you multiply it with count($this->dependson() ;-)
                 $sum = array_sum($grades);
                 $gradevalue = $sum / $num;
                 break;
 
-            case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished not calculated
+            case GRADE_AGGREGATE_MODE:       // the most common value, the highest one if multimode
+                $freq = array_count_values($grades);
+                arsort($freq);                      // sort by frequency keeping keys
+                $top = reset($freq);               // highest frequency count
+                $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
+                rsort($modes, SORT_NUMERIC);       // get highes mode
+                $gradevalue = reset($modes);
+
+            case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished are not calculated
                 $num = count($grades);
                 $sum = array_sum($grades);
                 $gradevalue = $sum / $num;
