@@ -1601,6 +1601,10 @@ table.minicalendar th {
   padding-left: 20px;
 }
 
+#calendar td.sidecalendar {
+border-width:0px;
+}
+
 #calendar td.sidecalendar .sideblock {
   border: 1px solid;
   margin-bottom:10px;
