@@ -17,7 +17,24 @@ h6.main {
 
 h1, h2, h3, h4 {
   text-align: left;
-  padding-left: 5px;
+}
+
+h1 {
+  padding: 6px;
+}
+
+h2 {
+  padding: 4px;
+
+}
+
+h3 {
+  padding: 3px;
+
+}
+
+#content {
+clear:both;
 }
   
 h1, h2, h3 {
@@ -30,8 +47,17 @@ h4 {
   border-bottom-width:1px; 
 }
 
-input {
-  
+input, select {
+  padding: 0px;
+}
+#layout-table #middle-column{
+  vertical-align:top;
+  padding-left:6px;
+  padding-right:6px;
+}
+.sitetopic {
+  padding:4px;
+  margin: 0px;
 }
 
 .generaltable {
@@ -48,16 +74,40 @@ input {
   border-style:solid;
 }
 
+.clearfix { 
+ min-width: 0; 
+ /* overflow: hidden; */ 
+}
+
+.clearfix:after {
+  /* content: "<!-- -->";  */
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+}
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
+
 /***
  *** Header
  ***/
+
+.headerskip {
+  position:absolute;
+  right:20em;
+  font-size:0.8em;
+}
 
 #header-home {
   /* padding:1em 0.5em; */
   height:100px;
   border-width:1px;
   border-style:solid;
-  
 }
 
 #header {
@@ -66,8 +116,11 @@ input {
   border-style:solid;
 }
 
-.headermain {
- border-width: 0px;
+.headermain, h1.headermain {
+  float:left;
+  margin:0%;
+  padding:0%;
+  border-width: 0px;
 }
 
 .headermenu {
@@ -76,23 +129,51 @@ input {
 }
 
 .navbar {
-  margin-right: 5px;
-  width: 100%; 
-  padding:0px;
-  height: 25px;
+  width:100%;
+  padding:3px 0.5em;
   border-width:1px;
   border-style:solid;
 }
 
-.breadcrumb {
- padding-top: 3px;
- padding-left: 3px;
- }
- 
+div.navbar {
+  width: auto;
+}
+
+table.navbar {
+  width: 100%;
+}
+
+.navbar .navbutton form {
+  float: left;
+}
+
 .navbar .navbutton {
-  padding-right: 3px;
-  padding-top: 2px;
- }
+  margin-top: 3px;
+}
+
+.navbar .breadcrumb {
+  float:left;
+  margin:0.2em 0em;
+}
+
+.breadcrumb ul {
+  padding:0%;
+  margin:0%;
+  text-indent:0%;
+  list-style:none;
+}
+.breadcrumb li {
+  display:inline;
+}
+
+.navbar .navbutton,
+.navbar .menu {
+  float:right;
+}
+
+#footer .navbar {
+  margin-top: 4em;
+}
 
 
 /***
@@ -101,7 +182,7 @@ input {
 
 TABLE.loginbox {
   margin-top: 40px;
-  }
+}
 
 .loginbox .header {
   border-width:1px;
@@ -126,9 +207,8 @@ TABLE.loginbox {
 
  
 #footer p.helplink {
- margin-bottom: -25px;
+ margin-bottom: 0px;
 }
-
 
 
 /***
@@ -218,6 +298,9 @@ table.calendarmonth tr td  {
   border-style: dashed;
 }
 
-#content {
-  clear: both;
-}
+
+.tabrow0 { 
+   padding-top: 4px; 
+} 
+
+
