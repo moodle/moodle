@@ -76,6 +76,14 @@ class grade_calculation extends grade_object {
     var $grade_item;
 
     /**
+     * Get associated grade_item object
+     * @return object
+     */
+    function get_grade_item() {
+        return grade_item::fetch('id', $this->itemid);
+    }
+
+    /**
      * Applies the formula represented by this object. The parameteres are taken from final
      * grades of grade items in current course only.
      * @return boolean false if error
@@ -90,7 +98,7 @@ class grade_calculation extends grade_object {
         }
 
         // init grade_item
-        $this->grade_item = grade_item::fetch('id', $this->itemid);
+        $this->grade_item = $this->get_grade_item();
 
         //init used items
         $this->useditems = $this->dependson();
@@ -149,7 +157,7 @@ class grade_calculation extends grade_object {
             if (!array_key_exists('gi'.$gi, $params)) {
                 $params['gi'.$gi] = 0;
             } else {
-                $params['gi'.$gi] = (float)$params[$gi];
+                $params['gi'.$gi] = (float)$params['gi'.$gi];
             }
         }
 
@@ -160,21 +168,28 @@ class grade_calculation extends grade_object {
         $this->formula->set_params($params);
         $result = $this->formula->evaluate();
 
+
         // insert final grade if needed
         if (empty($final)) {
-            $this->grade_item->grade_grades_final[$userid] = new grade_grades_final(array('itemid'=>$this->grade_item->id, 'userid'=>$userid));
-            $this->grade_item->grade_grades_final[$userid]->insert();
+            $final = new grade_grades_final(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
+            $final->insert();
         }
 
         // store the result
         if ($result === false) {
-            $final->grade_value = null;
+            $final->gradevalue = null;
             $final->update();
             return false;
 
         } else {
-            $final = $result;
-            $this->grade_item->grade_grades_final[$userid]->update();
+            // normalize
+            $result = bounded_number($this->grade_item->grademin, $result, $this->grade_item->grademax);
+            if ($this->grade_item->gradetype == GRADE_TYPE_SCALE) {
+                $result = round($result+0.00001); // round upwards
+            }
+
+            $final->gradevalue = $result;
+            $final->update();
             return true;
         }
     }

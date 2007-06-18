@@ -535,10 +535,8 @@ class grade_item extends grade_object {
 
         $errors = array();
 
-        if ($this->get_calculation()) {
-            // this is calculated grade
-            $this->upgrade_calculation_to_object();
-            if ($this->calculation->compute()) {
+        if ($calculation = $this->get_calculation()) {
+            if ($calculation->compute()) {
                 $this->needsupdate = false;
                 $this->update();
                 return true;
@@ -602,16 +600,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Use this when the calculation object is a stdClass (rare) and you need it to have full
-     * object status (with methods and all).
-     */
-    function upgrade_calculation_to_object() {
-        if (!is_a($this->calculation, 'grade_calculation')) {
-            $this->calculation = new grade_calculation($this->calculation, false);
-        }
-    }
-
-    /**
      * Given a float grade value or integer grade scale, applies a number of adjustment based on
      * grade_item variables and returns the result.
      * @param object $rawgrade The raw grade.
@@ -661,7 +649,7 @@ class grade_item extends grade_object {
                 $gradevalue = standardise_score($gradevalue, $rawgrade->grademin, $rawgrade->grademax, $this->grademin, $this->grademax);
             }
 
-            return (int)bounded_number(0, round($gradevalue), $this->grademax);
+            return (int)bounded_number(0, round($gradevalue+0.00001), $this->grademax);
 
 
         } else if ($this->gradetype == GRADE_TYPE_TEXT or $this->gradetype == GRADE_TYPE_NONE) { // no value
@@ -812,12 +800,12 @@ class grade_item extends grade_object {
      * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
      * @return mixed $calculation Object if found, false otherwise.
      */
-    function get_calculation($fetch = false) {
+    function get_calculation($nocache = false) {
         if (is_null($this->calculation)) {
-            $fetch = true;
+            $nocache = true;
         }
 
-        if ($fetch) {
+        if ($nocache) {
             $this->calculation = grade_calculation::fetch('itemid', $this->id);
         }
 
@@ -833,42 +821,42 @@ class grade_item extends grade_object {
      */
     function set_calculation($formula) {
         // remove cached calculation object
-        $this->calculation = null;
-
         if (empty($formula)) { // We are removing this calculation
             if (!empty($this->id)) {
-                if ($grade_calculation = $this->get_calculation()) {
+                if ($grade_calculation = $this->get_calculation(true)) {
                     $grade_calculation->delete();
                 }
             }
-            $this->calculation = null;
-            $status = true;
+            $this->calculation = false; // cache no calculation present
+            $this->flag_for_update();
+            return true;
 
         } else { // We are updating or creating the calculation entry in the DB
-            $grade_calculation = $this->get_calculation();
+            if ($grade_calculation = $this->get_calculation(true)) {
+                $grade_calculation->calculation = $formula;
+                if ($grade_calculation->update()) {
+                    $this->flag_for_update();
+                    return true;                    
+                } else {
+                    $this->calculation = null; // remove cache
+                    debugging("Could not save the calculation in the database for this grade_item.");
+                    return false;
+                }
 
-            if (empty($grade_calculation)) { // Creating
+            } else {
                 $grade_calculation = new grade_calculation();
                 $grade_calculation->calculation = $formula;
                 $grade_calculation->itemid = $this->id;
 
                 if ($grade_calculation->insert()) {
-                    $this->calculation = $grade_calculation;
                     return true;
                 } else {
-                    debugging("Could not save the calculation in the database, for this grade_item.");
+                    $this->calculation = null; // remove cache
+                    debugging("Could not save the calculation in the database for this grade_item.");
                     return false;
                 }
-            } else { // Updating
-                $grade_calculation->calculation = $formula;
-                $grade_calculation = new grade_calculation($grade_calculation);
-                $this->calculation = $grade_calculation;
-                $status = $grade_calculation->update();
             }
         }
-
-        $this->flag_for_update();
-        return $status;
     }
 
     /**
@@ -1026,9 +1014,8 @@ class grade_item extends grade_object {
      */
     function dependson() {
 
-        if ($this->get_calculation()) {
-            $this->upgrade_calculation_to_object();
-            return $this->calculation->dependson();
+        if ($calculation = $this->get_calculation()) {
+            return $calculation->dependson();
 
         } else if ($this->itemtype == 'category') {
             $grade_category = grade_category::fetch('id', $this->iteminstance);

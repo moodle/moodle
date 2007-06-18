@@ -722,7 +722,7 @@ class grade_test extends UnitTestCase {
         // Calculation for grade_item 2
         $grade_calculation = new stdClass();
         $grade_calculation->itemid = $this->grade_items[1]->id;
-        $grade_calculation->calculation = '= gi'.$this->grade_items[0]->id.'* + 30 ';
+        $grade_calculation->calculation = '= gi'.$this->grade_items[0]->id.' + 30 ';
         $grade_calculation->timecreated = mktime();
         $grade_calculation->timemodified = mktime();
         
@@ -920,7 +920,7 @@ class grade_test extends UnitTestCase {
         $grade_final->timemodified = mktime();
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
+            $this->grade_grades_final[0] = $grade_final;
         } 
         
         $grade_final = new stdClass();
@@ -932,7 +932,7 @@ class grade_test extends UnitTestCase {
         $grade_final->locked = true; 
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
+            $this->grade_grades_final[1] = $grade_final;
         }
 
         $grade_final = new stdClass();
@@ -944,7 +944,7 @@ class grade_test extends UnitTestCase {
         $grade_final->locked = false; 
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
+            $this->grade_grades_final[2] = $grade_final;
         } 
         
         // Grades for grade_item 2
@@ -952,37 +952,37 @@ class grade_test extends UnitTestCase {
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[1]->id;
         $grade_final->userid = 1;
+        $grade_final->gradevalue = 60;
+        $grade_final->timecreated = mktime();
+        $grade_final->timemodified = mktime();
+        $grade_final->locked = true; 
+
+        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
+            $this->grade_grades_final[3] = $grade_final;
+        } 
+        
+        $grade_final = new stdClass();
+        $grade_final->itemid = $this->grade_items[1]->id;
+        $grade_final->userid = 2;
         $grade_final->gradevalue = 70;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = true; 
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[1]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 100;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
+            $this->grade_grades_final[4] = $grade_final;
         }
 
         $grade_final = new stdClass();
         $grade_final->itemid = $this->grade_items[1]->id;
         $grade_final->userid = 3;
-        $grade_final->gradevalue = 94;
+        $grade_final->gradevalue = 100;
         $grade_final->timecreated = mktime();
         $grade_final->timemodified = mktime();
         $grade_final->locked = false; 
 
         if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
+            $this->grade_grades_final[5] = $grade_final;
         } 
         
         // Grades for grade_item 3
