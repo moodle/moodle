@@ -114,7 +114,7 @@ if ($mform->is_cancelled()){
     $streditingquestion = get_string('editingquestion', 'question');
     if (isset($SESSION->modform->instance)) {
         // TODO: remove restriction to quiz
-        $strediting = '<a href="' . $returnurl . '">' . get_string('editingquiz', 'quiz') . '</a> -> '.
+        $strediting = '<a href="' . htmlspecialchars($returnurl) . '">' . get_string('editingquiz', 'quiz') . '</a> -> '.
                 $streditingquestion;
     } else {
         $strediting = '<a href="edit.php?courseid='.$category->course.'">'.
