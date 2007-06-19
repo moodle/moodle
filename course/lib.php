@@ -1898,20 +1898,23 @@ function print_course_search($value="", $return=false, $format="plain") {
     if ($format == 'plain') {
         $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<input type="text" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
+        $output .= '<input type="text" id="coursesearchbox" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'short') {
         $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<input type="text" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
+        $output .= '<input type="text" id="coursesearchbox" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'navbar') {
         $output  = '<form id="coursesearchnavbar" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
-        $output .= '<input type="text" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<label for="coursesearchbox">'.$strsearchcourses.': </label>';
+        $output .= '<input type="text" id="coursesearchbox" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value, true).'" />';
+        $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     }
 
