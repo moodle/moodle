@@ -12,8 +12,9 @@ if (!$userid = optional_param('user', 0, PARAM_INT)) {
     $userid = $USER->id;  
 }
 
-// get all the grade_items
-if ($gradeitems = grade_get_items($courseid)) {
+
+// construct the tree, this should handle sort order
+if ($gradetree = new grade_tree($courseid)) {
     $gradetotal = 0;
     $gradesum = 0;
     
@@ -25,7 +26,7 @@ if ($gradeitems = grade_get_items($courseid)) {
  
     // setting up table headers
     $tablecolumns = array('itempic', 'itemname', 'grade', 'percentage', 'rank', 'feedback');
-    $tableheaders = array('',get_string('gradeitem', 'grades'), get_string('grade'),get_string('percent', 'grades'), get_string('rank', 'grades'),get_string('feedback'));
+    $tableheaders = array('', get_string('gradeitem', 'grades'), get_string('grade'), get_string('percent', 'grades'), get_string('rank', 'grades'), get_string('feedback'));
 
     $table = new flexible_table('grade-report-user-'.$course->id);
 
@@ -50,7 +51,10 @@ if ($gradeitems = grade_get_items($courseid)) {
     $table->setup();
 
     // loop through grade items to extra data
-    foreach ($gradeitems as $gradeitem) {
+    foreach ($gradetree->tree_array as $gradeitemobj) {
+        
+        // grade item is the 'object' of the grade tree
+        $gradeitem = $gradeitemobj['object'];        
         $data = array();
 
         $params->itemid = $gradeitem->id;
