@@ -813,4 +813,57 @@ function quiz_question_list_instances($questionid) {
     return array();
 }
 
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the quiz.
+ * @param $course The course id of the course the user is thinking of resetting. 
+ */
+function quiz_reset_course_form($course) {
+    echo '<p>';
+    print_checkbox('reset_quiz_attempts', 1, true, get_string('removeallquizattempts','quiz'));
+    echo '</p>';
+}
+
+/**
+ * Actual implementation of the rest coures functionality, delete all the
+ * quiz attempts for course $data->courseid, if $data->reset_quiz_attempts is
+ * set and true.
+ * @param $data the data submitted from the reset course forum.
+ * @param $showfeedback whether to output progress information as the reset 
+ *      progresses.
+ */
+function quiz_delete_userdata($data, $showfeedback=true) {
+    global $CFG;
+    
+    if (empty($data->reset_quiz_attempts)) {
+        return;
+    }
+    
+    $conditiononquizids = 'quiz IN (SELECT id FROM ' .
+            $CFG->prefix . 'quiz q WHERE q.course = ' . $data->courseid . ')';
+    
+    $attemptids = get_records_select('quiz_attempts', $conditiononquizids, '', 'id, uniqueid');
+    if ($attemptids) {
+        if ($showfeedback) {
+            echo '<div class="notifysuccess">', get_string('deletingquestionattempts', 'quiz');
+            $divider = ': ';
+        }
+        foreach ($attemptids as $attemptid) {
+            delete_attempt($attemptid->uniqueid);
+            if ($showfeedback) {
+                echo $divider, $attemptid->uniqueid;
+                $divider = ', ';
+            }
+        }
+        if ($showfeedback) {
+            echo "</div><br />\n";
+        }
+    }
+    if (delete_records_select('quiz_grades', $conditiononquizids) && $showfeedback) {
+        notify(get_string('gradesdeleted','quiz'), 'notifysuccess');
+    }
+    if (delete_records_select('quiz_attempts', $conditiononquizids) && $showfeedback) {
+        notify(get_string('attemptsdeleted','quiz'), 'notifysuccess');
+    }
+}
 ?>
