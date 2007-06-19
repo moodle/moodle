@@ -1,7 +1,7 @@
 /*******************************************************************
  styles_color.css
-  
- This CSS file contains all color definitions like 
+
+ This CSS file contains all color definitions like
  background-color, font-color, border-color etc.
 
  Styles are organised into the following sections:
@@ -91,11 +91,11 @@ table.formtable tbody th {
 }
 
 /* Alternate rows even */
-.r0 {  
+.r0 {
 }
 
 /* Alternate rows odd */
-.r1 {  
+.r1 {
 }
 
 /* notification messages (can be good or bad) */
@@ -114,20 +114,20 @@ table.formtable tbody th {
 }
 
 .generalbox {
-  border-color:#DDDDDD; 
+  border-color:#DDDDDD;
 }
 .informationbox {
-  border-color:#DDDDDD; 
+  border-color:#DDDDDD;
 }
 .feedbackbox {
-  border-color: #888888; 
+  border-color: #888888;
 }
 .feedbackby {
   background-color:#BBBBBB;
 }
 
 .noticebox {
-  border-color:#DDDDDD; 
+  border-color:#DDDDDD;
 }
 
 .errorbox {
@@ -162,7 +162,7 @@ table.formtable tbody th {
 
 .unread {
   background: #FFD991;
-} 
+}
 
 .censoredtext {
   color:#000000;
@@ -185,11 +185,11 @@ table.formtable tbody th {
 
 .generaltable .cell {
   background-color:#FFFFFF;
-  border-color:#EEEEEE; 
+  border-color:#EEEEEE;
 }
 
 .generaltable {
-  border-color:#EEEEEE; 
+  border-color:#EEEEEE;
 }
 
 
@@ -244,16 +244,16 @@ table.formtable tbody th {
  ***/
 
 .admin .generalboxcontent {
-  background-color:#EEEEEE; 
+  background-color:#EEEEEE;
 }
 
 .admin .generalbox {
-  border-color:#BBBBBB; 
+  border-color:#BBBBBB;
 }
 
 .admin .informationbox {
-  border-color:#BBBBBB; 
-  background-color:#FFFFFF; 
+  border-color:#BBBBBB;
+  background-color:#FFFFFF;
 }
 
 body#admin-index .c0 {
@@ -324,6 +324,18 @@ table.flexible .r1 {
   background-color:#EEEEEE;
 }
 
+body#admin-environment .error {
+    background-color : red;
+    color : inherit;
+}
+
+body#admin-environment .warn {
+    background-color : yellow;
+}
+
+body#admin-environment .ok {
+    background-color : lightgreen;
+}
 /***
  *** Blocks
  ***/
@@ -665,7 +677,7 @@ table.message_search_results td {
 }
 .que .feedback {
   border-color: #DDD;
-}    
+}
 .que.multianswer .incorrect {
     background-color: #faa;
 }
@@ -779,7 +791,7 @@ table.message_search_results td {
 }
 
 .forumpost .left {
-  background:#EEEEEE; 
+  background:#EEEEEE;
 }
 
 .forumpost .topic {
@@ -787,11 +799,11 @@ table.message_search_results td {
 }
 
 .forumpost .starter {
-  background:#DDDDDD; 
+  background:#DDDDDD;
 }
 
 .forumheaderlist .discussion .starter {
-  background:#DDDDDD; 
+  background:#DDDDDD;
 }
 
 .forumheaderlist td {
@@ -810,11 +822,11 @@ table.message_search_results td {
 }
 
 #mod-forum-discuss .forumpost.unread .content {
-  border-color: #FFD991; 
-} 
+  border-color: #FFD991;
+}
 
 #mod-forum-discuss .forumthread .unread {
-} 
+}
 
 #mod-forum-index .unread {
 }
