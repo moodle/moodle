@@ -739,7 +739,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
     if (!empty($options)) {
         foreach ($options as $section => $values) {
-            
+
             $output .= '   <optgroup label="'. s(format_string($section)) .'">'."\n";
             foreach ($values as $value => $label) {
                 $output .= '   <option value="'. format_string($value) .'"';
@@ -1386,7 +1386,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if ($strcache === false or count($strcache) > 2000 ) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
-    
+
     //init course id
     if (empty($courseid)) {
         $courseid = $COURSE->id;
@@ -1406,7 +1406,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if (!empty($CFG->filterall)) {
         $string = filter_string($string, $courseid);
     }
-    
+
     // If the site requires it, strip ALL tags from this string
     if (!empty($CFG->formatstringstriptags)) {
         $string = strip_tags($string);
@@ -1418,7 +1418,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
 
     //Store to cache
     $strcache[$md5] = $string;
-    
+
     return $string;
 }
 
@@ -1527,7 +1527,7 @@ function filter_string($string, $courseid=NULL) {
     }
 
     if (empty($courseid)) {
-        $courseid = $COURSE->id; 
+        $courseid = $COURSE->id;
     }
 
     require_once($CFG->libdir.'/filterlib.php');
@@ -2049,7 +2049,7 @@ function get_html_lang($dir = false) {
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
     $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
     @header('Content-Language: '.$language);
-    return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"'); 
+    return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
 
 
@@ -2078,9 +2078,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                        $usexml=false, $bodytags='', $return=false) {
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
-    
+
     $heading = format_string($heading); // Fix for MDL-8582
-    
+
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
         debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
@@ -2096,7 +2096,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     $meta = $stylesheetshtml.$meta;
 
-        
+
 /// Add the meta page from the themes if any were requested
 
     $metapage = '';
@@ -2251,7 +2251,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $pageclass .= ' course-'.$COURSE->id;
 
-    if (($pageid != 'site-index') && ($pageid != 'course-view') && 
+    if (($pageid != 'site-index') && ($pageid != 'course-view') &&
         (strstr($pageid, 'admin') === FALSE)) {
         $pageclass .= ' nocoursepage';
     }
@@ -2695,7 +2695,7 @@ function theme_setup($theme = '', $params=NULL) {
         } else {
             $extra='?file=';
         }
-        
+
         $CFG->pixpath = $CFG->wwwroot. '/pix/smartpix.php'.$extra.'/'.$theme;
         $CFG->modpixpath = $CFG->wwwroot .'/pix/smartpix.php'.$extra.'/'.$theme.'/mod';
     } else if (empty($THEME->custompix)) {    // Could be set in the above file
@@ -2950,7 +2950,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                 if (strpos($a, '</a>') === false) {
                     $navigation[] = array('title' => $a, 'url' => '');
                 } else {
-                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {                  
+                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {
                         $navigation[] = array('title' => $matches[2], 'url' => $matches[1]);
                     }
                 }
@@ -2982,7 +2982,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                 $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                            .$url.'">'."$title</a>\n</li>\n";
             }
-        }    
+        }
 
         $output .= "</ul>\n";
     }
@@ -3087,7 +3087,7 @@ function print_continue($link, $return=false) {
     if ($link == '') {
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $link = $_SERVER['HTTP_REFERER'];
-            $link = str_replace('&', '&amp;', $link); // make it valid XHTML 
+            $link = str_replace('&', '&amp;', $link); // make it valid XHTML
         } else {
             $link = $CFG->wwwroot .'/';
         }
@@ -3183,7 +3183,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'">';   
+    $output .= '<form action="'. $link .'" method="'. $method .'">';
     $output .= '<div>';
     if ($options) {
         foreach ($options as $name => $value) {
@@ -3649,7 +3649,7 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            
+
             $output .= '<th class="header c'.$key.'" scope="col">'. $heading .'</th>';
             // commenting the following code out as <th style does not validate MDL-7861
             //$output .= '<th sytle="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
@@ -3868,15 +3868,15 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
         if ($usehtmleditor) {
             if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&httpsrequired=1';  
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&httpsrequired=1';
                 // needed for course file area browsing in image insert plugin
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                         $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php?id='.$courseid.$httpsrequired.'"></script>'."\n" : '';
             } else {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';  
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                          $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php'.$httpsrequired.'"></script>'."\n" : '';
-                    
+
             }
             $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                     $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
@@ -3902,11 +3902,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
     $str .= '</textarea>'."\n";
 
-	if ($usehtmleditor) {
+    if ($usehtmleditor) {
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
-		$str .= '<script type="text/javascript">document.write(\''.
+        $str .= '<script type="text/javascript">document.write(\''.
             str_replace('\'','\\\'',editorshortcutshelpbutton()).'\'); </script>';
-	}
+    }
 
     if ($return) {
         return $str;
@@ -4015,13 +4015,13 @@ function update_course_icon($courseid) {
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    $capcheck = false;      
+    $capcheck = false;
 
     if (has_capability('moodle/course:manageactivities', $coursecontext) ||
         has_capability('moodle/site:manageblocks', $coursecontext)) {
-        $capcheck = true;      
+        $capcheck = true;
     } else {
-        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks  
+        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks
         if ($children = get_child_contexts($coursecontext)) {
             foreach ($children as $child) {
                 $childcontext = get_record('context', 'id', $child);
@@ -4029,12 +4029,12 @@ function update_course_icon($courseid) {
                     has_capability('moodle/site:manageblocks', $childcontext)) {
                     $capcheck = true;
                     break;
-                }             
-            }          
+                }
+            }
         }
     }
-    
-    
+
+
     if ($capcheck) {
         if (!empty($USER->editing)) {
             $string = get_string('turneditingoff');
@@ -4958,7 +4958,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
             $linkobject .= $imagetext;
         } else {
             $linkobject .= '<img class="iconhelp" alt="'.s(strip_tags($tooltip)).'" src="'.
-                   	$CFG->pixpath .'/help.gif" />';
+                       $CFG->pixpath .'/help.gif" />';
         }
     } else {
         $linkobject .= $tooltip;
@@ -5019,7 +5019,7 @@ function editorshortcutshelpbutton() {
 
     global $CFG;
     $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
-					get_string('editorshortcutkeys').'" class="iconkbhelp" />';
+                    get_string('editorshortcutkeys').'" class="iconkbhelp" />';
 
     return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
 }
@@ -5171,7 +5171,7 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
 <?php
     // fix for MDL-8517, admin pages redirections causes bad xhtml
     if ($adminroot) {
-        admin_externalpage_print_footer($adminroot);  
+        admin_externalpage_print_footer($adminroot);
     } else {
         print_footer('none');
     }
@@ -5519,7 +5519,7 @@ function print_side_block_end($attributes = array()) {
 /**
  * Prints out code needed for spellchecking.
  * Original idea by Ludo (Marc Alier).
- *  
+ *
  * Opening CDATA and <script> are output by weblib::use_html_editor()
  * @uses $CFG
  * @param boolean $usehtmleditor Normally set by $CFG->htmleditor, can be overriden here
@@ -5548,7 +5548,7 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\tspeller.openChecker();\n";
         $str .= '}'."\n";
     }
-    
+
     if ($return) {
         return $str;
     }
@@ -5672,7 +5672,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $
     }
 
 /// Print out the current tree of tabs (this function is recursive)
-   
+
     $output = convert_tree_to_html($tree);
 
     $output = "\n\n".'<div class="tabtree">'.$output.'</div><div class="clearer"> </div>'."\n\n";
@@ -5713,9 +5713,9 @@ function convert_tree_to_html($tree, $row=0) {
         }
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            if ($tab->selected) { 
+            if ($tab->selected) {
                 $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
-            } else if ($tab->active) { 
+            } else if ($tab->active) {
                 $liclass .= (empty($liclass)) ? 'here active' : ' here active';
             }
         }
@@ -5728,7 +5728,7 @@ function convert_tree_to_html($tree, $row=0) {
             $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
         }
 
-        if (!empty($tab->subtree)) { 
+        if (!empty($tab->subtree)) {
             $str .= convert_tree_to_html($tab->subtree, $row+1);
         } else if ($tab->selected) {
             $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
@@ -5771,7 +5771,6 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
     return $subtree;
 }
 
-
 /**
  * Returns a string containing a link to the user documentation for the current
  * page. Also contains an icon by default. Shown to teachers and admin only.
@@ -5782,17 +5781,8 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
 
-    if (empty($CFG->docroot) || !has_capability('moodle/site:doclinks')) {
-        return '';
-    }
-
     if (empty($CFG->pagepath)) {
         $CFG->pagepath = $ME;
-    }
-
-    $target = '';
-    if (!empty($CFG->doctonewwindow)) {
-        $target = ' target="_blank"';
     }
 
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
@@ -5800,6 +5790,28 @@ function page_doc_link($text='', $iconpath='') {
 
     if (empty($path)) {   // Not for home page
         return '';
+    }
+    return doc_link($path, $text, $iconpath);
+}
+
+/**
+ * Returns a string containing a link to the user documentation.
+ * Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @param string $path      The relative link
+ * @param string $text      The text to be displayed for the link
+ * @param string $iconpath  The path to the icon to be displayed
+ */
+function doc_link($path='', $text='', $iconpath='') {
+    global $CFG;
+
+    if (empty($CFG->docroot) ||  !has_capability('moodle/site:doclinks')) {
+        return '';
+    }
+
+    $target = '';
+    if (!empty($CFG->doctonewwindow)) {
+        $target = ' target="_blank"';
     }
 
     $lang = str_replace('_utf8', '', current_language());
@@ -5815,7 +5827,6 @@ function page_doc_link($text='', $iconpath='') {
 
     return $str;
 }
-
 /**
  * Returns true if the current site debugging settings are equal or above specified level.
  * If passed a parameter it will emit a debugging notice similar to trigger_error(). The
