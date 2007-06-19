@@ -67,6 +67,9 @@ $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid
               get_string('configguestroleid', 'admin'), $guestrole->id, $allroles));
 $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
               get_string('configdefaultuserroleid', 'admin'), $userrole->id, $allroles));
+
+$temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
+
 $temp->add(new admin_setting_configselect('defaultcourseroleid', get_string('defaultcourseroleid', 'admin'),
               get_string('configdefaultcourseroleid', 'admin'), $studentrole->id, $allroles));
 $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),

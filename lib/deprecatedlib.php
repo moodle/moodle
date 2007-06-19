@@ -578,37 +578,51 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
 
     global $CFG;
 
-    if ($courseid == SITEID and $CFG->allusersaresitestudents) {
-        // return users with confirmed, undeleted accounts who are not site teachers
-        // the following is a mess because of different conventions in the different user functions
-        $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
-        $sort = str_replace('timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
-        $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
-        $fields = str_replace('u.', '', $fields);
-        if ($sort) {
-            $sort = $sort .' '. $dir;
-        }
-        // Now we have to make sure site teachers are excluded
+    // make sure it works on the site course
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-        if ($teachers = get_course_teachers(SITEID)) {
-            foreach ($teachers as $teacher) {
-                $exceptions .= ','. $teacher->userid;
+    /// For the site course, old way was to check if $CFG->allusersaresitestudents was set to true. 
+    /// The closest comparible method using roles is if the $CFG->defaultuserroleid is set to the legacy
+    /// student role. This function should be replaced where it is used with something more meaningful. 
+    if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
+        if ($roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, $context)) {
+            $hascap = false;
+            foreach ($roles as $role) {
+                if ($role->id == $CFG->defaultuserroleid) {
+                    $hascap = true;
+                    break;
+                }
             }
-            $exceptions = ltrim($exceptions, ','); 
-          
-        }        
-
-        return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
-                          $page, $recordsperpage, $fields ? $fields : '*');
+            if ($hascap) {
+                // return users with confirmed, undeleted accounts who are not site teachers
+                // the following is a mess because of different conventions in the different user functions
+                $sort = str_replace('s.timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+                $sort = str_replace('timeaccess', 'lastaccess', $sort); // site users can't be sorted by timeaccess
+                $sort = str_replace('u.', '', $sort); // the get_user function doesn't use the u. prefix to fields
+                $fields = str_replace('u.', '', $fields);
+                if ($sort) {
+                    $sort = $sort .' '. $dir;
+                }
+                // Now we have to make sure site teachers are excluded
+        
+                if ($teachers = get_course_teachers(SITEID)) {
+                    foreach ($teachers as $teacher) {
+                        $exceptions .= ','. $teacher->userid;
+                    }
+                    $exceptions = ltrim($exceptions, ','); 
+                  
+                }        
+        
+                return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
+                                  $page, $recordsperpage, $fields ? $fields : '*');
+            }
+        }
     }
 
     $LIKE      = sql_ilike();
     $fullname  = sql_fullname('u.firstname','u.lastname');
 
     $groupmembers = '';
-
-    // make sure it works on the site course
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     $select = "c.contextlevel=".CONTEXT_COURSE." AND "; // Must be on a course
     if ($courseid != SITEID) {
@@ -706,6 +720,28 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
     $sort = 'ul.timeaccess DESC';
     
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    /// For the site course, if the $CFG->defaultuserroleid is set to the legacy teacher role, then all
+    /// users are teachers. This function should be replaced where it is used with something more 
+    /// meaningful. 
+    if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
+        if ($roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, $context)) {
+            $hascap = false;
+            foreach ($roles as $role) {
+                if ($role->id == $CFG->defaultuserroleid) {
+                    $hascap = true;
+                    break;
+                }
+            }
+            if ($hascap) {
+                if (empty($fields)) {
+                    $fields = '*';
+                }
+                return get_users(true, '', true, $exceptions, 'lastname ASC', '', '', '', '', $fields);
+            }
+        }
+    }
+
     return get_users_by_capability($context, 'moodle/course:update', 'u.*, ul.timeaccess as lastaccess, ra.hidden', $sort, '','','',$exceptions, false);
     /// some fields will be missing, like authority, editall
     /*
@@ -730,8 +766,30 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
  * @todo Finish documenting this function
  */
 function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='') {
+    global $CFG;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    /// If the course id is the SITEID, we need to return all the users if the "defaultuserroleid"
+    /// has the capbility of accessing the site course. $CFG->nodefaultuserrolelists set to true can 
+    /// over-rule using this.
+    if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
+        if ($roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context)) {
+            $hascap = false;
+            foreach ($roles as $role) {
+                if ($role->id == $CFG->defaultuserroleid) {
+                    $hascap = true;
+                    break;
+                }
+            }
+            if ($hascap) {
+                if (empty($fields)) {
+                    $fields = '*';
+                }
+                return get_users(true, '', true, $exceptions, 'lastname ASC', '', '', '', '', $fields);
+            }
+        }
+    }
     return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions, false);
 
 }
