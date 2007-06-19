@@ -58,8 +58,9 @@
  * The function looks for the best version to compare and
  * everything. This is the only function that should be called
  * ever from the rest of Moodle.
- * @param string version version to check. 
+ * @param string version version to check.
  * @param array results array of results checked.
+ * @param boolean true/false, whether to print the table or just return results array
  * @return boolean true/false, depending of results
  */
 function check_moodle_environment($version, &$environment_results, $print_table=true) {
@@ -114,14 +115,13 @@ function check_moodle_environment($version, &$environment_results, $print_table=
     return ($result && $status);
 }
 
-/** 
+/**
  * This function will print one beautiful table with all the environmental
  * configuration and how it suits Moodle needs.
  * @param boolean final result of the check (true/false)
  * @param array environment_results array of results gathered
  */
 function print_moodle_environment($result, $environment_results) {
-
 /// Get some strings
     $strname = get_string('name');
     $strinfo = get_string('info');
@@ -133,18 +133,26 @@ function print_moodle_environment($result, $environment_results) {
     $strbypassed = get_string('bypassed');
     $strrestricted = get_string('restricted');
     $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
+/// Table headers
+    $servertable = new stdClass;//table for server checks
+    $servertable->head  = array ($strname, $strinfo, $strreport, $strstatus);
+    $servertable->align = array ('center', 'center', 'left', 'center');
+    $servertable->wrap  = array ('nowrap', '', '', 'nowrap');
+    $servertable->size  = array ('10', 10, '100%', '10');
+    $servertable->width = '90%';
+    $servertable->class = 'environmenttable generaltable';
 
-/// Here we'll store all the feedback found
-    $feedbacktext = '';
+    $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
-/// Table header
-    $table = new stdClass;
-    $table->head  = array ($strname, $strinfo, $strreport, $strstatus);
-    $table->align = array ('center', 'center', 'left', 'center');
-    $table->wrap  = array ('nowrap', '', '', 'nowrap');
-    $table->size  = array ('10', 10, '100%', '10');
-    $table->width = '90%';
-    $table->class = 'environmenttable generaltable';
+    $othertable = new stdClass;//table for custom checks
+    $othertable->head  = array ($strinfo, $strreport, $strstatus);
+    $othertable->align = array ('center', 'left', 'center');
+    $othertable->wrap  = array ('', '', 'nowrap');
+    $othertable->size  = array (10, '100%', '10');
+    $othertable->width = '90%';
+    $othertable->class = 'environmenttable generaltable';
+
+    $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
 
 /// Iterate over each environment_result
     $continue = true;
@@ -205,46 +213,67 @@ function print_moodle_environment($result, $environment_results) {
                             $status = $strcheck;
                             $warningline = true;
                         } else {                                            //Handle error result (error)
-                            $status = $strcheck;                       
+                            $status = $strcheck;
                             $errorline = true;
                         }
                     }
                 }
             }
-    
+
         /// Build the text
-            $report = get_string($stringtouse, 'admin', $rec);
+            $linkparts = array();
+            $linkparts[] = 'admin/environment';
+            $linkparts[] = $type;
+            if (!empty($info)){
+               $linkparts[] = $info;
+            }
+            $report = doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+
+
         /// Format error or warning line
             if ($errorline || $warningline) {
-                $styletoapply = $errorline? 'error':'warn';
-                $type = '<span class="'.$styletoapply.'">'.$type.'</span>';
-                $info = '<span class="'.$styletoapply.'">'.$info.'</span>';
-                $report = '<span class="'.$styletoapply.'">'.$report.'</span>';
-                $status = '<span class="'.$styletoapply.'">'.$status.'</span>';
+                $messagetype = $errorline? 'error':'warn';
+            } else {
+                $messagetype = 'ok';
             }
-        /// Add the row to the table
-            $table->data[] = array ($type, $info, $report, $status);
-        ///Process the feedback if necessary
+            $status = '<span class="'.$messagetype.'">'.$status.'</span>';
+        /// Here we'll store all the feedback found
+            $feedbacktext = '';
+                ///Process the feedback if necessary
             if ($feedbackstr = $environment_result->getFeedbackStr()) {
-                $feedbacktext .= '<li class="environmenttable">'.get_string($feedbackstr, 'admin').'</li>';
+                $feedbacktext .= '<p class="'.$messagetype.'">'.get_string($feedbackstr, 'admin').'</p>';
             }
         ///Process the bypass if necessary
             if ($bypassstr = $environment_result->getBypassStr()) {
-                $feedbacktext .= '<li class="environmenttable">'.get_string($bypassstr, 'admin').'</li>';
+                $feedbacktext .= '<p class="warn">'.get_string($bypassstr, 'admin').'</p>';
             }
         ///Process the restrict if necessary
             if ($restrictstr = $environment_result->getRestrictStr()) {
-                $feedbacktext .= '<li class="environmenttable">'.get_string($restrictstr, 'admin').'</li>';
+                $feedbacktext .= '<p class="error">'.get_string($restrictstr, 'admin').'</p>';
+            }
+            if ($feedbacktext) {
+                $report = $report .$feedbacktext;
+            }
+        /// Add the row to the table
+
+            if ($environment_result->getPart() == 'custom_check'){
+                $otherdata[$messagetype][] = array ($info, $report, $status);
+
+            } else {
+                $serverdata[$messagetype][] = array ($type, $info, $report, $status);
             }
         }
     }
-    
-/// Print table
-    print_table($table);
+    //put errors first in
+    $servertable->data = array_merge($serverdata['error'], $serverdata['warn'], $serverdata['ok']);
+    $othertable->data = array_merge($otherdata['error'], $otherdata['warn'], $otherdata['ok']);
 
-/// And feedback accumulated text
-    if ($feedbacktext) {
-        print_simple_box('<ul>'.$feedbacktext.'</ul>', 'center', '90%', '', '', 'environmentbox generalbox');
+/// Print table
+    print_heading(get_string('serverchecks', 'admin'));
+    print_table($servertable);
+    if (count($othertable->data)){
+        print_heading(get_string('customcheck', 'admin'));
+        print_table($othertable);
     }
 
 /// Finally, if any error has happened, print the summary box
@@ -277,7 +306,7 @@ function normalize_version($version) {
  * @return mixed the xmlized structure or false on error
  */
 function load_environment_xml() {
-    
+
     global $CFG;
 
     static $data; //Only load and xmlize once by request
@@ -289,7 +318,7 @@ function load_environment_xml() {
 /// First of all, take a look inside $CFG->dataroot/environment/environment.xml
     $file = $CFG->dataroot.'/environment/environment.xml';
     $internalfile = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
-    if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) || 
+    if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) ||
         !$contents = file_get_contents($file)) {
     /// Fallback to fixed $CFG->admin/environment.xml
         if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
@@ -363,12 +392,12 @@ function get_latest_version_available ($version) {
 }
 
 
-/** 
+/**
  * This function will return the xmlized data belonging to one Moodle version
  * @return mixed the xmlized structure or false on error
  */
 function get_environment_for_version($version) {
-   
+
 /// Normalize the version requested
     $version = normalize_version($version);
 
@@ -389,12 +418,12 @@ function get_environment_for_version($version) {
 
 /// We now we have it. Extract from full contents.
     $fl_arr = array_flip($versions);
-    
+
     return $contents['COMPATIBILITY_MATRIX']['#']['MOODLE'][$fl_arr[$version]];
 }
 
 
-/** 
+/**
  * This function will check for everything (DB, PHP and PHP extensions for now)
  * returning an array of environment_result objects.
  * @param string $version xml version we are going to use to test this server
@@ -534,7 +563,7 @@ function environment_custom_checks($version) {
         if (!is_null($result)) {
         /// Do any actions defined in the XML file.
             process_environment_result($check, $result);
-    
+
         /// Add the result to the array of results
             $results[] = $result;
         }
@@ -587,7 +616,7 @@ function environment_check_php($version) {
     } else {
         $result->setStatus(false);
     }
-    $result->setLevel($level);   
+    $result->setLevel($level);
     $result->setCurrentVersion($current_version);
     $result->setNeededVersion($needed_version);
 
@@ -722,7 +751,7 @@ function environment_check_database($version) {
     } else {
         $result->setStatus(false);
     }
-    $result->setLevel($level);   
+    $result->setLevel($level);
     $result->setCurrentVersion($current_version);
     $result->setNeededVersion($needed_version);
     $result->setInfo($current_vendor);
@@ -837,7 +866,7 @@ function process_environment_messages($xml, &$result) {
 //--- Helper Class to return results to caller ---//
 
 
-/** 
+/**
  * This class is used to return the results of the environment
  * main functions (environment_check_xxxx)
  */
@@ -920,7 +949,7 @@ class environment_results {
     function setInfo($info) {
         $this->info=$info;
     }
-    
+
     /**
      * Set the feedback string
      * @param string the feedback string
@@ -970,7 +999,7 @@ class environment_results {
     }
 
     /**
-     * Get the current version 
+     * Get the current version
      * @return string current version
      */
     function getCurrentVersion() {
@@ -1050,7 +1079,7 @@ function bypass_mysql416_reqs ($result) {
 /// checker. All those functions will receive the result object and will
 /// return it modified as needed (status and bypass string)
 
-/** 
+/**
  * This function will restrict PHP reqs if:
  *   - We are using PHP 5.0.x, informing about the buggy version
  *
