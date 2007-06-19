@@ -110,12 +110,26 @@ function upgrade_plugins($type, $dir, $return) {
                 $db->debug = false;
             /// Continue with the instalation, roles and other stuff
                 if ($status) {
-                    // OK so far, now update the plugins record
+                /// OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
+
+                /// Install capabilities
                     if (!update_capabilities($type.'/'.$plug)) {
-                        error('Could not set up the capabilities for '.$module->name.'!');
+                        error('Could not set up the capabilities for '.$plugin->name.'!');
                     }
+                /// Install events
                     events_update_definition($type.'/'.$plug);
+
+                /// Run local install function if there is one
+                    if (is_readable($fullplug .'/lib.php')) {
+                        include_once($fullplug .'/lib.php'); 
+                        $installfunction = $plugin->name.'_install';
+                        if (function_exists($installfunction)) {
+                            if (! $installfunction() ) {
+                                notify('Encountered a problem running install function for '.$module->name.'!');
+                            }
+                        }
+                    }
                     
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
