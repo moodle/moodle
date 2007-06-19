@@ -4926,7 +4926,8 @@ function page_doc_link($text='', $iconpath='') {
  * Also contains an icon by default. Shown to teachers and admin only.
  *
  * @param string $path      The relative link
- * @param string $text      The text to be displayed for the link
+ * @param string $path      The page link after doc root and language, no
+ *                              leading slash.
  * @param string $iconpath  The path to the icon to be displayed
  */
 function doc_link($path='', $text='', $iconpath='') {
