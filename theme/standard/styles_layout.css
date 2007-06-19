@@ -3268,6 +3268,10 @@ body#mod-quiz-report table#itemanalysis
   width: 80%;
   margin: auto;
 }
+body#mod-quiz-report table#attempts,
+body#mod-quiz-report h2.main {
+  clear: both;
+}
 body#mod-quiz-report table#attempts {
   margin: 20px auto;
 }
