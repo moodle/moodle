@@ -19,8 +19,8 @@ if ($authtoken != sha1($username . $user->password)) {
     die('Invalid authentication token');
 }
 
-$what = optional_param('preset_what', '', PARAM_ALPHA);
-$time = optional_param('preset_time', '', PARAM_ALPHA);
+$what = optional_param('preset_what', 'all', PARAM_ALPHA);
+$time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 
 $now = usergetdate(time());
 // Let's see if we have sufficient and correct data
@@ -37,7 +37,7 @@ if(!empty($what) && !empty($time)) {
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
         }
-        
+
         switch($time) {
             case 'weeknow':
                 $startweekday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
