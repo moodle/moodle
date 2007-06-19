@@ -5382,7 +5382,8 @@ function page_doc_link($text='', $iconpath='') {
  * Returns a string containing a link to the user documentation.
  * Also contains an icon by default. Shown to teachers and admin only.
  *
- * @param string $path      The relative link
+ * @param string $path      The page link after doc root and language, no
+ *                              leading slash.
  * @param string $text      The text to be displayed for the link
  * @param string $iconpath  The path to the icon to be displayed
  */
