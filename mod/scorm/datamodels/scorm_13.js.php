@@ -747,7 +747,7 @@ function SCORMapi1_3() {
 
                                                                 matches = nodes[i].match(expression);
                                                                 //if ((matches == null) || (matches.join('').length == 0)) {
-                                                                if (matches == null && value != "") {
+                                                                if ((matches == null && value != "")||(matches == null && interactiontype=="true-false")){
 
                                                                     errorCode = "406";
                                                                 } else {
