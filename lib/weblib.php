@@ -1326,14 +1326,14 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         if ($oldcacheitem) {                               // See bug 4677 for discussion
             $newcacheitem->id = $oldcacheitem->id;
             @update_record('cache_text', $newcacheitem);   // Update existing record in the cache table
-                                                           // It's unlikely that the cron cache cleaner could have 
+                                                           // It's unlikely that the cron cache cleaner could have
                                                            // deleted this entry in the meantime, as it allows
                                                            // some extra time to cover these cases.
         } else {
             @insert_record('cache_text', $newcacheitem);   // Insert a new record in the cache table
                                                            // Again, it's possible that another user has caused this
-                                                           // record to be created already in the time that it took 
-                                                           // to traverse this function.  That's OK too, as the 
+                                                           // record to be created already in the time that it took
+                                                           // to traverse this function.  That's OK too, as the
                                                            // call above handles duplicate entries, and eventually
                                                            // the cron cleaner will delete them.
         }
@@ -2495,7 +2495,7 @@ function print_navigation ($navigation) {
            .str_replace('->', '</li><li title="'.$nav_text.'"><img src="'.$CFG->pixpath.'/a/r_breadcrumb.gif" class="resize" alt="" /> ', $navigation)."</li>\n";
        echo '<li class="first"><a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                                                        ? '/my' : '') .'/">'. $site->shortname ."</a></li>\n". $navigation;
-       echo "</ul>\n";  
+       echo "</ul>\n";
    }
 }
 
@@ -2572,7 +2572,7 @@ function print_continue($link) {
  * See, {@link print_simple_box_start}.
  *
  * @param string $align string, alignment of the box, not the text (default center, left, right).
- * @param string $width string, width of the box, including units %, for example '100%'. 
+ * @param string $width string, width of the box, including units %, for example '100%'.
  * @param string $color string, background colour of the box, for example '#eee'.
  * @param int $padding integer, padding in pixels, specified without units.
  * @param string $class string, space-separated class names.
@@ -2848,10 +2848,10 @@ function print_user($user, $course, $messageselect=false) {
     echo '</div></td><td class="links">';
     //link to blogs
     if ($CFG->bloglevel > 0) {
-    	echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';	
+        echo '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     }
-    
-	if ($isteacher) {
+
+    if ($isteacher) {
         $timemidnight = usergetmidnight(time());
         echo '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
         if (!iscreator($user->id) or ($isadmin and !isadmin($user->id))) {  // Includes admins
@@ -3257,7 +3257,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $mincols = 65;
     $minrows = 10;
     $str = '';
-    
+
     if ( empty($CFG->editorsrc) ) { // for backward compatibility.
         if (empty($courseid)) {
             if (!empty($course->id)) {  // search for it in global context
@@ -3301,7 +3301,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $str .= s($value);
     }
     $str .= '</textarea>'."\n";
-    
+
     if ($return) {
         return $str;
     }
@@ -3348,9 +3348,9 @@ function use_html_editor($name='', $editorhidebuttons='') {
 
 function print_editor_config($editorhidebuttons='', $return=false) {
     global $CFG;
-    
+
     $str = "config.pageStyle = \"body {";
-    
+
     if (!(empty($CFG->editorbackgroundcolor))) {
         $str .= " background-color: $CFG->editorbackgroundcolor;";
     }
@@ -3368,7 +3368,7 @@ function print_editor_config($editorhidebuttons='', $return=false) {
     $str .= (empty($CFG->editorkillword)) ? "false":"true";
     $str .= ';'."\n";
     $str .= 'config.fontname = {'."\n";
-    
+
     $fontlist = isset($CFG->editorfontlist) ? explode(';', $CFG->editorfontlist) : array();
     $i = 1;                     // Counter is used to get rid of the last comma.
 
@@ -3394,7 +3394,7 @@ function print_editor_config($editorhidebuttons='', $return=false) {
     if (!empty($CFG->editorspelling) && !empty($CFG->aspellpath)) {
         $str .= print_speller_code($usehtmleditor=true, true);
     }
-            
+
     if ($return) {
         return $str;
     }
@@ -3907,7 +3907,7 @@ function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $str
  * @param string $month  fieldname
  * @param string $year  fieldname
  * @param int $currenttime A default timestamp in GMT
- * @param boolean $return 
+ * @param boolean $return
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
 
@@ -3938,7 +3938,7 @@ function print_date_selector($day, $month, $year, $currenttime=0, $return=false)
  * @param string ? $minute  fieldname
  * @param $currenttime A default timestamp in GMT
  * @param int $step minute spacing
- * @param boolean $return 
+ * @param boolean $return
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
 
@@ -3965,9 +3965,9 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=fa
  *
  * @uses $CFG
  * @param int $timelimit default
- * @param string $unit 
- * @param string $name 
- * @param boolean $return 
+ * @param string $unit
+ * @param string $name
+ * @param boolean $return
  */
 function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
 
@@ -4166,7 +4166,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
     //Accessibility: prefix the alt text/title with 'Help with', strip distracting dots '...'
     // PLEASE DO NOT CHANGE. ('...' is VERY distracting for non-visual users)
     $tooltip = get_string('helpprefix', '', trim($title, ". \t"));
-    
+
     $linkobject = '';
 
     if ($image) {
@@ -4190,7 +4190,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
         $url = '/help.php?module='. $module .'&amp;file='. $page .'.html';
     }
 
-    $link = '<span class="helplink">'. 
+    $link = '<span class="helplink">'.
             link_to_popup_window ($url, 'popup', $linkobject, 400, 500, $tooltip, 'none', true).
             '</span>';
 
@@ -4358,7 +4358,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
     $message = clean_text($message);
 
     $output = '<div class="'.$style.'" align="'. $align .'">'. $message .'</div>'."<br />\n";
-    
+
     if ($return) {
         return $output;
     }
@@ -4528,7 +4528,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     static $block_id = 0;
     $block_id++;
     $skip_text = get_string('skipblock','access').' '.$block_id;
-    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>'; 
+    $skip_link = '<a href="#sb-'.$block_id.'" class="skip-block" title="'.$skip_text.'"><span class="accesshide">'.$skip_text.'</span></a>';
     $skip_dest = '<span id="sb-'.$block_id.'" class="skip-block-to"></span>';
     if (! empty($heading)) {
         $heading .= $skip_link;
@@ -4646,7 +4646,7 @@ function print_side_block_end($attributes = array()) {
 function print_speller_code ($usehtmleditor=false, $return=false) {
     global $CFG;
     $str = '';
-    
+
     if(!$usehtmleditor) {
         $str .= "\n".'<script language="javascript" type="text/javascript">'."\n";
         $str .= 'function openSpellChecker() {'."\n";
@@ -4898,8 +4898,6 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
     }
     echo $str;
 }
-
-
 /**
  * Returns a string containing a link to the user documentation for the current
  * page. Also contains an icon by default. Shown to teachers and admin only.
@@ -4910,17 +4908,8 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
 
-    if (empty($CFG->docroot) || !isteacherinanycourse()) {
-        return '';
-    }
-
     if (empty($CFG->pagepath)) {
         $CFG->pagepath = $ME;
-    }
-
-    $target = '';
-    if (!empty($CFG->doctonewwindow)) {
-        $target = ' target="_blank"';
     }
 
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
@@ -4929,19 +4918,43 @@ function page_doc_link($text='', $iconpath='') {
     if (empty($path)) {   // Not for home page
         return '';
     }
+    return doc_link($path, $text, $iconpath);
+}
+
+/**
+ * Returns a string containing a link to the user documentation.
+ * Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @param string $path      The relative link
+ * @param string $text      The text to be displayed for the link
+ * @param string $iconpath  The path to the icon to be displayed
+ */
+function doc_link($path='', $text='', $iconpath='') {
+    global $CFG;
+
+    if (empty($CFG->docroot) ||  !isteacherinanycourse()) {
+        return '';
+    }
+
+    $target = '';
+    if (!empty($CFG->doctonewwindow)) {
+        $target = ' target="_blank"';
+    }
 
     $lang = str_replace('_utf8', '', current_language());
 
     $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
 
     if (empty($iconpath)) {
-        $iconpath = $CFG->wwwroot . '/pix/docs.gif';
+        $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
     }
 
-    $str .= '<img src="' .$iconpath. '" alt="Docs" />' .$text. '</a>';
+    // alt left blank intentionally to prevent repetition in screenreaders
+    $str .= '<img class="iconhelp" src="' .$iconpath. '" alt="" />' .$text. '</a>';
 
     return $str;
 }
+
 
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
