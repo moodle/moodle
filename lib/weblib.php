@@ -286,22 +286,22 @@ function qualified_me() {
 
 /**
  * Class for creating and manipulating urls.
- * 
+ *
  * See short write up here http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url
  */
 class moodle_url {
-    var $scheme = '';// e.g. http 
-    var $host = ''; 
+    var $scheme = '';// e.g. http
+    var $host = '';
     var $port = '';
     var $user = '';
-    var $pass = ''; 
+    var $pass = '';
     var $path = '';
     var $fragment = '';
     var $params = array(); //associative array of query string params
-    
+
     /**
      * Pass no arguments to create a url that refers to this page. Use empty string to create empty url.
-     * 
+     *
      * @param string $url url default null means use this page url with no query string
      *                      empty string means empty url.
      *                      if you pass any other type of url it will be parsed into it's bits, including query string
@@ -324,11 +324,11 @@ class moodle_url {
             foreach ($parts as $key => $value){
                 $this->$key = $value;
             }
-            $this->params($params); 
+            $this->params($params);
         }
-    }    
+    }
     /**
-     * Add an array of params to the params for this page. The added params override existing ones if they 
+     * Add an array of params to the params for this page. The added params override existing ones if they
      * have the same name.
      *
      * @param array $params
@@ -336,9 +336,9 @@ class moodle_url {
     function params($params){
         $this->params = $params + $this->params;
     }
-    
+
     /**
-     * Remove all params if no arguments passed. Or else remove param $arg1, $arg2, etc. 
+     * Remove all params if no arguments passed. Or else remove param $arg1, $arg2, etc.
      *
      * @param string $arg1
      * @param string $arg2
@@ -357,7 +357,7 @@ class moodle_url {
     }
 
     /**
-     * Add a param to the params for this page. The added param overrides existing one if they 
+     * Add a param to the params for this page. The added param overrides existing one if they
      * have the same name.
      *
      * @param string $paramname name
@@ -367,7 +367,7 @@ class moodle_url {
         $this->params = array($paramname => $param) + $this->params;
     }
 
-   
+
     function get_query_string($overrideparams = array()){
         $arr = array();
         $params = $overrideparams + $this->params;
@@ -396,12 +396,12 @@ class moodle_url {
     }
     /**
      * Output url
-     * 
+     *
      * @param boolean $noquerystring whether to output page params as a query string in the url.
      * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
      * @return string url
      */
-    function out($noquerystring = false, $overrideparams = array()) { 
+    function out($noquerystring = false, $overrideparams = array()) {
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
@@ -411,15 +411,15 @@ class moodle_url {
             $uri .= (count($this->params)||count($overrideparams)) ? '?'.$this->get_query_string($overrideparams) : '';
         }
         $uri .= $this->fragment ? '#'.$this->fragment : '';
-        return $uri; 
+        return $uri;
     }
     /**
      * Output action url with sesskey
-     * 
+     *
      * @param boolean $noquerystring whether to output page params as a query string in the url.
      * @return string url
      */
-    function out_action($overrideparams = array()) { 
+    function out_action($overrideparams = array()) {
         $overrideparams = array('sesskey'=> sesskey()) + $overrideparams;
         return $this->out(false, $overrideparams);
     }
@@ -894,7 +894,7 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
     }
     if (!empty($options)) {
         foreach ($options as $section => $values) {
-            
+
             $output .= '   <optgroup label="'. s(format_string($section)) .'">'."\n";
             foreach ($values as $value => $label) {
                 $output .= '   <option value="'. format_string($value) .'"';
@@ -1541,7 +1541,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if ($strcache === false or count($strcache) > 2000 ) { // this number might need some tuning to limit memory usage in cron
         $strcache = array();
     }
-    
+
     //init course id
     if (empty($courseid)) {
         $courseid = $COURSE->id;
@@ -1561,7 +1561,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if (!empty($CFG->filterall)) {
         $string = filter_string($string, $courseid);
     }
-    
+
     // If the site requires it, strip ALL tags from this string
     if (!empty($CFG->formatstringstriptags)) {
         $string = strip_tags($string);
@@ -1573,7 +1573,7 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
 
     //Store to cache
     $strcache[$md5] = $string;
-    
+
     return $string;
 }
 
@@ -1682,7 +1682,7 @@ function filter_string($string, $courseid=NULL) {
     }
 
     if (empty($courseid)) {
-        $courseid = $COURSE->id; 
+        $courseid = $COURSE->id;
     }
 
     require_once($CFG->libdir.'/filterlib.php');
@@ -1821,7 +1821,7 @@ function clean_text($text, $format=FORMAT_MOODLE) {
     global $ALLOWED_TAGS, $CFG;
 
     if (empty($text) or is_numeric($text)) {
-       return (string)$text; 
+       return (string)$text;
     }
 
     switch ($format) {
@@ -1837,10 +1837,10 @@ function clean_text($text, $format=FORMAT_MOODLE) {
             /// Fix non standard entity notations
                 $text = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $text);
                 $text = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $text);
-    
+
             /// Remove tags that are not allowed
                 $text = strip_tags($text, $ALLOWED_TAGS);
-    
+
             /// Clean up embedded scripts and , using kses
                 $text = cleanAttributes($text);
             }
@@ -2230,7 +2230,7 @@ function get_html_lang($dir = false) {
     //Accessibility: added the 'lang' attribute to $direction, used in theme <html> tag.
     $language = str_replace('_', '-', str_replace('_utf8', '', current_language()));
     @header('Content-Language: '.$language);
-    return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"'); 
+    return ($direction.' lang="'.$language.'" xml:lang="'.$language.'"');
 }
 
 
@@ -2259,9 +2259,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
                        $usexml=false, $bodytags='', $return=false) {
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
-    
+
     $heading = format_string($heading); // Fix for MDL-8582
-    
+
 /// This makes sure that the header is never repeated twice on a page
     if (defined('HEADER_PRINTED')) {
         debugging('print_header() was called more than once - this should not happen.  Please check the code for this page closely. Note: error() and redirect() are now safe to call after print_header().');
@@ -2277,7 +2277,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     }
     $meta = $stylesheetshtml.$meta;
 
-        
+
 /// Add the meta page from the themes if any were requested
 
     $metapage = '';
@@ -2435,7 +2435,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $pageclass .= ' course-'.$COURSE->id;
 
-    if (($pageid != 'site-index') && ($pageid != 'course-view') && 
+    if (($pageid != 'site-index') && ($pageid != 'course-view') &&
         (strstr($pageid, 'admin') === FALSE)) {
         $pageclass .= ' nocoursepage';
     }
@@ -2455,7 +2455,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     if (!empty($CFG->langdirection)) {
         $pageclass .= ' ' . $CFG->langdirection;
     }
-    
+
     $pageclass .= ' lang-'.$currentlanguage;
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
@@ -2558,7 +2558,7 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
         $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $COURSE->id .'">'. $COURSE->shortname .'</a> ->';
     }
 
-    // If old style nav prepend course short name otherwise leave $navigation object alone 
+    // If old style nav prepend course short name otherwise leave $navigation object alone
     if (!is_newnav($navigation)) {
         $navigation = $shortname.' '.$navigation;
     }
@@ -2687,7 +2687,7 @@ function current_theme() {
     foreach ($themeorder as $themetype) {
 
         if (!empty($theme)) continue;
-        
+
         switch ($themetype) {
             case 'page': // Page theme is for special page-only themes set by code
                 if (!empty($CFG->pagetheme)) {
@@ -2749,7 +2749,7 @@ function current_theme() {
  */
 function current_category_theme($categoryid=0) {
     global $COURSE;
-    
+
 /// Use the COURSE global if the categoryid not set
     if (empty($categoryid)) {
         if (!empty($COURSE->category)) {
@@ -2758,10 +2758,10 @@ function current_category_theme($categoryid=0) {
             return false;
         }
     }
-    
+
 /// Retrieve the current category
     if ($category = get_record('course_categories', 'id', $categoryid)) {
-    
+
     /// Return the category theme if it exists
         if (!empty($category->theme)) {
             return $category->theme;
@@ -2977,7 +2977,7 @@ function theme_setup($theme = '', $params=NULL) {
         } else {
             $extra='?file=';
         }
-        
+
         $CFG->pixpath = $CFG->wwwroot. '/pix/smartpix.php'.$extra.'/'.$theme;
         $CFG->modpixpath = $CFG->wwwroot .'/pix/smartpix.php'.$extra.'/'.$theme.'/mod';
     } else if (empty($THEME->custompix)) {    // Could be set in the above file
@@ -3224,7 +3224,7 @@ function print_navigation ($navigation, $separator=0, $return=false) {
 
     if ($navigation) {
 
-        if (is_newnav($navigation)) { 
+        if (is_newnav($navigation)) {
             if ($return) {
                 return($navigation['breadcrumbs']);
             } else {
@@ -3234,16 +3234,16 @@ function print_navigation ($navigation, $separator=0, $return=false) {
         } else {
             debugging('Navigation needs to be updated to use build_navigation()', DEBUG_DEVELOPER);
         }
-        
+
         if (!is_array($navigation)) {
             $ar = explode('->', $navigation);
             $navigation = array();
-            
+
             foreach ($ar as $a) {
                 if (strpos($a, '</a>') === false) {
                     $navigation[] = array('title' => $a, 'url' => '');
                 } else {
-                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {                  
+                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {
                         $navigation[] = array('title' => $matches[2], 'url' => $matches[1]);
                     }
                 }
@@ -3263,8 +3263,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
                                  && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
                                  ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
-        
-        
+
+
         foreach ($navigation as $navitem) {
             $title = trim(strip_tags(format_string($navitem['title'], false)));
             $url   = $navitem['url'];
@@ -3275,8 +3275,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
                 $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
                            .$url.'">'."$title</a>\n</li>\n";
             }
-        }    
-        
+        }
+
         $output .= "</ul>\n";
     }
 
@@ -3380,7 +3380,7 @@ function print_continue($link, $return=false) {
     if ($link == '') {
         if (!empty($_SERVER['HTTP_REFERER'])) {
             $link = $_SERVER['HTTP_REFERER'];
-            $link = str_replace('&', '&amp;', $link); // make it valid XHTML 
+            $link = str_replace('&', '&amp;', $link); // make it valid XHTML
         } else {
             $link = $CFG->wwwroot .'/';
         }
@@ -3476,7 +3476,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
     // taking target out, will need to add later target="'.$target.'"
-    $output .= '<form action="'. $link .'" method="'. $method .'">';   
+    $output .= '<form action="'. $link .'" method="'. $method .'">';
     $output .= '<div>';
     if ($options) {
         foreach ($options as $name => $value) {
@@ -3942,7 +3942,7 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
-            
+
             $output .= '<th class="header c'.$key.'" scope="col">'. $heading .'</th>';
             // commenting the following code out as <th style does not validate MDL-7861
             //$output .= '<th sytle="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
@@ -4161,15 +4161,15 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
         if ($usehtmleditor) {
             if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&httpsrequired=1';  
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&httpsrequired=1';
                 // needed for course file area browsing in image insert plugin
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                         $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php?id='.$courseid.$httpsrequired.'"></script>'."\n" : '';
             } else {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';  
+                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';
                 $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                          $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php'.$httpsrequired.'"></script>'."\n" : '';
-                    
+
             }
             $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
                     $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
@@ -4308,13 +4308,13 @@ function update_course_icon($courseid) {
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    $capcheck = false;      
+    $capcheck = false;
 
     if (has_capability('moodle/course:manageactivities', $coursecontext) ||
         has_capability('moodle/site:manageblocks', $coursecontext)) {
-        $capcheck = true;      
+        $capcheck = true;
     } else {
-        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks  
+        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks
         if ($children = get_child_contexts($coursecontext)) {
             foreach ($children as $child) {
                 $childcontext = get_record('context', 'id', $child);
@@ -4322,12 +4322,12 @@ function update_course_icon($courseid) {
                     has_capability('moodle/site:manageblocks', $childcontext)) {
                     $capcheck = true;
                     break;
-                }             
-            }          
+                }
+            }
         }
     }
-    
-    
+
+
     if ($capcheck) {
         if (!empty($USER->editing)) {
             $string = get_string('turneditingoff');
@@ -5366,7 +5366,7 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
 }
 
 /**
- * Provide an definition of error_get_last for PHP before 5.2.0. This simply 
+ * Provide an definition of error_get_last for PHP before 5.2.0. This simply
  * returns NULL, since there is not way to get the right answer.
  */
 if (!function_exists('error_get_last')) {
@@ -5633,7 +5633,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
                 } else {
                     $output .= '&nbsp;&nbsp;<a href="'. $baseurl->out(false, array($pagevar => $currpage)).'">'. $displaypage .'</a>';
                 }
-                            
+
             }
             $displaycount++;
             $currpage++;
@@ -5756,11 +5756,11 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 function print_side_block_start($heading='', $attributes = array()) {
 
     global $CFG, $THEME;
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
-    
+
     // If there are no special attributes, give a default CSS class
     if (empty($attributes) || !is_array($attributes)) {
         $attributes = array('class' => 'sideblock');
@@ -5821,7 +5821,7 @@ function print_side_block_start($heading='', $attributes = array()) {
  */
 function print_side_block_end($attributes = array()) {
     global $CFG, $THEME;
-    
+
     echo '</div>';
 
     if (!empty($THEME->customcorners)) {
@@ -5843,7 +5843,7 @@ function print_side_block_end($attributes = array()) {
 /**
  * Prints out code needed for spellchecking.
  * Original idea by Ludo (Marc Alier).
- *  
+ *
  * Opening CDATA and <script> are output by weblib::use_html_editor()
  * @uses $CFG
  * @param boolean $usehtmleditor Normally set by $CFG->htmleditor, can be overriden here
@@ -5872,7 +5872,7 @@ function print_speller_code ($usehtmleditor=false, $return=false) {
         $str .= "\tspeller.openChecker();\n";
         $str .= '}'."\n";
     }
-    
+
     if ($return) {
         return $str;
     }
@@ -5996,7 +5996,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activated=NULL, $
     }
 
 /// Print out the current tree of tabs (this function is recursive)
-   
+
     $output = convert_tree_to_html($tree);
 
     $output = "\n\n".'<div class="tabtree">'.$output.'</div><div class="clearer"> </div>'."\n\n";
@@ -6037,9 +6037,9 @@ function convert_tree_to_html($tree, $row=0) {
         }
 
         if ($tab->inactive || $tab->active || ($tab->selected && !$tab->linkedwhenselected)) {
-            if ($tab->selected) { 
+            if ($tab->selected) {
                 $liclass .= (empty($liclass)) ? 'here selected' : ' here selected';
-            } else if ($tab->active) { 
+            } else if ($tab->active) {
                 $liclass .= (empty($liclass)) ? 'here active' : ' here active';
             }
         }
@@ -6052,7 +6052,7 @@ function convert_tree_to_html($tree, $row=0) {
             $str .= '<a href="'.$tab->link.'" title="'.$tab->title.'"><span>'.$tab->text.'</span></a>';
         }
 
-        if (!empty($tab->subtree)) { 
+        if (!empty($tab->subtree)) {
             $str .= convert_tree_to_html($tab->subtree, $row+1);
         } else if ($tab->selected) {
             $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
@@ -6106,17 +6106,8 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 function page_doc_link($text='', $iconpath='') {
     global $ME, $CFG;
 
-    if (empty($CFG->docroot) || !has_capability('moodle/site:doclinks')) {
-        return '';
-    }
-
     if (empty($CFG->pagepath)) {
         $CFG->pagepath = $ME;
-    }
-
-    $target = '';
-    if (!empty($CFG->doctonewwindow)) {
-        $target = ' target="_blank"';
     }
 
     $path = str_replace($CFG->httpswwwroot.'/','', $CFG->pagepath);  // Because the page could be HTTPSPAGEREQUIRED
@@ -6124,6 +6115,28 @@ function page_doc_link($text='', $iconpath='') {
 
     if (empty($path)) {   // Not for home page
         return '';
+    }
+    return doc_link($path, $text, $iconpath);
+}
+
+/**
+ * Returns a string containing a link to the user documentation.
+ * Also contains an icon by default. Shown to teachers and admin only.
+ *
+ * @param string $path      The relative link
+ * @param string $text      The text to be displayed for the link
+ * @param string $iconpath  The path to the icon to be displayed
+ */
+function doc_link($path='', $text='', $iconpath='') {
+    global $CFG;
+
+    if (empty($CFG->docroot) || !has_capability('moodle/site:doclinks')) {
+        return '';
+    }
+
+    $target = '';
+    if (!empty($CFG->doctonewwindow)) {
+        $target = ' target="_blank"';
     }
 
     $lang = str_replace('_utf8', '', current_language());
@@ -6178,7 +6191,7 @@ function debugging($message='', $level=DEBUG_NORMAL) {
                     $caller['line'] = '?'; // probably call_user_func()
                 }
                 if (!isset($caller['file'])) {
-                    $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()   
+                    $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()
                 }
                 $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
                 if (isset($caller['function'])) {
