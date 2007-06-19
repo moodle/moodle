@@ -16,8 +16,8 @@ $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 
-$what = optional_param('preset_what', '', PARAM_ALPHA);
-$time = optional_param('preset_time', '', PARAM_ALPHA);
+$what = optional_param('preset_what', 'all', PARAM_ALPHA);
+$time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 
 $now = usergetdate(time());
 // Let's see if we have sufficient and correct data
