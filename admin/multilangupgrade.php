@@ -59,12 +59,8 @@ foreach ($tables as $table) {
                 if ($rs and $rs->RecordCount() > 0) {
                     while (!$rs->EOF) {
                         $text = $rs->fields[$column];
-                        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
-                        $newtext = preg_replace_callback($search, 'multilangupgrade_impl', $text);
-                        if ($newtext != $text) {
-                            $newtext = addslashes($newtext);
-                            execute_sql("UPDATE $table SET $column='$newtext' WHERE id=".$rs->fields['id'], false);
-                        }
+                        $id   = $rs->fields['id'];
+
                         if ($i % 600 == 0) {
                             echo '<br />';
                         }
@@ -73,6 +69,22 @@ foreach ($tables as $table) {
                         }
                         $i++;
                         $rs->MoveNext();
+
+                        if (empty($text) or is_numeric($text)) {
+                            continue; // nothing to do
+                        }
+
+                        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
+                        $newtext = preg_replace_callback($search, 'multilangupgrade_impl', $text);
+
+                        if (is_null($newtext)) {
+                            continue; // regex error
+                        }
+
+                        if ($newtext != $text) {
+                            $newtext = addslashes($newtext);
+                            execute_sql("UPDATE $table SET $column='$newtext' WHERE id=$id", false);
+                        }
                     }
                 }
             }
