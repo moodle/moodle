@@ -429,6 +429,10 @@
     upgrade_plugins('gradeimport', 'grade/import', "$CFG->wwwroot/$CFG->admin/index.php");
     upgrade_plugins('gradereport', 'grade/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
+/// Check all message output plugins and upgrade if necessary
+    upgrade_plugins('message','message/output',"$CFG->wwwroot/$CFG->admin/index.php");
+
+
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
