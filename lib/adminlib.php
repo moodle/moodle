@@ -22,7 +22,8 @@ function upgrade_plugins($type, $dir, $return) {
     global $CFG, $db;
 
     if (!$plugs = get_list_of_plugins($dir) ) {
-        error('No '.$type.' plugins installed!');
+        notify('No '.$type.' plugins installed!');
+        return false;
     }
 
     $updated_plugins = false;
