@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // admin.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -189,7 +189,7 @@ $string['configstatsmaxruntime'] = 'Stats processing can be quite intensive, so 
 $string['configstatsruntimestart'] = 'What time should the cronjob that does the stats processing <b>start</b>?';
 $string['configstatsuserthreshold'] = 'If you enter a non-zero,  non numeric value here, for ranking courses, courses with less than this number of enrolled users (all roles) will be ignored';
 $string['configteacherassignteachers'] = 'Should ordinary teachers be allowed to assign other teachers within courses they teach?  If \'No\', then only course creators and admins can assign teachers.';
-$string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).  
+$string['configthemelist'] = 'Leave this blank to allow any valid theme to be used.  If you want to shorten the theme menu, you can specify a comma-separated list of names here (Don\'t use spaces!).
 For example:  standard,orangewhite.';
 $string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.  Cronjobs that depend on a time of day to run will use this timezone.';
 $string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
@@ -212,6 +212,7 @@ $string['cronerrorpassword'] = 'Sorry, you have not provided a valid password to
 $string['cronremotepassword'] = 'Cron password for remote access';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours.';
 $string['curlrecommended'] = 'Installing the optional Curl library is highly recommended in order to enable Moodle Networking functionality.';
+$string['customcheck'] = 'Other Checks';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';
 $string['dbmigrateconnecerror'] = 'Could not connect to the database specified.';
@@ -493,6 +494,7 @@ $string['searchinsettings'] = 'Search in settings';
 $string['secureforms'] = 'Use additional form security';
 $string['security'] = 'Security';
 $string['server'] = 'Server';
+$string['serverchecks'] = 'Server Checks';
 $string['sessioncookie'] = 'Cookie prefix';
 $string['sessioncookiepath'] = 'Cookie path';
 $string['sessionhandling'] = 'Session Handling';
