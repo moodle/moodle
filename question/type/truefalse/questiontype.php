@@ -165,8 +165,13 @@ class question_truefalse_qtype extends default_questiontype {
         $falsefeedbackimg = '';
 
         // Work out which radio button to select (if any)
-        $truechecked = ($state->responses[''] == $trueanswer->id) ? ' checked="checked"' : '';
-        $falsechecked = ($state->responses[''] == $falseanswer->id) ? ' checked="checked"' : '';
+        if (isset($state->responses[''])) {
+            $response = $state->responses[''];
+        } else {
+            $response = '';
+        }
+        $truechecked = ($response == $trueanswer->id) ? ' checked="checked"' : '';
+        $falsechecked = ($response == $falseanswer->id) ? ' checked="checked"' : '';
 
         // Work out visual feedback for answer correctness.
         if ($options->feedback) {
@@ -177,7 +182,7 @@ class question_truefalse_qtype extends default_questiontype {
             }
         }
         if ($options->feedback || $options->correct_responses) {
-            if (isset($answers[$state->responses['']])) {
+            if (isset($answers[$response])) {
                 $truefeedbackimg = question_get_feedback_image($trueanswer->fraction, !empty($truechecked) && $options->feedback);
                 $falsefeedbackimg = question_get_feedback_image($falseanswer->fraction, !empty($falsechecked) && $options->feedback);
             }
@@ -197,8 +202,8 @@ class question_truefalse_qtype extends default_questiontype {
             . s($falseanswer->answer) . '</label>';
 
         $feedback = '';
-        if ($options->feedback and isset($answers[$state->responses['']])) {
-            $chosenanswer = $answers[$state->responses['']];
+        if ($options->feedback and isset($answers[$response])) {
+            $chosenanswer = $answers[$response];
             $feedback = format_text($chosenanswer->feedback, true, $formatoptions, $cmoptions->course);
         }
         
@@ -206,7 +211,7 @@ class question_truefalse_qtype extends default_questiontype {
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
-        if (isset($question->options->answers[$state->responses['']])) {
+        if (isset($state->responses['']) && isset($question->options->answers[$state->responses['']])) {
             $state->raw_grade = $question->options->answers[$state->responses['']]->fraction * $question->maxgrade;
         } else {
             $state->raw_grade = 0;
