@@ -404,7 +404,7 @@ class default_questiontype {
                 return false;
             }
         } else {
-            // Don't check for success or failure becuase some question types do not use the answers table.
+            // Don't check for success or failure because some question types do not use the answers table.
             $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
         }
 
