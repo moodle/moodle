@@ -1521,10 +1521,16 @@ table.minicalendar th {
 
 #calendar .event_global,
 #calendar .event_course,
+#calendar .event_course0,
+#calendar .event_course1,
+#calendar .event_course2,
 #calendar .event_group,
 #calendar .event_user,
 .minicalendar .event_global,
 .minicalendar .event_course,
+.minicalendar .event_course0,
+.minicalendar .event_course1,
+.minicalendar .event_course2,
 .minicalendar .event_group,
 .minicalendar .event_user {
   border:2px solid !important;
@@ -1532,10 +1538,16 @@ table.minicalendar th {
 
 #calendar .duration_global,
 #calendar .duration_course,
+#calendar .duration_course0,
+#calendar .duration_course1,
+#calendar .duration_course2,
 #calendar .duration_group,
 #calendar .duration_user,
 .minicalendar .duration_global,
 .minicalendar .duration_course,
+.minicalendar .duration_course0,
+.minicalendar .duration_course1,
+.minicalendar .duration_course2,
 .minicalendar .duration_group,
 .minicalendar .duration_user
 {
