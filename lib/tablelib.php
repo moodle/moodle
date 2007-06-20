@@ -32,7 +32,12 @@ class flexible_table {
     var $totalrows   = 0;
     var $sort_default_column = NULL;
     var $sort_default_order  = SORT_ASC;
-
+    
+    /**
+     * Constructor
+     * @param int $uniqueid
+     * @todo Document properly
+     */
     function flexible_table($uniqueid) {
         $this->uniqueid = $uniqueid;
         $this->request  = array(
@@ -44,31 +49,67 @@ class flexible_table {
             TABLE_VAR_PAGE    => 'page'
         );
     }
-
+    
+    /**
+     * Sets the is_sortable variable to the given boolean, sort_default_column to 
+     * the given string, and the sort_default_order to the given integer.
+     * @param bool $bool
+     * @param string $defaultcolumn
+     * @param int $defaultorder
+     * @return void
+     */
     function sortable($bool, $defaultcolumn = NULL, $defaultorder = SORT_ASC) {
         $this->is_sortable = $bool;
         $this->sort_default_column = $defaultcolumn;
         $this->sort_default_order  = $defaultorder;
     }
 
+    /**
+     * Sets the is_collapsible variable to the given boolean.
+     * @param bool $bool
+     * @return void
+     */
     function collapsible($bool) {
         $this->is_collapsible = $bool;
     }
 
+    /**
+     * Sets the use_pages variable to the given boolean.
+     * @param bool $bool
+     * @return void
+     */
     function pageable($bool) {
         $this->use_pages = $bool;
     }
 
+    /**
+     * Sets the use_initials variable to the given boolean.
+     * @param bool $bool
+     * @return void
+     */
     function initialbars($bool) {
         $this->use_initials = $bool;
     }
 
+    /**
+     * Sets the pagesize variable to the given integer, the totalrows variable
+     * to the given integer, and the use_pages variable to true.
+     * @param int $perpage
+     * @param int $total
+     * @return void
+     */
     function pagesize($perpage, $total) {
         $this->pagesize  = $perpage;
         $this->totalrows = $total;
         $this->use_pages = true;
     }
 
+    /**
+     * Assigns each given variable in the array to the corresponding index
+     * in the request class variable.
+     * @param array $variables
+     * @return void
+     */
     function set_control_variables($variables) {
         foreach($variables as $what => $variable) {
             if(isset($this->request[$what])) {
@@ -77,34 +118,69 @@ class flexible_table {
         }
     }
 
+    /**
+     * Gives the given $value to the $attribute index of $this->attributes.
+     * @param string $attribute
+     * @param mixed $value
+     * @return void
+     */
     function set_attribute($attribute, $value) {
         $this->attributes[$attribute] = $value;
     }
 
+    /**
+     * Sets the given $column index to true in $this->column_suppress.
+     * @param integer $column
+     * @return void
+     */
     function column_suppress($column) {
         if(isset($this->column_suppress[$column])) {
             $this->column_suppress[$column] = true;
         }
     }
 
+    /**
+     * Sets the given $column index to the given $classname in $this->column_class.
+     * @param integer $column
+     * @param string $classname
+     * @return void
+     */
     function column_class($column, $classname) {
         if(isset($this->column_class[$column])) {
             $this->column_class[$column] = ' '.$classname; // This space needed so that classnames don't run together in the HTML
         }
     }
 
+    /**
+     * Sets the given $column index and $property index to the given $value in $this->column_style.
+     * @param integer $column
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     */
     function column_style($column, $property, $value) {
         if(isset($this->column_style[$column])) {
             $this->column_style[$column][$property] = $value;
         }
     }
 
+    /**
+     * Sets all columns of the given $property to the given $value in $this->column_style.
+     * @param integer $property
+     * @param string $value
+     * @return void
+     */
     function column_style_all($property, $value) {
         foreach(array_keys($this->columns) as $column) {
             $this->column_style[$column][$property] = $value;
         }
     }
 
+    /**
+     * Sets $this->reseturl to the given $url, and $this->baseurl to the given $url plus ? or &amp;
+     * @param type? $url
+     * @return type?
+     */
     function define_baseurl($url) {
         $this->reseturl = $url;
         if(!strpos($url, '?')) {
@@ -115,6 +191,10 @@ class flexible_table {
         }
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function define_columns($columns) {
         $this->columns = array();
         $this->column_style = array();
@@ -129,10 +209,18 @@ class flexible_table {
         }
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function define_headers($headers) {
         $this->headers = $headers;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function make_styles_string(&$styles) {
         if(empty($styles)) {
             return '';
@@ -146,6 +234,10 @@ class flexible_table {
         return $string;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function make_attributes_string(&$attributes) {
         if(empty($attributes)) {
             return '';
@@ -159,6 +251,10 @@ class flexible_table {
         return $string;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function setup() {
         global $SESSION, $CFG;
 
@@ -303,6 +399,10 @@ class flexible_table {
 
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_sql_sort($uniqueid = NULL) {
         if($uniqueid === NULL) {
             // "Non-static" function call
@@ -333,6 +433,10 @@ class flexible_table {
         return '';
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_page_start() {
         if(!$this->use_pages) {
             return '';
@@ -340,6 +444,10 @@ class flexible_table {
         return $this->currpage * $this->pagesize;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_page_size() {
         if(!$this->use_pages) {
             return '';
@@ -347,6 +455,10 @@ class flexible_table {
         return $this->pagesize;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_sql_where() {
         if(!isset($this->columns['fullname'])) {
             return '';
@@ -366,6 +478,10 @@ class flexible_table {
         return '';
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_initial_first() {
         if(!$this->use_initials) {
             return NULL;
@@ -374,6 +490,10 @@ class flexible_table {
         return $this->sess->i_first;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function get_initial_last() {
         if(!$this->use_initials) {
             return NULL;
@@ -382,6 +502,10 @@ class flexible_table {
         return $this->sess->i_last;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function print_html() {
         global $CFG;
 
@@ -601,6 +725,10 @@ class flexible_table {
         }
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function add_data($row) {
         if(!$this->setup) {
             return false;
@@ -608,6 +736,10 @@ class flexible_table {
         $this->data[] = $row;
     }
 
+    /**
+     * @todo Document
+     * @return type?
+     */
     function add_separator() {
         if(!$this->setup) {
             return false;
