@@ -17,8 +17,9 @@
 function SCORMapi1_2() {
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
-    //CMIString4096 = '^[.|\\n|\\r]{0,4095}$';
     CMIString4096 = '^.{0,4096}$';
+    //CMIString256 = '^[\.|\\n|\\r]{0,255}$';
+    //CMIString4096 = '^[\.|\\n|\\r]{0,4095}$';
     CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
@@ -132,8 +133,8 @@ function SCORMapi1_2() {
     $objectives = '';
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
-            preg_match('/.(\d+)./',$element,$matches);
-            $element = preg_replace('/.(\d+)./',"_\$1.",$element);
+            preg_match('/\.(\d+)\./',$element,$matches);
+            $element = preg_replace('/\.(\d+)\./',".\$1.",$element);
             if ($matches[1] == $count) {
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
@@ -334,7 +335,7 @@ function SCORMapi1_2() {
                                     ranges = range.split('#');
                                     value = value*1.0;
                                     if ((value >= ranges[0]) && (value <= ranges[1])) {
-                                        eval(element+'="'+value+'";');
+                                        eval(element+'=value;');
                                         errorCode = "0";
                                         <?php 
                                             if (debugging('',DEBUG_DEVELOPER)) {
@@ -347,9 +348,9 @@ function SCORMapi1_2() {
                                     }
                                 } else {
                                     if (element == 'cmi.comments') {
-                                        eval(element+'+="'+value+'";');
+                                        eval(element+'=value;');
                                     } else {
-                                        eval(element+'="'+value+'";');
+                                        eval(element+'=value;');
                                     }
                                     errorCode = "0";
                                     <?php 
@@ -479,7 +480,7 @@ function SCORMapi1_2() {
 
     function TotalTime() {
         total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
-        return '&'+underscore('cmi.core.total_time')+'='+escape(total_time);
+        return '&'+underscore('cmi.core.total_time')+'='+encodeURIComponent(total_time);
     }
 
     function CollectData(data,parent) {
@@ -494,7 +495,7 @@ function SCORMapi1_2() {
                 if (elementmodel != "cmi.core.session_time") {
                     if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                         if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                            elementstring = '&'+underscore(element)+'='+escape(data[property]);
+                            elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
                             if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
                                 if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
                                     datastring += elementstring;
