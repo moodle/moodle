@@ -3,7 +3,7 @@
 
 /// If config.php exists already then we are not needed.
 
-if (file_exists('./config.php')) { 
+if (file_exists('./config.php')) {
     header('Location: index.php');
     die;
 } else {
@@ -97,18 +97,18 @@ if (isset($_POST['stage'])) {
 
 
     if ($nextstage < 0) $nextstage = WELCOME;
-    
+
 
     /// Store any posted data
     foreach ($_POST as $setting=>$value) {
         $INSTALL[$setting] = $value;
     }
-    
+
 } else {
 
     $goforward = true;
     $nextstage = WELCOME;
-    
+
 }
 
 //==========================================================================//
@@ -131,7 +131,6 @@ require_once('./lib/moodlelib.php');
 require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
 require_once('./lib/environmentlib.php');
-require_once('./lib/xmlize.php');
 require_once('./lib/componentlib.class.php');
 require_once('./version.php');
 
@@ -199,7 +198,7 @@ if (isset($_GET['help'])) {
 /// Are we in config download mode?
 
 if (isset($_GET['download'])) {
-    header("Content-Type: application/download\n"); 
+    header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"config.php\"");
     echo $INSTALL['config'];
     exit;
@@ -216,7 +215,7 @@ if (isset($_GET['download'])) {
 if ($INSTALL['stage'] == DIRECTORY) {
 
     error_reporting(0);
-    
+
     /// check wwwroot
     if (ini_get('allow_url_fopen')) {
         if (($fh = @fopen($INSTALL['wwwrootform'].'/install.php', 'r')) === false) {
@@ -225,12 +224,12 @@ if ($INSTALL['stage'] == DIRECTORY) {
         }
     }
     if ($fh) fclose($fh);
-            
+
     /// check dirroot
     if (($fh = @fopen($INSTALL['dirrootform'].'/install.php', 'r')) === false ) {
         $errormsg .= get_string('dirrooterror', 'install').'<br />';
         $INSTALL['dirrootform'] = $INSTALL['dirroot'];
-    } 
+    }
     if ($fh) fclose($fh);
 
     /// check dataroot
@@ -238,7 +237,7 @@ if ($INSTALL['stage'] == DIRECTORY) {
     if (make_upload_directory('sessions', false) === false ) {
         $errormsg .= get_string('datarooterror', 'install').'<br />';
     }
-    if ($fh) fclose($fh); 
+    if ($fh) fclose($fh);
 
     if (!empty($errormsg)) $nextstage = DIRECTORY;
 
@@ -260,7 +259,7 @@ if ($INSTALL['stage'] == DATABASE) {
      } else {
          $INSTALL['skipdbencodingtest'] = false;
      }
-    
+
     /// different format for postgres7 by socket
     if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
         $INSTALL['dbhost'] = "user='{$INSTALL['dbuser']}' password='{$INSTALL['dbpass']}' dbname='{$INSTALL['dbname']}'";
@@ -282,11 +281,11 @@ if ($INSTALL['stage'] == DATABASE) {
 
     if (empty($errormsg)) {
 
-        error_reporting(0);  // Hide errors 
+        error_reporting(0);  // Hide errors
 
         if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
             /// The following doesn't seem to work but we're working on it
-            /// If you come up with a solution for creating a database in MySQL 
+            /// If you come up with a solution for creating a database in MySQL
             /// feel free to put it in and let us know
             if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
                 switch ($INSTALL['dbtype']) {   /// Try to create a database
@@ -331,7 +330,7 @@ if ($INSTALL['stage'] == DATABASE) {
                                         $nextstage = DATABASE;
                                         $INSTALL['showskipdbencodingtest'] = true;
                                         $INSTALL['dbencodingtestresults'] = false;
-                                    } 
+                                    }
                                 } else {
                                     $INSTALL['showskipdbencodingtest'] = true;
                                     $INSTALL['dbencodingtestresults'] = false;
@@ -464,7 +463,7 @@ if ($INSTALL['stage'] == DOWNLOADLANG && $INSTALL['downloadlangpack']) {
         $INSTALL['showdownloadlangpack']   = false;
         $INSTALL['downloadlangpackerror']  = $downloaderror;
     }
-}    
+}
 
 
 
@@ -518,7 +517,7 @@ if ($nextstage == SAVE) {
         fwrite($fh, $str);
         fclose($fh);
     }
-        
+
 
     $INSTALL['config'] = $str;
 }
@@ -569,7 +568,7 @@ if (isset($_GET['help'])) {
 
     <tr>
         <td class="td_main" colspan="2">
-    
+
 <?php
 
 if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
@@ -586,7 +585,7 @@ if ($nextstage == SAVE) {
         echo "<tr>\n";
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
-        echo "<td width=\"33.3%\" align=\"right\">\n";        
+        echo "<td width=\"33.3%\" align=\"right\">\n";
         print_single_button("index.php", $options, get_string('continue')."  &raquo;");
         echo "</td>\n";
         echo "</tr>\n";
@@ -594,16 +593,16 @@ if ($nextstage == SAVE) {
 
     } else {
         echo "<p class=\"errormsg\">".get_string('configfilenotwritten', 'install')."</p>";
-        
+
         echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n";
         echo "<tr>\n";
         echo "<td width=\"33.3%\">&nbsp;</td>\n";
-        echo "<td width=\"33.3%\" align=\"center\">\n";        
+        echo "<td width=\"33.3%\" align=\"center\">\n";
         $installoptions = array();
-        $installoptions['download'] = 1; 
+        $installoptions['download'] = 1;
         print_single_button("install.php", $installoptions, get_string('download', 'install'));
         echo "</td>\n";
-        echo "<td width=\"33.3%\" align=\"right\">\n";        
+        echo "<td width=\"33.3%\" align=\"right\">\n";
         print_single_button("index.php", $options, get_string('continue')."  &raquo;");
         echo "</td>\n";
         echo "</tr>\n";
@@ -641,7 +640,7 @@ if ($nextstage == SAVE) {
 
 
 
-<?php 
+<?php
 
 //==========================================================================//
 
@@ -690,7 +689,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             break;
         case COMPATIBILITY: /// Compatibilty check
             $compatsuccess = true;
-            
+
             /// Check that PHP is of a sufficient version
             print_compatibility_row(inst_check_php_version(), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'), 'phpversionhelp');
             /// Check session auto start
@@ -699,7 +698,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
             print_compatibility_row(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'), 'magicquotesruntimehelp');
             /// Check unsupported PHP configuration
             print_compatibility_row(ini_get_bool('magic_quotes_gpc') || (!ini_get_bool('register_globals')), get_string('globalsquotes', 'install'), get_string('globalsquoteserror', 'install'), 'globalsquoteshelp');
-            /// Check safe mode 
+            /// Check safe mode
             print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp', true);
             /// Check file uploads
             print_compatibility_row(ini_get_bool('file_uploads'), get_string('fileuploads', 'install'), get_string('fileuploadserror', 'install'), 'fileuploadshelp', true);
@@ -838,7 +837,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                         print_single_button('install.php', $options, get_string('downloadlanguagebutton','install', $languages[$INSTALL['language']]), 'POST');
                         print_simple_box_end();
                     } else {
-                /// Show result info 
+                /// Show result info
                     /// English lang packs aren't downloaded
                         if (substr($INSTALL['language'],0,2) == 'en') {
                             print_simple_box(get_string('downloadlanguagenotneeded', 'install', $languages[$INSTALL['language']]), 'center', '80%');
@@ -888,7 +887,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
         </td>
 
     </tr>
-    
+
     </table>
 <?php
     if (!$needtoopenform) {
@@ -937,7 +936,7 @@ function install_helpbutton($url, $title='') {
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }
-    
+
 
 
 //==========================================================================//
@@ -1036,7 +1035,7 @@ function css_styles() {
 <style type="text/css">
 
     body { background-color: #ffeece; }
-    p, li, td { 
+    p, li, td {
         font-family: helvetica, arial, sans-serif;
         font-size: 10pt;
     }
@@ -1112,6 +1111,18 @@ function css_styles() {
     .environmenttable {
         font-size: 10pt;
         border-color: #ffc85f;
+    }
+    table.environmenttable .error {
+        background-color : red;
+        color : inherit;
+    }
+
+    table.environmenttable .warn {
+        background-color : yellow;
+    }
+
+    table.environmenttable .ok {
+        background-color : lightgreen;
     }
     .header {
         background-color: #fee6b9;
