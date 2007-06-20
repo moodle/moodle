@@ -85,6 +85,12 @@ class grade_tree {
     var $include_grades;
 
     /**
+     * An flat array of final grades indexed by userid.
+     * @var array $grades
+     */
+    var $grades = array();
+
+    /**
      * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
      * @var string $commonvars
      */ 
@@ -633,6 +639,38 @@ class grade_tree {
     }
 
     /**
+     * Once the tree_array has been built, fills the $grades array by browsing through the tree
+     * and adding each final grade that is found.
+     * @return array $grades
+     */
+    function fill_grades($array = null) {
+        if (empty($array)) {
+            $array = $this->tree_array;
+        }
+
+        if (empty($array)) {
+            return null;
+        } else {
+            foreach ($array as $level1order => $level1) {
+                // If $level1 is a category, enter another recursive layer
+                if ($this->get_element_type($level1) == 'topcat' || $this->get_element_type($level1) == 'subcat') {
+                    $this->fill_grades($level1['children']);
+                } else {
+                    if (!empty($level1['finalgrades'])) {
+                        foreach ($level1['finalgrades'] as $final_grade) {
+                            $this->grades[$final_grade->userid][$final_grade->itemid] = $final_grade->gradevalue;
+                        } 
+                    }
+                }
+            }
+
+            reset($array);
+            return true;
+        }
+    }
+
+
+    /**
      * Static method that returns a sorted, nested array of all grade_categories and grade_items for 
      * a given course, or for the entire site if no courseid is given. This method is not recursive
      * by design, because we want to limit the layers to 3, and because we want to avoid accessing
@@ -814,18 +852,29 @@ class grade_tree {
      * @return string HTML table
      */
     function display_grades() {
+        global $CFG;
+
         // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
         $tree = $this->tree_filled;
+        $this->fill_grades();
 
         if (empty($this->tree_filled)) {
             debugging("The tree_filled array wasn't initialised, grade_tree could not display the grades correctly.");
             return false;
         }
+        
+        // Fetch array of students enroled in this course
+        if (!$context = get_context_instance(CONTEXT_COURSE, $this->courseid)) {
+            return false;  
+        } 
+        
+        $users = get_role_users(@implode(',', $CFG->gradebookroles), $context);
 
         $topcathtml = '<tr>';
         $cathtml    = '<tr>';
         $itemhtml   = '<tr>';
-        
+        $items = array();
+
         foreach ($tree as $topcat) {
             $itemcount = 0;
             
@@ -835,7 +884,8 @@ class grade_tree {
                 foreach ($cat['children'] as $item) {
                     $itemcount++;
                     $catitemcount++;
-                    $itemhtml .= '<td>' . $item['object']->itemname . '</td>';
+                    $itemhtml .= '<td>' . $item['object']->itemname . '</td>'; 
+                    $items[] = $item;
                 }
                 
                 if ($cat['object'] == 'filler') {
@@ -858,11 +908,28 @@ class grade_tree {
 
         }
         
+        $studentshtml = '';
+
+        foreach ($users as $userid => $user) {
+            $studentshtml .= '<tr>';
+            foreach ($items as $item) {
+                if (!empty($this->grades[$userid][$item['object']->id])) {
+                    $studentshtml .= '<td>' . $this->grades[$userid][$item['object']->id] . '</td>' . "\n"; 
+                } else {
+                    $studentshtml .= '<td>0</td>' . "\n";
+                }
+            } 
+            $studentshtml .= '</tr>';
+        }
+        
         $itemhtml   .= '</tr>';
         $cathtml    .= '</tr>';
         $topcathtml .= '</tr>';
-
-        return "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml</table>";
+        
+        $reporthtml = "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml";
+        $reporthtml .= $studentshtml; 
+        $reporthtml .= "</table>";
+        return $reporthtml;
 
     } 
 
