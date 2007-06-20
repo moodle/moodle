@@ -40,6 +40,7 @@ $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcompletehead'] = 'Configuration completed';
 $string['configurationcompletesub'] = 'Moodle made an attempt to save your configuration in a file in the root of your Moodle installation.';
 $string['continue'] = 'Continue';
+$string['customcheck'] = 'Other Checks';
 $string['database'] = 'Database';
 $string['databasecreationsettingshead'] = 'Now you need to configure the database settings where most Moodle data
     will be stored.  This database will be created automatically by the installer
@@ -223,6 +224,7 @@ $string['report'] = 'Report';
 $string['restricted'] = 'Restricted';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['serverchecks'] = 'Server Checks';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
