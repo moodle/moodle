@@ -424,8 +424,8 @@
     }
 
     // Start the form
-    echo '<form id="responseform" method="post" action="attempt.php" ',
-            'enctype="multipart/form-data" onclick="this.autocomplete=\'off\'">', "\n";
+    echo '<form id="responseform" method="post" action="attempt.php?q=', s($quiz->id), '&amp;page=', s($page),
+            '" enctype="multipart/form-data" onclick="this.autocomplete=\'off\'">', "\n";
     if($quiz->timelimit > 0) {
         // Make sure javascript is enabled for time limited quizzes
         ?>
@@ -442,7 +442,6 @@
 
     // Add a hidden field with the quiz id
     echo '<div>';
-    echo '<input type="hidden" name="q" value="' . s($quiz->id) . "\" />\n";
 
     // Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
@@ -452,7 +451,7 @@
         //<![CDATA[
         function navigate(page) {
             var ourForm = document.getElementById('responseform');
-            ourForm.page.value=page;
+            ourForm.action = ourForm.action.replace(/page=.*/, 'page=' + page);
             if (ourForm.onsubmit) {
                 ourForm.onsubmit();
             }
@@ -461,7 +460,6 @@
         //]]>
         </script>
         <?php
-        echo '<input type="hidden" id="page" name="page" value="'.$page."\" />\n";
         quiz_print_navigation_panel($page, $numpages);
         echo "<br />\n";
     }
