@@ -870,9 +870,9 @@ class grade_tree {
         
         $users = get_role_users(@implode(',', $CFG->gradebookroles), $context);
 
-        $topcathtml = '<tr>';
-        $cathtml    = '<tr>';
-        $itemhtml   = '<tr>';
+        $topcathtml = '<tr><td class="filler">&nbsp;</td>';
+        $cathtml    = '<tr><td class="filler">&nbsp;</td>';
+        $itemhtml   = '<tr><td class="filler">&nbsp;</td>';
         $items = array();
 
         foreach ($tree as $topcat) {
@@ -911,7 +911,7 @@ class grade_tree {
         $studentshtml = '';
 
         foreach ($users as $userid => $user) {
-            $studentshtml .= '<tr>';
+            $studentshtml .= '<tr><th>' . $user->firstname . ' ' . $user->lastname . '</th>';
             foreach ($items as $item) {
                 if (!empty($this->grades[$userid][$item['object']->id])) {
                     $studentshtml .= '<td>' . $this->grades[$userid][$item['object']->id] . '</td>' . "\n"; 
