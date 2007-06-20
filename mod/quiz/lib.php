@@ -866,4 +866,31 @@ function quiz_delete_userdata($data, $showfeedback=true) {
         notify(get_string('attemptsdeleted','quiz'), 'notifysuccess');
     }
 }
+
+/**
+ * Checks whether the current user is allowed to view a file uploaded in a quiz.
+ * Teachers can view any from their courses, students can only view their own.
+ * 
+ * @param int $attemptid int attempt id
+ * @param int $questionid int question id
+ * @return boolean to indicate access granted or denied  
+ */
+function quiz_check_file_access($attemptid, $questionid) {
+    global $USER;
+    
+    $attempt = get_record("quiz_attempts", 'id', $attemptid);
+    $quiz = get_record("quiz", 'id', $attempt->quiz);
+    $context = get_context_instance(CONTEXT_COURSE, $quiz->course);
+    
+    // access granted if the current user submitted this file
+    if ($attempt->userid == $USER->id) {
+        return true;
+    // access granted if the current user has permission to grade quizzes in this course
+    } else if (has_capability('mod/quiz:viewreports', $context) || has_capability('mod/quiz:grade', $context)) {
+        return true;
+    }
+    
+    // otherwise, this user does not have permission    
+    return false;
+}
 ?>
