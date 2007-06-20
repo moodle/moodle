@@ -1500,11 +1500,12 @@
                 fwrite ($bf,full_tag("MULTFACTOR",5,false,$grade_item->multfactor));
                 fwrite ($bf,full_tag("PLUSFACTOR",5,false,$grade_item->plusfactor));
                 fwrite ($bf,full_tag("HIDDEN",5,false,$grade_item->hidden));
+                fwrite ($bf,full_tag("LOCKED",5,false,$grade_item->locked));
+                fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
 
                 // back up the other stuff here                
                 $status = backup_gradebook_calculations_info($bf,$preferences,$grade_item->id);              
-                $status = backup_gradebook_grades_raw_info($bf,$preferences,$grade_item->id);
-                $status = backup_gradebook_grades_final_info($bf,$preferences,$grade_item->id);
+                $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_history_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
 
@@ -1574,52 +1575,32 @@
         return $status;
     }
 
-    function backup_gradebook_grades_raw_info($bf,$preferences, $itemid) {
+    function backup_gradebook_grades_info($bf,$preferences, $itemid) {
 
         global $CFG;
 
         $status = true;
         
         // find all calculations belonging to this item
-        if ($raws = get_records('grade_grades_raw', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_GRADES_RAW",5,true));
+        if ($raws = get_records('grade_grades', 'itemid', $itemid)) {
+            fwrite ($bf,start_tag("GRADE_GRADES",5,true));
             foreach ($raws as $raw) {
-                fwrite ($bf,start_tag("GRADE_RAW",6,true));
+                fwrite ($bf,start_tag("GRADE",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$raw->id));
                 fwrite ($bf,full_tag("USERID",7,false,$raw->userid));
-                fwrite ($bf,full_tag("GRADEVALUE",7,false,$raw->gradevalue));
-                fwrite ($bf,full_tag("GRADEMAX",7,false,$raw->grademax));
-                fwrite ($bf,full_tag("GRADEMIN",7,false,$raw->grademin));
-                fwrite ($bf,full_tag("SCALEID",7,false,$raw->scaleid));
+                fwrite ($bf,full_tag("RAWGRADE",7,false,$raw->rawgrade));
+                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$raw->rawgrademax));
+                fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$raw->rawgrademin));
+                fwrite ($bf,full_tag("RAWSCALEID",7,false,$raw->rawscaleid));
                 fwrite ($bf,full_tag("USERMODIFIED",7,false,$raw->usermodified));
-                fwrite ($bf,end_tag("GRADE_RAW",6,true));
-            }  
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_RAW",5,true));
-        }
-        return $status;
-    }
-
-    function backup_gradebook_grades_final_info($bf, $preferences, $itemid) {
-
-        global $CFG;
-
-        $status = true;
-        
-        // find all calculations belonging to this item
-        if ($finals = get_records('grade_grades_final', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_GRADES_FINAL",5,true));
-            foreach ($finals as $final) {
-                fwrite ($bf,start_tag("GRADE_FINAL",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$final->id));
-                fwrite ($bf,full_tag("USERID",7,false,$final->userid));
-                fwrite ($bf,full_tag("GRADEVALUE",7,false,$final->gradevalue));
+                fwrite ($bf,full_tag("FINALGRADE",7,false,$raw->finalgrade));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$final->hidden));
                 fwrite ($bf,full_tag("LOCKED",7,false,$final->locked));
+                fwrite ($bf,full_tag("LOCKTIME",7,false,$final->locktime));
                 fwrite ($bf,full_tag("EXPORTED",7,false,$final->exported));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$final->usermodified));
-                fwrite ($bf,end_tag("GRADE_FINAL",6,true));
+                fwrite ($bf,end_tag("GRADE_RAW",6,true));
             }  
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_FINAL",5,true));
+            $stauts = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
         }
         return $status;
     }

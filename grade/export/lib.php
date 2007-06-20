@@ -155,8 +155,8 @@ class grade_export {
                                 $studentgrade = $itemgrades[$student->id];
                             }
                             
-                            if (!empty($studentgrade->gradevalue)) {
-                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->gradevalue;                                    
+                            if (!empty($studentgrade->finalgrade)) {
+                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->finalgrade;                                    
                             } else {
                                 $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = "";
                                 $this->gradeshtml[$student->id][$gradeitem->id] = "";

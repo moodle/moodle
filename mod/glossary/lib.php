@@ -321,7 +321,7 @@ function glossary_get_user_grades($glossary, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, avg(gr.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(gr.rating) AS rawgrade
               FROM {$CFG->prefix}user u, {$CFG->prefix}glossary_entries ge,
                    {$CFG->prefix}glossary_ratings gr
              WHERE u.id = ge.userid AND ge.id = gr.entryid
@@ -349,7 +349,7 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
             $grade = new object();
             $grade->itemid     = $glossary->id;
             $grade->userid     = $userid;
-            $grade->gradevalue = NULL;
+            $grade->rawgrade = NULL;
             grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
         }
 

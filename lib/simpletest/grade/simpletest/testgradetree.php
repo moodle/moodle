@@ -262,7 +262,7 @@ class grade_tree_test extends grade_test {
         $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][1]['object']->itemname));
         $this->assertEqual($this->grade_items[2]->itemname, $tree->tree_array[1]['children'][2]['children'][1]['object']->itemname);
         $this->assertFalse(empty($tree->tree_array[1]['children'][2]['children'][1]['final_grades'][1]));
-        $this->assertEqual($this->grade_grades_final[6]->gradevalue, $tree->tree_array[1]['children'][2]['children'][1]['final_grades'][1]->gradevalue);
+        $this->assertEqual($this->grade_grades[6]->finalgrade, $tree->tree_array[1]['children'][2]['children'][1]['final_grades'][1]->finalgrade);
         
         // Check the need_insert array
         $this->assertEqual(1, count($tree->need_insert));

@@ -1111,7 +1111,7 @@ function forum_get_user_grades($forum, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, avg(fr.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(fr.rating) AS rawgrade
               FROM {$CFG->prefix}user u, {$CFG->prefix}forum_posts fp,
                    {$CFG->prefix}forum_ratings fr, {$CFG->prefix}forum_discussions fd
              WHERE u.id = fp.userid AND fp.discussion = fd.id AND fr.post = fp.id
@@ -1139,7 +1139,7 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
             $grade = new object();
             $grade->itemid     = $forum->id;
             $grade->userid     = $userid;
-            $grade->gradevalue = NULL;
+            $grade->rawgrade = NULL;
             grade_update('mod/forum', $data->course, 'mod', 'forum', $forum->id, 0, $grade);
         }
 

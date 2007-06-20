@@ -884,75 +884,62 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch create table for grade_calculations
         $result = $result && create_table($table);
         
-    /// Define table grade_grades_raw to be created
-        $table = new XMLDBTable('grade_grades_raw');
 
-    /// Adding fields to table grade_grades_raw
+    /// Define table grade_grades to be created
+        $table = new XMLDBTable('grade_grades');
+
+    /// Adding fields to table grade_grades
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('gradevalue', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
-        $table->addFieldInfo('gradescale', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
-        $table->addFieldInfo('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
-        $table->addFieldInfo('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
-        $table->addFieldInfo('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+        $table->addFieldInfo('rawgrademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
+        $table->addFieldInfo('rawgrademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('rawscaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-
-    /// Adding keys to table grade_grades_raw
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-        $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-        $table->addKeyInfo('scaleid', XMLDB_KEY_FOREIGN, array('scaleid'), 'scale', array('id'));
-        $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-    /// Launch create table for grade_grades_raw
-        $result = $result && create_table($table);
-        
-    /// Define table grade_grades_final to be created
-        $table = new XMLDBTable('grade_grades_final');
-
-    /// Adding fields to table grade_grades_final
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('gradevalue', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
-        $table->addFieldInfo('gradescale', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
-        $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('finalgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+        $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
 
-    /// Adding keys to table grade_grades_final
+    /// Adding keys to table grade_grades
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
         $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->addKeyInfo('rawscaleid', XMLDB_KEY_FOREIGN, array('rawscaleid'), 'scale', array('id'));
         $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
-    /// Launch create table for grade_grades_final
+    /// Launch create table for grade_grades
         $result = $result && create_table($table);
         
+
     /// Define table grade_grades_text to be created
         $table = new XMLDBTable('grade_grades_text');
 
     /// Adding fields to table grade_grades_text
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('gradesid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+        $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+        $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
         $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
 
     /// Adding keys to table grade_grades_text
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('gradesid', XMLDB_KEY_FOREIGN, array('gradesid'), 'grade_grades_raw', array('id'));
         $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+        $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_item', array('id'));
+        $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
 
     /// Launch create table for grade_grades_text
         $result = $result && create_table($table);
+
         
    /// Define table grade_outcomes to be created
         $table = new XMLDBTable('grade_outcomes');
@@ -1072,58 +1059,10 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field path
         $result = $result && add_field($table, $field);
      
-    /// Define field gradevalue to be dropped from grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('gradevalue');
-
-    /// Launch drop field gradevalue
-        $result = $result && drop_field($table, $field);
-    
-    /// Define field gradescale to be dropped from grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('gradescale');
-
-    /// Launch drop field gradescale
-        $result = $result && drop_field($table, $field);
-    
-    /// Define field locked to be added to grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('locked');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'hidden');
-
-    /// Launch add field locked
-        $result = $result && add_field($table, $field);
     } 
-    
-    if ($result && $oldversion < 2007043000) {
-
-    /// Define field gradevalue to be added to grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('gradevalue');
-        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'userid');
-
-    /// Launch add field gradevalue
-        $result = $result && add_field($table, $field);
-        
-    /// Define field gradescale to be added to grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('gradescale');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'gradevalue');
-
-    /// Launch add field gradescale
-        $result = $result && add_field($table, $field);
-    }
 
     if ($result && $oldversion < 2007043001) {
 
-    /// Define field informationformat to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $field = new XMLDBField('informationformat');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'information');
-
-    /// Launch add field informationformat
-        $result = $result && add_field($table, $field);
-        
     /// Define field schedule to be added to events_handlers
         $table = new XMLDBTable('events_handlers');
         $field = new XMLDBField('schedule');
@@ -1169,87 +1108,6 @@ function xmldb_main_upgrade($oldversion=0) {
     
     /// Launch drop field parent
         $result = $result && drop_field($table, $field);
-    }
-    if ($result && $oldversion < 2007050400) {
-
-    /// Define field feedbackformat to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $field = new XMLDBField('feedbackformat');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'feedback');
-
-    /// Launch add field feedbackformat
-        $result = $result && add_field($table, $field);
-    }
-    
-    
-    if ($result && $oldversion < 2007050900) {
-
-    /// Define field gradescale to be dropped from grade_grades_raw
-        $table = new XMLDBTable('grade_grades_raw');
-        $field = new XMLDBField('gradescale');
-
-    /// Launch drop field gradescale
-        $result = $result && drop_field($table, $field);
-        
-        
-    /// Define field gradescale to be dropped from grade_grades_final
-        $table = new XMLDBTable('grade_grades_final');
-        $field = new XMLDBField('gradescale');
-
-    /// Launch drop field gradescale
-        $result = $result && drop_field($table, $field);
-    }
-    
-    /// fixing the problem of grade_grades_text can't be referenced directly from grade_grades_final
-    if ($result && $oldversion < 2007050901) {
-
-    /// Define key gradesid (foreign) to be dropped form grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $key = new XMLDBKey('gradesid');
-        $key->setAttributes(XMLDB_KEY_FOREIGN, array('gradesid'), 'grade_grades_raw', array('id'));
-
-    /// Launch drop key gradesid
-        $result = $result && drop_key($table, $key);
-        
-    /// Define field gradesid to be dropped from grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $field = new XMLDBField('gradesid');
-
-    /// Launch drop field gradesid
-        $result = $result && drop_field($table, $field);
-        
-    /// Define field itemid to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $field = new XMLDBField('itemid');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'id');
-
-    /// Launch add field itemid
-        $result = $result && add_field($table, $field);
-        
-    /// Define field userid to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $field = new XMLDBField('userid');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'itemid');
-
-    /// Launch add field userid
-        $result = $result && add_field($table, $field);
-        
-    /// Define key itemid (foreign) to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $key = new XMLDBKey('itemid');
-        $key->setAttributes(XMLDB_KEY_FOREIGN, array('itemid'), 'grade_item', array('id'));
-
-    /// Launch add key itemid
-        $result = $result && add_key($table, $key);
-                
-    /// Define key userid (foreign) to be added to grade_grades_text
-        $table = new XMLDBTable('grade_grades_text');
-        $key = new XMLDBKey('userid');
-        $key->setAttributes(XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-
-    /// Launch add key userid
-        $result = $result && add_key($table, $key);
-    
     }
 
     if ($result && $oldversion < 2007051100) {
@@ -1356,18 +1214,120 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_default($table, $field);
     }
     
-    /// new tables for import buffers
-    if ($result && $oldversion < 2007060502) {
-    
+
+/// merge raw and final grade tables
+    if ($result && $oldversion < 2007062007) {
+        // it should be ok to frop following tables so early in development cycle ;-)
+        // the grades can be fetched again from modules anyway
+
+        $table = new XMLDBTable('grade_grades_final');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+
+        $table = new XMLDBTable('grade_grades_raw');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+
+        $table = new XMLDBTable('grade_grades_text');
+        $field = new XMLDBField('gradesid');
+
+        if (field_exists($table, $field)) {
+            drop_table($table);
+
+        /// Adding fields to table grade_grades_text
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+            $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+            $table->addFieldInfo('feedbackformat', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
+            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
+
+        /// Adding keys to table grade_grades_text
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+            $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_item', array('id'));
+            $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        /// Launch create table for grade_grades_text
+            $result = $result && create_table($table);
+        }
+
+        $table = new XMLDBTable('grade_grades');
+        if (!table_exists($table)) {
+        /// Adding fields to table grade_grades
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+            $table->addFieldInfo('rawgrademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
+            $table->addFieldInfo('rawgrademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('rawscaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('finalgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+            $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+
+        /// Adding keys to table grade_grades
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+            $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
+            $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+            $table->addKeyInfo('rawscaleid', XMLDB_KEY_FOREIGN, array('rawscaleid'), 'scale', array('id'));
+            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+
+        /// Launch create table for grade_grades
+            $result = $result && create_table($table);
+        }
+
+        $table  = new XMLDBTable('grade_items');
+        $field = new XMLDBField('locktime');
+
+        if (!field_exists($table, $field)) {
+            $locktime->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'locked');
+        /// Launch add field locktime
+            $result = $result && add_field($table, $field);
+        }
+
+        /// Remove the obsoleted unitttests tables - they will be recreated automatically
+        $tables = array('grade_categories',
+                        'scale',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_history');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable('unittest_'.$table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+
+        }
+
     /// Define table grade_import_values to be created
         $table = new XMLDBTable('grade_import_values');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
 
     /// Adding fields to table grade_import_values
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('newgradeitem', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('gradevalue', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0.0');
+        $table->addFieldInfo('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0.0');
         $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
     /// Adding keys to table grade_import_values
@@ -1377,9 +1337,12 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for grade_import_values
         $result = $result && create_table($table);
-        
+
     /// Define table grade_import_newitem to be created
         $table = new XMLDBTable('grade_import_newitem');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
 
     /// Adding fields to table grade_import_newitem
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -1391,10 +1354,11 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for grade_import_newitem
         $result = $result && create_table($table);
+
     }
-    
-    
-    return $result; 
+
+
+    return $result;
 }
 
 ?>

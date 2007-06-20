@@ -742,7 +742,7 @@ function data_get_user_grades($data, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, avg(drt.rating) AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, avg(drt.rating) AS rawgrade
               FROM {$CFG->prefix}user u, {$CFG->prefix}data_records dr,
                    {$CFG->prefix}data_ratings drt
              WHERE u.id = dr.userid AND dr.id = drt.recordid
@@ -773,7 +773,7 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
             $grade = new object();
             $grade->itemid     = $data->id;
             $grade->userid     = $userid;
-            $grade->gradevalue = NULL;
+            $grade->rawgrade = NULL;
             grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grade);
         }
 

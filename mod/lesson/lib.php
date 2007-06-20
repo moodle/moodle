@@ -412,13 +412,13 @@ function lesson_get_user_grades($lesson, $userid=0) {
 
     if ($lesson->retake) {
         if ($lesson->usemaxgrade) {
-            $sql = "SELECT u.id, u.id AS userid, MAX(g.grade) AS gradevalue
+            $sql = "SELECT u.id, u.id AS userid, MAX(g.grade) AS rawgrade
                       FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
                      WHERE u.id = g.userid AND g.lessonid = $lesson->id
                            $user
                   GROUP BY u.id";
         } else {
-            $sql = "SELECT u.id, u.id AS userid, AVG(g.grade) AS gradevalue
+            $sql = "SELECT u.id, u.id AS userid, AVG(g.grade) AS rawgrade
                       FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
                      WHERE u.id = g.userid AND g.lessonid = $lesson->id
                            $user
@@ -433,7 +433,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
                              $fuser
                        GROUP BY uu.id";
 
-        $sql = "SELECT u.id, u.id AS userid, g.grade AS gradevalue
+        $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade
                   FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g, ($firstonly) f
                  WHERE u.id = g.userid AND g.lessonid = $lesson->id
                        AND g.id = f.firstcompleted AND g.userid=f.userid
@@ -463,7 +463,7 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
             $grade = new object();
             $grade->itemid     = $lesson->id;
             $grade->userid     = $userid;
-            $grade->gradevalue = NULL;
+            $grade->rawgrade = NULL;
             grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grade);
         }
 

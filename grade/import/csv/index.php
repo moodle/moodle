@@ -143,7 +143,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         } 
                         unset($newgrade);
                         $newgrade -> newgradeitem = $newgradeitems[$key];
-                        $newgrade -> gradevalue = $value;                        
+                        $newgrade -> rawgrade = $value;                        
                         $newgrades[] = $newgrade;
                         
                         // if not, put it in                        
@@ -174,7 +174,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                             
                             unset($newgrade);
                             $newgrade -> itemid = $gradeitem->id;
-                            $newgrade -> gradevalue = $value;                            
+                            $newgrade -> rawgrade = $value;                            
                             $newgrades[] = $newgrade;
                         } // otherwise, we ignore this column altogether 
                           // because user has chosen to ignore them (e.g. institution, address etc)

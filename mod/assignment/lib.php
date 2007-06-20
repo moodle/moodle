@@ -1833,7 +1833,7 @@ function assignment_get_user_grades($assignment, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, s.grade AS gradevalue, s.submissioncomment AS feedback, s.format AS feedbackformat
+    $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat
               FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
              WHERE u.id = s.userid AND s.assignment = $assignment->id
                    $user";
@@ -1856,8 +1856,8 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
     if ($assignment != null) {
         if ($grades = assignment_get_user_grades($assignment, $userid)) {
             foreach($grades as $k=>$v) {
-                if ($v->gradevalue == -1) {
-                    $grades[$k]->gradevalue = null;
+                if ($v->rawgrade == -1) {
+                    $grades[$k]->rawgrade = null;
                 }
             }
             grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
@@ -1971,10 +1971,10 @@ function assignment_grade_handler($eventdata) {
     $submission->teacher    = $USER->id;
     $submission->timemarked = time();
 
-    if (is_null($eventdata->gradevalue)) {
+    if (is_null($eventdata->rawgrade)) {
         $submission->grade  = -1;
     } else {
-        $submission->grade  = (int)$eventdata->gradevalue; // round it for now
+        $submission->grade  = (int)$eventdata->rawgrade; // round it for now
         if ($old->grade != $submission->grade) {
             $submission->mailed = 0;       // Make sure mail goes out (again, even)
         }

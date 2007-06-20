@@ -42,8 +42,8 @@ class grade_text_test extends grade_test {
     function test_grade_grades_text_construct() {
         $params = new stdClass();
 
-        $params->itemid = $this->grade_grades_raw[0]->itemid;
-        $params->userid = $this->grade_grades_raw[0]->userid;
+        $params->itemid = $this->grade_grades[0]->itemid;
+        $params->userid = $this->grade_grades[0]->userid;
         $params->information = 'Thumbs down';
         $params->informationformat = FORMAT_PLAIN;
         $params->feedback = 'Good, but not good enough..';
@@ -62,8 +62,8 @@ class grade_text_test extends grade_test {
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'insert'));
         
-        $grade_grades_text->itemid = $this->grade_grades_raw[0]->itemid;
-        $grade_grades_text->userid = $this->grade_grades_raw[0]->userid;
+        $grade_grades_text->itemid = $this->grade_grades[0]->itemid;
+        $grade_grades_text->userid = $this->grade_grades[0]->userid;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';

@@ -170,17 +170,17 @@ class grade_category_test extends grade_test {
         $this->assertTrue(method_exists($category, 'generate_grades'));
         $category->load_grade_item();
 
-        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
-        $this->assertFalse($raw_grades);
+        $grades = get_records('grade_grades', 'itemid', $category->grade_item->id);
+        $this->assertFalse($grades);
 
         $category->generate_grades();
-        $raw_grades = get_records('grade_grades_raw', 'itemid', $category->grade_item->id);
-        $this->assertEqual(3, count($raw_grades));
+        $grades = get_records('grade_grades', 'itemid', $category->grade_item->id);
+        $this->assertEqual(3, count($grades));
 
         $rawvalues = array();
-        foreach ($raw_grades as $grade) {
-            $this->assertWithinMargin($grade->gradevalue, $grade->grademin, $grade->grademax);
-            $rawvalues[] = (int)$grade->gradevalue;
+        foreach ($grades as $grade) {
+            $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+            $rawvalues[] = (int)$grade->rawgrade;
         }
         sort($rawvalues);
         // calculated mean results
@@ -194,15 +194,15 @@ class grade_category_test extends grade_test {
     }
     
     function generate_random_raw_grade($item, $userid) {
-        $raw_grade = new grade_grades_raw();
-        $raw_grade->itemid = $item->id;
-        $raw_grade->userid = $userid;
-        $raw_grade->grademin = 0;
-        $raw_grade->grademax = 1;
+        $grade = new grade_grades();
+        $grade->itemid = $item->id;
+        $grade->userid = $userid;
+        $grade->grademin = 0;
+        $grade->grademax = 1;
         $valuetype = "grade$item->gradetype";
-        $raw_grade->gradevalue = rand(0, 1000) / 1000;
-        $raw_grade->insert();
-        return $raw_grade->gradevalue;
+        $grade->rawgrade = rand(0, 1000) / 1000;
+        $grade->insert();
+        return $grade->rawgrade;
     } 
 
     function test_grade_category_set_as_parent() {

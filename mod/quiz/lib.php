@@ -238,7 +238,7 @@ function quiz_get_user_grades($quiz, $userid=0) {
 
     $user = $userid ? "AND u.id = $userid" : "";
 
-    $sql = "SELECT u.id, u.id AS userid, g.grade AS gradevalue
+    $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade
               FROM {$CFG->prefix}user u, {$CFG->prefix}quiz_grades g
              WHERE u.id = g.userid AND g.quiz = $quiz->id
                    $user";
@@ -266,7 +266,7 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
             $grade = new object();
             $grade->itemid     = $quiz->id;
             $grade->userid     = $userid;
-            $grade->gradevalue = NULL;
+            $grade->rawgrade = NULL;
             grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grade);
         }
 

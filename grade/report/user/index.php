@@ -59,8 +59,8 @@ if ($gradetree = new grade_tree($courseid)) {
 
         $params->itemid = $gradeitem->id;
         $params->userid = $userid;
-        $grade_grades_final = new grade_grades_final($params);
-        $grade_text = $grade_grades_final->load_text();
+        $grade_grades = new grade_grades($params);
+        $grade_text = $grade_grades->load_text();
 
         /// prints mod icon if available
         if ($gradeitem->itemtype == 'mod') {
@@ -81,26 +81,25 @@ if ($gradetree = new grade_tree($courseid)) {
         }
     
         /// prints the grade 
-        $data[] = $grade_grades_final->gradevalue;
+        $data[] = $grade_grades->finalgrade;
     
         /// prints percentage
    
         if ($gradeitem->gradetype == 1) {
             // processing numeric grade
-            if ($grade_grades_final->gradevalue) {
-                $percentage = $grade_grades_final->gradevalue / $gradeitem->grademax * 100 .'%';
+            if ($grade_grades->finalgrade) {
             } else {
                 $percentage = '-';
             }
             $gradetotal += $gradeitem->grademax;
-            $gradesum += $grade_grades_final->gradevalue;
+            $gradesum += $grade_grades->finalgrade;
         } else if ($gradeitem->gradetype == 2) {
             // processing scale grade
             $scale = get_record('scale', 'id', $gradeitem->scaleid);
             $scalevals = explode(",", $scale->scale);
-            $percentage = ($grade_grades_final->gradevalue -1) / count($scalevals);        
+            $percentage = ($grade_grades->finalgrade -1) / count($scalevals);        
             $gradesum += count($scalevals);
-            $gradetotal += $grade_grades_final->gradevalue;
+            $gradetotal += $grade_grades->finalgrade;
         } else {
             // text grade
             $percentage = '-';  

@@ -87,7 +87,7 @@ if ( $formdata = $mform->get_data()) {
 
             if (isset($result['#']['score'][0]['#'])) {
                 $newgrade -> itemid = $gradeitem->id;
-                $newgrade -> gradevalue = $result['#']['score'][0]['#'];
+                $newgrade -> rawgrade = $result['#']['score'][0]['#'];
                 $newgrade-> userid = $result['#']['student'][0]['#'];
                 $newgrades[] = $newgrade;
             }
@@ -108,7 +108,7 @@ if ( $formdata = $mform->get_data()) {
                 }
           
                 // check grade value is a numeric grade
-                if (!is_numeric($newgrade->gradevalue)) {
+                if (!is_numeric($newgrade->rawgrade)) {
                     $status = false;
                     import_cleanup($importcode);
                     notify(get_string('badgrade', 'grades'));

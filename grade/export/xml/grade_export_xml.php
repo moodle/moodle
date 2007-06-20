@@ -66,6 +66,7 @@ class grade_export_xml extends grade_export {
                 // state can be new, or regrade
                 // require comparing of timestamps in db
                 
+                $params = new object();
                 $params->idnumber = $idnumber;
                 // get the grade item
                 $gradeitem = new grade_item($params);
@@ -73,16 +74,16 @@ class grade_export_xml extends grade_export {
                 // we are trying to figure out if this is a new grade, or a regraded grade
                 // only relevant if this grade for this user is already exported
                     
-                // get the grade_grades_final for this user
-                unset($params);
+                // get the grade_grades for this user
+                $params = new object();
                 $params->itemid = $gradeitem->id;
                 $params->userid = $studentid;
                 
-                $grade_grades_final = new grade_grades_final($params);
+                $grade_grades = new grade_grades($params);
                     
                 // if exported, check grade_history, if modified after export, set state to regrade
-                if (!empty($grade_grades_final->exported)) {
-                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades_final->exported)) {
+                if (!empty($grade_grades->exported)) {
+                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades->exported)) {
                         $status = 'regrade';  
                     } else {
                         $status = 'new';  
@@ -105,9 +106,9 @@ class grade_export_xml extends grade_export {
 
                 // timestamp this if needed
                 if ($export) {
-                    $grade_grades_final->exported = time();
+                    $grade_grades->exported = time();
                     // update the time stamp;
-                    $grade_grades_final->update();
+                    $grade_grades->update();
                 }
             }
         }

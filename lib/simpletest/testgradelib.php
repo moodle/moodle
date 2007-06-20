@@ -45,10 +45,10 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 class gradelib_test extends grade_test {
 
     function test_grade_get_items() {
-        if (get_class($this) == 'gradelib_test') { 
+        if (get_class($this) == 'gradelib_test') {
             $grade_items = grade_get_items($this->courseid);
 
-            $this->assertTrue(is_array($grade_items)); 
+            $this->assertTrue(is_array($grade_items));
             $this->assertEqual(count($grade_items), 10);
         }
     }
@@ -56,15 +56,15 @@ class gradelib_test extends grade_test {
 /*
 // obsolted function, should be replaced by grade_update() or removed completely
     function test_grade_create_category() {
-        if (get_class($this) == 'gradelib_test') { 
+        if (get_class($this) == 'gradelib_test') {
             $grade_category = new stdClass();
             $grade_category->timecreated = mktime();
             $grade_category->timemodified = mktime();
-        
+
             $items = array(new grade_item(), new grade_item());
-            
+
             $grade_category->id = grade_create_category($this->courseid, 'unittestcategory4', $items, GRADE_AGGREGATE_MEAN);
-            
+
             $last_grade_category = end($this->grade_categories);
             $this->assertEqual($grade_category->id, $last_grade_category->id + 1);
 
@@ -77,19 +77,13 @@ class gradelib_test extends grade_test {
     }
 */
     function test_grade_is_locked() {
-        if (get_class($this) == 'gradelib_test') { 
+        if (get_class($this) == 'gradelib_test') {
             $grade_item = $this->grade_items[0];
             $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
             $grade_item = $this->grade_items[1];
-            $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber)); 
+            $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
         }
     }
-
-    function test_grade_standardise_score() {
-        $this->assertEqual(4, round(standardise_score(6, 0, 7, 0, 5)));
-        $this->assertEqual(40, standardise_score(50, 30, 80, 0, 100));
-    }
-
 }
 
 ?>

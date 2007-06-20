@@ -1460,6 +1460,8 @@
                             $dbrec->multfactor = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#']);
                             $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
                             $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);                                                                      
+                            $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);                                                                      
+                            $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);                                                                      
                             
                             /// if thesse 5 all match then we know this item is already in db
 
@@ -1498,29 +1500,34 @@
                             $itemid = insert_record('grade_items',$dbrec);
                             
                             /// now, restore grade_calculations, grade_raw, grade_final, grade_text, and grade_history
-                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']) && ($raws = $info['GRADE_ITEM']['#']['GRADE_GRADES_RAW']['0']['#']['GRADE_RAW'])) {
+                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
                                 //Iterate over items
-                                for($i = 0; $i < sizeof($raws); $i++) {
-                                    $ite_info = $raws[$i];
+                                for($i = 0; $i < sizeof($grades); $i++) {
+                                    $ite_info = $grades[$i];
                                     //traverse_xmlize($ite_info);
 //Debug
                                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
                                     //Now build the GRADE_ITEM record structure
-                                    $raw->itemid       = $itemid;
+                                    $grade = new object();
+                                    $grade->itemid       = $itemid;
                                     $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));            
-                                    $raw->userid = $user->new_id;
-                                    $raw->gradevalue = backup_todb($ite_info['#']['GRADEVALUE']['0']['#']);
-                                    $raw->grademax = backup_todb($ite_info['#']['GRADEMAX']['0']['#']);
-                                    $raw->grademin = backup_todb($ite_info['#']['GRADEMIN']['0']['#']);
+                                    $grade->userid = $user->new_id;
+                                    $grade->rawgrade = backup_todb($ite_info['#']['RAWGRADE']['0']['#']);
+                                    $grade->rawgrademax = backup_todb($ite_info['#']['RAWGRADEMAX']['0']['#']);
+                                    $grade->rawgrademin = backup_todb($ite_info['#']['RAWGRADEMIN']['0']['#']);
                                     // need to find scaleid
-                                
-                                    if ($ite_info['#']['SCALEID']['0']['#']) {
-                                        $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['SCALEID']['0']['#']));
-                                        $raw->scaleid = $scale->new_id;
+                                    if ($ite_info['#']['RAWSCALEID']['0']['#']) {
+                                        $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['RAWSCALEID']['0']['#']));
+                                        $grade->rawscaleid = $scale->new_id;
                                     }
+                                    $grade->finalgrade = backup_todb($ite_info['#']['FINALGRADE']['0']['#']);
+                                    $grade->hidden = backup_todb($ite_info['#']['HIDDEN']['0']['#']);
+                                    $grade->locked = backup_todb($ite_info['#']['LOCKED']['0']['#']);
+                                    $grade->locktime = backup_todb($ite_info['#']['LOCKTIME']['0']['#']);
+                                    $grade->exported = backup_todb($ite_info['#']['EXPORTED']['0']['#']);
                                 
-                                    insert_record('grade_grades_raw', $raw);
+                                    insert_record('grade_grades', $grade);
                                     
                                     $counter++;
                                     if ($counter % 20 == 0) {
@@ -1534,40 +1541,6 @@
                                     }
                                 }
                             }
-                            
-                            /// processing grade_grades_final   
-                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_FINAL']['0']['#']) && ($finals = $info['GRADE_ITEM']['#']['GRADE_GRADES_FINAL']['0']['#']['GRADE_FINAL'])) {
-                                //Iterate over items
-                                for($i = 0; $i < sizeof($finals); $i++) {
-                                    $ite_info = $finals[$i];
-                                    //traverse_xmlize($ite_info);                                                                 //Debug
-                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                                    //$GLOBALS['traverse_array']="";                                                              //Debug
-                                    $final->itemid       = $itemid;
-                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));            
-                                    $final->userid = $user->new_id;
-                                    $final->gradevalue = backup_todb($ite_info['#']['GRADEVALUE']['0']['#']);
-                                    $final->hidden = backup_todb($ite_info['#']['HIDDEN']['0']['#']);
-                                    $final->locked = backup_todb($ite_info['#']['LOCKED']['0']['#']);
-                                    $final->exported = backup_todb($ite_info['#']['EXPORTED']['0']['#']);
-                                    
-                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
-                                    $final->usermodified = $modifier->new_id;
-                                
-                                    insert_record('grade_grades_final', $final);
-                                    
-                                    $counter++;
-                                    if ($counter % 20 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 400 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }    
                                
                             /// processing grade_calculations
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']) && ($calcs = $info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']['GRADE_CALCULATION'])) {

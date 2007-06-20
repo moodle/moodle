@@ -25,8 +25,7 @@
 
 require_once $CFG->libdir . '/grade/grade_category.php';
 require_once $CFG->libdir . '/grade/grade_item.php';
-require_once $CFG->libdir . '/grade/grade_grades_final.php';
-require_once $CFG->libdir . '/grade/grade_grades_raw.php';
+require_once $CFG->libdir . '/grade/grade_grades.php';
 
 /**
  * This class represents a complete tree of categories, grade_items and final grades,
@@ -316,8 +315,8 @@ class grade_tree {
         
         // If the object is a grade_item, but the final_grades index isn't yet loaded, make the switch now. Same for grade_category and children
         if ($new_element_class == 'grade_item' && !$has_final_grades && $this->include_grades) {
-            $new_element->element['final_grades'] = $new_element->element['object']->load_final();
-            unset($new_element->element['object']->grade_grades_final);
+            $new_element->element['final_grades'] = $new_element->element['object']->get_final();
+
         } elseif ($new_element_class == 'grade_category' && empty($new_element->element['children']) && $new_element->element['object']->has_children()) {
             $new_element->element['children'] = $new_element->element['object']->get_children(1);
             unset($new_element->element['object']->children);
@@ -580,7 +579,7 @@ class grade_tree {
                     $finals = array();
 
                     if ($this->include_grades) {
-                        $final = new grade_grades_final();
+                        $final = new grade_grades();
                         $final->itemid = $element['object']->id;
                         $finals = $final->fetch_all_using_this();
                     }
@@ -592,7 +591,6 @@ class grade_tree {
                 $element['children'] = $itemtree;
             } elseif (get_class($filler_object) == 'grade_item' && $this->include_grades) {
                 $final_grades = $filler_object->get_final();
-                unset($filler_object->grade_grades_final);
                 $element['final_grades'] = $final_grades;
             }
 
@@ -658,7 +656,7 @@ class grade_tree {
                 } else {
                     if (!empty($level1['finalgrades'])) {
                         foreach ($level1['finalgrades'] as $final_grade) {
-                            $this->grades[$final_grade->userid][$final_grade->itemid] = $final_grade->gradevalue;
+                            $this->grades[$final_grade->userid][$final_grade->itemid] = $final_grade->finalgrade;
                         } 
                     }
                 }
@@ -745,7 +743,7 @@ class grade_tree {
                     $finals = array();
 
                     if ($this->include_grades) {
-                        $final = new grade_grades_final();
+                        $final = new grade_grades();
                         $final->itemid = $itemid;
                         $finals = $final->fetch_all_using_this();
                     }
@@ -799,10 +797,10 @@ class grade_tree {
             $finals = array();
             if ($this->include_grades) {
                 if (get_class($object) == 'grade_item') {
-                    $finals = $object->load_final();
+                    $finals = $object->get_final();
                 } else {
                     $item_object = new grade_item($object, false);
-                    $finals = $object->load_final();
+                    $finals = $object->get_final();
                 }
             }
 
@@ -818,11 +816,11 @@ class grade_tree {
                 
                 if ($this->include_grades) {
                     if (get_class($item) == 'grade_item') {
-                        $finals = $item->load_final();
+                        $finals = $item->get_final();
                     } else {
                         $item_object = new grade_item($item, false);
-                        if (method_exists($item, 'load_final')) {
-                            $finals = $item->load_final();
+                        if (method_exists($item, 'get_final')) {
+                            $finals = $item->get_final();
                         }
                     }
                 }

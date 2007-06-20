@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once('grade_object.php');
-global $db;
+
 /**
  * Class representing a grade item. It is responsible for handling its DB representation,
  * modifying and returning its metadata.
@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation', 'grade_grades_raw', 'grade_grades_final', 'scale', 'category', 'outcome');
+    var $nonfields = array('table', 'nonfields', 'calculation', 'scale', 'category', 'outcome');
 
     /**
      * The course this grade_item belongs to.
@@ -203,18 +203,6 @@ class grade_item extends grade_object {
      * @var string $calculation
      */
     var $calculation;
-
-    /**
-     * Array of grade_grades_raw objects linked to this grade_item. They are indexed by userid.
-     * @var array $grade_grades_raw
-     */
-    var $grade_grades_raw = array();
-
-    /**
-     * Array of grade_grades_final objects linked to this grade_item. They are indexed by userid.
-     * @var array $grade_grades_final
-     */
-    var $grade_grades_final = array();
 
     /**
      * Constructor. Extends the basic functionality defined in grade_object.
@@ -439,6 +427,8 @@ class grade_item extends grade_object {
      * @return boolean Locked state
      */
     function is_locked($userid=NULL) {
+        // TODO: rewrite the item check
+
         if ($this->locked || empty($userid)) {
             return $this->locked; // This could be true or false (false only if no $userid given)
         } else {
@@ -454,33 +444,9 @@ class grade_item extends grade_object {
      * @return int Number of final grades changed, or false if error occurred during update.
      */
     function toggle_locking($update_final=false, $new_state=NULL) {
-        $this->locked = !$this->locked;
+        // TODO: implement new locking
 
-        if (!empty($new_state)) {
-            $this->locked = $new_state;
-        }
-
-        if (!$this->update()) {
-            debugging("Could not update this grade_item's locked state in the database.");
-            return false;
-        }
-
-        $count = 0;
-
-        if ($update_final) {
-            $this->load_final();
-            foreach ($this->grade_grades_final as $id => $final) {
-                $final->locked = $this->locked;
-                if (!$final->update()) {
-                    debugging("Could not update this grade_item's final grade's locked state in the database.");
-                    return false;
-                }
-                $count++;
-            }
-            $this->load_final();
-        }
-
-        return $count;
+        return 0;
     }
 
     /**
@@ -490,47 +456,22 @@ class grade_item extends grade_object {
      * @return int Number of final grades changed, or false if error occurred during update.
      */
     function toggle_hiding($update_final=false, $new_state=NULL) {
-        $this->hidden = !$this->hidden;
+        //TODO: implement new hiding
 
-        if (!empty($new_state)) {
-            $this->hidden = $new_state;
-        }
-
-        if (!$this->update()) {
-            debugging("Could not update this grade_item's hidden state in the database.");
-            return false;
-        }
-
-        $count = 0;
-
-        if ($update_final) {
-            $this->load_final();
-            foreach ($this->grade_grades_final as $id => $final) {
-                $final->hidden = $this->hidden;
-                if (!$final->update()) {
-                    debugging("Could not update this grade_item's final grade's hidden state in the database.");
-                    return false;
-                }
-                $count++;
-            }
-            $this->load_final();
-        }
-
-        return $count;
+        return 0;
     }
 
 
     /**
-     * Performs the necessary calculations on the grades_final referenced by this grade_item,
-     * and stores the results in grade_grades_final. Also resets the needsupdate flag
-     * once successfully performed.
+     * Performs the necessary calculations on the grades_final referenced by this grade_item.
+     * Also resets the needsupdate flag once successfully performed.
      *
      * This function must be use ONLY from lib/gradeslib.php/grade_update_final_grades(),
      * because the calculation must be done in correct order!!
      *
      * @return boolean true if ok, array of errors otherwise
      */
-    function update_final_grade() {
+    function update_final_grades() {
         global $CFG;
 
         $errors = array();
@@ -552,41 +493,36 @@ class grade_item extends grade_object {
             }
         }
 
-        $sql = "SELECT r.*, f.userid AS fuserid, f.id AS fid, f.itemid AS fitemid, f.gradevalue AS fgradevalue
-                  FROM {$CFG->prefix}grade_grades_raw r
-                       LEFT JOIN {$CFG->prefix}grade_grades_final f ON f.itemid=r.itemid AND f.userid=r.userid
-                 WHERE r.itemid={$this->id}";
-
-        if ($rs = get_recordset_sql($sql)) {
+        // TODO: add locking support
+        if ($rs = get_recordset('grade_grades', 'itemid', $this->id)) {
             if ($rs->RecordCount() > 0) {
                 while ($grade = rs_fetch_next_record($rs)) {
-                    if (!empty($errors) or is_null($grade->gradevalue)) {
+                    if (!empty($errors) or is_null($grade->rawgrade)) {
                         // unset existing final grade when no raw present or error
-                        $final = grade_grades_final::fetch('id', $grade->fid);
-                        $final->gradevalue = NULL;
-                        $final->update();
-                        continue;
-                    }
+                        if (!is_null($grade->finalgrade)) {
+                            $g = new object();
+                            $g->id         = $grade->id;
+                            $g->finalgrade = null;
+                            if (!update_record('grade_grades', $g)) {
+                                $errors[] = "Could not remove final grade for grade item:".$this->id;
+                            }
+                        }
 
-                    $finalvalue = $this->adjust_grade($grade);
+                    } else {
+                        $finalgrade = $this->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
-                    if (is_null($grade->fid)) {
-                        // final grade does not exist yet
-                        $final = new grade_grades_final(array('itemid'=>$grade->itemid, 'userid'=>$grade->userid, 'gradevalue'=>$finalvalue, false));
-                        $final->insert();
-
-                    } else if ($finalvalue != $grade->fgradevalue) {
-                        // let's update the final grade
-                        $final = grade_grades_final::fetch('id', $grade->fid);
-                        $final->gradevalue = $finalvalue;
-                        $final->update();
+                        if ($finalgrade != $grade->finalgrade) {
+                            $g = new object();
+                            $g->id         = $grade->id;
+                            $g->finalgrade = $finalgrade;
+                            if (!update_record('grade_grades', $g)) {
+                                $errors[] = "Could not update final grade for grade item:".$this->id;
+                            }
+                        }
                     }
                 }
             }
         }
-
-        //TODO: set grade to null for final grades that do not have corresponding raw grade
-        //      using left join SQL update only
 
         if (!empty($errors)) {
             $this->flag_for_update();
@@ -602,11 +538,13 @@ class grade_item extends grade_object {
     /**
      * Given a float grade value or integer grade scale, applies a number of adjustment based on
      * grade_item variables and returns the result.
-     * @param object $rawgrade The raw grade.
+     * @param object $rawgrade The raw grade value.
      * @return mixed
      */
-    function adjust_grade($rawgrade) {
-        $gradevalue = $rawgrade->gradevalue;
+    function adjust_grade($rawgrade, $rawmin, $rawmax) {
+        if (is_null($rawgrade)) {
+            return null;
+        }
 
         if ($this->gradetype == GRADE_TYPE_VALUE) { // Dealing with numerical grade
 
@@ -620,21 +558,21 @@ class grade_item extends grade_object {
 
             // Standardise score to the new grade range
             // NOTE: this is not compatible with current assignment grading
-            if ($rawgrade->grademin != $this->grademin or $rawgrade->grademax != $this->grademax) { 
-                $gradevalue = standardise_score($gradevalue, $rawgrade->grademin, $rawgrade->grademax, $this->grademin, $this->grademax);
+            if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
+                $rawgrade = grade_grades::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
             // Apply other grade_item factors
-            $gradevalue *= $this->multfactor;
-            $gradevalue += $this->plusfactor;
+            $rawgrade *= $this->multfactor;
+            $rawgrade += $this->plusfactor;
 
-            return bounded_number($this->grademin, $gradevalue, $this->grademax);
+            return bounded_number($this->grademin, $rawgrade, $this->grademax);
 
         } else if($this->gradetype == GRADE_TYPE_SCALE) { // Dealing with a scale value
             if (empty($this->scale)) {
                 $this->load_scale();
             }
-            
+
             if ($this->grademax < 0) {
                 return null; // scale not present - no grade
             }
@@ -645,11 +583,11 @@ class grade_item extends grade_object {
 
             // Convert scale if needed
             // NOTE: this is not compatible with current assignment grading
-            if ($rawgrade->grademax != $this->grademax and $rawgrade->grademax > 0) {
-                $gradevalue = standardise_score($gradevalue, $rawgrade->grademin, $rawgrade->grademax, $this->grademin, $this->grademax);
+            if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
+                $rawgrade = grade_grades::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
-            return (int)bounded_number(0, round($gradevalue+0.00001), $this->grademax);
+            return (int)bounded_number(0, round($rawgrade+0.00001), $this->grademax);
 
 
         } else if ($this->gradetype == GRADE_TYPE_TEXT or $this->gradetype == GRADE_TYPE_NONE) { // no value
@@ -667,7 +605,7 @@ class grade_item extends grade_object {
     /**
      * Sets this grade_item's needsupdate to true. Also looks at parent category, if any, and calls
      * its flag_for_update() method.
-     * This is triggered whenever any change in any grade_raw may cause grade_finals
+     * This is triggered whenever any change in any raw grade may cause grade_finals
      * for this grade_item to require an update. The flag needs to be propagated up all
      * levels until it reaches the top category. This is then used to determine whether or not
      * to regenerate the raw and final grades for each category grade_item.
@@ -703,6 +641,10 @@ class grade_item extends grade_object {
      * @return object grade_scale
      */
     function load_scale() {
+        if ($this->gradetype != GRADE_TYPE_SCALE) {
+            $this->scaleid = null;
+        }
+
         if (!empty($this->scaleid)) {
             $this->scale = grade_scale::fetch('id', $this->scaleid);
             $this->scale->load_items();
@@ -725,45 +667,6 @@ class grade_item extends grade_object {
             $this->outcome = grade_outcome::fetch('id', $this->outcomeid);
         }
         return $this->outcome;
-    }
-
-    /**
-     * Loads all the grade_grades_raw objects for this grade_item from the DB into grade_item::$grade_grades_raw array.
-     * @return array grade_grades_raw objects
-     */
-    function load_raw() {
-        $grade_raw_array = get_records('grade_grades_raw', 'itemid', $this->id);
-
-        if (empty($grade_raw_array)) {
-            return null;
-        }
-
-        foreach ($grade_raw_array as $r) {
-            $this->grade_grades_raw[$r->userid] = new grade_grades_raw($r);
-        }
-        return $this->grade_grades_raw;
-    }
-
-    /**
-     * Loads all the grade_grades_final objects for this grade_item from the DB into grade_item::$grade_grades_final array.
-     * @return array grade_grades_final objects
-     */
-    function load_final() {
-        global $CFG;
-
-        $this->grade_grades_final = array();
-
-        $grade_final_array = get_records('grade_grades_final', 'itemid', $this->id);
-
-        if (empty($grade_final_array)) {
-            return array();
-        }
-
-        foreach ($grade_final_array as $f) {
-            $this->grade_grades_final[$f->userid] = new grade_grades_final($f);
-        }
-
-        return fullclone($this->grade_grades_final);
     }
 
     /**
@@ -836,7 +739,7 @@ class grade_item extends grade_object {
                 $grade_calculation->calculation = $formula;
                 if ($grade_calculation->update()) {
                     $this->flag_for_update();
-                    return true;                    
+                    return true;
                 } else {
                     $this->calculation = null; // remove cache
                     debugging("Could not save the calculation in the database for this grade_item.");
@@ -860,43 +763,26 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the raw values for this grade item (as imported by module or other source).
-     * @param int $userid Optional: to retrieve a single raw grade
-     * @return mixed An array of all raw_grades (stdClass objects) for this grade_item, or a single raw_grade.
-     */
-    function get_raw($userid=NULL) {
-        if (empty($this->grade_grades_raw)) {
-            $this->load_raw();
-        }
-
-        $grade_raw_array = null;
-        if (!empty($userid)) {
-            $r = get_record('grade_grades_raw', 'itemid', $this->id, 'userid', $userid);
-            $grade_raw_array[$r->userid] = new grade_grades_raw($r);
-        } else {
-            $grade_raw_array = $this->grade_grades_raw;
-        }
-        return $grade_raw_array;
-    }
-
-    /**
      * Returns the final values for this grade item (as imported by module or other source).
      * @param int $userid Optional: to retrieve a single final grade
      * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
      */
     function get_final($userid=NULL) {
-        if (empty($this->grade_grades_final)) {
-            $this->load_final();
-        }
-
-        if (empty($userid)) {
-            return $this->grade_grades_final;
+        if ($userid) {
+            if ($user = get_record('grade_grades', 'itemid', $this->id, 'userid', $userid)) {
+                return $user;
+            }
 
         } else {
-            if (array_key_exists($userid, $this->grade_grades_final)) {
-                return $this->grade_grades_final[$userid];
+            if ($grades = get_records('grade_grades', 'itemid', $this->id)) {
+                //TODO: speed up with better SQL
+                $result = array();
+                foreach ($grades as $grade) {
+                    $result[$grade->userid] = $grade;
+                }
+                return $result;
             } else {
-                return new grade_grades_final(array('itemid'=>$this->itemid, 'gradevalue'=>NULL, 'userid'=>$userid));
+                return array();
             }
         }
     }
@@ -1043,6 +929,70 @@ class grade_item extends grade_object {
 
         } else {
             return array();
+        }
+    }
+
+    /**
+     * Updates raw grade value for given user, this is a only way to update raw
+     * grades from external source (module, gradebook, import, etc.),
+     * because it logs the change in history table and deals with final grade recalculation.
+     *
+     * The only exception is category grade item which stores the raw grades directly.
+     * Calculated grades do not use raw grades at all, the rawgrade changes there are not logged too.
+     *
+     * @param int $userid the graded user
+     * @param float $rawgrade value of raw grade
+     * @param string $howmodified modification source
+     * @param string $note optional note
+     * @param string $feedback teachjers feedback
+     * @param int $feedbackformat
+     * @return boolean true if ok, false if error
+     */
+    function update_raw($userid, $rawgrade=false, $howmodified='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
+        $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
+
+        //TODO: add locking checks here - prevent update if item or individaul grade locked
+        //TODO: if grade tree does not need to be recalculated, try to update all users grades in course and flag_for_update only if failed
+
+        // fist copy current grademin/max and scale
+        $grade->rawgrademin = $this->grademin;
+        $grade->rawgrademax = $this->grademax;
+        $grade->rawscaleid  = $this->scaleid;
+
+        if ($rawgrade !== false) {
+            // change of grade value requested
+            if (empty($grade->id)) {
+                $oldgrade = null;
+                $grade->rawgrade = $rawgrade;
+                $result = $grade->insert();
+
+            } else {
+                $oldgrade = $grade->rawgrade;
+                $grade->rawgrade = $rawgrade;
+                $result = $grade->update();
+            }
+        }
+
+        // do we have comment from teacher?
+        if ($result and $feedback !== false) {
+            if (empty($grade->id)) {
+                // create new grade
+                $oldgrade = null;
+                $result = $grade->insert();
+            }
+            $result = $result && $grade->update_feedback($feedback, $feedbackformat);
+        }
+
+        // TODO Handle history recording error, such as displaying a notice, but still return true
+        grade_history::insert_change($userid, $this->id, $grade->rawgrade, $oldgrade, $howmodified, $note);
+
+        // This grade item needs update
+        $this->flag_for_update();
+
+        if ($result) {
+            return $grade;
+        } else {
+            return false;
         }
     }
 }

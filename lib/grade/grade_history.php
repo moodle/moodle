@@ -35,25 +35,25 @@ class grade_history extends grade_object {
      * @var string $table
      */
     var $table = 'grade_history';
-    
+
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
     var $nonfields = array('table', 'nonfields');
-  
+
     /**
      * The grade_item whose raw grade is being changed.
      * @var int $itemid
      */
     var $itemid;
-    
+
     /**
      * The user whose raw grade is being changed.
      * @var int $userid
      */
     var $userid;
-    
+
     /**
      * The value of the grade before the change.
      * @var float $oldgrade
@@ -71,13 +71,13 @@ class grade_history extends grade_object {
      * @var string $note
      */
     var $note;
-    
+
     /**
      * How the grade was modified ('manual', 'module', 'import' etc...).
      * @var string $howmodified
      */
     var $howmodified;
-    
+
     /**
      * Finds and returns a grade_history object based on 1-3 field values.
      *
@@ -90,7 +90,7 @@ class grade_history extends grade_object {
      * @param string $fields
      * @return object grade_history object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_history = get_record('grade_history', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_history') {
                 foreach ($grade_history as $param => $value) {
@@ -104,10 +104,10 @@ class grade_history extends grade_object {
         } else {
             return false;
         }
-    } 
+    }
 
     /**
-     * Given a grade_grades_raw object and some other parameters, records the 
+     * Given a info about changed raw grade and some other parameters, records the
      * change of grade value for this object, and associated data.
      * @static
      * @param object $grade_raw
@@ -116,19 +116,19 @@ class grade_history extends grade_object {
      * @param string $howmodified
      * @return boolean Success or Failure
      */
-    function insert_change($grade_raw, $oldgrade, $howmodified='manual', $note=NULL) {
+    function insert_change($userid, $itemid, $newgrade, $oldgrade, $howmodified='manual', $note=NULL) {
         global $USER;
         $history = new grade_history();
-        $history->itemid = $grade_raw->itemid;
-        $history->userid = $grade_raw->userid;
-        $history->oldgrade = $oldgrade;
-        $history->newgrade = $grade_raw->gradevalue;
-        $history->note = $note;
-        $history->howmodified = $howmodified;
+        $history->itemid       = $itemid;
+        $history->userid       = $userid;
+        $history->oldgrade     = $oldgrade;
+        $history->newgrade     = $newgrade;
+        $history->note         = $note;
+        $history->howmodified  = $howmodified;
         $history->timemodified = time();
         $history->usermodified = $USER->id;
 
         return $history->insert();
-    } 
+    }
 }
 ?>

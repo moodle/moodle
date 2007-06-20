@@ -60,8 +60,7 @@ define('GRADE_UPDATE_ITEM_LOCKED', 4);
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_calculation.php');
-require_once($CFG->libdir . '/grade/grade_grades_raw.php');
-require_once($CFG->libdir . '/grade/grade_grades_final.php');
+require_once($CFG->libdir . '/grade/grade_grades.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
 require_once($CFG->libdir . '/grade/grade_history.php');
@@ -72,7 +71,7 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
 
 /**
  * Submit new or update grade; update/create grade_item definition. Grade must have userid specified,
- * gradevalue and feedback with format are optional. gradevalue NULL means 'Not graded', missing property
+ * rawgrade and feedback with format are optional. rawgrade NULL means 'Not graded', missing property
  * or key means do not change existing.
  *
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
@@ -190,54 +189,38 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             $failed = true;
             debugging('Invalid userid in grade submitted');
             continue;
+        } else {
+            $userid = $grade['userid'];
         }
 
-        // get the raw grade if it exist
-        $rawgrade = new grade_grades_raw(array('itemid'=>$grade_item->id, 'userid'=>$grade['userid']));
-        $rawgrade->grade_item = &$grade_item; // we already have it, so let's use it
-
-        // store these to keep track of original grade item settings
-        $rawgrade->grademax = $grade_item->grademax;
-        $rawgrade->grademin = $grade_item->grademin;
-        $rawgrade->scaleid  = $grade_item->scaleid;
+        $rawgrade     = false;
+        $feedback       = false;
+        $feedbackformat = FORMAT_MOODLE;
+        
+        if (array_key_exists('rawgrade', $grade)) {
+            $rawgrade = $grade['rawgrade'];
+        }
 
         if (array_key_exists('feedback', $grade)) {
-            $rawgrade->feedback = $grade['feedback'];
-            if (isset($grade['feedbackformat'])) {
-                $rawgrade->feedbackformat = $grade['feedbackformat'];
-            } else {
-                $rawgrade->feedbackformat = FORMAT_MOODLE;
-            }
+            $feedback = $grade['feedback'];
         }
 
-        $result = true;
-        if ($rawgrade->id) {
-            if (array_key_exists('gradevalue', $grade)) {
-                $result = $rawgrade->update($grade['gradevalue'], $source);
-            } else {
-                $result = $rawgrade->update($rawgrade->gradevalue, $source);
-            }
-
-        } else {
-            if (array_key_exists('gradevalue', $grade)) {
-                $rawgrade->gradevalue = $grade['gradevalue'];
-            } else {
-                $rawgrade->gradevalue = null;
-            }
-            $result = $rawgrade->insert();
+        if (array_key_exists('feedbackformat', $grade)) {
+            $feedbackformat = $grade['feedbackformat'];
         }
 
-        if (!$result) {
+        // update or insert the grade
+        $grade = $grade_item->update_raw($userid, $rawgrade, $source, null, $feedback, $feedbackformat);
+
+        if (!$grade) {
             $failed = true;
             debugging('Grade not updated');
             continue;
         }
 
-        // load existing text annotation
-        $rawgrade->load_text();
-
         // trigger grade_updated event notification
         $eventdata = new object();
+
         $eventdata->source            = $source;
         $eventdata->itemid            = $grade_item->id;
         $eventdata->courseid          = $grade_item->courseid;
@@ -246,12 +229,16 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $eventdata->iteminstance      = $grade_item->iteminstance;
         $eventdata->itemnumber        = $grade_item->itemnumber;
         $eventdata->idnumber          = $grade_item->idnumber;
-        $eventdata->userid            = $rawgrade->userid;
-        $eventdata->gradevalue        = $rawgrade->gradevalue;
-        $eventdata->feedback          = $rawgrade->feedback;
-        $eventdata->feedbackformat    = (int)$rawgrade->feedbackformat;
-        $eventdata->information       = $rawgrade->information;
-        $eventdata->informationformat = (int)$rawgrade->informationformat;
+        $eventdata->userid            = $grade->userid;
+        $eventdata->rawgrade        = $grade->rawgrade;
+
+        // load existing text annotation
+        if ($grade_text = $grade->load_text()) {
+            $eventdata->feedback          = $grade_text->feedback;
+            $eventdata->feedbackformat    = $grade_text->feedbackformat;
+            $eventdata->information       = $grade_text->information;
+            $eventdata->informationformat = $grade_text->informationformat;
+        }
 
         events_trigger('grade_updated', $eventdata);
     }
@@ -331,30 +318,7 @@ function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminsta
 }
 
 /**
-* For a given set of items, create a category to group them together (if one doesn't yet exist).
-* Modules may want to do this when they are created. However, the ultimate control is in the gradebook interface itself.
-*
-* @param int $courseid
-* @param string $fullname The name of the new category
-* @param array $items An array of grade_items to group under the new category
-* @param string $aggregation
-* @return mixed New grade_category id if successful
-*/
-/*
-// TODO: this should be obsoleted by grade_update() or removed completely - modules must not use any IDs or grade_item objects directly!
-function grade_create_category($courseid, $fullname, $items, $aggregation=GRADE_AGGREGATE_MEAN) {
-    $grade_category = new grade_category(compact('courseid', 'fullname', 'items', 'aggregation'));
-
-    if (empty($grade_category->id)) {
-        return $grade_category->insert();
-    } else {
-        return $grade_category->id;
-    }
-}
-*/
-
-/**
- * Updates all grade_grades_final in course.
+ * Updates all final grades in course.
  *
  * @param int $courseid
  * @return boolean true if ok, array of errors if problems found
@@ -389,7 +353,7 @@ function grade_update_final_grades($courseid) {
         foreach ($grade_items as $gid=>$gitem) {
             $grade_item =& $grade_items[$gid];
             if ($grade_item->needsupdate) {
-                $result = $grade_item->update_final_grade();
+                $result = $grade_item->update_final_grades();
                 if ($result !== true) {
                     $errors = array_merge($errors, $result);
                 }
@@ -454,7 +418,7 @@ function grade_update_final_grades($courseid) {
 
             //oki - let's update, calculate or aggregate :-)
             if ($doupdate) {
-                $result = $grade_item->update_final_grade();
+                $result = $grade_item->update_final_grades();
                 if ($result !== true) {
                     $errors = array_merge($errors, $result);
                 } else {
@@ -486,7 +450,7 @@ function grade_update_final_grades($courseid) {
  */
 function grade_grab_legacy_grades() {
 
-    global $CFG, $db;
+    global $CFG;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
@@ -528,6 +492,48 @@ function grade_grab_legacy_grades() {
                         grade_update_mod_grades($modinstance);
                     }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * For testing purposes mainly, reloads grades from all non legacy modules into gradebook.
+ */
+function grade_grab_grades() {
+
+    global $CFG;
+
+    if (!$mods = get_list_of_plugins('mod') ) {
+        error('No modules installed!');
+    }
+
+    foreach ($mods as $mod) {
+
+        if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+
+        if (!$module = get_record('modules', 'name', $mod)) {
+            //not installed
+            continue;
+        }
+
+        if (!$module->visible) {
+            //disabled module
+            continue;
+        }
+
+        $fullmod = $CFG->dirroot.'/mod/'.$mod;
+
+        // include the module lib once
+        if (file_exists($fullmod.'/lib.php')) {
+            include_once($fullmod.'/lib.php');
+            // look for modname_grades() function - old gradebook pulling function
+            // if present sync the grades with new grading system
+            $gradefunc = $mod.'_update_grades';
+            if (function_exists($gradefunc)) {
+                $gradefunc();
             }
         }
     }
@@ -579,16 +585,16 @@ function grade_update_mod_grades($modinstance) {
 
                 if ($usergrade == '-') {
                     // no grade
-                    $grade->gradevalue = null;
+                    $grade->rawgrade = null;
 
                 } else if ($scaleid) {
                     // scale in use, words used
                     $gradescale = explode(",", $scale->scale);
-                    $grade->gradevalue = array_search($usergrade, $gradescale) + 1;
+                    $grade->rawgrade = array_search($usergrade, $gradescale) + 1;
 
                 } else {
                     // good old numeric value
-                    $grade->gradevalue = $usergrade;
+                    $grade->rawgrade = $usergrade;
                 }
                 $grades[] = $grade;
             }
@@ -670,33 +676,6 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     $grade_item->insert();
 
     return $grade_item;
-}
-
-/**
- * Given a float value situated between a source minimum and a source maximum, converts it to the
- * corresponding value situated between a target minimum and a target maximum. Thanks to Darlene
- * for the formula :-)
- * @param float $gradevalue
- * @param float $source_min
- * @param float $source_max
- * @param float $target_min
- * @param float $target_max
- * @return float Converted value
- */
-function standardise_score($gradevalue, $source_min, $source_max, $target_min, $target_max, $debug=false) {
-    $factor = ($gradevalue - $source_min) / ($source_max - $source_min);
-    $diff = $target_max - $target_min;
-    $standardised_value = $factor * $diff + $target_min;
-    if ($debug) {
-        echo 'standardise_score debug info: (lib/gradelib.php)';
-        print_object(array('gradevalue' => $gradevalue,
-                           'source_min' => $source_min,
-                           'source_max' => $source_max,
-                           'target_min' => $target_min,
-                           'target_max' => $target_max,
-                           'result'     => $standardised_value));
-    }
-    return $standardised_value;
 }
 
 /**

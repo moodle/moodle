@@ -36,7 +36,7 @@ function grade_import_commit($courseid, $importcode) {
                     
                     $g = new object();
                     $g -> userid = $grade->userid;
-                    $g -> gradevalue = $grade->gradevalue;                    
+                    $g -> rawgrade = $grade->rawgrade;                    
                     $studentgrades[] = $g ;  
 
                 }
@@ -96,7 +96,7 @@ function grade_import_commit($courseid, $importcode) {
                     
                     $g = new object();
                     $g -> userid = $grade->userid;
-                    $g -> gradevalue = $grade->gradevalue;                    
+                    $g -> rawgrade = $grade->rawgrade;                    
                     $studentgrades[] = $g ;  
 
                 }

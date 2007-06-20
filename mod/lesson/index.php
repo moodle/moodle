@@ -88,7 +88,7 @@
                 // it's a student, show their grade
                 $grade_value = 0;
                 if ($return = lesson_get_user_grades($lesson, $USER->id)) {
-                    $grade_value = $return[$USER->id]->gradevalue;
+                    $grade_value = $return[$USER->id]->rawgrade;
                 }
             }
             $table->data[] = array ($lesson->section, $link, $grade_value, $due);

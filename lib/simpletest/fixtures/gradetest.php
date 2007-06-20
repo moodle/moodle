@@ -55,8 +55,7 @@ class grade_test extends UnitTestCase {
                         'scale',
                         'grade_items',
                         'grade_calculations',
-                        'grade_grades_raw',
-                        'grade_grades_final',
+                        'grade_grades',
                         'grade_grades_text',
                         'grade_outcomes',
                         'grade_history');
@@ -64,8 +63,7 @@ class grade_test extends UnitTestCase {
     var $grade_items = array();
     var $grade_categories = array();
     var $grade_calculations = array();
-    var $grade_grades_raw = array();
-    var $grade_grades_final = array();
+    var $grade_grades = array();
     var $grade_grades_text = array();
     var $grade_outcomes = array();
     var $grade_history = array();
@@ -121,6 +119,7 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('deleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('needsupdate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
@@ -259,52 +258,35 @@ class grade_test extends UnitTestCase {
             $result = $result && create_table($table, true, false);
         }
 
-        /// Define table grade_grades_final to be created
-        $table = new XMLDBTable('grade_grades_final');
+        /// Define table grade_grades to be created
+        $table = new XMLDBTable('grade_grades');
 
         if ($result && !table_exists($table)) {
 
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('gradevalue', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
-            $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+            $table->addFieldInfo('rawgrademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
+            $table->addFieldInfo('rawgrademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('rawscaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('finalgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
+            $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+    
+        /// Adding keys to table grade_grades
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
             $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+            $table->addKeyInfo('rawscaleid', XMLDB_KEY_FOREIGN, array('rawscaleid'), 'scale', array('id'));
             $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
-            /// Launch create table for grade_grades_final
-            $result = $result && create_table($table, true, false);
-        }
-
-        /// Define table grade_grades_raw to be created
-        $table = new XMLDBTable('grade_grades_raw');
-
-        if ($result && !table_exists($table)) {
-
-            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('gradevalue', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null);
-            $table->addFieldInfo('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
-            $table->addFieldInfo('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-            $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-            $table->addKeyInfo('scaleid', XMLDB_KEY_FOREIGN, array('scaleid'), 'scale', array('id'));
-            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-            /// Launch create table for grade_grades_raw
+            /// Launch create table for grade_grades
             $result = $result && create_table($table, true, false);
         }
 
@@ -733,397 +715,228 @@ class grade_test extends UnitTestCase {
     }
 
     /**
-     * Load grade_grades_raw data into the database, and adds the corresponding objects to this class' variable.
+     * Load grade_grades data into the database, and adds the corresponding objects to this class' variable.
      */
-    function load_grade_grades_raw() {
+    function load_grade_grades() {
         // Grades for grade_item 1
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[0]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 15; // too small
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[0]->id;
+        $grade->userid = 1;
+        $grade->rawgrade = 15; // too small
+        $grade->finalgrade = 30;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[0] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[0]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 40;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[0]->id;
+        $grade->userid = 2;
+        $grade->rawgrade = 40;
+        $grade->finalgrade = 40;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[1] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[0]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 170; // too big
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[0]->id;
+        $grade->userid = 3;
+        $grade->rawgrade = 170; // too big
+        $grade->finalgrade = 110;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[2] = $grade;
         }
+
 
         // No raw grades for grade_item 2 - it is calculated
+
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[1]->id;
+        $grade->userid = 1;
+        $grade->finalgrade = 60;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
+        $grade->locked = true; 
+
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[3] = $grade;
+        } 
+        
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[1]->id;
+        $grade->userid = 2;
+        $grade->finalgrade = 70;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
+        $grade->locked = true; 
+
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[4] = $grade;
+        }
+
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[1]->id;
+        $grade->userid = 3;
+        $grade->finalgrade = 100;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
+        $grade->locked = false; 
+
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[5] = $grade;
+        } 
 
 
         // Grades for grade_item 3
 
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[2]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 2;
-        $grade_raw->scaleid = $this->scale[3]->id;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[2]->id;
+        $grade->userid = 1;
+        $grade->rawgrade = 2;
+        $grade->finalgrade = 6;
+        $grade->scaleid = $this->scale[3]->id;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[6] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[2]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 3;
-        $grade_raw->scaleid = $this->scale[3]->id;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[2]->id;
+        $grade->userid = 2;
+        $grade->rawgrade = 3;
+        $grade->finalgrade = 2;
+        $grade->scaleid = $this->scale[3]->id;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[2]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 1;
-        $grade_raw->scaleid = $this->scale[3]->id;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[2]->id;
+        $grade->userid = 3;
+        $grade->rawgrade = 1;
+        $grade->finalgrade = 3;
+        $grade->scaleid = $this->scale[3]->id;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
         // Grades for grade_item 7
 
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[6]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 97;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[6]->id;
+        $grade->userid = 1;
+        $grade->rawgrade = 97;
+        $grade->finalgrade = 69;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[6]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 49;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[6]->id;
+        $grade->userid = 2;
+        $grade->rawgrade = 49;
+        $grade->finalgrade = 87;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[6]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 67;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[6]->id;
+        $grade->userid = 3;
+        $grade->rawgrade = 67;
+        $grade->finalgrade = 94;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
 
         // Grades for grade_item 8
 
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[7]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 3;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[7]->id;
+        $grade->userid = 2;
+        $grade->rawgrade = 3;
+        $grade->finalgrade = 3;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
     
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[7]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 6;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[7]->id;
+        $grade->userid = 3;
+        $grade->rawgrade = 6;
+        $grade->finalgrade = 6;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
   
         // Grades for grade_item 9
 
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[8]->id;
-        $grade_raw->userid = 1;
-        $grade_raw->gradevalue = 20;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[8]->id;
+        $grade->userid = 1;
+        $grade->rawgrade = 20;
+        $grade->finalgrade = 20;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[8]->id;
-        $grade_raw->userid = 2;
-        $grade_raw->gradevalue = 50;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[8]->id;
+        $grade->userid = 2;
+        $grade->rawgrade = 50;
+        $grade->finalgrade = 50;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
         
-        $grade_raw = new stdClass();
-        $grade_raw->itemid = $this->grade_items[7]->id;
-        $grade_raw->userid = 3;
-        $grade_raw->gradevalue = 100;
-        $grade_raw->timecreated = mktime();
-        $grade_raw->timemodified = mktime();
+        $grade = new stdClass();
+        $grade->itemid = $this->grade_items[7]->id;
+        $grade->userid = 3;
+        $grade->rawgrade = 100;
+        $grade->finalgrade = 100;
+        $grade->timecreated = mktime();
+        $grade->timemodified = mktime();
 
-        if ($grade_raw->id = insert_record('grade_grades_raw', $grade_raw)) {
-            $this->grade_grades_raw[] = $grade_raw;
+        if ($grade->id = insert_record('grade_grades', $grade)) {
+            $this->grade_grades[] = $grade;
         }
-    }
-
-    /**
-     * Load grade_grades_final data into the database, and adds the corresponding objects to this class' variable.
-     */
-    function load_grade_grades_final() {
-        // Grades for grade_item 1
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[0]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 30;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[0] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[0]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 40;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[1] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[0]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 110;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[2] = $grade_final;
-        } 
-        
-        // Grades for grade_item 2
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[1]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 60;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[3] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[1]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 70;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[4] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[1]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 100;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[5] = $grade_final;
-        } 
-        
-        // Grades for grade_item 3
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[2]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 6;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[2]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 2;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[2]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 3;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        // Grades for grade_item 7 (orphan item)
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[6]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 69;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[6]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 87;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[6]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 94;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-
-        // Grades for grade_item 8
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[7]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 3;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[7]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 6;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-
-        // Grades for grade_item 9
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[8]->id;
-        $grade_final->userid = 1;
-        $grade_final->gradevalue = 20;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
-        
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[8]->id;
-        $grade_final->userid = 2;
-        $grade_final->gradevalue = 50;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = true; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        }
-
-        $grade_final = new stdClass();
-        $grade_final->itemid = $this->grade_items[8]->id;
-        $grade_final->userid = 3;
-        $grade_final->gradevalue = 100;
-        $grade_final->timecreated = mktime();
-        $grade_final->timemodified = mktime();
-        $grade_final->locked = false; 
-
-        if ($grade_final->id = insert_record('grade_grades_final', $grade_final)) {
-            $this->grade_grades_final[] = $grade_final;
-        } 
     }
     
     /**
@@ -1132,8 +945,8 @@ class grade_test extends UnitTestCase {
     function load_grade_grades_text() {
         $grade_grades_text = new stdClass();
 
-        $grade_grades_text->itemid = $this->grade_grades_raw[0]->itemid;
-        $grade_grades_text->userid = $this->grade_grades_raw[0]->userid;
+        $grade_grades_text->itemid = $this->grade_grades[0]->itemid;
+        $grade_grades_text->userid = $this->grade_grades[0]->userid;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';

@@ -40,8 +40,8 @@ class grade_grades_text extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields');
-    
+    var $nonfields = array('table', 'nonfields', 'grade_item');
+
     /**
      * The grade_item.id this text refers to.
      * @var int $itemid
@@ -89,7 +89,7 @@ class grade_grades_text extends grade_object {
      * @var int $usermodified
      */
     var $usermodified;
-    
+
     /**
      * Finds and returns a grade_text object based on 1-3 field values.
      *
@@ -103,7 +103,7 @@ class grade_grades_text extends grade_object {
      * @param string $fields
      * @return object grade_text object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_text = get_record('grade_grades_text', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             if (isset($this) && get_class($this) == 'grade_grades_text') {
                 foreach ($grade_text as $param => $value) {
