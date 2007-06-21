@@ -297,18 +297,21 @@ class quiz_report extends quiz_default_report {
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id '.
                     groups_members_join_sql().
                     'LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = ' WHERE ra.contextid ' .$contextlists . ' AND '.groups_members_where_sql($currentgroup).' AND qa.preview = 0';
+                $where = ' WHERE ra.contextid ' .$contextlists . ' AND '.groups_members_where_sql($currentgroup);
                 if ($noattempts == 1) {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
                     $where .= ' AND qa.userid IS NULL'; // show ONLY no attempts;
-                } // no else, the left join is not filtered, which means we get both back.
+                } else {
+                    // We are including attempts, so exclude previews.
+                    $where .= ' AND qa.preview = 0';
+                }
             } else if (empty($currentgroup)) {
                 // We don't care about group, and we to do something funky with attempts
                 // So do a left join on attempts
                 $from  = 'FROM '.$CFG->prefix.'user u JOIN '.$CFG->prefix.'role_assignments ra ON ra.userid = u.id LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid AND qa.quiz = '.$quiz->id;
-                $where = " WHERE ra.contextid $contextlists AND qa.preview = 0";
+                $where = " WHERE ra.contextid $contextlists";
                 if (empty($noattempts)) {
-                    $where .= ' AND qa.userid IS NOT NULL'; // show ONLY students with attempts;
+                    $where .= ' AND qa.userid IS NOT NULL AND qa.preview = 0'; // show ONLY students with attempts;
                 } else if ($noattempts == 1) {
                     // noattempts = 1 means only no attempts, so make the left join ask for only records where the right is null (no attempts)
                     $where .= ' AND qa.userid IS NULL'; // show ONLY students without attempts;
