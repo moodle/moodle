@@ -51,7 +51,7 @@
     // assemble array of form data
     $formdata = array(
         'mode' => $mode,
-        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers'), PARAM_ALPHA) : 'this',
+        'reportusers'      => has_capability('mod/hotpot:viewreport',$modulecontext) ? optional_param('reportusers', get_user_preferences('hotpot_reportusers', 'allusers'), PARAM_ALPHANUM) : 'this',
         'reportattempts'   => optional_param('reportattempts', get_user_preferences('hotpot_reportattempts', 'all'), PARAM_ALPHA),
         'reportformat'     => optional_param('reportformat', 'htm', PARAM_ALPHA),
         'reportshowlegend' => optional_param('reportshowlegend', get_user_preferences('hotpot_reportshowlegend', '0'), PARAM_INT),
