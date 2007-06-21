@@ -10,18 +10,13 @@
   <div class="prompt">
     <?php echo $stranswer; ?>
   </div>
-
-  <table class="answer">
-      <tr>
-          <td>
-              <?php echo $answer; ?>
-          </td>
-      </tr>
-      <tr>
-          <td class="feedback">
-              <?php echo $feedback; ?>
-          </td>
-      </tr>
-  </table>
+  <table class="answer"><tr><td><?php // HTML editors have to go in tables. ?>
+    <?php echo $answer; ?>
+  </td></tr></table>
+  <?php if ($feedback) { ?>
+    <div class="feedback">
+      <?php echo $feedback; ?>
+    </div>
+  <?php } ?>
   <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
 </div>
