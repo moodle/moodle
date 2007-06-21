@@ -2322,7 +2322,6 @@ body#message-messages {
 }
 
 .que {
-  width: 90%;
   text-align: left;
   margin: 10px auto 15px auto;
   border: 1px solid;
@@ -2330,15 +2329,15 @@ body#message-messages {
 }
 .que .info {
   float: left;
-  margin: 5px;
+  margin: 5px 0 5px 5px;
   width: 8%;
 }
 .que .grade {
   margin-top: 0.5em;
 }
 .que .content {
-  float: right;
-  margin: 5px;
+  float: left;
+  margin: 5px 0 5px 5px;
   width: 88%;
 }
 .que .qtext {
