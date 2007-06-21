@@ -1288,15 +1288,6 @@ function xmldb_main_upgrade($oldversion=0) {
             $result = $result && create_table($table);
         }
 
-        $table  = new XMLDBTable('grade_items');
-        $field = new XMLDBField('locktime');
-
-        if (!field_exists($table, $field)) {
-            $locktime->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'locked');
-        /// Launch add field locktime
-            $result = $result && add_field($table, $field);
-        }
-
         /// Remove the obsoleted unitttests tables - they will be recreated automatically
         $tables = array('grade_categories',
                         'scale',
@@ -1357,6 +1348,19 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+
+    /// add new locktime field if needed
+    if ($result && $oldversion < 2007062008) {
+
+        $table  = new XMLDBTable('grade_items');
+        $field = new XMLDBField('locktime');
+
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'locked');
+        /// Launch add field locktime
+            $result = $result && add_field($table, $field);
+        }
+    }
 
     return $result;
 }
