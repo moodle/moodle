@@ -1,14 +1,14 @@
-<?php 
+<?php
       // This script fetches files from the dataroot/questionattempt directory
       // It is based on the top-level file.php
       //
       // On a module-by-module basis (currently only implemented for quiz), it checks
       // whether the user has permission to view the file.
       //
-      // Syntax:      question/file.php/questionattempt/attemptid/questionid/filename.ext
-      //              question/file.php/questionattempt/attemptid/questionid/filename.ext?forcedownload=1 (download instead of inline)
-      // Workaround:  question/file.php?file=/questionattempt/attemptid/questionid
-      // Test:        question/file.php/testslasharguments 
+      // Syntax:      question/file.php/attemptid/questionid/filename.ext
+      //              question/file.php/attemptid/questionid/filename.ext?forcedownload=1 (download instead of inline)
+      // Workaround:  question/file.php?file=/attemptid/questionid
+      // Test:        question/file.php/testslasharguments
 
     require_once('../config.php');
     require_once('../lib/filelib.php');
@@ -18,7 +18,7 @@
 
     $relativepath = get_file_argument('file.php');
     $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
-    
+
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
         error('No valid arguments supplied or incorrect server configuration');
@@ -26,54 +26,49 @@
         error('No valid arguments supplied, path does not start with slash!');
     }
 
-    $pathname = $CFG->dataroot.$relativepath;
-    
+    $pathname = $CFG->dataroot.'/questionattempt'.$relativepath;
+
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
         error('No valid arguments supplied');
     }
-    
-    // security: only allow access to questionattempt directory
-    if ($args[0] != 'questionattempt') {
-        question_attempt_not_found();
-    }
 
     // security: require login
     require_login();
 
-    // security: do not return directory node!    
+    // security: do not return directory node!
     if (is_dir($pathname)) {
         question_attempt_not_found();
     }
 
     $lifetime = 0;  // do not cache because students may reupload files
-    
+
     // force download for any student-submitted files
     $forcedownload = 1;
 
     // security: check that the user has permission to access this file
     $haspermission = false;
-    if ($attempt = get_record("question_attempts", "id", $args[1])) {
+    if ($attempt = get_record("question_attempts", "id", $args[0])) {
         $modfile = $CFG->dirroot .'/mod/'. $attempt->modulename .'/lib.php';
-        $modcheckfileaccess = $attempt->modulename .'_check_file_access'; 
+        $modcheckfileaccess = $attempt->modulename .'_check_file_access';
         if (file_exists($modfile)) {
             @require_once($modfile);
             if (function_exists($modcheckfileaccess)) {
-                $haspermission = $modcheckfileaccess($args[1], $args[2]);
+                $haspermission = $modcheckfileaccess($args[0], $args[1]);
             }
         }
-    }        
-    
+    }
+
     if ($haspermission) {
         // check that file exists
         if (!file_exists($pathname)) {
             question_attempt_not_found();
         }
-        
+
         // send the file
         session_write_close(); // unlock session during fileserving
-        $filename = $args[count($args)-1];        
+        $filename = $args[count($args)-1];
         send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
     } else {
         question_attempt_not_found();
