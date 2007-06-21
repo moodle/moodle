@@ -385,9 +385,9 @@
                 
                 echo '<input type="button" value="'.$buttontext.'" onclick="javascript:';
                 if ($strconfirmstartattempt) {
-                    echo "if (confirm(\\'".addslashes_js($strconfirmstartattempt)."\\'))";
+                    echo "if (confirm('".addslashes_js($strconfirmstartattempt)."')) ";
                 } 
-               echo " window.open('$attempturl','$window','$windowoptions'); ".' " />';   
+                echo "window.open('$attempturl','$window','$windowoptions');", '" />';   
 
 ?>
 <noscript>
