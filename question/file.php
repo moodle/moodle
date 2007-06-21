@@ -6,9 +6,7 @@
       // whether the user has permission to view the file.
       //
       // Syntax:      question/file.php/attemptid/questionid/filename.ext
-      //              question/file.php/attemptid/questionid/filename.ext?forcedownload=1 (download instead of inline)
-      // Workaround:  question/file.php?file=/attemptid/questionid
-      // Test:        question/file.php/testslasharguments
+      // Workaround:  question/file.php?file=/attemptid/questionid/filename.ext
 
     require_once('../config.php');
     require_once('../lib/filelib.php');
@@ -17,7 +15,8 @@
     disable_debugging();
 
     $relativepath = get_file_argument('file.php');
-    $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
+    // force download for any student-submitted files to prevent XSS attacks.
+    $forcedownload = 1;
 
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
@@ -43,9 +42,6 @@
     }
 
     $lifetime = 0;  // do not cache because students may reupload files
-
-    // force download for any student-submitted files
-    $forcedownload = 1;
 
     // security: check that the user has permission to access this file
     $haspermission = false;
