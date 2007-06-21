@@ -641,6 +641,13 @@ function calendar_top_controls($type, $data) {
         $data['d'] = 1;
     }
 
+    // Ensure course id passed if relevant
+    // Required due to changes in view/lib.php mainly (calendar_session_vars())
+    $courseid = '';
+    if (!empty($data['id'])) {
+        $courseid = '&amp;course='.$data['id'];
+    }
+
     if(!checkdate($data['m'], $data['d'], $data['y'])) {
         $time = time();
     }
@@ -678,10 +685,10 @@ function calendar_top_controls($type, $data) {
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'upcoming':
-            $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
+            $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming"'.$courseid.'>'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
         break;
         case 'display':
-            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
+            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
         break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
@@ -689,9 +696,9 @@ function calendar_top_controls($type, $data) {
             $prevdate = make_timestamp($prevyear, $prevmonth, 1);
             $nextdate = make_timestamp($nextyear, $nextmonth, 1);
             $content .= "\n".'<div class="calendar-controls">';
-            $content .= calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month&amp;', 1, $prevmonth, $prevyear);
+            $content .= calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $prevmonth, $prevyear);
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimemonthyear'))."</span>\n";
-            $content .= '<span class="hide"> | </span>'.calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month&amp;', 1, $nextmonth, $nextyear);
+            $content .= '<span class="hide"> | </span>'.calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $nextmonth, $nextyear);
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
         case 'day':
@@ -701,7 +708,7 @@ function calendar_top_controls($type, $data) {
             $prevname = calendar_wday_name($CALENDARDAYS[$prevdate['wday']]);
             $nextname = calendar_wday_name($CALENDARDAYS[$nextdate['wday']]);
             $content .= "\n".'<div class="calendar-controls">';
-            $content .= calendar_get_link_previous($prevname, 'view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']);
+            $content .= calendar_get_link_previous($prevname, 'view.php?view=day'.$courseid.'&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']);
  
             // Get the format string
             $text = get_string('strftimedaydate');
@@ -715,7 +722,7 @@ function calendar_top_controls($type, $data) {
             // Print the actual thing
             $content .= '<span class="hide"> | </span><span class="current">'.$text.'</span>';
 
-            $content .= '<span class="hide"> | </span>'. calendar_get_link_next($nextname, 'view.php?view=day&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']);
+            $content .= '<span class="hide"> | </span>'. calendar_get_link_next($nextname, 'view.php?view=day'.$courseid.'&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']);
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;
     }
@@ -1168,11 +1175,9 @@ function calendar_session_vars() {
     if(!isset($SESSION->cal_show_user)) {
         $SESSION->cal_show_user = true;
     }
-    // Version 1.76 to version 1.77 change, which commented out following if
-    // statement prevented individual course from being selected! Investigate
-    if(empty($SESSION->cal_courses_shown)) {
+   // if(empty($SESSION->cal_courses_shown)) {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-    }
+    //}
     if(empty($SESSION->cal_users_shown)) {
         // The empty() instead of !isset() here makes a whole world of difference,
         // as it will automatically change to the user's id when the user first logs

@@ -45,11 +45,6 @@
 
     require_login();
 
-    if(isguest()) {
-        // Guests cannot do anything with events
-        redirect(CALENDAR_URL.'view.php?view=upcoming');
-    }
-
     $action = required_param('action', PARAM_ALPHA);
     $eventid = optional_param('id', 0, PARAM_INT);
     $eventtype = optional_param('type', 'select', PARAM_ALPHA);
@@ -57,6 +52,11 @@
     $cal_y = optional_param('cal_y');
     $cal_m = optional_param('cal_m');
     $cal_d = optional_param('cal_d');
+
+    if(isguest()) {
+        // Guests cannot do anything with events
+        redirect(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse);
+    }
 
     $focus = '';
 
@@ -70,7 +70,7 @@
     calendar_session_vars();
 
     $now = usergetdate(time());
-    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -175,7 +175,7 @@
                     }
 
                     // OK, now redirect to day view
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
+                    redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
                 else {
                     foreach ($err as $key => $value) {
@@ -241,7 +241,7 @@
                         }
                     }
                     // OK, now redirect to day view
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
+                    redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
                 else {
                     foreach ($err as $key => $value) {
@@ -297,7 +297,7 @@
                     }
                 }
 
-                redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
+                redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
 
             }
             else {
@@ -545,13 +545,13 @@
     echo '<div class="sideblock">';
     echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
     echo '<div class="minicalendarblock minicalendartop">';
-    echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
     echo '</div><div class="minicalendarblock">';
-    echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
+    echo calendar_top_controls('display', array('id' => $urlcourse, 'm' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</div>';
     echo '</div>';
