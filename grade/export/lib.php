@@ -84,7 +84,7 @@ class grade_export {
 
         // first make sure we have all final grades
         // TODO: check that no grade_item has needsupdate set
-        grade_update_final_grades();
+        grade_update_final_grades($id);
 
         /// Check to see if groups are being used in this course
         if ($groupmode = groupmode($course)) {   // Groups are being used
@@ -134,7 +134,7 @@ class grade_export {
             foreach ($gradeitems as $gradeitem) {
               
                 // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem -> load_final()) {                    
+                if ($itemgrades = $gradeitem -> get_final()) {                    
                     
                     $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
                 
