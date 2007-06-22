@@ -361,19 +361,18 @@ table.flexible .r1 {
   background-color: #aaffaa;
 }
 
-body#admin-environment .error {
+.environmenttable .error {
     background-color : red;
     color : inherit;
 }
 
-body#admin-environment .warn {
+.environmenttable .warn {
     background-color : yellow;
 }
 
-body#admin-environment .ok {
+.environmenttable .ok {
     background-color : lightgreen;
 }
-
 /***
  *** Blocks
  ***/
