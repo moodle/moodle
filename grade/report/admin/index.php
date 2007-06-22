@@ -42,6 +42,8 @@ $param->categories    = optional_param('categories', 0, PARAM_INT);
 $param->element_type  = optional_param('element_type', 0, PARAM_ALPHA);
 $param->category_name = optional_param('category_name', 0, PARAM_ALPHA);
 
+$report = optional_param('report', 0, PARAM_ALPHANUM);
+
 print_object($param);
 
 $tree = new grade_tree($param->courseid);
@@ -178,5 +180,20 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
     }
 }
 print_heading(get_string('graderreport', 'grades'));
+
+// Add tabs
+if (empty($report)) {
+    $report = 'admin';
+}
+
+$tabs = $row = array();
+$row[] = new tabobject('grader', 'report.php?courseid='.$course->id.'&amp;report=grader',
+                       get_string('viewgrades', 'grades'));
+$row[] = new tabobject('admin', 'report.php?courseid='.$course->id.'&amp;report=admin',
+                       get_string('categories', 'grades'));
+$tabs[] = $row;
+
+print_tabs($tabs, $report);
+
 echo $tree->get_edit_tree(1, null, $param->source, $param->action, $param->type);
 ?>

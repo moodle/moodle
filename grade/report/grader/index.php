@@ -6,10 +6,11 @@ require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
 // get the params
-$courseid = required_param('id', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 $page = optional_param('page', 0, PARAM_INT);
 $sortitemid = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
+$report = optional_param('report', 0, PARAM_ALPHANUM);
 
 // setting the sort order, this depends on last state
 // all this should be in the new table class that we might need to use
@@ -108,10 +109,24 @@ if ($grades = get_records_sql($sql)) {
 
 print_heading('Grader Report');
 
+// Add tabs
+if (empty($report)) {
+    $report = 'grader';
+}
+
+$tabs = $row = array();
+$row[] = new tabobject('grader', 'report.php?courseid='.$course->id.'&amp;report=grader',
+                       get_string('viewgrades', 'grades'));
+$row[] = new tabobject('categories', 'report.php?courseid='.$course->id.'&amp;report=admin',
+                       get_string('categories', 'grades'));
+$tabs[] = $row;
+
+print_tabs($tabs, $report);
+
 // base url for sorting by first/last name
-$baseurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;page='.$page;
+$baseurl = 'report.php?courseid='.$courseid.'&amp;report=grader&amp;page='.$page;
 // base url for paging
-$pbarurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;';
+$pbarurl = 'report.php?courseid='.$courseid.'&amp;report=grader&amp;';
 
 print_paging_bar($numusers, $page, $perpage, $pbarurl);
 
