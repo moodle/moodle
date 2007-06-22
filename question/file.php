@@ -29,8 +29,10 @@
 
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
-    if (count($args) == 0) { // always at least courseid, may search for index.html in course root
-        error('No valid arguments supplied');
+
+    // check for the right number of directories in the path
+    if (count($args) != 3) {
+        error('Invalid arguments supplied');
     }
 
     // security: require login
@@ -53,6 +55,12 @@
             if (function_exists($modcheckfileaccess)) {
                 $haspermission = $modcheckfileaccess($args[0], $args[1]);
             }
+        }
+    } else if ($args[0][0] == 0) {
+        global $USER;
+        $list = explode('_', $args[0]);
+        if ($list[1] == $USER->id) {
+            $haspermission = true;
         }
     }
 
