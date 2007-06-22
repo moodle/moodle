@@ -268,6 +268,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users, $courseid) {
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
+            $event->calendarcourseid = $courseid;
 
             if ($event->timestart >= $starttime && $event->timestart <= $endtime) {  // Print it now
 
