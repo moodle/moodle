@@ -265,16 +265,16 @@ body#admin-blocks table#incompatible td.c0 {
   color: #ff0000;
 }
 
-body#admin-environment .error {
+.environmenttable .error {
     background-color : red;
     color : inherit;
 }
 
-body#admin-environment .warn {
+.environmenttable .warn {
     background-color : yellow;
 }
 
-body#admin-environment .ok {
+.environmenttable .ok {
     background-color : lightgreen;
 }
 table.flexible  .r0 {
