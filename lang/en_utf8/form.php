@@ -17,8 +17,9 @@ $string['requiredelement'] = 'Required field';
 $string['general'] = 'General';
 $string['optional'] = 'Optional';
 $string['revealpassword'] = 'Reveal';
-$string['modstandardels']='Common Module Settings';
+$string['modstandardels']='Common module settings';
 $string['miscellaneoussettings']='Miscellaneous Settings';
+$string['othersettings']='Other settings';
 $string['addfields']='Add $a fields to form';
 $string['day']='Day';
 $string['month']='Month';
@@ -26,7 +27,7 @@ $string['year']='Year';
 $string['hour']='Hour';
 $string['minute']='Minute';
 
-$string['advancedelement']='Advanced Element';
+$string['advancedelement']='Advanced element';
 $string['hideadvanced']='Hide Advanced';
 $string['showadvanced']='Show Advanced';
 

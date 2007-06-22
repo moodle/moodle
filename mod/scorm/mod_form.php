@@ -31,10 +31,8 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
 // Other Settings
-        $mform->addElement('header', 'advanced', get_string('othersettings'));
+        $mform->addElement('header', 'advanced', get_string('othersettings', 'form'));
 
-// Grading
-        $mform->addElement('static', 'grade', get_string('grades'));
 // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), $SCORM_GRADE_METHOD);
         $mform->setHelpButton('grademethod', array('grademethod',get_string('grademethod', 'scorm')), 'scorm');
@@ -50,15 +48,14 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Attempts
         $mform->addElement('static', '', '' ,'<hr />');
-        $mform->addElement('static', 'attempts', get_string('attempts','scorm'));
 
 // Max Attempts
         $attempts = array(0 => get_string('nolimit','scorm'));
         for ($i=1; $i<=$CFG->scorm_maxattempts; $i++) {
             if ($i == 1) {
-                $attempts[$i] = $i . ' ' . get_string('attempt','scorm');
+                $attempts[$i] = get_string('attempt1','scorm');
             } else {
-                $attempts[$i] = $i . ' ' . get_string('attempts','scorm');
+                $attempts[$i] = get_string('attemptsx','scorm', $i);
             }
         }
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), $attempts);
