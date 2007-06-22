@@ -5,14 +5,50 @@
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
-
 // get the params
 $courseid = required_param('id', PARAM_INT);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 $page = optional_param('page', 0, PARAM_INT);
-$sortitemid = optional_param('sortitemid', 0, PARAM_INT); // sort by which grade item
+$sortitemid = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
 
-$perpage = 10;
+// setting the sort order, this depends on last state
+// all this should be in the new table class that we might need to use
+// for displaying grades
+
+// already in not requesting sort, i.e. normal paging
+
+if ($sortitemid) {
+    if (!isset($SESSION->gradeuserreport->sort)) {
+        $sortorder = $SESSION->gradeuserreport->sort = 'ASC';  
+    } else {
+        // this is the first sort, i.e. by last name
+        if (!isset($SESSION->gradeuserreport->sortitemid)) {
+            $sortorder = $SESSION->gradeuserreport->sort = 'ASC';  
+        } else if ($SESSION->gradeuserreport->sortitemid == $sortitemid) {
+            // same as last sort        
+            if ($SESSION->gradeuserreport->sort == 'ASC') {
+                $sortorder = $SESSION->gradeuserreport->sort = 'DESC';
+            } else {
+                $sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+            }
+        } else {
+            $sortorder = $SESSION->gradeuserreport->sort = 'ASC';  
+        }
+    }
+    $SESSION->gradeuserreport->sortitemid = $sortitemid;
+} else {
+    // not requesting sort, use last setting (for paging)
+    $sortitemid = $SESSION->gradeuserreport->sortitemid;
+    $sortorder = $SESSION->gradeuserreport->sort;
+}
+
+/// end of setting sort order code
+
+// first make sure we have all final grades
+// TODO: check that no grade_item has needsupdate set
+grade_update_final_grades($courseid);
+
+$perpage = 3;
 
 // roles to be displaye in the gradebook
 $gradebookroles = $CFG->gradebookroles;
@@ -23,22 +59,32 @@ $gradebookroles = $CFG->gradebookroles;
 // this is check for user roles because there could be some users with grades
 // but not supposed to be displayed
 
-if ($sortitemid) {
-
-    $sql = "SELECT u.id, u.firstname, u.lastname, g.itemid, g.finalgrade
+if (is_numeric($sortitemid)) {
+    $sql = "SELECT u.id, u.firstname, u.lastname
             FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                  {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $sortitemid)
                  LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid             
             WHERE ra.roleid in ($gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($context)."
-            ORDER BY g.finalgrade ASC";
+            ORDER BY g.finalgrade $sortorder";
     $users = get_records_sql($sql, $perpage * $page, $perpage);
-} else {
-    
+} else {      
+    // default sort
     // get users sorted by lastname
-    $users = get_role_users(@implode(',', $CFG->gradebookroles), $context, false, '', 'u.lastname ASC', false, 0, $perpage); 
+    $users = get_role_users(@implode(',', $CFG->gradebookroles), $context, false, 'u.id, u.firstname, u.lastname', 'u.'.$sortitemid .' '. $sortorder, false, $page * $perpage, $perpage); 
 }
-print_object($users);
+
+/// count total records for paging
+
+$countsql = "SELECT COUNT(DISTINCT u.id)
+            FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
+                 {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $sortitemid)
+                 LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid             
+            WHERE ra.roleid in ($gradebookroles)
+                AND ra.contextid ".get_related_contexts_string($context);
+$numusers = count_records_sql($countsql);
+
+// print_object($users); // debug
 
 // phase 2 sql, we supply the userids in this query, and get all the grades
 // pulls out all the grades, this does not need to worry about paging
@@ -49,19 +95,27 @@ $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade
               AND gi.courseid = $courseid
               AND g.userid in (".implode(",", array_keys($users)).")";
 
-$grades = get_records_sql($sql);
-
-print_object($grades);
+///print_object($grades); //debug
 
 $finalgrades = array();
 // needs to be formatted into an array for easy retrival
-foreach ($grades as $grade) {
-    $finalgrades[$grade->userid][$grade->itemid] = $grade->finalgrade;
-  
+
+if ($grades = get_records_sql($sql)) {
+    foreach ($grades as $grade) {
+        $finalgrades[$grade->userid][$grade->itemid] = $grade->finalgrade;
+    } 
 }
 
 print_heading('Grader Report');
 
+// base url for sorting by first/last name
+$baseurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;page='.$page;
+// base url for paging
+$pbarurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;';
+
+print_paging_bar($numusers, $page, $perpage, $pbarurl);
+
+/// With the users in an sorted array and grades fetched, we can not print the main html table
 if ($gtree = new grade_tree($courseid, false)) {
 
     // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
@@ -80,7 +134,30 @@ if ($gtree = new grade_tree($courseid, false)) {
 
     $topcathtml = '<tr><td class="filler">&nbsp;</td>';
     $cathtml    = '<tr><td class="filler">&nbsp;</td>';
-    $itemhtml   = '<tr><td class="filler">&nbsp;</td>';
+    
+    if ($sortitemid == 'lastname') {
+        if ($sortorder == 'ASC') {
+            $lastarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
+        } else {
+            $lastarrow = ' <img src="http://yu.moodle.com/dev/pix/t/down.gif"/> ';                      
+        }
+    } else {
+        $lastarrow = '';  
+    }
+    
+    if ($sortitemid == 'firstname') {
+        if ($sortorder == 'ASC') {
+            $firstarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
+        } else {
+            $firstarrow = ' <img src="http://yu.moodle.com/dev/pix/t/down.gif"/> ';                      
+        }
+    } else {
+        $firstarrow = '';  
+    }
+    
+    // first name/last name column
+    $itemhtml   = '<tr><th class="filler"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '. $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
+    
     $items = array();
 
     foreach ($tree as $topcat) {
@@ -92,7 +169,17 @@ if ($gtree = new grade_tree($courseid, false)) {
             foreach ($cat['children'] as $item) {
                 $itemcount++;
                 $catitemcount++;
-                $itemhtml .= '<td>' . $item['object']->itemname . '</td>'; 
+                
+                if ($item['object']->id == $sortitemid) {
+                    if ($sortorder == 'ASC') {
+                        $arrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
+                    } else {
+                        $arrow = ' <img src="http://yu.moodle.com/dev/pix/t/down.gif"/> ';                      
+                    }
+                } else {
+                    $arrow = '';
+                }   
+                $itemhtml .= '<th><a href="'.$baseurl.'&amp;sortitemid='. $item['object']->id .'">'. $item['object']->itemname . '</a>' . $arrow. '</th>'; 
                 $items[] = $item;
             }
                 
