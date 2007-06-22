@@ -521,12 +521,15 @@ class grade_item extends grade_object {
 
         if ($this->is_locked()) {
             // locked grade items already have correct final grades
+            $this->needsupdate = false;
+            $this->update();
             return true;
         }
 
-        if ($calculation = $this->get_calculation()) {
-            if ($calculation->compute()) {
-                $this->force_regrade();
+        if ($this->is_calculated()) {
+            if ($this->calculation->compute()) {
+                $this->needsupdate = false;
+                $this->update();
                 return true;
             } else {
                 return array("Could not calculate grades for grade item id:".$this->id); // TODO: improve and localize
@@ -691,29 +694,9 @@ class grade_item extends grade_object {
         if ($category = $this->get_category()) {
             $category->force_regrading(); // we can ignore the result
 
-        } else {
-            $this->force_recalculation(); // recalculate all formulas - we do not know if any of them depends on this item
         }
-
 
         return $result;
-    }
-
-    /**
-     * Force recalculation of all calculated grades in course.
-     */
-    function force_recalculation($courseid=null) {
-        if (empty($courseid)) {
-            $courseid = $this->courseid;
-        }
-        $grade_item = new grade_item(array('courseid'=>$courseid), false);
-        $grade_items = $grade_item->fetch_all_using_this();
-        foreach($grade_items as $gi) {
-            if ($gi->get_calculation()) {
-                $gi->needsupdate = true;
-                $gi->update();
-            }
-        }
     }
 
     /**
@@ -791,67 +774,71 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns this object's calculation.
-     * @param boolean $fetch Whether to fetch the value from the DB or not (false == just use the object's value)
-     * @return mixed $calculation Object if found, false otherwise.
+     * Checks if grade calculated. Returns this object's calculation.
+     * @return mixed $calculation Calculation object if exists, false otherwise.
      */
-    function get_calculation($nocache = false) {
+    function is_calculated() {
         if (is_null($this->calculation)) {
-            $nocache = true;
-        }
-
-        if ($nocache) {
             $this->calculation = grade_calculation::fetch('itemid', $this->id);
         }
 
-        return $this->calculation;
+        return !empty($this->calculation);
+    }
+
+    /**
+     * Returns calculation string if grade calculated.
+     * @return mixed string if calculation used, null if not
+     */
+    function get_calculation() {
+        if ($this->is_calculated()) {
+            return $this->calculation->calculation;
+        } else {
+            return NULL;
+        }
     }
 
     /**
      * Sets this item's calculation (creates it) if not yet set, or
      * updates it if already set (in the DB). If no calculation is given,
      * the calculation is removed.
-     * @param string $formula
-     * @return boolean
+     * @param string $formula string representation of formula used for calculation
+     * @return boolean success
      */
     function set_calculation($formula) {
-        // remove cached calculation object
+        // refresh cached calculation object
+        $this->calculation = null;
+
+        $result = true;
+
         if (empty($formula)) { // We are removing this calculation
-            if (!empty($this->id)) {
-                if ($grade_calculation = $this->get_calculation(true)) {
-                    $grade_calculation->delete();
-                }
+            if (!empty($this->id) and $this->is_calculated()) {
+                $this->calculation->delete();
+                $this->calculation = null; // remove cache
             }
-            $this->calculation = false; // cache no calculation present
-            $this->force_regrading();
-            return true;
 
         } else { // We are updating or creating the calculation entry in the DB
-            if ($grade_calculation = $this->get_calculation(true)) {
-                $grade_calculation->calculation = $formula;
-                if ($grade_calculation->update()) {
-                    $this->force_regrading();
-                    return true;
-                } else {
+            if ($this->is_calculated()) {
+                $this->calculation->calculation = $formula;
+                if (!$this->calculation->update()) {
                     $this->calculation = null; // remove cache
+                    $result = false;
                     debugging("Could not save the calculation in the database for this grade_item.");
-                    return false;
                 }
 
             } else {
-                $grade_calculation = new grade_calculation();
-                $grade_calculation->calculation = $formula;
-                $grade_calculation->itemid = $this->id;
-
-                if ($grade_calculation->insert()) {
-                    return true;
-                } else {
+                $grade_calculation = new grade_calculation(array('calculation'=>$formula, 'itemid'=>$this->id), false);
+                if (!$grade_calculation->insert()) {
                     $this->calculation = null; // remove cache
+                    $result = false;
                     debugging("Could not save the calculation in the database for this grade_item.");
-                    return false;
                 }
+                $this->calculation = $grade_calculation;
             }
         }
+
+        $this->force_regrading();
+
+        return $result;
     }
 
     /**
@@ -979,7 +966,7 @@ class grade_item extends grade_object {
             return array();
         }
 
-        if ($calculation = $this->get_calculation()) {
+        if ($calculation = $this->is_calculated()) {
             return $calculation->dependson();
 
         } else if ($this->itemtype == 'category') {
@@ -1030,7 +1017,7 @@ class grade_item extends grade_object {
     function update_raw_grade($userid, $rawgrade=false, $howmodified='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
 
         // calculated grades can not be updated
-        if ($this->get_calculation()) {
+        if ($this->is_calculated()) {
             return false;
         }
 

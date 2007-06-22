@@ -304,14 +304,19 @@ class grade_category extends grade_object {
             return true;
         }
 
-        $result = true;
-
         $this->load_grade_item();
+
+        if ($this->grade_item->needsupdate) {
+            // this grade_item (and category) already needs update, no need to set it again here or in parent categories
+            return true;
+        }
 
         $paths = explode('/', $this->path);
 
         // Remove the first index, which is always empty
         unset($paths[0]);
+
+        $result = true;
 
         if (!empty($paths)) {
             $wheresql = '';
@@ -323,11 +328,6 @@ class grade_category extends grade_object {
             $grade_items = set_field_select('grade_items', 'needsupdate', '1', $wheresql . ' AND courseid = ' . $this->courseid);
             $this->grade_item->update_from_db();
 
-        }
-
-        if (count($paths) == 1) {
-            // we are the top category - force recalculation of all formulas in course
-            $this->grade_item->force_recalculation();
         }
 
         return $result;

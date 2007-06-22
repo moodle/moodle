@@ -116,6 +116,15 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');
         if ($itemdetails) {
             $itemdetails = (array)$itemdetails;
+
+            // grademin and grademax ignored when scale specified            
+            if (array_key_exists('scaleid', $itemdetails)) {
+                if ($itemdetails['scaleid']) {
+                    unset($itemdetails['grademin']);
+                    unset($itemdetails['grademax']);
+                }
+            }
+
             foreach ($itemdetails as $k=>$v) {
                 if (!in_array($k, $allowed)) {
                     // ignore it
@@ -320,51 +329,65 @@ function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminsta
  * Updates all final grades in course.
  *
  * @param int $courseid
+ * @param boolean $regradeall force regrading of all items
+ *
  * @return boolean true if ok, array of errors if problems found
  */
-function grade_update_final_grades($courseid) {
-    $errors = array();
-    $grade_item = new grade_item();
-    $grade_item->courseid = $courseid;
+function grade_update_final_grades($courseid, $regradeall=false) {
+
+    if ($regradeall) {
+        set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
+    }
+
+    $grade_item = new grade_item(array('courseid'=>$courseid), false);
+
     if (!$grade_items = $grade_item->fetch_all_using_this()) {
         return true;
     }
 
-    $needsupdate = false;
-    $calculated = false;
-    foreach ($grade_items as $gid=>$gitem) {
-        $grade_item =& $grade_items[$gid];
-        if ($grade_item->needsupdate) {
-            $needsupdate = true;
-        }
-        if ($grade_item->get_calculation()) {
-            $calculated = true;
-        }
-    }
-
-    // no update needed
-    if (!$needsupdate) {
-        return true;
-    }
-
-    // the easy way
-    if (!$calculated) {
+    if (!$regradeall) {
+        $needsupdate = false;
+        $calculated = false;
         foreach ($grade_items as $gid=>$gitem) {
             $grade_item =& $grade_items[$gid];
             if ($grade_item->needsupdate) {
-                $result = $grade_item->update_final_grades();
-                if ($result !== true) {
-                    $errors = array_merge($errors, $result);
-                }
+                $needsupdate = true;
+            }
+            if ($grade_item->is_calculated()) {
+                $calculated = true;
             }
         }
-
-        if (count($errors) == 0) {
+    
+        if (!$needsupdate) {
+            // no update needed
             return true;
-        } else {
-            return $errors;
+    
+        } else if ($calculated) {
+            // flag all calculated grade items with needsupdate
+            // we want to make sure all are ok, this can be improved later with proper dependency calculation
+            foreach ($grade_items as $gid=>$gitem) {
+                $grade_item =& $grade_items[$gid];
+                if (!$grade_item->is_calculated()) {
+                    continue;
+                }
+                $grade_item->update_from_db(); // make sure we have current data, it might have been updated in this loop already
+                if (!$grade_item->needsupdate) {
+                    //force recalculation and forced update of all parents
+                    $grade_item->force_regrading();
+                }
+            } 
+    
+            // again make sure all date is up-to-date - the needsupdate flag might have changed
+            foreach ($grade_items as $gid=>$gitem) {
+                $grade_item =& $grade_items[$gid];
+                $grade_item->update_from_db();
+                unset($grade_item->category);
+            }
         }
     }
+
+
+    $errors = array();
 
     // now the hard way with calculated grade_items or categories
     $finalitems = array();
@@ -373,41 +396,16 @@ function grade_update_final_grades($courseid) {
         $count = 0;
         foreach ($grade_items as $gid=>$gitem) {
             $grade_item =& $grade_items[$gid];
-            if (!$grade_item->needsupdate and $grade_item->itemtype!='category' and !$grade_item->get_calculation()) {
+            if (!$grade_item->needsupdate) {
                 $finalitems[$gid] = $grade_item;
                 $finalids[] = $gid;
                 unset($grade_items[$gid]);
                 continue;
             }
 
+            //do we have all data for finalizing of this item?
             $dependson = $grade_item->dependson();
 
-            //are we dealing with category with no calculated items?
-            // we can not trust the needsupdate flag because category might contain calculated items
-            if ($grade_item->itemtype=='category' and !$grade_item->needsupdate) {
-                $forceupdate = false;
-                foreach ($dependson as $childid) {
-                    if (in_array($childid, $finalids)) {
-                        $child = $finalitems[$childid];
-                    } else {
-                        $child = $grade_items[$childid];
-                    }
-                    if ($child->itemtype == 'category' or $child->get_calculation()) {
-                        $forceupdate = true;
-                    }
-                }
-
-                if ($forceupdate) {
-                    $grade_item->force_regrading();
-                } else {
-                    $finalitems[$gid] = $grade_item;
-                    $finalids[] = $gid;
-                    unset($grade_items[$gid]);
-                    continue;
-                }
-            }
-
-            //do we have all data for this item?
             $doupdate = true;
             foreach ($dependson as $did) {
                 if (!in_array($did, $finalids)) {
@@ -430,7 +428,7 @@ function grade_update_final_grades($courseid) {
 
         if ($count == 0) {
             foreach($grade_items as $grade_item) {
-                $errors[] = 'Probably circular reference in grade_item id:'.$grade_item->id; // TODO: localize
+                $errors[] = 'Probably circular reference or broken calculation formula in grade_item id:'.$grade_item->id; // TODO: localize
             }
             break;
         }

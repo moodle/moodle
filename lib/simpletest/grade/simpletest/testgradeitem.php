@@ -232,22 +232,20 @@ class grade_item_test extends grade_test {
         $this->assertEqual($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
-    function test_grade_item_get_calculation() {
+    function test_grade_item_is_calculated() {
         $grade_item = new grade_item($this->grade_items[1]);
-        $this->assertTrue(method_exists($grade_item, 'get_calculation'));
-        $grade_calculation = $grade_item->get_calculation();
-
-        $this->assertEqual($this->grade_calculations[0]->id, $grade_calculation->id);
+        $this->assertTrue(method_exists($grade_item, 'is_calculated'));
+        $this->assertTrue($grade_item->is_calculated());
     }
 
     function test_grade_item_set_calculation() {
 /*        $grade_item = new grade_item($this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'set_calculation'));
-        $this->assertTrue(method_exists($grade_item, 'get_calculation'));
+        $this->assertTrue(method_exists($grade_item, 'is_calculated'));
 
         $calculation = '=SUM([unittestgradeitem1], [unittestgradeitem3])';
         $grade_item->set_calculation($calculation);
-        $new_calculation = $grade_item->get_calculation();
+        $new_calculation = $grade_item->is_calculated();
 
         $this->assertEqual($calculation, $new_calculation->calculation);
 */    }
