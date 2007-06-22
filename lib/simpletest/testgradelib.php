@@ -80,7 +80,7 @@ class gradelib_test extends grade_test {
         if (get_class($this) == 'gradelib_test') {
             $grade_item = $this->grade_items[0];
             $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
-            $grade_item = $this->grade_items[1];
+            $grade_item = $this->grade_items[6];
             $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
         }
     }

@@ -184,7 +184,7 @@ class grade_item extends grade_object {
      * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
      * @var int $locked
      */
-    var $locked = false;
+    var $locked;
 
     /**
      * Whether or not the module instance referred to by this grade_item has been deleted.
@@ -215,12 +215,11 @@ class grade_item extends grade_object {
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
+     * Force regrading if necessary
+     *
+     * @return boolean success
      */
     function update() {
-        // If item is flagged as deleted, only update that flag in DB. The other changes are ignored.
-        if (!empty($this->deleted) && $this->deleted) {
-            return set_field('grade_items', 'deleted', 1, 'id', $this->id);
-        }
 
         if (!empty($this->outcome->id)) {
             $this->outcomeid = $this->outcome->id;
@@ -243,19 +242,12 @@ class grade_item extends grade_object {
             $this->scale = NULL;
         }
 
-        $qualifies = $this->qualifies_for_update();
+        if ($this->qualifies_for_regrading()) {
+            return $this->force_regrading();
 
-        $result = parent::update();
-
-        if ($result && $qualifies) {
-            $category = $this->get_category();
-
-            if (!empty($category)) {
-                $result = $result && $category->flag_for_update();
-            }
+        } else {
+            return parent::update();
         }
-
-        return $result;
     }
 
     /**
@@ -264,28 +256,27 @@ class grade_item extends grade_object {
      * This assumes that this object has an id number and a matching record in DB. If not, it will return false.
      * @return boolean
      */
-    function qualifies_for_update() {
+    function qualifies_for_regrading() {
         if (empty($this->id)) {
             return false;
         }
 
         $db_item = new grade_item(array('id' => $this->id));
 
-        $gradetypediff = $db_item->gradetype != $this->gradetype;
-        $grademaxdiff = $db_item->grademax != $this->grademax;
-        $grademindiff = $db_item->grademin != $this->grademin;
-        $scaleiddiff = $db_item->scaleid != $this->scaleid;
-        $outcomeiddiff = $db_item->outcomeid != $this->outcomeid;
-        $multfactordiff = $db_item->multfactor != $this->multfactor;
-        $plusfactordiff = $db_item->plusfactor != $this->plusfactor;
-        $needsupdatediff = $db_item->needsupdate != $this->needsupdate;
+        $gradetypediff   = $db_item->gradetype   != $this->gradetype;
+        $grademaxdiff    = $db_item->grademax    != $this->grademax;
+        $grademindiff    = $db_item->grademin    != $this->grademin;
+        $scaleiddiff     = $db_item->scaleid     != $this->scaleid;
+        $outcomeiddiff   = $db_item->outcomeid   != $this->outcomeid;
+        $multfactordiff  = $db_item->multfactor  != $this->multfactor;
+        $plusfactordiff  = $db_item->plusfactor  != $this->plusfactor;
+        $deleteddiff     = $db_item->deleted     != $this->deleted;
 
-        if ($gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff || $outcomeiddiff ||
-            $multfactordiff || $plusfactordiff || $needsupdatediff) {
-            return true;
-        } else {
-            return false;
-        }
+        $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
+        $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
+
+        return ($gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff || $outcomeiddiff ||
+                $multfactordiff || $plusfactordiff || $deleteddiff || $needsupdatediff || $lockeddiff);
     }
 
     /**
@@ -318,7 +309,7 @@ class grade_item extends grade_object {
     }
 
     /**
-     * If parent::delete() is successful, send flag_for_update message to parent category.
+     * If parent::delete() is successful, send force_regrading message to parent category.
      * @return boolean Success or failure.
      */
     function delete() {
@@ -326,21 +317,18 @@ class grade_item extends grade_object {
         if ($result) {
             $category = $this->get_category();
             if (!empty($category)) {
-                return $category->flag_for_update();
+                return $category->force_regrading();
             }
         }
         return $result;
     }
 
     /**
-     * In addition to perform parent::insert(), this calls the grade_item's category's (if applicable) flag_for_update() method.
+     * In addition to perform parent::insert(), this calls the grade_item's category's (if applicable) force_regrading() method.
      * @return int ID of the new grade_item record.
      */
     function insert() {
         global $CFG;
-
-        // all new grade_items must be recalculated
-        $this->needsupdate = true;
 
         if (!isset($this->gradetype)) {
             $this->gradetype = GRADE_TYPE_VALUE;
@@ -402,20 +390,15 @@ class grade_item extends grade_object {
 
         $result = parent::insert();
 
-        // Notify parent category of need to update. Note that a grade_item may not have a categoryid.
         if ($result) {
-            $category = $this->get_category();
-            if (!empty($category)) {
-                if (!$category->flag_for_update()) {
-                    debugging("Could not notify parent category of the need to update its final grades.");
-                    return false;
-                }
-            }
+            // force regrading of items if needed
+            $this->force_regrading();
+            return true;
+
         } else {
             debugging("Could not insert this grade_item in the database!");
+            return false;
         }
-
-        return $result;
     }
 
     /**
@@ -427,26 +410,88 @@ class grade_item extends grade_object {
      * @return boolean Locked state
      */
     function is_locked($userid=NULL) {
-        // TODO: rewrite the item check
+         if (!empty($this->locked)) {
+            return true;
+         }
 
-        if ($this->locked || empty($userid)) {
-            return $this->locked; // This could be true or false (false only if no $userid given)
-        } else {
-            $final = $this->get_final($userid);
-            return $final->locked;
+         if (!empty($userid)) {
+
+            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
+            $grade->grade_item =& $this; // prevent db fetching of cached grade_item
+
+            if (!empty($grade->id) and $grade->is_locked()) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     /**
      * Locks or unlocks this grade_item and (optionally) all its associated final grades.
      * @param boolean $update_final Whether to update final grades too
      * @param boolean $new_state Optional new state. Will use inverse of current state otherwise.
-     * @return int Number of final grades changed, or false if error occurred during update.
+     * @return boolean true if grade_item all grades updated, false if at least one update fails
      */
-    function toggle_locking($update_final=false, $new_state=NULL) {
-        // TODO: implement new locking
+    function set_locked($lockedstate) {
+        if ($lockedstate) {
+        /// setting lock
+            if (!empty($this->locked)) {
+                return true; // already locked
+            }
 
-        return 0;
+            if ($this->needsupdate) {
+                return false; // can not lock grade without first calculating final grade
+            }
+
+            $this->locked = time();
+            $this->update();
+
+            // this could be improved with direct SQL update
+            $result = true;
+            $grades = $this->get_final();
+            foreach($grades as $g) {
+                $grade = new grade_grades($g, false);
+                $grade->grade_item =& $this;
+                if (!$grade->set_locked(true)) {
+                    $result = false;
+                }
+            }
+
+            return $result;
+
+        } else {
+        /// removing lock
+            if (empty($this->locked)) {
+                return true; // not locked
+            }
+
+            if (!empty($this->locktime) and $this->locktime < time()) {
+                return false; // can not unlock grade item that should be already locked
+            }
+
+            $this->locked = 0;
+            $this->update();
+
+            // this could be improved with direct SQL update
+            $result = true;
+            $grades = $this->get_final();
+            foreach($grades as $g) {
+                $grade = new grade_grades($g, false);
+                $grade->grade_item =& $this;
+
+                if (!empty($grade->locktime) and $grade->locktime < time()) {
+                    $result = false; // can not unlock grade that should be already locked
+                }
+
+                if (!$grade->set_locked(false)) {
+                    $result = false;
+                }
+            }
+
+            return $result;
+
+        }
     }
 
     /**
@@ -474,29 +519,38 @@ class grade_item extends grade_object {
     function update_final_grades() {
         global $CFG;
 
-        $errors = array();
+        if ($this->is_locked()) {
+            // locked grade items already have correct final grades
+            return true;
+        }
 
         if ($calculation = $this->get_calculation()) {
             if ($calculation->compute()) {
-                $this->needsupdate = false;
-                $this->update();
+                $this->force_regrade();
                 return true;
             } else {
-                $errors[] = "Could not calculate grades for grade item id:".$this->id; // TODO: improve and localize
+                return array("Could not calculate grades for grade item id:".$this->id); // TODO: improve and localize
             }
 
         } else if ($this->itemtype == 'category') {
             // aggregate category grade item
             $category = $this->get_category();
             if (!$category->generate_grades()) {
-                $errors[] = "Could not calculate category grade item id:".$this->id; // TODO: improve and localize
+                return ("Could not calculate raw category grades id:".$this->id); // TODO: improve and localize
             }
         }
 
-        // TODO: add locking support
+        $errors = array();
+
+         // we need it to be really fast here ==> sql only
         if ($rs = get_recordset('grade_grades', 'itemid', $this->id)) {
             if ($rs->RecordCount() > 0) {
                 while ($grade = rs_fetch_next_record($rs)) {
+                    if (!empty($grade->locked)) {
+                        // this grade is locked - final grade must be ok
+                        continue;
+                    }
+
                     if (!empty($errors) or is_null($grade->rawgrade)) {
                         // unset existing final grade when no raw present or error
                         if (!is_null($grade->finalgrade)) {
@@ -519,18 +573,36 @@ class grade_item extends grade_object {
                                 $errors[] = "Could not update final grade for grade item:".$this->id;
                             }
                         }
+
+                        // do not use $grade->is_locked() bacause item may be still locked!
+                        if (!empty($grade->locktime) and empty($grade->locked) and $grade->locktime < time()) {
+                            // time to lock this grade
+                            $g = new object();
+                            $g->id     = $grade->id;
+                            $g->locked = time();
+                            update_record('grade_grades', $g);
+                        }
                     }
                 }
             }
         }
 
         if (!empty($errors)) {
-            $this->flag_for_update();
+            $this->force_regrading();
             return $errors;
 
         } else {
+            // reset the regrading flag
             $this->needsupdate = false;
             $this->update();
+
+            // recheck the needsupdate just to make sure ;-)
+            if (empty($this->needsupdate) and !empty($this->locktime)
+                and empty($this->locked) and $this->locktime < time()) {
+                // time to lock this grade_item
+                $this->set_locked(true);
+            }
+
             return true;
         }
     }
@@ -604,24 +676,44 @@ class grade_item extends grade_object {
 
     /**
      * Sets this grade_item's needsupdate to true. Also looks at parent category, if any, and calls
-     * its flag_for_update() method.
+     * its force_regrading() method.
      * This is triggered whenever any change in any raw grade may cause grade_finals
      * for this grade_item to require an update. The flag needs to be propagated up all
      * levels until it reaches the top category. This is then used to determine whether or not
      * to regenerate the raw and final grades for each category grade_item.
      * @return boolean Success or failure
      */
-    function flag_for_update() {
+    function force_regrading() {
         $this->needsupdate = true;
 
-        $result = $this->update();
-        $category = $this->get_category();
+        $result = parent::update();
 
-        if (!empty($category)) {
-            $result = $result && $category->flag_for_update();
+        if ($category = $this->get_category()) {
+            $category->force_regrading(); // we can ignore the result
+
+        } else {
+            $this->force_recalculation(); // recalculate all formulas - we do not know if any of them depends on this item
         }
 
+
         return $result;
+    }
+
+    /**
+     * Force recalculation of all calculated grades in course.
+     */
+    function force_recalculation($courseid=null) {
+        if (empty($courseid)) {
+            $courseid = $this->courseid;
+        }
+        $grade_item = new grade_item(array('courseid'=>$courseid), false);
+        $grade_items = $grade_item->fetch_all_using_this();
+        foreach($grade_items as $gi) {
+            if ($gi->get_calculation()) {
+                $gi->needsupdate = true;
+                $gi->update();
+            }
+        }
     }
 
     /**
@@ -731,14 +823,14 @@ class grade_item extends grade_object {
                 }
             }
             $this->calculation = false; // cache no calculation present
-            $this->flag_for_update();
+            $this->force_regrading();
             return true;
 
         } else { // We are updating or creating the calculation entry in the DB
             if ($grade_calculation = $this->get_calculation(true)) {
                 $grade_calculation->calculation = $formula;
                 if ($grade_calculation->update()) {
-                    $this->flag_for_update();
+                    $this->force_regrading();
                     return true;
                 } else {
                     $this->calculation = null; // remove cache
@@ -844,30 +936,12 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the locked state/date of this grade_item. This method is also available in
-     * grade_category, for cases where the object type is not known.
-     * @return int 0, 1 or timestamp int(10)
-     */
-    function get_locked() {
-        return $this->locked;
-    }
-
-    /**
-     * Sets the grade_item's locked variable and updates the grade_item.
-     * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
-     * @return success or failure of update() method
-     */
-    function set_locked($locked) {
-        $this->locked = $locked;
-        return $this->update();
-    }
-
-    /**
      * Returns the hidden state/date of this grade_item. This method is also available in
      * grade_category, for cases where the object type is not known.
      * @return int 0, 1 or timestamp int(10)
      */
-    function get_hidden() {
+    function is_hidden() {
+        // to do
         return $this->hidden;
     }
 
@@ -899,6 +973,11 @@ class grade_item extends grade_object {
      * @return array of grade_item ids this one depends on
      */
     function dependson() {
+
+        if ($this->is_locked()) {
+            // locked items do not need to be regraded
+            return array();
+        }
 
         if ($calculation = $this->get_calculation()) {
             return $calculation->dependson();
@@ -941,18 +1020,43 @@ class grade_item extends grade_object {
      * Calculated grades do not use raw grades at all, the rawgrade changes there are not logged too.
      *
      * @param int $userid the graded user
-     * @param float $rawgrade value of raw grade
+     * @param mixed $rawgrade float value of raw grade - false means do not change
      * @param string $howmodified modification source
      * @param string $note optional note
-     * @param string $feedback teachjers feedback
+     * @param mixed $feedback teachers feedback as string - false means do not change
      * @param int $feedbackformat
-     * @return boolean true if ok, false if error
+     * @return mixed grade_grades object if ok, false if error
      */
-    function update_raw($userid, $rawgrade=false, $howmodified='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
-        $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
+    function update_raw_grade($userid, $rawgrade=false, $howmodified='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
 
-        //TODO: add locking checks here - prevent update if item or individaul grade locked
-        //TODO: if grade tree does not need to be recalculated, try to update all users grades in course and flag_for_update only if failed
+        // calculated grades can not be updated
+        if ($this->get_calculation()) {
+            return false;
+        }
+
+        // do not allow grade updates when item locked - this prevents fetching of grade from db
+        if ($this->is_locked()) {
+            return false;
+        }
+
+        $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
+        $grade->grade_item =& $this; // prevent db fetching of cached grade_item
+
+        if (!empty($grade->id)) {
+            if ($grade->is_locked()) {
+                // do not update locked grades at all
+                return false;
+            }
+
+            if ($grade->locktime < time()) {
+                // do not update grades that should be already locked
+                // this does not solve all problems, cron is still needed to recalculate the final grades periodically
+                return false;
+            }
+
+        }
+
+        //TODO: if grade tree does not need to be recalculated, try to update grades of all users in course and force_regrading only if failed
 
         // fist copy current grademin/max and scale
         $grade->rawgrademin = $this->grademin;
@@ -987,7 +1091,7 @@ class grade_item extends grade_object {
         grade_history::insert_change($userid, $this->id, $grade->rawgrade, $oldgrade, $howmodified, $note);
 
         // This grade item needs update
-        $this->flag_for_update();
+        $this->force_regrading();
 
         if ($result) {
             return $grade;

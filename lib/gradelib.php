@@ -132,7 +132,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $grade_item->insert();
 
     } else {
-        if ($grade_item->locked) {
+        if ($grade_item->is_locked()) {
             debugging('Grading item is locked!');
             return GRADE_UPDATE_ITEM_LOCKED;
         }
@@ -193,7 +193,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             $userid = $grade['userid'];
         }
 
-        $rawgrade     = false;
+        $rawgrade       = false;
         $feedback       = false;
         $feedbackformat = FORMAT_MOODLE;
         
@@ -210,11 +210,10 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
 
         // update or insert the grade
-        $grade = $grade_item->update_raw($userid, $rawgrade, $source, null, $feedback, $feedbackformat);
+        $grade = $grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat);
 
         if (!$grade) {
             $failed = true;
-            debugging('Grade not updated');
             continue;
         }
 
@@ -399,7 +398,7 @@ function grade_update_final_grades($courseid) {
                 }
 
                 if ($forceupdate) {
-                    $grade_item->flag_for_update();
+                    $grade_item->force_regrading();
                 } else {
                     $finalitems[$gid] = $grade_item;
                     $finalids[] = $gid;

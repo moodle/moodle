@@ -1105,7 +1105,7 @@ class grade_tree {
                 
                 // Prepare lock/unlock string
                 $lock_unlock = 'lock';
-                if ($object->get_locked()) {
+                if ($object->is_locked()) {
                     $lock_unlock = 'unlock';
                 }
 

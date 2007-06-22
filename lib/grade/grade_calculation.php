@@ -102,6 +102,10 @@ class grade_calculation extends grade_object {
         // init grade_item
         $this->load_grade_item();
 
+        if ($this->grade_item->is_locked()) {
+            return true; // no need to recalculate locked items
+        }
+
         //get used items
         $useditems = $this->dependson();
 
@@ -136,6 +140,7 @@ class grade_calculation extends grade_object {
                     }
                     if ($used->itemid == $this->grade_item->id) {
                         $final = new grade_grades($used, false); // fetching from db is not needed
+                        $final->grade_item =& $this->grade_item;
                     }
                     $grades['gi'.$used->itemid] = $used->finalgrade;
                 }
@@ -170,17 +175,21 @@ class grade_calculation extends grade_object {
         // can not use own final grade during calculation
         unset($params['gi'.$this->grade_item->id]);
 
+        // insert final grade - will be needed later anyway
+        if (empty($final)) {
+            $final = new grade_grades(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
+            $final->insert();
+            $final->grade_item =& $this->grade_item;
+
+        } else if ($final->is_locked()) {
+            // no need to recalculate locked grades
+            return;
+        }
+
 
         // do the calculation
         $this->formula->set_params($params);
         $result = $this->formula->evaluate();
-
-
-        // insert final grade - will be needed anyway later
-        if (empty($final)) {
-            $final = new grade_grades(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
-            $final->insert();
-        }
 
         // store the result
         if ($result === false) {

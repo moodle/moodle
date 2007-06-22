@@ -180,10 +180,10 @@ class grade_category extends grade_object {
     }
 
     /**
-     * In addition to update() as defined in grade_object, call flag_for_update of parent categories, if applicable.
+     * In addition to update() as defined in grade_object, call force_regrading of parent categories, if applicable.
      */
     function update() {
-        $qualifies = $this->qualifies_for_update();
+        $qualifies = $this->qualifies_for_regrading();
 
         // Update the grade_item's sortorder if needed
         if (!empty($this->sortorder)) {
@@ -199,13 +199,13 @@ class grade_category extends grade_object {
 
         // Use $this->path to update all parent categories
         if ($result && $qualifies) {
-            $this->flag_for_update();
+            $this->force_regrading();
         }
         return $result;
     }
 
     /**
-     * If parent::delete() is successful, send flag_for_update message to parent category.
+     * If parent::delete() is successful, send force_regrading message to parent category.
      * @return boolean Success or failure.
      */
     function delete() {
@@ -214,7 +214,7 @@ class grade_category extends grade_object {
         if ($result) {
             $this->load_parent_category();
             if (!empty($this->parent_category)) {
-                $result = $result && $this->parent_category->flag_for_update();
+                $result = $result && $this->parent_category->force_regrading();
             }
 
             // Update children's categoryid/parent field
@@ -256,7 +256,7 @@ class grade_category extends grade_object {
         // Notify parent category of need to update.
         $this->load_parent_category();
         if (!empty($this->parent_category)) {
-            if (!$this->parent_category->flag_for_update()) {
+            if (!$this->parent_category->force_regrading()) {
                 debugging("Could not notify parent category of the need to update its final grades.");
                 return false;
             }
@@ -271,7 +271,7 @@ class grade_category extends grade_object {
      * This assumes that this object has an id number and a matching record in DB. If not, it will return false.
      * @return boolean
      */
-    function qualifies_for_update() {
+    function qualifies_for_regrading() {
         if (empty($this->id)) {
             return false;
         }
@@ -298,7 +298,7 @@ class grade_category extends grade_object {
      * thanks to the path variable, so we don't need to use recursion.
      * @return boolean Success or failure
      */
-    function flag_for_update() {
+    function force_regrading() {
         if (empty($this->id)) {
             debugging("Needsupdate requested before insering grade category.");
             return true;
@@ -322,7 +322,14 @@ class grade_category extends grade_object {
             $wheresql = substr($wheresql, 0, strrpos($wheresql, 'OR'));
             $grade_items = set_field_select('grade_items', 'needsupdate', '1', $wheresql . ' AND courseid = ' . $this->courseid);
             $this->grade_item->update_from_db();
+
         }
+
+        if (count($paths) == 1) {
+            // we are the top category - force recalculation of all formulas in course
+            $this->grade_item->force_recalculation();
+        }
+
         return $result;
     }
 
@@ -345,7 +352,13 @@ class grade_category extends grade_object {
         global $CFG;
 
         $this->load_grade_item();
+
+        if ($this->grade_item->is_locked()) {
+            return true; // no need to recalculate locked items
+        }
+
         $this->grade_item->load_scale();
+
 
         // find grde items of immediate children (category or grade items)
         $dependson = $this->grade_item->dependson();
@@ -378,6 +391,7 @@ class grade_category extends grade_object {
                     }
                     if ($used->itemid == $this->grade_item->id) {
                         $final = new grade_grades($used, false);
+                        $final->grade_item =& $this->grade_item;
                     }
                     $grades[$used->itemid] = $used->finalgrade;
                 }
@@ -400,10 +414,15 @@ class grade_category extends grade_object {
         // no circular references allowed
         unset($grades[$this->grade_item->id]);
 
-        // insert final grade - it will needed anyway later
+        // insert final grade - it will be needed later anyway
         if (empty($final)) {
             $final = new grade_grades(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
             $final->insert();
+            $final->grade_item =& $this->grade_item;
+
+        } else if ($final->is_locked()) {
+            // no need to recalculate locked grades
+            return;
         }
 
         // if no grades calculation possible or grading not allowed clear both final and raw
@@ -898,10 +917,10 @@ class grade_category extends grade_object {
      * grade_item, for cases where the object type is not known.
      * @return int 0, 1 or timestamp int(10)
      */
-    function get_locked() {
+    function is_locked() {
         $this->load_grade_item();
         if (!empty($this->grade_item)) {
-            return $this->grade_item->locked;
+            return $this->grade_item->is_locked();
         } else {
             return false;
         }
@@ -911,13 +930,14 @@ class grade_category extends grade_object {
      * Sets the grade_item's locked variable and updates the grade_item.
      * Method named after grade_item::set_locked().
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
-     * @return void
+     * @return boolean success
      */
-    function set_locked($locked) {
+    function set_locked($lockedstate) {
         $this->load_grade_item();
+
         if (!empty($this->grade_item)) {
-            $this->grade_item->locked = $locked;
-            return $this->grade_item->update();
+            return $this->grade_item->set_locked($lockedstate);
+
         } else {
             return false;
         }

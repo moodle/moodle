@@ -31,7 +31,7 @@
  * @package moodlecore
  */
 
-global $CFG;if (!defined('MOODLE_INTERNAL')) {
+if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
@@ -121,6 +121,41 @@ class grade_grades_test extends grade_test {
     function test_grade_grades_standardise_score() {
         $this->assertEqual(4, round(grade_grades::standardise_score(6, 0, 7, 0, 5)));
         $this->assertEqual(40, grade_grades::standardise_score(50, 30, 80, 0, 100));
+    }
+
+
+    function test_grade_grades_set_locked() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $grade = new grade_grades($grade_item->get_final(1));
+        $this->assertTrue(method_exists($grade, 'set_locked'));
+
+        $this->assertTrue(empty($grade_item->locked));
+        $this->assertTrue(empty($grade->locked));
+
+        $this->assertTrue($grade->set_locked(true));
+        $this->assertFalse(empty($grade->locked));
+        $this->assertTrue($grade->set_locked(false));
+        $this->assertTrue(empty($grade->locked));
+
+        $this->assertTrue($grade_item->set_locked(true));
+        $grade = new grade_grades($grade_item->get_final(1));
+
+        $this->assertFalse(empty($grade->locked));
+        $this->assertFalse($grade->set_locked(false));
+
+        $this->assertTrue($grade_item->set_locked(false));
+        $grade = new grade_grades($grade_item->get_final(1));
+
+        $this->assertTrue($grade->set_locked(false));
+    }
+
+    function test_grade_grades_is_locked() {
+        $grade = new grade_grades($this->grade_grades[0]);
+        $this->assertTrue(method_exists($grade, 'is_locked'));
+
+        $this->assertFalse($grade->is_locked());
+        $grade->locked = time();
+        $this->assertTrue($grade->is_locked());
     }
 
 

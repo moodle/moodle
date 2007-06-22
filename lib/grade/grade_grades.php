@@ -159,6 +159,61 @@ class grade_grades extends grade_object {
     }
 
     /**
+     * Check grade lock status. Uses both grade item lock and grade lock.
+     * Internally any date in locked field (including future ones) means locked,
+     * the date is stored for logging purposes only.
+     *
+     * @return boolean true if locked, false if not
+     */
+    function is_locked() {
+        $this->load_grade_item();
+
+        return $this->grade_item->is_locked() or !empty($this->locked);
+    }
+
+    /**
+     * Lock/unlopck this grade.
+     *
+     * @param boolean $lockstate true means lock, false unlock grade
+     * @return boolean true if sucessful, false if can not set new lock state for grade
+     */
+    function set_locked($lockedstate) {
+        $this->load_grade_item();
+
+        if ($lockedstate) {
+            if (!empty($this->locked)) {
+                return true; // already locked
+            }
+
+            if ($this->grade_item->needsupdate) {
+                //can not lock grade if final not calculated!
+                return false;
+            }
+
+            $this->locked = time();
+            $this->update();
+
+            return true;
+
+        } else {
+            if (empty($this->locked)) {
+                return true; // not locked
+            }
+
+            if ($this->grade_item->is_locked()) {
+                return false;
+            }
+
+            // remove the locked flag
+            $this->locked = 0;
+
+            $this->update();
+
+            return true;
+        }
+    }
+
+    /**
      * Finds and returns a grade_grades object based on 1-3 field values.
      * @static
      * @param string $field1

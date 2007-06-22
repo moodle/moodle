@@ -516,7 +516,6 @@ class grade_test extends UnitTestCase {
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
         $grade_item->iteminfo = 'Grade item used for unit testing';
-        $grade_item->locked = mktime() + 240000;
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 4;
@@ -617,9 +616,11 @@ class grade_test extends UnitTestCase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminstance = 5;
+        $grade_item->itemnumber = 0;
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 10;
         $grade_item->grademax = 120;
+        $grade_item->locked = time();
         $grade_item->iteminfo = 'Orphan Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -764,7 +765,6 @@ class grade_test extends UnitTestCase {
         $grade->finalgrade = 60;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
-        $grade->locked = true; 
 
         if ($grade->id = insert_record('grade_grades', $grade)) {
             $this->grade_grades[3] = $grade;
@@ -776,7 +776,6 @@ class grade_test extends UnitTestCase {
         $grade->finalgrade = 70;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
-        $grade->locked = true; 
 
         if ($grade->id = insert_record('grade_grades', $grade)) {
             $this->grade_grades[4] = $grade;
@@ -788,7 +787,6 @@ class grade_test extends UnitTestCase {
         $grade->finalgrade = 100;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
-        $grade->locked = false; 
 
         if ($grade->id = insert_record('grade_grades', $grade)) {
             $this->grade_grades[5] = $grade;

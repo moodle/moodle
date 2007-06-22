@@ -41,7 +41,7 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_item_test extends grade_test {
 
-    function test_grade_item_construct() { 
+    function test_grade_item_construct() {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
@@ -61,7 +61,7 @@ class grade_item_test extends grade_test {
     function test_grade_item_insert() {
         $grade_item = new grade_item();
         $this->assertTrue(method_exists($grade_item, 'insert'));
-        
+
         $grade_item->courseid = $this->courseid;
         $grade_item->categoryid = $this->grade_categories[1]->id;
         $grade_item->itemname = 'unittestgradeitem4';
@@ -70,7 +70,7 @@ class grade_item_test extends grade_test {
         $grade_item->iteminfo = 'Grade item used for unit testing';
 
         // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_category(); 
+        $category = $grade_item->get_category();
         $category->load_grade_item();
         $category->grade_item->needsupdate = false;
         $this->assertNotNull($category->grade_item);
@@ -102,7 +102,7 @@ class grade_item_test extends grade_test {
     }
 
     function test_grade_item_update_when_flagged_as_deleted() {
-        
+
     }
 
     function test_grade_item_update_guess_outcomeid() {
@@ -120,13 +120,13 @@ class grade_item_test extends grade_test {
     function test_grade_item_delete() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));
-        
+
         // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_category(); 
+        $category = $grade_item->get_category();
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
         $category->grade_item->needsupdate = false;
-        
+
         $this->assertTrue($grade_item->delete());
 
         // Now check the needsupdate variable, it should have been set to true
@@ -139,24 +139,24 @@ class grade_item_test extends grade_test {
     function test_grade_item_update() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'update'));
-        
+
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
 
         // Check the grade_category's needsupdate variable first
-        $category= $grade_item->get_category(); 
+        $category= $grade_item->get_category();
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
         $category->grade_item->needsupdate = false;
-        
+
         $this->assertTrue($grade_item->update());
 
         // Now check the needsupdate variable, it should NOT have been set to true, because insufficient changes to justify update.
         $this->assertFalse($category->grade_item->needsupdate);
-        
-        $grade_item->grademin = 14; 
-        $this->assertTrue($grade_item->qualifies_for_update());
+
+        $grade_item->grademin = 14;
+        $this->assertTrue($grade_item->qualifies_for_regrading());
         $this->assertTrue($grade_item->update(true));
-        
+
         // Now check the needsupdate variable, it should have been set to true
         $category->grade_item->update_from_db();
         $this->assertTrue($category->grade_item->needsupdate);
@@ -165,61 +165,63 @@ class grade_item_test extends grade_test {
         $category->load_parent_category();
         $category->parent_category->load_grade_item();
         $this->assertTrue($category->parent_category->grade_item->needsupdate);
-        
+
         $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
     }
 
-    function test_grade_item_qualifies_for_update() {
+    function test_grade_item_qualifies_for_regrading() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'qualifies_for_update'));
-        
+        $this->assertTrue(method_exists($grade_item, 'qualifies_for_regrading'));
+
+        $this->assertFalse($grade_item->qualifies_for_regrading());
+
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
-        
-        $this->assertFalse($grade_item->qualifies_for_update());
+
+        $this->assertFalse($grade_item->qualifies_for_regrading());
 
         $grade_item->grademin = 14;
 
-        $this->assertTrue($grade_item->qualifies_for_update()); 
+        $this->assertTrue($grade_item->qualifies_for_regrading());
     }
 
     function test_grade_item_fetch() {
-        $grade_item = new grade_item(); 
+        $grade_item = new grade_item();
         $this->assertTrue(method_exists($grade_item, 'fetch'));
 
         $grade_item = grade_item::fetch('id', $this->grade_items[0]->id);
         $this->assertEqual($this->grade_items[0]->id, $grade_item->id);
-        $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo); 
-        
+        $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo);
+
         $grade_item = grade_item::fetch('itemtype', $this->grade_items[1]->itemtype, 'itemmodule', $this->grade_items[1]->itemmodule);
         $this->assertEqual($this->grade_items[1]->id, $grade_item->id);
-        $this->assertEqual($this->grade_items[1]->iteminfo, $grade_item->iteminfo); 
+        $this->assertEqual($this->grade_items[1]->iteminfo, $grade_item->iteminfo);
     }
 
     function test_grade_item_fetch_all_using_this() {
         $grade_item = new grade_item();
         $grade_item->itemtype = 'mod';
         $this->assertTrue(method_exists($grade_item, 'fetch_all_using_this'));
-       
+
         $grade_items = $grade_item->fetch_all_using_this();
         $this->assertEqual(5, count($grade_items));
         $first_grade_item = reset($grade_items);
         $this->assertEqual($this->grade_items[0]->id, $first_grade_item->id);
     }
 
-    
+
     /**
      * Retrieve all final scores for a given grade_item.
      */
     function test_grade_item_get_all_finals() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_final'));
-        
+
         $final_grades = $grade_item->get_final();
-        $this->assertEqual(3, count($final_grades)); 
+        $this->assertEqual(3, count($final_grades));
     }
 
-    
+
     /**
      * Retrieve all final scores for a specific userid.
      */
@@ -242,7 +244,7 @@ class grade_item_test extends grade_test {
 /*        $grade_item = new grade_item($this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'set_calculation'));
         $this->assertTrue(method_exists($grade_item, 'get_calculation'));
-        
+
         $calculation = '=SUM([unittestgradeitem1], [unittestgradeitem3])';
         $grade_item->set_calculation($calculation);
         $new_calculation = $grade_item->get_calculation();
@@ -253,7 +255,7 @@ class grade_item_test extends grade_test {
     function test_grade_item_get_category() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_category'));
-        
+
         $category = $grade_item->get_category();
         $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
     }
@@ -264,9 +266,9 @@ class grade_item_test extends grade_test {
     function test_grade_item_update_final_grades() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'update_final_grades'));
-        $this->assertEqual(true, $grade_item->update_final_grades()); 
+        $this->assertEqual(true, $grade_item->update_final_grades());
     }
-    
+
     /**
      * Test the adjust_grade method
      */
@@ -278,26 +280,26 @@ class grade_item_test extends grade_test {
         $grade_raw->rawgrade = 40;
         $grade_raw->grademax = 100;
         $grade_raw->grademin = 0;
-        
+
         $grade_item->multfactor = 1;
         $grade_item->plusfactor = 0;
         $grade_item->grademax = 50;
         $grade_item->grademin = 0;
-        
+
         $original_grade_raw  = clone($grade_raw);
         $original_grade_item = clone($grade_item);
 
-        $this->assertEqual(20, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
-        
+        $this->assertEqual(20, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
+
         // Try a larger maximum grade
         $grade_item->grademax = 150;
         $grade_item->grademin = 0;
-        $this->assertEqual(60, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
+        $this->assertEqual(60, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
 
         // Try larger minimum grade
         $grade_item->grademin = 50;
 
-        $this->assertEqual(90, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
+        $this->assertEqual(90, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
 
         // Rescaling from a small scale (0-50) to a larger scale (0-100)
         $grade_raw->grademax = 50;
@@ -305,13 +307,13 @@ class grade_item_test extends grade_test {
         $grade_item->grademax = 100;
         $grade_item->grademin = 0;
 
-        $this->assertEqual(80, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
+        $this->assertEqual(80, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
 
         // Rescaling from a small scale (0-50) to a larger scale with offset (40-100)
         $grade_item->grademax = 100;
         $grade_item->grademin = 40;
 
-        $this->assertEqual(88, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
+        $this->assertEqual(88, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
 
         // Try multfactor and plusfactor
         $grade_raw = clone($original_grade_raw);
@@ -319,7 +321,7 @@ class grade_item_test extends grade_test {
         $grade_item->multfactor = 1.23;
         $grade_item->plusfactor = 3;
 
-        $this->assertEqual(27.6, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)); 
+        $this->assertEqual(27.6, $grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax));
 
         // Try multfactor below 0 and a negative plusfactor
         $grade_raw = clone($original_grade_raw);
@@ -327,50 +329,48 @@ class grade_item_test extends grade_test {
         $grade_item->multfactor = 0.23;
         $grade_item->plusfactor = -3;
 
-        $this->assertEqual(round(1.6), round($grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax))); 
+        $this->assertEqual(round(1.6), round($grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)));
     }
 
-    function test_grade_item_adjust_scale_grade() {
-/*        // Load grade item and its scale
-        $grade_item = new grade_item(array('scaleid' => $this->scale[1]->id), false);
-        $grade_item->gradetype = GRADE_TYPE_SCALE;
-        $grade_item->insert();
-        $grade_item->load_scale();
-        $this->assertEqual('Very Good', $grade_item->scale->scale_items[1]);
+    function test_grade_item_set_locked() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'set_locked'));
 
-        // Load raw grade and its scale
-        $grade_raw = new grade_grades(array('scaleid' => $this->scale[0]->id), false);
-        $grade_raw->rawgrade = 4;
-        $grade_raw->itemid = $grade_item->id;
-        $grade_raw->userid = 1;
-        $grade_raw->insert();
-        $grade_raw->load_scale();
-        $this->assertEqual('Fairly neutral', $grade_raw->scale->scale_items[2]);
+        $grade = new grade_grades($grade_item->get_final(1));
+        $this->assertTrue(empty($grade_item->locked));
+        $this->assertTrue(empty($grade->locked));
 
-        // Test grade_item::adjust_scale
-        $this->assertEqual(3, $grade_item->adjust_grade($grade_raw));
-        $grade_raw->rawgrade = 6;
-        $this->assertEqual(4, $grade_item->adjust_grade($grade_raw));
-*/    }
+        $this->assertTrue($grade_item->set_locked(true));
+        $grade = new grade_grades($grade_item->get_final(1));
 
-    function test_grade_item_toggle_locking() {
-/*        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'toggle_locking'));
+        $this->assertFalse(empty($grade_item->locked));
+        $this->assertFalse(empty($grade->locked)); // individual grades should be locked too
 
-        $this->assertFalse($grade_item->locked);
-        $this->assertEqual(0, $grade_item->toggle_locking());
-        $this->assertTrue($grade_item->locked);
-        $grade_item->load_final();
-        $this->assertFalse($grade_item->grade_grades[1]->locked);
-        
-        $grade_item->locked = false;
-        $this->assertEqual(3, $grade_item->toggle_locking(true));
-        $this->assertTrue($grade_item->locked);
-        $this->assertTrue($grade_item->grade_grades[1]->locked);
-        $this->assertTrue($grade_item->grade_grades[2]->locked);
-        $this->assertTrue($grade_item->grade_grades[3]->locked);
+        $this->assertTrue($grade_item->set_locked(false));
+        $grade = new grade_grades($grade_item->get_final(1));
+
+        $this->assertTrue(empty($grade_item->locked));
+        $this->assertTrue(empty($grade->locked)); // individual grades should be unlocked too
     }
 
+    function test_grade_item_is_locked() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'is_locked'));
+
+        $this->assertFalse($grade_item->is_locked());
+        $this->assertFalse($grade_item->is_locked(1));
+        $this->assertTrue($grade_item->set_locked(true));
+        $this->assertTrue($grade_item->is_locked());
+        $this->assertTrue($grade_item->is_locked(1));
+    }
+
+    function test_grade_item_dependson() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        //TODO
+    }
+
+
+/*
     function test_grade_item_toggle_hiding() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'toggle_hiding'));
@@ -380,16 +380,17 @@ class grade_item_test extends grade_test {
         $this->assertTrue($grade_item->hidden);
         $grade_item->load_final();
         $this->assertFalse($grade_item->grade_grades[1]->hidden);
-        
+
         $grade_item->hidden = false;
         $this->assertEqual(3, $grade_item->toggle_hiding(true));
         $this->assertTrue($grade_item->hidden);
         $this->assertTrue($grade_item->grade_grades[1]->hidden);
         $this->assertTrue($grade_item->grade_grades[2]->hidden);
         $this->assertTrue($grade_item->grade_grades[3]->hidden);
-*/    } 
+    }
+*/
 
     function test_float_keys() {
     }
-} 
+}
 ?>
