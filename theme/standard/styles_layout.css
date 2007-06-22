@@ -2380,9 +2380,8 @@ body#message-messages {
 }
 .que .feedback {
   clear: both;
-  /* float: right; */
-  width: 83%;
   padding: 0 0 0.3em 0.3em;
+  margin-bottom: 0.5em;
   border: 1px solid;
 }
 .multichoice td.feedback {
