@@ -48,6 +48,8 @@
     $cal_d = optional_param('cal_d');
     $cal_m = optional_param('cal_m');
     $cal_y = optional_param('cal_y');
+    $action = optional_param('action');
+    $type = optional_param('type');
 
     // Initialize the session variables
     calendar_session_vars();
