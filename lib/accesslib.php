@@ -3684,7 +3684,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  * @param bool parent if true, get list of users assigned in higher context too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $view=false) {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $view=false, $limitfrom='', $limitnum='') {
     global $CFG;
 
     if (empty($fields)) {
@@ -3721,7 +3721,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
             ORDER BY $sort
             ";                  // join now so that we can just use fullname() later
 
-    return get_records_sql($SQL);
+    return get_records_sql($SQL, $limitfrom, $limitnum);
 }
 
 /**
