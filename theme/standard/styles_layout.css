@@ -2356,7 +2356,6 @@ body#message-messages {
   width: 5%;
 }
 .que .answer {
-  /* float: right; */
   float: left;
   width: 83%;
   margin-bottom: 0.5em;
@@ -2417,9 +2416,7 @@ body#message-messages {
 .que .commentlink,
 .que .generalfeedback,
 .que .history {
-  float: right;
-  margin: 5px;
-  width: 88%;
+  margin-top: 0.5em;
 }
 
 .importerror {
