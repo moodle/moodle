@@ -111,8 +111,11 @@ if ($gradetree = new grade_tree($courseid)) {
         $data[] = '';
     
         /// prints notes
-        $data[] = $grade_text->feedback;
-    
+        if (!empty($grade_text->feedback)) {
+            $data[] = $grade_text->feedback;
+        } else {
+            $data[] = '&nbsp;';  
+        }
         $table->add_data($data);  
     }
     
