@@ -51,7 +51,7 @@ class block_calendar_month extends block_base {
         if ($courseshown == SITEID) {
             // For the front page
             $this->content->text .= calendar_overlib_html();
-            $this->content->text .= calendar_top_controls('frontpage', array('m' => $cal_m, 'y' => $cal_y));
+            $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             // No filters for now
 
