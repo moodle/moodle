@@ -174,7 +174,7 @@
     if (!$attempt) {
         // Delete any previous preview attempts belonging to this user.
         if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
-                AND userid = '$USER->id'")) {
+                AND userid = '$USER->id' AND preview = 1")) {
             foreach ($oldattempts as $oldattempt) {
                 quiz_delete_attempt($oldattempt, $quiz);
             }
