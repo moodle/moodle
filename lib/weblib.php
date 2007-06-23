@@ -2638,10 +2638,22 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             echo replace_cssconstants($css);
         } else {
         /// Actually output all the files in order.
-            foreach ($files as $file) {
-                echo '/***** '.$file[1].' start *****/'."\n\n";
-                @include_once($file[0].'/'.$file[1]);
-                echo '/***** '.$file[1].' end *****/'."\n\n";
+            if (empty($CFG->CSSEdit) && empty($THEME->CSSEdit)) {
+                foreach ($files as $file) {
+                    echo '/***** '.$file[1].' start *****/'."\n\n";
+                    @include_once($file[0].'/'.$file[1]);
+                    echo '/***** '.$file[1].' end *****/'."\n\n";
+                }
+            } else {
+                foreach ($files as $file) {
+                    echo '/* @group '.$file[1].' */'."\n\n";
+                    if (strstr($file[1], '.css') !== FALSE) {
+                        echo '@import url("'.$CFG->themewww.'/'.$file[1].'");'."\n\n";
+                    } else {
+                        @include_once($file[0].'/'.$file[1]);
+                    }
+                    echo '/* @end */'."\n\n";
+                }
             }
         }
     }
