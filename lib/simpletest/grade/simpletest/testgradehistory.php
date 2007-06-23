@@ -53,18 +53,18 @@ class grade_history_test extends grade_test {
         $this->assertEqual($params->itemid, $grade_history->itemid);
         $this->assertEqual($params->note, $grade_history->note);
     }
-    
+
     function test_grade_history_insert() {
         $grade_history = new grade_history();
         $this->assertTrue(method_exists($grade_history, 'insert'));
-        
+
         $grade_history->itemid = $this->grade_items[0]->id;
         $grade_history->userid = 1;
         $grade_history->oldgrade = 88;
         $grade_history->newgrade = 90;
         $grade_history->note = 'Modified manually in testgradehistory.php';
         $grade_history->howmodified = 'manual';
-        
+
         $grade_history->insert();
 
         $last_grade_history = end($this->grade_history);
@@ -77,27 +77,27 @@ class grade_history_test extends grade_test {
     function test_grade_history_update() {
         $grade_history = new grade_history($this->grade_history[0]);
         $this->assertTrue(method_exists($grade_history, 'update'));
-        $grade_history->note = 'Modified manually in testgradehistory.php';        
+        $grade_history->note = 'Modified manually in testgradehistory.php';
         $this->assertTrue($grade_history->update());
         $note = get_field('grade_history', 'note', 'id', $this->grade_history[0]->id);
-        $this->assertEqual($grade_history->note, $note); 
+        $this->assertEqual($grade_history->note, $note);
     }
 
     function test_grade_history_delete() {
         $grade_history = new grade_history($this->grade_history[0]);
         $this->assertTrue(method_exists($grade_history, 'delete'));
-        
+
         $this->assertTrue($grade_history->delete());
-        $this->assertFalse(get_record('grade_history', 'id', $grade_history->id)); 
+        $this->assertFalse(get_record('grade_history', 'id', $grade_history->id));
     }
 
     function test_grade_history_fetch() {
-        $grade_history = new grade_history(); 
+        $grade_history = new grade_history();
         $this->assertTrue(method_exists($grade_history, 'fetch'));
 
         $grade_history = grade_history::fetch('id', $this->grade_history[0]->id);
         $this->assertEqual($this->grade_history[0]->id, $grade_history->id);
-        $this->assertEqual($this->grade_history[0]->note, $grade_history->note); 
-    } 
-} 
+        $this->assertEqual($this->grade_history[0]->note, $grade_history->note);
+    }
+}
 ?>

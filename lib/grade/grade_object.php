@@ -39,43 +39,43 @@ class grade_object {
      * @var array $required_fields
      */
     var $required_fields = array();
-    
+
     /**
      * The PK.
-     * @var int $id 
+     * @var int $id
      */
     var $id;
-    
+
     /**
      * The first time this grade_calculation was created.
      * @var int $timecreated
      */
     var $timecreated;
-    
+
     /**
      * The last time this grade_calculation was modified.
      * @var int $timemodified
      */
     var $timemodified;
-    
+
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
      * @param object $params an object with named parameters for this grade item.
      * @param boolean $fetch Whether to fetch corresponding row from DB or not.
-     */       
+     */
     function grade_object($params=NULL, $fetch = true) {
         if (!empty($params) && (is_array($params) || is_object($params))) {
             $this->assign_to_this($params);
-            
+
             if ($fetch) {
                 $records = $this->fetch_all_using_this();
                 if ($records && count($records) > 0) {
                     $this->assign_to_this(current($records));
                 }
             }
-        } 
+        }
     }
-    
+
     /**
      * Updates this object in the Database, based on its object variables. ID must be set.
      *
@@ -85,7 +85,7 @@ class grade_object {
         global $USER;
 
         $this->timemodified = time();
-        
+
         if (empty($this->usermodified)) {
             $this->usermodified = $USER->id;
         }
@@ -99,7 +99,7 @@ class grade_object {
     function delete() {
         return delete_records($this->table, 'id', $this->id);
     }
-    
+
     /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
@@ -115,7 +115,7 @@ class grade_object {
         }
 
         $this->timecreated = $this->timemodified = time();
-        
+
         if (empty($this->usermodified)) {
             $this->usermodified = $USER->id;
         }
@@ -128,7 +128,7 @@ class grade_object {
                 unset($clonethis->$var);
             }
         }
-        
+
         if (!$this->id = insert_record($this->table, addslashes_recursive($clonethis), true)) {
             debugging("Could not insert object into db");
             return false;
@@ -161,7 +161,7 @@ class grade_object {
 
         return true;
     }
-    
+
     /**
      * Uses the variables of this object to retrieve all matching objects from the DB.
      * @return array $objects
@@ -169,19 +169,19 @@ class grade_object {
     function fetch_all_using_this() {
         $variables = get_object_vars($this);
         $wheresql = '';
-        
+
         foreach ($variables as $var => $value) {
             if (!empty($value) && !in_array($var, $this->nonfields)) {
                 $value = addslashes($value);
                 $wheresql .= " $var = '$value' AND ";
             }
         }
-        
+
         // Trim trailing AND
         $wheresql = substr($wheresql, 0, strrpos($wheresql, 'AND'));
 
         $objects = get_records_select($this->table, $wheresql, 'id');
-        
+
         if (!empty($objects)) {
             $full_objects = array();
 
@@ -195,7 +195,7 @@ class grade_object {
             return $objects;
         }
     }
-  
+
 
     /**
      * Given an associated array or object, cycles through each key/variable
@@ -206,7 +206,7 @@ class grade_object {
             if (in_object_vars($param, $this)) {
                 $this->$param = $value;
             }
-        } 
+        }
     }
 
 }

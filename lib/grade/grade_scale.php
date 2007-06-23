@@ -35,19 +35,19 @@ class grade_scale extends grade_object {
      * @var string $table
      */
     var $table = 'scale';
-    
+
     /**
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
     var $nonfields = array('table', 'nonfields', 'scale_items');
-  
+
     /**
      * The course this scale belongs to.
      * @var int $courseid
      */
     var $courseid;
-    
+
     /**
      * The name of the scale.
      * @var string $name
@@ -71,7 +71,7 @@ class grade_scale extends grade_object {
      * @var string $description
      */
     var $description;
-    
+
     /**
      * Finds and returns a grade_scale object based on 1-3 field values.
      * @static
@@ -85,7 +85,7 @@ class grade_scale extends grade_object {
      * @param string $fields
      * @return object grade_scale object or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
+    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_scale = get_record('scale', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
             $grade_scale = new grade_scale($grade_scale);
             return $grade_scale;
@@ -94,9 +94,9 @@ class grade_scale extends grade_object {
             return false;
         }
     }
-    
+
     /**
-     * Loads the scale's items into the $scale_items array. 
+     * Loads the scale's items into the $scale_items array.
      * There are three ways to achieve this:
      * 1. No argument given: The $scale string is already loaded and exploded to an array of items.
      * 2. A string is given: A comma-separated list of items is exploded into an array of items.
@@ -113,7 +113,7 @@ class grade_scale extends grade_object {
         } else {
             $this->scale_items = explode(',', $items);
         }
-        
+
         // Trim whitespace around each value
         foreach ($this->scale_items as $key => $val) {
             $this->scale_items[$key] = trim($val);
@@ -144,7 +144,7 @@ class grade_scale extends grade_object {
             $this->scale = $items;
         }
 
-        return $this->scale; 
-    } 
+        return $this->scale;
+    }
 }
 ?>

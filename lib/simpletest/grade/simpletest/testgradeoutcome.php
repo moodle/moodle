@@ -53,7 +53,7 @@ class grade_outcome_test extends grade_test {
     function test_grade_outcome_insert() {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'insert'));
-        
+
         $grade_outcome->courseid = $this->courseid;
         $grade_outcome->shortname = 'Team work';
 
@@ -69,27 +69,27 @@ class grade_outcome_test extends grade_test {
     function test_grade_outcome_update() {
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'update'));
-        $grade_outcome->shortname = 'Team work';        
+        $grade_outcome->shortname = 'Team work';
         $this->assertTrue($grade_outcome->update());
         $shortname = get_field('grade_outcomes', 'shortname', 'id', $this->grade_outcomes[0]->id);
-        $this->assertEqual($grade_outcome->shortname, $shortname); 
+        $this->assertEqual($grade_outcome->shortname, $shortname);
     }
 
     function test_grade_outcome_delete() {
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'delete'));
-        
+
         $this->assertTrue($grade_outcome->delete());
-        $this->assertFalse(get_record('grade_outcomes', 'id', $grade_outcome->id)); 
+        $this->assertFalse(get_record('grade_outcomes', 'id', $grade_outcome->id));
     }
 
     function test_grade_outcome_fetch() {
-        $grade_outcome = new grade_outcome(); 
+        $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
 
         $grade_outcome = grade_outcome::fetch('id', $this->grade_outcomes[0]->id);
         $this->assertEqual($this->grade_outcomes[0]->id, $grade_outcome->id);
-        $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname); 
-    } 
-} 
+        $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
+    }
+}
 ?>

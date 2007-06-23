@@ -116,7 +116,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         if ($itemdetails) {
             $itemdetails = (array)$itemdetails;
 
-            // grademin and grademax ignored when scale specified            
+            // grademin and grademax ignored when scale specified
             if (array_key_exists('scaleid', $itemdetails)) {
                 if ($itemdetails['scaleid']) {
                     unset($itemdetails['grademin']);
@@ -204,7 +204,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $rawgrade       = false;
         $feedback       = false;
         $feedbackformat = FORMAT_MOODLE;
-        
+
         if (array_key_exists('rawgrade', $grade)) {
             $rawgrade = $grade['rawgrade'];
         }
@@ -356,11 +356,11 @@ function grade_update_final_grades($courseid, $regradeall=false) {
                 $calculated = true;
             }
         }
-    
+
         if (!$needsupdate) {
             // no update needed
             return true;
-    
+
         } else if ($calculated) {
             // flag all calculated grade items with needsupdate
             // we want to make sure all are ok, this can be improved later with proper dependency calculation
@@ -374,8 +374,8 @@ function grade_update_final_grades($courseid, $regradeall=false) {
                     //force recalculation and forced update of all parents
                     $grade_item->force_regrading();
                 }
-            } 
-    
+            }
+
             // again make sure all date is up-to-date - the needsupdate flag might have changed
             foreach ($grade_items as $gid=>$gitem) {
                 $grade_item =& $grade_items[$gid];

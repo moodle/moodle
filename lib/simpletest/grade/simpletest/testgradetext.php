@@ -61,7 +61,7 @@ class grade_text_test extends grade_test {
     function test_grade_grades_text_insert() {
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'insert'));
-        
+
         $grade_grades_text->itemid = $this->grade_grades[0]->itemid;
         $grade_grades_text->userid = $this->grade_grades[0]->userid;
         $grade_grades_text->information = 'Thumbs down';
@@ -74,7 +74,7 @@ class grade_text_test extends grade_test {
         $last_grade_grades_text = end($this->grade_grades_text);
 
         global $USER;
-        
+
         $this->assertEqual($grade_grades_text->id, $last_grade_grades_text->id + 1);
         $this->assertFalse(empty($grade_grades_text->timecreated));
         $this->assertFalse(empty($grade_grades_text->timemodified));
@@ -84,28 +84,28 @@ class grade_text_test extends grade_test {
     function test_grade_grades_text_update() {
         $grade_grades_text = new grade_grades_text($this->grade_grades_text[0]);
         $this->assertTrue(method_exists($grade_grades_text, 'update'));
-        
+
         $this->assertTrue($grade_grades_text->update(89));
         $information = get_field('grade_grades_text', 'information', 'id', $this->grade_grades_text[0]->id);
-        $this->assertEqual($grade_grades_text->information, $information); 
+        $this->assertEqual($grade_grades_text->information, $information);
     }
 
     function test_grade_grades_text_delete() {
         $grade_grades_text = new grade_grades_text($this->grade_grades_text[0]);
         $this->assertTrue(method_exists($grade_grades_text, 'delete'));
-        
+
         $this->assertTrue($grade_grades_text->delete());
-        $this->assertFalse(get_record('grade_grades_text', 'id', $grade_grades_text->id)); 
+        $this->assertFalse(get_record('grade_grades_text', 'id', $grade_grades_text->id));
     }
 
     function test_grade_grades_text_fetch() {
-        $grade_grades_text = new grade_grades_text(); 
+        $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'fetch'));
 
         $grade_grades_text = grade_grades_text::fetch('id', $this->grade_grades_text[0]->id);
         $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades_text->id);
-        $this->assertEqual($this->grade_grades_text[0]->information, $grade_grades_text->information); 
-    } 
+        $this->assertEqual($this->grade_grades_text[0]->information, $grade_grades_text->information);
+    }
 
     function test_grade_grades_text_load_grade_item() {
         $grade_grades_text = new grade_grades_text($this->grade_grades_text[0]);
@@ -116,5 +116,5 @@ class grade_text_test extends grade_test {
         $this->assertNotNull($grade_grades_text->grade_item);
         $this->assertEqual($this->grade_items[0]->id, $grade_grades_text->grade_item->id);
     }
-} 
+}
 ?>
