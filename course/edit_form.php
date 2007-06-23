@@ -198,7 +198,7 @@ class course_edit_form extends moodleform {
         $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('yes'), 1);
         $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('enroldate'), 2);
         $mform->addGroup($radio, 'enrollable', get_string('enrollable'), ' ', false);
-        $mform->setHelpButton('enrollable', array('courseenrollable', get_string('enrollable')), true);
+        $mform->setHelpButton('enrollable', array('courseenrollable2', get_string('enrollable')), true);
         $mform->setDefault('enrollable', 1);
 
         $enroldatestartgrp = array();
