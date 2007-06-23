@@ -59,7 +59,6 @@ define('GRADE_UPDATE_ITEM_LOCKED', 4);
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
-require_once($CFG->libdir . '/grade/grade_calculation.php');
 require_once($CFG->libdir . '/grade/grade_grades.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
@@ -404,10 +403,10 @@ function grade_update_final_grades($courseid, $regradeall=false) {
             }
 
             //do we have all data for finalizing of this item?
-            $dependson = $grade_item->dependson();
+            $depends_on = $grade_item->depends_on();
 
             $doupdate = true;
-            foreach ($dependson as $did) {
+            foreach ($depends_on as $did) {
                 if (!in_array($did, $finalids)) {
                     $doupdate = false;
                 }

@@ -819,6 +819,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('itemnumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('idnumber', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
         $table->addFieldInfo('gradetype', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
         $table->addFieldInfo('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
@@ -863,25 +864,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'grade_categories', array('id'));
 
     /// Launch create table for grade_categories
-        $result = $result && create_table($table);
-        
-    /// Define table grade_calculations to be created
-        $table = new XMLDBTable('grade_calculations');
-
-    /// Adding fields to table grade_calculations
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-        $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table grade_calculations
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-        $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-    /// Launch create table for grade_calculations
         $result = $result && create_table($table);
         
 
@@ -1006,17 +988,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
-    if ($result && $oldversion < 2007042601) {
-
-    /// Changing nullability of field usermodified on table grade_calculations to null
-        $table = new XMLDBTable('grade_calculations');
-        $field = new XMLDBField('usermodified');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'timemodified');
-
-        /// Launch change of nullability for field usermodified
-        $result = $result && change_field_notnull($table, $field);
-    }    
-    
     if ($result && $oldversion < 2007042701) {
 
     /// Define key categoryid (foreign) to be dropped form grade_categories
@@ -1288,25 +1259,6 @@ function xmldb_main_upgrade($oldversion=0) {
             $result = $result && create_table($table);
         }
 
-        /// Remove the obsoleted unitttests tables - they will be recreated automatically
-        $tables = array('grade_categories',
-                        'scale',
-                        'grade_items',
-                        'grade_calculations',
-                        'grade_grades_raw',
-                        'grade_grades_final',
-                        'grade_grades_text',
-                        'grade_outcomes',
-                        'grade_history');
-
-        foreach ($tables as $table) {
-            $table = new XMLDBTable('unittest_'.$table);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-
-        }
-
     /// Define table grade_import_values to be created
         $table = new XMLDBTable('grade_import_values');
         if (table_exists($table)) {
@@ -1360,6 +1312,46 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field locktime
             $result = $result && add_field($table, $field);
         }
+    }
+
+
+/// merge calculation formula into grade_item
+    if ($result && $oldversion < 2007062301) {
+
+    /// Delete obsoleted calculations table - we did not need the data yet
+        $table = new XMLDBTable('grade_calculations');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+
+    /// Define field calculation to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('calculation');
+
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'idnumber');
+        /// Launch add field calculation
+            $result = $result && add_field($table, $field);
+        }
+
+        /// Remove the obsoleted unitttests tables - they will be recreated automatically
+        $tables = array('grade_categories',
+                        'scale',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_history');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable('unittest_'.$table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+
     }
 
     return $result;

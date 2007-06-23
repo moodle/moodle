@@ -80,6 +80,7 @@ class grade_history extends grade_object {
 
     /**
      * Finds and returns a grade_history object based on 1-3 field values.
+     * @static
      *
      * @param string $field1
      * @param string $value1
@@ -92,15 +93,9 @@ class grade_history extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_history = get_record('grade_history', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_history') {
-                foreach ($grade_history as $param => $value) {
-                    $this->$param = $value;
-                }
-                return $this;
-            } else {
-                $grade_history = new grade_history($grade_history);
-                return $grade_history;
-            }
+            $grade_history = new grade_history($grade_history);
+            return $grade_history;
+
         } else {
             return false;
         }

@@ -74,6 +74,7 @@ class grade_scale extends grade_object {
     
     /**
      * Finds and returns a grade_scale object based on 1-3 field values.
+     * @static
      *
      * @param string $field1
      * @param string $value1
@@ -86,15 +87,9 @@ class grade_scale extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { 
         if ($grade_scale = get_record('scale', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_scale') {
-                foreach ($grade_scale as $param => $value) {
-                    $this->$param = $value;
-                }
-                return $this;
-            } else {
-                $grade_scale = new grade_scale($grade_scale);
-                return $grade_scale;
-            }
+            $grade_scale = new grade_scale($grade_scale);
+            return $grade_scale;
+
         } else {
             return false;
         }

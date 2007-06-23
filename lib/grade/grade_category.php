@@ -153,6 +153,7 @@ class grade_category extends grade_object {
 
     /**
      * Finds and returns a grade_category object based on 1-3 field values.
+     * @static
      *
      * @param string $field1
      * @param string $value1
@@ -165,15 +166,9 @@ class grade_category extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_category') {
-                foreach ($grade_category as $param => $value) {
-                    $this->$param = $value;
-                }
-                return $this;
-            } else {
-                $grade_category = new grade_category($grade_category);
-                return $grade_category;
-            }
+            $grade_category = new grade_category($grade_category);
+            return $grade_category;
+
         } else {
             return false;
         }
@@ -361,15 +356,15 @@ class grade_category extends grade_object {
 
 
         // find grde items of immediate children (category or grade items)
-        $dependson = $this->grade_item->dependson();
+        $depends_on = $this->grade_item->depends_on();
         $items = array();
 
-        foreach($dependson as $dep) {
+        foreach($depends_on as $dep) {
             $items[$dep] = grade_item::fetch('id', $dep);
         }
 
         // where to look for final grades - include or grade item too
-        $gis = implode(',', array_merge($dependson, array($this->grade_item->id)));
+        $gis = implode(',', array_merge($depends_on, array($this->grade_item->id)));
 
         $sql = "SELECT g.*
                   FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
@@ -384,7 +379,7 @@ class grade_category extends grade_object {
                 $final    = null;
                 while ($used = rs_fetch_next_record($rs)) {
                     if ($used->userid != $prevuser) {
-                        $this->aggregate_grades($prevuser, $items, $grades, $dependson, $final);
+                        $this->aggregate_grades($prevuser, $items, $grades, $depends_on, $final);
                         $prevuser = $used->userid;
                         $grades   = array();
                         $final    = null;
@@ -395,7 +390,7 @@ class grade_category extends grade_object {
                     }
                     $grades[$used->itemid] = $used->finalgrade;
                 }
-                $this->aggregate_grades($prevuser, $items, $grades, $dependson, $final);
+                $this->aggregate_grades($prevuser, $items, $grades, $depends_on, $final);
             }
         }
 
@@ -405,7 +400,7 @@ class grade_category extends grade_object {
     /**
      * internal function for category grades aggregation
      */
-    function aggregate_grades($userid, $items, $grades, $dependson, $final) {
+    function aggregate_grades($userid, $items, $grades, $depends_on, $final) {
         if (empty($userid)) {
             //ignore first run
             return;
@@ -480,7 +475,7 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade caunted as minimum
-                $num = count($dependson);     // you can calculate sum from this one if you multiply it with count($this->dependson() ;-)
+                $num = count($depends_on);     // you can calculate sum from this one if you multiply it with count($this->depends_on() ;-)
                 $sum = array_sum($grades);
                 $rawgrade = $sum / $num;
                 break;

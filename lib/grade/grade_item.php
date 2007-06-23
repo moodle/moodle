@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'calculation', 'scale', 'category', 'outcome');
+    var $nonfields = array('table', 'nonfields', 'formula', 'calculation_normalized', 'scale', 'category', 'outcome');
 
     /**
      * The course this grade_item belongs to.
@@ -107,6 +107,23 @@ class grade_item extends grade_object {
      * @var string $idnumber
      */
     var $idnumber;
+
+    /**
+     * Calculation string used for this item.
+     * @var string $calculation
+     */
+    var $calculation;
+
+    /**
+     * Indicates if we already tried to normalize the grade calculation formula.
+     * This flag helps to minimize db access when broken formulas used in calculation.
+     * @var boolean
+     */
+    var $calculation_normalized;
+    /**
+     * Math evaluation object
+     */
+    var $formula;
 
     /**
      * The type of grade (0 = none, 1 = value, 2 = scale, 3 = text)
@@ -199,12 +216,6 @@ class grade_item extends grade_object {
     var $needsupdate;
 
     /**
-     * Calculation string used for this item.
-     * @var string $calculation
-     */
-    var $calculation;
-
-    /**
      * Constructor. Extends the basic functionality defined in grade_object.
      * @param array $params Can also be a standard object.
      * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
@@ -263,6 +274,7 @@ class grade_item extends grade_object {
 
         $db_item = new grade_item(array('id' => $this->id));
 
+        $calculationdiff = $db_item->calculation != $this->calculation;
         $gradetypediff   = $db_item->gradetype   != $this->gradetype;
         $grademaxdiff    = $db_item->grademax    != $this->grademax;
         $grademindiff    = $db_item->grademin    != $this->grademin;
@@ -275,12 +287,14 @@ class grade_item extends grade_object {
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
 
-        return ($gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff || $outcomeiddiff ||
-                $multfactordiff || $plusfactordiff || $deleteddiff || $needsupdatediff || $lockeddiff);
+        return ($calculationdiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
+             || $outcomeiddiff || $multfactordiff || $plusfactordiff || $deleteddiff || $needsupdatediff
+             || $lockeddiff);
     }
 
     /**
      * Finds and returns a grade_item object based on 1-3 field values.
+     * @static
      *
      * @param string $field1
      * @param string $value1
@@ -293,16 +307,9 @@ class grade_item extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_item = get_record('grade_items', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_item') {
-                foreach ($grade_item as $param => $value) {
-                    $this->$param = $value;
-                }
+            $grade_item = new grade_item($grade_item);
+            return $grade_item;
 
-                return $this;
-            } else {
-                $grade_item = new grade_item($grade_item);
-                return $grade_item;
-            }
         } else {
             return false;
         }
@@ -410,11 +417,11 @@ class grade_item extends grade_object {
      * @return boolean Locked state
      */
     function is_locked($userid=NULL) {
-         if (!empty($this->locked)) {
+        if (!empty($this->locked)) {
             return true;
-         }
+        }
 
-         if (!empty($userid)) {
+        if (!empty($userid)) {
 
             $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
             $grade->grade_item =& $this; // prevent db fetching of cached grade_item
@@ -527,7 +534,7 @@ class grade_item extends grade_object {
         }
 
         if ($this->is_calculated()) {
-            if ($this->calculation->compute()) {
+            if ($this->compute()) {
                 $this->needsupdate = false;
                 $this->update();
                 return true;
@@ -775,14 +782,32 @@ class grade_item extends grade_object {
 
     /**
      * Checks if grade calculated. Returns this object's calculation.
-     * @return mixed $calculation Calculation object if exists, false otherwise.
+     * @return boolean true if grade item calculated.
      */
     function is_calculated() {
-        if (is_null($this->calculation)) {
-            $this->calculation = grade_calculation::fetch('itemid', $this->id);
+        if (empty($this->calculation)) {
+            return false;
         }
 
-        return !empty($this->calculation);
+        /*
+         * The main reason why we use the [#gixxx#] instead of [idnumber] is speed of depends_on(),
+         * we would have to fetch all course grade items to find out the ids.
+         * Also if user changes the idnumber the formula does not need to be updated.
+         */
+
+        // first detect if we need to update calculation formula from [idnumber] to [#giXXX#] (after backup, etc.)
+        if (!$this->calculation_normalized and preg_match_all('/\[(?!#gi)(.*?)\]/', $this->calculation, $matches)) {
+            foreach ($matches[1] as $idnumber) {
+                if ($grade_item = grade_item::fetch('courseid', $this->courseid, 'idnumber', $idnumber)) {
+                    $this->calculation = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $this->calculation);
+                }
+            }
+            $this->update(); // update in db if needed
+            $this->calculation_normalized = true;
+            return !empty($this->calculation);
+        }
+
+        return true;
     }
 
     /**
@@ -791,7 +816,20 @@ class grade_item extends grade_object {
      */
     function get_calculation() {
         if ($this->is_calculated()) {
-            return $this->calculation->calculation;
+            $formula = $this->calculation;
+            // denormalize formula - convert [#giXX#] to [idnumber]
+            if (preg_match_all('/\[#gi([0-9]+)#\]/', $formula, $matches)) {
+                foreach ($matches[1] as $id) {
+                    if ($grade_item = grade_item::fetch('id', $id)) {
+                        if (!empty($grade_item->idnumber)) {
+                            $formula = str_replace('[#gi'.$grade_item->id.'#]', '['.$grade_item->idnumber.']', $formula);
+                        }
+                    }
+                }
+            }
+
+            return $formula;
+
         } else {
             return NULL;
         }
@@ -805,40 +843,29 @@ class grade_item extends grade_object {
      * @return boolean success
      */
     function set_calculation($formula) {
-        // refresh cached calculation object
-        $this->calculation = null;
+        $formula = trim($formula);
 
-        $result = true;
+        if (empty($formula)) {
+            $this->calculation = NULL;
 
-        if (empty($formula)) { // We are removing this calculation
-            if (!empty($this->id) and $this->is_calculated()) {
-                $this->calculation->delete();
-                $this->calculation = null; // remove cache
+        } else {
+            if (strpos($formula, '=') !== 0) {
+                $formula = '='.$formula;
             }
 
-        } else { // We are updating or creating the calculation entry in the DB
-            if ($this->is_calculated()) {
-                $this->calculation->calculation = $formula;
-                if (!$this->calculation->update()) {
-                    $this->calculation = null; // remove cache
-                    $result = false;
-                    debugging("Could not save the calculation in the database for this grade_item.");
+            // normalize formula - we want grade item ids [#giXXX#] instead of [idnumber]
+            $grade_item = new grade_item(array('courseid'=>$this->courseid), false);
+            if ($grade_items = $grade_item->fetch_all_using_this()) {
+                foreach ($grade_items as $grade_item) {
+                    $formula = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $formula);
                 }
-
-            } else {
-                $grade_calculation = new grade_calculation(array('calculation'=>$formula, 'itemid'=>$this->id), false);
-                if (!$grade_calculation->insert()) {
-                    $this->calculation = null; // remove cache
-                    $result = false;
-                    debugging("Could not save the calculation in the database for this grade_item.");
-                }
-                $this->calculation = $grade_calculation;
             }
+
+            $this->calculation = $formula;
         }
 
-        $this->force_regrading();
-
-        return $result;
+        $this->calculation_normalized = true;
+        return $this->update();
     }
 
     /**
@@ -959,18 +986,21 @@ class grade_item extends grade_object {
      * Finds out on which other items does this depend directly when doing calculation or category agregation
      * @return array of grade_item ids this one depends on
      */
-    function dependson() {
+    function depends_on() {
 
         if ($this->is_locked()) {
             // locked items do not need to be regraded
             return array();
         }
 
-        if ($calculation = $this->is_calculated()) {
-            return $calculation->dependson();
+        if ($this->is_calculated()) {
+            if (preg_match_all('/\[#gi([0-9]+)#\]/', $this->calculation, $matches)) {
+                return array_unique($matches[1]); // remove duplicates
+            } else {
+                return array();
+            }
 
-        } else if ($this->itemtype == 'category') {
-            $grade_category = grade_category::fetch('id', $this->iteminstance);
+        } else if ($grade_category = $this->load_category()) {
             $children = $grade_category->get_children(1, 'flat');
 
             if (empty($children)) {
@@ -979,15 +1009,13 @@ class grade_item extends grade_object {
 
             $result = array();
 
-            $childrentype = get_class(reset($children));
-            if ($childrentype == 'grade_category') {
-                foreach ($children as $id => $category) {
-                    $grade_item = $category->get_grade_item();
+            foreach ($children as $id => $child) {
+                if (get_class($child) == 'grade_category') {
+                    $grade_item = $child->get_grade_item();
                     $result[] = $grade_item->id;
-                }
-            } elseif ($childrentype == 'grade_item') {
-                foreach ($children as $id => $grade_item) {
-                    $result[] = $grade_item->id;
+
+                } else if (get_class($child) == 'grade_item') {
+                    $result[] = $child->id;
                 }
             }
 
@@ -1086,5 +1114,137 @@ class grade_item extends grade_object {
             return false;
         }
     }
+
+    /**
+     * Calculates final grade values useing the formula in calculation property.
+     * The parameteres are taken from final grades of grade items in current course only.
+     * @return boolean false if error
+     */
+    function compute() {
+        global $CFG;
+
+        if (!$this->is_calculated()) {
+            return false;
+        }
+
+        require_once($CFG->libdir.'/mathslib.php');
+
+        if ($this->is_locked()) {
+            return true; // no need to recalculate locked items
+        }
+
+        // get used items
+        $useditems = $this->depends_on();
+
+        // prepare formula and init maths library
+        $formula = preg_replace('/\[#(gi[0-9]+)#\]/', '\1', $this->calculation);
+        $this->formula = new calc_formula($formula);
+
+        // where to look for final grades?
+        // this itemid is added so that we use only one query for source and final grades
+        $gis = implode(',', array_merge($useditems, array($this->id)));
+
+        $sql = "SELECT g.*
+                  FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items gi
+                 WHERE gi.id = g.itemid AND gi.courseid={$this->courseid} AND gi.id IN ($gis)
+              ORDER BY g.userid";
+
+        $return = true;
+
+        // group the grades by userid and use formula on the group
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                $prevuser = 0;
+                $grades   = array();
+                $final    = null;
+                while ($used = rs_fetch_next_record($rs)) {
+                    if ($used->userid != $prevuser) {
+                        if (!$this->use_formula($prevuser, $grades, $useditems, $final)) {
+                            $return = false;
+                        }
+                        $prevuser = $used->userid;
+                        $grades   = array();
+                        $final    = null;
+                    }
+                    if ($used->itemid == $this->id) {
+                        $final = new grade_grades($used, false); // fetching from db is not needed
+                        $final->grade_item =& $this;
+                    }
+                    $grades['gi'.$used->itemid] = $used->finalgrade;
+                }
+                if (!$this->use_formula($prevuser, $grades, $useditems, $final)) {
+                    $return = false;
+                }
+            }
+        }
+
+        //TODO: we could return array of errors here
+        return $return;
+    }
+
+    /**
+     * internal function - does the final grade calculation
+     */
+    function use_formula($userid, $params, $useditems, $final) {
+        if (empty($userid)) {
+            return true;
+        }
+
+        // add missing final grade values
+        // not graded (null) is counted as 0 - the spreadsheet way
+        foreach($useditems as $gi) {
+            if (!array_key_exists('gi'.$gi, $params)) {
+                $params['gi'.$gi] = 0;
+            } else {
+                $params['gi'.$gi] = (float)$params['gi'.$gi];
+            }
+        }
+
+        // can not use own final grade during calculation
+        unset($params['gi'.$this->id]);
+
+        // insert final grade - will be needed later anyway
+        if (empty($final)) {
+            $final = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
+            $final->insert();
+            $final->grade_item =& $this;
+
+        } else if ($final->is_locked()) {
+            // no need to recalculate locked grades
+            return;
+        }
+
+
+        // do the calculation
+        $this->formula->set_params($params);
+        $result = $this->formula->evaluate();
+
+        // store the result
+        if ($result === false) {
+            // error during calculation
+            if (!is_null($final->finalgrade) or !is_null($final->rawgrade)) {
+                $final->finalgrade = null;
+                $final->rawgrade   = null;
+                $final->update();
+            }
+            return false;
+
+        } else {
+            // normalize
+            $result = bounded_number($this->grademin, $result, $this->grademax);
+            if ($this->gradetype == GRADE_TYPE_SCALE) {
+                $result = round($result+0.00001); // round scales upwards
+            }
+
+            // store only if final grade changed, remove raw grade because we do not need it
+            if ($final->finalgrade != $result or !is_null($final->rawgrade)) {
+                $final->finalgrade = $result;
+                $final->rawgrade   = null;
+                $final->update();
+            }
+            return true;
+        }
+    }
+
 }
 ?>

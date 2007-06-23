@@ -1492,6 +1492,8 @@
                 fwrite ($bf,full_tag("ITEMNUMBER",5,false,$grade_item->itemnumber));
                 fwrite ($bf,full_tag("ITEMINFO",5,false,$grade_item->iteminfo));
                 fwrite ($bf,full_tag("IDNUMBER",5,false,$grade_item->idnumber));
+                // use [idnumber] in calculation instead of [#giXXX#]
+                fwrite ($bf,full_tag("CALCULATION",5,false,$grade_item->get_caclulation()));
                 fwrite ($bf,full_tag("GRADEMAX",5,false,$grade_item->grademax));
                 fwrite ($bf,full_tag("GRADEMIN",5,false,$grade_item->grademin));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_item->scaleid));
@@ -1504,7 +1506,6 @@
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
 
                 // back up the other stuff here                
-                $status = backup_gradebook_calculations_info($bf,$preferences,$grade_item->id);              
                 $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_history_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
@@ -1553,27 +1554,6 @@
 
         return $status;
     }
-    //Backup gradebook_calculations(called from backup_gradebook_item_info
-    function backup_gradebook_calculations_info($bf,$preferences, $itemid) {
-
-        global $CFG;
-
-        $status = true;
-        
-        // find all calculations belonging to this item
-        if ($calculations = get_records('grade_calculations', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_CALCULATIONS",5,true));
-            foreach ($calculations as $calculation) {
-                fwrite ($bf,start_tag("GRADE_CALCULATION",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$calculation->id));
-                fwrite ($bf,full_tag("CALCULATION",7,false,$calculation->calculation));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$calculation->usermodified));
-                fwrite ($bf,end_tag("GRADE_CALCULATION",6,true));
-            }  
-            $status = fwrite ($bf,end_tag("GRADE_CALCULATIONS",5,true));
-        }
-        return $status;
-    }
 
     function backup_gradebook_grades_info($bf,$preferences, $itemid) {
 
@@ -1581,19 +1561,19 @@
 
         $status = true;
         
-        // find all calculations belonging to this item
-        if ($raws = get_records('grade_grades', 'itemid', $itemid)) {
+        // find all grades belonging to this item
+        if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES",5,true));
-            foreach ($raws as $raw) {
+            foreach ($grades as $grade) {
                 fwrite ($bf,start_tag("GRADE",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$raw->id));
-                fwrite ($bf,full_tag("USERID",7,false,$raw->userid));
-                fwrite ($bf,full_tag("RAWGRADE",7,false,$raw->rawgrade));
-                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$raw->rawgrademax));
-                fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$raw->rawgrademin));
-                fwrite ($bf,full_tag("RAWSCALEID",7,false,$raw->rawscaleid));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$raw->usermodified));
-                fwrite ($bf,full_tag("FINALGRADE",7,false,$raw->finalgrade));
+                fwrite ($bf,full_tag("ID",7,false,$grade->id));
+                fwrite ($bf,full_tag("USERID",7,false,$grade->userid));
+                fwrite ($bf,full_tag("RAWGRADE",7,false,$grade->rawgrade));
+                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$grade->rawgrademax));
+                fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$grade->rawgrademin));
+                fwrite ($bf,full_tag("RAWSCALEID",7,false,$grade->rawscaleid));
+                fwrite ($bf,full_tag("USERMODIFIED",7,false,$grade->usermodified));
+                fwrite ($bf,full_tag("FINALGRADE",7,false,$grade->finalgrade));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$final->hidden));
                 fwrite ($bf,full_tag("LOCKED",7,false,$final->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$final->locktime));
@@ -1611,7 +1591,7 @@
 
         $status = true;
         
-        // find all calculations belonging to this item
+        // find all grade texts belonging to this item
         if ($texts = get_records('grade_grades_text', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
             foreach ($texts as $text) {
@@ -1635,7 +1615,7 @@
 
         $status = true;
         
-        // find all calculations belonging to this item
+        // find all grade history belonging to this item
         if ($histories = get_records('grade_history', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",5,true));
             foreach ($histories as $history) {

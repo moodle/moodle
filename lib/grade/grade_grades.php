@@ -216,6 +216,7 @@ class grade_grades extends grade_object {
     /**
      * Finds and returns a grade_grades object based on 1-3 field values.
      * @static
+     *
      * @param string $field1
      * @param string $value1
      * @param string $field2
@@ -227,16 +228,9 @@ class grade_grades extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($object = get_record('grade_grades', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_grades') {
-                foreach ($object as $param => $value) {
-                    $this->$param = $value;
-                }
+            $object = new grade_grades($object);
+            return $object;
 
-                return $this;
-            } else {
-                $object = new grade_grades($object);
-                return $object;
-            }
         } else {
             return false;
         }

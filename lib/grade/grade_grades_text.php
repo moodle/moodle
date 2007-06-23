@@ -92,6 +92,7 @@ class grade_grades_text extends grade_object {
 
     /**
      * Finds and returns a grade_text object based on 1-3 field values.
+     * @static
      *
      * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
      * @param string $field1
@@ -105,15 +106,9 @@ class grade_grades_text extends grade_object {
      */
     function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
         if ($grade_text = get_record('grade_grades_text', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            if (isset($this) && get_class($this) == 'grade_grades_text') {
-                foreach ($grade_text as $param => $value) {
-                    $this->$param = $value;
-                }
-                return $this;
-            } else {
-                $grade_text = new grade_grades_text($grade_text);
-                return $grade_text;
-            }
+            $grade_text = new grade_grades_text($grade_text);
+            return $grade_text;
+
         } else {
             return false;
         }

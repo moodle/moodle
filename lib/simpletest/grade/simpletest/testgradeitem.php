@@ -232,24 +232,6 @@ class grade_item_test extends grade_test {
         $this->assertEqual($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
-    function test_grade_item_is_calculated() {
-        $grade_item = new grade_item($this->grade_items[1]);
-        $this->assertTrue(method_exists($grade_item, 'is_calculated'));
-        $this->assertTrue($grade_item->is_calculated());
-    }
-
-    function test_grade_item_set_calculation() {
-/*        $grade_item = new grade_item($this->grade_items[1]);
-        $this->assertTrue(method_exists($grade_item, 'set_calculation'));
-        $this->assertTrue(method_exists($grade_item, 'is_calculated'));
-
-        $calculation = '=SUM([unittestgradeitem1], [unittestgradeitem3])';
-        $grade_item->set_calculation($calculation);
-        $new_calculation = $grade_item->is_calculated();
-
-        $this->assertEqual($calculation, $new_calculation->calculation);
-*/    }
-
     function test_grade_item_get_category() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_category'));
@@ -330,6 +312,9 @@ class grade_item_test extends grade_test {
         $this->assertEqual(round(1.6), round($grade_item->adjust_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)));
     }
 
+    /**
+     * Test locking of grade items
+     */
     function test_grade_item_set_locked() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'set_locked'));
@@ -362,11 +347,28 @@ class grade_item_test extends grade_test {
         $this->assertTrue($grade_item->is_locked(1));
     }
 
-    function test_grade_item_dependson() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        //TODO
-    }
+    function test_grade_item_depends_on() {
+        $grade_item = new grade_item($this->grade_items[1]);
 
+        // calculated grade dependency
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC); // for comparison
+        $this->assertEqual(array($this->grade_items[0]->id), $deps);
+
+        // simulate depends on returns none when locked
+        $grade_item->locked = time();
+        $grade_item->update();
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC); // for comparison
+        $this->assertEqual(array(), $deps);
+
+        // category dependency
+        $grade_item = new grade_item($this->grade_items[3]);
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC); // for comparison
+        $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
+        $this->assertEqual($res, $deps);
+    }
 
 /*
     function test_grade_item_toggle_hiding() {
@@ -383,12 +385,65 @@ class grade_item_test extends grade_test {
         $this->assertEqual(3, $grade_item->toggle_hiding(true));
         $this->assertTrue($grade_item->hidden);
         $this->assertTrue($grade_item->grade_grades[1]->hidden);
-        $this->assertTrue($grade_item->grade_grades[2]->hidden);
+        $this->assertTrue($grade_item->grade_gra
+        des[2]->hidden);
         $this->assertTrue($grade_item->grade_grades[3]->hidden);
     }
 */
 
-    function test_float_keys() {
+    function test_grade_item_is_calculated() {
+        $grade_item = new grade_item($this->grade_items[1]);
+        $this->assertTrue(method_exists($grade_item, 'is_calculated'));
+        $grade_itemsource = new grade_item($this->grade_items[0]);
+        $normalizedformula = str_replace('['.$grade_itemsource->idnumber.']', '[#gi'.$grade_itemsource->id.'#]', $this->grade_items[1]->calculation);
+
+        $this->assertTrue($grade_item->is_calculated());
+        $this->assertEqual($normalizedformula, $grade_item->calculation);
     }
+
+    function test_grade_item_set_calculation() {
+        $grade_item = new grade_item($this->grade_items[1]);
+        $this->assertTrue(method_exists($grade_item, 'set_calculation'));
+        $grade_itemsource = new grade_item($this->grade_items[0]);
+
+        $grade_item->set_calculation('=['.$grade_itemsource->idnumber.']');
+
+        $this->assertTrue(!empty($grade_item->needsupdate));
+        $this->assertEqual('=[#gi'.$grade_itemsource->id.'#]', $grade_item->calculation);
+    }
+
+    function test_grade_item_get_calculation() {
+        $grade_item = new grade_item($this->grade_items[1]);
+        $this->assertTrue(method_exists($grade_item, 'get_calculation'));
+        $grade_itemsource = new grade_item($this->grade_items[0]);
+
+        $denormalizedformula = str_replace('[#gi'.$grade_itemsource->id.'#]', '['.$grade_itemsource->idnumber.']', $this->grade_items[1]->calculation);
+
+        $formula = $grade_item->get_calculation();
+        $this->assertTrue(!empty($grade_item->needsupdate));
+        $this->assertEqual($denormalizedformula, $formula);
+    }
+
+    function test_grade_item_compute() {
+        $grade_item = new grade_item($this->grade_items[1]);
+        $this->assertTrue(method_exists($grade_item, 'compute'));
+
+        $grade_grades = grade_grades::fetch('id', $this->grade_grades[3]->id);
+        $grade_grades->delete();
+        $grade_grades = grade_grades::fetch('id', $this->grade_grades[4]->id);
+        $grade_grades->delete();
+        $grade_grades = grade_grades::fetch('id', $this->grade_grades[5]->id);
+        $grade_grades->delete();
+
+        $grade_item->compute();
+
+        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[3]->userid, 'itemid', $this->grade_grades[3]->itemid);
+        $this->assertEqual($this->grade_grades[3]->finalgrade, $grade_grades->finalgrade);
+        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[4]->userid, 'itemid', $this->grade_grades[4]->itemid);
+        $this->assertEqual($this->grade_grades[4]->finalgrade, $grade_grades->finalgrade);
+        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[5]->userid, 'itemid', $this->grade_grades[5]->itemid);
+        $this->assertEqual($this->grade_grades[5]->finalgrade, $grade_grades->finalgrade);
+    }
+
 }
 ?>

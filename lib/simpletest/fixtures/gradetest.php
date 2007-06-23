@@ -54,7 +54,6 @@ class grade_test extends UnitTestCase {
     var $tables = array('grade_categories',
                         'scale',
                         'grade_items',
-                        'grade_calculations',
                         'grade_grades',
                         'grade_grades_text',
                         'grade_outcomes',
@@ -62,7 +61,6 @@ class grade_test extends UnitTestCase {
 
     var $grade_items = array();
     var $grade_categories = array();
-    var $grade_calculations = array();
     var $grade_grades = array();
     var $grade_grades_text = array();
     var $grade_outcomes = array();
@@ -108,6 +106,7 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('itemnumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('idnumber', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+            $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
             $table->addFieldInfo('gradetype', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1');
             $table->addFieldInfo('grademax', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '100');
             $table->addFieldInfo('grademin', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
@@ -155,28 +154,6 @@ class grade_test extends UnitTestCase {
             $table->addKeyInfo('parent', XMLDB_KEY_FOREIGN, array('parent'), 'grade_categories', array('id'));
 
             /// Launch create table for grade_categories
-            $result = $result && create_table($table, true, false);
-        }
-
-        /// Define table grade_calculations to be created
-        $table = new XMLDBTable('grade_calculations');
-        
-        if ($result && !table_exists($table)) {
-
-            /// Adding fields to table grade_calculations
-            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
-            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-
-            /// Adding keys to table grade_calculations
-            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-            $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-
-            /// Launch create table for grade_calculations
             $result = $result && create_table($table, true, false);
         }
 
@@ -493,6 +470,7 @@ class grade_test extends UnitTestCase {
         $grade_item->grademin = 30;
         $grade_item->grademax = 110;
         $grade_item->itemnumber = 1;
+        $grade_item->idnumber = 'item id 0';
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -510,6 +488,7 @@ class grade_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitem2';
         $grade_item->itemtype = 'import';
         $grade_item->itemmodule = 'assignment';
+        $grade_item->calculation = '= [#gi'.$this->grade_items[0]->id.'#] + 30 + [item id 0] - [item id 0]';
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->iteminstance = 2;
         $grade_item->itemnumber = null;
@@ -696,23 +675,6 @@ class grade_test extends UnitTestCase {
             $this->grade_items[9] = $grade_item;
         }
 
-    }
-
-    /**
-     * Load grade_calculation data into the database, and adds the corresponding objects to this class' variable.
-     */
-    function load_grade_calculations() {
-        // Calculation for grade_item 2
-        $grade_calculation = new stdClass();
-        $grade_calculation->itemid = $this->grade_items[1]->id;
-        $grade_calculation->calculation = '= gi'.$this->grade_items[0]->id.' + 30 ';
-        $grade_calculation->timecreated = mktime();
-        $grade_calculation->timemodified = mktime();
-        
-        if ($grade_calculation->id = insert_record('grade_calculations', $grade_calculation)) {
-            $this->grade_calculations[0] = $grade_calculation;
-            $this->grade_items[1]->calculation = $grade_calculation;
-        } 
     }
 
     /**

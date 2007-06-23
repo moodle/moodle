@@ -1445,6 +1445,7 @@
                             $dbrec->itemnumber = backup_todb($info['GRADE_ITEM']['#']['ITEMNUMBER']['0']['#']);
                             $dbrec->iteminfo = backup_todb($info['GRADE_ITEM']['#']['ITEMINFO']['0']['#']);
                             $dbrec->idnumber = backup_todb($info['GRADE_ITEM']['#']['IDNUMBER']['0']['#']);
+                            $dbrec->calculation = backup_todb($info['GRADE_ITEM']['#']['CALCULATION']['0']['#']);
                             $dbrec->grademax = backup_todb($info['GRADE_ITEM']['#']['GRADEMAX']['0']['#']);
                             $dbrec->grademin = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#']);
                             /// needs to be restored first
@@ -1499,7 +1500,7 @@
 
                             $itemid = insert_record('grade_items',$dbrec);
                             
-                            /// now, restore grade_calculations, grade_raw, grade_final, grade_text, and grade_history
+                            /// now, restore grade_grades, grade_text, and grade_history
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
                                 //Iterate over items
                                 for($i = 0; $i < sizeof($grades); $i++) {
@@ -1542,37 +1543,6 @@
                                 }
                             }
                                
-                            /// processing grade_calculations
-                            if (!empty($info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']) && ($calcs = $info['GRADE_ITEM']['#']['GRADE_CALCULATIONS']['0']['#']['GRADE_CALCULATION'])) {
-                                //Iterate over items
-                                for($i = 0; $i < sizeof($calcs); $i++) {
-                                    $ite_info = $calcs[$i];
-                                    //traverse_xmlize($ite_info);
-//Debug
-                                    //print_object ($GLOBALS['traverse_array']);
-//Debug
-                                    //$GLOBALS['traverse_array']="";                                                              //Debug
-                                    $calc->itemid       = $itemid;
-
-                                    $calc->calculation = backup_todb($ite_info['#']['CALCULATION']['0']['#']);
-                                    
-                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
-                                    $calc->usermodified = $modifier->new_id;
-                                
-                                    insert_record('grade_calculations', $calc);
-                                    
-                                    $counter++;
-                                    if ($counter % 20 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 400 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
 
                             /// processing grade_grades_text
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_TEXT']['0']['#']) && ($texts = $info['GRADE_ITEM']['#']['GRADE_GRADES_TEXT']['0']['#']['GRADE_TEXT'])) {
