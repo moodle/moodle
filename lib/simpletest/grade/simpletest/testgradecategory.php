@@ -87,6 +87,8 @@ class grade_category_test extends grade_test {
 
         $grade_category->insert();
 
+        $this->assertEqual('/'.$this->grade_categories[0]->id.'/'.$grade_category->id, $grade_category->path);
+
         $last_grade_category = end($this->grade_categories);
 
         $this->assertFalse(empty($grade_category->grade_item));
@@ -121,9 +123,17 @@ class grade_category_test extends grade_test {
         $grade_category = new grade_category();
         $this->assertTrue(method_exists($grade_category, 'fetch'));
 
-        $grade_category = grade_category::fetch('id', $this->grade_categories[0]->id);
+        $grade_category = grade_category::fetch(array('id'=>$this->grade_categories[0]->id));
         $this->assertEqual($this->grade_categories[0]->id, $grade_category->id);
         $this->assertEqual($this->grade_categories[0]->fullname, $grade_category->fullname);
+    }
+
+    function test_grade_category_fetch_all() {
+        $grade_category = new grade_category();
+        $this->assertTrue(method_exists($grade_category, 'fetch_all'));
+
+        $grade_categories = grade_category::fetch_all(array('courseid'=>$this->courseid));
+        $this->assertEqual(count($this->grade_categories), count($grade_categories));
     }
 
     function test_grade_category_get_children() {
@@ -244,6 +254,8 @@ class grade_category_test extends grade_test {
         $child2 = new grade_item();
         $child1->itemname = 'new grade_item';
         $child2->itemname = 'new grade_item';
+        $child1->itemtype = 'something';
+        $child2->itemtype = 'something';
         $child1->sortorder = 1;
         $child2->sortorder = 2;
         $child1->courseid = $grade_category->courseid;

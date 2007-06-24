@@ -102,9 +102,17 @@ class grade_text_test extends grade_test {
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'fetch'));
 
-        $grade_grades_text = grade_grades_text::fetch('id', $this->grade_grades_text[0]->id);
+        $grade_grades_text = grade_grades_text::fetch(array('id'=>$this->grade_grades_text[0]->id));
         $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades_text->id);
         $this->assertEqual($this->grade_grades_text[0]->information, $grade_grades_text->information);
+    }
+
+    function test_grade_grades_text_fetch_all() {
+        $grade_grades_text = new grade_grades_text();
+        $this->assertTrue(method_exists($grade_grades_text, 'fetch_all'));
+
+        $grade_grades_texts = grade_grades_text::fetch_all(array());
+        $this->assertEqual(count($this->grade_grades_text[0]), count($grade_grades_texts));
     }
 
     function test_grade_grades_text_load_grade_item() {

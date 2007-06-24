@@ -95,9 +95,18 @@ class grade_history_test extends grade_test {
         $grade_history = new grade_history();
         $this->assertTrue(method_exists($grade_history, 'fetch'));
 
-        $grade_history = grade_history::fetch('id', $this->grade_history[0]->id);
+        $grade_history = grade_history::fetch(array('id'=>$this->grade_history[0]->id));
         $this->assertEqual($this->grade_history[0]->id, $grade_history->id);
         $this->assertEqual($this->grade_history[0]->note, $grade_history->note);
     }
+
+    function test_grade_history_fetch_all() {
+        $grade_history = new grade_history();
+        $this->assertTrue(method_exists($grade_history, 'fetch_all'));
+
+        $histories = grade_history::fetch(array());
+        $this->assertEqual(count($this->grade_history), count($histories));
+    }
+
 }
 ?>

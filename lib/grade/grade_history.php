@@ -73,32 +73,37 @@ class grade_history extends grade_object {
     var $note;
 
     /**
+     * Which user account did the modification.
+     * @var string $usermodified
+     */
+    var $usermodified;
+
+    /**
      * How the grade was modified ('manual', 'module', 'import' etc...).
      * @var string $howmodified
      */
-    var $howmodified;
+    var $howmodified = 'manual';
 
     /**
-     * Finds and returns a grade_history object based on 1-3 field values.
+     * Finds and returns a grade_history instance based on params.
      * @static
      *
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_history object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_history instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_history = get_record('grade_history', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_history = new grade_history($grade_history);
-            return $grade_history;
+    function fetch($params) {
+        return grade_object::fetch_helper('grade_history', 'grade_history', $params);
+    }
 
-        } else {
-            return false;
-        }
+    /**
+     * Finds and returns all grade_history instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_history insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('grade_history', 'grade_history', $params);
     }
 
     /**
@@ -120,8 +125,6 @@ class grade_history extends grade_object {
         $history->newgrade     = $newgrade;
         $history->note         = $note;
         $history->howmodified  = $howmodified;
-        $history->timemodified = time();
-        $history->usermodified = $USER->id;
 
         return $history->insert();
     }

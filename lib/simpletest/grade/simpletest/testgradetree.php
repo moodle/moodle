@@ -356,13 +356,13 @@ class grade_tree_test extends grade_test {
         $tree->remove_element(7);
         $tree->renumber();
         $tree->update_db();
-        $item = grade_item::fetch('id', $this->grade_items[6]->id);
+        $item = grade_item::fetch(array('id'=>$this->grade_items[6]->id));
         $this->assertTrue(empty($item->id));
 
         $tree->move_element(4, 9);
         $tree->renumber();
         $tree->update_db();
-        $item = grade_item::fetch('id', $this->grade_items[1]->id);
+        $item = grade_item::fetch(array('id'=>$this->grade_items[1]->id));
         $this->assertFalse(empty($item->id));
         $this->assertEqual(8, $item->sortorder);
 

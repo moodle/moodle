@@ -60,19 +60,107 @@ class grade_object {
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.
-     * @param object $params an object with named parameters for this grade item.
+     * @param array $params an array with required parameters for this grade object.
      * @param boolean $fetch Whether to fetch corresponding row from DB or not.
      */
     function grade_object($params=NULL, $fetch = true) {
-        if (!empty($params) && (is_array($params) || is_object($params))) {
-            $this->assign_to_this($params);
+        if (!empty($params) and (is_array($params) or is_object($params))) {
+            if ($fetch and $data = $this->fetch($params)) {
+                grade_object::set_properties($this, $data);
 
-            if ($fetch) {
-                $records = $this->fetch_all_using_this();
-                if ($records && count($records) > 0) {
-                    $this->assign_to_this(current($records));
-                }
+            } else {
+                grade_object::set_properties($this, $params);
             }
+        }
+    }
+
+    /**
+     * Finds and returns a grade_object instance based on params.
+     * @static abstract
+     *
+     * @param array $params associative arrays varname=>value
+     * @return object grade_object instance or false if none found.
+     */
+    function fetch($params) {
+        error('Abstract method fetch() not overrided in '.get_class($this));
+    }
+
+    /**
+     * Finds and returns all grade_object instances based on params.
+     * @static abstract
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_object insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        error('Abstract method fetch_all() not overrided in '.get_class($this));
+    }
+
+    /**
+     * Factory method - uses the parameters to retrieve matching instance from the DB.
+     * @static final protected
+     * @return mixed object insatnce or false if not found
+     */
+    function fetch_helper($table, $classname, $params) {
+        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
+        // in PHP5 we could do it much better
+        if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
+            if (count($instances) > 1) {
+                // we should not tolerate any errors here - proplems might appear later
+                error('Found more than one record in fetch() !');
+            }
+            return reset($instances);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Factory method - uses the parameters to retrieve all matching instances from the DB.
+     * @static final protected
+     * @return mixed array of object instances or false if not found
+     */
+    function fetch_all_helper($table, $classname, $params) {
+        // we have to do use this hack because of the incomplete OOP implementation in PHP4 :-(
+        // in PHP5 we could do it much better
+        $instance = new $classname();
+
+        $classvars = (array)$instance;
+        $params    = (array)$params;
+
+        $wheresql = array();
+
+        // remove incorrect params - warn developer if needed
+        foreach ($params as $var=>$value) {
+            if (!array_key_exists($var, $classvars) or in_array($var, $instance->nonfields)) {
+                debugging("Incorrect property name $var for class $classname");
+                continue;
+            }
+            if (is_null($value)) {
+                $wheresql[] = " $var IS NULL ";
+            } else {
+                $value = addslashes($value);
+                $wheresql[] = " $var = '$value' ";
+            }
+        }
+
+        if (empty($wheresql)) {
+            $wheresql = '';
+        } else {
+            $wheresql = implode("AND", $wheresql);
+        }
+
+        if ($datas = get_records_select($table, $wheresql, 'id')) {
+            $result = array();
+            foreach($datas as $data) {
+                $instance = new $classname();
+                grade_object::set_properties($instance, $data);
+                $result[$instance->id] = $instance;
+            }
+            return $result;
+
+        } else {
+            return false;
         }
     }
 
@@ -86,7 +174,7 @@ class grade_object {
 
         $this->timemodified = time();
 
-        if (empty($this->usermodified)) {
+        if (array_key_exists('usermodified', $this)) {
             $this->usermodified = $USER->id;
         }
 
@@ -116,20 +204,11 @@ class grade_object {
 
         $this->timecreated = $this->timemodified = time();
 
-        if (empty($this->usermodified)) {
+        if (array_key_exists('usermodified', $this)) {
             $this->usermodified = $USER->id;
         }
 
-        $clonethis = fullclone($this);
-
-        // Unset non-set and null fields
-        foreach ($clonethis as $var => $val) {
-            if (!isset($val)) {
-                unset($clonethis->$var);
-            }
-        }
-
-        if (!$this->id = insert_record($this->table, addslashes_recursive($clonethis), true)) {
+        if (!$this->id = insert_record($this->table, addslashes_recursive($this))) {
             debugging("Could not insert object into db");
             return false;
         }
@@ -157,54 +236,21 @@ class grade_object {
             return false;
         }
 
-        $this->assign_to_this($params);
+        grade_object::set_properties($this, $params);
 
         return true;
     }
 
     /**
-     * Uses the variables of this object to retrieve all matching objects from the DB.
-     * @return array $objects
-     */
-    function fetch_all_using_this() {
-        $variables = get_object_vars($this);
-        $wheresql = '';
-
-        foreach ($variables as $var => $value) {
-            if (!empty($value) && !in_array($var, $this->nonfields)) {
-                $value = addslashes($value);
-                $wheresql .= " $var = '$value' AND ";
-            }
-        }
-
-        // Trim trailing AND
-        $wheresql = substr($wheresql, 0, strrpos($wheresql, 'AND'));
-
-        $objects = get_records_select($this->table, $wheresql, 'id');
-
-        if (!empty($objects)) {
-            $full_objects = array();
-
-            // Convert the stdClass objects returned by the get_records_select method into proper objects
-            $classname = get_class($this);
-            foreach ($objects as $id => $stdobject) {
-                $full_objects[$id] = new $classname($stdobject, false);
-            }
-            return $full_objects;
-        } else {
-            return $objects;
-        }
-    }
-
-
-    /**
      * Given an associated array or object, cycles through each key/variable
      * and assigns the value to the corresponding variable in this object.
+     * @static final
      */
-    function assign_to_this($params) {
-        foreach ($params as $param => $value) {
-            if (in_object_vars($param, $this)) {
-                $this->$param = $value;
+    function set_properties(&$instance, $params) {
+        $classvars = (array)$instance;
+        foreach ($params as $var => $value) {
+            if (array_key_exists($var, $classvars)) {
+                $instance->$var = $value;
             }
         }
     }

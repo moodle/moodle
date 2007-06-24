@@ -73,7 +73,7 @@ class grade_item extends grade_object {
     var $itemname;
 
     /**
-     * e.g. 'mod', 'blocks', 'import', 'calculate' etc...
+     * e.g. 'category', 'total' and 'mod', 'blocks', 'import', etc...
      * @var string $itemtype
      */
     var $itemtype;
@@ -129,19 +129,19 @@ class grade_item extends grade_object {
      * The type of grade (0 = none, 1 = value, 2 = scale, 3 = text)
      * @var int $gradetype
      */
-    var $gradetype;
+    var $gradetype = GRADE_TYPE_VALUE;
 
     /**
      * Maximum allowable grade.
      * @var float $grademax
      */
-    var $grademax;
+    var $grademax = 100;
 
     /**
      * Minimum allowable grade.
      * @var float $grademin
      */
-    var $grademin;
+    var $grademin = 0;
 
     /**
      * id of the scale, if this grade is based on a scale.
@@ -168,61 +168,58 @@ class grade_item extends grade_object {
     var $outcome;
 
     /**
-     * grade required to pass. (grademin < gradepass <= grademax)
+     * grade required to pass. (grademin <= gradepass <= grademax)
      * @var float $gradepass
      */
-    var $gradepass;
+    var $gradepass = 0;
 
     /**
      * Multiply all grades by this number.
      * @var float $multfactor
      */
-    var $multfactor;
+    var $multfactor = 1.0;
 
     /**
      * Add this to all grades.
      * @var float $plusfactor
      */
-    var $plusfactor;
+    var $plusfactor = 0;
 
     /**
      * Sorting order of the columns.
      * @var int $sortorder
      */
-    var $sortorder;
+    var $sortorder = 0;
 
     /**
      * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
      * @var int $hidden
      */
-    var $hidden;
+    var $hidden = 0;
 
     /**
-     * Date until which to lock this grade_item. If null, 0 or false, grade_item is not locked. Locking prevents updating.
+     * Grade item lock flag. Enmpty if not locked, lcoked if any value presetn ,usually date when was locked. Locking prevents updating.
      * @var int $locked
      */
-    var $locked;
+    var $locked = 0;
+
+    /**
+     * Date when to lock the grade. Empty means no automatic locking.
+     * @var int $locktime
+     */
+    var $locktime = 0;
 
     /**
      * Whether or not the module instance referred to by this grade_item has been deleted.
      * @var int $deleted
      */
-    var $deleted;
+    var $deleted = 0;
 
     /**
      * If set, the whole column will be recalculated, then this flag will be switched off.
      * @var boolean $needsupdate
      */
-    var $needsupdate;
-
-    /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
-     */
-    function grade_item($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-    }
+    var $needsupdate = 0;
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
@@ -293,26 +290,25 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Finds and returns a grade_item object based on 1-3 field values.
+     * Finds and returns a grade_item instance based on params.
      * @static
      *
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_item object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_item instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_item = get_record('grade_items', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_item = new grade_item($grade_item);
-            return $grade_item;
+    function fetch($params) {
+        return grade_object::fetch_helper('grade_items', 'grade_item', $params);
+    }
 
-        } else {
-            return false;
-        }
+    /**
+     * Finds and returns all grade_item instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_item insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('grade_items', 'grade_item', $params);
     }
 
     /**
@@ -728,7 +724,7 @@ class grade_item extends grade_object {
         }
 
         if (!empty($this->scaleid)) {
-            $this->scale = grade_scale::fetch('id', $this->scaleid);
+            $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
             $this->scale->load_items();
             $this->grademax = count($this->scale->scale_items) - 1;
             $this->grademin = 0;
@@ -746,7 +742,7 @@ class grade_item extends grade_object {
      */
     function load_outcome() {
         if (!empty($this->outcomeid)) {
-            $this->outcome = grade_outcome::fetch('id', $this->outcomeid);
+            $this->outcome = grade_outcome::fetch(array('id'=>$this->outcomeid));
         }
         return $this->outcome;
     }
@@ -762,9 +758,9 @@ class grade_item extends grade_object {
         $category = null;
 
         if (!empty($this->categoryid)) {
-            $category = grade_category::fetch('id', $this->categoryid);
+            $category = grade_category::fetch(array('id'=>$this->categoryid));
         } elseif (!empty($this->iteminstance) && $this->itemtype == 'category') {
-            $category = grade_category::fetch('id', $this->iteminstance);
+            $category = grade_category::fetch(array('id'=>$this->iteminstance));
         }
 
         return $category;
@@ -798,7 +794,7 @@ class grade_item extends grade_object {
         // first detect if we need to update calculation formula from [idnumber] to [#giXXX#] (after backup, etc.)
         if (!$this->calculation_normalized and preg_match_all('/\[(?!#gi)(.*?)\]/', $this->calculation, $matches)) {
             foreach ($matches[1] as $idnumber) {
-                if ($grade_item = grade_item::fetch('courseid', $this->courseid, 'idnumber', $idnumber)) {
+                if ($grade_item = grade_item::fetch(array('courseid'=>$this->courseid, 'idnumber'=>$idnumber))) {
                     $this->calculation = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $this->calculation);
                 }
             }
@@ -820,7 +816,7 @@ class grade_item extends grade_object {
             // denormalize formula - convert [#giXX#] to [idnumber]
             if (preg_match_all('/\[#gi([0-9]+)#\]/', $formula, $matches)) {
                 foreach ($matches[1] as $id) {
-                    if ($grade_item = grade_item::fetch('id', $id)) {
+                    if ($grade_item = grade_item::fetch(array('id'=>$id))) {
                         if (!empty($grade_item->idnumber)) {
                             $formula = str_replace('[#gi'.$grade_item->id.'#]', '['.$grade_item->idnumber.']', $formula);
                         }
@@ -854,8 +850,7 @@ class grade_item extends grade_object {
             }
 
             // normalize formula - we want grade item ids [#giXXX#] instead of [idnumber]
-            $grade_item = new grade_item(array('courseid'=>$this->courseid), false);
-            if ($grade_items = $grade_item->fetch_all_using_this()) {
+            if ($grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
                 foreach ($grade_items as $grade_item) {
                     $formula = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $formula);
                 }

@@ -48,6 +48,8 @@ class grade_scale extends grade_object {
      */
     var $courseid;
 
+    var $userid;
+
     /**
      * The name of the scale.
      * @var string $name
@@ -73,26 +75,25 @@ class grade_scale extends grade_object {
     var $description;
 
     /**
-     * Finds and returns a grade_scale object based on 1-3 field values.
+     * Finds and returns a grade_scale instance based on params.
      * @static
      *
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_scale object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_scale instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_scale = get_record('scale', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_scale = new grade_scale($grade_scale);
-            return $grade_scale;
+    function fetch($params) {
+        return grade_object::fetch_helper('scale', 'grade_scale', $params);
+    }
 
-        } else {
-            return false;
-        }
+    /**
+     * Finds and returns all grade_scale instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_scale insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('scale', 'grade_scale', $params);
     }
 
     /**

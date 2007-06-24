@@ -576,12 +576,9 @@ class grade_tree {
                 $itemtree = array();
 
                 foreach ($children as $element) {
-                    $finals = array();
 
-                    if ($this->include_grades) {
-                        $final = new grade_grades();
-                        $final->itemid = $element['object']->id;
-                        $finals = $final->fetch_all_using_this();
+                    if (!$this->include_grades or !$finals = grade_grades::fetch_all(array('itemid'=>$element['object']->id))) {
+                        $finals = array();
                     }
 
                     $itemtree[$element['object']->sortorder] = array('object' => $element['object'], 'finalgrades' => $finals);
@@ -740,12 +737,8 @@ class grade_tree {
                 }
 
                 foreach ($items as $itemid => $item) {
-                    $finals = array();
-
-                    if ($this->include_grades) {
-                        $final = new grade_grades();
-                        $final->itemid = $itemid;
-                        $finals = $final->fetch_all_using_this();
+                    if (!$this->include_grades or !$finals = grade_grades::fetch_all(array('itemid'=>$itemid))) {
+                        $finals = array();
                     }
 
                     $sortorder = $item->sortorder;

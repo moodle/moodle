@@ -99,12 +99,12 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
             $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('categoryid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
             $table->addFieldInfo('itemtype', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('itemmodule', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('itemmodule', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
             $table->addFieldInfo('iteminstance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('itemnumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-            $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
             $table->addFieldInfo('idnumber', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
             $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
             $table->addFieldInfo('gradetype', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1');
@@ -118,11 +118,12 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('deleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('needsupdate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
             $table->addKeyInfo('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'grade_categories', array('id'));
@@ -142,13 +143,14 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('parent', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('depth', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-            $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
             $table->addFieldInfo('fullname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
             $table->addKeyInfo('parent', XMLDB_KEY_FOREIGN, array('parent'), 'grade_categories', array('id'));
@@ -256,7 +258,6 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
 
-        /// Adding keys to table grade_grades
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
             $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
             $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
@@ -316,11 +317,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Way off topic, Not very helpful, Fairly neutral, Fairly helpful, Supportive, Some good information, Perfect answer!';
         $scale->description = 'This scale defines some of qualities that make posts helpful within the Moodle help forums.\n Your feedback will help others see how their posts are being received.';
         $scale->timemodified = mktime();
-        $temp  = explode(',', $scale->scale);
-        $scale->max         = count($temp) -1;
 
         if ($scale->id = insert_record('scale', $scale)) {
             $this->scale[0] = $scale;
+            $temp = explode(',', $scale->scale);
+            $this->scalemax[0] = count($temp) -1;
         }
 
         $scale = new stdClass();
@@ -331,11 +332,11 @@ class grade_test extends UnitTestCase {
         $scale->scale       = 'Distinction, Very Good, Good, Pass, Fail';
         $scale->description = 'This scale is used to mark standard assignments.';
         $scale->timemodified = mktime();
-        $temp  = explode(',', $scale->scale);
-        $scale->max         = count($temp) -1;
 
         if ($scale->id = insert_record('scale', $scale)) {
             $this->scale[1] = $scale;
+            $temp = explode(',', $scale->scale);
+            $this->scalemax[1] = count($temp) -1;
         }
 
         $scale = new stdClass();
@@ -351,6 +352,8 @@ class grade_test extends UnitTestCase {
 
         if ($scale->id = insert_record('scale', $scale)) {
             $this->scale[2] = $scale;
+            $temp = explode(',', $scale->scale);
+            $this->scalemax[2] = count($temp) -1;
         }
 
         $scale->name        = 'unittestscale4';
@@ -364,6 +367,8 @@ class grade_test extends UnitTestCase {
 
         if ($scale->id = insert_record('scale', $scale)) {
             $this->scale[3] = $scale;
+            $temp = explode(',', $scale->scale);
+            $this->scalemax[3] = count($temp) -1;
         }
 
         $scale->name        = 'unittestscale5';
@@ -377,6 +382,8 @@ class grade_test extends UnitTestCase {
 
         if ($scale->id = insert_record('scale', $scale)) {
             $this->scale[4] = $scale;
+            $temp = explode(',', $scale->scale);
+            $this->scalemax[4] = count($temp) -1;
         }
     }
 
@@ -391,7 +398,6 @@ class grade_test extends UnitTestCase {
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
-        $grade_category->hidden      = 0;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
         $grade_category->depth = 1;
@@ -407,7 +413,6 @@ class grade_test extends UnitTestCase {
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
-        $grade_category->hidden      = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
@@ -424,7 +429,6 @@ class grade_test extends UnitTestCase {
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
-        $grade_category->hidden      = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
@@ -443,7 +447,6 @@ class grade_test extends UnitTestCase {
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 0;
-        $grade_category->hidden      = 0;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
         $grade_category->depth = 1;
@@ -515,7 +518,7 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
-        $grade_item->grademax = $this->scale[0]->max;
+        $grade_item->grademax = $this->scalemax[0];
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -622,7 +625,7 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_SCALE;
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
-        $grade_item->grademax = $this->scale[0]->max;
+        $grade_item->grademax = $this->scalemax[0];
         $grade_item->iteminfo = 'Grade item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
@@ -923,7 +926,6 @@ class grade_test extends UnitTestCase {
     function load_grade_outcomes() {
         // Calculation for grade_item 1
         $grade_outcome = new stdClass();
-        $grade_outcome->itemid = $this->grade_items[0]->id;
         $grade_outcome->shortname = 'Team work';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
@@ -935,7 +937,6 @@ class grade_test extends UnitTestCase {
 
         // Calculation for grade_item 2
         $grade_outcome = new stdClass();
-        $grade_outcome->itemid = $this->grade_items[1]->id;
         $grade_outcome->shortname = 'Complete circuit board';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();
@@ -947,7 +948,6 @@ class grade_test extends UnitTestCase {
 
         // Calculation for grade_item 3
         $grade_outcome = new stdClass();
-        $grade_outcome->itemid = $this->grade_items[2]->id;
         $grade_outcome->shortname = 'Debug Java program';
         $grade_outcome->timecreated = mktime();
         $grade_outcome->timemodified = mktime();

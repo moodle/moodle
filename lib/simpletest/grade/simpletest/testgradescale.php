@@ -98,7 +98,7 @@ class grade_scale_test extends grade_test {
         $grade_scale = new grade_scale();
         $this->assertTrue(method_exists($grade_scale, 'fetch'));
 
-        $grade_scale = grade_scale::fetch('id', $this->scale[0]->id);
+        $grade_scale = grade_scale::fetch(array('id'=>$this->scale[0]->id));
         $this->assertEqual($this->scale[0]->id, $grade_scale->id);
         $this->assertEqual($this->scale[0]->name, $grade_scale->name);
     }

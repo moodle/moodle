@@ -70,7 +70,7 @@ class grade_grades_text extends grade_object {
      * Text format for information (FORMAT_PLAIN, FORMAT_HTML etc...).
      * @var int $informationformat
      */
-    var $informationformat;
+    var $informationformat = FORMAT_MOODLE;
 
     /**
      * Manual feedback from the teacher. This could be a code like 'mi'.
@@ -82,7 +82,7 @@ class grade_grades_text extends grade_object {
      * Text format for feedback (FORMAT_PLAIN, FORMAT_HTML etc...).
      * @var int $feedbackformat
      */
-    var $feedbackformat;
+    var $feedbackformat = FORMAT_MOODLE;
 
     /**
      * The userid of the person who last modified this text.
@@ -91,27 +91,25 @@ class grade_grades_text extends grade_object {
     var $usermodified;
 
     /**
-     * Finds and returns a grade_text object based on 1-3 field values.
+     * Finds and returns a grade_grades_text instance based on params.
      * @static
      *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_text object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_grades_text instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_text = get_record('grade_grades_text', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_text = new grade_grades_text($grade_text);
-            return $grade_text;
+    function fetch($params) {
+        return grade_object::fetch_helper('grade_grades_text', 'grade_grades_text', $params);
+    }
 
-        } else {
-            return false;
-        }
+    /**
+     * Finds and returns all grade_grades_text instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_grades_text insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('grade_grades_text', 'grade_grades_text', $params);
     }
 
     /**
@@ -120,7 +118,7 @@ class grade_grades_text extends grade_object {
      */
     function load_grade_item() {
         if (empty($this->grade_item) && !empty($this->itemid)) {
-            $this->grade_item = grade_item::fetch('id', $this->itemid);
+            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
         return $this->grade_item;
     }

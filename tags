@@ -5404,15 +5404,15 @@ fail	lib/simpletestlib/test_case.php	/^        function fail($message = "Fail") 
 fatal	mod/chat/chatd.php	/^    function fatal($message) {$/;"	f
 fault	lib/soap/nusoap.php	/^	function fault($faultcode,$faultstring,$faultactor='',$faultdetail=''){$/;"	f
 fcFPP	auth/fc/fcFPP.php	/^    function fcFPP($host="localhost", $port="3333")$/;"	f
-fetch	lib/grade/grade_calculation.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_category.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_grades_final.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_grades_raw.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_grades_text.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_history.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_item.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_outcome.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
-fetch	lib/grade/grade_scale.php	/^    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") { $/;"	f
+fetch	lib/grade/grade_calculation.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_category.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_grades_final.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_grades_raw.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_grades_text.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_history.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_item.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_outcome.php	/^    function fetch($params) { $/;"	f
+fetch	lib/grade/grade_scale.php	/^    function fetch($params) { $/;"	f
 fetch	lib/simpletestlib/http.php	/^        function &fetch($timeout) {$/;"	f
 fetch	lib/smarty/Smarty.class.php	/^    function fetch($resource_name, $cache_id = null, $compile_id = null, $display = false)$/;"	f
 fetchResponse	lib/simpletestlib/user_agent.php	/^        function &fetchResponse($url, $encoding) {$/;"	f
@@ -12106,7 +12106,7 @@ write	lib/adodb/session/adodb-encrypt-secret.php	/^	function write($data, $key) 
 write	lib/adodb/session/adodb-encrypt-sha1.php	/^	function write($data, $key) $/;"	f
 write	lib/adodb/session/adodb-session.php	/^	function write($key, $val) $/;"	f
 write	lib/adodb/session/adodb-session2.php	/^	function write($key, $val) $/;"	f
-write	lib/excel/OLEwriter.php	/^    function write($data) \/\/por ahora sólo a STDOUT$/;"	f
+write	lib/excel/OLEwriter.php	/^    function write($data) \/\/por ahora sï¿½lo a STDOUT$/;"	f
 write	lib/excel/Worksheet.php	/^    function write($row, $col, $token, $format = 0)$/;"	f
 write	lib/excellib.class.php	/^    function write($row, $col, $token, $format=0) {$/;"	f
 write	lib/odslib.class.php	/^    function write($row, $col, $token, $format=0) {$/;"	f

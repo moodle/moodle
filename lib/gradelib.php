@@ -95,8 +95,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         return GRADE_UPDATE_FAILED;
     }
 
-    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'), false);
-    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+    if (!$grade_items = grade_item::fetch_all(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'))) {
         // create a new one
         $grade_item = false;
 
@@ -277,8 +276,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 */
 function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $userid=NULL) {
 
-    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'), false);
-    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+    if (!$grade_items = grade_item::fetch_all(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'))) {
         return false;
 
     } else if (count($grade_items) == 1){
@@ -300,31 +298,6 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
 
 
 /**
-* Extracts from the gradebook all the grade items attached to the calling object.
-* For example, an assignment may want to retrieve all the grade_items for itself,
-* and get three outcome scales in return. This will affect the grading interface.
-*
-* Note: Each parameter refines the search. So if you only give the courseid,
-*       all the grade_items for this course will be returned. If you add the
-*       itemtype 'mod', all grade_items for this courseif AND for the 'mod'
-*       type will be returned, etc...
-*
-* @param int $courseid The id of the course to which the grade items belong
-* @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
-* @param string $itemmodule 'forum, 'quiz', 'csv' etc
-* @param int $iteminstance id of the item module
-* @param int $itemnumber Can be used to distinguish multiple grades for an activity
-* @param string $itemname The name of the grade item
-* @param int $idnumber grade item Primary Key
-* @return array An array of grade items
-*/
-function grade_get_items($courseid, $itemtype=NULL, $itemmodule=NULL, $iteminstance=NULL, $itemnumber=NULL, $itemname=NULL, $idnumber=NULL) {
-    $grade_item = new grade_item(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemname', 'itemnumber', 'idnumber'), false);
-    $grade_items = $grade_item->fetch_all_using_this();
-    return $grade_items;
-}
-
-/**
  * Updates all final grades in course.
  *
  * @param int $courseid
@@ -338,9 +311,7 @@ function grade_update_final_grades($courseid, $regradeall=false) {
         set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
     }
 
-    $grade_item = new grade_item(array('courseid'=>$courseid), false);
-
-    if (!$grade_items = $grade_item->fetch_all_using_this()) {
+    if (!$grade_items = $grade_item->fetch_all(array('courseid'=>$courseid))) {
         return true;
     }
 
@@ -617,7 +588,7 @@ function grade_update_mod_grades($modinstance) {
 function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
     // does it already exist?
-    if ($grade_items = grade_get_items($modinstance->course, 'mod', $modinstance->modname, $modinstance->id, 0)) {
+    if ($grade_items = grade_grades::fetch_all(array('courseid'=>$modinstance->course, 'itemtype'=>'mod', 'itemmodule'=>$modinstance->modname, 'iteminstance'=>$modinstance->id, 'itemnumber'=>0))) {
         if (count($grade_items) > 1) {
             debugging('Multiple legacy grade_items found.');
             return false;

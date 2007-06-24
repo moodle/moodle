@@ -61,7 +61,7 @@ $mform->display();
 // print_gradeitem_selections($id);
 // print all items for selections
 // make this a standard function in lib maybe
-if ($grade_items = grade_get_items($id)) {
+if ($grade_items = grade_grades::fetch_all(array('courseid'=>$id))) {
     echo '<form action="index.php" method="post">';
     echo '<div>';
     foreach ($grade_items as $grade_item) {

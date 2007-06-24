@@ -66,7 +66,7 @@ class grade_import_mapping_form extends moodleform {
         include_once($CFG->libdir.'/gradelib.php');
         
         if ($id) {
-            if ($grade_items = grade_get_items($id)) {
+            if ($grade_items = grade_grades::fetch_all(array('courseid'=>$id))) {
                 foreach ($grade_items as $grade_item) {
                     $gradeitems[$grade_item->idnumber] = $grade_item->itemname;      
                 }

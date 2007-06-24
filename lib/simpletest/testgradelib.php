@@ -43,39 +43,6 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
  * 3 users for 3 grade_items
  */
 class gradelib_test extends grade_test {
-
-    function test_grade_get_items() {
-        if (get_class($this) == 'gradelib_test') {
-            $grade_items = grade_get_items($this->courseid);
-
-            $this->assertTrue(is_array($grade_items));
-            $this->assertEqual(count($grade_items), 10);
-        }
-    }
-
-/*
-// obsolted function, should be replaced by grade_update() or removed completely
-    function test_grade_create_category() {
-        if (get_class($this) == 'gradelib_test') {
-            $grade_category = new stdClass();
-            $grade_category->timecreated = mktime();
-            $grade_category->timemodified = mktime();
-
-            $items = array(new grade_item(), new grade_item());
-
-            $grade_category->id = grade_create_category($this->courseid, 'unittestcategory4', $items, GRADE_AGGREGATE_MEAN);
-
-            $last_grade_category = end($this->grade_categories);
-            $this->assertEqual($grade_category->id, $last_grade_category->id + 1);
-
-            $db_grade_category = get_record('grade_categories', 'id', $grade_category->id);
-            $db_grade_category = new grade_category($db_grade_category);
-            $db_grade_category->load_grade_item();
-            $this->grade_categories[] = $db_grade_category;
-            $this->grade_items[] = $db_grade_category->grade_item;
-        }
-    }
-*/
     function test_grade_is_locked() {
         if (get_class($this) == 'gradelib_test') {
             $grade_item = $this->grade_items[0];

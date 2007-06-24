@@ -55,7 +55,8 @@ class grade_outcome_test extends grade_test {
         $this->assertTrue(method_exists($grade_outcome, 'insert'));
 
         $grade_outcome->courseid = $this->courseid;
-        $grade_outcome->shortname = 'Team work';
+        $grade_outcome->shortname = 'tw';
+        $grade_outcome->fullname = 'Team work';
 
         $grade_outcome->insert();
 
@@ -87,9 +88,19 @@ class grade_outcome_test extends grade_test {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
 
-        $grade_outcome = grade_outcome::fetch('id', $this->grade_outcomes[0]->id);
+        $grade_outcome = grade_outcome::fetch(array('id'=>$this->grade_outcomes[0]->id));
         $this->assertEqual($this->grade_outcomes[0]->id, $grade_outcome->id);
         $this->assertEqual($this->grade_outcomes[0]->shortname, $grade_outcome->shortname);
+
+        $this->assertEqual($this->scale[2]->id, $grade_outcome->scale->id);
+    }
+
+    function test_grade_outcome_fetch_all() {
+        $grade_outcome = new grade_outcome();
+        $this->assertTrue(method_exists($grade_outcome, 'fetch_all'));
+
+        $grade_outcomes = grade_outcome::fetch_all(array());
+        $this->assertEqual(count($this->grade_outcomes), count($grade_outcomes));
     }
 }
 ?>

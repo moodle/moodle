@@ -9,7 +9,7 @@ class grade_export_txt_form extends moodleform {
         $mform->addElement('header', 'general', 'Gradeitems to be included'); // TODO: localize
         $id = $this->_customdata['id']; // course id
         $mform->addElement('hidden', 'id', $id);
-        if ($grade_items = grade_get_items($id)) {
+        if ($grade_items = grade_grades::fetch_all(array('courseid'=>$id))) {
             foreach ($grade_items as $grade_item) {
                 $element = new HTML_QuickForm_advcheckbox('itemids[]', null, $grade_item->itemname, array('selected'=>'selected'), array(0, $grade_item->id));
                 $element->setChecked(1);

@@ -189,26 +189,22 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item();
         $this->assertTrue(method_exists($grade_item, 'fetch'));
 
-        $grade_item = grade_item::fetch('id', $this->grade_items[0]->id);
+        $grade_item = grade_item::fetch(array('id'=>$this->grade_items[0]->id));
         $this->assertEqual($this->grade_items[0]->id, $grade_item->id);
         $this->assertEqual($this->grade_items[0]->iteminfo, $grade_item->iteminfo);
 
-        $grade_item = grade_item::fetch('itemtype', $this->grade_items[1]->itemtype, 'itemmodule', $this->grade_items[1]->itemmodule);
+        $grade_item = grade_item::fetch(array('itemtype'=>$this->grade_items[1]->itemtype, 'itemmodule'=>$this->grade_items[1]->itemmodule));
         $this->assertEqual($this->grade_items[1]->id, $grade_item->id);
         $this->assertEqual($this->grade_items[1]->iteminfo, $grade_item->iteminfo);
     }
 
-    function test_grade_item_fetch_all_using_this() {
+    function test_grade_item_fetch_all() {
         $grade_item = new grade_item();
-        $grade_item->itemtype = 'mod';
-        $this->assertTrue(method_exists($grade_item, 'fetch_all_using_this'));
+        $this->assertTrue(method_exists($grade_item, 'fetch_all'));
 
-        $grade_items = $grade_item->fetch_all_using_this();
-        $this->assertEqual(5, count($grade_items));
-        $first_grade_item = reset($grade_items);
-        $this->assertEqual($this->grade_items[0]->id, $first_grade_item->id);
+        $grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid));
+        $this->assertEqual(count($this->grade_items), count($grade_items));
     }
-
 
     /**
      * Retrieve all final scores for a given grade_item.
@@ -428,20 +424,20 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'compute'));
 
-        $grade_grades = grade_grades::fetch('id', $this->grade_grades[3]->id);
+        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[3]->id));
         $grade_grades->delete();
-        $grade_grades = grade_grades::fetch('id', $this->grade_grades[4]->id);
+        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[4]->id));
         $grade_grades->delete();
-        $grade_grades = grade_grades::fetch('id', $this->grade_grades[5]->id);
+        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[5]->id));
         $grade_grades->delete();
 
         $grade_item->compute();
 
-        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[3]->userid, 'itemid', $this->grade_grades[3]->itemid);
+        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[3]->userid, 'itemid'=>$this->grade_grades[3]->itemid));
         $this->assertEqual($this->grade_grades[3]->finalgrade, $grade_grades->finalgrade);
-        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[4]->userid, 'itemid', $this->grade_grades[4]->itemid);
+        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[4]->userid, 'itemid'=>$this->grade_grades[4]->itemid));
         $this->assertEqual($this->grade_grades[4]->finalgrade, $grade_grades->finalgrade);
-        $grade_grades = grade_grades::fetch('userid', $this->grade_grades[5]->userid, 'itemid', $this->grade_grades[5]->itemid);
+        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[5]->userid, 'itemid'=>$this->grade_grades[5]->itemid));
         $this->assertEqual($this->grade_grades[5]->finalgrade, $grade_grades->finalgrade);
     }
 

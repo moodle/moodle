@@ -79,36 +79,41 @@ class grade_outcome extends grade_object {
     var $usermodified;
 
     /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
+     * Finds and returns a grade_outcome instance based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return object grade_outcome instance or false if none found.
      */
-    function grade_outcome($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-        if (!empty($this->scaleid)) {
-            $this->scale = new grade_scale(array('id' => $this->scaleid));
-            $this->scale->load_items();
+    function fetch($params) {
+        if ($outcome = grade_object::fetch_helper('grade_outcomes', 'grade_outcome', $params)) {
+            if (!empty($outcome->scaleid)) {
+                $outcome->scale = new grade_scale(array('id'=>$outcome->scaleid));
+                $outcome->scale->load_items();
+            }
+            return $outcome;
+
+        } else {
+            return false;
         }
     }
 
     /**
-     * Finds and returns a grade_outcome object based on 1-3 field values.
+     * Finds and returns all grade_outcome instances based on params.
      * @static
      *
-     * @param boolean $static Unless set to true, this method will also set $this object with the returned values.
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_outcome object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_outcome insatnces or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_outcome = get_record('grade_outcomes', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_outcome = new grade_outcome($grade_outcome);
-            return $grade_outcome;
+    function fetch_all($params) {
+        if ($outcomes = grade_object::fetch_all_helper('grade_outcomes', 'grade_outcome', $params)) {
+            foreach ($outcomes as $key=>$value) {
+                if (!empty($outcomes[$key]->scaleid)) {
+                    $outcomes[$key]->scale = new grade_scale(array('id'=>$outcomes[$key]->scaleid));
+                    $outcomes[$key]->scale->load_items();
+                }
+            }
+            return $outcomes;
 
         } else {
             return false;

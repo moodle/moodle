@@ -85,9 +85,17 @@ class grade_grades_test extends grade_test {
         $grade_grades = new grade_grades();
         $this->assertTrue(method_exists($grade_grades, 'fetch'));
 
-        $grade_grades = grade_grades::fetch('id', $this->grade_grades[0]->id);
-        $this->assertEqual($this->grade_grades[0]->id, $grade_grades->id);
-        $this->assertEqual($this->grade_grades[0]->rawgrade, $grade_grades->rawgrade);
+        $grades = grade_grades::fetch(array('id'=>$this->grade_grades[0]->id));
+        $this->assertEqual($this->grade_grades[0]->id, $grades->id);
+        $this->assertEqual($this->grade_grades[0]->rawgrade, $grades->rawgrade);
+    }
+
+    function test_grade_grades_fetch_all() {
+        $grade_grades = new grade_grades();
+        $this->assertTrue(method_exists($grade_grades, 'fetch_all'));
+
+        $grades = grade_grades::fetch_all(array());
+        $this->assertEqual(count($this->grade_grades), count($grades));
     }
 
     function test_grade_raw_update_feedback() {

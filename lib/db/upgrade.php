@@ -812,12 +812,12 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('categoryid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
         $table->addFieldInfo('itemtype', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('itemmodule', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemmodule', XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
         $table->addFieldInfo('iteminstance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('itemnumber', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('iteminfo', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
         $table->addFieldInfo('idnumber', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
         $table->addFieldInfo('calculation', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
         $table->addFieldInfo('gradetype', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
@@ -1025,7 +1025,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Define field path to be added to grade_categories
         $table = new XMLDBTable('grade_categories');
         $field = new XMLDBField('path');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'depth');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'depth');
 
     /// Launch add field path
         $result = $result && add_field($table, $field);
@@ -1333,6 +1333,39 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field calculation
             $result = $result && add_field($table, $field);
         }
+    }
+
+    if ($result && $oldversion < 2007062401) {
+
+    /// Changing nullability of field itemname on table grade_items to null
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('itemname');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'categoryid');
+
+    /// Launch change of nullability for field itemname
+        $result = $result && change_field_notnull($table, $field);
+
+        $field = new XMLDBField('itemmodule');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null, 'itemtype');
+
+    /// Launch change of nullability for field itemname
+        $result = $result && change_field_notnull($table, $field);
+
+        $field = new XMLDBField('iteminfo');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'itemnumber');
+
+    /// Launch change of nullability for field itemname
+        $result = $result && change_field_notnull($table, $field);
+
+
+    /// Changing nullability of field path on table grade_categories to null
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('path');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'depth');
+
+    /// Launch change of nullability for field path
+        $result = $result && change_field_notnull($table, $field);
+
 
         /// Remove the obsoleted unitttests tables - they will be recreated automatically
         $tables = array('grade_categories',

@@ -85,19 +85,19 @@ class grade_category extends grade_object {
      * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
      * @var int $aggregation
      */
-    var $aggregation;
+    var $aggregation = GRADE_AGGREGATE_MEAN_ALL;
 
     /**
      * Keep only the X highest items.
      * @var int $keephigh
      */
-    var $keephigh;
+    var $keephigh = 0;
 
     /**
      * Drop the X lowest items.
      * @var int $droplow
      */
-    var $droplow;
+    var $droplow = 0;
 
     /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
@@ -120,18 +120,6 @@ class grade_category extends grade_object {
     var $grade_item;
 
     /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Whether or not to fetch the corresponding row from the DB.
-     * @param object $grade_item The associated grade_item object can be passed during construction.
-     */
-    function grade_category($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-        $this->path = grade_category::build_path($this);
-    }
-
-
-    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -152,22 +140,35 @@ class grade_category extends grade_object {
 
 
     /**
-     * Finds and returns a grade_category object based on 1-3 field values.
+     * Finds and returns a grade_category instance based on params.
      * @static
      *
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_category object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_category instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($grade_category = get_record('grade_categories', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $grade_category = new grade_category($grade_category);
-            return $grade_category;
+    function fetch($params) {
+        if ($category = grade_object::fetch_helper('grade_categories', 'grade_category', $params)) {
+            $category->path = grade_category::build_path($category);
+            return $category;
+
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Finds and returns all grade_category instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_category insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        if ($categories = grade_object::fetch_all_helper('grade_categories', 'grade_category', $params)) {
+            foreach ($categories as $key=>$value) {
+                $categories[$key]->path = grade_category::build_path($categories[$key]);
+            }
+            return $categories;
 
         } else {
             return false;
@@ -360,7 +361,7 @@ class grade_category extends grade_object {
         $items = array();
 
         foreach($depends_on as $dep) {
-            $items[$dep] = grade_item::fetch('id', $dep);
+            $items[$dep] = grade_item::fetch(array('id'=>$dep));
         }
 
         // where to look for final grades - include or grade item too
@@ -712,9 +713,11 @@ class grade_category extends grade_object {
             return false;
         }
 
-        $grade_item = new grade_item(array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id), false);
-        if (!$grade_items = $grade_item->fetch_all_using_this()) {
+        $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
+
+        if (!$grade_items = grade_item::fetch_all($params)) {
             // create a new one
+            $grade_item = new grade_item($params, false);
             $grade_item->gradetype = GRADE_TYPE_VALUE;
             $grade_item->insert();
 

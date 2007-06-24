@@ -127,7 +127,7 @@ class grade_export {
             }  
         } else {
             // else we get all items for this course
-            $gradeitems = grade_get_items($this->id);
+            $gradeitems = grade_grades::fetch_all(array('courseid'=>$this->id));
         }
         
         if ($gradeitems) {

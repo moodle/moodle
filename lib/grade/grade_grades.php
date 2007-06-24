@@ -67,13 +67,13 @@ class grade_grades extends grade_object {
      * The maximum allowable grade when this grade was created.
      * @var float $rawgrademax
      */
-    var $rawgrademax;
+    var $rawgrademax = 100;
 
     /**
      * The minimum allowable grade when this grade was created.
      * @var float $rawgrademin
      */
-    var $rawgrademin;
+    var $rawgrademin = 0;
 
     /**
      * id of the scale, if this grade is based on a scale.
@@ -105,34 +105,25 @@ class grade_grades extends grade_object {
      * 0 if visible, 1 always hidden or date not visible until
      * @var float $hidden
      */
-    var $hidden;
+    var $hidden = 0;
 
     /**
      * 0 not locked, date when the item was locked
      * @var float locked
      */
-    var $locked;
+    var $locked = 0;
 
     /**
      * 0 no automatic locking, date when to lock the grade automatically
      * @var float $locktime
      */
-    var $locktime;
+    var $locktime = 0;
 
     /**
      * Exported flag
      * @var boolean $exported
      */
-    var $exported;
-
-    /**
-     * Constructor. Extends the basic functionality defined in grade_object.
-     * @param array $params Can also be a standard object.
-     * @param boolean $fetch Wether or not to fetch the corresponding row from the DB.
-     */
-    function grade_grades($params=NULL, $fetch=true) {
-        $this->grade_object($params, $fetch);
-    }
+    var $exported = 0;
 
     /**
      * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
@@ -141,7 +132,7 @@ class grade_grades extends grade_object {
      */
     function load_text() {
         if (empty($this->grade_grades_text->id)) {
-            $this->grade_grades_text = grade_grades_text::fetch('itemid', $this->itemid, 'userid', $this->userid);
+            $this->grade_grades_text = grade_grades_text::fetch(array('itemid'=>$this->itemid, 'userid'=>$this->userid));
         }
 
         return $this->grade_grades_text;
@@ -153,7 +144,7 @@ class grade_grades extends grade_object {
      */
     function load_grade_item() {
         if (empty($this->grade_item) && !empty($this->itemid)) {
-            $this->grade_item = grade_item::fetch('id', $this->itemid);
+            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
         return $this->grade_item;
     }
@@ -214,26 +205,25 @@ class grade_grades extends grade_object {
     }
 
     /**
-     * Finds and returns a grade_grades object based on 1-3 field values.
+     * Finds and returns a grade_grades instance based on params.
      * @static
      *
-     * @param string $field1
-     * @param string $value1
-     * @param string $field2
-     * @param string $value2
-     * @param string $field3
-     * @param string $value3
-     * @param string $fields
-     * @return object grade_category object or false if none found.
+     * @param array $params associative arrays varname=>value
+     * @return object grade_grades instance or false if none found.
      */
-    function fetch($field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields="*") {
-        if ($object = get_record('grade_grades', $field1, $value1, $field2, $value2, $field3, $value3, $fields)) {
-            $object = new grade_grades($object);
-            return $object;
+    function fetch($params) {
+        return grade_object::fetch_helper('grade_grades', 'grade_grades', $params);
+    }
 
-        } else {
-            return false;
-        }
+    /**
+     * Finds and returns all grade_grades instances based on params.
+     * @static
+     *
+     * @param array $params associative arrays varname=>value
+     * @return array array of grade_grades insatnces or false if none found.
+     */
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('grade_grades', 'grade_grades', $params);
     }
 
     /**
