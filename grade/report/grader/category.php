@@ -23,12 +23,13 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 set_time_limit(0);
+require_once '../../../config.php';
 require_once $CFG->libdir . '/grade/grade_tree.php';
 require_once $CFG->libdir . '/gradelib.php';
 
 $param = new stdClass();
 
-$param->courseid      = optional_param('courseid', 0 , PARAM_INT);
+$param->courseid      = optional_param('id', 0 , PARAM_INT);
 $param->moveup        = optional_param('moveup', 0, PARAM_INT);
 $param->movedown      = optional_param('movedown', 0, PARAM_INT);
 $param->source        = optional_param('source', 0, PARAM_INT);
@@ -41,8 +42,30 @@ $param->items         = optional_param('items', 0, PARAM_INT);
 $param->categories    = optional_param('categories', 0, PARAM_INT);
 $param->element_type  = optional_param('element_type', 0, PARAM_ALPHA);
 $param->category_name = optional_param('category_name', 0, PARAM_ALPHA);
+$courseid = $param->courseid;
 
-print_object($param);
+/// Make sure they can even access this course
+
+if (!$course = get_record('course', 'id', $courseid)) {
+    print_error('nocourseid');
+}
+
+require_login($course->id);
+
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+$strgrades = get_string('grades');
+$strgraderreport = get_string('graderreport', 'grades');
+$strcategoriesedit = get_string('categoriesedit', 'grades');
+
+$crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
+$crumbs[] = array('name' => $strgraderreport, 'link' => '', 'type' => 'misc');
+$crumbs[] = array('name' => $strcategoriesedit, 'link' => '', 'type' => 'misc');
+
+$navigation = build_navigation($crumbs);
+
+print_header_simple($strgrades.': '.$strgraderreport.': '.$strcategoriesedit, $navigation, 
+                    '', '', true, '', navmenu($course));
 
 $tree = new grade_tree($param->courseid);
 $select_source = false;
@@ -177,6 +200,11 @@ if (!empty($param->action) && !empty($param->source) && confirm_sesskey()) {
 
     }
 }
-print_heading(get_string('graderreport', 'grades'));
+
+print_heading(get_string('categoriesedit', 'grades'));
+// Add tabs
+$currenttab = 'editcategory'; 
+include('tabs.php');
 echo $tree->get_edit_tree(1, null, $param->source, $param->action, $param->type);
+print_footer($course);
 ?>

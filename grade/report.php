@@ -26,7 +26,7 @@
     require_once("../config.php");
     require_once("../lib/gradelib.php");
 
-    $courseid = required_param('courseid');              // course id
+    $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
 
 
@@ -93,7 +93,7 @@
 /// Print the report selector at the top if there is more than one report
 
     if ($reportnames) {
-        popup_form($CFG->wwwroot.'/grade/report.php?courseid='.$course->id.'&amp;report=', $reportnames, 
+        popup_form($CFG->wwwroot.'/grade/report.php?id='.$course->id.'&amp;report=', $reportnames, 
                    'choosegradereport', $report, '', '', '', false, 'self', get_string('gradereports', 'grades').':');
     }
 
