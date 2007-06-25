@@ -4260,7 +4260,7 @@ function update_group_button($courseid, $groupid) {
     if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_GROUP, $groupid))) {
         $string = get_string('editgroupprofile');
 
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
+        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/group/index.php\">".
                '<div>'.
                '<input type="hidden" name="id" value="'. $courseid .'" />'.
                '<input type="hidden" name="group" value="'. $groupid .'" />'.
@@ -4290,7 +4290,7 @@ function update_groups_button($courseid) {
             $edit = 'on';
         }
 
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
+        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/group/index.php\">".
                '<div>'.
                "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
