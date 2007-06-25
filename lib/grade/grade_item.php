@@ -1060,7 +1060,7 @@ class grade_item extends grade_object {
                 return false;
             }
 
-            if ($grade->locktime < time()) {
+            if (!empty($grade->locktime) and $grade->locktime < time()) {
                 // do not update grades that should be already locked
                 // this does not solve all problems, cron is still needed to recalculate the final grades periodically
                 return false;
