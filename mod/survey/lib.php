@@ -393,8 +393,8 @@ function survey_print_multi($question) {
             echo "<td class=\"qnumtopcell\"><b>$qnum</b></td>";
             echo "<td valign=\"top\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {            
-                $screenreader = !empty($USER->screenreader)?"<label for=\"q$P$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
+                $screenreader = !empty($USER->screenreader)?"<label for=\"q$P" . $q->id . "_$i\">".$options[$i-1]."</label><br/>":'';
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$P$q->id\" id=\"q$P" . $q->id . "_$i\" value=\"$i\" alt=\"$i\" /></td>";
             }
             echo "<td class=\"whitecell\"><input type=\"radio\" name=\"q$P$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["q$P$q->id"] = $numoptions;
@@ -406,8 +406,8 @@ function survey_print_multi($question) {
             echo "<td class=\"preferthat\"><span class='smalltext'>$stripreferthat&nbsp;</span></td>";
             echo "<td class=\"optioncell\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                $screenreader = !empty($USER->screenreader)?"<label for=\"qP$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"qP$q->id\" id=\"qP$q->id".$i."\" value=\"$i\" alt=\"$i\"/></td>";
+                $screenreader = !empty($USER->screenreader)?"<label for=\"qP" . $q->id . "_$i\">".$options[$i-1]."</label><br/>":'';
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"qP$q->id\" id=\"qP" . $q->id . "_$i\" value=\"$i\" alt=\"$i\"/></td>";
             }
             echo "<td><input type=\"radio\" name=\"qP$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             echo "</tr>";
@@ -417,8 +417,8 @@ function survey_print_multi($question) {
             echo "<td class=\"foundthat\"><span class='smalltext'>$strifoundthat&nbsp;</span></td>";
             echo "<td class=\"optioncell\">$q->text</td>";
             for ($i=1;$i<=$numoptions;$i++) {
-                $screenreader = !empty($USER->screenreader)?"<label for=\"q$q->id".$i."\">".$options[$i-1]."</label><br/>":'';
-                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$q->id\" id=\"q$q->id".$i."\" value=\"$i\" alt=\"$i\" /></td>";
+                $screenreader = !empty($USER->screenreader)?"<label for=\"q" . $q->id . "_$i\">".$options[$i-1]."</label><br/>":'';
+                echo "<td class=\"screenreadertext\">".$screenreader."<input type=\"radio\" name=\"q$q->id\" id=\"q" . $q->id . "_$i\" value=\"$i\" alt=\"$i\" /></td>";
             }
             echo "<td class=\"buttoncell\"><input type=\"radio\" name=\"q$q->id\" value=\"0\" checked=\"checked\" alt=\"0\" /></td>";
             $checklist["qP$q->id"] = $numoptions;
