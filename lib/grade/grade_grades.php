@@ -159,7 +159,7 @@ class grade_grades extends grade_object {
     function is_locked() {
         $this->load_grade_item();
 
-        return $this->grade_item->is_locked() or !empty($this->locked);
+        return !empty($this->locked) or $this->grade_item->is_locked();
     }
 
     /**
@@ -202,6 +202,28 @@ class grade_grades extends grade_object {
 
             return true;
         }
+    }
+
+    /**
+     * Check grade lock status. Uses both grade item lock and grade lock.
+     * Internally any date in hidden field (including future ones) means hidden,
+     * the date is stored for logging purposes only.
+     *
+     * @return boolean true if hidden, false if not
+     */
+    function is_hidden() {
+        $this->load_grade_item();
+
+        return $this->hidden == 1 or $this->hidden > time() or $this->grade_item->is_hidden();
+    }
+
+    /**
+     * Set the hidden status of grade, 0 mean visible, 1 always hidden, number means date to hide until.
+     * @param int $hidden new hidden status
+     */
+    function set_hidden($hidden) {
+       $this->hidden = $hidden;
+       $this->update();
     }
 
     /**

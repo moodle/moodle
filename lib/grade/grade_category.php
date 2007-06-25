@@ -913,15 +913,11 @@ class grade_category extends grade_object {
     /**
      * Returns the locked state/date of the associated grade_item. This method is also available in
      * grade_item, for cases where the object type is not known.
-     * @return int 0, 1 or timestamp int(10)
+     * @return boolean
      */
     function is_locked() {
         $this->load_grade_item();
-        if (!empty($this->grade_item)) {
-            return $this->grade_item->is_locked();
-        } else {
-            return false;
-        }
+        return $this->grade_item->is_locked();
     }
 
     /**
@@ -932,27 +928,17 @@ class grade_category extends grade_object {
      */
     function set_locked($lockedstate) {
         $this->load_grade_item();
-
-        if (!empty($this->grade_item)) {
-            return $this->grade_item->set_locked($lockedstate);
-
-        } else {
-            return false;
-        }
+        return $this->grade_item->set_locked($lockedstate);
     }
 
     /**
      * Returns the hidden state/date of the associated grade_item. This method is also available in
-     * grade_item, for cases where the object type is not known.
-     * @return int 0, 1 or timestamp int(10)
+     * grade_item.
+     * @return boolean
      */
-    function get_hidden() {
+    function is_hidden() {
         $this->load_grade_item();
-        if (!empty($this->grade_item)) {
-            return $this->grade_item->hidden;
-        } else {
-            return false;
-        }
+        return $this->grade_item->is_hidden();
     }
 
     /**
@@ -963,12 +949,7 @@ class grade_category extends grade_object {
      */
     function set_hidden($hidden) {
         $this->load_grade_item();
-        if (!empty($this->grade_item)) {
-            $this->grade_item->hidden = $hidden;
-            return $this->grade_item->update();
-        } else {
-            return false;
-        }
+        $this->grade_item->set_hidden($hidden);
     }
 
     /**

@@ -166,6 +166,36 @@ class grade_grades_test extends grade_test {
         $this->assertTrue($grade->is_locked());
     }
 
+    function test_grade_grades_set_hidden() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $grade = new grade_grades($grade_item->get_final(1));
+        $this->assertTrue(method_exists($grade, 'set_hidden'));
+
+        $this->assertEqual(0, $grade_item->hidden);
+        $this->assertEqual(0, $grade->hidden);
+
+        $grade->set_hidden(0);
+        $this->assertEqual(0, $grade->hidden);
+
+        $grade->set_hidden(1);
+        $this->assertEqual(1, $grade->hidden);
+    }
+
+    function test_grade_grades_is_hidden() {
+        $grade = new grade_grades($this->grade_grades[0]);
+        $this->assertTrue(method_exists($grade, 'is_hidden'));
+
+        $this->assertFalse($grade->is_hidden());
+        $grade->hidden = 1;
+        $this->assertTrue($grade->is_hidden());
+
+        $grade->hidden = time()-666;
+        $this->assertFalse($grade->is_hidden());
+
+        $grade->hidden = time()+666;
+        $this->assertTrue($grade->is_hidden());
+    }
+
 
 }
 ?>

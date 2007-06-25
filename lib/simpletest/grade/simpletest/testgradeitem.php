@@ -343,6 +343,44 @@ class grade_item_test extends grade_test {
         $this->assertTrue($grade_item->is_locked(1));
     }
 
+    /**
+     * Test hiding of grade items
+     */
+    function test_grade_item_set_hidden() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'set_hidden'));
+
+        $grade = new grade_grades($grade_item->get_final(1));
+        $this->assertEqual(0, $grade_item->hidden);
+        $this->assertEqual(0, $grade->hidden);
+
+        $grade_item->set_hidden(666);
+        $grade = new grade_grades($grade_item->get_final(1));
+
+        $this->assertEqual(666, $grade_item->hidden);
+        $this->assertEqual(666, $grade->hidden);
+    }
+
+    function test_grade_item_is_hidden() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'is_hidden'));
+
+        $this->assertFalse($grade_item->is_hidden());
+        $this->assertFalse($grade_item->is_hidden(1));
+
+        $grade_item->set_hidden(1);
+        $this->assertTrue($grade_item->is_hidden());
+        $this->assertTrue($grade_item->is_hidden(1));
+
+        $grade_item->set_hidden(666);
+        $this->assertFalse($grade_item->is_hidden());
+        $this->assertFalse($grade_item->is_hidden(1));
+
+        $grade_item->set_hidden(time()+666);
+        $this->assertTrue($grade_item->is_hidden());
+        $this->assertTrue($grade_item->is_hidden(1));
+    }
+
     function test_grade_item_depends_on() {
         $grade_item = new grade_item($this->grade_items[1]);
 
@@ -365,27 +403,6 @@ class grade_item_test extends grade_test {
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
         $this->assertEqual($res, $deps);
     }
-
-/*
-    function test_grade_item_toggle_hiding() {
-        $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'toggle_hiding'));
-
-        $this->assertFalse($grade_item->hidden);
-        $this->assertEqual(0, $grade_item->toggle_hiding());
-        $this->assertTrue($grade_item->hidden);
-        $grade_item->load_final();
-        $this->assertFalse($grade_item->grade_grades[1]->hidden);
-
-        $grade_item->hidden = false;
-        $this->assertEqual(3, $grade_item->toggle_hiding(true));
-        $this->assertTrue($grade_item->hidden);
-        $this->assertTrue($grade_item->grade_grades[1]->hidden);
-        $this->assertTrue($grade_item->grade_gra
-        des[2]->hidden);
-        $this->assertTrue($grade_item->grade_grades[3]->hidden);
-    }
-*/
 
     function test_grade_item_is_calculated() {
         $grade_item = new grade_item($this->grade_items[1]);

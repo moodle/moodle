@@ -192,7 +192,7 @@ class grade_item extends grade_object {
     var $sortorder = 0;
 
     /**
-     * Date until which to hide this grade_item. If null, 0 or false, grade_item is not hidden. Hiding prevents viewing.
+     * 0 if visible, 1 always hidden or date not visible until
      * @var int $hidden
      */
     var $hidden = 0;
@@ -418,12 +418,9 @@ class grade_item extends grade_object {
         }
 
         if (!empty($userid)) {
-
-            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
-            $grade->grade_item =& $this; // prevent db fetching of cached grade_item
-
-            if (!empty($grade->id) and $grade->is_locked()) {
-                return true;
+            if ($grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+                $grade->grade_item =& $this; // prevent db fetching of cached grade_item
+                return $grade->is_locked();
             }
         }
 
@@ -478,17 +475,17 @@ class grade_item extends grade_object {
 
             // this could be improved with direct SQL update
             $result = true;
-            $grades = $this->get_final();
-            foreach($grades as $g) {
-                $grade = new grade_grades($g, false);
-                $grade->grade_item =& $this;
+            if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+                foreach($grades as $grade) {
+                    $grade->grade_item =& $this;
 
-                if (!empty($grade->locktime) and $grade->locktime < time()) {
-                    $result = false; // can not unlock grade that should be already locked
-                }
+                    if (!empty($grade->locktime) and $grade->locktime < time()) {
+                        $result = false; // can not unlock grade that should be already locked
+                    }
 
-                if (!$grade->set_locked(false)) {
-                    $result = false;
+                    if (!$grade->set_locked(false)) {
+                        $result = false;
+                    }
                 }
             }
 
@@ -498,17 +495,43 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Locks or unlocks this grade_item and (optionally) all its associated final grades.
-     * @param boolean $update_final Whether to update final grades too
-     * @param boolean $new_state Optional new state. Will use inverse of current state otherwise.
-     * @return int Number of final grades changed, or false if error occurred during update.
+     * Returns the hidden state of this grade_item (if the grade_item is hidden OR no specific
+     * $userid is given) or the hidden state of a specific grade within this item if a specific
+     * $userid is given and the grade_item is unhidden.
+     *
+     * @param int $userid
+     * @return boolean hidden state
      */
-    function toggle_hiding($update_final=false, $new_state=NULL) {
-        //TODO: implement new hiding
+    function is_hidden($userid=NULL) {
+        if ($this->hidden == 1 or $this->hidden > time()) {
+            return true;
+        }
 
-        return 0;
+        if (!empty($userid)) {
+            if ($grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+                $grade->grade_item =& $this; // prevent db fetching of cached grade_item
+                return $grade->is_hidden();
+            }
+        }
+
+        return false;
     }
 
+    /**
+     * Set the hidden status of grade_item and all grades, 0 mean visible, 1 always hidden, number means date to hide until.
+     * @param int $hidden new hidden status
+     */
+    function set_hidden($hidden) {
+        $this->hidden = $hidden;
+        $this->update();
+
+        if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+            foreach($grades as $grade) {
+                $grade->grade_item =& $this;
+                $grade->set_hidden($hidden);
+            }
+        }
+    }
 
     /**
      * Performs the necessary calculations on the grades_final referenced by this grade_item.
@@ -945,26 +968,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the hidden state/date of this grade_item. This method is also available in
-     * grade_category, for cases where the object type is not known.
-     * @return int 0, 1 or timestamp int(10)
-     */
-    function is_hidden() {
-        // to do
-        return $this->hidden;
-    }
-
-    /**
-     * Sets the grade_item's hidden variable and updates the grade_item.
-     * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
-     * @return void
-     */
-    function set_hidden($hidden) {
-        $this->hidden = $hidden;
-        return $this->update();
-    }
-
-    /**
      * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
      * deleting childless categories.
      * @return boolean
@@ -1109,7 +1112,7 @@ class grade_item extends grade_object {
 
             // trigger grade_updated event notification
             $eventdata = new object();
-    
+
             $eventdata->source       = $source;
             $eventdata->itemid       = $this->id;
             $eventdata->courseid     = $this->courseid;
@@ -1120,7 +1123,7 @@ class grade_item extends grade_object {
             $eventdata->idnumber     = $this->idnumber;
             $eventdata->userid       = $grade->userid;
             $eventdata->rawgrade     = $grade->rawgrade;
-    
+
             // load existing text annotation
             if ($grade_text = $grade->load_text()) {
                 $eventdata->feedback          = $grade_text->feedback;
@@ -1128,7 +1131,7 @@ class grade_item extends grade_object {
                 $eventdata->information       = $grade_text->information;
                 $eventdata->informationformat = $grade_text->informationformat;
             }
-    
+
             events_trigger('grade_updated', $eventdata);
 
             return $grade;

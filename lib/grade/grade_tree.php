@@ -1091,7 +1091,7 @@ class grade_tree {
 
                 // Add dimmed_text span around object name if set to hidden
                 $hide_show = 'hide';
-                if ($object->get_hidden()) {
+                if ($object->is_hidden()) {
                     $object_name = '<span class="dimmed_text">' . $object_name . '</span>';
                     $hide_show = 'show';
                 }
