@@ -86,7 +86,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->id, $last_grade_item->id + 1);
         $this->assertEqual(11, $grade_item->sortorder);
     }
-
+/*
     function test_grade_item_generate_itemnumber() {
         $grade_item = new grade_item($this->grade_items[0]);
         $copy_grade_item = fullclone($grade_item);
@@ -96,7 +96,7 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->itemnumber+1, $copy_grade_item->itemnumber);
 
     }
-
+*/
     function test_grade_item_generate_idnumber() {
 
     }
