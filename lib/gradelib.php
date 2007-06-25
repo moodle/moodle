@@ -90,12 +90,15 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted');
 
+    // grade item identification
+    $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');
+
     if (is_null($courseid) or is_null($itemtype)) {
         debugging('Missing courseid or itemtype');
         return GRADE_UPDATE_FAILED;
     }
 
-    if (!$grade_items = grade_item::fetch_all(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'))) {
+    if (!$grade_items = grade_item::fetch_all($params)) {
         // create a new one
         $grade_item = false;
 
@@ -104,14 +107,12 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         unset($grade_items); //release memory
 
     } else {
-
         debugging('Found more than one grade item');
         return GRADE_UPDATE_MULTIPLE;
     }
 
 /// Create or update the grade_item if needed
     if (!$grade_item) {
-        $params = compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber');
         if ($itemdetails) {
             $itemdetails = (array)$itemdetails;
 
@@ -217,36 +218,9 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         }
 
         // update or insert the grade
-        $grade = $grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat);
-
-        if (!$grade) {
+        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat)) {
             $failed = true;
-            continue;
         }
-
-        // trigger grade_updated event notification
-        $eventdata = new object();
-
-        $eventdata->source            = $source;
-        $eventdata->itemid            = $grade_item->id;
-        $eventdata->courseid          = $grade_item->courseid;
-        $eventdata->itemtype          = $grade_item->itemtype;
-        $eventdata->itemmodule        = $grade_item->itemmodule;
-        $eventdata->iteminstance      = $grade_item->iteminstance;
-        $eventdata->itemnumber        = $grade_item->itemnumber;
-        $eventdata->idnumber          = $grade_item->idnumber;
-        $eventdata->userid            = $grade->userid;
-        $eventdata->rawgrade        = $grade->rawgrade;
-
-        // load existing text annotation
-        if ($grade_text = $grade->load_text()) {
-            $eventdata->feedback          = $grade_text->feedback;
-            $eventdata->feedbackformat    = $grade_text->feedbackformat;
-            $eventdata->information       = $grade_text->information;
-            $eventdata->informationformat = $grade_text->informationformat;
-        }
-
-        events_trigger('grade_updated', $eventdata);
     }
 
     if (!$failed) {

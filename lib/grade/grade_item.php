@@ -374,7 +374,7 @@ class grade_item extends grade_object {
                 $this->idnumber = rand(0,9999999999); // TODO replace rand() with proper random generator
             }
         }
-
+/*
         // If a grade_item already exists with these itemtype, itemmodule and iteminstance
         // but not itemnumber, generate an itemnumber.
         if (empty($this->itemnumber) && !empty($this->itemtype) && !empty($this->itemmodule) && !empty($this->iteminstance)) {
@@ -389,7 +389,7 @@ class grade_item extends grade_object {
 
             $this->itemnumber = $existing_item->itemnumber + 1;
         }
-
+*/
 
         $result = parent::insert();
 
@@ -1037,7 +1037,9 @@ class grade_item extends grade_object {
      * @param int $feedbackformat
      * @return mixed grade_grades object if ok, false if error
      */
-    function update_raw_grade($userid, $rawgrade=false, $howmodified='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
+    function update_raw_grade($userid, $rawgrade=false, $source='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
+        global $CFG;
+        require_once($CFG->libdir.'/eventslib.php');
 
         // calculated grades can not be updated
         if ($this->is_calculated()) {
@@ -1098,13 +1100,39 @@ class grade_item extends grade_object {
         }
 
         // TODO Handle history recording error, such as displaying a notice, but still return true
-        grade_history::insert_change($userid, $this->id, $grade->rawgrade, $oldgrade, $howmodified, $note);
+        grade_history::insert_change($userid, $this->id, $grade->rawgrade, $oldgrade, $source, $note);
 
         // This grade item needs update
         $this->force_regrading();
 
         if ($result) {
+
+            // trigger grade_updated event notification
+            $eventdata = new object();
+    
+            $eventdata->source       = $source;
+            $eventdata->itemid       = $this->id;
+            $eventdata->courseid     = $this->courseid;
+            $eventdata->itemtype     = $this->itemtype;
+            $eventdata->itemmodule   = $this->itemmodule;
+            $eventdata->iteminstance = $this->iteminstance;
+            $eventdata->itemnumber   = $this->itemnumber;
+            $eventdata->idnumber     = $this->idnumber;
+            $eventdata->userid       = $grade->userid;
+            $eventdata->rawgrade     = $grade->rawgrade;
+    
+            // load existing text annotation
+            if ($grade_text = $grade->load_text()) {
+                $eventdata->feedback          = $grade_text->feedback;
+                $eventdata->feedbackformat    = $grade_text->feedbackformat;
+                $eventdata->information       = $grade_text->information;
+                $eventdata->informationformat = $grade_text->informationformat;
+            }
+    
+            events_trigger('grade_updated', $eventdata);
+
             return $grade;
+
         } else {
             return false;
         }
