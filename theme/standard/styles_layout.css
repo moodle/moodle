@@ -193,7 +193,7 @@ div.groupselector {
 }
 
 .centerpara {
-  text-align:center  
+  text-align:center
 }
 
 .noticebox {
@@ -209,7 +209,7 @@ div.groupselector {
 }
 
 #notice .buttons {
-  text-align:center  
+  text-align:center
 }
 
 #notice .buttons div,
@@ -573,7 +573,7 @@ form#adminsettings div.htmlarea {
 }
 
 .mform label .req, .mform label .adv {
-  cursor: help;  
+  cursor: help;
 }
 
 /* form frozen */
@@ -808,7 +808,7 @@ body#admin-auth table.generaltable th
   white-space: nowrap;
 }
 
-body#admin-modules .generaltablecell 
+body#admin-modules .generaltablecell
 {
   padding-top: 2px;
   padding-bottom: 2px;
@@ -883,7 +883,7 @@ body#admin-modules table.generaltable td.c0
 
 #admin-roles-manage .buttons .singlebutton,
 #admin-roles-override .buttons .singlebutton {
-    display: inline;
+  display: inline;
   padding: 5px;
 }
 
@@ -1312,7 +1312,7 @@ a.skip-block, .skip-block {
  *** Blogs
  ***/
 .addbloglink {
-  text-align: center;  
+  text-align: center;
 }
 
 .blogpost .audience {
@@ -2741,7 +2741,7 @@ body#user-index .rolesform {
  ***/
 
 .nextchatsession {
-  text-align:center;  
+  text-align:center;
 }
 
 #mod-chat-gui_header_js-jsupdate {
@@ -2755,14 +2755,14 @@ body#user-index .rolesform {
 }
 
 #mod-chat-view #chatcurrentusers .chatuserdetails {
-   vertical-align: middle;   
+  vertical-align: middle;
 }
 
 #mod-chat-view #enterlink {
-   text-align: center;
-   margin-left: auto;
-   margin-right: auto;
-   width: 50%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 .chat-event .picture,
@@ -3480,7 +3480,7 @@ body#question-preview .quemodname, body#question-preview .controls {
 }
 
 .whitecell {
-  background-color:white;  
+  background-color:white;
 }
 /***
  *** Modules: Wiki
