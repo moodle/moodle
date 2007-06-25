@@ -1,4 +1,4 @@
-<?PHP // $Id$
+﻿<?PHP // $Id$
       // admin.php - created with Moodle 1.7 beta + (2006101003)
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
@@ -82,7 +82,7 @@ $string['configdigestmailtime'] = 'People who choose to have emails sent to them
 $string['configdisableuserimages'] = 'Disable the ability for users to change user profile images.';
 $string['configdisplayloginfailures'] = 'This will display information to selected users about previous failed logins.';
 $string['configdocroot'] = 'Defines the path to the Moodle Docs. You can change this if you wish to have your own custom online documentation. However, if you do that make sure that the paths in your documentation follow the same format as http://docs.moodle.org.';
-$string['configdoctonewwindow'] = 'If you enable this, then links to Moodle Docs will be showed in a new window.';
+$string['configdoctonewwindow'] = 'If you enable this, then links to Moodle Docs will be shown in a new window.';
 $string['configeditorfontlist'] = 'Select the fonts that should appear in the editor\'s drop-down list.';
 $string['configeditordictionary'] = 'This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['configenableajax'] = 'This setting allows you to control the use of AJAX (advanced client/server interfaces using Javascript) across the whole site.  With this setting enabled users can still make a choice in their profile, otherwise AJAX is disabled for everybody.';
