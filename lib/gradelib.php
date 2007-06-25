@@ -285,7 +285,7 @@ function grade_update_final_grades($courseid, $regradeall=false) {
         set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
     }
 
-    if (!$grade_items = $grade_item->fetch_all(array('courseid'=>$courseid))) {
+    if (!$grade_items = grade_item::fetch_all(array('courseid'=>$courseid))) {
         return true;
     }
 
