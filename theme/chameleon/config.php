@@ -80,7 +80,7 @@ $THEME->langsheets = false;
 /// different styles.
 
 
-$THEME->navmenuwidth = 5;
+$THEME->navmenuwidth = 50;
 
 /// You can use this to control the cutoff point for strings 
 /// in the navmenus (list of activities in popup menu etc)
