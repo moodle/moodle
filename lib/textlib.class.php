@@ -25,8 +25,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /// Required files
-    require_once('typo3/class.t3lib_cs.php');
-    require_once('typo3/class.t3lib_div.php');
+    require_once($CFG->libdir.'/typo3/class.t3lib_cs.php');
+    require_once($CFG->libdir.'/typo3/class.t3lib_div.php');
 
 /// If ICONV is available, lets Typo3 library use it for convert
     if (extension_loaded('iconv')) {
