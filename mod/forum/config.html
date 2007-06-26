@@ -170,6 +170,23 @@
     </td>
 </tr>
 
+<tr valign="top">
+        <td align="right">forum_enabletimedposts:</td>
+        <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+       choose_from_menu ($options, "forum_enabletimedposts", $CFG->forum_enabletimedposts, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php 
+        print_string("configenabletimedposts","forum");
+    ?>
+    </td>
+</tr>
+
 <tr>
     <td colspan="3" align="center">
     <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
