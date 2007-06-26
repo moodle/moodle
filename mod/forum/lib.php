@@ -1132,7 +1132,7 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
     global $CFG;
 
     if ($forum != null) {
-        require_once($CFG->libdir.'/lib/gradelib.php');
+        require_once($CFG->libdir.'/gradelib.php');
         if ($grades = forum_get_user_grades($forum, $userid)) {
             grade_update('mod/forum', $forum->course, 'mod', 'forum', $forum->id, 0, $grades);
 
