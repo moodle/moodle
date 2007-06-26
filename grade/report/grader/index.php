@@ -128,14 +128,21 @@ $numusers = count_records_sql($countsql);
 
 // print_object($users); // debug
 
+if (empty($users)) {
+    $userselect = '';
+    $users = array();
+} else {
+    $userselect = 'AND g.userid in ('.implode(',', array_keys($users)).')';
+}
+
+
 // phase 2 sql, we supply the userids in this query, and get all the grades
 // pulls out all the grades, this does not need to worry about paging
 $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade 
         FROM  {$CFG->prefix}grade_grades g, 
               {$CFG->prefix}grade_items gi                 
         WHERE g.itemid = gi.id
-              AND gi.courseid = $courseid
-              AND g.userid in (".implode(",", array_keys($users)).")";
+              AND gi.courseid = $courseid $userselect";
 
 ///print_object($grades); //debug
 
