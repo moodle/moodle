@@ -1533,19 +1533,25 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 				$this->source = preg_replace($search, $replace, $this->source);
 
                 // relative URLs in <a ... onclick="window.open('...')...">...</a>
-                $search = '|'.'(?<='.'onclick="'."window.open\\('".')'."([^']*)".'(?='."'\\);return false;".'")'.'|ise';
+                $search = '|'.'(?<='.'onclick="'."window.open\\('".')'."(.*?)".'(?='."'\\);return false;".'")'.'|ise';
                 $replace = "hotpot_convert_url('".$this->get_baseurl()."','".$this->reference."','\\1')";
                 $this->source = preg_replace($search, $replace, $this->source);
 
             } else {
-				if ($this->parse_xml) {
+
+                // relative URLs in <a ... onclick="window.open('...')...">...</a>
+                $search = '|'.'(?<='.'onclick=&quot;'."window.open\\(&apos;".')'."(.*?)".'(?='."&apos;\\);return false;".'&quot;)'.'|ise';
+                $replace = "hotpot_convert_url('".$this->get_baseurl()."','".$this->reference."','\\1')";
+                $this->source = preg_replace($search, $replace, $this->source);
+
+                if ($this->parse_xml) {
 
 					$this->filetype = 'xml';
 
 					// encode "gap fill" text in JCloze exercise
 					$this->encode_cdata($this->source, 'gap-fill');
 
-					// convert source to xml tree
+                    // convert source to xml tree
 					$this->hotpot_xml_tree($this->source);
 
 					$keys = array_keys($this->xml);
@@ -1609,7 +1615,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
 				} // end $this->create_html
 			} // end if html/xml file
-		} // end if $this->read_file
+        } // end if $this->read_file
 	} // end constructor function
 
 	function hotpot_convert_relative_urls(&$str) {
