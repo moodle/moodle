@@ -81,7 +81,7 @@
 
     $strgrades = get_string('grades');
 
-    $crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
+    $crumbs[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
     $crumbs[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
     
     $navigation = build_navigation($crumbs);    

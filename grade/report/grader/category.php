@@ -27,6 +27,220 @@ require_once '../../../config.php';
 require_once $CFG->libdir . '/grade/grade_tree.php';
 require_once $CFG->libdir . '/gradelib.php';
 
+/**
+ * Returns a HTML list with sorting arrows and insert boxes. This is a recursive method.
+ * @param int $level The level of recursion
+ * @param array $elements The elements to display in a list. Defaults to this->tree_array
+ * @param int $source_sortorder A source sortorder, given when an element needs to be moved or inserted.
+ * @param string $action 'move' or 'insert'
+ * @param string $source_type 'topcat', 'subcat' or 'item'
+ * @return string HTML code
+ */
+function get_edit_tree($tree, $level=1, $elements=NULL, $source_sortorder=NULL, $action=NULL, $source_type=NULL) {
+    if (empty($tree->tree_array)) {
+        return null;
+    } else {
+        global $CFG;
+        global $USER;
+
+        $strmove           = get_string("move");
+        $strmoveup         = get_string("moveup");
+        $strmovedown       = get_string("movedown");
+        $strmovehere       = get_string("movehere");
+        $strcancel         = get_string("cancel");
+        $stredit           = get_string("edit");
+        $strdelete         = get_string("delete");
+        $strhide           = get_string("hide");
+        $strshow           = get_string("show");
+        $strlock           = get_string("lock", 'grades');
+        $strunlock         = get_string("unlock", 'grades');
+        $strnewcategory    = get_string("newcategory", 'grades');
+        $strcategoryname   = get_string("categoryname", 'grades');
+        $strcreatecategory = get_string("createcategory", 'grades');
+        $strsubcategory    = get_string("subcategory", 'grades');
+        $stritems          = get_string("items", 'grades');
+        $strcategories     = get_string("categories", 'grades');
+
+        $list = '';
+        $closing_form_tags = '';
+
+        if (empty($elements)) {
+            $list .= '<form action="category.php" method="post">' . "\n";
+            $list .= '<ul id="grade_edit_tree">' . "\n";
+            $elements = $tree->tree_array;
+
+            $element_type_options = '<select name="element_type">' . "\n";
+            $element_type_options .= "<option value=\"items\">$stritems</option><option value=\"categories\">$strcategories</option>\n";
+            $element_type_options .= "</select>\n";
+
+            $strforelementtypes= get_string("forelementtypes", 'grades', $element_type_options);
+
+            $closing_form_tags .= '<fieldset><legend>' . $strnewcategory . '</legend>' . "\n";
+            $closing_form_tags .= '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />' . "\n";
+            $closing_form_tags .= '<input type="hidden" name="id" value="' . $tree->courseid . '" />' . "\n";
+            $closing_form_tags .= '<input type="hidden" name="action" value="create" />' . "\n";
+            $closing_form_tags .= '<label for="category_name">' . $strcategoryname . '</label>' . "\n";
+            $closing_form_tags .= '<input id="category_name" type="text" name="category_name" size="40" />' . "\n";
+            $closing_form_tags .= '<input type="submit" value="' . $strcreatecategory . '" />' . "\n";
+            $closing_form_tags .= $strforelementtypes;
+            $closing_form_tags .= '</fieldset>' . "\n";
+            $closing_form_tags .= "</form>\n";
+        } else {
+            $list = '<ul class="level' . $level . 'children">' . "\n";
+        }
+
+        $first = true;
+        $count = 1;
+        $last = false;
+        $last_sortorder = null;
+
+        if (count($elements) == 1) {
+            $last = true;
+        }
+
+        foreach ($elements as $sortorder => $element) {
+            $object = $element['object'];
+
+            $object_name = $object->get_name();
+            $object_class = get_class($object);
+            $object_parent = $object->get_parent_id();
+            $element_type = $tree->get_element_type($element);
+
+            $highlight_class = '';
+
+            if ($source_sortorder == $sortorder && !empty($action)) {
+                $highlight_class = ' selected_element ';
+            }
+
+            // Prepare item icon if appropriate
+            $module_icon = '';
+            if (!empty($object->itemmodule)) {
+                $module_icon = '<div class="moduleicon">'
+                    . '<label for="checkbox_select_' . $sortorder . '">'
+                    . '<img src="'
+                    . $CFG->modpixpath . '/' . $object->itemmodule . '/icon.gif" alt="'
+                    . $object->itemmodule . '" title="' . $object->itemmodule . '" /></label></div>';
+            }
+
+            // Add dimmed_text span around object name if set to hidden
+            $hide_show = 'hide';
+            if ($object->is_hidden()) {
+                $object_name = '<span class="dimmed_text">' . $object_name . '</span>';
+                $hide_show = 'show';
+            }
+
+            // Prepare lock/unlock string
+            $lock_unlock = 'lock';
+            if ($object->is_locked()) {
+                $lock_unlock = 'unlock';
+            }
+
+            // Prepare select checkbox for subcats and items
+            $select_checkbox = '';
+            if ($element_type != 'topcat') {
+                $group = 'items';
+                if ($element_type == 'subcat') {
+                    $group = 'categories';
+                }
+
+                $select_checkbox = '<div class="select_checkbox">' . "\n"
+                    . '<input id="checkbox_select_' . $sortorder . '" type="checkbox" name="' . $group . '[' . $sortorder . ']" />' . "\n"
+                    . '</div>' . "\n";
+
+                // Add a label around the object name to trigger the checkbox
+                $object_name = '<label for="checkbox_select_' . $sortorder . '">' . $object_name . '</label>';
+            }
+
+            $list .= '<li class="level' . $level . 'element sortorder'
+                  . $object->get_sortorder() . $highlight_class . '">' . "\n"
+                  . $select_checkbox . $module_icon . $object_name;
+
+
+            $list .= '<div class="icons">' . "\n";
+
+            // Print up arrow
+            if (!$first) {
+                $list .= '<a href="category.php?'."source=$sortorder&amp;moveup={$object->previous_sortorder}$tree->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/up.gif" class="iconsmall" ' . 'alt="'.$strmoveup.'" title="'.$strmoveup.'" /></a>'. "\n";
+            } else {
+                $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> '. "\n";
+            }
+
+            // Print down arrow
+            if (!$last) {
+                $list .= '<a href="category.php?'."source=$sortorder&amp;movedown={$object->next_sortorder}$tree->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/down.gif" class="iconsmall" ' . 'alt="'.$strmovedown.'" title="'.$strmovedown.'" /></a>'. "\n";
+            } else {
+                $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
+            }
+
+            // Print move icon
+            if ($element_type != 'topcat') {
+                $list .= '<a href="category.php?'."source=$sortorder&amp;action=move&amp;type=$element_type$tree->commonvars\">\n";
+                $list .= '<img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'" /></a>'. "\n";
+            } else {
+                $list .= '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="iconsmall" alt="" /> ' . "\n";
+            }
+
+            // Print edit icon
+            $list .= '<a href="category.php?'."target=$sortorder&amp;action=edit$tree->commonvars\">\n";
+            $list .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+            // Print delete icon
+            $list .= '<a href="category.php?'."target=$sortorder&amp;action=delete$tree->commonvars\">\n";
+            $list .= '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                  .$strdelete.'" title="'.$strdelete.'" /></a>'. "\n";
+
+            // Print hide/show icon
+            $list .= '<a href="category.php?'."target=$sortorder&amp;action=$hide_show$tree->commonvars\">\n";
+            $list .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+                  .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+            // Print lock/unlock icon
+            $list .= '<a href="category.php?'."target=$sortorder&amp;action=$lock_unlock$tree->commonvars\">\n";
+            $list .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+                  .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+
+            $list .= '</div> <!-- end icons div -->';
+
+            if (!empty($element['children'])) {
+                $list .= get_edit_tree($tree, $level + 1, $element['children'], $source_sortorder, $action, $source_type);
+            }
+
+            $list .= '</li>' . "\n";
+
+            $first = false;
+            $count++;
+            if ($count == count($elements)) {
+                $last = true;
+            }
+
+            $last_sortorder = $sortorder;
+        }
+
+        // Add an insertion box if source_sortorder is given and a few other constraints are satisfied
+        if ($source_sortorder && !empty($action)) {
+            $moving_item_near_subcat = $element_type == 'subcat' && $source_type == 'item' && $level > 1;
+            $moving_cat_to_lower_level = ($level == 2 && $source_type == 'topcat') || ($level > 2 && $source_type == 'subcat');
+            $moving_subcat_near_item_in_cat = $element_type == 'item' && $source_type == 'subcat' && $level > 1;
+            $moving_element_near_itself = $sortorder == $source_sortorder;
+
+            if (!$moving_item_near_subcat && !$moving_cat_to_lower_level && !$moving_subcat_near_item_in_cat && !$moving_element_near_itself) {
+                $list .= '<li class="insertion">' . "\n";
+                $list .= '<a href="category.php?' . "source=$source_sortorder&amp;$action=$last_sortorder$tree->commonvars\">\n";
+                $list .= '<img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" />' . "\n";
+                $list .= "</a>\n</li>";
+            }
+        }
+
+        $list .= '</ul>' . "\n$closing_form_tags";
+
+        return $list;
+    }
+
+    return false;
+}
+
 $param = new stdClass();
 
 $param->courseid      = optional_param('id', 0 , PARAM_INT);
@@ -58,13 +272,14 @@ $strgrades = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $strcategoriesedit = get_string('categoriesedit', 'grades');
 
-$crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
-$crumbs[] = array('name' => $strgraderreport, 'link' => '', 'type' => 'misc');
+$crumbs[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+$crumbs[] = array('name' => $strgraderreport, 
+    'link' => $CFG->wwwroot . '/grade/report.php?id=' . $courseid . '&amp;report=grader', 'type' => 'misc');
 $crumbs[] = array('name' => $strcategoriesedit, 'link' => '', 'type' => 'misc');
 
 $navigation = build_navigation($crumbs);
 
-print_header_simple($strgrades.': '.$strgraderreport.': '.$strcategoriesedit, $navigation, 
+print_header_simple($strgrades.': '.$strgraderreport, ': '.$strcategoriesedit, $navigation, 
                     '', '', true, '', navmenu($course));
 
 $tree = new grade_tree($param->courseid);
@@ -205,6 +420,6 @@ print_heading(get_string('categoriesedit', 'grades'));
 // Add tabs
 $currenttab = 'editcategory'; 
 include('tabs.php');
-echo $tree->get_edit_tree(1, null, $param->source, $param->action, $param->type);
+echo get_edit_tree($tree, 1, null, $param->source, $param->action, $param->type);
 print_footer($course);
 ?>

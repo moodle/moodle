@@ -42,13 +42,14 @@ $strgrades = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $strgradepreferences = get_string('gradepreferences', 'grades');
 
-$crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
-$crumbs[] = array('name' => $strgraderreport, 'link' => '', 'type' => 'misc');
+$crumbs[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+$crumbs[] = array('name' => $strgraderreport, 
+    'link' => $CFG->wwwroot . '/grade/report.php?id=' . $courseid . '&amp;report=grader', 'type' => 'misc');
 $crumbs[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc');
 
 $navigation = build_navigation($crumbs);
 
-print_header_simple($strgrades.': '.$strgraderreport.': '.$strgradepreferences, $navigation, 
+print_header_simple($strgrades.': '.$strgraderreport,': '.$strgradepreferences, $navigation, 
                     '', '', true, '', navmenu($course));
 print_heading(get_string('preferences'));
 // Add tabs
