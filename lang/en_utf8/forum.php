@@ -24,6 +24,7 @@ $string['cannotadddiscussion'] = 'Adding discussions to this forum requires grou
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all forums.  You will still need to turn feeds on manually in the settings for each forum.';
+$string['configenabletimedposts'] = 'Set to \'yes\' if you want to allow setting of display periods when posting a new forum discussion (Experimental as not yet fully tested)';
 $string['configlongpost'] = 'Any post over this length (in characters not including HTML) is considered long. Posts displayed on the site front page, social format course pages, or user profiles are shortened to a natural break somewhere between the forum_shortpost and forum_longpost values.';
 $string['configmanydiscussions'] = 'Maximum number of discussions shown in a forum per page';
 $string['configmaxbytes'] = 'Default maximum size for all forum attachments on the site (subject to course limits and other local settings)';
