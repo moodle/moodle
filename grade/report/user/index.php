@@ -50,80 +50,83 @@ if ($gradetree = new grade_tree($courseid)) {
 
     $table->setup();
 
-    // loop through grade items to extra data
-    foreach ($gradetree->tree_array as $gradeitemobj) {
-        
-        // grade item is the 'object' of the grade tree
-        $gradeitem = $gradeitemobj['object'];        
-        $data = array();
+    if ($gradetree->tree_array) {
+        // loop through grade items to extra data
+        foreach ($gradetree->tree_array as $gradeitemobj) {
 
-        $params->itemid = $gradeitem->id;
-        $params->userid = $userid;
-        $grade_grades = new grade_grades($params);
-        $grade_text = $grade_grades->load_text();
+            // grade item is the 'object' of the grade tree
+            $gradeitem = $gradeitemobj['object'];        
+            $data = array();
 
-        /// prints mod icon if available
-        if ($gradeitem->itemtype == 'mod') {
-            $iconpath = $CFG->dirroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
-            $icon = $CFG->wwwroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
-            if (file_exists($iconpath)) {
-                $data[] = '<img src = "'.$icon.'" alt="'.$gradeitem->itemname.'" class="activityicon"/>';  
-            }  
-        } else {
-            $data[] = '';
-        }
-  
-        /// prints grade item name
-        if ($gradeitem->itemtype == 'category') {
-            $data[] = '<b>'.$gradeitem->itemname.'</b>';
-        } else {
-            $data[] = $gradeitem->itemname;
-        }
-    
-        /// prints the grade 
-        $data[] = $grade_grades->finalgrade;
-    
-        /// prints percentage
-   
-        if ($gradeitem->gradetype == 1) {
-            // processing numeric grade
-            if ($grade_grades->finalgrade) {
-                $percentage = (($grade_grades->finalgrade / $gradeitem->grademax) * 100).'%';
+            $params->itemid = $gradeitem->id;
+            $params->userid = $userid;
+            $grade_grades = new grade_grades($params);
+            $grade_text = $grade_grades->load_text();
+
+            /// prints mod icon if available
+            if ($gradeitem->itemtype == 'mod') {
+                $iconpath = $CFG->dirroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
+                $icon = $CFG->wwwroot.'/mod/'.$gradeitem->itemmodule.'/icon.gif';
+                if (file_exists($iconpath)) {
+                    $data[] = '<img src = "'.$icon.'" alt="'.$gradeitem->itemname.'" class="activityicon"/>';  
+                }  
             } else {
-                $percentage = '-';
+                $data[] = '';
             }
-            $gradetotal += $gradeitem->grademax;
-            $gradesum += $grade_grades->finalgrade;
-        } else if ($gradeitem->gradetype == 2) {
-            // processing scale grade
-            $scale = get_record('scale', 'id', $gradeitem->scaleid);
-            $scalevals = explode(",", $scale->scale);
-            $percentage = ($grade_grades->finalgrade -1) / count($scalevals);        
-            $gradesum += count($scalevals);
-            $gradetotal += $grade_grades->finalgrade;
-        } else {
-            // text grade
-            $percentage = '-';  
-        }
-   
-        $data[] = $percentage;
-    
-        /// prints rank
-        $data[] = '';
-    
-        /// prints notes
-        if (!empty($grade_text->feedback)) {
-            $data[] = $grade_text->feedback;
-        } else {
-            $data[] = '&nbsp;';  
-        }
-        $table->add_data($data);  
-    }
-    
-    $table->add_data(array('', get_string('total'), $gradesum.'/'.$gradetotal));
 
-    // print the page
-    print_heading(get_string('userreport', 'grades'));
-    $table->print_html();
+            /// prints grade item name
+            if ($gradeitem->itemtype == 'category') {
+                $data[] = '<b>'.$gradeitem->itemname.'</b>';
+            } else {
+                $data[] = $gradeitem->itemname;
+            }
+
+            /// prints the grade 
+            $data[] = $grade_grades->finalgrade;
+
+            /// prints percentage
+
+            if ($gradeitem->gradetype == 1) {
+                // processing numeric grade
+                if ($grade_grades->finalgrade) {
+                    $percentage = (($grade_grades->finalgrade / $gradeitem->grademax) * 100).'%';
+                } else {
+                    $percentage = '-';
+                }
+                $gradetotal += $gradeitem->grademax;
+                $gradesum += $grade_grades->finalgrade;
+            } else if ($gradeitem->gradetype == 2) {
+                // processing scale grade
+                $scale = get_record('scale', 'id', $gradeitem->scaleid);
+                $scalevals = explode(",", $scale->scale);
+                $percentage = ($grade_grades->finalgrade -1) / count($scalevals);        
+                $gradesum += count($scalevals);
+                $gradetotal += $grade_grades->finalgrade;
+            } else {
+                // text grade
+                $percentage = '-';  
+            }
+
+            $data[] = $percentage;
+
+            /// prints rank
+            $data[] = '';
+
+            /// prints notes
+            if (!empty($grade_text->feedback)) {
+                $data[] = $grade_text->feedback;
+            } else {
+                $data[] = '&nbsp;';  
+            }
+            $table->add_data($data);  
+        }
+    
+        $table->add_data(array('', get_string('total'), $gradesum.'/'.$gradetotal));
+
+        // print the page
+        print_heading(get_string('userreport', 'grades'));
+        $table->print_html();
+
+    }
 }
 ?>
