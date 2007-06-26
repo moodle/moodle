@@ -1529,7 +1529,12 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
                 $replace = "hotpot_convert_navbutton_url('".$this->get_baseurl()."','".$this->reference."','\\1','".$this->course."')";
                 $this->source = preg_replace($search, $replace, $this->source);
 
-            } else {
+                // relative URLs in <a ... onclick="window.open('...')...">...</a>
+                $search = '|'.'(?<='.'onclick="'."window.open\\('".')'."([^']*)".'(?='."'\\);return false;".'")'.'|ise';
+                $replace = "hotpot_convert_url('".$this->get_baseurl()."','".$this->reference."','\\1')";
+                $this->source = preg_replace($search, $replace, $this->source);
+
+                } else {
                 if ($this->parse_xml) {
 
                     $this->filetype = 'xml';
