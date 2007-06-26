@@ -48,7 +48,7 @@ function grade_get_category_weight($course, $category) {
 
 function grade_get_grade_items($course) {
     global $CFG;
-     $sql = "SELECT i.id, c.name as cname, i.modid, mm.name as modname, i.cminstance, c.hidden, cm.visible, i.sort_order
+     $sql = "SELECT i.id, c.name as cname, i.modid, mm.name as modname, i.cminstance, c.hidden, cm.visible, i.sort_order, cm.id as cmid
             FROM    {$CFG->prefix}grade_item i, 
                     {$CFG->prefix}grade_category c, 
                     {$CFG->prefix}course_modules cm, 
@@ -675,7 +675,7 @@ function grade_get_grades() {
     if ($mods) {
         foreach ($mods as $mod)    {
             // hidden is a gradebook setting for an assignment and visible is a course_module setting 
-            if (($mod->hidden != 1 && $mod->visible==1) or (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->id)) && $preferences->show_hidden==1)) {
+            if (($mod->hidden != 1 && $mod->visible==1) or (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->cmid)) && $preferences->show_hidden==1)) {
                 $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
                 if (file_exists($libfile)) {
                     require_once($libfile);
