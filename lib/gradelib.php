@@ -576,11 +576,12 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
         } else if ($scaleid) {
             $grade_item->gradetype = GRADE_TYPE_SCALE;
             $grade_item->scaleid   = $scaleid;
+            $grade_item->grademin  = 1;
 
         } else {
-           $grade_item->gradetype  = GRADE_TYPE_VALUE;
-           $grade_item->grademax   = $grademax;
-           $grade_item->grademin   = 0;
+            $grade_item->gradetype  = GRADE_TYPE_VALUE;
+            $grade_item->grademax   = $grademax;
+            $grade_item->grademin   = 0;
         }
 
         $grade_item->itemname = $modinstance->name;
@@ -606,7 +607,7 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     } else if ($scaleid) {
         $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = $scaleid;
-
+        $grade_item->grademin  = 1; 
     } else {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $grademax;

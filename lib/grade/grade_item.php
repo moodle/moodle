@@ -749,8 +749,11 @@ class grade_item extends grade_object {
         if (!empty($this->scaleid)) {
             $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
             $this->scale->load_items();
-            $this->grademax = count($this->scale->scale_items) - 1;
-            $this->grademin = 0;
+
+            // Until scales are uniformly set to min=0 max=count(scaleitems)-1 throughout Moodle, we
+            // stay with the current min=1 max=count(scaleitems)
+            $this->grademax = count($this->scale->scale_items);
+            $this->grademin = 1;
         } else {
             $this->scale = null;
         }
