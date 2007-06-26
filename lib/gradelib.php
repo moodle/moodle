@@ -677,4 +677,62 @@ function grade_oldgradebook_upgrade($courseid) {
     }
 }
 
+/**
+ * Given a grade_category, grade_item or grade_grade, this function 
+ * figures out the state of the object and builds then returns a div
+ * with the icons needed for the grader report.
+ *
+ * @param object $object
+ * @return string HTML
+ */
+function grade_get_icons($object, $tree) {
+    global $CFG;
+
+    $stredit           = get_string("edit");
+    $strmove           = get_string("move");
+    $strmoveup         = get_string("moveup");
+    $strmovedown       = get_string("movedown");
+    $strmovehere       = get_string("movehere");
+    $strcancel         = get_string("cancel");
+    $stredit           = get_string("edit");
+    $strdelete         = get_string("delete");
+    $strhide           = get_string("hide");
+    $strshow           = get_string("show");
+    $strlock           = get_string("lock", 'grades');
+    $strunlock         = get_string("unlock", 'grades');
+
+    $html = '<div class="grade_icons">img</div>';
+    
+    // Edit icon
+    $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
+          . "&amp;action=edit$tree->commonvars\">\n";
+    $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+          .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+    // Hide/Show icon
+    $hide_show = 'hide';
+    if ($object->is_hidden()) {
+        $hide_show = 'show';
+    }
+    
+    $html .= '<a href="report.php?report=grader&amp;target=' . $object->get_sortorder()
+          . "&amp;action=$hide_show$tree->commonvars\">\n";
+    $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+          .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+
+    // Prepare lock/unlock string
+    $lock_unlock = 'lock';
+    if ($object->is_locked()) {
+        $lock_unlock = 'unlock';
+    }
+    // Print lock/unlock icon
+    $html .= '<a href="report.php?report=grader&amp;target=' . $object->get_sortorder()
+          . "&amp;action=$lock_unlock$tree->commonvars\">\n";
+    $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+          .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+
+
+    // Lock/Unlock icon
+    return $html;
+}
 ?>
