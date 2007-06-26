@@ -119,8 +119,10 @@ $string['downloadlanguagenotneeded'] = 'Podeu continuar el procés d\'instal·la
 $string['downloadlanguagesub'] = 'Ara teniu l\'opció de baixar un paquet d\'idioma i continuar el procés d\'instal·lació en aquest idioma.<br /><br />Si no podeu baixar el paquet, el procés d\'instal·lació prosseguirà en anglès. (Després que s\'hagi completat la instal·lació, tindreu l\'oportunitat de baixar i instal·lar paquets d\'idioma addicionals.)';
 $string['environmenterrortodo'] = 'Abans d\'instal·lar aquesta versió de Moodle heu de resoldre tots els problemes d\'entorn (errors) que s\'han trobat.';
 $string['environmenthead'] = 'S\'està comprovant el vostre entorn';
+$string['environmentrecommendcustomcheck'] = 'si aquesta prova falla, això indica un problema en potència';
 $string['environmentrecommendinstall'] = 'es recomana instal·lar/habilitar';
 $string['environmentrecommendversion'] = 'esteu executant la versió $a->current i es recomana la $a->needed';
+$string['environmentrequirecustomcheck'] = 'cal passar aquesta prova';
 $string['environmentrequireinstall'] = 'es requereix instal·lar/habilitar';
 $string['environmentrequireversion'] = 'esteu executant la versió $a->current i es requereix la $a->needed';
 $string['environmentsub'] = 'S\'està comprovant si els diferents components del vostre sistema satisfan els requeriments';
@@ -193,11 +195,14 @@ $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o poste
 <p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
+$string['qtyperqpwillberemoved'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. No estàveu utilitzant aquest tipus de pregunta, de manera que no hauríeu d\'experimentar cap problema.';
+$string['qtyperqpwillberemovedanyway'] = 'Durant l\'actualització, el tipus de pregunta RPQ se suprimirà. Teniu algunes preguntes RQP en la base de dades que deixaran de funcionar si no reinstal·leu el codi de http://moodle.org/mod/data/view.php?d=13&amp;rid=797 abans de prosseguir l\'actualització.';
 $string['remotedownloadnotallowed'] = 'El vostre servidor no permet baixar components ((allow_url_fopen inhabilitat).<br /><br />Baixeu manualment el fitxer <a href=\"$a->url\">$a->url</a>, copieu en la ubicació \"$a->dest\" del vostre servidor i descomprimiu-lo allí.';
 $string['report'] = 'Informe';
 $string['restricted'] = 'Restringit';
 $string['safemode'] = 'Mode segur';
 $string['safemodeerror'] = 'Moodle pot tenir problemes amb el mode segur activat';
+$string['serverchecks'] = 'Proves del servidor';
 $string['sessionautostart'] = 'Autoinici de sessió';
 $string['sessionautostarterror'] = 'Hauria d\'estar desactivat';
 $string['skipdbencodingtest'] = 'Omet la prova de codificació de la base de dades';
