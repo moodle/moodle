@@ -1678,7 +1678,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                 }
             }
         } else {
-            error(get_strin('nopasswordchangeforced', 'auth'));
+            error(get_string('nopasswordchangeforced', 'auth'));
         }
     }
 
