@@ -163,6 +163,25 @@ $string['editqcats'] = 'Edit questions categories';
 $string['editquestions'] = 'Edit questions';
 $string['editquiz'] = 'Edit Quiz';
 $string['editquizquestions'] = 'Edit Quiz Questions';
+$string['emailconfirmbody'] = 'Dear $a->username,
+
+Thank you for submitting your answers to
+\'$a->quizname\'
+in course \'$a->coursename\'
+at $a->submissiontime.
+
+This email confirms that we have safely received your answers.
+
+You can access this quiz at $a->quizurl.';
+$string['emailconfirmsubject'] = 'Quiz submission confirmation: $a->quizname';
+$string['emailnotifybody'] = 'Dear $a->username,
+
+$a->studentname has completed the quiz
+\'$a->quizname\' ($a->quizurl)
+in course \'$a->coursename\'
+
+You can review this attempt at $a->quizreviewurl.';
+$string['emailnotifysubject'] = '$a->studentname has completed quiz $a->quizname';
 $string['errorinquestion'] = 'Error in question';
 $string['errormissingquestion'] = 'Error: The system is missing the question with id $a';
 $string['errornotnumbers'] = 'Error - answers must be numeric';
@@ -380,6 +399,8 @@ $string['questiontype'] = 'Question type $a';
 $string['questiontypesetupoptions'] = 'Setup options for question types:';
 $string['quiz:attempt'] = 'Attempt quizzes';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
+$string['quiz:emailconfirmsubmission'] = 'Get email confirmation when submitting';
+$string['quiz:emailnotifysubmission'] = 'Get email notification of submissions';
 $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:ignoretimelimits'] = 'Ignores time limit on quizzes';
 $string['quiz:manage'] = 'Manage quizzes';

@@ -93,6 +93,22 @@ $mod_quiz_capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array()
+    ),
+
+    // Receive email confirmation of own quiz submission
+    'mod/quiz:emailconfirmsubmission' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array()
+    ),
+
+    // Receive email notification of other peoples quiz submissions
+    'mod/quiz:emailnotifysubmission' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array()
     )
 );
 

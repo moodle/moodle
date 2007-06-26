@@ -363,6 +363,11 @@
         }
     }
 
+/// Send emails to those who have the capability set
+    if ($finishattempt && !$attempt->preview) {
+        quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm);
+    }
+
 /// Check access to quiz page
 
     // check the quiz times

@@ -765,4 +765,164 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
     }
     return array($someoptions, $alloptions);
 }
+
+/// FUNCTIONS FOR SENDING NOTIFICATION EMAILS ///////////////////////////////
+
+/**
+ * Sends confirmation email to the student taking the course
+ *
+ * @param stdClass $a associative array of replaceable fields for the templates
+ *
+ * @return bool|string result of email_to_user()
+ */
+function quiz_send_confirmation($a) {
+
+    global $USER;
+
+    // recipient is self
+    $a->useridnumber = $USER->idnumber;
+    $a->username = fullname($USER);
+    $a->userusername = $USER->username;
+
+    // fetch the subject and body from strings
+    $subject = get_string('emailconfirmsubject', 'quiz', $a);
+    $body = get_string('emailconfirmbody', 'quiz', $a);
+
+    // send email and analyse result
+    return email_to_user($USER, get_admin(), $subject, $body);
+}
+
+/**
+ * Sends notification email to the interested parties that assign the role capability
+ *
+ * @param object $recipient user object of the intended recipient
+ * @param stdClass $a associative array of replaceable fields for the templates
+ *
+ * @return bool|string result of email_to_user()
+ */
+function quiz_send_notification($recipient, $a) {
+
+    global $USER;
+
+    // recipient info for template
+    $a->username = fullname($recipient);
+    $a->userusername = $recipient->username;
+    $a->userusername = $recipient->username;
+
+    // fetch the subject and body from strings
+    $subject = get_string('emailnotifysubject', 'quiz', $a);
+    $body = get_string('emailnotifybody', 'quiz', $a);
+
+    // send email and analyse result
+    return email_to_user($recipient, $USER, $subject, $body);
+}
+
+/**
+ * Takes a bunch of information to format into an email and send
+ * to the specified recipient.
+ *
+ * @param object $course the course
+ * @param object $quiz the quiz
+ * @param object $attempt this attempt just finished
+ * @param object $context the quiz context
+ * @param object $cm the coursemodule for this quiz
+ *
+ * @return int number of emails sent
+ */
+function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) {
+    global $CFG, $USER;
+    // we will count goods and bads for error logging
+    $emailresult = array('good' => 0, 'block' => 0, 'fail' => 0);
+
+    // do nothing if required objects not present
+    if (empty($course) or empty($quiz) or empty($attempt) or empty($context)) {
+        debugging('quiz_send_notification_emails: Email(s) not sent due to program error.',
+                DEBUG_DEVELOPER);
+        return $emailresult['fail'];
+    }
+
+    // check for confirmation required
+    $sendconfirm = false;
+    $notifyexcludeusers = '';
+    if (has_capability('mod/quiz:emailconfirmsubmission', $context, NULL, false)) {
+        // exclude from notify emails later
+        $notifyexcludeusers = $USER->id;
+        // send the email
+        $sendconfirm = true;
+    }
+
+    // check for notifications required
+    $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.email, u.emailstop, u.lang, u.timezone, u.mailformat, u.maildisplay';
+    $userstonotify = get_users_by_capability($context, 'mod/quiz:emailnotifysubmission',
+            $notifyfields, '', '', '', groups_m_get_groups_for_user($cm, $USER->id),
+            $notifyexcludeusers, false, false, true);
+
+    // if something to send, then build $a
+    if (! empty($userstonotify) or $sendconfirm) {
+        $a = new stdClass;
+        // course info
+        $a->coursename = $course->fullname;
+        $a->courseshortname = $course->shortname;
+        // quiz info
+        $a->quizname = $quiz->name;
+        $a->quizreportlink = '<a href="report.php?q=' . $quiz->id . '">' . format_string($quiz->name) . ' report</a>';
+        $a->quizreporturl = $CFG->wwwroot . '/mod/quiz/report.php?q=' . $quiz->id;
+        $a->quizreviewlink = '<a href="review.php?attempt=' . $attempt->id . '">' . format_string($quiz->name) . ' review</a>';
+        $a->quizreviewurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
+        $a->quizlink = '<a href="view.php?q=' . $quiz->id . '">' . format_string($quiz->name) . '</a>';
+        $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id;
+        // attempt info
+        $a->attemptsubmissiontime = userdate($attempt->timefinish);
+        $a->attempttimetaken = $attempt->timefinish - $attempt->timestart;
+        // student who sat the quiz info
+        $a->studentidnumber = $USER->idnumber;
+        $a->studentname = fullname($USER);
+        $a->studentusername = $USER->username;
+    }
+
+    // send confirmation if required
+    if ($sendconfirm) {
+        // send the email and update stats
+        switch (quiz_send_confirmation($a)) {
+            case true:
+                $emailresult['good']++;
+                break;
+            case false:
+                $emailresult['fail']++;
+                break;
+            case 'emailstop':
+                $emailresult['block']++;
+                break;
+        }
+    }
+
+    // send notifications if required
+    if (!empty($userstonotify)) {
+        // loop through recipients and send an email to each and update stats
+        foreach ($userstonotify as $recipient) {
+            switch (quiz_send_notification($recipient, $a)) {
+                case true:
+                    $emailresult['good']++;
+                    break;
+                case false:
+                    $emailresult['fail']++;
+                    break;
+                case 'emailstop':
+                    $emailresult['block']++;
+                    break;
+            }
+        }
+    }
+
+    // log errors sending emails if any
+    if (! empty($emailresult['fail'])) {
+        debugging('quiz_send_notification_emails:: '.$emailresult['fail'].' email(s) failed to be sent.', DEBUG_DEVELOPER);
+    }
+    if (! empty($emailresult['block'])) {
+        debugging('quiz_send_notification_emails:: '.$emailresult['block'].' email(s) were blocked by the user.', DEBUG_DEVELOPER);
+    }
+
+    // return the number of successfully sent emails
+    return $emailresult['good'];
+}
 ?>
