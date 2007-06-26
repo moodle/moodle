@@ -197,6 +197,7 @@ define("HOTPOT_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 function hotpot_add_instance(&$hotpot) {
     if (hotpot_set_form_values($hotpot)) {
         if ($result = insert_record('hotpot', $hotpot)) {
+            $hotpot->id = $result;
             hotpot_update_events($hotpot);
         }
     } else {
