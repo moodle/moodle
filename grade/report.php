@@ -28,7 +28,7 @@
 
     $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
-
+    $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 /// Make sure they can even access this course
 
@@ -84,11 +84,40 @@
     $crumbs[] = array('name' => $strgrades, 'link' => '', 'type' => 'misc');
     $crumbs[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($crumbs);    
+    
+    // build buttons here
+    /// setting up editting mode 
+    if (!isset($USER->gradeediting)) {
+        $USER->gradeediting = 0;
+    }
+
+    if (($edit == 1) and confirm_sesskey()) {
+        $USER->gradeediting = 1;
+    } else if (($edit == 0) and confirm_sesskey()) {
+        $USER->gradeediting = 0;
+    }
+
+    // params for the turn editting on button
+    $options['id'] = $courseid;
+    $options['report'] = $report;
+    
+    if ($USER->gradeediting) {
+        $options['edit'] = 0;
+        $string = get_string('turneditingoff');
+    } else {
+        $options['edit'] = 1;
+        $string = get_string('turneditingon'); 
+    }
+
+    $options['sesskey'] = sesskey();
+    $link = 'report.php';
+
+    // turn eidtting on and off buttons
+    $buttons = print_single_button($link, $options, $string, 'get', '_self', true);
     
     print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation, 
-                        '', '', true, '', navmenu($course));
-
+                        '', '', true, $buttons, navmenu($course));
 
 /// Print the report selector at the top if there is more than one report
 

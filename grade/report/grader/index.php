@@ -5,12 +5,47 @@
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
+/// processing posted grades here
+
+if ($data = data_submitted()) {
+    foreach ($data as $varname => $postedgrade) {
+        // skip, not a grade
+        if (!strstr($varname, 'grade')) {
+            continue;  
+        }
+        // clean
+        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);
+    
+        $gradeinfo = explode("_", $varname);
+    
+        $grade = new object();
+        $grade->userid = $gradeinfo[1];
+        $gradeitemid = $gradeinfo[2];
+        $grade->rawgrade = $postedgrade;
+    
+        // put into grades array  
+        $grades[$gradeitemid][] = $grade;  
+    }
+}
+
+// now we update the raw grade for each posted grades
+if (!empty($grades)) {
+    foreach ($grades as $gradeitemid => $itemgrades) {
+        foreach ($itemgrades as $gradedata) {
+            echo "gradeitemid is $gradeitemid";
+            $gradeitem = new grade_item(array('id'=>$gradeitemid), true);
+            $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade);  
+        }
+    }
+}
+
 // get the params
 $courseid = required_param('id', PARAM_INT);
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 $page = optional_param('page', 0, PARAM_INT);
 $sortitemid = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
 $report = optional_param('report', 0, PARAM_ALPHANUM);
+$perpage = optional_param('perpage', 3, PARAM_INT); // number of users on a page
 
 // setting the sort order, this depends on last state
 // all this should be in the new table class that we might need to use
@@ -39,17 +74,23 @@ if ($sortitemid) {
     $SESSION->gradeuserreport->sortitemid = $sortitemid;
 } else {
     // not requesting sort, use last setting (for paging)
-    $sortitemid = $SESSION->gradeuserreport->sortitemid;
-    $sortorder = $SESSION->gradeuserreport->sort;
+    
+    if (isset($SESSION->gradeuserreport->sortitemid)) {
+        $sortitemid = $SESSION->gradeuserreport->sortitemid;
+    }
+    if (isset($SESSION->gradeuserreport->sort)) {
+        $sortorder = $SESSION->gradeuserreport->sort;
+    } else {
+        $sortorder = 'ASC';  
+    }
 }
 
 /// end of setting sort order code
 
+
 // first make sure we have all final grades
 // TODO: check that no grade_item has needsupdate set
 grade_update_final_grades($courseid);
-
-$perpage = 3;
 
 // roles to be displaye in the gradebook
 $gradebookroles = $CFG->gradebookroles;
@@ -124,23 +165,22 @@ print_paging_bar($numusers, $page, $perpage, $pbarurl);
 if ($gtree = new grade_tree($courseid, false)) {
 
     // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
-     $tree = $gtree->tree_filled;
+    $tree = $gtree->tree_filled;
 
     if (empty($gtree->tree_filled)) {
         debugging("The tree_filled array wasn't initialised, grade_tree could not display the grades correctly.");
-        return false;
     }
         
         // Fetch array of students enroled in this course
     if (!$context = get_context_instance(CONTEXT_COURSE, $gtree->courseid)) {
-        return false;  
+        return false;
     }        
     //$users = get_role_users(@implode(',', $CFG->gradebookroles), $context);
 
     $topcathtml = '<tr><td class="filler">&nbsp;</td>';
     $cathtml    = '<tr><td class="filler">&nbsp;</td>';
-    
-    if ($sortitemid == 'lastname') {
+
+    if ($sortitemid === 'lastname') {
         if ($sortorder == 'ASC') {
             $lastarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
         } else {
@@ -150,7 +190,7 @@ if ($gtree = new grade_tree($courseid, false)) {
         $lastarrow = '';  
     }
     
-    if ($sortitemid == 'firstname') {
+    if ($sortitemid === 'firstname') {
         if ($sortorder == 'ASC') {
             $firstarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
         } else {
@@ -212,14 +252,56 @@ if ($gtree = new grade_tree($courseid, false)) {
     foreach ($users as $userid => $user) {
         $studentshtml .= '<tr><th>' . $user->firstname . ' ' . $user->lastname . '</th>';
         foreach ($items as $item) {
-            // finalgrades[$userid][$itemid] could be null because of the outer join
-            // in this case it's different than a 0
+            
+            
+            $studentshtml .= '<td>';
+            
             if (isset($finalgrades[$userid][$item['object']->id])) {
-                $studentshtml .= '<td>' . $finalgrades[$userid][$item['object']->id] . '</td>' . "\n"; 
+                $gradeval = $finalgrades[$userid][$item['object']->id];
             } else {
-                $studentshtml .= '<td>-</td>' . "\n";
+                $gradeval = '-';  
             }
-        } 
+              
+            // if in editting mode, we need to print either a text box
+            // or a drop down (for scales)
+            if ($USER->gradeediting) {
+                if ($item['object']->scaleid) {
+                    if ($scale = get_record('scale', 'id', $item['object']->scaleid)) {
+                        $scales = explode(",", $scale->scale);
+                        // reindex because scale is off 1
+                        $i = 0;
+                        foreach ($scales as $scaleoption) {
+                            $i++;
+                            $scaleopt[$i] = $scaleoption;
+                        }
+                        $studentshtml .= choose_from_menu ($scaleopt, 'grade_'.$userid.'_'.$item['object']->id, $gradeval, get_string('nograde'), '', -1, true);
+                    }
+                } else {
+                    $studentshtml .= '<input type="text" name="grade_'.$userid.'_'.$item['object']->id.'" value="'.$gradeval.'"/>';
+                }
+            } else {
+                // finalgrades[$userid][$itemid] could be null because of the outer join
+                // in this case it's different than a 0  
+                if ($item['object']->scaleid) {
+                    if ($scale = get_record('scale', 'id', $item['object']->scaleid)) {
+                        $scales = explode(",", $scale->scale);
+                        
+                        // invalid grade if gradeval < 1
+                        if ((int) $gradeval < 1) {
+                            $studentshtml .= '-';  
+                        } else {
+                            $studentshtml .= $scales[$gradeval-1];
+                        }
+                    } else {
+                        // no such scale, throw error?  
+                    }                        
+                } else {
+                    $studentshtml .=  $gradeval;
+                }
+            }
+            
+            $studentshtml .=  '</td>' . "\n";
+        }
         $studentshtml .= '</tr>';
     }
         
@@ -230,8 +312,24 @@ if ($gtree = new grade_tree($courseid, false)) {
     $reporthtml = "<table style=\"text-align: center\" border=\"1\">$topcathtml$cathtml$itemhtml";
     $reporthtml .= $studentshtml; 
     $reporthtml .= "</table>";
+    
+    // print submit button
+    if ($USER->gradeediting) {
+        echo '<form action="report.php" method="POST">';
+        echo '<div>';
+        echo '<input type="hidden" value="'.$courseid.'" name="id" />';
+        echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
+        echo '<input type="hidden" value="grader" name="report"/>';
+    }    
 
     echo $reporthtml;
+    
+    // print submit button
+    if ($USER->gradeediting) {
+        echo '<input type="submit" value="'.get_string('update').'" />';
+        echo '</div></form>';
+    }
+    
 }
 
 ?>

@@ -9,7 +9,7 @@ include_once($CFG->libdir.'/gradelib.php');
 $courseid = required_param('id', PARAM_INT);
 if (!$userid = optional_param('user', 0, PARAM_INT)) {
     // current user
-    $userid = $USER->id;  
+    $userid = $USER->id;
 }
 
 
@@ -22,7 +22,7 @@ if ($gradetree = new grade_tree($courseid)) {
     * Table has 6 columns 
     *| pic  | itemname/description | grade (grade_final) | percentage | rank | feedback |
     */
-    $baseurl = $CFG->wwwroot.'/grade/report?id='.$id.'&amp;userid='.$userid;
+    $baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
  
     // setting up table headers
     $tablecolumns = array('itempic', 'itemname', 'grade', 'percentage', 'rank', 'feedback');
@@ -88,6 +88,7 @@ if ($gradetree = new grade_tree($courseid)) {
         if ($gradeitem->gradetype == 1) {
             // processing numeric grade
             if ($grade_grades->finalgrade) {
+                $percentage = (($grade_grades->finalgrade / $gradeitem->grademax) * 100).'%';
             } else {
                 $percentage = '-';
             }

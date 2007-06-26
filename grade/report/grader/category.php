@@ -64,7 +64,7 @@ $crumbs[] = array('name' => $strcategoriesedit, 'link' => '', 'type' => 'misc');
 
 $navigation = build_navigation($crumbs);
 
-print_header_simple($strgrades.': '.$strgraderreport.': '.$strcategoriesedit, $navigation, 
+zprint_header_simple($strgrades.': '.$strgraderreport.': '.$strcategoriesedit, $navigation, 
                     '', '', true, '', navmenu($course));
 
 $tree = new grade_tree($param->courseid);
