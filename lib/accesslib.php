@@ -3579,29 +3579,43 @@ function get_default_course_role($course) {
  * @param $sort - the sort order
  * @param $limitfrom - number of records to skip (offset)
  * @param $limitnum - number of records to fetch
- * @param $groups - single group or array of groups - group(s) user is in
+ * @param $groups - single group or array of groups - only return
+ *               users who are in one of these group(s).
  * @param $exceptions - list of users to exclude
  * @param view - set to true when roles are pulled for display only
  *               this is so that we can filter roles with no visible 
  *               assignment, for example, you might want to "hide" all
  *               course creators when browsing the course participants
  *               list.
+ * @param boolean $useviewallgroups if $groups is set the return users who 
+ *               have capability both $capability and moodle/site:accessallgroups
+ *               in this context, as well as users who have $capability and who are
+ *               in $groups.
  */
 function get_users_by_capability($context, $capability, $fields='', $sort='',
-                                 $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true, $view=false) {
+        $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true,
+        $view=false, $useviewallgroups=false) {
     global $CFG;
 
 /// Sorting out groups
     if ($groups) {
-        $groupjoin = 'INNER JOIN '.$CFG->prefix.'groups_members gm ON gm.userid = ra.userid';
-
         if (is_array($groups)) {
-            $groupsql = 'AND gm.groupid IN ('.implode(',', $groups).')';
+            $grouptest = 'gm.groupid IN (' . implode(',', $groups) . ')';
         } else {
-            $groupsql = 'AND gm.groupid = '.$groups;
+            $grouptest = 'gm.groupid = ' . $groups;
+        }
+        $grouptest = 'ra.userid IN (SELECT userid FROM ' .
+            $CFG->prefix . 'groups_members gm WHERE ' . $grouptest . ')';
+        
+        if ($useviewallgroups) {
+            $viewallgroupsusers = get_users_by_capability($context,
+                    'moodle/site:accessallgroups', $fields='id, id', '', '', '', '', $exceptions);
+            $groupsql = ' AND (' . $grouptest . ' OR ra.userid IN (' . 
+                    implode(',', array_keys($viewallgroupsusers)) . '))';
+        } else {  
+            $groupsql = ' AND ' . $grouptest;
         }
     } else {
-        $groupjoin = '';
         $groupsql = '';
     }
 
@@ -3665,8 +3679,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     $from   = " FROM {$CFG->prefix}user u
                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                 INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
-                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON (ul.userid = u.id $coursesql1)
-                $groupjoin";
+                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul ON (ul.userid = u.id $coursesql1)";
     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
                   AND u.deleted = 0
                   AND ra.roleid in $roleids
