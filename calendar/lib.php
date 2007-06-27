@@ -202,7 +202,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Paddding (the first week may have blank days in the beginning)
     for($i = $display->minwday; $i < $startwday; ++$i) {
-        $content .= '<td>&nbsp;</td>'."\n";
+        $content .= '<td class="day">&nbsp;</td>'."\n";
     }
 
     // Now display all the calendar
@@ -332,7 +332,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Paddding (the last week may have blank days at the end)
     for($i = $dayweek; $i <= $display->maxwday; ++$i) {
-        $content .= '<td>&nbsp;</td>';
+        $content .= '<td class="day">&nbsp;</td>';
     }
     $content .= '</tr>'; // Last row ends
 
