@@ -683,6 +683,7 @@ function grade_oldgradebook_upgrade($courseid) {
  * with the icons needed for the grader report.
  *
  * @param object $object
+ * @param object $tree (A complete grade_tree object)
  * @return string HTML
  */
 function grade_get_icons($object, $tree) {
@@ -701,13 +702,15 @@ function grade_get_icons($object, $tree) {
     $strlock           = get_string("lock", 'grades');
     $strunlock         = get_string("unlock", 'grades');
 
-    $html = '<div class="grade_icons">img</div>';
+    $html = '<div class="grade_icons">';
     
-    // Edit icon
-    $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
-          . "&amp;action=edit$tree->commonvars\">\n";
-    $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-          .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+    // Edit icon (except for grade_grades)
+    if (get_class($object) != 'grade_grades') {
+        $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
+              . "&amp;action=edit$tree->commonvars\">\n";
+        $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+              .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+    }
 
     // Hide/Show icon
     $hide_show = 'hide';
@@ -715,7 +718,13 @@ function grade_get_icons($object, $tree) {
         $hide_show = 'show';
     }
     
-    $html .= '<a href="report.php?report=grader&amp;target=' . $object->get_sortorder()
+    if (get_class($object) != 'grade_grades') {
+        $identifier = $object->get_sortorder();
+    } else {
+        $identifier = 'grade_grades_' . $object->id;
+    }
+
+    $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
           . "&amp;action=$hide_show$tree->commonvars\">\n";
     $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
           .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
@@ -725,14 +734,17 @@ function grade_get_icons($object, $tree) {
     if ($object->is_locked()) {
         $lock_unlock = 'unlock';
     }
+    
     // Print lock/unlock icon
-    $html .= '<a href="report.php?report=grader&amp;target=' . $object->get_sortorder()
+    $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
           . "&amp;action=$lock_unlock$tree->commonvars\">\n";
     $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
           .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
 
+    if ($grade) {
+        
+    }
 
-    // Lock/Unlock icon
-    return $html;
+    return $html . '</div>';
 }
 ?>

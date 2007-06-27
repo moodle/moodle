@@ -200,9 +200,10 @@ if (empty($users)) {
 
 // phase 2 sql, we supply the userids in this query, and get all the grades
 // pulls out all the grades, this does not need to worry about paging
-$sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade 
-        FROM  {$CFG->prefix}grade_grades g, 
-              {$CFG->prefix}grade_items gi                 
+$sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, gt.feedback 
+        FROM  {$CFG->prefix}grade_items gi, 
+              {$CFG->prefix}grade_grades g
+        LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.itemid = gt.itemid AND g.userid = gt.userid
         WHERE g.itemid = gi.id
               AND gi.courseid = $courseid $userselect";
 
@@ -213,7 +214,7 @@ $finalgrades = array();
 
 if ($grades = get_records_sql($sql)) {
     foreach ($grades as $grade) {
-        $finalgrades[$grade->userid][$grade->itemid] = $grade->finalgrade;
+        $finalgrades[$grade->userid][$grade->itemid] = $grade;
     } 
 }
 
@@ -250,9 +251,9 @@ $cathtml    = '<tr><td class="filler">&nbsp;</td>';
 
 if ($sortitemid === 'lastname') {
     if ($sortorder == 'ASC') {
-        $lastarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
+        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
     } else {
-        $lastarrow = ' <img src="http://yu.moodle.com/dev/pix/t/down.gif"/> ';                      
+        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
     }
 } else {
     $lastarrow = '';  
@@ -260,9 +261,9 @@ if ($sortitemid === 'lastname') {
 
 if ($sortitemid === 'firstname') {
     if ($sortorder == 'ASC') {
-        $firstarrow = ' <img src="http://yu.moodle.com/dev/pix/t/up.gif"/> ';
+        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
     } else {
-        $firstarrow = ' <img src="http://yu.moodle.com/dev/pix/t/down.gif"/> ';                      
+        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
     }
 } else {
     $firstarrow = '';  
@@ -285,29 +286,46 @@ foreach ($tree as $topcat) {
             
             if ($item['object']->id == $sortitemid) {
                 if ($sortorder == 'ASC') {
-                    $arrow = ' <img src="pix/t/up.gif"/> ';
+                    $arrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
                 } else {
-                    $arrow = ' <img src="pix/t/down.gif"/> ';                      
+                    $arrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
                 }
             } else {
                 $arrow = '';
-            }   
-            $itemhtml .= '<th><a href="'.$baseurl.'&amp;sortitemid='
+            }  
+            
+            $dimmed = '';
+            if ($item['object']->is_hidden()) {
+                $dimmed = 'class="dimmed_text"';
+            }
+
+            $itemhtml .= '<th '.$dimmed.'><a href="'.$baseurl.'&amp;sortitemid='
                       . $item['object']->id .'">'. $item['object']->itemname 
                       . '</a>' . $arrow; 
             
-            // Print icons            
-            $itemhtml .= grade_get_icons($item['object'], $gtree) . '</th>';
+            // Print icons if grade editing is on 
+            if ($USER->gradeediting) {
+                $itemhtml .= grade_get_icons($item['object'], $gtree) . '</th>';
+            }
+
             $items[] = $item;
         }
             
         if ($cat['object'] == 'filler') {
             $cathtml .= '<td class="subfiller">&nbsp;</td>';
         } else {
+            $dimmed = '';
+            if ($cat['object']->is_hidden()) {
+                $dimmed = 'class="dimmed_text"';
+            }
+            
             $cat['object']->load_grade_item();
-            $cathtml .= '<td colspan="' . $catitemcount . '">' . $cat['object']->fullname;
-            // Print icons
-            $cathtml .= grade_get_icons($cat['object'], $gtree) . '</td>';
+            $cathtml .= '<td '.$dimmed.' colspan="' . $catitemcount . '">' . $cat['object']->fullname;
+
+            // Print icons if grade editing is on 
+            if ($USER->gradeediting) {
+                $cathtml .= grade_get_icons($cat['object'], $gtree) . '</td>';
+            }
         }
     }
 
@@ -318,9 +336,17 @@ foreach ($tree as $topcat) {
         }
         $topcathtml .= '<td ' . $colspan . 'class="topfiller">&nbsp;</td>';
     } else {
-        $topcathtml .= '<th colspan="' . $itemcount . '">' . $topcat['object']->fullname;
-        // Print icons
-        $topcathtml .= grade_get_icons($topcat['object'], $gtree) . '</th>';
+        $dimmed = '';
+        if ($topcat['object']->is_hidden()) {
+            $dimmed = 'class="dimmed_text"';
+        }
+        
+        $topcathtml .= '<th '.$dimmed.' colspan="' . $itemcount . '">' . $topcat['object']->fullname;
+        
+        // Print icons if grade editing is on 
+        if ($USER->gradeediting) {
+            $topcathtml .= grade_get_icons($topcat['object'], $gtree) . '</th>';
+        }
     }
 }
     
@@ -334,14 +360,19 @@ foreach ($users as $userid => $user) {
         $studentshtml .= '<td>';
         
         if (isset($finalgrades[$userid][$item['object']->id])) {
-            $gradeval = $finalgrades[$userid][$item['object']->id];
+            $gradeval = $finalgrades[$userid][$item['object']->id]->finalgrade;
+            $grade_grades = new grade_grades($finalgrades[$userid][$item['object']->id], false);
         } else {
             $gradeval = '-';  
+            $grade_grades = new grade_grades(array('userid' => $userid, 'itemid' => $item['object']->id), false);
         }
           
         // if in editting mode, we need to print either a text box
         // or a drop down (for scales)
         if ($USER->gradeediting) {
+            // We need to retrieve each grade_grade object from DB in order to 
+            // know if they are hidden/locked
+
             if ($item['object']->scaleid) {
                 if ($scale = get_record('scale', 'id', $item['object']->scaleid)) {
                     $scales = explode(",", $scale->scale);
@@ -355,6 +386,11 @@ foreach ($users as $userid => $user) {
                 }
             } else {
                 $studentshtml .= '<input type="text" name="grade_'.$userid.'_'.$item['object']->id.'" value="'.$gradeval.'"/>';
+            }
+            
+            // Do not show any icons if no grade (no record in DB to match)
+            if (!empty($grade_grades->id)) {
+                $studentshtml .= grade_get_icons($grade_grades, $gtree);
             }
         } else {
             // finalgrades[$userid][$itemid] could be null because of the outer join
@@ -392,7 +428,7 @@ $reporthtml .= "</table>";
 
 // print submit button
 if ($USER->gradeediting) {
-    echo '<form action="report.php" method="POST">';
+    echo '<form action="report.php" method="post">';
     echo '<div>';
     echo '<input type="hidden" value="'.$courseid.'" name="id" />';
     echo '<input type="hidden" value="'.sesskey().'" name="sesskey" />';
