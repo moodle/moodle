@@ -15,9 +15,9 @@ if ($data = data_submitted()) {
         }
         // clean
         $postedgrade = clean_param($postedgrade, PARAM_NUMBER);
-    
+
         $gradeinfo = explode("_", $varname);
-    
+
         $grade = new object();
         $grade->userid = $gradeinfo[1];
         $gradeitemid = $gradeinfo[2];
@@ -32,7 +32,6 @@ if ($data = data_submitted()) {
 if (!empty($grades)) {
     foreach ($grades as $gradeitemid => $itemgrades) {
         foreach ($itemgrades as $gradedata) {
-            echo "gradeitemid is $gradeitemid";
             $gradeitem = new grade_item(array('id'=>$gradeitemid), true);
             $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade);  
         }
@@ -297,7 +296,7 @@ foreach ($tree as $topcat) {
                       . $item['object']->id .'">'. $item['object']->itemname 
                       . '</a>' . $arrow; 
             
-            // Print icons
+            // Print icons            
             $itemhtml .= grade_get_icons($item['object'], $gtree) . '</th>';
             $items[] = $item;
         }

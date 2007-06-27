@@ -99,9 +99,9 @@ if ($gradetree = new grade_tree($courseid)) {
                 // processing scale grade
                 $scale = get_record('scale', 'id', $gradeitem->scaleid);
                 $scalevals = explode(",", $scale->scale);
-                $percentage = ($grade_grades->finalgrade -1) / count($scalevals);        
-                $gradesum += count($scalevals);
-                $gradetotal += $grade_grades->finalgrade;
+                $percentage = (($grade_grades->finalgrade) / count($scalevals) * 100).'%';      
+                $gradesum += $grade_grades->finalgrade;
+                $gradetotal += count($scalevals);
             } else {
                 // text grade
                 $percentage = '-';  
@@ -118,7 +118,8 @@ if ($gradetree = new grade_tree($courseid)) {
             } else {
                 $data[] = '&nbsp;';  
             }
-            $table->add_data($data);  
+
+            $table->add_data($data);
         }
     
         $table->add_data(array('', get_string('total'), $gradesum.'/'.$gradetotal));
