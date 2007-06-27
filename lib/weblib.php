@@ -1843,6 +1843,10 @@ function clean_text($text, $format=FORMAT_MOODLE) {
 
             /// Clean up embedded scripts and , using kses
                 $text = cleanAttributes($text);
+
+            /// Again remove tags that are not allowed
+                $text = strip_tags($text, $ALLOWED_TAGS);
+
             }
 
         /// Remove potential script events - some extra protection for undiscovered bugs in our code
