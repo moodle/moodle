@@ -48,7 +48,7 @@ $perpage       = optional_param('perpage', 3, PARAM_INT); // number of users on 
 $action        = optional_param('action', 0, PARAM_ALPHA);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
-$target        = optional_param('target', 0, PARAM_INT);
+$target        = optional_param('target', 0, PARAM_ALPHANUM);
 
 // Grab the grade_tree for this course
 $gtree = new grade_tree($courseid, false);
@@ -95,7 +95,17 @@ if ($sortitemid) {
 
 // Perform actions on categories, items and grades
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
-    $element = $gtree->locate_element($target);
+
+    // If targetting a grade, create a pseudo-element
+    if (preg_match('/^grade([0-9]*)/', $target, $matches)) {
+        $grade_grades_id = $matches[1];
+        $element = new stdClass();
+        $grade_grades = new grade_grades(array('id' => $grade_grades_id));
+        $element->element = array('object' => $grade_grades);
+    } else { 
+        $element = $gtree->locate_element($target);
+    }
+
     switch ($action) {
         case 'edit':
             break;

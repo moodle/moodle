@@ -721,7 +721,7 @@ function grade_get_icons($object, $tree) {
     if (get_class($object) != 'grade_grades') {
         $identifier = $object->get_sortorder();
     } else {
-        $identifier = 'grade_grades_' . $object->id;
+        $identifier = 'grade' . $object->id;
     }
 
     $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
