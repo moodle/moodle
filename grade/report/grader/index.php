@@ -5,6 +5,10 @@
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
+// Prepare language strings
+$strsortasc  = get_string('sortasc', 'grades');
+$strsortdesc = get_string('sortdesc', 'grades');
+
 /// processing posted grades here
 
 if ($data = data_submitted()) {
@@ -261,9 +265,9 @@ $cathtml    = '<tr><td class="filler">&nbsp;</td>';
 
 if ($sortitemid === 'lastname') {
     if ($sortorder == 'ASC') {
-        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
+        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
     } else {
-        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
+        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
     }
 } else {
     $lastarrow = '';  
@@ -271,9 +275,9 @@ if ($sortitemid === 'lastname') {
 
 if ($sortitemid === 'firstname') {
     if ($sortorder == 'ASC') {
-        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
+        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
     } else {
-        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
+        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
     }
 } else {
     $firstarrow = '';  
@@ -296,9 +300,9 @@ foreach ($tree as $topcat) {
             
             if ($item['object']->id == $sortitemid) {
                 if ($sortorder == 'ASC') {
-                    $arrow = ' <img src="'.$CFG->pixpath.'/t/up.gif"/> ';
+                    $arrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
                 } else {
-                    $arrow = ' <img src="'.$CFG->pixpath.'/t/down.gif"/> ';
+                    $arrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
                 }
             } else {
                 $arrow = '';
@@ -313,10 +317,8 @@ foreach ($tree as $topcat) {
                       . $item['object']->id .'">'. $item['object']->itemname 
                       . '</a>' . $arrow; 
             
-            // Print icons if grade editing is on 
-            if ($USER->gradeediting) {
-                $itemhtml .= grade_get_icons($item['object'], $gtree) . '</th>';
-            }
+            // Print icons
+            $itemhtml .= grade_get_icons($item['object'], $gtree) . '</th>';
 
             $items[] = $item;
         }
@@ -332,10 +334,8 @@ foreach ($tree as $topcat) {
             $cat['object']->load_grade_item();
             $cathtml .= '<td '.$dimmed.' colspan="' . $catitemcount . '">' . $cat['object']->fullname;
 
-            // Print icons if grade editing is on 
-            if ($USER->gradeediting) {
-                $cathtml .= grade_get_icons($cat['object'], $gtree) . '</td>';
-            }
+            // Print icons 
+            $cathtml .= grade_get_icons($cat['object'], $gtree) . '</td>';
         }
     }
 
@@ -353,10 +353,8 @@ foreach ($tree as $topcat) {
         
         $topcathtml .= '<th '.$dimmed.' colspan="' . $itemcount . '">' . $topcat['object']->fullname;
         
-        // Print icons if grade editing is on 
-        if ($USER->gradeediting) {
-            $topcathtml .= grade_get_icons($topcat['object'], $gtree) . '</th>';
-        }
+        // Print icons
+        $topcathtml .= grade_get_icons($topcat['object'], $gtree) . '</th>';
     }
 }
     
@@ -372,6 +370,7 @@ foreach ($users as $userid => $user) {
         if (isset($finalgrades[$userid][$item['object']->id])) {
             $gradeval = $finalgrades[$userid][$item['object']->id]->finalgrade;
             $grade_grades = new grade_grades($finalgrades[$userid][$item['object']->id], false);
+            $grade_grades->feedback = $finalgrades[$userid][$item['object']->id]->feedback;
         } else {
             $gradeval = '-';  
             $grade_grades = new grade_grades(array('userid' => $userid, 'itemid' => $item['object']->id), false);
@@ -398,10 +397,6 @@ foreach ($users as $userid => $user) {
                 $studentshtml .= '<input type="text" name="grade_'.$userid.'_'.$item['object']->id.'" value="'.$gradeval.'"/>';
             }
             
-            // Do not show any icons if no grade (no record in DB to match)
-            if (!empty($grade_grades->id)) {
-                $studentshtml .= grade_get_icons($grade_grades, $gtree);
-            }
         } else {
             // finalgrades[$userid][$itemid] could be null because of the outer join
             // in this case it's different than a 0  
@@ -421,6 +416,11 @@ foreach ($users as $userid => $user) {
             } else {
                 $studentshtml .=  $gradeval;
             }
+        }
+        
+        // Do not show any icons if no grade (no record in DB to match)
+        if (!empty($grade_grades->id)) {
+            $studentshtml .= grade_get_icons($grade_grades, $gtree);
         }
         
         $studentshtml .=  '</td>' . "\n";

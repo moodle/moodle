@@ -688,8 +688,12 @@ function grade_oldgradebook_upgrade($courseid) {
  */
 function grade_get_icons($object, $tree) {
     global $CFG;
+    global $USER;
 
+    $straddfeedback    = get_string("addfeedback", 'grades');
     $stredit           = get_string("edit");
+    $streditfeedback   = get_string("editfeedback", 'grades');
+    $strfeedback       = get_string("feedback");
     $strmove           = get_string("move");
     $strmoveup         = get_string("moveup");
     $strmovedown       = get_string("movedown");
@@ -704,47 +708,80 @@ function grade_get_icons($object, $tree) {
 
     $html = '<div class="grade_icons">';
     
-    // Edit icon (except for grade_grades)
-    if (get_class($object) != 'grade_grades') {
-        $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
-              . "&amp;action=edit$tree->commonvars\">\n";
-        $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-              .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
-    }
+    // Icons shown when edit mode is on
+    if ($USER->gradeediting) {
+        // Edit icon (except for grade_grades)
+        if (get_class($object) != 'grade_grades') {
+            $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
+                  . "&amp;action=edit$tree->commonvars\">\n";
+            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+        }
 
-    // Hide/Show icon
-    $hide_show = 'hide';
-    if ($object->is_hidden()) {
-        $hide_show = 'show';
-    }
-    
-    if (get_class($object) != 'grade_grades') {
-        $identifier = $object->get_sortorder();
-    } else {
-        $identifier = 'grade' . $object->id;
-    }
-
-    $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
-          . "&amp;action=$hide_show$tree->commonvars\">\n";
-    $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
-          .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
-
-    // Prepare lock/unlock string
-    $lock_unlock = 'lock';
-    if ($object->is_locked()) {
-        $lock_unlock = 'unlock';
-    }
-    
-    // Print lock/unlock icon
-    $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
-          . "&amp;action=$lock_unlock$tree->commonvars\">\n";
-    $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
-          .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
-
-    if ($grade) {
+        // Prepare Hide/Show icon state
+        $hide_show = 'hide';
+        if ($object->is_hidden()) {
+            $hide_show = 'show';
+        }
         
+        // Setup object identifier and show feedback icon if applicable
+        if (get_class($object) != 'grade_grades') {
+            $identifier = $object->get_sortorder();
+        } else {
+            $identifier = 'grade' . $object->id;
+            
+            if ($USER->gradefeedback) {
+                // Display Edit/Add feedback icon
+                if (empty($object->feedback)) {
+                    $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
+                          . "&amp;action=addfeedback$tree->commonvars\">\n"; 
+                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
+                          . 'title="'.$straddfeedback.'" /></a>'. "\n";
+                } else {
+                    $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
+                          . "&amp;action=editfeedback$tree->commonvars\">\n"; 
+                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
+                          . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                      . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
+                } 
+            }
+        }
+
+        // Display Hide/Show icon
+        $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+              . "&amp;action=$hide_show$tree->commonvars\">\n";
+        $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+              .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+
+        // Prepare lock/unlock string
+        $lock_unlock = 'lock';
+        if ($object->is_locked()) {
+            $lock_unlock = 'unlock';
+        }
+        
+        // Print lock/unlock icon
+        $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+              . "&amp;action=$lock_unlock$tree->commonvars\">\n";
+        $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+              .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+
+        if ($grade) {
+            
+        }
+    } else {
+        if ($USER->gradefeedback) {
+            // Display Edit/Add feedback icon
+            if (!empty($object->feedback)) {
+                $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
+                      . "&amp;action=viewfeedback$tree->commonvars\">\n"; 
+                $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                      . $strfeedback.'\');" onmouseout="return nd();" ' 
+                      . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
+            }            
+        }
     }
 
     return $html . '</div>';
 }
+
 ?>

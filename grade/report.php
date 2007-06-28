@@ -29,6 +29,7 @@
     $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
+    $feedback = optional_param('feedback', -1, PARAM_BOOL); // sticky feedback mode
 
 /// Make sure they can even access this course
 
@@ -97,8 +98,19 @@
     } else if (($edit == 0) and confirm_sesskey()) {
         $USER->gradeediting = 0;
     }
+    
+    // Setup feedback mode
+    if (!isset($USER->gradefeedback)) {
+        $USER->gradefeedback = 0;
+    }
 
-    // params for the turn editting on button
+    if (($feedback == 1) and confirm_sesskey()) {
+        $USER->gradefeedback = 1;
+    } else if (($feedback == 0) and confirm_sesskey()) {
+        $USER->gradefeedback = 0;
+    }
+
+    // params for the turn editting on and feedback buttons
     $options['id'] = $courseid;
     $options['report'] = $report;
     
@@ -113,8 +125,20 @@
     $options['sesskey'] = sesskey();
     $link = 'report.php';
 
-    // turn eidtting on and off buttons
+    // turn editting on and off buttons
     $buttons = print_single_button($link, $options, $string, 'get', '_self', true);
+    unset($options['edit']);
+
+    if ($USER->gradefeedback) {
+        $options['feedback'] = 0;
+        $string = get_string('turnfeedbackoff', 'grades');
+    } else {
+        $options['feedback'] = 1;
+        $string = get_string('turnfeedbackon', 'grades'); 
+    }
+
+    // turn editting on and off buttons
+    $buttons .= print_single_button($link, $options, $string, 'get', '_self', true);
     
     print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation, 
                         '', '', true, $buttons, navmenu($course));
