@@ -4469,7 +4469,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
+        $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.'onclick="this.target=\''.$CFG->framename.'\';"'.
+                    ' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->cm.'">'.
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
