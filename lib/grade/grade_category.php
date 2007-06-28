@@ -560,14 +560,15 @@ class grade_category extends grade_object {
      * @return array
      */
     function fetch_course_tree($courseid, $include_grades=false, $include_category_items=false) {
+        $sortorder = 1;
         $course_category = grade_category::fetch_course_category($courseid);
-        $course_category->sortorder = 1;
+        $course_category->set_sortorder($sortorder);
+        $course_category->sortorder = $sortorder;
         $category_array = array('object'=>$course_category,
                                 'children'=>$course_category->get_children($include_grades, $include_category_items));
         if ($include_grades) {
             $category_array['finalgrades'] = $course_category->get_final();
         }
-        $sortorder = 1;
         return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
