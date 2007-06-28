@@ -12,12 +12,15 @@ if (!$userid = optional_param('user', 0, PARAM_INT)) {
     $userid = $USER->id;
 }
 
+$context = get_context_instance(CONTEXT_COURSE, $courseid);
+// find total number of participants
+$numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context));
 
 // construct the tree, this should handle sort order
 if ($gradetree = new grade_tree($courseid)) {
     $gradetotal = 0;
     $gradesum = 0;
-    
+
     /*
     * Table has 6 columns 
     *| pic  | itemname/description | grade (grade_final) | percentage | rank | feedback |
@@ -53,11 +56,19 @@ if ($gradetree = new grade_tree($courseid)) {
     if ($gradetree->tree_array) {
         // loop through grade items to extra data
         foreach ($gradetree->tree_array as $gradeitemobj) {
-
+            
             // grade item is the 'object' of the grade tree
             $gradeitem = $gradeitemobj['object'];        
+            
+            // grade categories are returned as part of the tree
+            // skip them
+            if (get_class($gradeitem) == 'grade_category') {
+                continue;  
+            }
+            
+            // row data to be inserted into table
             $data = array();
-
+            
             $params->itemid = $gradeitem->id;
             $params->userid = $userid;
             $grade_grades = new grade_grades($params);
@@ -81,8 +92,24 @@ if ($gradetree = new grade_tree($courseid)) {
                 $data[] = $gradeitem->itemname;
             }
 
-            /// prints the grade 
-            $data[] = $grade_grades->finalgrade;
+            /// prints the grade
+
+            if ($gradeitem->scaleid) {
+                // using scales
+                if ($scale = get_record('scale', 'id', $gradeitem->scaleid)) {
+                    $scales = explode(",", $scale->scale);
+                    // reindex because scale is off 1
+                    // invalid grade if gradeval < 1
+                    if ((int) $grade_grades->finalgrade < 1) {
+                        $data[] = '-';  
+                    } else {
+                        $data[] = $scales[$grade_grades->finalgrade-1];
+                    }
+                }
+            } else {
+                // normal grade, or text, just display
+                $data[] = $grade_grades->finalgrade;
+            }
 
             /// prints percentage
 
@@ -110,7 +137,19 @@ if ($gradetree = new grade_tree($courseid)) {
             $data[] = $percentage;
 
             /// prints rank
-            $data[] = '';
+            if ($grade_grades->finalgrade) {
+                /// find the number of users with a higher grade
+                $sql = "SELECT COUNT(DISTINCT(userid))
+                        FROM {$CFG->prefix}grade_grades
+                        WHERE finalgrade > $grade_grades->finalgrade
+                        AND itemid = $gradeitem->id";
+                $rank = count_records_sql($sql) + 1;
+            
+                $data[] = "$rank/$numusers";
+            } else {
+                // no grade, no rank
+                $data[] = "-";
+            }
 
             /// prints notes
             if (!empty($grade_text->feedback)) {
