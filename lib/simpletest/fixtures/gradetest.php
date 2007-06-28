@@ -79,7 +79,7 @@ class grade_test extends UnitTestCase {
         global $CFG;
         $CFG->old_prefix = $CFG->prefix;
         $CFG->prefix .= 'unittest_';
-        if (!$this->create_test_tables()) {
+        if (!$this->prepare_test_tables()) {
             die("Could not create all the test tables!");
         }
 
@@ -89,7 +89,7 @@ class grade_test extends UnitTestCase {
         }
     }
 
-    function create_test_tables() {
+    function prepare_test_tables() {
         $result = true;
 
         /// Define table grade_items to be created
@@ -132,6 +132,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for grade_items
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table grade_categories to be created
@@ -157,6 +160,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for grade_categories
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table grade_grades_text to be created
@@ -164,10 +170,9 @@ class grade_test extends UnitTestCase {
 
         if ($result && !table_exists($table)) {
 
-            /// Adding fields to table grade_grades_text
+        /// Adding fields to table grade_grades_text
             $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-            $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-            $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('gradeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('information', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
             $table->addFieldInfo('informationformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
@@ -176,14 +181,15 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
             $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null);
 
-            /// Adding keys to table grade_grades_text
+        /// Adding keys to table grade_grades_text
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-            $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-            $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
             $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
-            /// Launch create table for grade_grades_text
-            $result = $result && create_table($table, true, false);
+        /// Launch create table for grade_grades_text
+            $result = $result && create_table($table);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table grade_outcomes to be created
@@ -209,6 +215,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for grade_outcomes
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table grade_history to be created
@@ -235,6 +244,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for grade_history
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table grade_grades to be created
@@ -266,6 +278,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for grade_grades
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         /// Define table scale to be created
@@ -285,6 +300,9 @@ class grade_test extends UnitTestCase {
 
             /// Launch create table for scale
             $result = $result && create_table($table, true, false);
+
+        } else {
+            delete_records($table->name);
         }
 
         return $result;
@@ -296,11 +314,9 @@ class grade_test extends UnitTestCase {
      */
     function tearDown() {
         global $CFG;
+        // delete the contents of tables before the test run - the unit test might fail on fatal error and the data would not be deleted!
         foreach ($this->tables as $table) {
-            delete_records($table);
-            if (count($this->$table) > 0) {
-                unset ($this->$table);
-            }
+            unset($this->$table);
         }
         $CFG->prefix = $CFG->old_prefix;
     }
@@ -391,18 +407,24 @@ class grade_test extends UnitTestCase {
      * Load grade_category data into the database, and adds the corresponding objects to this class' variable.
      */
     function load_grade_categories() {
+
+        $course_category = grade_category::fetch_course_category($this->courseid);
+
         $grade_category = new stdClass();
 
         $grade_category->fullname    = 'unittestcategory1';
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
-        $grade_category->keephigh    = 100;
+        $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
+        $grade_category->parent      = $course_category->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
-        $grade_category->depth = 1;
+        $grade_category->depth = 2;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
+            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id;
+            update_record('grade_categories', $grade_category);
             $this->grade_categories[0] = $grade_category;
         }
 
@@ -411,14 +433,16 @@ class grade_test extends UnitTestCase {
         $grade_category->fullname    = 'unittestcategory2';
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
-        $grade_category->keephigh    = 100;
+        $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
-        $grade_category->depth = 2;
+        $grade_category->depth = 3;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
+            $grade_category->path = $this->grade_categories[0]->path.'/'.$grade_category->id;
+            update_record('grade_categories', $grade_category);
             $this->grade_categories[1] = $grade_category;
         }
 
@@ -427,14 +451,16 @@ class grade_test extends UnitTestCase {
         $grade_category->fullname    = 'unittestcategory3';
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
-        $grade_category->keephigh    = 100;
+        $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
-        $grade_category->depth = 2;
+        $grade_category->depth = 3;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
+            $grade_category->path = $this->grade_categories[0]->path.'/'.$grade_category->id;
+            update_record('grade_categories', $grade_category);
             $this->grade_categories[2] = $grade_category;
         }
 
@@ -445,13 +471,16 @@ class grade_test extends UnitTestCase {
         $grade_category->fullname    = 'level1category';
         $grade_category->courseid    = $this->courseid;
         $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
-        $grade_category->keephigh    = 100;
+        $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
+        $grade_category->parent      = $course_category->id;
         $grade_category->timecreated = mktime();
         $grade_category->timemodified = mktime();
-        $grade_category->depth = 1;
+        $grade_category->depth = 2;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
+            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id;
+            update_record('grade_categories', $grade_category);
             $this->grade_categories[3] = $grade_category;
         }
     }
@@ -460,6 +489,9 @@ class grade_test extends UnitTestCase {
      * Load grade_item data into the database, and adds the corresponding objects to this class' variable.
      */
     function load_grade_items() {
+
+        $course_category = grade_category::fetch_course_category($this->courseid);
+
         // id = 0
         $grade_item = new stdClass();
 
@@ -594,6 +626,7 @@ class grade_test extends UnitTestCase {
         $grade_item = new stdClass();
 
         $grade_item->courseid = $this->courseid;
+        $grade_item->categoryid = $course_category->id;
         $grade_item->itemname = 'unittestorphangradeitem1';
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
@@ -908,8 +941,7 @@ class grade_test extends UnitTestCase {
     function load_grade_grades_text() {
         $grade_grades_text = new stdClass();
 
-        $grade_grades_text->itemid = $this->grade_grades[0]->itemid;
-        $grade_grades_text->userid = $this->grade_grades[0]->userid;
+        $grade_grades_text->gradeid = $this->grade_grades[0]->id;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';

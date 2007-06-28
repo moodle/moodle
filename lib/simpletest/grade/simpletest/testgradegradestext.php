@@ -42,16 +42,14 @@ class grade_text_test extends grade_test {
     function test_grade_grades_text_construct() {
         $params = new stdClass();
 
-        $params->itemid = $this->grade_grades[0]->itemid;
-        $params->userid = $this->grade_grades[0]->userid;
+        $params->gradeid = $this->grade_grades[0]->id;
         $params->information = 'Thumbs down';
         $params->informationformat = FORMAT_PLAIN;
         $params->feedback = 'Good, but not good enough..';
         $params->feedbackformat = FORMAT_PLAIN;
 
         $grade_grades_text = new grade_grades_text($params, false);
-        $this->assertEqual($params->userid, $grade_grades_text->userid);
-        $this->assertEqual($params->itemid, $grade_grades_text->itemid);
+        $this->assertEqual($params->gradeid, $grade_grades_text->gradeid);
         $this->assertEqual($params->information, $grade_grades_text->information);
         $this->assertEqual($params->informationformat, $grade_grades_text->informationformat);
         $this->assertEqual($params->feedback, $grade_grades_text->feedback);
@@ -62,8 +60,7 @@ class grade_text_test extends grade_test {
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'insert'));
 
-        $grade_grades_text->itemid = $this->grade_grades[0]->itemid;
-        $grade_grades_text->userid = $this->grade_grades[0]->userid;
+        $grade_grades_text->gradeid = $this->grade_grades[0]->id;
         $grade_grades_text->information = 'Thumbs down';
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';
@@ -113,16 +110,6 @@ class grade_text_test extends grade_test {
 
         $grade_grades_texts = grade_grades_text::fetch_all(array());
         $this->assertEqual(count($this->grade_grades_text[0]), count($grade_grades_texts));
-    }
-
-    function test_grade_grades_text_load_grade_item() {
-        $grade_grades_text = new grade_grades_text($this->grade_grades_text[0]);
-        $this->assertTrue(method_exists($grade_grades_text, 'load_grade_item'));
-        $this->assertNull($grade_grades_text->grade_item);
-        $this->assertTrue($grade_grades_text->itemid);
-        $this->assertNotNull($grade_grades_text->load_grade_item());
-        $this->assertNotNull($grade_grades_text->grade_item);
-        $this->assertEqual($this->grade_items[0]->id, $grade_grades_text->grade_item->id);
     }
 }
 ?>

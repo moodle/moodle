@@ -132,7 +132,7 @@ class grade_grades extends grade_object {
      */
     function load_text() {
         if (empty($this->grade_grades_text->id)) {
-            $this->grade_grades_text = grade_grades_text::fetch(array('itemid'=>$this->itemid, 'userid'=>$this->userid));
+            $this->grade_grades_text = grade_grades_text::fetch(array('gradeid'=>$this->id));
         }
 
         return $this->grade_grades_text;
@@ -261,10 +261,10 @@ class grade_grades extends grade_object {
         if (empty($this->grade_grades_text->id)) {
             $this->grade_grades_text = new grade_grades_text();
 
-            $this->grade_grades_text->itemid            = $this->itemid;
+            $this->grade_grades_text->gradeid           = $this->id;
             $this->grade_grades_text->userid            = $this->userid;
-            $this->grade_grades_text->information       = $this->information       = $information;
-            $this->grade_grades_text->informationformat = $this->informationformat = $informationformat;
+            $this->grade_grades_text->information       = $information;
+            $this->grade_grades_text->informationformat = $informationformat;
 
             return $this->grade_grades_text->insert();
 
@@ -272,8 +272,8 @@ class grade_grades extends grade_object {
             if ($this->grade_grades_text->information != $information
               or $this->grade_grades_text->informationformat != $informationformat) {
 
-                $this->grade_grades_text->information       = $this->information       = $information;
-                $this->grade_grades_text->informationformat = $this->informationformat = $informationformat;
+                $this->grade_grades_text->information       = $information;
+                $this->grade_grades_text->informationformat = $informationformat;
                 return  $this->grade_grades_text->update();
             } else {
                 return true;
@@ -294,10 +294,9 @@ class grade_grades extends grade_object {
         if (empty($this->grade_grades_text->id)) {
             $this->grade_grades_text = new grade_grades_text();
 
-            $this->grade_grades_text->itemid         = $this->itemid;
-            $this->grade_grades_text->userid         = $this->userid;
-            $this->grade_grades_text->feedback       = $this->feedback       = $feedback;
-            $this->grade_grades_text->feedbackformat = $this->feedbackformat = $feedbackformat;
+            $this->grade_grades_text->gradeid        = $this->id;
+            $this->grade_grades_text->feedback       = $feedback;
+            $this->grade_grades_text->feedbackformat = $feedbackformat;
 
             return $this->grade_grades_text->insert();
 
@@ -305,8 +304,8 @@ class grade_grades extends grade_object {
             if ($this->grade_grades_text->feedback != $feedback
               or $this->grade_grades_text->feedbackformat != $feedbackformat) {
 
-                $this->grade_grades_text->feedback       = $this->feedback       = $feedback;
-                $this->grade_grades_text->feedbackformat = $this->feedbackformat = $feedbackformat;
+                $this->grade_grades_text->feedback       = $feedback;
+                $this->grade_grades_text->feedbackformat = $feedbackformat;
                 return  $this->grade_grades_text->update();
             } else {
                 return true;

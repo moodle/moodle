@@ -1597,7 +1597,7 @@
             foreach ($texts as $text) {
                 fwrite ($bf,start_tag("GRADE_TEXT",6,true));
                 fwrite ($bf,full_tag("ID",7,false,$text->id));
-                fwrite ($bf,full_tag("USERID",7,false,$text->userid));
+                fwrite ($bf,full_tag("GRADEID",7,false,$text->gradeid));
                 fwrite ($bf,full_tag("INFORMATION",7,false,$text->information));                
                 fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$text->informationformat));
                 fwrite ($bf,full_tag("FEEDBACK",7,false,$text->feedback));

@@ -36,7 +36,7 @@ class grade_category extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'children', 'all_children', 'grade_item', 'parent_category');
+    var $nonfields = array('table', 'nonfields', 'children', 'all_children', 'grade_item', 'parent_category', 'sortorder');
 
     /**
      * The course this category belongs to.
@@ -55,12 +55,6 @@ class grade_category extends grade_object {
      * @var object $parent_category
      */
     var $parent_category;
-
-    /**
-     * A grade_category object this category used to belong to before getting updated. Will be deleted shortly.
-     * @var object $old_parent
-     */
-    var $old_parent;
 
     /**
      * The number of parents this category has.
@@ -120,6 +114,11 @@ class grade_category extends grade_object {
     var $grade_item;
 
     /**
+     * Temporary sortorder for speedup of children resorting
+     */
+    var $sortorder;
+
+    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -131,10 +130,10 @@ class grade_category extends grade_object {
      */
     function build_path($grade_category) {
         if (empty($grade_category->parent)) {
-            return "/$grade_category->id";
+            return '/'.$grade_category->id;
         } else {
             $parent = get_record('grade_categories', 'id', $grade_category->parent);
-            return grade_category::build_path($parent) . "/$grade_category->id";
+            return grade_category::build_path($parent).'/'.$grade_category->id;
         }
     }
 
@@ -147,13 +146,7 @@ class grade_category extends grade_object {
      * @return object grade_category instance or false if none found.
      */
     function fetch($params) {
-        if ($category = grade_object::fetch_helper('grade_categories', 'grade_category', $params)) {
-            $category->path = grade_category::build_path($category);
-            return $category;
-
-        } else {
-            return false;
-        }
+        return grade_object::fetch_helper('grade_categories', 'grade_category', $params);
     }
 
     /**
@@ -164,40 +157,31 @@ class grade_category extends grade_object {
      * @return array array of grade_category insatnces or false if none found.
      */
     function fetch_all($params) {
-        if ($categories = grade_object::fetch_all_helper('grade_categories', 'grade_category', $params)) {
-            foreach ($categories as $key=>$value) {
-                $categories[$key]->path = grade_category::build_path($categories[$key]);
-            }
-            return $categories;
-
-        } else {
-            return false;
-        }
+        return grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
     }
 
     /**
      * In addition to update() as defined in grade_object, call force_regrading of parent categories, if applicable.
      */
     function update() {
-        $qualifies = $this->qualifies_for_regrading();
+        // load the grade item or create a new one
+        $this->load_grade_item();
 
-        // Update the grade_item's sortorder if needed
-        if (!empty($this->sortorder)) {
-            $this->load_grade_item();
-            if (!empty($this->grade_item)) {
-                $this->grade_item->sortorder = $this->sortorder;
-                $this->grade_item->update();
-            }
-            unset($this->sortorder);
+        // force recalculation of path;
+        if (empty($this->path)) {
+            $this->path  = grade_category::build_path($this);
+            $this->depth = substr_count($this->path, '/');
         }
 
-        $result = parent::update();
-
-        // Use $this->path to update all parent categories
-        if ($result && $qualifies) {
-            $this->force_regrading();
+        if (!parent::update()) {
+            return false;
         }
-        return $result;
+
+        // Recalculate grades if needed
+        if ($this->qualifies_for_regrading()) {
+            $this->grade_item->force_regrading();
+        }
+        return true;
     }
 
     /**
@@ -230,33 +214,43 @@ class grade_category extends grade_object {
      * This method also creates an associated grade_item if this wasn't done during construction.
      */
     function insert() {
+
+        if (empty($this->courseid)) {
+            error('Can not insert grade category without course id!');
+        }
+
+        if (empty($this->parent)) {
+            $course_category = grade_category::fetch_course_category($this->courseid);
+            $this->parent = $course_category->id;
+
+        }
+
+        $this->path = null;
+
         if (!parent::insert()) {
             debugging("Could not insert this category: " . print_r($this, true));
             return false;
         }
 
-        $this->path = grade_category::build_path($this);
-
-        // Build path and depth variables
-        if (!empty($this->parent)) {
-            $this->depth = $this->get_depth_from_path();
-        } else {
-            $this->depth = 1;
-        }
-
+        // build path and depth
         $this->update();
 
-        // initialize grade_item for this category
-        $this->grade_item = $this->get_grade_item();
+        return true;
+    }
 
-        // Notify parent category of need to update.
-        $this->load_parent_category();
-        if (!empty($this->parent_category)) {
-            if (!$this->parent_category->force_regrading()) {
-                debugging("Could not notify parent category of the need to update its final grades.");
-                return false;
-            }
+    function insert_course_category($courseid) {
+        $this->courseid = $courseid;
+        $this->fullname = 'course grade category';
+        $this->path     = null;
+        $this->parent   = null;
+
+        if (!parent::insert()) {
+            debugging("Could not insert this category: " . print_r($this, true));
+            return false;
         }
+
+        // build path and depth
+        $this->update();
 
         return true;
     }
@@ -275,14 +269,10 @@ class grade_category extends grade_object {
         $db_item = new grade_category(array('id' => $this->id));
 
         $aggregationdiff = $db_item->aggregation != $this->aggregation;
-        $keephighdiff = $db_item->keephigh != $this->keephigh;
-        $droplowdiff = $db_item->droplow != $this->droplow;
+        $keephighdiff    = $db_item->keephigh    != $this->keephigh;
+        $droplowdiff     = $db_item->droplow     != $this->droplow;
 
-        if ($aggregationdiff || $keephighdiff || $droplowdiff) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($aggregationdiff || $keephighdiff || $droplowdiff);
     }
 
     /**
@@ -356,8 +346,9 @@ class grade_category extends grade_object {
         $this->grade_item->load_scale();
 
 
-        // find grde items of immediate children (category or grade items)
+        // find grade items of immediate children (category or grade items)
         $depends_on = $this->grade_item->depends_on();
+
         $items = array();
 
         foreach($depends_on as $dep) {
@@ -531,30 +522,6 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Given an array of stdClass children of a certain $object_type, returns a flat or nested
-     * array of these children, ready for appending to a tree built by get_children.
-     * @static
-     * @param array $children
-     * @param string $arraytype
-     * @param string $object_type
-     * @return array
-     */
-    function children_to_array($children, $arraytype='nested', $object_type='grade_item') {
-        $children_array = array();
-
-        foreach ($children as $id => $child) {
-            $child = new $object_type($child, false);
-            if ($arraytype == 'nested') {
-                $children_array[$child->get_sortorder()] = array('object' => $child);
-            } else {
-                $children_array[$child->get_sortorder()] = $child;
-            }
-        }
-
-        return $children_array;
-    }
-
-    /**
      * Returns true if this category has any child grade_category or grade_item.
      * @return int number of direct children, or false if none found.
      */
@@ -569,102 +536,172 @@ class grade_category extends grade_object {
      * @return boolean Success or failure
      */
     function can_add_child($child) {
-        if ($this->has_children()) {
+        if ($this->is_course_category()) {
+            return true;
+
+        } else if ($this->has_children()) {
             if (get_class($child) != $this->get_childrentype()) {
                 return false;
             } else {
                 return true;
             }
+
         } else {
             return true;
         }
     }
 
     /**
-     * Disassociates this category from its category parent(s). The object is then updated in DB.
-     * @return boolean Success or Failure
+     * Returns tree with all grade_items and categories as elements
+     * @static
+     * @param int $courseid
+     * @param boolean $include_grades include final grades
+     * @param boolean $include_category_items as category children
+     * @return array
      */
-    function divorce_parent() {
-        $this->old_parent = $this->get_parent_category();
-        $this->parent = null;
-        $this->parent_category = null;
-        $this->depth = 1;
-        $this->path = '/' . $this->id;
-        return $this->update();
+    function fetch_course_tree($courseid, $include_grades=false, $include_category_items=false) {
+        $course_category = grade_category::fetch_course_category($courseid);
+        $course_category->sortorder = 1;
+        $category_array = array('object'=>$course_category,
+                                'children'=>$course_category->get_children($include_grades, $include_category_items));
+        if ($include_grades) {
+            $category_array['finalgrades'] = $course_category->get_final();
+        }
+        $sortorder = 1;
+        return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
-    /**
-     * Looks at a path string (e.g. /2/45/56) and returns the depth level represented by this path (in this example, 3).
-     * If no string is given, it looks at the obect's path and assigns the resulting depth to its $depth variable.
-     * @param string $path
-     * @return int Depth level
-     */
-    function get_depth_from_path($path=NULL) {
-        if (empty($path)) {
-            $path = $this->path;
+    function _fetch_course_tree_recursion($category_array, &$sortorder) {
+        // update the sortorder in db if needed
+        if ($category_array['object']->sortorder != $sortorder) {
+            $category_array['object']->set_sortorder($sortorder);
         }
-        preg_match_all('/\/([0-9]+)+?/', $path, $matches);
-        $depth = count($matches[0]);
 
-        return $depth;
+        // store the grade_item or grade_category instance
+        $result = array('object'=>$category_array['object']);
+
+        // reuse final grades if there
+        if (array_key_exists('finalgrades', $category_array)) {
+            $result['finalgrades'] = $category_array['finalgrades'];
+        }
+
+        // recursively resort children
+        if (!empty($category_array['children'])) {
+            $result['children'] = array();
+            foreach($category_array['children'] as $oldorder=>$child_array) {
+                if (!empty($childarray['object']->itemtype) and ($childarray['object']->itemtype == 'course' or $childarray['object']->itemtype == 'category')) {
+                    $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                } else {
+                    $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
      * Fetches and returns all the children categories and/or grade_items belonging to this category.
      * By default only returns the immediate children (depth=1), but deeper levels can be requested,
      * as well as all levels (0). The elements are indexed by sort order.
-     * @param int $depth 1 for immediate children, 0 for all children, and 2+ for specific levels deeper than 1.
-     * @param string $arraytype Either 'nested' or 'flat'. A nested array represents the true hierarchy, but is more difficult to work with.
      * @return array Array of child objects (grade_category and grade_item).
      */
-    function get_children($depth=1, $arraytype='nested') {
-        $children_array = array();
+    function get_children($include_grades=false, $include_category_items=false) {
 
-        // Set up $depth for recursion
-        $newdepth = $depth;
-        if ($depth > 1) {
-            $newdepth--;
+        // This function must be as fast as possible ;-)
+        // fetch all course grade items and categories into memory - we do not expect hundreds of these in course
+        // we have to limit the number of queries though, because it will be used often in grade reports
+
+        $cats  = get_records('grade_categories', 'courseid', $this->courseid);
+        $items = get_records('grade_items', 'courseid', $this->courseid);
+
+        // init children array first
+        foreach ($cats as $catid=>$cat) {
+            $cats[$catid]->children = array();
         }
 
-        $childrentype = $this->get_childrentype();
+        //first attach items to cats and add category sortorder
+        foreach ($items as $item) {
+            if ($item->itemtype == 'course' or $item->itemtype == 'category') {
+                $cats[$item->iteminstance]->sortorder = $item->sortorder;
 
-        if ($childrentype == 'grade_item') {
-            $children = get_records('grade_items', 'categoryid', $this->id);
-            // No need to proceed with recursion
-            $children_array = $this->children_to_array($children, $arraytype, 'grade_item');
-            $this->children = $this->children_to_array($children, 'flat', 'grade_item');
-        } elseif ($childrentype == 'grade_category') {
-            $children = get_records('grade_categories', 'parent', $this->id, 'id');
-
-            if ($depth == 1) {
-                $children_array = $this->children_to_array($children, $arraytype, 'grade_category');
-                $this->children = $this->children_to_array($children, 'flat', 'grade_category');
+                if (!$include_category_items) {
+                    continue;
+                }
+                $categoryid = $item->iteminstance;
             } else {
-                foreach ($children as $id => $child) {
-                    $cat = new grade_category($child, false);
+                $categoryid = $item->categoryid;
+            }
 
-                    if ($cat->has_children()) {
-                        if ($arraytype == 'nested') {
-                            $children_array[$cat->get_sortorder()] = array('object' => $cat, 'children' => $cat->get_children($newdepth, $arraytype));
-                        } else {
-                            $children_array[$cat->get_sortorder()] = $cat;
-                            $cat_children = $cat->get_children($newdepth, $arraytype);
-                            foreach ($cat_children as $id => $cat_child) {
-                                $children_array[$cat_child->get_sortorder()] = new grade_category($cat_child, false);
-                            }
-                        }
-                    } else {
-                        if ($arraytype == 'nested') {
-                            $children_array[$cat->get_sortorder()] = array('object' => $cat);
-                        } else {
-                            $children_array[$cat->get_sortorder()] = $cat;
-                        }
+            // prevent problems with duplicate sortorders in db
+            $sortorder = $item->sortorder;
+            while(array_key_exists($sortorder, $cats[$categoryid]->children)) {
+                $sortorder++;
+            }
+
+            $cats[$categoryid]->children[$sortorder] = $item;
+
+        }
+
+        // now find the requested category and connect categories as children
+        $category = false;
+        foreach ($cats as $catid=>$cat) {
+            if (!empty($cat->parent)) {
+                // prevent problems with duplicate sortorders in db
+                $sortorder = $cat->sortorder;
+                while(array_key_exists($sortorder, $cats[$cat->parent]->children)) {
+                    $sortorder++;
+                }
+
+                $cats[$cat->parent]->children[$sortorder] = $cat;
+            }
+
+            if ($catid == $this->id) {
+                $category = &$cats[$catid];
+            }
+        }
+
+        unset($items); // not needed
+        unset($cats); // not needed
+
+        $children_array = grade_category::_get_children_recursion($category, $include_grades);
+
+        ksort($children_array);
+
+        return $children_array;
+
+    }
+
+    function _get_children_recursion($category, $include_grades) {
+
+        $children_array = array();
+        foreach($category->children as $sortorder=>$child) {
+            if (array_key_exists('itemtype', $child)) {
+                $grade_item = new grade_item($child, false);
+                $children_array[$sortorder] = array('object'=>$grade_item);
+                if ($include_grades) {
+                    $children_array[$sortorder]['finalgrades'] = $grade_item->get_final();
+                }
+
+            } else {
+                $children = grade_category::_get_children_recursion($child, $include_grades);
+                $grade_category = new grade_category($child, false);
+                if (empty($children)) {
+                    $children_array[$sortorder] = array('object'=>$grade_category);
+                    if ($include_grades) {
+                        $children_array[$sortorder]['finalgrades'] = $grade_category->get_final();
+                    }
+                } else {
+                    $children_array[$sortorder] = array('object'=>$grade_category, 'children'=>$children);
+                    if ($include_grades) {
+                        $children_array[$sortorder]['finalgrades'] = $grade_category->get_final();
                     }
                 }
             }
-        } else {
-            return null;
         }
+
+        // sort the array
+        ksort($children_array);
 
         return $children_array;
     }
@@ -713,7 +750,12 @@ class grade_category extends grade_object {
             return false;
         }
 
-        $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
+        if (empty($this->parent)) {
+            $params = array('courseid'=>$this->courseid, 'itemtype'=>'course', 'iteminstance'=>$this->id);
+
+        } else {
+            $params = array('courseid'=>$this->courseid, 'itemtype'=>'category', 'iteminstance'=>$this->id);
+        }
 
         if (!$grade_items = grade_item::fetch_all($params)) {
             // create a new one
@@ -760,15 +802,13 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Sets this category as the parent for the given children. If the category's courseid isn't set, it uses that of the children items.
+     * Sets this category as the parent for the given children.
      * A number of constraints are necessary:
-     *    - The children must all be of the same type and at the same level
-     *    - The children cannot already be top categories
+     *    - The children must all be of the same type and at the same level (top level is exception)
      *    - The children all belong to the same course
      * @param array $children An array of fully instantiated grade_category OR grade_item objects
      *
      * @return boolean Success or Failure
-     * @TODO big problem of performance
      */
     function set_as_parent($children) {
         global $CFG;
@@ -778,72 +818,21 @@ class grade_category extends grade_object {
             return false;
         }
 
-        // Check type and sortorder of first child
-        $first_child = current($children);
-        $first_child_type = get_class($first_child);
-
-        // If this->courseid is not set, set it to the first child's courseid
-        if (empty($this->courseid)) {
-            $this->courseid = $first_child->courseid;
-        }
-
-        $grade_tree = new grade_tree();
+        $result = true;
 
         foreach ($children as $child) {
-            if (get_class($child) != $first_child_type) {
-                debugging("Violated constraint: Attempted to set a category as a parent over children of 2 different types.");
-                return false;
-            }
-
-            if ($grade_tree->get_element_type($child) == 'topcat') {
-                debugging("Violated constraint: Attempted to set a category over children which are already top categories.");
-                return false;
-            }
-
-            if ($first_child_type == 'grade_category' or $first_child_type == 'grade_item') {
-                if (!empty($child->parent)) {
-                    debugging("Violated constraint: Attempted to set a category over children that already have a top category.");
-                    return false;
-                }
-            } else {
-                debugging("Attempted to set a category over children that are neither grade_items nor grade_categories.");
-                return false;
-            }
-
+            // check sanity of course id
             if ($child->courseid != $this->courseid) {
                 debugging("Attempted to set a category over children which do not belong to the same course.");
-                return false;
+                continue;
+            }
+            // change parrent if possible
+            if (!$child->set_parent_id($this->id)) {
+                $result = false;
             }
         }
 
-        // We passed all the checks, time to set the category as a parent.
-        foreach ($children as $child) {
-            $child->divorce_parent();
-            $child->set_parent_id($this->id);
-            if (!$child->update()) {
-                debugging("Could not set this category as a parent for one of its children, DB operation failed.");
-                return false;
-            }
-        }
-
-        // TODO Assign correct sortorders to the newly assigned children and parent. Simply add 1 to all of them!
-        $this->load_grade_item();
-        $this->grade_item->sortorder = $first_child->get_sortorder();
-
-        if (!$this->update()) {
-            debugging("Could not update this category's sortorder in DB.");
-            return false;
-        }
-
-        $query = "UPDATE {$CFG->prefix}grade_items SET sortorder = sortorder + 1 WHERE sortorder >= {$this->grade_item->sortorder}";
-        $query .= " AND courseid = $this->courseid";
-
-        if (!execute_sql($query)) {
-            debugging("Could not update the sortorder of grade_items listed after this category.");
-            return false;
-        } else {
-            return true;
-        }
+        return $result;
     }
 
     /**
@@ -879,9 +868,34 @@ class grade_category extends grade_object {
      * @param id $parentid
      */
     function set_parent_id($parentid) {
-        $this->parent = $parentid;
-        $this->path = grade_category::build_path($this);
-        $this->depth = $this->get_depth_from_path();
+        if (!$parent_category = grade_category::fetch(array('id'=>$parentid))) {
+            return false;
+        }
+        if (!$parent_category->can_add_child($this)) {
+            return false;
+        }
+
+        $this->force_regrading();            // mark old parent as needing regrading
+
+        // set new parent category
+        $this->parent          = $parentid;
+        $this->path            = null;       // remove old path and depth - will be recalculated in update()
+        $this->parent_category = null;
+        $this->update();
+
+        $grade_item = $this->load_grade_item();
+        $grade_item->parent_category = null;
+        return $grade_item->update();               // marks new parent as needing regrading too
+    }
+
+    /**
+     * Returns the final values for this grade category.
+     * @param int $userid Optional: to retrieve a single final grade
+     * @return mixed An array of all final_grades (stdClass objects) for this grade_item, or a single final_grade.
+     */
+    function get_final($userid=NULL) {
+        $this->load_grade_item();
+        return $this->grade_item->get_final($userid);
     }
 
     /**
@@ -890,24 +904,47 @@ class grade_category extends grade_object {
      * @return int Sort order
      */
     function get_sortorder() {
-        if (empty($this->sortorder)) {
-            $this->load_grade_item();
-            if (!empty($this->grade_item)) {
-                return $this->grade_item->sortorder;
-            }
-        } else {
-            return $this->sortorder;
-        }
+        $this->load_grade_item();
+        return $this->grade_item->get_sortorder();
     }
 
     /**
-     * Sets a temporary sortorder variable for this category. It is used in the update() method to update the grade_item.
+     * Sets sortorder variable for this category.
      * This method is also available in grade_item, for cases where the object type is not know.
      * @param int $sortorder
      * @return void
      */
     function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
+        $this->load_grade_item();
+        $this->grade_item->set_sortorder($sortorder);
+    }
+
+    /**
+     * Return true if this is the top most categroy that represents the total course grade.
+     * @return boolean
+     */
+    function is_course_category() {
+        $this->load_grade_item();
+        return $this->grade_item->is_course_item();
+    }
+
+    /**
+     * Return the top most course category.
+     * @static
+     * @return object grade_category instance for course grade
+     */
+    function fetch_course_category($courseid) {
+
+        // course category has no parent
+        if ($course_category = grade_category::fetch(array('courseid'=>$courseid, 'parent'=>null))) {
+            return $course_category;
+        }
+
+        // create a new one
+        $course_category = new grade_category();
+        $course_category->insert_course_category($courseid);
+
+        return $course_category;
     }
 
     /**
@@ -952,17 +989,5 @@ class grade_category extends grade_object {
         $this->grade_item->set_hidden($hidden);
     }
 
-    /**
-     * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
-     * deleting childless categories.
-     * @return boolean
-     */
-    function is_old_parent_childless() {
-        if (!empty($this->old_parent)) {
-            return !$this->old_parent->has_children();
-        } else {
-            return false;
-        }
-    }
 }
 ?>

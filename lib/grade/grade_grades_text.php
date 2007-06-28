@@ -40,25 +40,13 @@ class grade_grades_text extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'grade_item');
+    var $nonfields = array('table', 'nonfields');
 
     /**
-     * The grade_item.id this text refers to.
+     * The grade_grades.id this text refers to.
      * @var int $itemid
      */
-    var $itemid;
-
-    /**
-     * The grade_item object referenced by $this->itemid.
-     * @var object $grade_item
-     */
-    var $grade_item;
-
-    /**
-     * The user.id this text refers to.
-     * @var int $userid
-     */
-    var $userid;
+    var $gradeid;
 
     /**
      * Further information like forum rating distribution 4/5/7/0/1
@@ -112,15 +100,5 @@ class grade_grades_text extends grade_object {
         return grade_object::fetch_all_helper('grade_grades_text', 'grade_grades_text', $params);
     }
 
-    /**
-     * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
-     * @return object grade_item.
-     */
-    function load_grade_item() {
-        if (empty($this->grade_item) && !empty($this->itemid)) {
-            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
-        }
-        return $this->grade_item;
-    }
 }
 ?>

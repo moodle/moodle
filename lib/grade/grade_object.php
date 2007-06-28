@@ -178,7 +178,15 @@ class grade_object {
             $this->usermodified = $USER->id;
         }
 
-        return update_record($this->table, addslashes_recursive($this));
+        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
+        $data = new object();
+        foreach ($this as $var=>$value) {
+            if (!in_array($var, $this->nonfields)) {
+                $data->$var = addslashes_recursive($value);
+            }
+        }
+
+        return update_record($this->table, $data);
     }
 
     /**
@@ -208,7 +216,15 @@ class grade_object {
             $this->usermodified = $USER->id;
         }
 
-        if (!$this->id = insert_record($this->table, addslashes_recursive($this))) {
+        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
+        $data = new object();
+        foreach ($this as $var=>$value) {
+            if (!in_array($var, $this->nonfields)) {
+                $data->$var = addslashes_recursive($value);
+            }
+        }
+
+        if (!$this->id = insert_record($this->table, addslashes_recursive($data))) {
             debugging("Could not insert object into db");
             return false;
         }
@@ -232,7 +248,7 @@ class grade_object {
         }
 
         if (!$params = get_record($this->table, 'id', $this->id)) {
-            debugging("Object with this id does not exist, can not update from db!");
+            debugging("Object with this id:{$this->id} does not exist in table:{$this->table}, can not update from db!");
             return false;
         }
 

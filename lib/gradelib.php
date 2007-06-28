@@ -610,7 +610,7 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     } else if ($scaleid) {
         $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = $scaleid;
-        $grade_item->grademin  = 1; 
+        $grade_item->grademin  = 1;
     } else {
         $params['gradetype'] = GRADE_TYPE_VALUE;
         $params['grademax']  = $grademax;
@@ -681,7 +681,7 @@ function grade_oldgradebook_upgrade($courseid) {
 }
 
 /**
- * Given a grade_category, grade_item or grade_grade, this function 
+ * Given a grade_category, grade_item or grade_grade, this function
  * figures out the state of the object and builds then returns a div
  * with the icons needed for the grader report.
  *
@@ -712,12 +712,12 @@ function grade_get_icons($object, $tree) {
     $strunlock         = get_string("unlock", 'grades');
 
     $html = '<div class="grade_icons">';
-    
+
     // Icons shown when edit mode is on
     if ($USER->gradeediting) {
         // Edit icon (except for grade_grades)
         if (get_class($object) != 'grade_grades') {
-            $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder() 
+            $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder()
                   . "&amp;action=edit$tree->commonvars\">\n";
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
@@ -728,27 +728,27 @@ function grade_get_icons($object, $tree) {
         if ($object->is_hidden()) {
             $hide_show = 'show';
         }
-        
+
         // Setup object identifier and show feedback icon if applicable
         if (get_class($object) != 'grade_grades') {
             $identifier = $object->get_sortorder();
         } else {
             $identifier = 'grade' . $object->id;
-            
+
             if ($USER->gradefeedback) {
                 // Display Edit/Add feedback icon
                 if (empty($object->feedback)) {
                     $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
-                          . "&amp;action=addfeedback$tree->commonvars\">\n"; 
+                          . "&amp;action=addfeedback$tree->commonvars\">\n";
                     $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
                           . 'title="'.$straddfeedback.'" /></a>'. "\n";
                 } else {
                     $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
-                          . "&amp;action=editfeedback$tree->commonvars\">\n"; 
+                          . "&amp;action=editfeedback$tree->commonvars\">\n";
                     $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
                           . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                       . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
-                } 
+                }
             }
         }
 
@@ -763,19 +763,19 @@ function grade_get_icons($object, $tree) {
         if ($object->is_locked()) {
             $lock_unlock = 'unlock';
         }
-        
+
         // Print lock/unlock icon
         $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
               . "&amp;action=$lock_unlock$tree->commonvars\">\n";
         $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
               .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
-        
+
         // If object is a category, display expand/contract icon
         if (get_class($object) == 'grade_category') {
             $expand_contract = 'switch_minus'; // Default: expanded
 
             $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
-            
+
             if ($state == GRADE_CATEGORY_CONTRACTED) {
                 $expand_contract = 'switch_plus';
             }
@@ -790,11 +790,11 @@ function grade_get_icons($object, $tree) {
             // Display Edit/Add feedback icon
             if (!empty($object->feedback)) {
                 $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
-                      . "&amp;action=viewfeedback$tree->commonvars\">\n"; 
+                      . "&amp;action=viewfeedback$tree->commonvars\">\n";
                 $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                      . $strfeedback.'\');" onmouseout="return nd();" ' 
+                      . $strfeedback.'\');" onmouseout="return nd();" '
                       . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
-            }            
+            }
         }
     }
 

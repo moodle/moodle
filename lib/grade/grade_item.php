@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'formula', 'calculation_normalized', 'scale', 'category', 'outcome');
+    var $nonfields = array('table', 'nonfields', 'formula', 'calculation_normalized', 'scale', 'category', 'parent_category', 'outcome');
 
     /**
      * The course this grade_item belongs to.
@@ -55,16 +55,17 @@ class grade_item extends grade_object {
     var $categoryid;
 
     /**
-     * The grade_category object referenced by $this->categoryid or $this->iteminstance (itemtype must be == 'category' in that case).
+     * The grade_category object referenced $this->iteminstance (itemtype must be == 'category' or == 'course' in that case).
      * @var object $category
      */
     var $category;
 
     /**
-     * A grade_category object this item used to belong to before getting updated. Will be deleted shortly.
-     * @var object $old_parent
+     * The grade_category object referenced by $this->categoryid.
+     * @var object $parent_category
      */
-    var $old_parent;
+    var $parent_category;
+
 
     /**
      * The name of this grade_item (pushed by the module).
@@ -73,7 +74,7 @@ class grade_item extends grade_object {
     var $itemname;
 
     /**
-     * e.g. 'category', 'total' and 'mod', 'blocks', 'import', etc...
+     * e.g. 'category', 'course' and 'mod', 'blocks', 'import', etc...
      * @var string $itemtype
      */
     var $itemtype;
@@ -272,6 +273,7 @@ class grade_item extends grade_object {
         $db_item = new grade_item(array('id' => $this->id));
 
         $calculationdiff = $db_item->calculation != $this->calculation;
+        $categorydiff    = $db_item->categoryid  != $this->categoryid;
         $gradetypediff   = $db_item->gradetype   != $this->gradetype;
         $grademaxdiff    = $db_item->grademax    != $this->grademax;
         $grademindiff    = $db_item->grademin    != $this->grademin;
@@ -284,7 +286,7 @@ class grade_item extends grade_object {
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
 
-        return ($calculationdiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
+        return ($calculationdiff || $categorydiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
              || $outcomeiddiff || $multfactordiff || $plusfactordiff || $deleteddiff || $needsupdatediff
              || $lockeddiff);
     }
@@ -316,14 +318,11 @@ class grade_item extends grade_object {
      * @return boolean Success or failure.
      */
     function delete() {
-        $result = parent::delete();
-        if ($result) {
-            $category = $this->get_category();
-            if (!empty($category)) {
-                return $category->force_regrading();
-            }
+        if ($category = $this->get_parent_category()) {
+            $category->force_regrading();
         }
-        return $result;
+
+        return parent::delete();;
     }
 
     /**
@@ -333,8 +332,8 @@ class grade_item extends grade_object {
     function insert() {
         global $CFG;
 
-        if (!isset($this->gradetype)) {
-            $this->gradetype = GRADE_TYPE_VALUE;
+        if (empty($this->courseid)) {
+            error('Can not insert grade item without course id!');
         }
 
         if (empty($this->scaleid) and !empty($this->scale->id)) {
@@ -350,20 +349,18 @@ class grade_item extends grade_object {
             $this->scale = NULL;
         }
 
-        // If not set, infer courseid from referenced category
-        if (empty($this->courseid) && (!empty($this->iteminstance) || !empty($this->categoryid))) {
-            $this->load_category();
-            $this->courseid = $this->category->courseid;
+        if (empty($this->categoryid) and !$this->is_course_item() and !$this->is_category_item()) {
+            $course_category = grade_category::fetch_course_category($this->courseid);
+            $this->categoryid = $course_category->id;
+
         }
 
-        // If sortorder not given, extrapolate one
-        if (empty($this->sortorder)) {
-            $last_sortorder = get_field_select('grade_items', 'MAX(sortorder)', '');
-            if (!empty($last_sortorder)) {
-                $this->sortorder = $last_sortorder + 1;
-            } else {
-                $this->sortorder = 1;
-            }
+        // always place the new items at the end, move them after insert if needed
+        $last_sortorder = get_field_select('grade_items', 'MAX(sortorder)', "courseid = {$this->courseid}");
+        if (!empty($last_sortorder)) {
+            $this->sortorder = $last_sortorder + 1;
+        } else {
+            $this->sortorder = 1;
         }
 
         // If not set, generate an idnumber from itemmodule and iteminstance
@@ -561,7 +558,7 @@ class grade_item extends grade_object {
                 return array("Could not calculate grades for grade item id:".$this->id); // TODO: improve and localize
             }
 
-        } else if ($this->itemtype == 'category') {
+        } else if ($this->is_category_item() or $this->is_course_item()) {
             // aggregate category grade item
             $category = $this->get_category();
             if (!$category->generate_grades()) {
@@ -715,25 +712,25 @@ class grade_item extends grade_object {
     function force_regrading() {
         $this->needsupdate = true;
 
-        $result = parent::update();
+        if (!parent::update()) {
+            return false;
+        }
 
-        if ($category = $this->get_category()) {
-            $category->force_regrading(); // we can ignore the result
+        if ($this->is_course_item()) {
+            // no parent
+
+        } else if ($this->is_category_item()) {
+            $category = $this->load_category();
+            $parent = $category->load_parent_category();
+            $parent->force_regrading();
+
+        } else {
+            $parent = $this->load_parent_category();
+            $parent->force_regrading();
 
         }
 
-        return $result;
-    }
-
-    /**
-     * Disassociates this item from its category parent(s). The object is then updated in DB.
-     * @return boolean Success or Failure
-     */
-    function divorce_parent() {
-        $this->old_parent = $this->get_category();
-        $this->category = null;
-        $this->categoryid = null;
-        return $this->update();
+        return true;
     }
 
     /**
@@ -774,21 +771,39 @@ class grade_item extends grade_object {
     }
 
     /**
-    * Returns the grade_category object this grade_item belongs to (if any).
-    * This category object may be the parent (referenced by categoryid) or the associated category
+    * Returns the grade_category object this grade_item belongs to (referenced by categoryid).
+    *
+    * @return mixed grade_category object if applicable, false if course item
+    */
+    function get_parent_category() {
+
+        if ($this->is_course_item()) {
+            return false;
+
+        } else if ($this->is_category_item()) {
+
+            $category = $this->get_category();
+            return $category->get_parent_category();
+
+        } else {
+            $category = grade_category::fetch(array('id'=>$this->categoryid));
+            return $category;
+        }
+    }
+
+    /**
+    * Returns the grade_category object of associated category for category and course items
     * (referenced by iteminstance).
     *
-    * @return mixed grade_category object if applicable, NULL otherwise
+    * @return mixed grade_category object if applicable, false otherwise
     */
     function get_category() {
-        $category = null;
-
-        if (!empty($this->categoryid)) {
-            $category = grade_category::fetch(array('id'=>$this->categoryid));
-        } elseif (!empty($this->iteminstance) && $this->itemtype == 'category') {
-            $category = grade_category::fetch(array('id'=>$this->iteminstance));
+        if (!$this->is_course_item() and !$this->is_category_item()) {
+            return false;
         }
 
+        $category = grade_category::fetch(array('id'=>$this->iteminstance));
+        $category->grade_item =& $this;
         return $category;
     }
 
@@ -798,8 +813,41 @@ class grade_item extends grade_object {
      * @return object Grade_category
      */
     function load_category() {
-        $this->category = $this->get_category();
+        if (empty($this->category->id)) {
+            $this->category = $this->get_category();
+        }
         return $this->category;
+    }
+
+    /**
+     * Calls upon the get_category method to retrieve the grade_category object
+     * from the DB and assigns it to $this->category. It also returns the object.
+     * @return object Grade_category
+     */
+    function load_parent_category() {
+        if (empty($this->parent_category->id)) {
+            $this->parent_category = $this->get_parent_category();
+        }
+        return $this->parent_category;
+    }
+
+    function is_category_item() {
+        return ($this->itemtype == 'category');
+    }
+
+    function is_course_item() {
+        return ($this->itemtype == 'course');
+    }
+
+    function fetch_course_item($courseid) {
+        if ($course_item = grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'))) {
+            return $course_item;
+        }
+
+        // first call - let category insert one
+        $course_category = grade_category::fetch_course_category($courseid);
+
+        return grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'));
     }
 
     /**
@@ -932,7 +980,14 @@ class grade_item extends grade_object {
      * @return void
      */
     function set_sortorder($sortorder) {
+        global $CFG;
+
+        if ($this->sortorder == $sortorder) {
+            return;
+        }
+
         $this->sortorder = $sortorder;
+        $this->update();
     }
 
     /**
@@ -941,7 +996,16 @@ class grade_item extends grade_object {
      * @return string name
      */
     function get_name() {
-        return $this->itemname;
+        if ($this->is_course_item()) {
+            return ('Total course grade'); // TODO: localize
+
+        } else if ($this->is_course_item()) {
+            $category = $this->get_category();
+            return $category->get_name().'(grade)'; // TODO: localize
+
+        } else {
+            return $this->itemname;
+        }
     }
 
     /**
@@ -965,22 +1029,22 @@ class grade_item extends grade_object {
     /**
      * Sets this item's categoryid. A generic method shared by objects that have a parent id of some kind.
      * @param int $parentid
+     * @return boolean success;
      */
     function set_parent_id($parentid) {
-        $this->categoryid = $parentid;
-    }
-
-    /**
-     * If the old parent is set (after an update), this checks and returns whether it has any children. Important for
-     * deleting childless categories.
-     * @return boolean
-     */
-    function is_old_parent_childless() {
-        if (!empty($this->old_parent)) {
-            return !$this->old_parent->has_children();
-        } else {
+        if (!$parent_category = grade_category::fetch(array('id'=>$parentid))) {
             return false;
         }
+        if (!$parent_category->can_add_child($this)) {
+            return false;
+        }
+        $this->force_regrading(); // mark old parent as needing regrading
+
+        // set new parent
+        $this->categoryid = $parentid;
+        $this->parent_category = null;
+
+        return $this->update(); // mark new parent as needing regrading too
     }
 
     /**
@@ -988,6 +1052,7 @@ class grade_item extends grade_object {
      * @return array of grade_item ids this one depends on
      */
     function depends_on() {
+        global $CFG;
 
         if ($this->is_locked()) {
             // locked items do not need to be regraded
@@ -1002,25 +1067,22 @@ class grade_item extends grade_object {
             }
 
         } else if ($grade_category = $this->load_category()) {
-            $children = $grade_category->get_children(1, 'flat');
+            $sql = "SELECT gi.id
+                      FROM {$CFG->prefix}grade_items gi
+                     WHERE gi.categoryid ={$grade_category->id}
 
-            if (empty($children)) {
+                    UNION
+
+                    SELECT gi.id
+                      FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
+                     WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
+                           AND gc.parent = {$grade_category->id}";
+
+            if ($children = get_records_sql($sql)) {
+                return array_keys($children);
+            } else {
                 return array();
             }
-
-            $result = array();
-
-            foreach ($children as $id => $child) {
-                if (get_class($child) == 'grade_category') {
-                    $grade_item = $child->get_grade_item();
-                    $result[] = $grade_item->id;
-
-                } else if (get_class($child) == 'grade_item') {
-                    $result[] = $child->id;
-                }
-            }
-
-            return $result;
 
         } else {
             return array();

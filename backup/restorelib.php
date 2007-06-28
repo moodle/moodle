@@ -1287,7 +1287,7 @@
                                 $dbrec->path = grade_category::build_path($dbrec);
                                 // this is not needed in the xml because
                                 // given this parent and grandparent(s) we can recalculate the depth
-                                $dbrec->depth = grade_category::get_depth_from_path($dbrec->path);
+                                $dbrec->depth = substr_count($dbrec->path, '/');
                                 update_record('grade_categories', $dbrec);
                             } else {
                                 // if fullname already exists, we should keep the current grade category
@@ -1552,9 +1552,8 @@
                                     //traverse_xmlize($ite_info);                                                                 //Debug
                                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
-                                    $text->itemid       = $itemid;
-                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));
-                                    $text->userid = $user->new_id;
+                                    $grade = backup_getid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['GRADEID']['0']['#']));
+                                    $text->gradeid = $grade->new_id;
                                     $text->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
                                     $text->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
                                     $text->feedback = backup_todb($ite_info['#']['FEEDBACK']['0']['#']);

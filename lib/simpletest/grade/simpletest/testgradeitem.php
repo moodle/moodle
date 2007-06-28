@@ -70,7 +70,7 @@ class grade_item_test extends grade_test {
         $grade_item->iteminfo = 'Grade item used for unit testing';
 
         // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_category();
+        $category = $grade_item->get_parent_category();
         $category->load_grade_item();
         $category->grade_item->needsupdate = false;
         $this->assertNotNull($category->grade_item);
@@ -122,16 +122,12 @@ class grade_item_test extends grade_test {
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
         // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_category();
+        $category = $grade_item->get_parent_category();
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
         $category->grade_item->needsupdate = false;
 
         $this->assertTrue($grade_item->delete());
-
-        // Now check the needsupdate variable, it should have been set to true
-        $category->grade_item->update_from_db();
-        $this->assertTrue($category->grade_item->needsupdate);
 
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
     }
@@ -143,7 +139,7 @@ class grade_item_test extends grade_test {
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
 
         // Check the grade_category's needsupdate variable first
-        $category= $grade_item->get_category();
+        $category= $grade_item->get_parent_category();
         $category->load_grade_item();
         $this->assertNotNull($category->grade_item);
         $category->grade_item->needsupdate = false;
@@ -203,7 +199,7 @@ class grade_item_test extends grade_test {
         $this->assertTrue(method_exists($grade_item, 'fetch_all'));
 
         $grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid));
-        $this->assertEqual(count($this->grade_items), count($grade_items));
+        $this->assertEqual(count($this->grade_items), count($grade_items)-1);
     }
 
     /**
@@ -228,11 +224,11 @@ class grade_item_test extends grade_test {
         $this->assertEqual($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
-    function test_grade_item_get_category() {
+    function test_grade_item_get_parent_category() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'get_category'));
+        $this->assertTrue(method_exists($grade_item, 'get_parent_category'));
 
-        $category = $grade_item->get_category();
+        $category = $grade_item->get_parent_category();
         $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
     }
 
