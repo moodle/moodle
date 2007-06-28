@@ -633,24 +633,4 @@ function calendar_add_event_allowed($event) {
             return false;
     }
 }
-
-function calendar_get_allowed_types(&$allowed) {
-    global $USER, $CFG, $SESSION;
-
-    $allowed->user = true; // User events always allowed
-    $allowed->groups = false; // This may change just below
-    $allowed->courses = false; // This may change just below
-    $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
-
-    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer))) {
-        $course = get_record('course', 'id', $SESSION->cal_course_referer);
-
-        $allowed->courses = array($course->id => 1);
-
-        if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-            $allowed->groups = get_groups($SESSION->cal_course_referer);
-        }
-    }
-}
-
 ?>

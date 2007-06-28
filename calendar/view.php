@@ -227,7 +227,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
     $events = calendar_get_upcoming($courses, $groups, $users, 1, 100, $starttime);
 
     $text = '';
-    if (!isguest() && !empty($USER->id)) {
+    if (!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
@@ -359,7 +359,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday);
 
     $text = '';
-    if(!isguest() && !empty($USER->id)) {
+    if(!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons"><form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';
         $text.= '<input type="hidden" name="action" value="new" />';
@@ -554,7 +554,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
     $text = '';
 
-    if(!isguest() && !empty($USER->id)) {
+    if(!isguest() && !empty($USER->id) && calendar_user_can_add_event()) {
         $text.= '<div class="buttons">';
         $text.= '<form action="'.CALENDAR_URL.'event.php" method="get">';
         $text.= '<div>';

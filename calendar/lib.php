@@ -1401,4 +1401,32 @@ function calendar_set_filters_status($packed_bitfield) {
     return true;
 }
 
+function calendar_get_allowed_types(&$allowed) {
+    global $USER, $CFG, $SESSION;
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $allowed->user = has_capability('moodle/calendar:manageownentries', $sitecontext);
+    $allowed->groups = false; // This may change just below
+    $allowed->courses = false; // This may change just below
+    $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
+
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer))) {
+        $course = get_record('course', 'id', $SESSION->cal_course_referer);
+
+        $allowed->courses = array($course->id => 1);
+
+        if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
+            $allowed->groups = get_groups($SESSION->cal_course_referer);
+        }
+    }
+}
+
+/**
+ * see if user can add calendar entries at all
+ * used to print the "New Event" button
+ * @return bool
+ */
+function calendar_user_can_add_event() {
+    calendar_get_allowed_types($allowed);
+    return (bool)($allowed->user || $allowed->groups || $allowed->courses || $allowed->site); 
+}
 ?>
