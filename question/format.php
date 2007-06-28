@@ -365,6 +365,9 @@ class qformat_default {
         $destination = $path_parts['dirname'];
         $file = clean_filename( $path_parts['basename'] );
 
+        // check if path exists
+        check_dir_exists($destination, true, true );
+
         // detect and fix any filename collision - get unique filename
         $newfiles = resolve_filename_collisions( $destination, array($file) );        
         $newfile = $newfiles[0];
@@ -383,6 +386,7 @@ class qformat_default {
         fclose( $fh );
 
         // return the (possibly) new filename
+        $newfile = ereg_replace("{$CFG->dataroot}/{$this->course->id}/", '',$newfullpath);
         return $newfile;
     }
 
