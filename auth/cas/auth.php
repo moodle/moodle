@@ -372,14 +372,15 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 if ($value == 'dn') {
                     $result[$key] = $user_dn;
                 }
-                if (!array_key_exists($value, $user_entry[0])) {
+                if (!array_key_exists(strtolower($value), $user_entry[0])) {
                     continue; // wrong data mapping!
                 }
-                if (is_array($user_entry[0][$value])) {
-                    $newval = $textlib->convert($user_entry[0][$value][0], $this->config->ldapencoding, 'utf-8');
+                if (is_array($user_entry[0][strtolower($value)])) {
+                    $newval = $textlib->convert($user_entry[0][strtolower($value)][0], $this->config->ldapencoding, 'utf-8');
                 } else {
-                    $newval = $textlib->convert($user_entry[0][$value], $this->config->ldapencoding, 'utf-8');
+                    $newval = $textlib->convert($user_entry[0][strtolower($value)], $this->config->ldapencoding, 'utf-8');
                 }
+
                 if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;
                 }
@@ -954,6 +955,7 @@ if (!empty($this->config->attrcreators)) {
     if (count($result)!=0)
     	return true;
  	}
+
     return false;
     }
    /**
@@ -1056,18 +1058,20 @@ if (!empty($this->config->attrcreators)) {
         do {
             $attributes = @ldap_get_attributes($conn, $entry);
             for ($j=0; $j<$attributes['count']; $j++) {
-                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
+                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);				
+
                 if (is_array($values)) {
-                $fresult[$i][$attributes[$j]] = $values;
+                $fresult[$i][strtolower($attributes[$j])] = $values;
                 }
                 else {
-                    $fresult[$i][$attributes[$j]] = array($values);
+                    $fresult[$i][strtolower($attributes[$j])] = array($values);
                 }
             }
             $i++;
         }
         while ($entry = @ldap_next_entry($conn, $entry));
         //were done
+
         return ($fresult);
     }
     /**
