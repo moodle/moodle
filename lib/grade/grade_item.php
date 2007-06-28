@@ -964,8 +964,7 @@ class grade_item extends grade_object {
 
     /**
      * Returns the sortorder of this grade_item. This method is also available in
-     * grade_category, for cases where the object type is not know. It will act as a virtual
-     * variable for a grade_category.
+     * grade_category, for cases where the object type is not know.
      * @return int Sort order
      */
     function get_sortorder() {
@@ -974,8 +973,7 @@ class grade_item extends grade_object {
 
     /**
      * Sets the sortorder of this grade_item. This method is also available in
-     * grade_category, for cases where the object type is not know. It will act as a virtual
-     * variable for a grade_category.
+     * grade_category, for cases where the object type is not know.
      * @param int $sortorder
      * @return void
      */
