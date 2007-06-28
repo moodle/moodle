@@ -4477,14 +4477,16 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'>'."\n".'<div>'."\n".
+        $backmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.
+                   'onclick="this.target=\''.$CFG->framename.'\';">'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'."\n".
                    '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true)."\n".
                    '</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'>'."\n".'<div>'."\n".
+        $nextmod = '<li>'."\n".'<form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.
+                   'onclick="this.target=\''.$CFG->framename.'\';">'."\n".'<div>'."\n".
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'."\n".
                    '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true)."\n".
                    '</button>'."\n".'</div>'."\n".'</form>'."\n".'</li>'."\n";
