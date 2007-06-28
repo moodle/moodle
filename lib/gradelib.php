@@ -45,6 +45,9 @@ define('GRADE_CHILDTYPE_CAT', 1);
 define('GRADE_ITEM', 0); // Used to compare class names with CHILDTYPE values
 define('GRADE_CATEGORY', 1); // Used to compare class names with CHILDTYPE values
 
+define('GRADE_CATEGORY_CONTRACTED', 0); // The state of a category header in the grader report
+define('GRADE_CATEGORY_EXPANDED', 1); // The state of a category header in the grader report
+
 define('GRADE_TYPE_NONE', 0);
 define('GRADE_TYPE_VALUE', 1);
 define('GRADE_TYPE_SCALE', 2);
@@ -704,6 +707,8 @@ function grade_get_icons($object, $tree) {
     $strhide           = get_string("hide");
     $strshow           = get_string("show");
     $strlock           = get_string("lock", 'grades');
+    $strswitch_minus   = get_string("contract", 'grades');
+    $strswitch_plus    = get_string("expand", 'grades');
     $strunlock         = get_string("unlock", 'grades');
 
     $html = '<div class="grade_icons">';
@@ -764,9 +769,21 @@ function grade_get_icons($object, $tree) {
               . "&amp;action=$lock_unlock$tree->commonvars\">\n";
         $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
               .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+        
+        // If object is a category, display expand/contract icon
+        if (get_class($object) == 'grade_category') {
+            $expand_contract = 'switch_minus'; // Default: expanded
 
-        if ($grade) {
+            $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
             
+            if ($state == GRADE_CATEGORY_CONTRACTED) {
+                $expand_contract = 'switch_plus';
+            }
+
+            $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+                  . "&amp;action=$expand_contract$tree->commonvars\">\n";
+            $html .= '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
+                  .${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
         }
     } else {
         if ($USER->gradefeedback) {
