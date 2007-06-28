@@ -4763,7 +4763,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     if ($selectmod and has_capability('moodle/site:viewreports', $context)) {
         $logstext = get_string('alllogs');
-        $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.$CFG->frametarget.' href="'.
+        $logslink = '<li>'."\n".'<a title="'.$logstext.'" '.
+                    $CFG->frametarget.'onclick="this.target=\''.$CFG->framename.'\';"'.' href="'.
                     $CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;user=0&amp;date=0&amp;id='.
                        $course->id.'&amp;modid='.$selectmod->cm.'">'.
                     '<img class="icon log" src="'.$CFG->pixpath.'/i/log.gif" alt="'.$logstext.'" /></a>'."\n".'</li>';
@@ -4771,14 +4772,16 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     }
     if ($backmod) {
         $backtext= get_string('activityprev', 'access');
-        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $backmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$backmod->mod.'/view.php" '.
+                   'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$backmod->cm.'" />'.
                    '<button type="submit" title="'.$backtext.'">'.link_arrow_left($backtext, $url='', $accesshide=true).
                    '</button></fieldset></form></li>';
     }
     if ($nextmod) {
         $nexttext= get_string('activitynext', 'access');
-        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.$CFG->frametarget.'><fieldset class="invisiblefieldset">'.
+        $nextmod = '<li><form action="'.$CFG->wwwroot.'/mod/'.$nextmod->mod.'/view.php"  '.
+                   'onclick="this.target=\''.$CFG->framename.'\';"'.'><fieldset class="invisiblefieldset">'.
                    '<input type="hidden" name="id" value="'.$nextmod->cm.'" />'.
                    '<button type="submit" title="'.$nexttext.'">'.link_arrow_right($nexttext, $url='', $accesshide=true).
                    '</button></fieldset></form></li>';
