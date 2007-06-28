@@ -2047,6 +2047,50 @@ body#grade-index .grades .weighted {
    margin:0px 20px 0px 20px;
 }
 
+/* new grades CSS */
+
+#grade-report table {
+  border-width:1px;
+  border-style:solid;
+}
+
+#grade-report table td {
+  border-width:1px;
+  border-style:solid;
+}
+
+#grade-report tr.heading {
+  border-width:0px 0px 0px 0px;
+  border-style:solid;
+}
+
+#grade-report .heading td {
+  border-width:0px 0px 0px 0px;
+  border-style:solid;
+}
+
+#grade-report td.category {
+  border-width:1px 1px 0px 1px;
+  border-style:solid;
+}
+
+#grade-report th.user {
+  border-width:0px 0px 1px 0px;
+  border-style:solid;
+}
+
+#grade-report th.categoryitem,
+#grade-report th.courseitem,
+#grade-report td.topleft {
+  border-width:0px 1px 0px 1px;
+  border-style:solid;
+}
+
+#grade-report th.item {
+  border-width:1px 1px 1px 1px;
+  border-style:solid;
+}
+
 /* gradebook edit tree */
 #grade_edit_tree .movetarget {
   position: relative;
@@ -3516,3 +3560,4 @@ wikiadminactions {
 .workshopkey {
   text-align:center;
 }
+

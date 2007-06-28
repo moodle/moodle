@@ -57,7 +57,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
         $grade_items[$item->sortorder] = $item;
     }
     unset($all_grade_items);
-    asort($grade_items);
+    ksort($grade_items);
 
     $total = $grade_items[1];
     unset($grade_items[1]);

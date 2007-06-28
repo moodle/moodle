@@ -560,15 +560,15 @@ class grade_category extends grade_object {
      * @return array
      */
     function fetch_course_tree($courseid, $include_grades=false, $include_category_items=false) {
-        $sortorder = 1;
         $course_category = grade_category::fetch_course_category($courseid);
-        $course_category->set_sortorder($sortorder);
-        $course_category->sortorder = $sortorder;
-        $category_array = array('object'=>$course_category,
+        $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
                                 'children'=>$course_category->get_children($include_grades, $include_category_items));
         if ($include_grades) {
             $category_array['finalgrades'] = $course_category->get_final();
         }
+        $sortorder = 1;
+        $course_category->set_sortorder($sortorder);
+        $course_category->sortorder = $sortorder;
         return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
@@ -578,8 +578,8 @@ class grade_category extends grade_object {
             $category_array['object']->set_sortorder($sortorder);
         }
 
-        // store the grade_item or grade_category instance
-        $result = array('object'=>$category_array['object']);
+        // store the grade_item or grade_category instance with extra info
+        $result = array('object'=>$category_array['object'], 'type'=>$category_array['type'], 'depth'=>$category_array['depth']);
 
         // reuse final grades if there
         if (array_key_exists('finalgrades', $category_array)) {
@@ -590,7 +590,7 @@ class grade_category extends grade_object {
         if (!empty($category_array['children'])) {
             $result['children'] = array();
             foreach($category_array['children'] as $oldorder=>$child_array) {
-                if (!empty($childarray['object']->itemtype) and ($childarray['object']->itemtype == 'course' or $childarray['object']->itemtype == 'category')) {
+                if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
                     $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
                 } else {
                     $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
@@ -637,6 +637,7 @@ class grade_category extends grade_object {
             // prevent problems with duplicate sortorders in db
             $sortorder = $item->sortorder;
             while(array_key_exists($sortorder, $cats[$categoryid]->children)) {
+                echo "$sortorder exists in item loop<br>";
                 $sortorder++;
             }
 
@@ -651,6 +652,7 @@ class grade_category extends grade_object {
                 // prevent problems with duplicate sortorders in db
                 $sortorder = $cat->sortorder;
                 while(array_key_exists($sortorder, $cats[$cat->parent]->children)) {
+                    echo "$sortorder exists in cat loop<br>";
                     $sortorder++;
                 }
 
@@ -679,25 +681,26 @@ class grade_category extends grade_object {
         foreach($category->children as $sortorder=>$child) {
             if (array_key_exists('itemtype', $child)) {
                 $grade_item = new grade_item($child, false);
-                $children_array[$sortorder] = array('object'=>$grade_item);
-                if ($include_grades) {
-                    $children_array[$sortorder]['finalgrades'] = $grade_item->get_final();
+                if (in_array($grade_item->itemtype, array('course', 'category'))) {
+                    $type  = $grade_item->itemtype.'item';
+                    $depth = $category->depth;
+                } else {
+                    $type  = 'item';
+                    $depth = $category->depth; // we use this to set the same colour
                 }
+                $children_array[$sortorder] = array('object'=>$grade_item, 'type'=>$type, 'depth'=>$depth);
 
             } else {
                 $children = grade_category::_get_children_recursion($child, $include_grades);
                 $grade_category = new grade_category($child, false);
                 if (empty($children)) {
-                    $children_array[$sortorder] = array('object'=>$grade_category);
-                    if ($include_grades) {
-                        $children_array[$sortorder]['finalgrades'] = $grade_category->get_final();
-                    }
-                } else {
-                    $children_array[$sortorder] = array('object'=>$grade_category, 'children'=>$children);
-                    if ($include_grades) {
-                        $children_array[$sortorder]['finalgrades'] = $grade_category->get_final();
-                    }
+                    $children = array();
                 }
+                $children_array[$sortorder] = array('object'=>$grade_category, 'type'=>'category', 'depth'=>$grade_category->depth, 'children'=>$children);
+            }
+
+            if ($include_grades) {
+                $children_array[$sortorder]['finalgrades'] = $grade_item->get_final();
             }
         }
 
@@ -842,7 +845,11 @@ class grade_category extends grade_object {
      * @return string name
      */
     function get_name() {
-        return $this->fullname;
+        if (empty($this->parent)) {
+            return "Top course category"; //TODO: localize
+        } else {
+            return $this->fullname;
+        }
     }
 
     /**

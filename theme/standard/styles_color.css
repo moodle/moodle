@@ -700,6 +700,17 @@ body#grade-index .grades .r1 {
   background-color: #f0f0f0;
 }
 
+/* new grades css*/
+
+#grade-report .catlevel1 {
+  background-color: #ffffff;
+}
+#grade-report .catlevel2 {
+  background-color: #eeeeee;
+}
+#grade-report .catlevel3 {
+  background-color: #dddddd;
+}
 
 /***
  *** Login
@@ -1076,3 +1087,4 @@ form.mform .fdescription.required {
 #help .center {
   text-align: center;
 }
+

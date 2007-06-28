@@ -978,8 +978,6 @@ class grade_item extends grade_object {
      * @return void
      */
     function set_sortorder($sortorder) {
-        global $CFG;
-
         if ($this->sortorder == $sortorder) {
             return;
         }
@@ -995,11 +993,11 @@ class grade_item extends grade_object {
      */
     function get_name() {
         if ($this->is_course_item()) {
-            return ('Total course grade'); // TODO: localize
+            return get_string('total'); // TODO: localize
 
-        } else if ($this->is_course_item()) {
+        } else if ($this->is_category_item()) {
             $category = $this->get_category();
-            return $category->get_name().'(grade)'; // TODO: localize
+            return 'Category<br />grade'; // TODO: localize
 
         } else {
             return $this->itemname;

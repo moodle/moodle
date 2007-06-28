@@ -280,7 +280,7 @@ $navigation = build_navigation($crumbs);
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
 
-$gtree = new grade_tree($param->courseid, false, false);
+$gtree = new grade_tree($param->courseid, false);
 $select_source = false;
 
 if (!empty ($param->action) && !empty ($param->source) && confirm_sesskey()) {
@@ -330,14 +330,14 @@ elseif (!empty ($param->target) && !empty ($param->action) && confirm_sesskey())
 			if (!$element['object']->set_hidden(1)) {
 				debugging("Could not update the element's hidden state!");
 			} else {
-				$gtree = new grade_tree($param->courseid, false, false);
+				$gtree = new grade_tree($param->courseid, false);
 			}
 			break;
 		case 'show' :
 			if (!$element['object']->set_hidden(0)) {
 				debugging("Could not update the element's hidden state!");
 			} else {
-                $gtree = new grade_tree($param->courseid, false, false);
+                $gtree = new grade_tree($param->courseid, false);
 			}
 			break;
 		case 'lock' :
@@ -345,14 +345,14 @@ elseif (!empty ($param->target) && !empty ($param->action) && confirm_sesskey())
 			if (!$element['object']->set_locked(1)) {
 				debugging("Could not update the element's locked state!");
 			} else {
-                $gtree = new grade_tree($param->courseid, false, false);
+                $gtree = new grade_tree($param->courseid, false);
 			}
 			break;
 		case 'unlock' :
 			if (!$element['object']->set_locked(0)) {
 				debugging("Could not update the element's locked state!");
 			} else {
-                $gtree = new grade_tree($param->courseid, false, false);
+                $gtree = new grade_tree($param->courseid, false);
 			}
 			break;
 		default :
@@ -380,7 +380,7 @@ elseif (!empty ($param->element_type) && !empty ($param->action) && $param->acti
 			}
 
 			if ($category->set_as_parent($items) && $category->update()) {
-				$gtree = new grade_tree($param->courseid, false, false);
+				$gtree = new grade_tree($param->courseid, false);
 			} else { // creation of category didn't work, print a message
 				debugging("Could not create a parent category over the items you selected..");
 			}
@@ -403,7 +403,7 @@ elseif (!empty ($param->element_type) && !empty ($param->action) && $param->acti
 			}
 
 			if ($category->set_as_parent($categories) && $category->update()) {
-				$gtree = new grade_tree($param->courseid, false, false);
+				$gtree = new grade_tree($param->courseid, false);
 			} else { // creation of category didn't work, print a message
 				debugging("Could not create a parent category over the categories you selected..");
 			}

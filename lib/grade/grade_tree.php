@@ -61,19 +61,20 @@ class grade_tree {
      * objects for the given courseid. Full objects are instantiated.
      * and renumbering.
      * @param int $courseid
-     * @param boolean $include_grades
      * @param boolean $fillers include fillers and colspans, make the levels var "rectabgular"
+     * @param boolean $include_grades
      * @param boolean $include_cagegory_items inclute the items for categories in the tree
      */
-    function grade_tree($courseid, $include_grades=false, $fillers=true, $include_cagegory_items=false) {
+    function grade_tree($courseid, $fillers=true, $include_grades=false) {
         global $USER;
 
         $this->courseid = $courseid;
         $this->include_grades = $include_grades;
         $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
+        $this->levels = array();
 
         // get course grade tree
-        $this->tree_array =& grade_category::fetch_course_tree($courseid, $include_grades, $include_cagegory_items);
+        $this->tree_array =& grade_category::fetch_course_tree($courseid, $include_grades, true);
 
         if ($fillers) {
             // inject fake categories == fillers
@@ -82,7 +83,6 @@ class grade_tree {
             grade_tree::inject_colspans($this->tree_array);
         }
 
-        $this->levels = array();
         grade_tree::fill_levels($this->levels, $this->tree_array, 0);
     }
 
@@ -90,22 +90,30 @@ class grade_tree {
     /**
      * Static recursive helper - fills the levels array, useful when accessing tree elements of one level
      */
-    function fill_levels(&$levels, &$tree, $depth) {
+    function fill_levels(&$levels, &$element, $depth) {
         if (!array_key_exists($depth, $levels)) {
             $levels[$depth] = array();
         }
-        $levels[$depth][] =& $tree;
+
+        // prepare unique identifier
+        if ($element['type'] == 'category') {
+            $element['eid'] = 'c'.$element['object']->id;
+        } else if (in_array($element['type'], array('item', 'courseitem', 'categoryitem'))) {
+            $element['eid'] = 'i'.$element['object']->id;
+        }
+
+        $levels[$depth][] =& $element;
         $depth++;
-        if (empty($tree['children'])) {
+        if (empty($element['children'])) {
             return;
         }
         $prev = 0;
-        foreach ($tree['children'] as $sortorder=>$child) {
-            grade_tree::fill_levels($levels, $tree['children'][$sortorder], $depth);
-            $tree['children'][$sortorder]['prev'] = $prev;
-            $tree['children'][$sortorder]['next'] = 0;
+        foreach ($element['children'] as $sortorder=>$child) {
+            grade_tree::fill_levels($levels, $element['children'][$sortorder], $depth);
+            $element['children'][$sortorder]['prev'] = $prev;
+            $element['children'][$sortorder]['next'] = 0;
             if ($prev) {
-                $tree['children'][$prev]['next'] = $sortorder;
+                $element['children'][$prev]['next'] = $sortorder;
             }
             $prev = $sortorder;
         }
@@ -114,17 +122,17 @@ class grade_tree {
     /**
      * Static recursive helper - makes full tree (all leafes are at the same level)
      */
-    function inject_fillers(&$tree, $depth) {
+    function inject_fillers(&$element, $depth) {
         $depth++;
 
-        if (empty($tree['children'])) {
+        if (empty($element['children'])) {
             return $depth;
         }
         $chdepths = array();
-        $chids = array_keys($tree['children']);
+        $chids = array_keys($element['children']);
 
         foreach ($chids as $chid) {
-            $chdepths[$chid] = grade_tree::inject_fillers($tree['children'][$chid], $depth);
+            $chdepths[$chid] = grade_tree::inject_fillers($element['children'][$chid], $depth);
         }
         arsort($chdepths);
 
@@ -134,8 +142,8 @@ class grade_tree {
                 continue;
             }
             for ($i=0; $i < $maxdepth-$chd; $i++) {
-                $oldchild =& $tree['children'][$chid];
-                $tree['children'][$chid] = array('object'=>'filler', 'children'=>array($oldchild));
+                $oldchild =& $element['children'][$chid];
+                $element['children'][$chid] = array('object'=>'filler', 'type'=>'filler', 'depth'=>$element['object']->depth,'children'=>array($oldchild));
             }
         }
 
@@ -145,17 +153,15 @@ class grade_tree {
     /**
      * Static recursive helper - add colspan information into categories
      */
-    function inject_colspans(&$tree) {
-        if (empty($tree['children'])) {
+    function inject_colspans(&$element) {
+        if (empty($element['children'])) {
             return 1;
         }
         $count = 0;
-        foreach ($tree['children'] as $key=>$child) {
-            $count += grade_tree::inject_colspans($tree['children'][$key]);
+        foreach ($element['children'] as $key=>$child) {
+            $count += grade_tree::inject_colspans($element['children'][$key]);
         }
-        if ($count > 1) {
-            $tree['colspan'] = $count - 1;
-        }
+        $element['colspan'] = $count;
         return $count;
     }
 

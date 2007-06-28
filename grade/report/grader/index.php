@@ -55,7 +55,7 @@ $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
 
 // Grab the grade_tree for this course
-$gtree = new grade_tree($courseid, false);
+$gtree = new grade_tree($courseid);
 
 // setting the sort order, this depends on last state
 // all this should be in the new table class that we might need to use
@@ -253,9 +253,6 @@ if (!$context = get_context_instance(CONTEXT_COURSE, $gtree->courseid)) {
 }
 //$users = get_role_users(@implode(',', $CFG->gradebookroles), $context);
 
-$topcathtml = '<tr><td class="filler">&nbsp;</td>';
-$cathtml    = '<tr><td class="filler">&nbsp;</td>';
-
 if ($sortitemid === 'lastname') {
     if ($sortorder == 'ASC') {
         $lastarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
@@ -286,29 +283,36 @@ $numrows = count($gtree->levels);
 foreach ($gtree->levels as $key=>$row) {
     if ($key ==0) {
         // do not diplay course grade category
-        continue;
+        // continue;
     }
 
-    $headerhtml .= '<tr>';
+    $headerhtml .= '<tr class="heading">';
 
     if ($key == $numrows - 1) {
-        $headerhtml .= '<th class="filler"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '. $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
+        $headerhtml .= '<th class="user"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '. $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
     } else {
-        $headerhtml .= '<td class="filler">&nbsp;</td>';
+        $headerhtml .= '<td class="topleft">&nbsp;</td>';
     }
 
     foreach ($row as $element) {
-        if (!empty($element['collspan'])) {
-            $colspan = 'colspan="'.$element['collspan'].'"';
+        if (!empty($element['colspan'])) {
+            $colspan = 'colspan="'.$element['colspan'].'"';
         } else {
             $colspan = '';
         }
 
-        if ($element['object'] == 'filler') {
-            $headerhtml .= '<td class="filler" '.$colspan.'>&nbsp;</td>';
+        if (!empty($element['depth'])) {
+            $catlevel = ' catlevel'.$element['depth'];
+        } else {
+            $catlevel = '';
+        }
 
-        } else if (get_class($element['object']) == 'grade_category') {
-            $headerhtml .= '<td '.$colspan.'">' . $element['object']->get_name();
+
+        if ($element['type'] == 'filler') {
+            $headerhtml .= '<td class="filler'.$catlevel.'" '.$colspan.'>&nbsp;</td>';
+
+        } else if ($element['type'] == 'category') {
+            $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'">'.$element['object']->get_name();
 
             // Print icons
             if ($USER->gradeediting) {
@@ -331,7 +335,7 @@ foreach ($gtree->levels as $key=>$row) {
                 $dimmed = 'class="dimmed_text"';
             }
 
-            $headerhtml .= '<th '.$dimmed.'><a href="'.$baseurl.'&amp;sortitemid='
+            $headerhtml .= '<th '.$dimmed.' class="'.$element['type'].$catlevel.'"><a href="'.$baseurl.'&amp;sortitemid='
                       . $element['object']->id .'">'. $element['object']->get_name()
                       . '</a>' . $arrow;
 
@@ -349,7 +353,7 @@ foreach ($gtree->levels as $key=>$row) {
 $studentshtml = '';
 
 foreach ($users as $userid => $user) {
-    $studentshtml .= '<tr><th>' . $user->firstname . ' ' . $user->lastname . '</th>';
+    $studentshtml .= '<tr><th class="user">' . $user->firstname . ' ' . $user->lastname . '</th>';
     foreach ($items as $item) {
 
 
@@ -416,7 +420,7 @@ foreach ($users as $userid => $user) {
     $studentshtml .= '</tr>';
 }
 
-$reporthtml = "<table style=\"text-align: center\" border=\"1\">$headerhtml";
+$reporthtml = "<table style=\"text-align: center\">$headerhtml";
 $reporthtml .= $studentshtml;
 $reporthtml .= "</table>";
 
