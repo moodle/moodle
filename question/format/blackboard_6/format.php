@@ -231,6 +231,9 @@ class qformat_blackboard_6 extends qformat_default {
             case 'Fill in the Blank':
                 $this->process_fblank($question, $questions);
                 break;
+            case 'Short Response':
+                $this->process_essay($question, $questions);
+                break;
             default:
                 print "Unknown or unhandled question type: \"$question->qtype\"<br />";
                 break;
@@ -299,6 +302,9 @@ function create_raw_question($quest) {
                             $choices = $this->process_block($mc_choice, $choices);
                             $block->choices[] = $choices;             
                         }
+                        break;
+                    case 'Short Response':
+                        // do nothing?
                         break;
                     case 'Fill in the Blank':
                         // do nothing?
@@ -538,7 +544,7 @@ function process_tf($quest, &$questions) {
     $question->image = ""; // No images with this format
     $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
     // put name in question object
-    $question->name = $question->questiontext;
+    $question->name = shorten_text($question->questiontext, 250);
 
     // first choice is true, second is false.
     if ($quest->responses[0]->fraction == 1) {
@@ -577,7 +583,7 @@ function process_fblank($quest, &$questions) {
     $question->usecase = 0;
     $question->image = '';
     $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = $question->questiontext;
+    $question->name = shorten_text($question->questiontext, 250);
     $answers = array();
     $fractions = array();
     $feedbacks = array();
@@ -642,7 +648,7 @@ function process_mc($quest, &$questions) {
     $question->single = 1;
     $question->image = "";
     $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = $question->questiontext;
+    $question->name = shorten_text($question->questiontext, 250);
     
     $feedback = array();
     foreach($quest->feedback as $fback) {
@@ -711,7 +717,7 @@ function process_mc($quest, &$questions) {
 function process_ma($quest, &$questions) {
     $question = $this->defaultquestion(); // copied this from process_mc
     $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = $question->questiontext; 
+    $question->name = shorten_text($question->questiontext, 250); 
     $question->qtype = MULTICHOICE;
     $question->defaultgrade = 1;
     $question->single = 0; // More than one answer allowed
@@ -767,9 +773,7 @@ function process_essay($quest, &$questions) {
         $question->usecase = 0; // Ignore case
         $question->image = ""; // No images with this format
         $question->questiontext = addslashes(trim($quest->QUESTION_BLOCK->text));
-        $question->name = $question->questiontext;
-    
-        print $question->name;
+        $question->name = shorten_text($question->questiontext, 250);
     
         $question->feedback = array();
         // not sure where to get the correct answer from
@@ -777,7 +781,7 @@ function process_essay($quest, &$questions) {
             // Added this code to put the possible solution that the
             // instructor gives as the Moodle answer for an essay question
             if ($feedback->ident == 'solution') {
-                $question->feedback = $feedback->text;
+                $question->feedback = addslashes($feedback->text);
             }
         }
         //Added because essay/questiontype.php:save_question_option is expecting a 
@@ -803,7 +807,7 @@ function process_matching($quest, &$questions) {
         $question->qtype = RENDEREDMATCH;
         $question->defaultgrade = 1;
         $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-        $question->name = $question->questiontext;
+        $question->name = shorten_text($question->questiontext, 250);
     
         foreach($quest->RESPONSE_BLOCK->subquestions as $qid => $subq) {
             foreach($quest->responses as $rid => $resp) {
