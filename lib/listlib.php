@@ -97,7 +97,7 @@ class moodle_list{
      * @param string $type
      * @param string $attributes
      * @param boolean $editable
-     * @param moodle_url $pageurl url for this page 
+     * @param moodle_url $pageurl url for this page
      * @param integer $page if 0 no pagination. (These three params only used in top level list.)
      * @param string $pageparamname name of url param that is used for passing page no
      * @param integer $itemsperpage no of top level items.
@@ -116,7 +116,7 @@ class moodle_list{
         } else {
             $this->pageurl = $pageurl;
         }
-        
+
     }
 
     /**
@@ -136,7 +136,7 @@ class moodle_list{
                 $last = (count($this->items) == $itemiter);
                 if ($this->editable){
                     $item->set_icon_html($first, $last, $lastitem);
-                }                
+                }
                 if ($itemhtml = $item->to_html($indent+1, $extraargs)){
                     $html .= "$tabs\t<li".((!empty($item->attributes))?(' '.$item->attributes):'').">";
                     $html .= $itemhtml;
@@ -197,7 +197,7 @@ class moodle_list{
     function set_parent(&$parent){
         $this->parentitem =& $parent;
     }
-    
+
 
     /**
      * Produces a hierarchical tree of list items from a flat array of records.
@@ -205,10 +205,10 @@ class moodle_list{
      * records are already sorted.
      * If the parent field doesn't point to another record in the array then this is
      * a top level list
-     * 
+     *
      * @param integer $offset how many list toplevel items are there in lists before this one
      * @return integer $offset + how many toplevel items where there in this list.
-     * 
+     *
      */
     function list_from_records($paged = false, $offset =1){
         $this->paged = $paged;
@@ -217,7 +217,7 @@ class moodle_list{
         $records = $this->records;
         $page = $this->page;
         if (!empty($page)) {
-            
+
             $this->firstitem = ($page-1) * $this->itemsperpage + 1;
             $this->lastitem = $this->firstitem + $this->itemsperpage - 1;
         }
@@ -239,14 +239,14 @@ class moodle_list{
                     $newattributes = $this->parentitem->attributes;
                 } else {
                     $newattributes = '';
-                    
+
                 }
                 $newlistitem =& new $this->listitemclassname($record, $this, $newattributes, $inpage);
                 if ($inpage){
                     //but don't recurse down the tree for items that are not on this page
                     $newlistitem->create_children($records, $this->childparent, $record->id);
                 } else {
-                    $this->paged = true; 
+                    $this->paged = true;
                 }
                 $itemiter++;
             }
@@ -532,8 +532,7 @@ class list_item{
         $strmovedown = get_string('movedown');
         $strmoveleft = get_string('maketoplevelitem', 'question');
         $pixpath = $CFG->pixpath;
-        $icons = array();
-    
+
         if (isset($this->parentlist->parentitem)) {
             $parentitem =& $this->parentlist->parentitem;
             if (isset($parentitem->parentlist->parentitem)){
@@ -541,38 +540,37 @@ class list_item{
             } else {
                 $action = $strmoveleft;
             }
-            $icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action(array('left'=>$this->id)), 'left'); 
+            $this->icons['left'] = $this->image_icon($action, $this->parentlist->pageurl->out_action(array('left'=>$this->id)), 'left');
         } else {
-            $icons['left'] =  $this->image_spacer();
+            $this->icons['left'] =  $this->image_spacer();
         }
 
         if (!$first) {
-             $icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('moveup'=>$this->id)), 'up');
+            $this->icons['up'] = $this->image_icon($strmoveup, $this->parentlist->pageurl->out_action(array('moveup'=>$this->id)), 'up');
         } else {
-            $icons['up'] =  $this->image_spacer();
+            $this->icons['up'] =  $this->image_spacer();
         }
 
         if (!$last) {
-            $icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action(array('movedown'=>$this->id)), 'down');
+            $this->icons['down'] = $this->image_icon($strmovedown, $this->parentlist->pageurl->out_action(array('movedown'=>$this->id)), 'down');
         } else {
-            $icons['down'] =  $this->image_spacer();
+            $this->icons['down'] =  $this->image_spacer();
         }
 
         if (!empty($lastitem)) {
             $makechildof = get_string('makechildof', 'question', $lastitem->name);
-            $icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action(array('right'=>$this->id)), 'right'); 
+            $this->icons['right'] = $this->image_icon($makechildof, $this->parentlist->pageurl->out_action(array('right'=>$this->id)), 'right');
         } else {
-            $icons['right'] =  $this->image_spacer();
+            $this->icons['right'] =  $this->image_spacer();
         }
 
-        $this->icons = $icons;
     }
     function image_icon($action, $url, $icon){
         global $CFG;
         $pixpath = $CFG->pixpath;
         return '<a title="' . $action .'" href="'.$url.'">
                 <img src="' . $pixpath . '/t/'.$icon.'.gif" class="iconsmall" alt="' . $action. '" /></a> ';
-    }  
+    }
     function image_spacer(){
         global $CFG;
         $pixpath = $CFG->pixpath;
