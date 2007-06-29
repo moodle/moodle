@@ -755,16 +755,6 @@ FROM
 WHERE 
     ra.userid=$userid
 UNION
-SELECT 
-    $fields 
-FROM 
-    {$CFG->prefix}role_assignments ra
-    INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
-    INNER JOIN {$CFG->prefix}course_categories a ON x.instanceid=a.id AND x.contextlevel=40
-    INNER JOIN {$CFG->prefix}course c ON c.category=a.id
-WHERE 
-    ra.userid=$userid
-UNION
 SELECT
     $fields
 FROM
