@@ -207,57 +207,6 @@ class grade_category_test extends grade_test {
         return $grade->rawgrade;
     }
 
-    function test_grade_category_set_as_parent() {
-        //TODO: rewrite this test - we need proper items stored in database!
-
-/*        global $CFG;
-        $debuglevel = $CFG->debug;
-
-        // There are 3 constraints which, if violated, should return false and trigger a debugging message. Test each of them
-        $grade_category = new grade_category();
-        $grade_category->fullname    = 'new topcategory';
-        $grade_category->courseid    = $this->courseid;
-        $grade_category->insert();
-
-        // 1. mixed types of children
-        $child1 = new grade_item();
-        $child1->sortorder = 1;
-        $child2 = new grade_category();
-        $child2->grade_item = new grade_item();
-        $child2->grade_item->sortorder = 2;
-        $CFG->debug = 2;
-        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
-        $CFG->debug = $debuglevel;
-
-        // 2. Child is a top category
-        $child1 = new grade_category($this->grade_categories[0]);
-        $CFG->debug = 2;
-        $this->assertFalse($grade_category->set_as_parent(array($child1)));
-        $CFG->debug = $debuglevel;
-
-        // 3. Children belong to different courses
-        $child1 = new grade_item($this->grade_items[0]);
-        $child2 = new grade_item($this->grade_items[1]);
-        $child2->courseid = 543;
-        $CFG->debug = 2;
-        $this->assertFalse($grade_category->set_as_parent(array($child1, $child2)));
-        $CFG->debug = $debuglevel;
-
-        // Now test setting parent correctly
-        $child1 = new grade_item();
-        $child2 = new grade_item();
-        $child1->itemname = 'new grade_item';
-        $child2->itemname = 'new grade_item';
-        $child1->itemtype = 'something';
-        $child2->itemtype = 'something';
-        $child1->sortorder = 1;
-        $child2->sortorder = 2;
-        $child1->courseid = $grade_category->courseid;
-        $child2->courseid = $grade_category->courseid;
-        $child1->insert();
-        $child2->insert();
-        $this->assertTrue($grade_category->set_as_parent(array($child1, $child2)));*/
-    }
 /*
     function test_grade_category_apply_limit_rules() {
         $category = new grade_category();

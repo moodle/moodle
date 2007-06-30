@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070628" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070630" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1333,8 +1333,9 @@
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this entry" PREVIOUS="timemodified"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="gradeid"/>
+        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="primary" NEXT="usermodified"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="gradeid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as “Not met, Borderline, Met” (stored as 0,1 or 2)" PREVIOUS="grade_grades_text" NEXT="grade_history">

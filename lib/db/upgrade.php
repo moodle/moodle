@@ -952,7 +952,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
 /// clenaup and recreate tables for course grade
-    if ($result && $oldversion < 2007062800) {
+    if ($result && $oldversion < 2007063000) {
         /// Remove obsoleted unitt tests tables - they will be recreated automatically
         $tables = array('grade_categories',
                         'scale',
@@ -1106,6 +1106,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Adding keys to table grade_grades_text
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('gradeid', XMLDB_KEY_FOREIGN, array('gradeid'), 'grade_grades', array('id'));
         $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
     /// Launch create table for grade_grades_text
@@ -1160,6 +1161,17 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    // add foreign key that was forgotten in last commit
+    if ($result && $oldversion < 2007063001) {
+
+    /// Define key gradeid (foreign) to be added to grade_grades_text
+        $table = new XMLDBTable('grade_grades_text');
+        $key = new XMLDBKey('gradeid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('gradeid'), 'grade_grades', array('id'));
+
+    /// Launch add key gradeid
+        add_key($table, $key);
+    }
     return $result;
 }
 

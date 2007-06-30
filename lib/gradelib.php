@@ -667,7 +667,7 @@ function grade_oldgradebook_upgrade($courseid) {
             $newitem = new grade_item(array('courseid'=>$olditem->courseid, 'itemtype'=>'mod', 'itemmodule'=>$olditem->modname, 'iteminstance'=>$olditem->cminstance, 'itemnumber'=>0));
             if (!empty($olditem->category)) {
                 // we do this low level stuff to get some speedup during upgrade
-                $newitem->set_parent_id($categories[$olditem->category]->id);
+                $newitem->set_parent($categories[$olditem->category]->id);
             }
             $newitem->gradetype = GRADE_TYPE_NONE;
             $newitem->multfactor = $olditem->scale_grade;
@@ -689,7 +689,7 @@ function grade_oldgradebook_upgrade($courseid) {
  * @param object $tree (A complete grade_tree object)
  * @return string HTML
  */
-function grade_get_icons($object, $tree) {
+function grade_get_icons($element, $tree) {
     global $CFG;
     global $USER;
 
@@ -713,12 +713,19 @@ function grade_get_icons($object, $tree) {
 
     $html = '<div class="grade_icons">';
 
+    $eid    = $element['eid'];
+    $object = $element['object'];
+    $type   = $element['type'];
+
     // Icons shown when edit mode is on
     if ($USER->gradeediting) {
         // Edit icon (except for grade_grades)
-        if (get_class($object) != 'grade_grades') {
-            $html .= '<a href="report/grader/category.php?target=' . $object->get_sortorder()
-                  . "&amp;action=edit$tree->commonvars\">\n";
+        if ($type == 'category') {
+            $html .= '<a href="report/grader/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
+            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+        } else {
+            $html .= '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
         }
@@ -730,30 +737,24 @@ function grade_get_icons($object, $tree) {
         }
 
         // Setup object identifier and show feedback icon if applicable
-        if (get_class($object) != 'grade_grades') {
-            $identifier = $object->get_sortorder();
-        } else {
-            $identifier = 'grade' . $object->id;
-
-            if ($USER->gradefeedback) {
-                // Display Edit/Add feedback icon
-                if (empty($object->feedback)) {
-                    $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
-                          . "&amp;action=addfeedback$tree->commonvars\">\n";
-                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
-                          . 'title="'.$straddfeedback.'" /></a>'. "\n";
-                } else {
-                    $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
-                          . "&amp;action=editfeedback$tree->commonvars\">\n";
-                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
-                          . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                      . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
-                }
+        if ($type != 'category' and $USER->gradefeedback) {
+            // Display Edit/Add feedback icon
+            if (empty($object->feedback)) {
+                $html .= '<a href="report.php?report=grader&amp;target='.$eid
+                      . "&amp;action=addfeedback$tree->commonvars\">\n";
+                $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
+                      . 'title="'.$straddfeedback.'" /></a>'. "\n";
+            } else {
+                $html .= '<a href="report.php?report=grader&amp;target='.$eid
+                      . "&amp;action=editfeedback$tree->commonvars\">\n";
+                $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
+                      . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                  . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
             }
         }
 
         // Display Hide/Show icon
-        $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+        $html .= '<a href="report.php?report=grader&amp;target='.$eid
               . "&amp;action=$hide_show$tree->commonvars\">\n";
         $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
               .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
@@ -765,7 +766,7 @@ function grade_get_icons($object, $tree) {
         }
 
         // Print lock/unlock icon
-        $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+        $html .= '<a href="report.php?report=grader&amp;target='.$eid
               . "&amp;action=$lock_unlock$tree->commonvars\">\n";
         $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
               .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
@@ -780,7 +781,7 @@ function grade_get_icons($object, $tree) {
                 $expand_contract = 'switch_plus';
             }
 
-            $html .= '<a href="report.php?report=grader&amp;target=' . $identifier
+            $html .= '<a href="report.php?report=grader&amp;target=' . $eid
                   . "&amp;action=$expand_contract$tree->commonvars\">\n";
             $html .= '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
                   .${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
@@ -789,7 +790,7 @@ function grade_get_icons($object, $tree) {
         if ($USER->gradefeedback) {
             // Display Edit/Add feedback icon
             if (!empty($object->feedback)) {
-                $html .= '<a href="report.php?report=grader&amp;target=' . $object->id
+                $html .= '<a href="report.php?report=grader&amp;target=' . $eid
                       . "&amp;action=viewfeedback$tree->commonvars\">\n";
                 $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                       . $strfeedback.'\');" onmouseout="return nd();" '

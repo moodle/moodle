@@ -100,27 +100,21 @@ if ($sortitemid) {
 // Perform actions on categories, items and grades
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
-    // If targetting a grade, create a pseudo-element
-    if (preg_match('/^grade([0-9]*)/', $target, $matches)) {
-        $grade_grades_id = $matches[1];
-        $element = new stdClass();
-        $grade_grades = new grade_grades(array('id' => $grade_grades_id));
-        $element->element = array('object' => $grade_grades);
-    } else {
-        $element = $gtree->locate_element($target);
-    }
+    $element = $gtree->locate_element($target);
 
     switch ($action) {
         case 'edit':
             break;
         case 'delete':
             if ($confirm == 1) { // Perform the deletion
-                $element['object']->delete($target);
+                //TODO: add proper delete support for grade items and categories
+                //$element['object']->delete();
                 // Print result message
 
             } else { // Print confirmation dialog
+                $eid = $element['eid'];
                 $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
-                $linkyes = "category.php?target=$target&amp;action=delete&amp;confirm=1$gtree->commonvars";
+                $linkyes = "category.php?target=$eid&amp;action=delete&amp;confirm=1$gtree->commonvars";
                 $linkno = "category.php?$gtree->commonvars";
                 notice_yesno($strdeletecheckfull, $linkyes, $linkno);
             }
@@ -281,7 +275,7 @@ $headerhtml = '';
 
 $numrows = count($gtree->levels);
 foreach ($gtree->levels as $key=>$row) {
-    if ($key ==0) {
+    if ($key == 0) {
         // do not diplay course grade category
         // continue;
     }
@@ -295,6 +289,10 @@ foreach ($gtree->levels as $key=>$row) {
     }
 
     foreach ($row as $element) {
+        $eid    = $element['eid'];
+        $object = $element['object'];
+        $type   = $element['type'];
+
         if (!empty($element['colspan'])) {
             $colspan = 'colspan="'.$element['colspan'].'"';
         } else {
@@ -316,7 +314,7 @@ foreach ($gtree->levels as $key=>$row) {
 
             // Print icons
             if ($USER->gradeediting) {
-                $headerhtml .= grade_get_icons($element['object'], $gtree) . '</td>';
+                $headerhtml .= grade_get_icons($element, $gtree) . '</td>';
             }
 
         } else {
@@ -339,7 +337,7 @@ foreach ($gtree->levels as $key=>$row) {
                       . $element['object']->id .'">'. $element['object']->get_name()
                       . '</a>' . $arrow;
 
-            $headerhtml .= grade_get_icons($element['object'], $gtree) . '</th>';
+            $headerhtml .= grade_get_icons($element, $gtree) . '</th>';
 
             $items[$element['object']->sortorder] =& $element['object'];
         }
@@ -408,11 +406,6 @@ foreach ($users as $userid => $user) {
             } else {
                 $studentshtml .=  $gradeval;
             }
-        }
-
-        // Do not show any icons if no grade (no record in DB to match)
-        if (!empty($grade_grades->id)) {
-            $studentshtml .= grade_get_icons($grade_grades, $gtree);
         }
 
         $studentshtml .=  '</td>' . "\n";
