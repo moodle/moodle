@@ -35,7 +35,7 @@ class mod_glossary_entry_form extends moodleform {
             $categories = array(0 => get_string('notcategorised', 'glossary'));
         }
 
-        $categoriesEl = $mform->addElement('select', 'categories', get_string('categories', 'glossary'), $categories);
+        $categoriesEl =& $mform->addElement('select', 'categories', get_string('categories', 'glossary'), $categories);
         $categoriesEl->setMultiple(true);
         $categoriesEl->setSize(5);
 
