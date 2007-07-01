@@ -1216,7 +1216,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $sec=substr($time,12,2);
                 $result = mktime($hr,$min,$sec,$mo,$dt,$yr);
                 break;
-            case 'posix':
+            case 'rfc2307':
+            case 'rfc2307bis':
                 $result = $time * DAYSECS; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
                 break;
             case 'ad':
@@ -1239,7 +1240,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             case 'edir':
                 $result=date('YmdHis', $time).'Z';
                 break;
-            case 'posix':
+            case 'rfc2307':
+            case 'rfc2307bis':
                 $result = $time ; //Already in correct format
                 break;
             default:
