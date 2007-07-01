@@ -522,6 +522,7 @@ class grade_item extends grade_object {
     /**
      * Set the hidden status of grade_item and all grades, 0 mean visible, 1 always hidden, number means date to hide until.
      * @param int $hidden new hidden status
+     * @return void
      */
     function set_hidden($hidden) {
         $this->hidden = $hidden;

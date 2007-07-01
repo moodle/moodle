@@ -87,6 +87,14 @@ switch ($action) {
         //TODO: implement deleting in grade items and categories
         break;
 
+    case 'autosort':
+        //TODO: implement autosorting based on order of mods on course page, categories first, manual items last
+        break;
+
+    case 'synclegacy':
+        grade_grab_legacy_grades($course->id);
+        redirect($returnurl);
+
     case 'move':
         if ($eid and confirm_sesskey()) {
             $moveafter = required_param('moveafter', PARAM_ALPHANUM);
@@ -145,17 +153,22 @@ switch ($action) {
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
 
-echo '<ul class="grade_tree">';
+print_box_start('gradetreebox generalbox');
+echo '<ul id="grade_tree">';
 print_grade_tree($gtree->top_element, $moving);
 echo '</ul>';
+print_box_end();
 
+echo '<div class="buttons">';
 if ($moving) {
     print_single_button('category.php', array('id'=>$course->id), get_string('cancel'), 'get');
 } else {
     print_single_button('edit_category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
-    print_single_button('edit_item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
+    print_single_button('edit_item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get'); // TODO: localize
+    print_single_button('category.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get'); //TODO: localize
+    print_single_button('category.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get'); //TODO: localize
 }
-
+echo '</div>';
 print_footer($course);
 die;
 
@@ -230,7 +243,7 @@ function print_grade_tree($element, $moving) {
 /// print the list items now
     if ($moving == $eid) {
         // do not diplay children
-        echo '<li class="'.$element['type'].'">'.$icon.$name.'('.get_string('move').')</li>';
+        echo '<li class="'.$element['type'].' moving">'.$icon.$name.'('.get_string('move').')</li>';
 
     } else if ($element['type'] != 'category') {
         echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>'.$moveto;

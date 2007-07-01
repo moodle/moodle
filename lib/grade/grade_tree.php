@@ -130,6 +130,8 @@ class grade_tree {
         }
         $chdepths = array();
         $chids = array_keys($element['children']);
+        $last_child  = end($chids);
+        $first_child = reset($chids);
 
         foreach ($chids as $chid) {
             $chdepths[$chid] = grade_tree::inject_fillers($element['children'][$chid], $depth);
@@ -142,8 +144,15 @@ class grade_tree {
                 continue;
             }
             for ($i=0; $i < $maxdepth-$chd; $i++) {
+                if ($chid == $first_child) {
+                    $type = 'fillerfirst';
+                } else if ($chid == $last_child) {
+                    $type = 'fillerlast';
+                } else {
+                    $type = 'filler';
+                }
                 $oldchild =& $element['children'][$chid];
-                $element['children'][$chid] = array('object'=>'filler', 'type'=>'filler', 'eid'=>'', 'depth'=>$element['object']->depth,'children'=>array($oldchild));
+                $element['children'][$chid] = array('object'=>'filler', 'type'=>$type, 'eid'=>'', 'depth'=>$element['object']->depth,'children'=>array($oldchild));
             }
         }
 
@@ -172,6 +181,21 @@ class grade_tree {
      * @return object element
      */
     function locate_element($eid) {
+        if (strpos($eid, 'g') === 0) {
+            // it is a grade  construct a new object
+            $id = (int)substr($eid, 1);
+            if (!$grade = grade_grades::fetch(array('id'=>$id))) {
+                return null;
+            }
+            //extra security check - the grade item must be in this tree
+            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+                return null;
+            }
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grades methods!
+            return array('eid'=>'g'.$id,'object'=>$grade, 'type'=>'grade');
+        }
+
+        // it is a category or item
         foreach ($this->levels as $row) {
             foreach ($row as $element) {
                 if ($element['type'] == 'filler') {
@@ -186,26 +210,4 @@ class grade_tree {
         return null;
     }
 
-    /**
-     * Given an element object, returns its type (topcat, subcat or item).
-     * The $element can be a straight object (fully instantiated), an array of 'object' and 'children'/'final_grades', or a stdClass element
-     * as produced by grade_tree::locate_element(). This method supports all three types of inputs.
-     * @param object $element
-     * @return string Type
-     */
-    function get_element_type($element) {
-        if ($element['object'] == 'filler') {
-            return 'filler';
-        }
-
-        if (get_class($element['object']) == 'grade_category') {
-            if ($element['object']->depth == 2) {
-                return 'topcat';
-            } else {
-                return 'subcat';
-            }
-        }
-
-        return 'item';
-    }
 }

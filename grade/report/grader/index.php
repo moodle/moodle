@@ -122,33 +122,25 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
         case 'hide':
         // TODO Implement calendar for selection of a date to hide element until
-            if (!$element['object']->set_hidden(1)) {
-                debugging("Could not update the element's hidden state!");
-            } else {
-                $gtree = new grade_tree($courseid);
-            }
+            $element['object']->set_hidden(1);
+            $gtree = new grade_tree($courseid);
             break;
         case 'show':
-            if (!$element['object']->set_hidden(0)) {
-                debugging("Could not update the element's hidden state!");
-            } else {
-                $gtree = new grade_tree($courseid);
-            }
+            $element['object']->set_hidden(0);
+            $gtree = new grade_tree($courseid);
             break;
         case 'lock':
         // TODO Implement calendar for selection of a date to lock element after
             if (!$element['object']->set_locked(1)) {
                 debugging("Could not update the element's locked state!");
-            } else {
-                $gtree = new grade_tree($courseid);
             }
+            $gtree = new grade_tree($courseid);
             break;
         case 'unlock':
             if (!$element['object']->set_locked(0)) {
                 debugging("Could not update the element's locked state!");
-            } else {
-                $gtree = new grade_tree($courseid);
             }
+            $gtree = new grade_tree($courseid);
             break;
         default:
             break;
@@ -306,10 +298,10 @@ foreach ($gtree->levels as $key=>$row) {
         }
 
 
-        if ($element['type'] == 'filler') {
-            $headerhtml .= '<td class="filler'.$catlevel.'" '.$colspan.'>&nbsp;</td>';
+        if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
+            $headerhtml .= '<td class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</td>';
 
-        } else if ($element['type'] == 'category') {
+        } else if ($type == 'category') {
             $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'">'.$element['object']->get_name();
 
             // Print icons
@@ -333,7 +325,7 @@ foreach ($gtree->levels as $key=>$row) {
                 $dimmed = 'class="dimmed_text"';
             }
 
-            $headerhtml .= '<th '.$dimmed.' class="'.$element['type'].$catlevel.'"><a href="'.$baseurl.'&amp;sortitemid='
+            $headerhtml .= '<th '.$dimmed.' class="'.$type.$catlevel.'"><a href="'.$baseurl.'&amp;sortitemid='
                       . $element['object']->id .'">'. $element['object']->get_name()
                       . '</a>' . $arrow;
 
@@ -359,11 +351,11 @@ foreach ($users as $userid => $user) {
 
         if (isset($finalgrades[$userid][$item->id])) {
             $gradeval = $finalgrades[$userid][$item->id]->finalgrade;
-            $grade_grades = new grade_grades($finalgrades[$userid][$item->id], false);
-            $grade_grades->feedback = $finalgrades[$userid][$item->id]->feedback;
+            $grade = new grade_grades($finalgrades[$userid][$item->id], false);
+            $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
         } else {
             $gradeval = '-';
-            $grade_grades = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
+            $grade = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
         }
 
         // if in editting mode, we need to print either a text box
@@ -406,6 +398,15 @@ foreach ($users as $userid => $user) {
             } else {
                 $studentshtml .=  $gradeval;
             }
+        }
+
+        // Do not show any icons if no grade (no record in DB to match)
+        if (!empty($grade->id)) {
+            // emulate grade element
+            $grade->courseid = $course->id;
+            $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grades methods
+            $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
+            $studentshtml .= grade_get_icons($element, $gtree);
         }
 
         $studentshtml .=  '</td>' . "\n";

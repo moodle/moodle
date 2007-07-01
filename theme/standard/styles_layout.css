@@ -2047,6 +2047,7 @@ body#grade-index .grades .weighted {
    margin:0px 20px 0px 20px;
 }
 
+
 /* new grades CSS */
 
 #grade-report table {
@@ -2086,66 +2087,68 @@ body#grade-index .grades .weighted {
   border-style:solid;
 }
 
+#grade-report td.fillerfirst {
+  border-width:0px 0px 0px 1px;
+  border-style:solid;
+}
+
+#grade-report td.fillerlast {
+  border-width:0px 1px 0px 0px;
+  border-style:solid;
+}
+
 #grade-report th.item {
   border-width:1px 1px 1px 1px;
   border-style:solid;
 }
 
 /* gradebook edit tree */
-#grade_edit_tree .movetarget {
+
+#grade-report-grader-category .gradetreebox {
+  width:70%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:10px;
+  padding-bottom:15px;
+}
+
+#grade-report-grader-category .buttons {
+  margin: 20px;
+  text-align:center;
+}
+
+#grade-report-grader-category .buttons .singlebutton {
+  display: inline;
+  padding: 5px;
+}
+
+
+#grade-report-grader-category .movetarget {
   position: relative;
   width: 80px;
   height: 16px;
 }
 
-#content ul#grade_edit_tree {
+#grade-report-grader-category ul#grade_tree {
   width: auto;
 }
 
-#grade_edit_tree li {
+#grade-report-grader-category ul#grade_tree li {
   list-style: none;
-  margin-top: 8px;
 }
 
-#grade_edit_tree li div.moduleicon {
-  margin-right: 5px;
-  display: inline;
+#grade-report-grader-category ul#grade_tree li.category {
+  margin-bottom: 6px;
 }
 
-#grade_edit_tree li div.select_checkbox {
-  margin-right: 5px;
-  display: inline;
-}
-
-#grade_edit_tree li.insertion {
-  cursor: pointer;
-}
-
-#grade_edit_tree .moveuparrow {
-  cursor: pointer;
-}
-
-#grade_edit_tree .movedownarrow {
-  cursor: pointer;
-}
-
-#grade_edit_tree form.movearrow div {
-  display: inline;
-}
-
-#grade_edit_tree form.movearrow {
-  display: inline;
-}
-
-#grade_edit_tree .selected_element {
+#grade-report-grader-category .moving {
   background-color: #E8EEF7;
 }
 
-#grade_edit_tree .icons {
-  position: relative;
-  display: inline;
-  margin-left: 10px;
+#grade-report-grader-category .iconsmall {
+  margin-left: 4px;
 }
+
 /***
  *** Login
  ***/

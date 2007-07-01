@@ -391,13 +391,20 @@ function grade_update_final_grades($courseid, $regradeall=false) {
 /**
  * For backwards compatibility with old third-party modules, this function can
  * be used to import all grades from activities with legacy grading.
+ * @param int $courseid or null if all courses
  */
-function grade_grab_legacy_grades() {
+function grade_grab_legacy_grades($courseid=null) {
 
     global $CFG;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         error('No modules installed!');
+    }
+
+    if ($courseid) {
+        $course_sql = " AND cm.course=$courseid";
+    } else {
+        $course_sql = "";
     }
 
     foreach ($mods as $mod) {
@@ -429,7 +436,7 @@ function grade_grab_legacy_grades() {
                 // get all instance of the activity
                 $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
                           FROM {$CFG->prefix}$mod a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-                         WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id";
+                         WHERE m.name='$mod' AND m.id=cm.module AND cm.instance=a.id $course_sql";
 
                 if ($modinstances = get_records_sql($sql)) {
                     foreach ($modinstances as $modinstance) {
@@ -724,8 +731,14 @@ function grade_get_icons($element, $tree) {
             $html .= '<a href="report/grader/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
-        } else {
+
+        } else if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
             $html .= '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
+            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+        } else if ($type == 'grade') {
+            $html .= '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
         }

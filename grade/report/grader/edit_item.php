@@ -2,7 +2,7 @@
 
 require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once 'edit_item_form.php';
+require_once $CFG->libdir.'/formslib.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
@@ -62,3 +62,29 @@ $mform->display();
 
 print_footer($course);
 die;
+
+
+class edit_item_form extends moodleform {
+    function definition() {
+        $mform =& $this->_form;
+
+        // visible elements
+        $mform->addElement('text', 'itemname', get_string('itemname', 'grades'));
+
+        //TODO: add other elements
+
+        // hidden params
+        $mform->addElement('hidden', 'id', 0);
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'courseid', 0);
+        $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('hidden', 'itemtype', 0);
+        $mform->setType('itemtype', PARAM_ALPHA);
+
+//-------------------------------------------------------------------------------
+        // buttons
+        $this->add_action_buttons();
+    }
+}
