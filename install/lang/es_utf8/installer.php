@@ -129,6 +129,7 @@ $string['environmenthead'] = 'Comprobando su entorno';
 $string['environmentrecommendcustomcheck'] = 'Si esta comprobación falla, ello indica un problema potencial';
 $string['environmentrecommendinstall'] = 'es recomendable que esté instalado/activado';
 $string['environmentrecommendversion'] = 'versión $a->needed es recomendada y está ejecutando $a->current';
+$string['environmentrequirecustomcheck'] = 'esta prueba debe pasar';
 $string['environmentrequireinstall'] = 'es obligatorio que esté instalado/activado';
 $string['environmentrequireversion'] = 'versión $a->needed es obligatoria y está ejecutando $a->current';
 $string['environmentsub'] = 'Estamos comprobando que diferentes componentes de su servidor cumplen con los requerimientos del sistema';
@@ -205,6 +206,8 @@ $string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o supe
 <p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
+$string['qtyperqpwillberemoved'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. En el caso de que no estuviera utilizando este tipo de pregunta, no debería tener ningún problema.';
+$string['qtyperqpwillberemovedanyway'] = 'Durante la actualización, el tipo de pregunta RQP será eliminada. Usted tiene algunas preguntas RQP en su base de datos, y tales preguntas no pararán de funcionar a menos que reinstale el código desde http://moodle.org/mod/data/view.php?d=13&amp;rid=797  antes de continuar la actualización.';
 $string['remotedownloadnotallowed'] = 'No está permitido descargar los componentes a su servidor (allow_url_fopen está deshabilitado).<br /><br />Debe descargar el archivo <a href=\"$a->url\">$a->url</a> manualmente, y copiarlo a \"$a->dest\"';
 $string['report'] = 'Informe';
 $string['restricted'] = 'Restringido';
