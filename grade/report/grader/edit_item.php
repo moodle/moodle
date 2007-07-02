@@ -1,8 +1,7 @@
 <?php  //$Id$
 require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once $CFG->libdir.'/formslib.php';
-require_once ('edit_item_form.php');
+require_once 'edit_item_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
@@ -30,10 +29,15 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
+    if (empty($data->checkbox)) {
+        $data->checkbox = 0; // work around the missing value if checkbox not selected
+    }
+
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$course->id));
     grade_item::set_properties($grade_item, $data);
 
     if (empty($grade_item->id)) {
+        $grade_item->itemtype = 'manual'; // for all new items to be manual only
         $grade_item->insert();
 
     } else {
