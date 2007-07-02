@@ -70,21 +70,22 @@
     echo '</div>';
 
 /// Prints the file list from list generated above.
-    echo '<div id="ims_filelist"><ul style="list-style:none;padding:10px;margin:0px;">';  
+    echo '<div id="ims_filelist">';
+    ?>
+    <script type="text/javascript">
+        //<![CDATA[
+        function set_value(txt) {
+            opener.document.getElementById('<?php echo $choose ?>').value = txt;
+            window.close();
+        }
+        //]]>
+    </script>
+    <?php
+    echo '<ul style="list-style:none;padding:10px;margin:0px;">';  
     if ($items != array()) {
         
         foreach ($items as $item) {
             if ($item->type == 'deployed') {
-                ?>
-                <script type="text/javascript">
-                //<![CDATA[
-                function set_value(txt) {
-                    opener.document.getElementById('<?php echo $choose ?>').value = txt;
-                    window.close();
-                }
-                //]]>
-                </script>
-                <?php
                 echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> $item->name" .
                      "(<a onclick=\"return set_value('#$item->path')\" href=\"#\">$strchoose</a>) " .
                      "(<a href=\"preview.php?directory=$item->path&amp;choose=$choose\">$strpreview</a>)</li>\n";
