@@ -1,8 +1,8 @@
 <?php  //$Id$
-
 require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->libdir.'/formslib.php';
+require_once ('edit_item_form.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
@@ -19,8 +19,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 // default return url
 $returnurl = 'category.php?id='.$course->id;
 
-
-$mform = new edit_item_form();
+$mform = new edit_item_form(qualified_me(), array('id'=>$id));
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     $mform->set_data($item);
 } else {
@@ -44,7 +43,6 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-
 $strgrades       = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $stritemsedit    = get_string('itemsedit', 'grades');
@@ -61,30 +59,3 @@ print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $stritemsedit, 
 $mform->display();
 
 print_footer($course);
-die;
-
-
-class edit_item_form extends moodleform {
-    function definition() {
-        $mform =& $this->_form;
-
-        // visible elements
-        $mform->addElement('text', 'itemname', get_string('itemname', 'grades'));
-
-        //TODO: add other elements
-
-        // hidden params
-        $mform->addElement('hidden', 'id', 0);
-        $mform->setType('id', PARAM_INT);
-
-        $mform->addElement('hidden', 'courseid', 0);
-        $mform->setType('courseid', PARAM_INT);
-
-        $mform->addElement('hidden', 'itemtype', 0);
-        $mform->setType('itemtype', PARAM_ALPHA);
-
-//-------------------------------------------------------------------------------
-        // buttons
-        $this->add_action_buttons();
-    }
-}

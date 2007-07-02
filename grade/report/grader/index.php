@@ -13,18 +13,21 @@ $strsortdesc = get_string('sortdesc', 'grades');
 
 if ($data = data_submitted()) {
     foreach ($data as $varname => $postedgrade) {
+        
+        // clean posted values
+        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);      
+        $varname = clean_param($varname, PARAM_RAW);
+        
         // skip, not a grade
         if (!strstr($varname, 'grade')) {
             continue;
         }
-        // clean
-        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);
 
         $gradeinfo = explode("_", $varname);
 
         $grade = new object();
-        $grade->userid = $gradeinfo[1];
-        $gradeitemid = $gradeinfo[2];
+        $grade->userid = clean_param($gradeinfo[1], PARAM_INT);
+        $gradeitemid = clean_param($gradeinfo[2], PARAM_INT);
         $grade->rawgrade = $postedgrade;
 
         // put into grades array
