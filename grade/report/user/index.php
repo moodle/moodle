@@ -12,6 +12,9 @@ if (!$userid = optional_param('user', 0, PARAM_INT)) {
     $userid = $USER->id;
 }
 
+// get the user (for full name)
+$user = get_record('user', 'id', $userid);
+
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
 // find total number of participants
 $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context));
@@ -50,117 +53,119 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             ));
 
     $table->setup();
+    
+    // print the page
+    print_heading(get_string('userreport', 'grades'). " - ".fullname($user));
 
-    $all_grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
-    $grade_items = array();
-    foreach ($all_grade_items as $item) {
-        $grade_items[$item->sortorder] = $item;
-    }
-    unset($all_grade_items);
-    ksort($grade_items);
-
-    $total = $grade_items[1];
-    unset($grade_items[1]);
-    $grade_items[] = $total;
-
-    foreach ($grade_items as $grade_item) {
-
-        $data = array();
-
-        $params->itemid = $grade_item->id;
-        $params->userid = $userid;
-        $grade_grades = new grade_grades($params);
-        $grade_text = $grade_grades->load_text();
-
-        /// prints mod icon if available
-        if ($grade_item->itemtype == 'mod') {
-            $iconpath = $CFG->dirroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
-            $icon = $CFG->wwwroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
-            if (file_exists($iconpath)) {
-                $data[] = '<img src = "'.$icon.'" alt="'.$grade_item->itemname.'" class="activityicon"/>';
-            }
-        } else {
-            $data[] = '';
+    if ($all_grade_items = grade_item::fetch_all(array('courseid'=>$courseid))) {
+        $grade_items = array();
+        foreach ($all_grade_items as $item) {
+            $grade_items[$item->sortorder] = $item;
         }
+        unset($all_grade_items);
+        ksort($grade_items);
 
-        // TODO: indicate items that "needsupdate" - missing final calculation
+        $total = $grade_items[1];
+        unset($grade_items[1]);
+        $grade_items[] = $total;
 
-        /// prints grade item name
-        if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
-            $data[] = '<b>'.$grade_item->get_name().'</b>';
-        } else {
-            $data[] = $grade_item->get_name();
-        }
+        foreach ($grade_items as $grade_item) {
 
-        /// prints the grade
+            $data = array();
 
-        if ($grade_item->scaleid) {
-            // using scales
-            if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
-                $scales = explode(",", $scale->scale);
-                // reindex because scale is off 1
-                // invalid grade if gradeval < 1
-                if ((int) $grade_grades->finalgrade < 1) {
-                    $data[] = '-';
-                } else {
-                    $data[] = $scales[$grade_grades->finalgrade-1];
+            $params->itemid = $grade_item->id;
+            $params->userid = $userid;
+            $grade_grades = new grade_grades($params);
+            $grade_text = $grade_grades->load_text();
+
+            /// prints mod icon if available
+            if ($grade_item->itemtype == 'mod') {
+                $iconpath = $CFG->dirroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
+                $icon = $CFG->wwwroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
+                if (file_exists($iconpath)) {
+                    $data[] = '<img src = "'.$icon.'" alt="'.$grade_item->itemname.'" class="activityicon"/>';
                 }
-            }
-        } else {
-            // normal grade, or text, just display
-            $data[] = $grade_grades->finalgrade;
-        }
-
-        /// prints percentage
-
-        if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
-            // processing numeric grade
-            if ($grade_grades->finalgrade) {
-                $percentage = (($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
             } else {
+                $data[] = '';
+            }
+
+            // TODO: indicate items that "needsupdate" - missing final calculation
+
+            /// prints grade item name
+            if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
+                $data[] = '<b>'.$grade_item->get_name().'</b>';
+            } else {
+                $data[] = $grade_item->get_name();
+            }
+
+            /// prints the grade
+
+            if ($grade_item->scaleid) {
+                // using scales
+                if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
+                    $scales = explode(",", $scale->scale);
+                    // reindex because scale is off 1
+                    // invalid grade if gradeval < 1
+                    if ((int) $grade_grades->finalgrade < 1) {
+                        $data[] = '-';
+                    } else {
+                        $data[] = $scales[$grade_grades->finalgrade-1];
+                    }
+                }
+            } else {
+                // normal grade, or text, just display
+                $data[] = $grade_grades->finalgrade;
+            }
+
+            /// prints percentage
+
+            if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
+                // processing numeric grade
+                if ($grade_grades->finalgrade) {
+                    $percentage = (($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
+                } else {
+                    $percentage = '-';
+                }
+
+            } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+                // processing scale grade
+                $scale = get_record('scale', 'id', $grade_item->scaleid);
+                $scalevals = explode(",", $scale->scale);
+                $percentage = (($grade_grades->finalgrade) / count($scalevals) * 100).'%';
+
+            } else {
+                // text grade
                 $percentage = '-';
             }
 
-        } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-            // processing scale grade
-            $scale = get_record('scale', 'id', $grade_item->scaleid);
-            $scalevals = explode(",", $scale->scale);
-            $percentage = (($grade_grades->finalgrade) / count($scalevals) * 100).'%';
+            $data[] = $percentage;
 
-        } else {
-            // text grade
-            $percentage = '-';
+            /// prints rank
+            if ($grade_grades->finalgrade) {
+                /// find the number of users with a higher grade
+                $sql = "SELECT COUNT(DISTINCT(userid))
+                        FROM {$CFG->prefix}grade_grades
+                        WHERE finalgrade > $grade_grades->finalgrade
+                        AND itemid = $grade_item->id";
+                $rank = count_records_sql($sql) + 1;
+
+                $data[] = "$rank/$numusers";
+            } else {
+                // no grade, no rank
+                $data[] = "-";
+            }
+
+            /// prints notes
+            if (!empty($grade_text->feedback)) {
+                $data[] = $grade_text->feedback;
+            } else {
+                $data[] = '&nbsp;';
+            }
+
+            $table->add_data($data);
         }
-
-        $data[] = $percentage;
-
-        /// prints rank
-        if ($grade_grades->finalgrade) {
-            /// find the number of users with a higher grade
-            $sql = "SELECT COUNT(DISTINCT(userid))
-                    FROM {$CFG->prefix}grade_grades
-                    WHERE finalgrade > $grade_grades->finalgrade
-                    AND itemid = $grade_item->id";
-            $rank = count_records_sql($sql) + 1;
-
-            $data[] = "$rank/$numusers";
-        } else {
-            // no grade, no rank
-            $data[] = "-";
-        }
-
-        /// prints notes
-        if (!empty($grade_text->feedback)) {
-            $data[] = $grade_text->feedback;
-        } else {
-            $data[] = '&nbsp;';
-        }
-
-        $table->add_data($data);
+        $table->print_html();
+    } else {
+        notify(get_string('nogradeitem', 'grades'));
     }
-
-    // print the page
-    print_heading(get_string('userreport', 'grades'));
-    $table->print_html();
-
 ?>
