@@ -33,7 +33,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $timelimitgrp=array();
         $timelimitgrp[] = &$mform->createElement('text', 'timelimit');
         $timelimitgrp[] = &$mform->createElement('checkbox', 'timelimitenable', '', get_string('enable'));
-        $mform->addGroup($timelimitgrp, 'timelimitgrp', get_string("timelimit", "quiz"), array(' '), false);
+        $mform->addGroup($timelimitgrp, 'timelimitgrp', get_string('timelimitmin', 'quiz'), array(' '), false);
         $mform->setType('timelimit', PARAM_TEXT);
         $timelimitgrprules = array();
         $timelimitgrprules['timelimit'][] = array(null, 'numeric', null, 'client');

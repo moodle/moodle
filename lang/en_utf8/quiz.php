@@ -528,6 +528,7 @@ $string['timecompleted'] = 'Completed';
 $string['timedelay'] = 'You are not allowed to do the quiz since you have not passed the time delay before attempting another quiz';
 $string['timeleft'] = 'Time Remaining';
 $string['timelimit'] = 'Time limit';
+$string['timelimitmin'] = 'Time limit (minutes)';
 $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
 $string['timestr'] = '%%H:%%M:%%S on %%d/%%m/%%y';
 $string['timesup'] = 'Time is up!';

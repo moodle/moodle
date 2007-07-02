@@ -55,6 +55,17 @@ function xmldb_quiz_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    if ($result && $oldversion < 2007070200) {
+
+    /// Changing precision of field timelimit on table quiz to (10)
+        $table = new XMLDBTable('quiz');
+        $field = new XMLDBField('timelimit');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timemodified');
+
+    /// Launch change of precision for field timelimit
+        $result = $result && change_field_precision($table, $field);
+    }
+
     return $result;
 }
 
