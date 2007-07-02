@@ -39,6 +39,7 @@
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/mod/resource/type/ims/repository_config.php');
 
+
 /**
 * Extend the base resource class for ims resources
 */
@@ -632,7 +633,7 @@ class resource_ims extends resource_base {
     function setup_elements(&$mform) {
         global $CFG, $RESOURCE_WINDOW_OPTIONS;
 
-        $mform->addElement('choosecoursefile', 'reference', get_string('location'));
+        $mform->addElement('choosecoursefileorimsrepo', 'reference', get_string('location'));
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('header', 'displaysettings', get_string('display', 'resource'));
