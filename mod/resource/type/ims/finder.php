@@ -10,6 +10,7 @@
 
 /// Directory to browse, inside repository. Starts on ''.    
     $directory = optional_param ('directory', '', PARAM_PATH);
+    $choose  = optional_param('choose', 'id_reference_value', PARAM_FILE);
     
 /// Get the language strings needed
     $strdeployall = get_string('deployall','resource');
@@ -59,11 +60,11 @@
 
 /// Prints the toolbar. 
     echo '<div id="ims_toolbar" style="padding:10px;">';
-    ims_print_crumbtrail($directory);
+    ims_print_crumbtrail($directory, $choose);
     
 /// If admin, add extra buttons - redeploy & help.
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        echo " | (<a href=\"repository_deploy.php?file=$directory&all=force\">$strdeployall</a>) ";
+        echo " | (<a href=\"repository_deploy.php?file=$directory&amp;all=force\">$strdeployall</a>) ";
         helpbutton("deploy", get_string("deployall", "resource"), "resource", true);
     }
     echo '</div>';
@@ -74,11 +75,19 @@
         
         foreach ($items as $item) {
             if ($item->type == 'deployed') {
-                echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> $item->name (<a href=\"javascript:
-                        opener.document.forms['form'].reference.value = '#$item->path'; 
-                        opener.document.forms['form'].name.value = '$item->name'; 
-                        window.close();
-                    \">$strchoose</a>) (<a href=\"preview.php?directory=$item->path\">$strpreview</a>)</li>\n";
+                ?>
+                <script type="text/javascript">
+                //<![CDATA[
+                function set_value(txt) {
+                    opener.document.getElementById('<?php echo $choose ?>').value = txt;
+                    window.close();
+                }
+                //]]>
+                </script>
+                <?php
+                echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> $item->name" .
+                     "(<a onclick=\"return set_value('#$item->path')\" href=\"#\">$strchoose</a>) " .
+                     "(<a href=\"preview.php?directory=$item->path&amp;choose=$choose\">$strpreview</a>)</li>\n";
             }
             else if ($item->type == 'not deployed') {
             /// Only displays non-deployed IMS CP's if admin user.
@@ -87,7 +96,7 @@
                 }
             }
             else if ($item->type == 'directory') {
-                echo "<li><img src=\"images/dir.gif\" alt=\"IMS CP Package\" /> <a href=\"?directory=$item->path\">$item->name</a></li>\n";
+                echo "<li><img src=\"images/dir.gif\" alt=\"IMS CP Package\" /> <a href=\"?directory=$item->path&amp;choose=$choose\">$item->name</a></li>\n";
             }
         }
     }
@@ -101,7 +110,7 @@
     exit;
     
 /// Generates the crumbtrial from $directory. Just splits up on '/'.
-    function ims_print_crumbtrail($directory) {
+    function ims_print_crumbtrail($directory, $choose='') {
         $strrepository = get_string('repository','resource');
         
         $arr = explode('/', $directory);
@@ -111,13 +120,13 @@
             return;
         }
         else {
-            $output = "<a href=\"?directory=\">$strrepository</a> &#187; ";
+            $output = "<a href=\"?directory=&amp;choose=$choose\">$strrepository</a> &#187; ";
         }
         $itemdir = '';
         foreach ($arr as $item) {
             if ($item == '') continue;
             $itemdir .= '/'.$item;
-            $output .= "<a href=\"?directory=$itemdir\">$item</a> &#187; ";
+            $output .= "<a href=\"?directory=$itemdir&amp;choose=$choose\">$item</a> &#187; ";
         }
         $output .= $last;
         echo $output;

@@ -9,6 +9,7 @@
     require_once('repository_config.php');
     
     $directory = required_param ('directory', PARAM_PATH);
+    $choose = optional_param ('choose', 'id_reference_value', PARAM_FILE);
     $page = optional_param ('page', 0, PARAM_INT);
 
 /// Calculate the path of the IMS CP to be displayed
@@ -57,7 +58,9 @@
 /// content - this produces everything else
 
 /// adds side navigation bar if needed. must also adjust width of iframe to accomodate 
-    echo "<div id=\"ims-menudiv\">";  preview_buttons($directory, $items['title']); echo preview_ims_generate_toc($items, $directory, 0, $page); echo "</div>";
+    echo "<div id=\"ims-menudiv\">";  
+    preview_buttons($directory, $items['title'], $choose); 
+    echo preview_ims_generate_toc($items, $directory, 0, $page); echo "</div>";
     
     $fullurl = "$CFG->repositorywebroot/$directory/".$items[$page]->href;
 /// prints iframe filled with $fullurl ;width:".$iframewidth." missing also height=\"420px\"
@@ -138,7 +141,7 @@
         return $contents;
     }
     
-    function preview_buttons($directory, $name) {
+    function preview_buttons($directory, $name, $choose='') {
         $strchoose = get_string('choose','resource');
         $strback = get_string('back','resource');
         
@@ -146,13 +149,19 @@
         $arr = explode('/', $directory);
         array_pop($arr);
         $directory = implode('/', $arr);
-        echo "<div id=\"ims_preview_buttons\" style=\"padding:10px;\">
-              (<a href='finder.php?directory=$directory'>$strback</a>) 
-              (<a href=\"javascript:
-                        opener.document.forms['form'].reference.value = '#$path'; 
-                        opener.document.forms['form'].name.value = '$name'; 
-                        window.close();
-              \">$strchoose</a>)</div>";
+        ?>
+        <script type="text/javascript">
+        //<![CDATA[
+        function set_value(txt) {
+            opener.document.getElementById('<?php echo $choose ?>').value = txt;
+            window.close();
+        }
+        //]]>
+        </script>
+        <?php
+        echo "<div id=\"ims_preview_buttons\" style=\"padding:10px;\">".
+             "(<a href=\"finder.php?directory=$directory&amp;choose=$choose\">$strback</a>) ".
+             "(<a onclick=\"return set_value('#$path')\" href=\"#\">$strchoose</a>)</div>";
     }
     
 ?>
