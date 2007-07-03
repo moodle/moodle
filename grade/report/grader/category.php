@@ -153,6 +153,12 @@ switch ($action) {
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
 
+print_heading(get_string('categoriesedit', 'grades'));
+
+// Add tabs
+$currenttab = 'editcategory'; 
+include('tabs.php');
+
 print_box_start('gradetreebox generalbox');
 echo '<ul id="grade_tree">';
 print_grade_tree($gtree->top_element, $moving);

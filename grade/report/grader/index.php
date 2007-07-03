@@ -305,12 +305,14 @@ foreach ($gtree->levels as $key=>$row) {
             $headerhtml .= '<td class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</td>';
 
         } else if ($type == 'category') {
-            $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'">'.$element['object']->get_name();
+            $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
 
             // Print icons
             if ($USER->gradeediting) {
-                $headerhtml .= grade_get_icons($element, $gtree) . '</td>';
+                $headerhtml .= grade_get_icons($element, $gtree); 
             }
+
+            $headerhtml .= '</td>';
 
         } else {
             if ($element['object']->id == $sortitemid) {

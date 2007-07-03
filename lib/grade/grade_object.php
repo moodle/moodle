@@ -82,7 +82,7 @@ class grade_object {
      * @return object grade_object instance or false if none found.
      */
     function fetch($params) {
-        error('Abstract method fetch() not overrided in '.get_class($this));
+        error('Abstract method fetch() not overridden in '.get_class($this));
     }
 
     /**
@@ -93,7 +93,7 @@ class grade_object {
      * @return array array of grade_object insatnces or false if none found.
      */
     function fetch_all($params) {
-        error('Abstract method fetch_all() not overrided in '.get_class($this));
+        error('Abstract method fetch_all() not overridden in '.get_class($this));
     }
 
     /**
