@@ -55,16 +55,20 @@ function xmldb_scorm_upgrade($oldversion=0) {
                         'previous' => '0');
 
         /// Retrieve old datas
-        if ($olddatas = get_records('scorm_scoes')) {
-            foreach ($olddatas as $olddata) {
-                $newdata = new stdClass();
-                $newdata->scoid = $olddata->id;
-                foreach ($fields as $field => $value) {
-                    if ($olddata->$field != $value) {
-                        $newdata->name = addslashes($field);
-                        $newdata->value = addslashes($olddata->$field);
-                        $id = insert_record('scorm_scoes_data', $newdata);
-                        $result = $result && ($id != 0);
+        if ($scorms = get_records('scorm')) {
+            foreach ($scorms as $scorm) {
+                if ($olddatas = get_records('scorm_scoes','scorm', $scorm->id)) {
+                    foreach ($olddatas as $olddata) {
+                        $newdata = new stdClass();
+                        $newdata->scoid = $olddata->id;
+                        foreach ($fields as $field => $value) {
+                            if ($olddata->$field != $value) {
+                                $newdata->name = addslashes($field);
+                                $newdata->value = addslashes($olddata->$field);
+                                $id = insert_record('scorm_scoes_data', $newdata);
+                                $result = $result && ($id != 0);
+                            }
+                        }
                     }
                 }
             }
@@ -251,12 +255,20 @@ function xmldb_scorm_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007031300) {
-        if ($tracks = get_records('scorm_scoes_track')) {
-            foreach ($tracks as $track) {
-                $element = preg_replace('/\.N(\d+)\./',".\$1.",$track->element);
-                if ($track->element != $element) {
-                    $track->element = $element;
-                    update_record('scorm_scoes_track',$track);
+        if ($scorms = get_records('scorm')) {
+            foreach ($scorms as $scorm) {
+                if ($scoes = get_records('scorm_scoes','scorm',$scorm->id)) {
+                    foreach ($scoes as $sco) {
+                        if ($tracks = get_records('scorm_scoes_track','scoid',$sco->id)) {
+                            foreach ($tracks as $track) {
+                                $element = preg_replace('/\.N(\d+)\./',".\$1.",$track->element);
+                                if ($track->element != $element) {
+                                    $track->element = $element;
+                                    update_record('scorm_scoes_track',$track);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
