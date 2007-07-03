@@ -25,8 +25,12 @@ require_once("../../../config.php");
 require_once($CFG->dirroot.'/grade/export/lib.php');
 require_once('grade_export_xml.php');
 
-$id = required_param('id', PARAM_INT); // course id
+$id = required_param('id', PARAM_INT); // course id    
+$course = get_record('course', 'id', $id);
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
+    
+$action = 'exportxml';
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
 
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {
@@ -38,10 +42,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     }
         
     // print the grades on screen for feedbacks
-    $course = get_record('course', 'id', $id);
-    $action = 'exportxml';
-    print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
-    
+   
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
     
@@ -49,9 +50,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
     exit;
 }
-$course = get_record('course', 'id', $id);
-$action = 'exportxml';
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+
 print_gradeitem_selections($id);
 print_footer();
 ?>

@@ -121,7 +121,7 @@ class grade_export {
             foreach ($itemids as $iid) {
                 
                 if ($iid) {
-                    $params->id = $iid;
+                    $params->id = clean_param($iid, PARAM_INT);
                     $gradeitems[] = new grade_item($params);
                 }              
             }  
