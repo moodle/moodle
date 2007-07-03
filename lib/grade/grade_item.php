@@ -199,13 +199,13 @@ class grade_item extends grade_object {
     var $hidden = 0;
 
     /**
-     * Grade item lock flag. Enmpty if not locked, lcoked if any value presetn ,usually date when was locked. Locking prevents updating.
+     * Grade item lock flag. Empty if not locked, locked if any value present, usually date when item was locked. Locking prevents updating.
      * @var int $locked
      */
     var $locked = 0;
 
     /**
-     * Date when to lock the grade. Empty means no automatic locking.
+     * Date after which the grade will be locked. Empty means no automatic locking.
      * @var int $locktime
      */
     var $locktime = 0;

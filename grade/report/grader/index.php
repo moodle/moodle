@@ -327,10 +327,10 @@ foreach ($gtree->levels as $key=>$row) {
 
             $dimmed = '';
             if ($element['object']->is_hidden()) {
-                $dimmed = 'class="dimmed_text"';
+                $dimmed = ' dimmed_text ';
             }
 
-            $headerhtml .= '<th '.$dimmed.' class="'.$type.$catlevel.'"><a href="'.$baseurl.'&amp;sortitemid='
+            $headerhtml .= '<th class="'.$type.$catlevel.$dimmed.'"><a href="'.$baseurl.'&amp;sortitemid='
                       . $element['object']->id .'">'. $element['object']->get_name()
                       . '</a>' . $arrow;
 

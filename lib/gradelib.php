@@ -59,6 +59,16 @@ define('GRADE_UPDATE_MULTIPLE', 2);
 define('GRADE_UPDATE_ITEM_DELETED', 3);
 define('GRADE_UPDATE_ITEM_LOCKED', 4);
 
+// Set up constants for report preferences
+define('GRADER_REPORT_AGGREGATION_POSITION_LEFT', 0);
+define('GRADER_REPORT_AGGREGATION_POSITION_RIGHT', 1);
+define('GRADER_REPORT_AGGREGATION_VIEW_FULL', 0);
+define('GRADER_REPORT_AGGREGATION_VIEW_COMPACT', 1);
+define('GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
+define('GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
+define('GRADER_REPORT_FEEDBACK_FORMAT_TEXT', 0);
+define('GRADER_REPORT_FEEDBACK_FORMAT_HTML', 1);
+
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
@@ -699,7 +709,8 @@ function grade_oldgradebook_upgrade($courseid) {
 function grade_get_icons($element, $tree) {
     global $CFG;
     global $USER;
-
+    
+    // Load language strings
     $straddfeedback    = get_string("addfeedback", 'grades');
     $stredit           = get_string("edit");
     $streditfeedback   = get_string("editfeedback", 'grades');
@@ -718,11 +729,16 @@ function grade_get_icons($element, $tree) {
     $strswitch_plus    = get_string("expand", 'grades');
     $strunlock         = get_string("unlock", 'grades');
 
+    // Prepare container div
     $html = '<div class="grade_icons">';
 
+    // Prepare reference variables
     $eid    = $element['eid'];
     $object = $element['object'];
     $type   = $element['type'];
+
+    // Load user preferences 
+    $aggregationview = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
 
     // Icons shown when edit mode is on
     if ($USER->gradeediting) {
@@ -753,13 +769,13 @@ function grade_get_icons($element, $tree) {
         if ($type != 'category' and $USER->gradefeedback) {
             // Display Edit/Add feedback icon
             if (empty($object->feedback)) {
-                $html .= '<a href="report.php?report=grader&amp;target='.$eid
-                      . "&amp;action=addfeedback$tree->commonvars\">\n";
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                      . "&amp;action=add&amp;courseid=$object->courseid\">\n";
                 $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
                       . 'title="'.$straddfeedback.'" /></a>'. "\n";
             } else {
-                $html .= '<a href="report.php?report=grader&amp;target='.$eid
-                      . "&amp;action=editfeedback$tree->commonvars\">\n";
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                      . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
                 $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
                       . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                   . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
@@ -785,7 +801,7 @@ function grade_get_icons($element, $tree) {
               .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
 
         // If object is a category, display expand/contract icon
-        if (get_class($object) == 'grade_category') {
+        if (get_class($object) == 'grade_category' && $aggregationview == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
             $expand_contract = 'switch_minus'; // Default: expanded
 
             $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
@@ -803,8 +819,8 @@ function grade_get_icons($element, $tree) {
         if ($USER->gradefeedback) {
             // Display Edit/Add feedback icon
             if (!empty($object->feedback)) {
-                $html .= '<a href="report.php?report=grader&amp;target=' . $eid
-                      . "&amp;action=viewfeedback$tree->commonvars\">\n";
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                      . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
                 $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                       . $strfeedback.'\');" onmouseout="return nd();" '
                       . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
