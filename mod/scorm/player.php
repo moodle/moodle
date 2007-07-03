@@ -124,7 +124,7 @@
     if ($scorm->popup == 1) {
         $bodyscript = 'onunload="main.close();"';
     }
-    
+
     $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navigation = build_navigation($crumbs);
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
@@ -132,12 +132,12 @@
     print_header($pagetitle, $course->fullname,
                  $navigation,
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
-    if ($sco->scormtype == 'sco') {
+    //if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
     <script type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 <?php
-    }
+    //}
     if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
         echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";\n//]]>\n</script>\n";
@@ -288,7 +288,5 @@
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
         print_custom_corners_end();
     } ?>
-    </div> <!-- Content -->
-    </div> <!-- Page -->
-</body>
-</html>
+    <div class="clearer">&nbsp;</div>
+<?php print_footer(); ?>
