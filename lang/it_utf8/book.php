@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.2 2007/02/16 18:47:46 andreabix Exp $ 
+<?PHP // $Id: book.php,v 1.3 2007/07/03 11:42:29 andreabix Exp $ 
       // book.php - created with Moodle 1.7.1+ (2006101010)
 
 
