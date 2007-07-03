@@ -6078,7 +6078,7 @@ function convert_tree_to_html($tree, $row=0) {
             $str .= '<div class="tabrow'.($row+1).' empty">&nbsp;</div>'."\n";
         }
 
-        $str .= '</li>'."\n";
+        $str .= ' </li>'."\n";
     }
     $str .= '</ul>'."\n";
 
