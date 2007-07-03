@@ -137,12 +137,12 @@
     print_header($pagetitle, $course->fullname,
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
-    if ($sco->scormtype == 'sco') {
+    //if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
     <script type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
 <?php
-    }
+    //}
     if (($sco->previd != 0) && ((!isset($sco->previous)) || ($sco->previous == 0))) {
         $scostr = '&scoid='.$sco->previd;
         echo '    <script type="text/javascript">'."\n//<![CDATA[\n".'var prev="'.$CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modepop.$scostr."\";\n//]]>\n</script>\n";
@@ -289,7 +289,5 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM content -->
-    </div> <!-- Content -->
-    </div> <!-- Page -->
-</body>
-</html>
+    <div class="clearer">&nbsp;</div>
+<?php print_footer(); ?>
