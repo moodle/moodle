@@ -1004,34 +1004,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns this grade_item's id. This is specified for cases where we do not
-     * know an object's type, and want to get either an item's id or a category's item's id.
-     *
-     * @return int
-     */
-    function get_item_id() {
-        return $this->id;
-    }
-
-    /**
-     * Returns this item's category id. A generic method shared by objects that have a parent id of some kind.
-     * @return int $parentid
-     */
-    function get_parent_id() {
-        if ($this->is_course_item()) {
-            return false;
-
-        } else if ($this->is_category_item()) {
-
-            return $category->id;
-
-        } else {
-            return $this->categoryid;
-;
-        }
-    }
-
-    /**
      * Sets this item's categoryid. A generic method shared by objects that have a parent id of some kind.
      * @param int $parentid
      * @return boolean success;

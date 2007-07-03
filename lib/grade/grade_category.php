@@ -137,7 +137,6 @@ class grade_category extends grade_object {
         }
     }
 
-
     /**
      * Finds and returns a grade_category instance based on params.
      * @static
@@ -173,15 +172,18 @@ class grade_category extends grade_object {
             $this->depth = substr_count($this->path, '/');
         }
 
-        if (!parent::update()) {
-            return false;
-        }
 
         // Recalculate grades if needed
         if ($this->qualifies_for_regrading()) {
+            if (!parent::update()) {
+                return false;
+            }
             $this->grade_item->force_regrading();
+            return true;
+
+        } else {
+            return parent::update();
         }
-        return true;
     }
 
     /**
@@ -270,10 +272,11 @@ class grade_category extends grade_object {
      */
     function qualifies_for_regrading() {
         if (empty($this->id)) {
+            debugging("Can not regrade non existing category");
             return false;
         }
 
-        $db_item = new grade_category(array('id' => $this->id));
+        $db_item = grade_category::fetch(array('id'=>$this->id));
 
         $aggregationdiff = $db_item->aggregation != $this->aggregation;
         $keephighdiff    = $db_item->keephigh    != $this->keephigh;
@@ -293,7 +296,7 @@ class grade_category extends grade_object {
      */
     function force_regrading() {
         if (empty($this->id)) {
-            debugging("Needsupdate requested before insering grade category.");
+            debugging("Needsupdate requested before inserting grade category.");
             return true;
         }
 
@@ -782,25 +785,6 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Returns this category's grade_item's id. This is specified for cases where we do not
-     * know an object's type, and want to get either an item's id or a category's item's id.
-     *
-     * @return int
-     */
-    function get_item_id() {
-        $this->load_grade_item();
-        return $this->grade_item->id;
-    }
-
-    /**
-     * Returns this category's parent id. A generic method shared by objects that have a parent id of some kind.
-     * @return id $parentid
-     */
-    function get_parent_id() {
-        return $this->parent;
-    }
-
-    /**
      * Sets this category's parent id. A generic method shared by objects that have a parent id of some kind.
      * @param int parentid
      * @return boolean success
@@ -867,6 +851,10 @@ class grade_category extends grade_object {
         $this->grade_item->set_sortorder($sortorder);
     }
 
+    /**
+     * Move this category after the given sortorder - does not change the parent
+     * @param int $sortorder to place after
+     */
     function move_after_sortorder($sortorder) {
         $this->load_grade_item();
         $this->grade_item->move_after_sortorder($sortorder);

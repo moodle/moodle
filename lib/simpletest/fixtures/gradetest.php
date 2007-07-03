@@ -506,7 +506,7 @@ class grade_test extends UnitTestCase {
         $grade_item->grademax = 110;
         $grade_item->itemnumber = 1;
         $grade_item->idnumber = 'item id 0';
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 0 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 3;
@@ -529,7 +529,7 @@ class grade_test extends UnitTestCase {
         $grade_item->itemnumber = null;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 1 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 4;
@@ -551,7 +551,7 @@ class grade_test extends UnitTestCase {
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
         $grade_item->grademax = $this->scalemax[0];
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 2 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 6;
@@ -567,12 +567,12 @@ class grade_test extends UnitTestCase {
         $grade_item->courseid = $this->courseid;
         $grade_item->iteminstance = $this->grade_categories[0]->id;
         $grade_item->itemname = 'unittestgradeitemcategory1';
-        $grade_item->needsupdate = true;
+        $grade_item->needsupdate = 0;
         $grade_item->itemtype = 'category';
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 3 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 1;
@@ -589,10 +589,10 @@ class grade_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitemcategory2';
         $grade_item->itemtype = 'category';
         $grade_item->gradetype = GRADE_TYPE_VALUE;
-        $grade_item->needsupdate = true;
+        $grade_item->needsupdate = 0;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 4 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 2;
@@ -612,7 +612,7 @@ class grade_test extends UnitTestCase {
         $grade_item->needsupdate = true;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 5 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 5;
@@ -636,7 +636,7 @@ class grade_test extends UnitTestCase {
         $grade_item->grademin = 10;
         $grade_item->grademax = 120;
         $grade_item->locked = time();
-        $grade_item->iteminfo = 'Orphan Grade item used for unit testing';
+        $grade_item->iteminfo = 'Orphan Grade 6 item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 7;
@@ -659,7 +659,7 @@ class grade_test extends UnitTestCase {
         $grade_item->scaleid = $this->scale[0]->id;
         $grade_item->grademin = 0;
         $grade_item->grademax = $this->scalemax[0];
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 7 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 9;
@@ -680,7 +680,7 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminfo = 'Grade item 8 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 10;
@@ -702,7 +702,7 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Orphan Grade item used for unit testing';
+        $grade_item->iteminfo = 'Orphan Grade 9 item used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 8;
