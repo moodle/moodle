@@ -18,7 +18,6 @@ $repositorybrowser = '/mod/resource/type/ims/finder.php';
 * @return int
 */
 
-require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
 function scorm_add_instance($scorm) {
     if(empty($scorm->datadir)) { //check to make sure scorm object is valid BEFORE entering it in the database.
@@ -360,7 +359,7 @@ function scorm_get_post_actions() {
 }
 
 function scorm_option2text($scorm) {
-    global $SCORM_POPUP_OPTIONS;
+    require_once('locallib.php');
 
     if (isset($scorm->popup)) {
         if ($scorm->popup) {
