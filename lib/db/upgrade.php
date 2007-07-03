@@ -1172,6 +1172,22 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key gradeid
         add_key($table, $key);
     }
+
+    if ($result && $oldversion < 2007070300) {
+        set_config('grade_report_aggregationview', '0'); 
+        set_config('grade_report_aggregationposition', '0'); 
+        set_config('grade_report_bulkcheckboxes', '1'); 
+        set_config('grade_report_gradedisplaytype', '0'); 
+        set_config('grade_report_enableajax', '1'); 
+        set_config('grade_report_showeyecons', '1'); 
+        set_config('grade_report_showgroups', '1'); 
+        set_config('grade_report_showlocks', '1'); 
+        set_config('grade_report_shownotes', '1'); 
+        set_config('grade_report_showscales', '1'); 
+        set_config('grade_report_studentsperpage', '20'); 
+        set_config('grade_report_feedbackformat', '0'); 
+    }
+
     return $result;
 }
 
