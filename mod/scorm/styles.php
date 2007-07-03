@@ -24,27 +24,26 @@
 }
 
 #mod-scorm-player #scormpage {
-  position: relative;
   width: 100%;
 }
 #mod-scorm-player #tocbox {
-  position: absolute;
+  float: left;
+  width: 17%;
   left: 0px;
   top: 0px;
-  width: 19%;
 }
 #mod-scorm-player #tochead {
   text-align: center;
   font-weight: bold;
 }
 #mod-scorm-player #scormbox {
-  position: absolute;
   right: 0px;
-  top: 0px;
 }
 #mod-scorm-player .toc {
+  float: right;
   width: 80%; 
-  margin-left: 20%; 
+  right: 0px;
+  top: 0px;
 }
 #mod-scorm-player .no-toc {
   width: 100%;
@@ -53,17 +52,17 @@
  /* border: 1px solid black; */
 }
 #mod-scorm-player #scormtop {
-  position: relative;
   width: 100%;
-  height: 30px;
+  height: auto;
 }
-#mod-scorm-player #scormbrowse {
-  position: absolute;
+#mod-scorm-player #scormmode {
+  float: left;
+  width: 50%;
   left: 5px;
   top: 0px;
 }
 #mod-scorm-player #scormnav {
-  position: absolute;
+  float: right;
   right: 5px;
   top: 0px;
 }
