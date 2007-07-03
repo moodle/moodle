@@ -152,5 +152,7 @@ $string['width'] = 'Width';
 $string['window'] = 'Window';
 $string['unziperror'] = 'An error occurs during package unzip';
 $string['othersettings'] = 'Additional settings';
+$string['updatefreq'] = 'Auto-update frequency';
+$string['options'] = 'Options';
 
 ?>
