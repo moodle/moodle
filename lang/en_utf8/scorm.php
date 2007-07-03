@@ -152,5 +152,6 @@ $string['width'] = 'Width';
 $string['window'] = 'Window';
 $string['unziperror'] = 'An error occurs during package unzip';
 $string['othersettings'] = 'Additional settings';
+$string['options'] = 'Options';
 
 ?>
