@@ -163,10 +163,8 @@
                 }
             } else {
                 result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
-                //result = '<?php echo $strvalidation ?>: '+ result + '\n';
                 if (errorlogs != '') {
                   result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
-                  //  result = '<?php echo $strerrorlog ?>: '+ result + '\n';
                 }
                 alert(result);
                 return false;
@@ -330,20 +328,6 @@
                             ?>
                             </td>
                         </tr>
-<!--
-                        <tr>
-                            <td align="right"><b><?php print_string('hidereview','scorm') ?>:</b></td>
-                            <td>
-                            <?php
-                                $options = array();
-                                $options[0]=get_string('no');
-                                $options[1]=get_string('yes');
-                                choose_from_menu ($options, 'hidereview', (int) $form->hidereview, '');
-                                helpbutton('reviewmode', get_string('hidereview','scorm'), 'scorm', true);
-                            ?>
-                            </td>
-                        </tr>
--->
                         <tr>
                             <td align="right"><b><?php print_string('hidebrowse','scorm') ?>:</b></td>
                             <td>
@@ -379,19 +363,6 @@
                             ?>
                             </td>
                         </tr>
-<!--
-                        <tr>
-                            <td align="right"><b><?php print_string('hideexit','scorm') ?>:</b></td>
-                            <td>
-                            <?php
-                                $options = array();
-                                $options[0]=get_string('no');
-                                $options[1]=get_string('yes');
-                                choose_from_menu ($options, 'hideexit', (int) $form->hideexit, '');
-                            ?>
-                            </td>
-                        </tr>
--->
                     </table>
                 </div>
             </td>
