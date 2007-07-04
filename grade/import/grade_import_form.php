@@ -7,9 +7,11 @@ class grade_import_form extends moodleform {
 
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
         // file upload
         $mform->addElement('file', 'userfile', get_string('file'));
+        $mform->setType('userfile', PARAM_FILE);
         $mform->addRule('userfile', null, 'required');
         $textlib = new textlib();
         $encodings = $textlib->get_encodings();
@@ -17,6 +19,7 @@ class grade_import_form extends moodleform {
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000); 
         $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
+        $mform->setType('previewrows', PARAM_INT);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 
@@ -66,7 +69,7 @@ class grade_import_mapping_form extends moodleform {
         include_once($CFG->libdir.'/gradelib.php');
         
         if ($id) {
-            if ($grade_items = grade_grades::fetch_all(array('courseid'=>$id))) {
+            if ($grade_items = grade_item::fetch_all(array('courseid'=>$id))) {
                 foreach ($grade_items as $grade_item) {
                     $gradeitems[$grade_item->idnumber] = $grade_item->itemname;      
                 }
@@ -93,10 +96,12 @@ class grade_import_mapping_form extends moodleform {
         
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'map', 1);
+        $mform->setType('map', PARAM_INT);
         $mform->addElement('hidden', 'id', optional_param('id'));
+        $mform->setType('id', PARAM_INT);
         //echo '<input name="filename" value='.$newfilename.' type="hidden" />';
         $mform->addElement('hidden', 'filename', $newfilename);
-        
+        $mform->setType('filename', PARAM_FILE);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));        
         
     }

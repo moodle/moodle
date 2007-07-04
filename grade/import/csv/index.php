@@ -35,17 +35,18 @@ $mform = new grade_import_form();
 // they are somehow not returned with get_data()
 // if ($formdata = $mform2->get_data()) {
 if (($formdata = data_submitted()) && !empty($formdata->map)) {
-  
+
     // if mapping informatioin is supplied
 
     foreach ($formdata->maps as $i=>$header) {
-        $map[$header] = $formdata->mapping[$i];
-    }    
+        // either "new" or existing ids, clean using alphanum
+        $map[clean_param($header, PARAM_RAW)] = clean_param($formdata->mapping[clean_param($i, PARAM_INT)], PARAM_ALPHANUM);
+    }
 
-    $map[$formdata->mapfrom] = $formdata->mapto;
+    $map[clean_param($formdata->mapfrom, PARAM_RAW)] = clean_param($formdata->mapto, PARAM_RAW);
 
     // temporary file name supplied by form
-    $filename = $CFG->dataroot.'/temp/'.$formdata->filename;
+    $filename = $CFG->dataroot.'/temp/'.clean_param($formdata->filename, PARAM_FILE);
 
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
@@ -63,7 +64,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         $importcode = time();
     
         // --- get header (field names) ---
-        $header = split($csv_delimiter, fgets($fp,1024));
+        $header = split($csv_delimiter, clean_param(fgets($fp,1024), PARAM_RAW));
     
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
@@ -82,8 +83,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             // each line is a student record
             foreach ($line as $key => $value) {  
                 //decode encoded commas
+                $value = clean_param($value, PARAM_RAW);
                 $value = preg_replace($csv_encode,$csv_delimiter2,trim($value));
-                
+
                 switch ($map[$header[$key]]) {
                     case 'userid': //
                         if (!$user = get_record('user','id', $value)) {
@@ -247,7 +249,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     $fp = fopen($filename, "r");        
   
     // --- get header (field names) ---
-    $header = split($csv_delimiter, fgets($fp,1024));
+    $header = split($csv_delimiter, clean_param(fgets($fp,1024), PARAM_RAW));
     
     // print some preview
     $numlines = 0; // 0 preview lines displayed
@@ -256,6 +258,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
     echo '<table>';
     echo '<tr>';
     foreach ($header as $h) {
+        $h = clean_param($h, PARAM_RAW);
         echo '<th>'.$h.'</th>'; 
     }
     echo '</tr>';
@@ -263,7 +266,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         $lines = split($csv_delimiter, fgets($fp,1024));     
         echo '<tr>';
         foreach ($lines as $line) {
-            echo '<td>'.$line.'</td>';;
+            echo '<td>'.clean_param($line, PARAM_RAW).'</td>';;
         }
         $numlines ++;
         echo '</tr>';
