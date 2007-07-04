@@ -64,8 +64,9 @@ class grade_tree {
      * @param boolean $fillers include fillers and colspans, make the levels var "rectabgular"
      * @param boolean $include_grades
      * @param boolean $include_cagegory_items inclute the items for categories in the tree
+     * &param boolean $category_grade_last category grade item is the last child
      */
-    function grade_tree($courseid, $fillers=true, $include_grades=false) {
+    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=false) {
         global $USER;
 
         $this->courseid = $courseid;
@@ -75,6 +76,10 @@ class grade_tree {
 
         // get course grade tree
         $this->top_element =& grade_category::fetch_course_tree($courseid, $include_grades, true);
+
+        if ($category_grade_last) {
+            grade_tree::category_grade_last($this->top_element);
+        }
 
         if ($fillers) {
             // inject fake categories == fillers
@@ -86,6 +91,25 @@ class grade_tree {
         grade_tree::fill_levels($this->levels, $this->top_element, 0);
     }
 
+
+    /**
+     * Static recursive helper - makes the grade_item for category the last children
+     */
+    function category_grade_last(&$element) {
+        if (empty($element['children'])) {
+            return;
+        }
+        if (count($element['children']) < 2) {
+            return;
+        }
+        $category_item = reset($element['children']);
+        $order = key($element['children']);
+        unset($element['children'][$order]);
+        $element['children'][$order] =& $category_item;
+        foreach ($element['children'] as $sortorder=>$child) {
+            grade_tree::category_grade_last($element['children'][$sortorder]);
+        }
+    }
 
     /**
      * Static recursive helper - fills the levels array, useful when accessing tree elements of one level
