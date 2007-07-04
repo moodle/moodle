@@ -1,7 +1,7 @@
 <form id="assignform" method="post" action="">
 <div style="text-align:center;">
 <label for="extendperiod"><?php print_string('enrolperiod') ?></label> <?php choose_from_menu($periodmenu, "extendperiod", $defaultperiod, $unlimitedperiod); ?>
-<label for="extendperiod"><?php print_string('startingfrom') ?></label> <?php choose_from_menu($basemenu, "extendbase", 3, ""); ?>
+<label for="extendbase"><?php print_string('startingfrom') ?></label> <?php choose_from_menu($basemenu, "extendbase", 3, ""); ?>
 
 <input type="hidden" name="previoussearch" value="<?php p($previoussearch) ?>" />
 <input type="hidden" name="userid" value="<?php p($userid) ?>" />

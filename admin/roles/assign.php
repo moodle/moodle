@@ -15,9 +15,8 @@
     $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $hidden         = optional_param('hidden', 0, PARAM_BOOL); // whether this assignment is hidden
-    $timestart      = optional_param('timestart', 0, PARAM_INT);
-    $timeend        = optional_param('timened', 0, PARAM_INT);
     $extendperiod   = optional_param('extendperiod', 0, PARAM_INT);
+    $extendbase     = optional_param('extendbase', 0, PARAM_INT);
     $userid         = optional_param('userid', 0, PARAM_INT); // needed for user tabs
     $courseid       = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
 
@@ -89,9 +88,12 @@
     }
 
     $timeformat = get_string('strftimedate');
+    $today = time();
+    $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+    
     $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
-    if(time() > $course->startdate) {
-        $basemenu[3] = get_string('today') . ' (' . userdate(time(), $timeformat) . ')' ;
+    if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
+        $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
     }
     if($course->enrollable == 2) {
         if($course->enrolstartdate > 0) {
@@ -156,8 +158,6 @@
 
         if ($add and !empty($frm->addselect) and confirm_sesskey()) {
 
-            $timemodified = time();
-
             foreach ($frm->addselect as $adduser) {
                 if (!$adduser = clean_param($adduser, PARAM_INT)) {
                     continue;
@@ -176,7 +176,21 @@
                     }
                 }
                 if ($allow) {
-                    $timestart = $timemodified;
+                    switch($extendbase) {
+                        case 0:
+                            $timestart = $course->startdate;
+                            break;
+                        case 3:
+                            $timestart = $today;
+                            break;
+                        case 4:
+                            $timestart = $course->enrolstartdate;
+                            break;
+                        case 5:
+                            $timestart = $course->enrolenddate;
+                            break;
+                    }
+                    
                     if($extendperiod > 0) {
                         $timeend = $timestart + $extendperiod;
                     } else {
