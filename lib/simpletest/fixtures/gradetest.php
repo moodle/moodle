@@ -702,13 +702,34 @@ class grade_test extends UnitTestCase {
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->grademin = 0;
         $grade_item->grademax = 100;
-        $grade_item->iteminfo = 'Orphan Grade 9 item used for unit testing';
+        $grade_item->iteminfo = 'Orphan Grade item 9 used for unit testing';
         $grade_item->timecreated = mktime();
         $grade_item->timemodified = mktime();
         $grade_item->sortorder = 8;
 
         if ($grade_item->id = insert_record('grade_items', $grade_item)) {
             $this->grade_items[9] = $grade_item;
+        }
+
+        // Manual grade_item
+        // id = 10
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->courseid;
+        $grade_item->categoryid = $course_category->id;
+        $grade_item->itemname = 'manual grade_item';
+        $grade_item->itemtype = 'manual';
+        $grade_item->itemnumber = 0;
+        $grade_item->needsupdate = false;
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Manual grade item 10 used for unit testing';
+        $grade_item->timecreated = mktime();
+        $grade_item->timemodified = mktime();
+
+        if ($grade_item->id = insert_record('grade_items', $grade_item)) {
+            $this->grade_items[10] = $grade_item;
         }
 
     }

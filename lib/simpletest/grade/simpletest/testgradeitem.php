@@ -86,34 +86,17 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->id, $last_grade_item->id + 1);
         $this->assertEqual(11, $grade_item->sortorder);
     }
-/*
-    function test_grade_item_generate_itemnumber() {
-        $grade_item = new grade_item($this->grade_items[0]);
+
+    function test_grade_item_generate_itemnumber_for_manual() {
+        $grade_item = new grade_item($this->grade_items[10]);
         $copy_grade_item = fullclone($grade_item);
         $copy_grade_item->itemnumber = null;
         unset($copy_grade_item->id);
         $result_id = $copy_grade_item->insert();
         $this->assertEqual($grade_item->itemnumber+1, $copy_grade_item->itemnumber);
-
     }
-*/
+
     function test_grade_item_generate_idnumber() {
-
-    }
-
-    function test_grade_item_update_when_flagged_as_deleted() {
-
-    }
-
-    function test_grade_item_update_guess_outcomeid() {
-
-    }
-
-    function test_grade_item_update_default_gradetype() {
-
-    }
-
-    function test_grade_item_update_guess_scaleid() {
 
     }
 
@@ -166,6 +149,20 @@ class grade_item_test extends grade_test {
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
     }
 
+    function test_grade_item_load_scale() {
+        $grade_item = new grade_item($this->grade_items[2]);
+        $this->assertTrue(method_exists($grade_item, 'load_scale'));
+        $scale = $grade_item->load_scale();
+        $this->assertFalse(empty($grade_item->scale));
+        $this->assertEqual($scale->id, $this->grade_items[2]->scaleid);
+    }
+
+    function test_grade_item_load_outcome() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'load_outcome'));
+        //TODO: add tests
+    }
+
     function test_grade_item_qualifies_for_regrading() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'qualifies_for_regrading'));
@@ -179,6 +176,23 @@ class grade_item_test extends grade_test {
         $grade_item->grademin = 14;
 
         $this->assertTrue($grade_item->qualifies_for_regrading());
+    }
+
+    function test_grade_item_force_regrading() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'force_regrading'));
+
+        $grade_category = $grade_item->get_parent_category();
+        $grade_category->load_grade_item();
+        $this->assertEqual(0, $grade_item->needsupdate);
+        $this->assertEqual(0, $grade_category->grade_item->needsupdate);
+
+        $this->assertTrue($grade_item->force_regrading());
+
+        $grade_category = $grade_item->get_parent_category();
+        $grade_category->load_grade_item();
+        $this->assertEqual(1, $grade_item->needsupdate);
+        $this->assertEqual(1, $grade_category->grade_item->needsupdate);
     }
 
     function test_grade_item_fetch() {
@@ -224,12 +238,94 @@ class grade_item_test extends grade_test {
         $this->assertEqual($this->grade_grades[0]->finalgrade, $final_grade->finalgrade);
     }
 
+    function test_grade_item_get_sortorder() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_sortorder'));
+        $sortorder = $grade_item->get_sortorder();
+        $this->assertEqual($this->grade_items[0]->sortorder, $sortorder);
+    }
+
+    function test_grade_item_set_sortorder() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'set_sortorder'));
+        $grade_item->set_sortorder(999);
+        $this->assertEqual($grade_item->sortorder, 999);
+    }
+
+    function test_grade_item_move_after_sortorder() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'move_after_sortorder'));
+        $grade_item->move_after_sortorder(5);
+        $this->assertEqual($grade_item->sortorder, 6);
+
+        $grade_item = grade_item::fetch(array('id'=>$this->grade_items[0]->id));
+        $this->assertEqual($grade_item->sortorder, 6);
+
+        $after = grade_item::fetch(array('id'=>$this->grade_items[6]->id));
+        $this->assertEqual($after->sortorder, 8);
+    }
+
+    function test_grade_item_get_name() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'get_name'));
+
+        $name = $grade_item->get_name();
+        $this->assertEqual($this->grade_items[0]->itemname, $name);
+    }
+
+    function test_grade_item_set_parent() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'set_parent'));
+
+        $old = $grade_item->get_parent_category();
+        $old_item = $old->get_grade_item();
+        $new = new grade_category($this->grade_categories[3]);
+        $new_item = $new->get_grade_item();
+
+        $this->assertEqual($old_item->needsupdate, 0);
+
+        $this->assertTrue($grade_item->set_parent($new->id));
+
+        $new_item->update_from_db();
+        $old_item->update_from_db();
+        $grade_item->update_from_db();
+
+        $this->assertEqual($old_item->needsupdate, 1);
+        $this->assertEqual($grade_item->categoryid, $new->id);
+    }
+
     function test_grade_item_get_parent_category() {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'get_parent_category'));
 
         $category = $grade_item->get_parent_category();
         $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
+    }
+
+    function test_grade_item_load_parent_category() {
+        $grade_item = new grade_item($this->grade_items[0]);
+        $this->assertTrue(method_exists($grade_item, 'load_parent_category'));
+
+        $category = $grade_item->load_parent_category();
+        $this->assertEqual($this->grade_categories[1]->fullname, $category->fullname);
+        $this->assertEqual($this->grade_categories[1]->fullname, $grade_item->parent_category->fullname);
+    }
+
+    function test_grade_item_get_item_category() {
+        $grade_item = new grade_item($this->grade_items[3]);
+        $this->assertTrue(method_exists($grade_item, 'get_item_category'));
+
+        $category = $grade_item->get_item_category();
+        $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
+    }
+
+    function test_grade_item_load_item_category() {
+        $grade_item = new grade_item($this->grade_items[3]);
+        $this->assertTrue(method_exists($grade_item, 'load_item_category'));
+
+        $category = $grade_item->load_item_category();
+        $this->assertEqual($this->grade_categories[0]->fullname, $category->fullname);
+        $this->assertEqual($this->grade_categories[0]->fullname, $grade_item->item_category->fullname);
     }
 
     /**
@@ -239,6 +335,7 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'update_final_grades'));
         $this->assertEqual(true, $grade_item->update_final_grades());
+        //TODO: add more tests
     }
 
     /**
@@ -375,6 +472,24 @@ class grade_item_test extends grade_test {
         $grade_item->set_hidden(time()+666);
         $this->assertTrue($grade_item->is_hidden());
         $this->assertTrue($grade_item->is_hidden(1));
+    }
+
+    function test_grade_item_is_category_item() {
+        $grade_item = new grade_item($this->grade_items[3]);
+        $this->assertTrue(method_exists($grade_item, 'is_category_item'));
+        $this->assertTrue($grade_item->is_category_item());
+    }
+
+    function test_grade_item_is_course_item() {
+        $grade_item = grade_item::fetch_course_item($this->courseid);
+        $this->assertTrue(method_exists($grade_item, 'is_course_item'));
+        $this->assertTrue($grade_item->is_course_item());
+    }
+
+    function test_grade_item_fetch_course_item() {
+        $grade_item = grade_item::fetch_course_item($this->courseid);
+        $this->assertTrue(method_exists($grade_item, 'fetch_course_item'));
+        $this->assertTrue($grade_item->itemtype, 'course');
     }
 
     function test_grade_item_depends_on() {

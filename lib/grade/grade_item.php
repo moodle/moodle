@@ -229,27 +229,8 @@ class grade_item extends grade_object {
      * @return boolean success
      */
     function update() {
-
-        if (!empty($this->outcome->id)) {
-            $this->outcomeid = $this->outcome->id;
-        }
-
-        if (!isset($this->gradetype)) {
-            $this->gradetype = GRADE_TYPE_VALUE;
-        }
-
-        if (empty($this->scaleid) and !empty($this->scale->id)) {
-            $this->scaleid = $this->scale->id;
-        }
-
-        // Retrieve scale and infer grademax from it
-        if ($this->gradetype == GRADE_TYPE_SCALE and !empty($this->scaleid)) {
-            $this->load_scale();
-
-        } else {
-            $this->scaleid = NULL;
-            $this->scale = NULL;
-        }
+        // Retrieve scale and infer grademax/min from it if needed
+        $this->load_scale();
 
         if ($this->qualifies_for_regrading()) {
             return $this->force_regrading();
@@ -341,19 +322,10 @@ class grade_item extends grade_object {
             error('Can not insert grade item without course id!');
         }
 
-        if (empty($this->scaleid) and !empty($this->scale->id)) {
-            $this->scaleid = $this->scale->id;
-        }
+        // load scale if needed
+        $this->load_scale();
 
-        // Retrieve scale and infer grademax from it
-        if ($this->gradetype == GRADE_TYPE_SCALE and !empty($this->scaleid)) {
-            $this->load_scale();
-
-        } else {
-            $this->scaleid = NULL;
-            $this->scale = NULL;
-        }
-
+        // add parent categroy if needed
         if (empty($this->categoryid) and !$this->is_course_item() and !$this->is_category_item()) {
             $course_category = grade_category::fetch_course_category($this->courseid);
             $this->categoryid = $course_category->id;
@@ -376,22 +348,16 @@ class grade_item extends grade_object {
                 $this->idnumber = rand(0,9999999999); // TODO replace rand() with proper random generator
             }
         }
-/*
-        // If a grade_item already exists with these itemtype, itemmodule and iteminstance
-        // but not itemnumber, generate an itemnumber.
-        if (empty($this->itemnumber) && !empty($this->itemtype) && !empty($this->itemmodule) && !empty($this->iteminstance)) {
-            $existing_item = get_record('grade_items',
-                'iteminstance', $this->iteminstance,
-                'itemmodule', $this->itemmodule,
-                'itemtype', $this->itemtype);
 
-            if (empty($existing_item->itemnumber)) {
-                $existing_item->itemnumber = 0;
+        // add proper item numbers to manual items
+        if ($this->itemtype == 'manual') {
+            if (empty($this->itemnumber)) {
+                $this->itemnumber = 0;
             }
-
-            $this->itemnumber = $existing_item->itemnumber + 1;
+            while (grade_item::fetch(array('courseid'=>$this->courseid, 'itemtype'=>'manual', 'itemnumber'=>$this->itemnumber))) {
+                $this->itemnumber++;
+            }
         }
-*/
 
         $result = parent::insert();
 
@@ -737,7 +703,7 @@ class grade_item extends grade_object {
     /**
      * Instantiates a grade_scale object whose data is retrieved from the DB,
      * if this item's scaleid variable is set.
-     * @return object grade_scale
+     * @return object grade_scale or null if no scale used
      */
     function load_scale() {
         if ($this->gradetype != GRADE_TYPE_SCALE) {
@@ -745,13 +711,17 @@ class grade_item extends grade_object {
         }
 
         if (!empty($this->scaleid)) {
-            $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
-            $this->scale->load_items();
+            //do not load scale if already present
+            if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
+                $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
+                $this->scale->load_items();
+            }
 
             // Until scales are uniformly set to min=0 max=count(scaleitems)-1 throughout Moodle, we
             // stay with the current min=1 max=count(scaleitems)
             $this->grademax = count($this->scale->scale_items);
             $this->grademin = 1;
+
         } else {
             $this->scale = null;
         }
@@ -999,7 +969,6 @@ class grade_item extends grade_object {
 
         } else {
             return get_string('grade');
-
         }
     }
 
