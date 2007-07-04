@@ -15,6 +15,7 @@ $ADMIN->add('root', new admin_externalpage('search', get_string('search', 'admin
 
 $ADMIN->add('root', new admin_category('users', get_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
+$ADMIN->add('root', new admin_category('grades', get_string('grades')));
 $ADMIN->add('root', new admin_category('location', get_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', get_string('language')));
 

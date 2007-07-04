@@ -47,9 +47,5 @@ $temp->add(new admin_setting_special_backuptime());
 $temp->add(new admin_setting_special_backupsaveto());
 $ADMIN->add('courses', $temp);
 
-// new CFG variable for coursemanager (what roles to display)
-$temp = new admin_settingpage('grades', get_string('grades'));
-$temp->add(new admin_setting_special_gradeexport());
-$ADMIN->add('courses', $temp);
 
 ?>
