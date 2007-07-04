@@ -13,7 +13,8 @@ require_login($course->id);
 
 // to extend enrolments current user needs to be able to do role assignments
 require_capability('moodle/role:assign', $context);
-
+$today = time();
+$today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     if (count($form->userid) != count($form->extendperiod) || count($form->userid) != count($form->extendbase)) {
         error('Parameters malformation', $CFG->wwwroot.'/user/index.php?id='.$id);
@@ -55,9 +56,7 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
                                     }
                                     break;
                                 case 3: // current date
-                                    if(time() > $course->startdate) {
-                                        $student->timeend = time() + $form->extendperiod[$k];
-                                    }
+                                    $student->timeend = $today + $form->extendperiod[$k];
                                     break;
                                 case 4: // course enrolment start date
                                     if($course->enrolstartdate > 0) {
@@ -103,8 +102,8 @@ for ($i=1; $i<=365; $i++) {
 $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
 $basemenu[1] = get_string('enrolmentstart');
 $basemenu[2] = get_string('enrolmentend');
-if(time() > $course->startdate) {
-    $basemenu[3] = get_string('today') . ' (' . userdate(time(), $timeformat) . ')' ;
+if($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
+    $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
 }
 if($course->enrollable == 2) {
     if($course->enrolstartdate > 0) {
