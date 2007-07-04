@@ -142,13 +142,19 @@
 
     mtrace('Removing expired enrolments ...', '');     // See MDL-8785
     $timenow = time();
-    if ($oldenrolments = get_records_select('role_assignments', "timeend > 0 AND timeend < '$timenow'")) {
-        mtrace(count($oldenrolments).' to delete');
-        foreach ($oldenrolments as $oldenrolment) {
-            if (role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid)) {
-                mtrace("Deleted expired role assignment $oldenrolment->roleid for user $oldenrolment->userid from context $oldenrolment->contextid");
+    $somefound = false;
+    // find courses where limited enrolment is enabled
+    if($limitedcourses = get_records_select('course', 'enrolperiod > 0')) {
+        foreach($limitedcourses as $course) {
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $oldenrolments = get_records_select('role_assignments', 'timeend > 0 AND timeend < ' . $timenow . ' AND contextid = ' . $context->id);
+            foreach ($oldenrolments as $oldenrolment) {
+                role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
+                $somefound = true;
             }
         }
+    }
+    if($somefound) {
         mtrace('Done');
     } else {
         mtrace('none found');

@@ -232,31 +232,6 @@ function process_config($config) {
 function cron() {
     global $CFG;
 
-
-    // Delete all assignments from the database that have already expired
-    
-    $timenow = time();
-
-    if ($assignments = get_records_sql("SELECT ra.*, c.instanceid as courseid FROM 
-                                          {$CFG->prefix}role_assignments ra,
-                                          {$CFG->prefix}context c
-                                         WHERE ra.enrol = 'manual'
-                                           AND ra.timeend > 0 
-                                           AND ra.timeend < $timenow
-                                           AND ra.contextid = c.id 
-                                           AND c.contextlevel = ".CONTEXT_COURSE)) {
-        foreach ($assignments as $assignment) {
-            if ($course = get_record('course', 'id', $assignment->courseid)) {
-                if (empty($course->enrolperiod)) {   // This overrides student timeend
-                    continue;
-                }
-            }
-            role_unassign($assignment->roleid, $assignment->userid, 0, $assignment->contextid);
-        }
-    }
-
-
-
     // Notify users about enrolments that are going to expire soon!
 
     if (empty($CFG->lastexpirynotify)) {
