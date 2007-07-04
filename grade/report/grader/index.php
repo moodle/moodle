@@ -330,6 +330,14 @@ foreach ($gtree->levels as $key=>$row) {
                 $dimmed = ' dimmed_text ';
             }
 
+            if ($object->itemtype == 'mod') {
+                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'.get_string('modulename', $object->itemmodule).'"/>';
+            } else if ($object->itemtype == 'manual') {
+                //TODO: add manual grading icon
+                $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
+            }
+
+
             $headerhtml .= '<th class="'.$type.$catlevel.$dimmed.'"><a href="'.$baseurl.'&amp;sortitemid='
                       . $element['object']->id .'">'. $element['object']->get_name()
                       . '</a>' . $arrow;
@@ -338,8 +346,6 @@ foreach ($gtree->levels as $key=>$row) {
 
             $items[$element['object']->sortorder] =& $element['object'];
         }
-
-
     }
 
     $headerhtml .= '</tr>';
@@ -355,11 +361,26 @@ foreach ($users as $userid => $user) {
         $studentshtml .= '<td>';
 
         if (isset($finalgrades[$userid][$item->id])) {
+                    
             $gradeval = $finalgrades[$userid][$item->id]->finalgrade;
+            
+            // trim trailing "0"s
+            if (isset($gradeval)) {
+                if ($gradeval != 0) {
+                    $gradeval = trim($gradeval, ".0");  
+                } else {
+                    $gradeval = 0;
+                }
+            }
+            
             $grade = new grade_grades($finalgrades[$userid][$item->id], false);
             $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
         } else {
-            $gradeval = '-';
+            if ($USER->gradeediting) {
+                $gradeval ='';
+            } else { 
+                $gradeval = '-';
+            }
             $grade = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
         }
 
@@ -381,7 +402,7 @@ foreach ($users as $userid => $user) {
                     $studentshtml .= choose_from_menu ($scaleopt, 'grade_'.$userid.'_'.$item->id, $gradeval, get_string('nograde'), '', -1, true);
                 }
             } else {
-                $studentshtml .= '<input type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
+                $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
             }
 
         } else {
@@ -419,7 +440,7 @@ foreach ($users as $userid => $user) {
     $studentshtml .= '</tr>';
 }
 
-$reporthtml = "<table style=\"text-align: center\">$headerhtml";
+$reporthtml = "<table class=\"boxaligncenter\">$headerhtml";
 $reporthtml .= $studentshtml;
 $reporthtml .= "</table>";
 
@@ -436,7 +457,7 @@ echo $reporthtml;
 
 // print submit button
 if ($USER->gradeediting) {
-    echo '<input type="submit" value="'.get_string('update').'" />';
+    echo '<div style="text-align:center"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
 ?>
