@@ -2295,8 +2295,10 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
 function enrol_into_course($course, $user, $enrol) {
 
     $timestart = time();
+    // remove time part from the timestamp and keep only the date part
+    $timestart = make_timestamp(date('Y', $timestart), date('m', $timestart), date('d', $timestart), 0, 0, 0);
     if ($course->enrolperiod) {
-        $timeend = time() + $course->enrolperiod;
+        $timeend = $timestart + $course->enrolperiod;
     } else {
         $timeend = 0;
     }
