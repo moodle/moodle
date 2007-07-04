@@ -7,7 +7,7 @@ include_once($CFG->libdir.'/gradelib.php');
 
 // Prepare language strings
 $strsortasc  = get_string('sortasc', 'grades');
-$strsortdesc = get_string('sortdesc', 'grades');
+$strsortdesc = get_string('sortasc', 'grades');
 
 /// processing posted grades here
 
@@ -51,11 +51,19 @@ $context       = get_context_instance(CONTEXT_COURSE, $courseid);
 $page          = optional_param('page', 0, PARAM_INT);
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
 $report        = optional_param('report', 0, PARAM_ALPHANUM);
-$perpage       = optional_param('perpage', 3, PARAM_INT); // number of users on a page
 $action        = optional_param('action', 0, PARAM_ALPHA);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
+
+// Get the user preferences
+$perpage  = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
+$decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
+
+// Override perpage if set in URL
+if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
+    $perpage = $perpageurl;
+}
 
 // Grab the grade_tree for this course
 $gtree = new grade_tree($courseid);
@@ -244,9 +252,9 @@ if (!$context = get_context_instance(CONTEXT_COURSE, $gtree->courseid)) {
 
 if ($sortitemid === 'lastname') {
     if ($sortorder == 'ASC') {
-        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
+        $lastarrow = print_arrow('up', $strsortasc, true);
     } else {
-        $lastarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
+        $lastarrow = print_arrow('down', $strsortdesc, true);
     }
 } else {
     $lastarrow = '';
@@ -254,9 +262,9 @@ if ($sortitemid === 'lastname') {
 
 if ($sortitemid === 'firstname') {
     if ($sortorder == 'ASC') {
-        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
+        $firstarrow = print_arrow('up', $strsortasc, true);
     } else {
-        $firstarrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
+        $firstarrow = print_arrow('down', $strsortdesc, true);
     }
 } else {
     $firstarrow = '';
@@ -317,9 +325,9 @@ foreach ($gtree->levels as $key=>$row) {
         } else {
             if ($element['object']->id == $sortitemid) {
                 if ($sortorder == 'ASC') {
-                    $arrow = ' <img src="'.$CFG->pixpath.'/t/up.gif" alt="'.$strsortasc.'" /> ';
+                    $arrow = print_arrow('up', $strsortasc, true);
                 } else {
-                    $arrow = ' <img src="'.$CFG->pixpath.'/t/down.gif" alt="'.$strsortdesc.'" /> ';
+                    $arrow = print_arrow('down', $strsortdesc, true);
                 }
             } else {
                 $arrow = '';
@@ -416,13 +424,13 @@ foreach ($users as $userid => $user) {
                     if ((int) $gradeval < 1) {
                         $studentshtml .= '-';
                     } else {
-                        $studentshtml .= $scales[$gradeval-1];
+                        $studentshtml .= round($scales[$gradeval-1], $decimals);
                     }
                 } else {
                     // no such scale, throw error?
                 }
             } else {
-                $studentshtml .=  $gradeval;
+                $studentshtml .=  round($gradeval, $decimals);
             }
         }
 

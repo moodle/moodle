@@ -6279,5 +6279,53 @@ function print_location_comment($file, $line, $return = false)
     }
 }
 
+
+/** 
+ * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
+ * provide this function with the language strings for sortasc and sortdesc.
+ * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
+ * @param string $direction 'up' or 'down'
+ * @param string $strsort The language string used for the alt attribute of this image
+ * @param bool $return Whether to print directly or return the html string
+ * @return string HTML for the image
+ * 
+ * TODO See if this isn't already defined somewhere. If not, move this to weblib
+ */
+function print_arrow($direction='up', $strsort=null, $return=false) {
+    global $CFG;
+    
+    if (!in_array($direction, array('up', 'down', 'right', 'left'))) {
+        return null;
+    }
+    
+    $return = null; 
+
+    switch ($direction) {
+        case 'up':
+            $sortdir = 'asc';
+            break;
+        case 'down':
+            $sortdir = 'desc';
+            break;
+        default:
+            $sortdir = null;
+            break;
+    }
+
+    // Prepare language string
+    $strsort = '';
+    if (empty($strsort) && !empty($sortdir)) {
+        $strsort  = get_string('sort' . $sortdir, 'grades');
+    }
+
+    $return = ' <img src="'.$CFG->pixpath.'/t/' . $direction . '.gif" alt="'.$strsort.'" /> ';
+
+    if ($return) {
+        return $return;
+    } else {
+        echo $return;
+    }
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

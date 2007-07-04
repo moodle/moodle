@@ -25,7 +25,7 @@
 
     require_once("../config.php");
     require_once("../lib/gradelib.php");
-grade_grab_grades();
+    
     $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
