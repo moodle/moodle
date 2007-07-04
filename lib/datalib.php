@@ -760,7 +760,7 @@ SELECT
 FROM
     {$CFG->prefix}role_assignments ra
     INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
-    INNER JOIN {$CFG->prefix}course_categories a ON (a.path LIKE ".sql_concat('"%/"', sql_concat('x.instanceid', '"/%"'))." OR a.id=x.instanceid) AND x.contextlevel=40
+    INNER JOIN {$CFG->prefix}course_categories a ON (a.path LIKE ".sql_concat('"%/"', 'x.instanceid', '"/%"')." OR a.id=x.instanceid) AND x.contextlevel=40
     INNER JOIN {$CFG->prefix}course c ON c.category=a.id
 WHERE
     ra.userid=$userid
