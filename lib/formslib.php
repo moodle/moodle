@@ -370,6 +370,29 @@ class moodleform {
     }
 
     /**
+     * Return submitted data without validation or NULL if there is no submitted data.
+     *
+     * @param bool $slashed true means return data with addslashes applied
+     * @return object submitted data; NULL if not submitted
+     */
+    function get_submitted_data($slashed=true) {
+        $mform =& $this->_form;
+
+        if ($this->is_submitted()) {
+            $data = $mform->exportValues(null, $slashed);
+            unset($data['sesskey']); // we do not need to return sesskey
+            unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
+            if (empty($data)) {
+                return NULL;
+            } else {
+                return (object)$data;
+            }
+        } else {
+            return NULL;
+        }
+    }
+
+    /**
      * Save verified uploaded files into directory. Upload process can be customised from definition()
      * method by creating instance of upload manager and storing it in $this->_upload_form
      *
