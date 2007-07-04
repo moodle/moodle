@@ -26,7 +26,7 @@ set_time_limit(0);
 require_once '../../../config.php';
 require_once $CFG->libdir . '/gradelib.php';
 
-$courseid      = optional_param('id', 0 , PARAM_INT);
+$courseid      = required_param('id', PARAM_INT);
 
 /// Make sure they can even access this course
 
@@ -37,6 +37,23 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course->id);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('gradereport/grader:manage', $context);
+
+// If data submitted, then process and store.  
+if ($form = data_submitted()) {
+    foreach ($form as $preference => $value) {
+        switch ($preference) {
+            case 'persistflt':
+                set_user_preference('calendar_persistflt', intval($value));
+                break;
+            default:
+                set_user_preference($preference, $value);
+                break;
+        }
+    }
+    redirect($CFG->wwwroot . '/grade/report.php?report=grader&amp;id='.$courseid, get_string('changessaved'), 1);
+    exit;
+}
 
 $strgrades = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
@@ -49,12 +66,19 @@ $crumbs[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc'
 
 $navigation = build_navigation($crumbs);
 
-print_header_simple($strgrades.': '.$strgraderreport,': '.$strgradepreferences, $navigation,
+print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferences,': '.$strgradepreferences, $navigation,
                     '', '', true, '', navmenu($course));
 print_heading(get_string('preferences'));
 // Add tabs
 $currenttab = 'preferences';
 include('tabs.php');
+
+print_simple_box_start("center");
+
+include('./preferences_form.php');
+$mform = new grader_report_preferences_form('preferences.php', compact('course'));
+echo $mform->display();
+print_simple_box_end();
 
 print_footer($course);
 ?>

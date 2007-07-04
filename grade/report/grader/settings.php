@@ -41,4 +41,5 @@ $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_
                                                  '3' => '3',
                                                  '4' => '4',
                                                  '5' => '5'))); 
+
 ?>

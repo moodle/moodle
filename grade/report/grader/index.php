@@ -5,10 +5,6 @@
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
-// Prepare language strings
-$strsortasc  = get_string('sortasc', 'grades');
-$strsortdesc = get_string('sortasc', 'grades');
-
 /// processing posted grades here
 
 if ($data = data_submitted()) {
@@ -64,6 +60,15 @@ $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_repor
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
     $perpage = $perpageurl;
 }
+
+// Prepare language strings
+$strsortasc  = get_string('sortasc', 'grades');
+$strsortdesc = get_string('sortasc', 'grades');
+
+// base url for sorting by first/last name
+$baseurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;page='.$page;
+// base url for paging
+$pbarurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;';
 
 // Grab the grade_tree for this course
 $gtree = new grade_tree($courseid);
@@ -166,12 +171,13 @@ grade_update_final_grades($courseid);
 // roles to be displaye in the gradebook
 $gradebookroles = $CFG->gradebookroles;
 
-// pulls out the userids of the users to be display, and sort them
-// the right outer join is needed because potentially, it is possible not
-// to have the corresponding entry in grade_grades table for some users
-// this is check for user roles because there could be some users with grades
-// but not supposed to be displayed
-
+/* 
+* pulls out the userids of the users to be display, and sort them
+* the right outer join is needed because potentially, it is possible not
+* to have the corresponding entry in grade_grades table for some users
+* this is check for user roles because there could be some users with grades
+* but not supposed to be displayed
+*/ 
 if (is_numeric($sortitemid)) {
     $sql = "SELECT u.id, u.firstname, u.lastname
             FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
@@ -227,19 +233,6 @@ if ($grades = get_records_sql($sql)) {
     }
 }
 
-print_heading('Grader Report');
-
-// Add tabs
-$currenttab = 'graderreport';
-include('tabs.php');
-
-// base url for sorting by first/last name
-$baseurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;page='.$page;
-// base url for paging
-$pbarurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;';
-
-print_paging_bar($numusers, $page, $perpage, $pbarurl);
-
 /// With the users in an sorted array and grades fetched, we can not print the main html table
 
 // 1. Fetch all top-level categories for this course, with all children preloaded, sorted by sortorder
@@ -270,13 +263,23 @@ if ($sortitemid === 'firstname') {
     $firstarrow = '';
 }
 
-// first name/last name column
+/********* BEGIN OUTPUT *********/
+
+print_heading('Grader Report');
+
+// Add tabs
+$currenttab = 'graderreport';
+include('tabs.php');
+
+print_paging_bar($numusers, $page, $perpage, $pbarurl);
 
 $items = array();
 
+// Prepare Table Headers
 $headerhtml = '';
 
 $numrows = count($gtree->levels);
+
 foreach ($gtree->levels as $key=>$row) {
     if ($key == 0) {
         // do not diplay course grade category
@@ -286,7 +289,8 @@ foreach ($gtree->levels as $key=>$row) {
     $headerhtml .= '<tr class="heading">';
 
     if ($key == $numrows - 1) {
-        $headerhtml .= '<th class="user"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '. $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
+        $headerhtml .= '<th class="user"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '
+                    . $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
     } else {
         $headerhtml .= '<td class="topleft">&nbsp;</td>';
     }
@@ -339,10 +343,12 @@ foreach ($gtree->levels as $key=>$row) {
             }
 
             if ($object->itemtype == 'mod') {
-                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'.get_string('modulename', $object->itemmodule).'"/>';
+                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
+                      .get_string('modulename', $object->itemmodule).'"/>';
             } else if ($object->itemtype == 'manual') {
                 //TODO: add manual grading icon
-                $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
+                $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades')
+                      .'"/>'; // TODO: localize
             }
 
 
@@ -359,7 +365,8 @@ foreach ($gtree->levels as $key=>$row) {
     $headerhtml .= '</tr>';
 }
 
-$studentshtml = '';
+// Prepare Table Rows
+$studentshtml = ''; 
 
 foreach ($users as $userid => $user) {
     $studentshtml .= '<tr><th class="user">' . $user->firstname . ' ' . $user->lastname . '</th>';
@@ -407,7 +414,8 @@ foreach ($users as $userid => $user) {
                         $i++;
                         $scaleopt[$i] = $scaleoption;
                     }
-                    $studentshtml .= choose_from_menu ($scaleopt, 'grade_'.$userid.'_'.$item->id, $gradeval, get_string('nograde'), '', -1, true);
+                    $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
+                                                      $gradeval, get_string('nograde'), '', -1, true);
                 }
             } else {
                 $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
