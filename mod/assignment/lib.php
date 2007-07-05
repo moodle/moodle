@@ -1980,10 +1980,15 @@ function assignment_grade_handler($eventdata) {
         }
     }
 
-    $submission->submissioncomment = addslashes($eventdata->feedback);
-    $submission->format            = (int)$eventdata->feedbackformat;
+    if (isset($eventdata->feedback)) {
+        $submission->submissioncomment = addslashes($eventdata->feedback);
+    }
+    
+    if (isset($eventdata->feedbackformat)) {
+        $submission->format            = (int)$eventdata->feedbackformat;
+    }
 
-    if ($old->submissioncomment != $eventdata->feedback or $old->format != $submission->format) {
+    if (isset($eventdata->feedback) && ($old->submissioncomment != $eventdata->feedback or $old->format != $submission->format)) {
         $submission->mailed = 0;       // Make sure mail goes out (again, even)
     }
 
