@@ -9,11 +9,11 @@ include_once($CFG->libdir.'/gradelib.php');
 
 if ($data = data_submitted()) {
     foreach ($data as $varname => $postedgrade) {
-        
+
         // clean posted values
-        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);      
+        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);
         $varname = clean_param($varname, PARAM_RAW);
-        
+
         // skip, not a grade
         if (!strstr($varname, 'grade')) {
             continue;
@@ -170,13 +170,13 @@ grade_update_final_grades($courseid);
 // roles to be displaye in the gradebook
 $gradebookroles = $CFG->gradebookroles;
 
-/* 
+/*
 * pulls out the userids of the users to be display, and sort them
 * the right outer join is needed because potentially, it is possible not
 * to have the corresponding entry in grade_grades table for some users
 * this is check for user roles because there could be some users with grades
 * but not supposed to be displayed
-*/ 
+*/
 if (is_numeric($sortitemid)) {
     $sql = "SELECT u.id, u.firstname, u.lastname
             FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
@@ -320,7 +320,7 @@ foreach ($gtree->levels as $key=>$row) {
 
             // Print icons
             if ($USER->gradeediting) {
-                $headerhtml .= grade_get_icons($element, $gtree); 
+                $headerhtml .= grade_get_icons($element, $gtree);
             }
 
             $headerhtml .= '</td>';
@@ -365,37 +365,37 @@ foreach ($gtree->levels as $key=>$row) {
 }
 
 // Prepare Table Rows
-$studentshtml = ''; 
+$studentshtml = '';
 
 foreach ($users as $userid => $user) {
     // Student name and link
 
-    $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id=' 
+    $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id='
                   . $user->id . '">' . fullname($user) . '</a></th>';
     foreach ($items as $item) {
 
         $studentshtml .= '<td>';
 
         if (isset($finalgrades[$userid][$item->id])) {
-                    
+
             $gradeval = $finalgrades[$userid][$item->id]->finalgrade;
-            
+
             // trim trailing "0"s
             if (isset($gradeval)) {
                 if ($gradeval != 0) {
-                    $gradeval = trim($gradeval, ".0");  
+                    $gradeval = trim($gradeval, ".0");
                 } else {
                     $gradeval = 0;
                 }
             }
-            
+
             $grade = new grade_grades($finalgrades[$userid][$item->id], false);
             $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
         } else {
-            // if itemtype is course or category, the grades in this item is not directly editable  
+            // if itemtype is course or category, the grades in this item is not directly editable
             if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
                 $gradeval ='';
-            } else { 
+            } else {
                 $gradeval = '-';
             }
             $grade = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
@@ -403,7 +403,7 @@ foreach ($users as $userid => $user) {
 
         // if in editting mode, we need to print either a text box
         // or a drop down (for scales)
-        
+
         // grades in item of type grade category or course are not directly editable
         if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
             // We need to retrieve each grade_grade object from DB in order to

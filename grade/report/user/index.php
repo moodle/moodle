@@ -53,7 +53,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             ));
 
     $table->setup();
-    
+
     // print the page
     print_heading(get_string('userreport', 'grades'). " - ".fullname($user));
 

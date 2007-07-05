@@ -40,36 +40,36 @@ class grader_report_preferences_form extends moodleform {
                                                            false, get_string('configstudentsperpage', 'grades')));
         $mform->setDefault('grade_report_studentsperpage', $prefs->studentsperpage);
         $mform->setType('grade_report_studentsperpage', PARAM_INT);
-        
-        $mform->addElement('select','grade_report_aggregationposition', get_string('aggregationposition', 'grades'), 
+
+        $mform->addElement('select','grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
                 array(get_string('left', 'grades'), get_string('right', 'grades')));
         $mform->setHelpButton('grade_report_aggregationposition', array(false, get_string('aggregationposition', 'grades'), false, true,
                                                            false, get_string('configaggregationposition', 'grades')));
         $mform->setDefault('grade_report_aggregationposition', $prefs->aggregationposition);
         $mform->setType('grade_report_aggregationposition', PARAM_INT);
-        
-        $mform->addElement('select','grade_report_aggregationview', get_string('aggregationview', 'grades'), 
+
+        $mform->addElement('select','grade_report_aggregationview', get_string('aggregationview', 'grades'),
                 array(get_string('full', 'grades'), get_string('compact', 'grades')));
         $mform->setHelpButton('grade_report_aggregationview', array(false, get_string('aggregationview', 'grades'), false, true,
                                                            false, get_string('configaggregationview', 'grades')));
         $mform->setDefault('grade_report_aggregationview', $prefs->aggregationview);
         $mform->setType('grade_report_aggregationview', PARAM_INT);
 
-        $mform->addElement('select','grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'), 
+        $mform->addElement('select','grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                 array(get_string('raw', 'grades'), get_string('percentage', 'grades')));
         $mform->setHelpButton('grade_report_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'), false, true,
                                                            false, get_string('configgradedisplaytype', 'grades')));
         $mform->setDefault('grade_report_gradedisplaytype', $prefs->gradedisplaytype);
         $mform->setType('grade_report_gradedisplaytype', PARAM_INT);
 
-        $mform->addElement('select','grade_report_feedbackformat', get_string('feedbackformat', 'grades'), 
+        $mform->addElement('select','grade_report_feedbackformat', get_string('feedbackformat', 'grades'),
                 array(get_string('text', 'grades'), get_string('html', 'grades')));
         $mform->setHelpButton('grade_report_feedbackformat', array(false, get_string('feedbackformat', 'grades'), false, true,
                                                            false, get_string('configfeedbackformat', 'grades')));
         $mform->setDefault('grade_report_feedbackformat', $prefs->feedbackformat);
         $mform->setType('grade_report_feedbackformat', PARAM_INT);
 
-        $mform->addElement('select','grade_report_decimalpoints', get_string('decimalpoints', 'grades'), 
+        $mform->addElement('select','grade_report_decimalpoints', get_string('decimalpoints', 'grades'),
                 array(0, 1, 2, 3, 4, 5));
         $mform->setHelpButton('grade_report_decimalpoints', array(false, get_string('decimalpoints', 'grades'), false, true,
                                                            false, get_string('configdecimalpoints', 'grades')));
@@ -116,12 +116,12 @@ class grader_report_preferences_form extends moodleform {
         $mform->setHelpButton('grade_report_showscales', array(false, get_string('showscales', 'grades'), false, true,
                                                            false, get_string('configshowscales', 'grades')));
         $mform->setDefault('grade_report_showscales', $prefs->showscales);
-        $mform->setType('grade_report_showscales', PARAM_INT); 
-        
+        $mform->setType('grade_report_showscales', PARAM_INT);
+
         $mform->addElement('hidden', 'id');
         $mform->setDefault('id', $course->id);
 
-        $this->add_action_buttons(); 
+        $this->add_action_buttons();
     }
 
 

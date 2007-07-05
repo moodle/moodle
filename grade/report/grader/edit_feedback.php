@@ -46,11 +46,11 @@ if ($mform->is_cancelled()) {
 }
 
 // Get extra data related to this feedback
-$query = "SELECT a.id AS userid, a.firstname, a.lastname, 
+$query = "SELECT a.id AS userid, a.firstname, a.lastname,
                  b.id AS itemid, b.itemname, b.grademin, b.grademax, b.iteminstance, b.itemmodule, b.scaleid,
-                 c.finalgrade 
-            FROM {$CFG->prefix}user a, 
-                 {$CFG->prefix}grade_items b, 
+                 c.finalgrade
+            FROM {$CFG->prefix}user a,
+                 {$CFG->prefix}grade_items b,
                  {$CFG->prefix}grade_grades c
            WHERE c.id = $id
              AND b.id = c.itemid
@@ -87,7 +87,7 @@ $navigation = build_navigation($nav);
 
 /*********** BEGIN OUTPUT *************/
 
-print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $heading, 
+print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $heading,
     ': ' . $heading , $navigation, '', '', true, '', navmenu($course));
 
 print_heading($heading);
@@ -95,11 +95,11 @@ print_heading($heading);
 print_simple_box_start("center");
 
 // Student name and link
-echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view.php?id=' 
+echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view.php?id='
      . $extra_info->userid . '">' . fullname($extra_info) . "</a></p>";
 
-// Grade item name and link     
-echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule 
+// Grade item name and link
+echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule
      . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
 
 // Final grade and link to scale if applicable
@@ -108,7 +108,7 @@ if (!empty($extra_info->finalgrade)) {
     $closelink = '';
 
     if (!empty($extra_info->scaleid)) {
-        $openlink = '<a href="' . $CFG->wwwroot . '/course/scales.php?id=' . $courseid . '&amp;scaleid=' 
+        $openlink = '<a href="' . $CFG->wwwroot . '/course/scales.php?id=' . $courseid . '&amp;scaleid='
                   . $extra_info->scaleid . '">';
         $closelink = '</a>';
     }
