@@ -47,9 +47,9 @@
     $strexercise  = get_string("modulename", "exercise");
 
     // ...display header...
-    $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($exercise->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($exercise->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple(format_string($exercise->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strexercise), navmenu($course, $cm));
@@ -340,14 +340,7 @@
         /// Check to see if groups are being used in this exercise
         /// and if so, set $currentgroup to reflect the current group
         $groupmode = groupmode($course, $cm);   // Groups are being used?
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-
-        /// Allow the teacher to change groups (for this session)
-        if ($groupmode) {
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
-            }
-        }
+        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
 
         print_heading_with_help(get_string("managingassignment", "exercise"), "managing", "exercise");
 

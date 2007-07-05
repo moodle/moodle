@@ -28,9 +28,9 @@
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
     
-    $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($journal->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($journal->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple(format_string($journal->name), '', $navigation, '', '', true,
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));

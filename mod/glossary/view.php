@@ -224,22 +224,22 @@
     $strsearch = get_string("search");
     $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
-    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$id", 'type' => 'activityinstance');
 
 /// If we are in approval mode, prit special header
     if ($tab == GLOSSARY_APPROVAL_VIEW) {
         require_capability('mod/glossary:approve', $context);
 
-        $crumbs[] = array('name' => $strwaitingapproval, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navlinks[] = array('name' => $strwaitingapproval, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($navlinks);
 
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
 
         print_heading($strwaitingapproval);
     } else { /// Print standard header
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         print_header_simple(format_string($glossary->name), "", $navigation, "", "", true,
             update_module_button($cm->id, $course->id, $strglossary), navmenu($course, $cm));
     }

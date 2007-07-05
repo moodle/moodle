@@ -64,9 +64,9 @@
         print_header($pagetitle, $course->fullname);
     } else {
 
-        $resource_obj->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-        $resource_obj->crumbs[] = array('name' => $strdeploy, 'link' => '', 'type' => 'action');
-        $navigation = build_navigation($resource_obj->crumbs);
+        $resource_obj->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+        $resource_obj->navlinks[] = array('name' => $strdeploy, 'link' => '', 'type' => 'action');
+        $navigation = build_navigation($resource_obj->navlinks);
         print_header($pagetitle, $course->fullname, $navigation,
                      '', '', true, 
                      update_module_button($cm->id, $course->id, $resource_obj->strresource));

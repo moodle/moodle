@@ -7019,51 +7019,51 @@ function setup_lang_from_browser() {
  * and others
  * @uses $CFG 
  * @uses $THEME
- * @param $extrabreadcrumbs - array of associative arrays, keys: name, link, type
+ * @param $extranavlinks - array of associative arrays, keys: name, link, type
  * @return $navigation as an object so it can be differentiated from old style 
  * navigation strings.
  */
-function build_navigation($extrabreadcrumbs) {
+function build_navigation($extranavlinks) {
     global $CFG, $COURSE;
 
     $navigation = '';
 
     //Site name
     if ($site = get_site()) {
-        $breadcrumbs[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
+        $navlinks[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
     }
 
 
     if ($COURSE) {
         if ($COURSE->id != SITEID) {
             //Course
-            $breadcrumbs[] = array('name' => format_string($COURSE->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",'type' => 'course');
+            $navlinks[] = array('name' => format_string($COURSE->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",'type' => 'course');
         }       
     }
 
-    //Merge in extra bread crumbs
-    $breadcrumbs = array_merge($breadcrumbs, $extrabreadcrumbs);
+    //Merge in extra navigation links
+    $navlinks = array_merge($navlinks, $extranavlinks);
 
-    //Construct an unordered list from $breadcrumbs
+    //Construct an unordered list from $navlinks
     //Accessibility: heading hidden from visual browsers by default.
     $navigation = '<h2 class="accesshide">'.get_string('youarehere','access')."</h2> <ul>\n";
-    $countcrumb = count($breadcrumbs);
+    $countlinks = count($navlinks);
 
-    for($i=0;$i<$countcrumb;$i++) {
+    for($i=0;$i<$countlinks;$i++) {
 
         // Check the link type to see if this link should appear in the trail
-        if ($breadcrumbs[$i]['type'] == 'activity' && $i+1 < $countcrumb  && ($CFG->hideactivitytypecrumb == 2 || ($CFG->hideactivitytypecrumb == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
+        if ($navlinks[$i]['type'] == 'activity' && $i+1 < $countlinks  && ($CFG->hideactivitytypenavlink == 2 || ($CFG->hideactivitytypenavlink == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
             continue;
         }
         $navigation .= '<li class="first">';
         if ($i > 0) {
             $navigation .= get_separator();
         }
-        if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
-            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$breadcrumbs[$i]['link']}\">";
+        if ($navlinks[$i]['link'] && $i+1 < $countlinks) {
+            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlinks[$i]['link']}\">";
         }
-        $navigation .= "{$breadcrumbs[$i]['name']}";
-        if ($breadcrumbs[$i]['link'] && $i+1 < $countcrumb) {
+        $navigation .= "{$navlinks[$i]['name']}";
+        if ($navlinks[$i]['link'] && $i+1 < $countlinks) {
             $navigation .= "</a>";
         }
 
@@ -7072,7 +7072,7 @@ function build_navigation($extrabreadcrumbs) {
 
     $navigation .= "</ul>";
 
-    return(array('newnav' => true, 'breadcrumbs' => $navigation));
+    return(array('newnav' => true, 'navlinks' => $navigation));
 }
 
 function is_newnav($navigation) {

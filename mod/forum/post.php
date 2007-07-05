@@ -58,10 +58,10 @@
             require_login();
         }
         
-        $crumbs[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
+        $navlinks[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
         
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         
         print_header($course->shortname, $course->fullname, $navigation, '' , '', true, "", navmenu($course, $cm));
@@ -98,7 +98,11 @@
             }
         }
 
-        $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        if (isset($_SERVER["HTTP_REFERER"])) {
+            $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
+        } else {
+            $SESSION->fromurl = '';
+        }
 
 
         // Load up the $post variable.
@@ -112,11 +116,14 @@
         $post->userid     = $USER->id;
         $post->message    = '';
 
-        $post->groupid = get_current_group($course->id);
-        if ($post->groupid == 0) {
-            $post->groupid = -1;
+        if ($groupmode = groupmode($course, $cm)) {
+            $post->groupid = get_and_set_current_group($course, $groupmode);
+            if ($post->groupid == 0) {
+                $post->groupid = -1; //TODO: why -1??
+            }
+        } else {
+            $post->groupid = -1; //TODO: why -1??
         }
-
         forum_set_return();
 
     } else if (!empty($reply)) {      // User is writing a new reply
@@ -403,12 +410,12 @@
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
             
-            $crumbs[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
-            $crumbs[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-            $crumbs[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
-            $crumbs[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
+            $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+            $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+            $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+            $navlinks[] = array('name' => get_string("prune", "forum"), 'link' => '', 'type' => 'title');
             
-            $navigation = build_navigation($crumbs);
+            $navigation = build_navigation($navlinks);
             
             print_header_simple(format_string($discussion->name).": ".format_string($post->subject), "", $navigation, '', "", true, "", navmenu($course, $cm));
 
@@ -628,15 +635,15 @@
     $strforums = get_string("modulenameplural", "forum");
 
 
-    $crumbs[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
 
 
     if ($post->parent) {
-        $crumbs[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'activityinstance');
-        $crumbs[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'action');            
+        $navlinks[] = array('name' => format_string($toppost->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => get_string('editing', 'forum'), 'link' => '', 'type' => 'action');            
     } else {
-        $crumbs[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'action');
+        $navlinks[] = array('name' => format_string($toppost->subject), 'link' => '', 'type' => 'action');
     }
 
     if (empty($post->edit)) {
@@ -664,7 +671,7 @@
     $forcefocus = empty($reply) ? NULL : 'message';
 
 
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
      
     print_header("$course->shortname: $strdiscussionname ".
                   format_string($toppost->subject), $course->fullname,

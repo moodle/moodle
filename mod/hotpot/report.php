@@ -402,8 +402,8 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
     
-    $crumbs[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
-    $crumbs[] = array('name' => $hotpot->name, 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
+    $navlinks[] = array('name' => $hotpot->name, 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
 
 
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -414,16 +414,16 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
             $module = "hotpot";
         }
 
-        $crumbs[] = array('name' => get_string("report$mode", $module), 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => get_string("report$mode", $module), 'link' => '', 'type' => 'title');
         
 
     } else {
 
-        $crumbs[] = array('name' => get_string("report", "quiz"), 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => get_string("report", "quiz"), 'link' => '', 'type' => 'title');
     }
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
     print_header($title, $heading, $navigation, "", "", true, $button, navmenu($course, $cm));
 
     print_heading($hotpot->name);
@@ -600,10 +600,8 @@ function hotpot_get_report_users($course, $formdata) {
     $users = array();
 
     /// Check to see if groups are being used in this module
-    $currentgroup = false;
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simple");
-    }
+    $groupmode = groupmode($course, $cm); //TODO: there is no $cm defined!
+    $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simple");
 
     $sort = "u.lastname ASC";
 

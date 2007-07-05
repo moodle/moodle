@@ -75,10 +75,10 @@
         $entry->format = $defaultformat;
     }
 
-    $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $stredit, 'link' => '', 'type' => 'action');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $stredit, 'link' => '', 'type' => 'action');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple(format_string($journal->name), "", $navigation, "",
                   "", true, "", navmenu($course, $cm));

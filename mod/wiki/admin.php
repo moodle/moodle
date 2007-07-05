@@ -114,11 +114,11 @@
           default: break;
        }
     }
-    $crumbs[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
-    $crumbs[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
+    $navlinks[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$wiki_entry->pagename", "", $navigation,
                 $focus, "", true, update_module_button($cm->id, $course->id, $strwiki),

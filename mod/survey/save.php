@@ -33,10 +33,10 @@
 
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurveysaved = get_string("surveysaved", "survey");
-    $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strsurveysaved", "", $navigation, "");
 

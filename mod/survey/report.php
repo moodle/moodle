@@ -65,10 +65,10 @@
                        <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     }
     
-    $crumbs[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($survey->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strreport, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($survey->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strreport, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($navlinks);
     
     print_header("$course->shortname: ".format_string($survey->name), $course->fullname, $navigation,
                  "", "", true,

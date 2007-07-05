@@ -76,19 +76,16 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
     
-    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple($data->name, "", $navigation, "", "", true, "", navmenu($course));
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode);
-    } else {
-        $currentgroup = 0;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
 /// Print the tabs
     $currenttab = 'add';

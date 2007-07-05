@@ -51,13 +51,13 @@
     $strmodulename = get_string("modulename", "glossary");
     $strdisplayformats = get_string("displayformats","glossary");
 
-    $crumbs[] = array('name' => $stradmin, 'link' => "../../$CFG->admin/index.php", 'type' => 'core');
-    $crumbs[] = array('name' => $strconfiguration, 'link' => "../../$CFG->admin/configure.php", 'type' => 'core');
-    $crumbs[] = array('name' => $strmanagemodules, 'link' => "../../$CFG->admin/modules.php", 'type' => 'core');
-    $crumbs[] = array('name' => $strmodulename, 'link' => "../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey", 'type' => 'core');
-    $crumbs[] = array('name' => $strdisplayformats, 'link' => '', 'type' => 'core');
+    $navlinks[] = array('name' => $stradmin, 'link' => "../../$CFG->admin/index.php", 'type' => 'core');
+    $navlinks[] = array('name' => $strconfiguration, 'link' => "../../$CFG->admin/configure.php", 'type' => 'core');
+    $navlinks[] = array('name' => $strmanagemodules, 'link' => "../../$CFG->admin/modules.php", 'type' => 'core');
+    $navlinks[] = array('name' => $strmodulename, 'link' => "../../$CFG->admin/module.php?module=glossary&amp;sesskey=$USER->sesskey", 'type' => 'core');
+    $navlinks[] = array('name' => $strdisplayformats, 'link' => '', 'type' => 'core');
 
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     print_header("$strmodulename: $strconfiguration", $site->fullname, $navigation);
 

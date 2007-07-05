@@ -18,7 +18,7 @@
     }
 
     require_course_login($course);
-    $currentgroup = get_current_group($course->id);
+    $currentgroup = get_and_set_current_group($course, groupmode($course));
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
 
@@ -451,10 +451,10 @@
 
 
     /// Output the page
-    $crumbs[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
+    $navlinks[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
     
     print_header("$course->shortname: $strforums", $course->fullname,
-                    build_navigation($crumbs),
+                    build_navigation($navlinks),
                     "", "", true, $searchform, navmenu($course));
 
     if (!isguest()) {

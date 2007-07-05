@@ -84,8 +84,8 @@ function display() {
                 print_footer($course);
             } else {                           /// Make a page and a pop-up window
 
-                $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-                $this->navigation = build_navigation($this->crumbs);
+                $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+                $this->navigation = build_navigation($this->navlinks);
                 
                 print_header($pagetitle, $course->fullname, $this->navigation,
                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
@@ -113,8 +113,8 @@ function display() {
             }
         } else {    /// not a popup at all
 
-            $this->crumbs[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
-            $this->navigation = build_navigation($this->crumbs);
+            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
+            $this->navigation = build_navigation($this->navlinks);
             
             print_header($pagetitle, $course->fullname, $this->navigation,
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),

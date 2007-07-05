@@ -40,12 +40,12 @@
     $fullname        = fullname($user, has_capability('moodle/site:viewfullnames', $syscontext));
 
     // TODO: add new cookie tail here!
-    $crumbs[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'core');
-    $crumbs[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'title');
-    $crumbs[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
-    $crumbs[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'core');
+    $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'title');
+    $navlinks[] = array('name' => $strforumposts, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strmode, 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
     
     print_header("$course->shortname: $fullname: $strmode", $course->fullname,$navigation);
     

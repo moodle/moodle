@@ -96,9 +96,9 @@
     $meta .= '//]]>'."\n";
     $meta .= '</script>'."\n";
     
-    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
@@ -108,11 +108,8 @@
 
 
 /// Groups needed for Add entry tab
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode);
-    } else {
-        $currentgroup = 0;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
 /// Print the tabs.
     $currenttab = 'templates';

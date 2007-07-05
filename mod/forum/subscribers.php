@@ -36,11 +36,11 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strsubscribers, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strsubscribers, 'link' => '', 'type' => 'title');
 
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     if (has_capability('mod/forum:managesubscriptions', $context)) {
         print_header_simple("$strsubscribers", "", $navigation,
@@ -54,11 +54,8 @@
     }
 
 /// Check to see if groups are being used in this forum
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
 
     if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
 

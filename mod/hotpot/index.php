@@ -37,8 +37,8 @@
     $title = format_string($course->shortname) . ": $strmodulenameplural";
     $heading = $course->fullname;
     
-    $crumbs[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
     
     print_header($title, $heading, $navigation, "", "", true, "", navmenu($course));
 

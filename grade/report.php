@@ -82,10 +82,10 @@
 
     $strgrades = get_string('grades');
 
-    $crumbs[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
-    $crumbs[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
+    $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+    $navlinks[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
     
-    $navigation = build_navigation($crumbs);    
+    $navigation = build_navigation($navlinks);    
     
     // build buttons here
     /// setting up editting mode 

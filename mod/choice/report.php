@@ -38,16 +38,22 @@
         redirect("report.php?id=$cm->id");                      
     }
         
-    if ($download <> "xls" and $download <> "txt" and $download <> "ods") {
+    if (!$download) {
 
-        $crumbs[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $crumbs[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');
 
-        $navigation = build_navigation($crumbs);    
+        $navigation = build_navigation($navlinks);    
     
         print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
+        /// Check to see if groups are being used in this choice
+        $groupmode = groupmode($course, $cm);
+        setup_and_print_groups($course, $groupmode, 'report.php?id='.$id);
+    } else {
+        $groupmode = groupmode($course, $cm);
+        get_and_set_current_group($course, $groupmode);
     }
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');

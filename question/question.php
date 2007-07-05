@@ -121,21 +121,21 @@ if ($mform->is_cancelled()){
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $category->course))
             ? update_module_button($cm->id, $category->course, get_string('modulename', $cm->modname))
             : "";
-        $crumbs = array();
-        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$category->course", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
-        $crumbs[] = array('name' => get_string('editingquiz', 'quiz'), 'link' => $returnurl, 'type' => 'title');
-        $crumbs[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navlinks = array();
+        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$category->course", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $navlinks[] = array('name' => get_string('editingquiz', 'quiz'), 'link' => $returnurl, 'type' => 'title');
+        $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation, "", "", true, $strupdatemodule);
     
     } else {
-        $crumbs = array();
-        $crumbs[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
-        $crumbs[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
+        $navlinks = array();
+        $navlinks[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
+        $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
         $strediting = '<a href="edit.php?courseid='.$category->course.'">'.
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation);
     }
 

@@ -69,9 +69,9 @@
         $strdatabases = get_string("modulenameplural", "data");
         $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
         
-        $crumbs[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-        $navigation = build_navigation($crumbs);
+        $navlinks[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+        $navigation = build_navigation($navlinks);
         
         print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
@@ -113,23 +113,19 @@
 /// Print the page header
     $strdata = get_string('modulenameplural','data');
 
-    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');
 
-    print_heading(format_string($data->name));
-
 /// Check to see if groups are being used here
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, 'edit.php?d='.$data->id);
 
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, 'edit.php?d='.$data->id.'&amp;sesskey='.sesskey().'&amp;');
-    } else {
-        $currentgroup = 0;
-    }
+    print_heading(format_string($data->name));
 
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";

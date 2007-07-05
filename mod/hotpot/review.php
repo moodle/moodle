@@ -53,9 +53,9 @@
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
     
-    $crumbs[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
-    $crumbs[] = array('name' => get_string("review", "quiz"), 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
+    $navlinks[] = array('name' => get_string("review", "quiz"), 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
     
 
     $button = update_module_button($cm->id, $course->id, $strmodulename);

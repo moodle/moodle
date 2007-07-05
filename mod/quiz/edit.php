@@ -310,10 +310,10 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
-        $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-        $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
-        $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+        $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
+        $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($navlinks);
            
         print_header_simple($streditingquiz, '', $navigation, "", "",
                  true, $strupdatemodule);
@@ -350,10 +350,10 @@
         ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
         : "";
       
-    $crumbs[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-    $crumbs[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
-    $crumbs[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+    $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
+    $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 

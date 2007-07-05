@@ -44,11 +44,11 @@
     $strimportppt = get_string("importppt", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    $crumbs[] = array('name' => $strlessons, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($mod->name,true), 'link' => "$CFG->wwwroot/mod/$modname/view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strimportppt, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strlessons, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($mod->name,true), 'link' => "$CFG->wwwroot/mod/$modname/view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strimportppt, 'link' => '', 'type' => 'title');
             
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strimportppt", " $strimportppt", $navigation);
 

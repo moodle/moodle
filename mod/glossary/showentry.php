@@ -49,10 +49,10 @@
 
         $CFG->framename = "newwindow";
         if ($course->id != SITEID) {
-            $crumbs[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
-            $crumbs[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
+            $navlinks[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
+            $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
             
-            $navigation = build_navigation($crumbs);
+            $navigation = build_navigation($navlinks);
             
             print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname, $navigation, "", "", true, "&nbsp;", "&nbsp;");
         } else {

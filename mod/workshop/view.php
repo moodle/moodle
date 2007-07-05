@@ -69,12 +69,12 @@
     }
 
     // ...display header...
-    $crumbs[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     if ($straction) {
-        $crumbs[] = array('name' => $straction, 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => $straction, 'link' => '', 'type' => 'title');
     }
-    $navigation = build_navigation($crumbs);    
+    $navigation = build_navigation($navlinks);    
     
     print_header_simple(format_string($workshop->name), "", $navigation,
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
@@ -305,34 +305,12 @@
             workshop_grade_assessments($workshop);
         }
 
-        /// Check to see if groups are being used in this workshop
-        /*
-        setup_and_print_groups($course, groupmode($course, $cm), "view.php?id=$cm->id");
-        $currentgroup = get_current_group($course->id);
-        */
-        
-        /// copied code from assignment module, if this is not the way to do this please change it
-        /// the above code does not work
-        /// set_and_print_groups() is not fully implemented as function groups_instance_print_grouping_selector()
-        /// and function groups_instance_print_group_selector() are missing.
-       
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $changegroup = optional_param('group', -1, PARAM_INT);   // choose the current group
+
+        /// find out current groups mode
         $groupmode = groupmode($course, $cm);
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);   
-    
-        /// Now we need a menu for separategroups as well!
-        if ($groupmode == VISIBLEGROUPS || ($groupmode
-            && has_capability('moodle/site:accessallgroups', $context))) {
-        
-            //the following query really needs to change
-            if ($groups = groups_get_groups_names($course->id)) { //TODO:
-                print_box_start('groupmenu');
-                print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
-                print_box_end(); // groupmenu
-            }
-        }
-        
+        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+
         /// Print admin links
         echo "<table width=\"100%\"><tr><td>";
         echo "<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".

@@ -47,11 +47,11 @@
     $strglossaries   = get_string("modulenameplural", "glossary");
     $strglossary     = get_string("modulename", "glossary");
 
-    $crumbs[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id&amp;tab=GLOSSARY_CATEGORY_VIEW", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => get_string("categories","glossary"), 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$cm->id&amp;tab=GLOSSARY_CATEGORY_VIEW", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => get_string("categories","glossary"), 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     print_header_simple(format_string($glossary->name), "", $navigation,
                         "", "", true, update_module_button($cm->id, $course->id, $strglossary),

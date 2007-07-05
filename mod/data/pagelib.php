@@ -28,8 +28,8 @@ class page_data extends page_generic_activity {
         parent::init_quick($data);
     }
 
-    function print_header($title, $morebreadcrumbs = NULL, $meta) {
-        parent::print_header($title, $morebreadcrumbs, '', $meta);
+    function print_header($title, $morenavlinks = NULL, $meta) {
+        parent::print_header($title, $morenavlinks, '', $meta);
     }
 
     function get_type() {

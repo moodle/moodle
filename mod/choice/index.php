@@ -15,8 +15,8 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
-    $crumbs[] = array('name' => $strchoices, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strchoices, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strchoices", "", $navigation, "", "", true, "", navmenu($course));
 

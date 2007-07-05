@@ -21,8 +21,8 @@
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
     
-    $crumbs[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple("$strsurveys", "", $navigation, 
                  "", "", true, "", navmenu($course));

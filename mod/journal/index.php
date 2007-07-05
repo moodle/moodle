@@ -17,8 +17,8 @@
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     
-    $crumbs[] = array('name' => $strjournals, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strjournals, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strjournals", "", $navigation, 
                  "", "", true, "", navmenu($course));

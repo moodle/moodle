@@ -97,9 +97,9 @@
 
     unset($SESSION->fromdiscussion);
 
-    $crumbs[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($forum->name,true), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => format_string($discussion->name,true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
+    $navlinks[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($forum->name,true), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => format_string($discussion->name,true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
     
 
     if ($mode) {
@@ -136,7 +136,7 @@
 
     $searchform = forum_search_form($course);
     
-    $navigation = build_navigation($crumbs); 
+    $navigation = build_navigation($navlinks); 
     print_header("$course->shortname: ".format_string($discussion->name), $course->fullname,
                      $navigation, "", "", true, $searchform, navmenu($course, $cm));
     

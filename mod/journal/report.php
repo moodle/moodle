@@ -38,20 +38,17 @@
     $strentries = get_string("entries", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    $crumbs[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strentries, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($journal->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strentries, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strjournals", "", $navigation, "", "", true);
 
 
 /// Check to see if groups are being used in this journal
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
 
 /// Process incoming data if there is any
     if ($data = data_submitted()) {

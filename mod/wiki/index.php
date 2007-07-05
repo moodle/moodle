@@ -24,8 +24,8 @@
 
 
 /// Print the header
-    $crumbs[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple("$strwikis", "", $navigation, "", "", true, "", navmenu($course));
 

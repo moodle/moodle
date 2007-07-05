@@ -64,29 +64,29 @@
         $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
         
-        $crumbs[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         
         if (empty($b)) {
             if (empty($a)) {
-                $navigation = build_navigation($crumbs);
+                $navigation = build_navigation($navlinks);
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,$navigation,
                              '', '', true);
             } else {
                 
-                $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
-                $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
-                $navigation = build_navigation($crumbs);
+                $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
+                $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => '', 'type' => 'title');
+                $navigation = build_navigation($navlinks);
                     
                 print_header("$course->shortname: ".format_string($scorm->name), $course->fullname,
                              $navigation, '', '', true);
             }
         } else {
             
-            $crumbs[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
-            $crumbs[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
-            $crumbs[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
-            $navigation = build_navigation($crumbs);
+            $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
+            $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
+            $navlinks[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
+            $navigation = build_navigation($navlinks);
             
             print_header("$course->shortname: ".format_string($scorm->name), $course->fullname, $navigation,
                      '', '', true);

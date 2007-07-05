@@ -11,7 +11,7 @@ $temp->add(new admin_setting_configcheckbox('allowcoursethemes', get_string('all
 $temp->add(new admin_setting_configcheckbox('allowcategorythemes',  get_string('allowcategorythemes', 'admin'), get_string('configallowcategorythemes', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin'), 1));
 $temp->add(new admin_setting_configcheckbox('showblocksonmodpages', get_string('showblocksonmodpages', 'admin'), get_string('configshowblocksonmodpages', 'admin'), 0));
-$temp->add(new admin_setting_configselect('hideactivitytypecrumb', get_string('hideactivitytypecrumb', 'admin'), get_string('confighideactivitytypecrumb', 'admin'), 0,
+$temp->add(new admin_setting_configselect('hideactivitytypenavlink', get_string('hideactivitytypenavlink', 'admin'), get_string('confighideactivitytypenavlink', 'admin'), 0,
 array(
         0 => get_string('hidefromnone', 'admin'),
         1 => get_string('hidefromstudents', 'admin'),

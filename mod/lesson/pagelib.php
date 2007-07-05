@@ -60,7 +60,7 @@ class page_lesson extends page_generic_activity {
      *
      * @return void
      **/
-    function print_header($title = '', $morebreadcrumbs = array()) {
+    function print_header($title = '', $morenavlinks = array()) {
         global $CFG;
 
         $this->init_full();
@@ -76,11 +76,11 @@ class page_lesson extends page_generic_activity {
             $title = "{$this->courserecord->shortname}: $activityname";
         }
 
-        $crumbs[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
     
-        if (!empty($morebreadcrumbs)) {
-            $breadcrumbs = array_merge($crumbs, $morebreadcrumbs);
+        if (!empty($morenavlinks)) {
+            $navlinks = array_merge($navlinks, $morenavlinks);
         }
  
 
@@ -132,7 +132,7 @@ class page_lesson extends page_generic_activity {
             $meta = '';
         // }
 
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
 
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord));
 

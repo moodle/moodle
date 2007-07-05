@@ -97,12 +97,12 @@
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
-    $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     
     if (!$search || $showform) {
     
         $crumns[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         print_header_simple("$strsearch", "", $navigation, 'search.words',
                   "", "", "&nbsp;", navmenu($course));
@@ -119,9 +119,9 @@
 
     $searchform = forum_search_form($course, $search);
 
-    $crumbs[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
+    $navigation = build_navigation($navlinks);
 
 
     if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
@@ -407,7 +407,7 @@ function forum_clean_search_terms($words, $prefix='') {
 function forum_menu_list($course)  {
 
     $menu = array();
-    $currentgroup = get_current_group($course->id);
+    $currentgroup = get_and_set_current_group($course, groupmode($course));
 
     if ($forums = get_all_instances_in_course("forum", $course)) {
         if ($course->format == 'weeks') {

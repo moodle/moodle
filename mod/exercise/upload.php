@@ -28,10 +28,10 @@
     $strexercise  = get_string("modulename", "exercise");
     $strupload      = get_string("upload");
 
-    $crumbs[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strupload, 'link' => '', 'type' => 'title');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strupload, 'link' => '', 'type' => 'title');
+    $navigation = build_navigation($navlinks);
 
     print_header_simple(format_string($exercise->name)." : $strupload", "", $navigation,
                   "", "", true);

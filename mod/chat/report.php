@@ -39,23 +39,20 @@
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
         
-        $crumbs[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $crumbs[] = array('name' => $strchatreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
+        $navlinks[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => $strchatreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');
         
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                       '', '', true, '', navmenu($course, $cm));
 
     /// Check to see if groups are being used here
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
-        } else {
-            $currentgroup = false;
-        }
+        $groupmode = groupmode($course, $cm);
+        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
 
-        if (!empty($currentgroup)) {
+        if ($currentgroup) {
             $groupselect = " AND groupid = '$currentgroup'";
         } else {
             $groupselect = "";
@@ -95,11 +92,11 @@
 
 
 /// Print the Sessions display
-    $crumbs[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strchatreport, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strchats, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($chat->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strchatreport, 'link' => '', 'type' => 'title');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
     
     print_header_simple(format_string($chat->name).": $strchatreport", '', $navigation,
                   '', '', true, '', navmenu($course, $cm));

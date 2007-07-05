@@ -28,8 +28,8 @@
     $strlastmodified = get_string("lastmodified");
     
   
-    $crumbs[] = array('name' => $strresources, 'link' => '', 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strresources, 'link' => '', 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
 
     print_header("$course->shortname: $strresources", $course->fullname, $navigation, 
                  "", "", true, "", navmenu($course));

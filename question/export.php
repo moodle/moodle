@@ -69,11 +69,11 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
             ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
             : "";
-        $crumbs = array();
-        $crumbs[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
-        $crumbs[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navlinks = array();
+        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $navlinks[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($navlinks);
         print_header_simple($txt->exportquestions, '', $navigation, "", "", true, $strupdatemodule);
 
         $currenttab = 'edit';
@@ -82,9 +82,9 @@
         include($CFG->dirroot."/mod/$cm->modname/tabs.php");
     } else {
         // Print basic page layout.
-        $crumbs = array();
-        $crumbs[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($crumbs);
+        $navlinks = array();
+        $navlinks[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navigation = build_navigation($navlinks);
            
         print_header_simple($txt->exportquestions, '', $navigation);
         // print tabs

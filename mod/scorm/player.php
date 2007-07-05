@@ -51,7 +51,7 @@
             // The module SCORM/AICC activity with the first id is the course  
             $firstscorm = current($scorms);
             if (!(($course->format == 'scorm') && ($firstscorm->id == $scorm->id))) {
-                $crumbs[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+                $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
             }
         }
     }
@@ -59,8 +59,8 @@
     $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE,$course->id))) {
-        $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-        $navigation = build_navigation($crumbs);
+        $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navigation = build_navigation($navlinks);
         
         print_header($pagetitle, $course->fullname, $navigation,
                  '', '', true, update_module_button($cm->id, $course->id, $strscorm), '', false);
@@ -125,8 +125,8 @@
         $bodyscript = 'onunload="main.close();"';
     }
 
-    $crumbs[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navigation = build_navigation($navlinks);
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
     
     print_header($pagetitle, $course->fullname,

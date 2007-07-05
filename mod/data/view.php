@@ -94,9 +94,9 @@
     if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
         
-        $crumbs[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
-        $navigation = build_navigation($crumbs);
+        $navlinks[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
+        $navigation = build_navigation($navlinks);
         
         print_header_simple(format_string($data->name), "",
                  $navigation, "", "", true, '', navmenu($course, $cm));
@@ -258,6 +258,12 @@
         if (!empty($THEME->customcorners)) print_custom_corners_start();
     }
 
+/// Check to see if groups are being used here
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = setup_and_print_groups($course, $groupmode,
+                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
+                                            '&amp;order='.s($order).'&amp;');
+
     print_heading(format_string($data->name));
 
     // Do we need to show a link to the RSS feed for the records?
@@ -270,15 +276,6 @@
 
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
         print_box(format_text($data->intro), 'generalbox', 'intro');
-    }
-
-/// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode,
-                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
-                                            '&amp;order='.s($order).'&amp;');
-    } else {
-        $currentgroup = 0;
     }
 
 /// Delete any requested records

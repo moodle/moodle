@@ -35,11 +35,11 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
-    $crumbs[] = array('name' => $strlesson, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-    $crumbs[] = array('name' => format_string($lesson->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
-    $crumbs[] = array('name' => $strimportquestions, 'link' => '', 'type' => 'title');
+    $navlinks[] = array('name' => $strlesson, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($lesson->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
+    $navlinks[] = array('name' => $strimportquestions, 'link' => '', 'type' => 'title');
             
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
 
     print_header_simple("$strimportquestions", " $strimportquestions", $navigation);
 

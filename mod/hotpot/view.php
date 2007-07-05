@@ -42,10 +42,10 @@
     // header strings
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
-    $crumbs[] = array('name' => get_string("modulenameplural", "hotpot"), 'link' => $CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id, 'type' => 'activity');
-    $crumbs[] = array('name' => $hotpot->name, 'link' => '', 'type' => 'activityinstance');
+    $navlinks[] = array('name' => get_string("modulenameplural", "hotpot"), 'link' => $CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id, 'type' => 'activity');
+    $navlinks[] = array('name' => $hotpot->name, 'link' => '', 'type' => 'activityinstance');
     
-    $navigation = build_navigation($crumbs);
+    $navigation = build_navigation($navlinks);
         
     $button = update_module_button($cm->id, $course->id, get_string("modulename", "hotpot"));
     $button = '<div style="font-size:0.75em;">'.$button.'</div>';

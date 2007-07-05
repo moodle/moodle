@@ -42,8 +42,8 @@
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
     
-    $crumbs[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
+    $navigation = build_navigation($navlinks);
 
     print_header_simple($strdata, '', $navigation, '', '', true, "", navmenu($course));
 
@@ -78,7 +78,7 @@
         array_push($table->align, 'center');
     }
 
-    $currentgroup = get_current_group($course->id);
+    $currentgroup = get_and_set_current_group($course, groupmode($course));
     if ($currentgroup and has_capability('mod/data:manageentries', $context)) {
         $group = groups_get_group($currentgroup, false);
         $groupname = " ($group->name)";

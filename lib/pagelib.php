@@ -181,7 +181,7 @@ class page_base {
     // HTML OUTPUT SECTION
 
     // We have absolutely no idea what derived pages are all about
-    function print_header($title, $morebreadcrumbs) {
+    function print_header($title, $morenavlinks) {
         trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
         return;
     }
@@ -386,7 +386,7 @@ class page_course extends page_base {
 
     // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
-    function print_header($title, $morebreadcrumbs=NULL, $meta='', $bodytags='') {
+    function print_header($title, $morenavlinks=NULL, $meta='', $bodytags='') {
         global $USER, $CFG;
 
         $this->init_full();
@@ -397,18 +397,18 @@ class page_course extends page_base {
             $title = str_replace($search, $replace, $title);
         }
     
-        $crumbs = array();
+        $navlinks = array();
         
-        if(!empty($morebreadcrumbs)) {
-            $crumbs = array_merge($crumbs, $morebreadcrumbs);
+        if(!empty($morenavlinks)) {
+            $navlinks = array_merge($navlinks, $morenavlinks);
         }
 
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
         $buttons = switchroles_form($this->courserecord->id) . update_course_icon($this->courserecord->id );
-        $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
+        $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
 
         print_header($title, $this->courserecord->fullname, $navigation,
                      '', $meta, true, $buttons, user_login_string($this->courserecord, $USER), false, $bodytags);
@@ -611,7 +611,7 @@ class page_generic_activity extends page_base {
         return BLOCK_POS_LEFT;
     }
     
-    function print_header($title, $morebreadcrumbs = NULL, $bodytags = '', $meta = '') {
+    function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG;
     
         $this->init_full();
@@ -623,14 +623,14 @@ class page_generic_activity extends page_base {
         }
     
    
-        $crumbs[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
     
-        if (!empty($morebreadcrumbs)) {
-            $breadcrumbs = array_merge($crumbs, $morebreadcrumbs);
+        if (!empty($morenavlinks)) {
+            $navlinks = array_merge($navlinks, $morenavlinks);
         }
               
-        if (empty($morebreadcrumbs) && $this->user_allowed_editing()) {
+        if (empty($morenavlinks) && $this->user_allowed_editing()) {
             $buttons = '<table><tr><td>'.update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', $this->activityname)).'</td>';
             if (!empty($CFG->showblocksonmodpages)) {
                 $buttons .= '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.
@@ -643,7 +643,7 @@ class page_generic_activity extends page_base {
             $buttons = '&nbsp;';
         }
         
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         print_header($title, $this->courserecord->fullname, $navigation, '', $meta, true, $buttons, navmenu($this->courserecord, $this->modulerecord), false, $bodytags);
     }

@@ -3242,9 +3242,9 @@ function print_navigation ($navigation, $separator=0, $return=false) {
 
         if (is_newnav($navigation)) {
             if ($return) {
-                return($navigation['breadcrumbs']);
+                return($navigation['navlinks']);
             } else {
-                echo $navigation['breadcrumbs'];
+                echo $navigation['navlinks'];
                 return;
             }
         } else {

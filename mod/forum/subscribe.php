@@ -52,10 +52,10 @@
         }
         
         $strforums = get_string('modulenameplural', 'forum');
-        $crumbs[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $crumbs[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
     
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
         

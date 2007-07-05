@@ -31,8 +31,8 @@
                  </form>";
     }
     
-    $crumbs[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
+    $navigation = build_navigation($navlinks);
     
     print_header_simple($strquizzes, '', $navigation,
                  '', '', true, $streditquestions, navmenu($course));

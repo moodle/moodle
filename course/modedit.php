@@ -111,7 +111,7 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
         
-        $crumbsinstancename = array('name' => format_string($form->name,true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinksinstancename = array('name' => format_string($form->name,true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
        
         $CFG->pagepath = 'mod/'.$module->name;
         if (!empty($type)) {
@@ -299,13 +299,13 @@
         $streditinga = get_string("editinga", "moodle", $fullmodulename);
         $strmodulenameplural = get_string("modulenameplural", $module->name);
         
-        $crumbs[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
-        if (isset($crumbsinstancename)) {
-            $crumbs[] = $crumbsinstancename;
+        $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
+        if (isset($navlinksinstancename)) {
+            $navlinks[] = $navlinksinstancename;
         }
-        $crumbs[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');
         
-        $navigation = build_navigation($crumbs);
+        $navigation = build_navigation($navlinks);
         
         print_header_simple($streditinga, '', $navigation, $mform->focus(), "", false);
 

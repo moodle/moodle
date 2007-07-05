@@ -59,12 +59,12 @@ $strgrades = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $strgradepreferences = get_string('gradepreferences', 'grades');
 
-$crumbs[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
-$crumbs[] = array('name' => $strgraderreport,
+$navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+$navlinks[] = array('name' => $strgraderreport,
     'link' => $CFG->wwwroot . '/grade/report.php?id=' . $courseid . '&amp;report=grader', 'type' => 'misc');
-$crumbs[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc');
+$navlinks[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc');
 
-$navigation = build_navigation($crumbs);
+$navigation = build_navigation($navlinks);
 
 print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferences,': '.$strgradepreferences, $navigation,
                     '', '', true, '', navmenu($course));
