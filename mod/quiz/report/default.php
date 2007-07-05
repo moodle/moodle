@@ -27,6 +27,7 @@ class quiz_default_report {
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
     /// Print the page header
+        $navlinks = array();
         $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($quiz->name), 'link' => '', 'type' => 'activityinstance');
         $navigation = build_navigation($navlinks);

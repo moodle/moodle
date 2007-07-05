@@ -299,6 +299,7 @@
         $streditinga = get_string("editinga", "moodle", $fullmodulename);
         $strmodulenameplural = get_string("modulenameplural", $module->name);
         
+        $navlinks = array();
         $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
         if (isset($navlinksinstancename)) {
             $navlinks[] = $navlinksinstancename;

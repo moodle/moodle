@@ -59,6 +59,7 @@ $strgrades = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $strgradepreferences = get_string('gradepreferences', 'grades');
 
+$navlinks = array();
 $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
 $navlinks[] = array('name' => $strgraderreport,
     'link' => $CFG->wwwroot . '/grade/report.php?id=' . $courseid . '&amp;report=grader', 'type' => 'misc');

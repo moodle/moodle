@@ -31,6 +31,7 @@
         }
 
         $strforums = get_string('modulenameplural', 'forum');
+        $navlinks = array();
         $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($forum->name), 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
     

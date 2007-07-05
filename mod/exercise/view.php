@@ -47,6 +47,7 @@
     $strexercise  = get_string("modulename", "exercise");
 
     // ...display header...
+    $navlinks = array();
     $navlinks[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($exercise->name), 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);

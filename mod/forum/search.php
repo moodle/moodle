@@ -97,6 +97,7 @@
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strforums, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     
     if (!$search || $showform) {
@@ -119,6 +120,7 @@
 
     $searchform = forum_search_form($course, $search);
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strsearch, 'link' => "search.php?id=$course->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => s($search, true), 'link' => '', 'type' => 'link');
     $navigation = build_navigation($navlinks);

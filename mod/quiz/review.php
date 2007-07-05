@@ -124,7 +124,8 @@
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
-                    
+        
+        $navlinks = array();
         $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $strreview, 'link' => '', 'type' => 'title');

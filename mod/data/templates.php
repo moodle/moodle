@@ -96,6 +96,7 @@
     $meta .= '//]]>'."\n";
     $meta .= '</script>'."\n";
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);

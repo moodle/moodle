@@ -42,6 +42,8 @@
     // header strings
     $title = format_string($course->shortname.': '.$hotpot->name, true);
     $heading = $course->fullname;
+    
+    $navlinks = array();
     $navlinks[] = array('name' => get_string("modulenameplural", "hotpot"), 'link' => $CFG->wwwroot.'/mod/hotpot/index.php?id='.$course->id, 'type' => 'activity');
     $navlinks[] = array('name' => $hotpot->name, 'link' => '', 'type' => 'activityinstance');
     

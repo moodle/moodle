@@ -25,6 +25,7 @@
     $strreport = get_string("report",'scorm');
     $strlastmodified = get_string("lastmodified");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strscorms, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 

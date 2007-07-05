@@ -622,7 +622,7 @@ class page_generic_activity extends page_base {
             $title = str_replace($search, $replace, $title);
         }
     
-   
+        $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
     

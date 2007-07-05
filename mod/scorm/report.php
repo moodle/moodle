@@ -64,6 +64,7 @@
         $strattempt  = get_string('attempt', 'scorm');
         $strname  = get_string('name');
         
+        $navlinks = array();
         $navlinks[] = array('name' => $strscorms, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         

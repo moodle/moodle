@@ -46,6 +46,8 @@
     $strpopup = get_string('popup','scorm');
     $strexit = get_string('exitactivity','scorm');
 
+    $navlinks = array();
+    
     if ($course->id != SITEID) {
         if ($scorms = get_all_instances_in_course('scorm', $course)) {
             // The module SCORM/AICC activity with the first id is the course  

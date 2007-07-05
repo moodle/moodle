@@ -28,6 +28,7 @@
     $strexercise  = get_string("modulename", "exercise");
     $strupload      = get_string("upload");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strexercises, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($exercise->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strupload, 'link' => '', 'type' => 'title');

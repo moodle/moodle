@@ -24,6 +24,7 @@
 
 
 /// Print the header
+    $navlinks = array();
     $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

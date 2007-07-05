@@ -58,6 +58,7 @@
     /// top frame with the navigation bar and the assessment form
 
     if ($frameset == "top") {
+        $navlinks = array();
         $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $strassess, 'link' => '', 'type' => 'title');

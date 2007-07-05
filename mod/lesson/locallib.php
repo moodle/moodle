@@ -239,7 +239,7 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
     }
 
 /// Header setup
-    
+    $navlinks = array();
     $navlinks[] = array('name' => $strlessons, 'link' => "$CFG->wwwroot/mod/lesson/index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => $strname, 'link' => '', 'type' => 'activityinstance');
     

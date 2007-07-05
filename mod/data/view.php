@@ -94,6 +94,7 @@
     if (empty($cm->visible) and !has_capability('mod/data:managetemplates', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
         
+        $navlinks = array();
         $navlinks[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
         $navigation = build_navigation($navlinks);

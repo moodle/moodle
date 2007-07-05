@@ -42,6 +42,7 @@
     $strcomments = get_string("comments", "glossary");
     $straddcomment = get_string("addcomment", "glossary");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($glossary->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strcomments, 'link' => '', 'type' => 'title');

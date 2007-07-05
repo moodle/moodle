@@ -1687,6 +1687,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     global $CFG, $displaynoticegood, $displaynoticebad;
 
     $strdata = get_string('modulenameplural','data');
+    
+    $navlinks = array();
     $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => $data->name, 'link' => '', 'type' => 'activityinstance');
     

@@ -51,6 +51,7 @@
     $strsubmissions = get_string("submissions", "workshop");
 
     // ... print the header and...
+    $navlinks = array();
     $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strsubmissions, 'link' => '', 'type' => 'title');

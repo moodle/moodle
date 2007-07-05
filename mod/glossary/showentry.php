@@ -49,6 +49,7 @@
 
         $CFG->framename = "newwindow";
         if ($course->id != SITEID) {
+            $navlinks = array();
             $navlinks[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
             $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
             

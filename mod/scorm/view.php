@@ -63,6 +63,7 @@
     //
     // Print the page header
     //
+    $navlinks = array();
     $navlinks[] = array('name' => format_string($scorm->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);
     

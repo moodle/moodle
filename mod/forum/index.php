@@ -451,6 +451,7 @@
 
 
     /// Output the page
+    $navlinks = array();
     $navlinks[] = array('name' => $strforums, 'link' => '', 'type' => 'activity');
     
     print_header("$course->shortname: $strforums", $course->fullname,

@@ -75,7 +75,8 @@ class page_lesson extends page_generic_activity {
         if (empty($title)) {
             $title = "{$this->courserecord->shortname}: $activityname";
         }
-
+        
+        $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $this->activityname), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/index.php?id={$this->courserecord->id}", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($this->activityrecord->name), 'link' => $CFG->wwwroot."/mod/{$this->activityname}/view.php?id={$this->modulerecord->id}", 'type' => 'activityinstance');
     

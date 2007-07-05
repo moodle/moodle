@@ -224,6 +224,7 @@
     $strsearch = get_string("search");
     $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($glossary->name), 'link' => "view.php?id=$id", 'type' => 'activityinstance');
 

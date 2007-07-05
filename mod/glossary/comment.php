@@ -223,6 +223,7 @@ function glossary_comment_print_header($course, $cm, $glossary, $entry, $action)
     $strglossary   = get_string('modulename', 'glossary');
     $strcomments   = get_string('comments', 'glossary');
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strglossaries, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($glossary->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strcomments, 'link' => "comments.php?id=$cm->id&amp;eid=$entry->id", 'type' => 'title');

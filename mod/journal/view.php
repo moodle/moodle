@@ -28,6 +28,7 @@
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strjournals, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($journal->name), 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);

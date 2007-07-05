@@ -81,7 +81,7 @@
 /// Print the header
 
     $strgrades = get_string('grades');
-
+    $navlinks = array();
     $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
     $navlinks[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
     

@@ -29,7 +29,7 @@
 
 
 /// Print the header
-
+    $navlinks = array();
     $navlinks[] = array('name' => $strlessons, 'link' => '', 'type' => 'activity');
     
     $navigation = build_navigation($navlinks);

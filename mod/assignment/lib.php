@@ -958,7 +958,8 @@ class assignment_base {
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-
+        
+        $navlinks = array();
         $navlinks[] = array('name' => $this->strassignments, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?a={$this->assignment->id}", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $this->strsubmissions, 'link' => '', 'type' => 'title');

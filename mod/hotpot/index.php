@@ -37,6 +37,7 @@
     $title = format_string($course->shortname) . ": $strmodulenameplural";
     $heading = $course->fullname;
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strmodulenameplural, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

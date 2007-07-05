@@ -27,7 +27,7 @@
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
     
-  
+    $navlinks = array();
     $navlinks[] = array('name' => $strresources, 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);
 

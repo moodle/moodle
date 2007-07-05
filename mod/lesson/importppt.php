@@ -44,6 +44,7 @@
     $strimportppt = get_string("importppt", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strlessons, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($mod->name,true), 'link' => "$CFG->wwwroot/mod/$modname/view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strimportppt, 'link' => '', 'type' => 'title');

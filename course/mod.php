@@ -672,6 +672,7 @@
         $focuscursor = "form.name";
     }
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'action');
     $navigation = build_navigation($navlinks);

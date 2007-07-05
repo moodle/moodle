@@ -53,6 +53,7 @@
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
     $navlinks[] = array('name' => get_string("review", "quiz"), 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);

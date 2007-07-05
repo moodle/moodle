@@ -35,6 +35,7 @@
     $strimportquestions = get_string("importquestions", "lesson");
     $strlessons = get_string("modulenameplural", "lesson");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strlesson, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($lesson->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strimportquestions, 'link' => '', 'type' => 'title');

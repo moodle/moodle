@@ -402,6 +402,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     $title = format_string($course->shortname) . ": $hotpot->name";
     $heading = $course->fullname;
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strmodulenameplural, 'link' => 'index.php?id='.$course->id, 'type' => 'activity');
     $navlinks[] = array('name' => $hotpot->name, 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
 

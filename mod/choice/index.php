@@ -15,6 +15,7 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
+    $navlinks = array();
     $navlinks[] = array('name' => $strchoices, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 

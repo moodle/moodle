@@ -17,6 +17,7 @@
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strjournals, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 

@@ -21,6 +21,7 @@
     $strdone  = get_string("done", "survey");
     $strnotdone  = get_string("notdone", "survey");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strsurveys, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

@@ -30,7 +30,7 @@
                    </div>
                  </form>";
     }
-    
+    $navlinks = array();
     $navlinks[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

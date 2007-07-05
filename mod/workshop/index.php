@@ -23,6 +23,7 @@
     $strdeadline = get_string("deadline", "workshop");
     $strsubmitted = get_string("submitted", "assignment");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strworkshops, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

@@ -22,6 +22,7 @@
     $strsubmitted = get_string("submitted", "assignment");
     $strgrade = get_string("grade");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strassignments, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 

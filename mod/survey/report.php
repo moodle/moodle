@@ -65,6 +65,7 @@
                        <a href=\"view.php?id=$cm->id\">".format_string($survey->name,true)."</a> -> ";
     }
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($survey->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strreport, 'link' => '', 'type' => 'title');

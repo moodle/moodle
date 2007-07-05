@@ -7027,7 +7027,8 @@ function build_navigation($extranavlinks) {
     global $CFG, $COURSE;
 
     $navigation = '';
-
+    $navlinks = array();
+    
     //Site name
     if ($site = get_site()) {
         $navlinks[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');

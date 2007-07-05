@@ -40,6 +40,7 @@
         
     if (!$download) {
 
+        $navlinks = array();
         $navlinks[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($choice->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $strresponses, 'link' => '', 'type' => 'title');

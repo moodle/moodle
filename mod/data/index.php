@@ -42,6 +42,7 @@
     $strname = get_string('name');
     $strdata = get_string('modulename','data');
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strdata, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
     $navigation = build_navigation($navlinks);
 

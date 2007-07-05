@@ -51,6 +51,7 @@
     $strmodulename = get_string("modulename", "glossary");
     $strdisplayformats = get_string("displayformats","glossary");
 
+    $navlinks = array();
     $navlinks[] = array('name' => $stradmin, 'link' => "../../$CFG->admin/index.php", 'type' => 'core');
     $navlinks[] = array('name' => $strconfiguration, 'link' => "../../$CFG->admin/configure.php", 'type' => 'core');
     $navlinks[] = array('name' => $strmanagemodules, 'link' => "../../$CFG->admin/modules.php", 'type' => 'core');

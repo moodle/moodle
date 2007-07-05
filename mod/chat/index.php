@@ -22,6 +22,7 @@
 
 /// Print the header
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strchats, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
 

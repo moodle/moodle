@@ -281,6 +281,7 @@
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
 

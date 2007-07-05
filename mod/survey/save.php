@@ -33,6 +33,7 @@
 
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurveysaved = get_string("surveysaved", "survey");
+    $navlinks = array();
     $navlinks[] = array('name' => $strsurveys, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($survey->name), 'link' => '', 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strsurveysaved, 'link' => '', 'type' => 'title');

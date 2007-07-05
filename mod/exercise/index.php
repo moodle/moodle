@@ -24,6 +24,7 @@
     $strdeadline = get_string("deadline", "exercise");
     $strsubmitted = get_string("submitted", "assignment");
     
+    $navlinks = array();
     $navlinks[] = array('name' => $strexercises, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
     

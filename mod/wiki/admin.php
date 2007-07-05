@@ -114,6 +114,7 @@
           default: break;
        }
     }
+    $navlinks = array();
     $navlinks[] = array('name' => $strwikis, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($wiki->name,true), 'link' => "view.php?id=$moodleID", 'type' => 'activityinstace');
     $navlinks[] = array('name' => get_string("administration","wiki"), 'link' => '', 'type' => 'title');

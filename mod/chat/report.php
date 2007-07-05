@@ -34,7 +34,8 @@
     $strseesession    = get_string('seesession', 'chat');
     $strdeletesession = get_string('deletesession', 'chat');
 
-
+    $navlinks = array();
+    
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript

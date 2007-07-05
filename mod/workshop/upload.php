@@ -23,6 +23,7 @@
     $strworkshop = get_string('modulename', 'workshop');
     $strsubmission = get_string('submission', 'workshop');
 
+    $navlinks = array();
     $navlinks[] = array('name' => $strworkshops, 'link' => "index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => format_string($workshop->name,true), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $strsubmission, 'link' => '', 'type' => 'title');

@@ -58,6 +58,7 @@
             require_login();
         }
         
+        $navlinks = array();
         $navlinks[] = array('name' => get_string("forums", "forum"), 'link' => "../forum/view.php?f=$forum->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($forum->name,true), 'link' => '../forum/index.php?id=$course->id', 'type' => 'activityinstance');
         
@@ -410,6 +411,7 @@
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
             
+            $navlinks = array();
             $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
             $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
             $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
@@ -634,7 +636,7 @@
 
     $strforums = get_string("modulenameplural", "forum");
 
-
+    $navlinks = array();
     $navlinks[] = array('name' => $strforums, 'link' => "../forum/index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => $forum->name, 'link' => "view.php?f=$forum->id", 'type' => 'activityinstance');
 
