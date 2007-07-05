@@ -6,6 +6,7 @@ require_once 'edit_feedback_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
+$action   = optional_param('action', 0, PARAM_ALPHA);
 
 if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
@@ -45,10 +46,12 @@ if ($mform->is_cancelled()) {
 }
 
 // Get name of student and gradeitem name
-$query = "SELECT a.firstname, a.lastname, b.itemname, c.finalgrade, b.grademin, b.grademax
-            FROM {$CFG->prefix}user AS a, 
-                 {$CFG->prefix}grade_items AS b, 
-                 {$CFG->prefix}grade_grades AS c
+$query = "SELECT a.id AS userid, a.firstname, a.lastname, 
+                 b.id AS itemid, b.itemname, b.grademin, b.grademax, b.iteminstance, b.itemmodule, b.scaleid,
+                 c.finalgrade 
+            FROM {$CFG->prefix}user a, 
+                 {$CFG->prefix}grade_items b, 
+                 {$CFG->prefix}grade_grades c
            WHERE c.id = $id
              AND b.id = c.itemid
              AND a.id = c.userid";
@@ -57,35 +60,60 @@ $extra_info = get_record_sql($query) ;
 $extra_info->grademin = round($extra_info->grademin);
 $extra_info->grademax = round($extra_info->grademax);
 $extra_info->finalgrade = round($extra_info->finalgrade);
+$extra_info->course_module = get_coursemodule_from_instance($extra_info->itemmodule, $extra_info->iteminstance, $courseid);
 
 $stronascaleof   = get_string('onascaleof', 'grades', $extra_info);
 $strgrades       = get_string('grades');
 $strgrade        = get_string('grade');
 $strgraderreport = get_string('graderreport', 'grades');
+$strfeedback     = get_string('feedback', 'grades');
 $strfeedbackedit = get_string('feedbackedit', 'grades');
+$strfeedbackview = get_string('feedbackview', 'grades');
+$strfeedbackadd  = get_string('feedbackadd', 'grades');
 $strstudent      = get_string('student', 'grades');
 $strgradeitem    = get_string('gradeitem', 'grades');
 
+$feedback = null;
+$heading = ${"strfeedback$action"};
+if (!empty($action) && $action == 'view') {
+    $feedback = "<p><strong>$strfeedback</strong>:</p><p>$grade_text->feedback</p>";
+}
+
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
              array('name'=>$strgraderreport, 'link'=>$CFG->wwwroot.'/grade/report.php?id='.$courseid.'&amp;report=grader', 'type'=>'misc'),
-             array('name'=>$strfeedbackedit, 'link'=>'', 'type'=>'misc'));
+             array('name'=>$heading, 'link'=>'', 'type'=>'misc'));
 
 $navigation = build_navigation($nav);
 
+print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $heading, 
+    ': ' . $heading , $navigation, '', '', true, '', navmenu($course));
 
-print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strfeedbackedit, $navigation, '', '', true, '', navmenu($course));
+print_heading($heading);
 
-print_heading(get_string('feedbackedit', 'grades'));
-print_box_start('gradefeedbackbox generalbox');
-echo "<p>$strstudent: " . fullname($extra_info) . "</p>";
-echo "<p>$strgradeitem: " . $extra_info->itemname . "</p>";
+print_simple_box_start("center");
+
+echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view.php?id=' 
+     . $extra_info->userid . '">' . fullname($extra_info) . "</a></p>";
+echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule 
+     . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
 if (!empty($extra_info->finalgrade)) {
-    echo "<p>$strgrade: " . $extra_info->finalgrade . "$stronascaleof</p>";
+    $openlink = '';
+    $closelink = '';
+
+    if (!empty($extra_info->scaleid)) {
+        $openlink = '<a href="' . $CFG->wwwroot . '/course/scales.php?id=' . $courseid . '&amp;scaleid=' 
+                  . $extra_info->scaleid . '">';
+        $closelink = '</a>';
+    }
+    echo "<p><strong>$strgrade:</strong> " . $extra_info->finalgrade . "$openlink $stronascaleof $closelink</p>";
+}
+echo $feedback;
+
+if ($action != 'view') {
+    $mform->display();
 }
 
-$mform->display();
-
-print_box_end();
+print_simple_box_end();
 
 print_footer($course);
 die;

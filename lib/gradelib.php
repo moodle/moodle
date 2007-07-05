@@ -817,10 +817,10 @@ function grade_get_icons($element, $tree) {
         }
     } else {
         if ($USER->gradefeedback) {
-            // Display Edit/Add feedback icon
+            // Display view feedback icon
             if (!empty($object->feedback)) {
                 $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
-                      . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
+                      . "&amp;action=view&amp;courseid=$object->courseid\">\n";
                 $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                       . $strfeedback.'\');" onmouseout="return nd();" '
                       . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
