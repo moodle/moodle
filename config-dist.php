@@ -283,9 +283,16 @@ $CFG->admin = 'admin';
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
 // 
 // special magic evil developer only wanting to edit the xmldb files manually
-// uncomment these if you're lazy like Penny
+// AND don't use the XMLDBEditor nor the prev/next stuff at all (Mahara and others)
+// Uncomment these if you're lazy like Penny
 // $CFG->xmldbdisablecommentchecking = true;
 // $CFG->xmldbdisablenextprevchecking = true;
+//
+// special magig evil developer only wanting to edit xmldb files manually
+// AND allowing the XMLDBEditor to recostruct the prev/next elements every
+// time one file is loaded and saved (Moodle).
+// Uncomment this if you're lazy like Petr
+// $CFG->xmldbreconstructprevnext = true;
 //
 // Set the priority of themes from highest to lowest. This is useful (for
 // example) in sites where the user theme should override all other theme

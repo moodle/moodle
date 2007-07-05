@@ -190,6 +190,38 @@ class XMLDBObject {
     }
 
     /**
+     * Reconstruct previous/next attributes.
+     */
+    function fixPrevNext(&$arr) {
+        global $CFG;
+
+        if (empty($CFG->xmldbreconstructprevnext)) {
+            return false;
+        }
+        $tweaked = false;
+
+        $prev = null;
+        foreach ($arr as $key=>$el) {
+            $prev_value = $arr[$key]->previous;
+            $next_value = $arr[$key]->next;
+
+            $arr[$key]->next     = null;
+            $arr[$key]->previous = null;
+            if ($prev !== null) {
+                $arr[$prev]->next    = $arr[$key]->name;
+                $arr[$key]->previous = $arr[$prev]->name;
+            }
+            $prev = $key;
+
+            if ($prev_value != $arr[$key]->previous or $next_value != $arr[$key]->next) {
+                $tweaked = true;
+            }
+        }
+
+        return $tweaked;
+    }
+
+    /**
      * This function will check that all the elements in one array
      * have a consistent info in their previous/next fields
      */

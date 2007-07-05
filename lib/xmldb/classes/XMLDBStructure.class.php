@@ -395,6 +395,7 @@ class XMLDBStructure extends XMLDBObject {
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing tables)
+            $this->fixPrevNext($this->tables);
             if ($result && !$this->checkPreviousNextValues($this->tables)) {
                 $this->errormsg = 'Some TABLES previous/next values are incorrect';
                 $this->debug($this->errormsg);
@@ -435,6 +436,7 @@ class XMLDBStructure extends XMLDBObject {
                 $result = false;
             }
         /// Check previous & next are ok (duplicates and existing statements)
+            $this->fixPrevNext($this->statements);
             if ($result && !$this->checkPreviousNextValues($this->statements)) {
                 $this->errormsg = 'Some STATEMENTS previous/next values are incorrect';
                 $this->debug($this->errormsg);
