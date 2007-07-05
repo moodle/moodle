@@ -84,7 +84,23 @@ switch ($action) {
         break;
 
     case 'delete':
-        //TODO: implement deleting in grade items and categories
+        if ($eid) {
+            $confirm = optional_param('confirm', 0, PARAM_BOOL);
+
+            if ($confirm and confirm_sesskey()) {
+                $object->delete('grade/report/grader/category');
+                redirect($returnurl);
+
+            } else {
+                print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
+                $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
+                $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
+                $optionsno  = array('id'=>$course->id);
+                notice_yesno($strdeletecheckfull, 'category.php', 'category.php', $optionsyes, $optionsno, 'post', 'get');
+                print_footer($course);
+                die;
+            }
+        }
         break;
 
     case 'autosort':
@@ -156,7 +172,7 @@ print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriese
 print_heading(get_string('categoriesedit', 'grades'));
 
 // Add tabs
-$currenttab = 'editcategory'; 
+$currenttab = 'editcategory';
 include('tabs.php');
 
 print_box_start('gradetreebox generalbox');
