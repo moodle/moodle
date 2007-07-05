@@ -68,7 +68,7 @@ class auth_plugin_pam extends auth_plugin_base {
 
         // call_time_pass_reference of errormessage is deprecated - throws warnings in multiauth
         //if (pam_auth($username, $password, &$errormessage)) {
-        if (pam_auth(stripslashes($username), strislashes($password))) {
+        if (pam_auth(stripslashes($username), stripslashes($password))) {
             return true;
         }
         else {
