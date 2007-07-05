@@ -63,12 +63,12 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 
 // Prepare language strings
 $strsortasc  = get_string('sortasc', 'grades');
-$strsortdesc = get_string('sortasc', 'grades');
+$strsortdesc = get_string('sortdesc', 'grades');
 
 // base url for sorting by first/last name
-$baseurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;page='.$page;
+$baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
 // base url for paging
-$pbarurl = 'report.php?id='.$courseid.'&amp;report=grader&amp;';
+$pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
 
 // Grab the grade_tree for this course
 $gtree = new grade_tree($courseid);
@@ -162,7 +162,6 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
             break;
     }
 }
-
 
 // first make sure we have all final grades
 // TODO: check that no grade_item has needsupdate set
@@ -372,7 +371,6 @@ foreach ($users as $userid => $user) {
     $studentshtml .= '<tr><th class="user">' . $user->firstname . ' ' . $user->lastname . '</th>';
     foreach ($items as $item) {
 
-
         $studentshtml .= '<td>';
 
         if (isset($finalgrades[$userid][$item->id])) {
@@ -391,7 +389,8 @@ foreach ($users as $userid => $user) {
             $grade = new grade_grades($finalgrades[$userid][$item->id], false);
             $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
         } else {
-            if ($USER->gradeediting) {
+            // if itemtype is course or category, the grades in this item is not directly editable  
+            if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
                 $gradeval ='';
             } else { 
                 $gradeval = '-';
@@ -401,7 +400,9 @@ foreach ($users as $userid => $user) {
 
         // if in editting mode, we need to print either a text box
         // or a drop down (for scales)
-        if ($USER->gradeediting) {
+        
+        // grades in item of type grade category or course are not directly editable
+        if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
             // We need to retrieve each grade_grade object from DB in order to
             // know if they are hidden/locked
 
