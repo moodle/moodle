@@ -597,7 +597,10 @@
         if (has_capability('moodle/site:readallmessages', $context) && !empty($CFG->messaging)) {
             $displaylist['messageselect.php'] = get_string('messageselectadd');
         }
-        
+        if (has_capability('moodle/notes:manage', $context)) {
+            $displaylist['addnote.php'] = get_string('addnewnote', 'notes');
+            $displaylist['groupaddnote.php'] = get_string('groupaddnewnote', 'notes');
+        }
         $displaylist['extendenrol.php'] = get_string('extendenrol');
         $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
         

@@ -13,6 +13,8 @@ $actions = array(
         'messageselect.php',
         'extendenrol.php',
         'groupextendenrol.php',
+        'addnote.php',
+        'groupaddnote.php',
         );
 
 if (array_search($formaction, $actions) === false) {

@@ -145,4 +145,8 @@ $string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
 $string['site:mnetlogintoremote'] = 'Roam to a remote Moodle';
 $string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
 
+// Notes
+$string['notes:view'] = 'View notes';
+$string['notes:manage'] = 'Manage notes';
+
 ?>

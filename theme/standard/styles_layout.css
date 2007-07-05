@@ -19,6 +19,8 @@
   grades
   login
   message
+  notes
+  mymoodle
   question
   tabs
   user
@@ -2347,6 +2349,52 @@ body#message-messages {
   padding:10px;
 }
 
+/***
+ *** Notes
+ ***/
+.notepost {
+    margin-bottom: 1em;
+    background-color: #F0F0F0;
+}
+.sitenotepost {
+    background-color: #FFFFF0;
+}
+.coursenotepost {
+}
+.draftnotepost {
+    background-color: #F0FFF0;
+}
+
+.ownnotepost .info {
+    font-weight: bolder;
+}
+
+.notepost .header {  
+}
+
+.notepost .user {
+    font-weight: bolder;
+}
+
+.notepost .userpicture {
+    float: left;
+    margin: 5px;
+}
+.notepost .rating5 {
+    color: red;
+}
+.notepost .rating1 {
+    color: orange;
+}
+.notepost .info, .notepost .rating {
+    font-size: smaller;
+}
+
+.notepost .content {
+}
+
+.notepost .footer {
+}
 
 /***
  *** MyMoodle
