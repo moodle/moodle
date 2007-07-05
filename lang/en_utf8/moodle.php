@@ -131,6 +131,7 @@ $string['autosubscribeyes'] = 'Yes: when I post, subscribe me to that forum';
 $string['availability'] = 'Availability';
 $string['availablecourses'] = 'Available Courses';
 $string['backtoparticipants'] = 'Back to participants list';
+$string['back'] = 'Back';
 $string['backup'] = 'Backup';
 $string['backupactivehelp'] = 'Choose whether or not to do automated backups.';
 $string['backupcancelled'] = 'Backup Cancelled';

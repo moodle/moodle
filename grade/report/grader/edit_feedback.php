@@ -45,7 +45,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-// Get name of student and gradeitem name
+// Get extra data related to this feedback
 $query = "SELECT a.id AS userid, a.firstname, a.lastname, 
                  b.id AS itemid, b.itemname, b.grademin, b.grademax, b.iteminstance, b.itemmodule, b.scaleid,
                  c.finalgrade 
@@ -85,6 +85,8 @@ $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id
 
 $navigation = build_navigation($nav);
 
+/*********** BEGIN OUTPUT *************/
+
 print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $heading, 
     ': ' . $heading , $navigation, '', '', true, '', navmenu($course));
 
@@ -92,10 +94,15 @@ print_heading($heading);
 
 print_simple_box_start("center");
 
+// Student name and link
 echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view.php?id=' 
      . $extra_info->userid . '">' . fullname($extra_info) . "</a></p>";
+
+// Grade item name and link     
 echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule 
      . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
+
+// Final grade and link to scale if applicable
 if (!empty($extra_info->finalgrade)) {
     $openlink = '';
     $closelink = '';
@@ -107,10 +114,14 @@ if (!empty($extra_info->finalgrade)) {
     }
     echo "<p><strong>$strgrade:</strong> " . $extra_info->finalgrade . "$openlink $stronascaleof $closelink</p>";
 }
-echo $feedback;
 
+// Form if in edit or add modes
 if ($action != 'view') {
     $mform->display();
+} else { // Feedback string and Back button if in View mode
+    echo $feedback;
+    echo "<button onclick=\"window.location='" . $CFG->wwwroot . "/grade/report.php?report=grader&amp;id=$courseid';\">"
+         . get_string('back') . '</button>';
 }
 
 print_simple_box_end();

@@ -368,7 +368,10 @@ foreach ($gtree->levels as $key=>$row) {
 $studentshtml = ''; 
 
 foreach ($users as $userid => $user) {
-    $studentshtml .= '<tr><th class="user">' . $user->firstname . ' ' . $user->lastname . '</th>';
+    // Student name and link
+
+    $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id=' 
+                  . $user->id . '">' . fullname($user) . '</a></th>';
     foreach ($items as $item) {
 
         $studentshtml .= '<td>';
