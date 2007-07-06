@@ -21,19 +21,21 @@ class grader_report_preferences_form extends moodleform {
 /// form definition with preferences defaults
 //--------------------------------------------------------------------------------
         $prefs = new stdClass();
-        $prefs->aggregationposition = get_user_preferences('grade_report_aggregationposition',  $CFG->grade_report_aggregationposition);
-        $prefs->aggregationview     = get_user_preferences('grade_report_aggregationview',      $CFG->grade_report_aggregationview);
-        $prefs->bulkcheckboxes      = get_user_preferences('grade_report_bulkcheckboxes',       $CFG->grade_report_bulkcheckboxes);
-        $prefs->enableajax          = get_user_preferences('grade_report_enableajax',           $CFG->grade_report_enableajax);
-        $prefs->gradedisplaytype    = get_user_preferences('grade_report_gradedisplaytype',     $CFG->grade_report_gradedisplaytype);
-        $prefs->showeyecons         = get_user_preferences('grade_report_showeyecons',          $CFG->grade_report_showeyecons);
-        $prefs->showgroups          = get_user_preferences('grade_report_showgroups',           $CFG->grade_report_showgroups);
-        $prefs->showlocks           = get_user_preferences('grade_report_showlocks',            $CFG->grade_report_showlocks);
-        $prefs->shownotes           = get_user_preferences('grade_report_shownotes',            $CFG->grade_report_shownotes);
-        $prefs->showscales          = get_user_preferences('grade_report_showscales',           $CFG->grade_report_showscales);
-        $prefs->studentsperpage     = get_user_preferences('grade_report_studentsperpage',      $CFG->grade_report_studentsperpage);
-        $prefs->feedbackformat      = get_user_preferences('grade_report_feedbackformat',       $CFG->grade_report_feedbackformat);
-        $prefs->decimalpoints       = get_user_preferences('grade_report_decimalpoints',        $CFG->grade_report_decimalpoints);
+        $prefs->aggregationposition    = get_user_preferences('grade_report_aggregationposition',    $CFG->grade_report_aggregationposition);
+        $prefs->aggregationview        = get_user_preferences('grade_report_aggregationview',        $CFG->grade_report_aggregationview);
+        $prefs->bulkcheckboxes         = get_user_preferences('grade_report_bulkcheckboxes',         $CFG->grade_report_bulkcheckboxes);
+        $prefs->enableajax             = get_user_preferences('grade_report_enableajax',             $CFG->grade_report_enableajax);
+        $prefs->gradedisplaytype       = get_user_preferences('grade_report_gradedisplaytype',       $CFG->grade_report_gradedisplaytype);
+        $prefs->grandtotalsdisplaytype = get_user_preferences('grade_report_grandtotalsdisplaytype', $CFG->grade_report_grandtotalsdisplaytype);
+        $prefs->showeyecons            = get_user_preferences('grade_report_showeyecons',            $CFG->grade_report_showeyecons);
+        $prefs->showgroups             = get_user_preferences('grade_report_showgroups',             $CFG->grade_report_showgroups);
+        $prefs->showlocks              = get_user_preferences('grade_report_showlocks',              $CFG->grade_report_showlocks);
+        $prefs->shownotes              = get_user_preferences('grade_report_shownotes',              $CFG->grade_report_shownotes);
+        $prefs->showscales             = get_user_preferences('grade_report_showscales',             $CFG->grade_report_showscales);
+        $prefs->showgrandtotals        = get_user_preferences('grade_report_showgrandtotals',        $CFG->grade_report_showgrandtotals);
+        $prefs->studentsperpage        = get_user_preferences('grade_report_studentsperpage',        $CFG->grade_report_studentsperpage);
+        $prefs->feedbackformat         = get_user_preferences('grade_report_feedbackformat',         $CFG->grade_report_feedbackformat);
+        $prefs->decimalpoints          = get_user_preferences('grade_report_decimalpoints',          $CFG->grade_report_decimalpoints);
 
         $mform->addElement('text','grade_report_studentsperpage', get_string('studentsperpage', 'grades'));
         $mform->setHelpButton('grade_report_studentsperpage', array(false, get_string('studentsperpage', 'grades'), false, true,
