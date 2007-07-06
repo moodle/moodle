@@ -6,7 +6,7 @@ require_once 'edit_feedback_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
-$action   = optional_param('action', 0, PARAM_ALPHA);
+$action   = optional_param('action', 'view', PARAM_ALPHA);
 
 if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
@@ -15,13 +15,12 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-//require_capability() here!!
+require_capability('gradereport/grader:manage', $context);
 
 // default return url
-$returnurl = 'index.php?id='.$course->id;
+$returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
 
-
-$mform = new edit_feedback_form();
+$mform = new edit_feedback_form('edit_feedback.php', compact('course', 'id'));
 if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
     $mform->set_data($grade_text);
 } else {
@@ -32,9 +31,11 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
+    $data->gradeid = $data->id;
+    unset($data->id);
+
     $grade_text = new grade_grades_text(array('gradeid'=>$id));
     grade_grades_text::set_properties($grade_text, $data);
-
     if (empty($grade_text->id)) {
         $grade_text->insert();
 
@@ -42,7 +43,7 @@ if ($mform->is_cancelled()) {
         $grade_text->update();
     }
 
-    redirect($returnurl);
+    redirect($returnurl, get_string('feedbacksaved', 'grades'), 1);
 }
 
 // Get extra data related to this feedback
@@ -60,7 +61,10 @@ $extra_info = get_record_sql($query) ;
 $extra_info->grademin = round($extra_info->grademin);
 $extra_info->grademax = round($extra_info->grademax);
 $extra_info->finalgrade = round($extra_info->finalgrade);
-$extra_info->course_module = get_coursemodule_from_instance($extra_info->itemmodule, $extra_info->iteminstance, $courseid);
+
+if (!empty($extra_info->itemmodule) && !empty($extra_info->iteminstance)) {
+    $extra_info->course_module = get_coursemodule_from_instance($extra_info->itemmodule, $extra_info->iteminstance, $courseid);
+}
 
 $stronascaleof   = get_string('onascaleof', 'grades', $extra_info);
 $strgrades       = get_string('grades');
@@ -75,7 +79,7 @@ $strgradeitem    = get_string('gradeitem', 'grades');
 
 $feedback = null;
 $heading = ${"strfeedback$action"};
-if (!empty($action) && $action == 'view') {
+if (!empty($action) && $action == 'view' && !empty($grade_text->feedback)) {
     $feedback = "<p><strong>$strfeedback</strong>:</p><p>$grade_text->feedback</p>";
 }
 
@@ -99,8 +103,10 @@ echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view
      . $extra_info->userid . '">' . fullname($extra_info) . "</a></p>";
 
 // Grade item name and link
-echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule
-     . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
+if (!empty($extra_info->course_module) && !empty($extra_info->itemmodule)) {
+    echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule
+         . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
+}
 
 // Final grade and link to scale if applicable
 if (!empty($extra_info->finalgrade)) {

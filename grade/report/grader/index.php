@@ -55,6 +55,7 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 // Get the user preferences
 $perpage  = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
 $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
+$aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
 
 // Override perpage if set in URL
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
@@ -71,7 +72,7 @@ $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grad
 $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
 
 // Grab the grade_tree for this course
-$gtree = new grade_tree($courseid);
+$gtree = new grade_tree($courseid, true, false, $aggregation_position);
 
 // setting the sort order, this depends on last state
 // all this should be in the new table class that we might need to use

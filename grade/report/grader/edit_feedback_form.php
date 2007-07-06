@@ -8,6 +8,8 @@ class edit_feedback_form extends moodleform {
         $mform =& $this->_form;
 
         $feedbackformat = get_user_preferences('grade_report_feedbackformat', $CFG->grade_report_feedbackformat);
+        $course = $this->_customdata['course'];
+        $id     = $this->_customdata['id'];
 
         // visible elements
         // User preference determines the format
@@ -21,11 +23,13 @@ class edit_feedback_form extends moodleform {
         //TODO: add other elements
 
         // hidden params
-        $mform->addElement('hidden', 'gradeid', 0);
+        $mform->addElement('hidden', 'id', 0);
         $mform->setType('gradeid', PARAM_INT);
+        $mform->setDefault('id', $id);
 
         $mform->addElement('hidden', 'courseid', 0);
         $mform->setType('courseid', PARAM_INT);
+        $mform->setDefault('courseid', $course->id);
 
 //-------------------------------------------------------------------------------
         // buttons

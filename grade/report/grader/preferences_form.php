@@ -134,6 +134,7 @@ class grader_report_preferences_form extends moodleform {
         $mform->setType('grade_report_showgrandtotals', PARAM_INT); 
         
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $course->id);
 
         $this->add_action_buttons();

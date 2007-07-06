@@ -63,10 +63,9 @@ class grade_tree {
      * @param int $courseid
      * @param boolean $fillers include fillers and colspans, make the levels var "rectabgular"
      * @param boolean $include_grades
-     * @param boolean $include_cagegory_items inclute the items for categories in the tree
      * &param boolean $category_grade_last category grade item is the last child
      */
-    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=false) {
+    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true) {
         global $USER;
 
         $this->courseid = $courseid;
