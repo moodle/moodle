@@ -872,8 +872,8 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
         $a->quizlink = '<a href="view.php?q=' . $quiz->id . '">' . format_string($quiz->name) . '</a>';
         $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id;
         // attempt info
-        $a->attemptsubmissiontime = userdate($attempt->timefinish);
-        $a->attempttimetaken = $attempt->timefinish - $attempt->timestart;
+        $a->submissiontime = userdate($attempt->timefinish);
+        $a->timetaken = format_time($attempt->timefinish - $attempt->timestart);
         // student who sat the quiz info
         $a->studentidnumber = $USER->idnumber;
         $a->studentname = fullname($USER);
