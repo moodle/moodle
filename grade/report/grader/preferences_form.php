@@ -62,7 +62,14 @@ class grader_report_preferences_form extends moodleform {
         $mform->setDefault('grade_report_gradedisplaytype', $prefs->gradedisplaytype);
         $mform->setType('grade_report_gradedisplaytype', PARAM_INT);
 
-        $mform->addElement('select','grade_report_feedbackformat', get_string('feedbackformat', 'grades'),
+        $mform->addElement('select','grade_report_grandtotalsdisplaytype', get_string('grandtotalsdisplaytype', 'grades'), 
+                array(get_string('raw', 'grades'), get_string('percentage', 'grades')));
+        $mform->setHelpButton('grade_report_grandtotalsdisplaytype', array(false, get_string('grandtotalsdisplaytype', 'grades'), false, true,
+                                                           false, get_string('configgrandtotalsdisplaytype', 'grades')));
+        $mform->setDefault('grade_report_grandtotalsdisplaytype', $prefs->grandtotalsdisplaytype);
+        $mform->setType('grade_report_grandtotalsdisplaytype', PARAM_INT);
+
+        $mform->addElement('select','grade_report_feedbackformat', get_string('feedbackformat', 'grades'), 
                 array(get_string('text', 'grades'), get_string('html', 'grades')));
         $mform->setHelpButton('grade_report_feedbackformat', array(false, get_string('feedbackformat', 'grades'), false, true,
                                                            false, get_string('configfeedbackformat', 'grades')));
@@ -116,8 +123,14 @@ class grader_report_preferences_form extends moodleform {
         $mform->setHelpButton('grade_report_showscales', array(false, get_string('showscales', 'grades'), false, true,
                                                            false, get_string('configshowscales', 'grades')));
         $mform->setDefault('grade_report_showscales', $prefs->showscales);
-        $mform->setType('grade_report_showscales', PARAM_INT);
-
+        $mform->setType('grade_report_showscales', PARAM_INT); 
+        
+        $mform->addElement('checkbox', 'grade_report_showgrandtotals', get_string('showgrandtotals', 'grades'));
+        $mform->setHelpButton('grade_report_showgrandtotals', array(false, get_string('showgrandtotals', 'grades'), false, true,
+                                                           false, get_string('configshowgrandtotals', 'grades')));
+        $mform->setDefault('grade_report_showgrandtotals', $prefs->showgrandtotals);
+        $mform->setType('grade_report_showgrandtotals', PARAM_INT); 
+        
         $mform->addElement('hidden', 'id');
         $mform->setDefault('id', $course->id);
 

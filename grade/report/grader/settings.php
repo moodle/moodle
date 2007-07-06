@@ -17,10 +17,16 @@ $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', g
                                           get_string('configgradedisplaytype', 'grades'), false,
                                           array( '0' => 'raw',
                                                  '1' => 'percentage')));
+$settings->add(new admin_setting_configselect('grade_report_grandtotalsdisplaytype', get_string('grandtotalsdisplaytype', 'grades'),
+                                          get_string('configgrandtotalsdisplaytype', 'grades'), false, 
+                                          array( '0' => 'raw', 
+                                                 '1' => 'percentage')));
 $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_string('showeyecons', 'grades'),
                                             get_string('configshoweyecons', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showgroups', get_string('showgroups', 'grades'),
                                             get_string('configshowgroups', 'grades'), 0));
+$settings->add(new admin_setting_configcheckbox('grade_report_showgrandtotals', get_string('showgrandtotals', 'grades'),
+                                            get_string('configshowgrandtotals', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
                                             get_string('configshowlocks', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_shownotes', get_string('shownotes', 'grades'),
