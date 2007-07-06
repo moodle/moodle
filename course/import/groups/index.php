@@ -4,6 +4,7 @@
 
     require_once('../../../config.php');
     require_once('../../lib.php');
+    require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
     
     $mycourseid = required_param('id', PARAM_INT);    // Course id
     
@@ -67,9 +68,9 @@
         $optional = array("coursename" => 1, 
                           "idnumber" =>1,
                           "description" => 1,
-                          "password" => 1,
+                          "enrolmentkey" => 1,
                           "theme" => 1,
-                           "picture" => 1, 
+                          "picture" => 1, 
                           "hidepicture" => 1, );
 
         // --- get header (field names) ---
@@ -117,10 +118,6 @@
                               get_string('processingstops', 'error'), 
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
-                    // password needs to be encrypted
-                    else if ($name == "password") {
-                        $newgroup->password = md5($value);
-                    }
                     else if ($name == "groupname") {
                         $newgroup->name = addslashes($value);
                     }
@@ -133,7 +130,7 @@
                 
                 //if idnumber is set, we use that.
                 //unset invalid courseid
-                if ($newgroup->idnumber){
+                if (isset($newgroup->idnumber)){
                     if (!$mycourse = get_record('course', 'idnumber',$newgroup->idnumber)){
                         notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
@@ -143,7 +140,7 @@
                 //else use course short name to look up
                 //unset invalid coursename (if no id)
                             
-                else if ($newgroup->coursename){
+                else if (isset($newgroup->coursename)){
                     if (!$mycourse = get_record('course', 'shortname',$newgroup->coursename)){
                         notify(get_string('unknowncourse', 'error', $newgroup->coursename));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
@@ -167,11 +164,11 @@
                     if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
                         notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
                     } else {
-                        if (get_record("groups","name",$groupname,"courseid",$newgroup->courseid) || !($newgroup->id = insert_record("groups", $newgroup))) {
+                        if ( $group = groups_group_name_exists($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup->courseid, $newgroup)) ) {
     
                             //Record not added - probably because group is already registered
                             //In this case, output groupname from previous registration
-                            if ($group = get_record("groups","name",$groupname)) {
+                            if ($group) {
                                 notify("$newgroup->name ".get_string('groupexistforcourse', 'error', $groupname));
                             } else {
                                 notify(get_string('groupnotaddederror', 'error', $groupname));
