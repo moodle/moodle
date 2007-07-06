@@ -57,6 +57,8 @@ class grade_text_test extends grade_test {
     }
 
     function test_grade_grades_text_insert() {
+        global $USER;
+
         $grade_grades_text = new grade_grades_text();
         $this->assertTrue(method_exists($grade_grades_text, 'insert'));
 
@@ -65,12 +67,11 @@ class grade_text_test extends grade_test {
         $grade_grades_text->informationformat = FORMAT_PLAIN;
         $grade_grades_text->feedback = 'Good, but not good enough..';
         $grade_grades_text->feedbackformat = FORMAT_PLAIN;
+        $grade_grades_text->usermodified = $USER->id;
 
         $grade_grades_text->insert();
 
         $last_grade_grades_text = end($this->grade_grades_text);
-
-        global $USER;
 
         $this->assertEqual($grade_grades_text->id, $last_grade_grades_text->id + 1);
         $this->assertFalse(empty($grade_grades_text->timecreated));

@@ -83,11 +83,12 @@ class grade_export_xml extends grade_export {
                     
                 // if exported, check grade_history, if modified after export, set state to regrade
                 if (!empty($grade_grades->exported)) {
-                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades->exported)) {
+                    //TODO: use timemodified or something else instead
+/*                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades->exported)) {
                         $status = 'regrade';  
                     } else {
                         $status = 'new';  
-                    }
+                    }*/
                 } else { 
                     // never exported
                     $status = 'new'; 

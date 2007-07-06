@@ -1371,7 +1371,7 @@
             }
         }
         
-        // Process grade items (grade_raw, grade_final, grade_history and grade_text)
+        // Process grade items (grade_raw, grade_final, and grade_text)
         if ($itemscount && $continue) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeitems','grades').'</li>';
@@ -1500,7 +1500,7 @@
 
                             $itemid = insert_record('grade_items',$dbrec);
                             
-                            /// now, restore grade_grades, grade_text, and grade_history
+                            /// now, restore grade_grades, grade_text
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
                                 //Iterate over items
                                 for($i = 0; $i < sizeof($grades); $i++) {
@@ -1573,38 +1573,6 @@
                                     }
                                 }
                             }                                                   
-
-                            /// processing grade_history
-                            if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES_HISTORY']['0']['#']) && ($histories = $info['GRADE_ITEM']['#']['GRADE_GRADES_HISTORY']['0']['#']['GRADE_HISTORY'])) {
-                                //Iterate over items
-                                for($i = 0; $i < sizeof($histories); $i++) {
-                                    $ite_info = $histories[$i];
-                                    //traverse_xmlize($ite_info);                                                                 //Debug
-                                    //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-                                    //$GLOBALS['traverse_array']="";                                                              //Debug
-                                    $history->itemid       = $itemid;
-                                    $user = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERID']['0']['#']));
-                                    $history->userid = $user->new_id;
-                                    $history->oldgrade = backup_todb($ite_info['#']['OLDGRADE']['0']['#']);
-                                    $history->newgrade = backup_todb($ite_info['#']['NEWGRADE']['0']['#']);
-                                    $history->note = backup_todb($ite_info['#']['NOTE']['0']['#']);
-                                    $history->howmodified = backup_todb($ite_info['#']['HOWMODIFIED']['0']['#']);                                                                        
-                                    $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($ite_info['#']['USERMODIFIED']['0']['#']));
-                                    $history->usermodified = $modifier->new_id;
-                                    insert_record('grade_history', $history);
-                                    
-                                    $counter++;
-                                    if ($counter % 20 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 400 == 0) {
-                                                echo "<br />";
-                                            }
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
                         }
                     $counteritems++; // increment item count
                     }

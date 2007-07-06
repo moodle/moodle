@@ -37,19 +37,12 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
-/**
- * Here is a brief explanation of the test data set up in these unit tests.
- * category1 => array(category2 => array(grade_item1, grade_item2), category3 => array(grade_item3))
- * 3 users for 3 grade_items
- */
 class gradelib_test extends grade_test {
     function test_grade_is_locked() {
-        if (get_class($this) == 'gradelib_test') {
-            $grade_item = $this->grade_items[0];
-            $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
-            $grade_item = $this->grade_items[6];
-            $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
-        }
+        $grade_item = $this->grade_items[0];
+        $this->assertFalse(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
+        $grade_item = $this->grade_items[6];
+        $this->assertTrue(grade_is_locked($grade_item->courseid, $grade_item->itemtype, $grade_item->itemmodule, $grade_item->iteminstance, $grade_item->itemnumber));
     }
 }
 

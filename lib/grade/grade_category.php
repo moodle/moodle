@@ -36,7 +36,7 @@ class grade_category extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'children', 'all_children', 'grade_item', 'parent_category', 'sortorder');
+    var $nonfields = array('table', 'required_fields', 'nonfields', 'children', 'all_children', 'grade_item', 'parent_category', 'sortorder');
 
     /**
      * The course this category belongs to.
@@ -161,8 +161,10 @@ class grade_category extends grade_object {
 
     /**
      * In addition to update() as defined in grade_object, call force_regrading of parent categories, if applicable.
+     * @param string $source from where was the object updated (mod/forum, manual, etc.)
+     * @return boolean success
      */
-    function update() {
+    function update($source=null) {
         // load the grade item or create a new one
         $this->load_grade_item();
 
@@ -175,22 +177,23 @@ class grade_category extends grade_object {
 
         // Recalculate grades if needed
         if ($this->qualifies_for_regrading()) {
-            if (!parent::update()) {
+            if (!parent::update($source)) {
                 return false;
             }
-            $this->grade_item->force_regrading();
+            $this->grade_item->force_regrading($source);
             return true;
 
         } else {
-            return parent::update();
+            return parent::update($source);
         }
     }
 
     /**
      * If parent::delete() is successful, send force_regrading message to parent category.
-     * @return boolean Success or failure.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
      */
-    function delete() {
+    function delete($source=null) {
         if ($this->is_course_category()) {
             debuggin('Can not delete top course category!');
             return false;
@@ -200,19 +203,22 @@ class grade_category extends grade_object {
         $parent = $this->load_parent_category();
 
         // Update children's categoryid/parent field first
-        $set_field_result = set_field('grade_items', 'categoryid', $parent->id, 'categoryid', $this->id);
-        $set_field_result = set_field('grade_categories', 'parent', $parent->id, 'parent', $this->id);
+        if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            foreach ($children as $child) {
+                $child->set_parent($parent->id);
+            }
+        }
+        if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            foreach ($children as $child) {
+                $child->set_parent($parent->id);
+            }
+        }
 
-        // first delete the attached grade item
-        $grade_item->delete();
+        // first delete the attached grade item and grades
+        $grade_item->delete($source);
 
         // delete category itself
-        $result = parent::delete();
-
-        // force regrading of parent
-        $parent->force_regrading();
-
-        return $result;
+        return parent::delete($source);
     }
 
     /**
@@ -221,8 +227,10 @@ class grade_category extends grade_object {
      * be done here instead of in the constructor, is that they both need to know the record's
      * id number, which only gets created at insertion time.
      * This method also creates an associated grade_item if this wasn't done during construction.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return int PK ID if successful, false otherwise
      */
-    function insert() {
+    function insert($source=null) {
 
         if (empty($this->courseid)) {
             error('Can not insert grade category without course id!');
@@ -231,20 +239,19 @@ class grade_category extends grade_object {
         if (empty($this->parent)) {
             $course_category = grade_category::fetch_course_category($this->courseid);
             $this->parent = $course_category->id;
-
         }
 
         $this->path = null;
 
-        if (!parent::insert()) {
+        if (!parent::insert($source)) {
             debugging("Could not insert this category: " . print_r($this, true));
             return false;
         }
 
         // build path and depth
-        $this->update();
+        $this->update($source);
 
-        return true;
+        return $this->id;
     }
 
     function insert_course_category($courseid) {
@@ -253,15 +260,15 @@ class grade_category extends grade_object {
         $this->path     = null;
         $this->parent   = null;
 
-        if (!parent::insert()) {
+        if (!parent::insert('system')) {
             debugging("Could not insert this category: " . print_r($this, true));
             return false;
         }
 
         // build path and depth
-        $this->update();
+        $this->update('system');
 
-        return true;
+        return $this->id;
     }
 
     /**
@@ -292,9 +299,10 @@ class grade_category extends grade_object {
      * levels until it reaches the top category. This is then used to determine whether or not
      * to regenerate the raw and final grades for each category grade_item. This is accomplished
      * thanks to the path variable, so we don't need to use recursion.
+     * @param string $source from where was the object updated (mod/forum, manual, etc.)
      * @return boolean Success or failure
      */
-    function force_regrading() {
+    function force_regrading($source=null) {
         if (empty($this->id)) {
             debugging("Needsupdate requested before inserting grade category.");
             return true;

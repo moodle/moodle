@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070630" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070706" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1260,9 +1260,8 @@
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="plusfactor" NEXT="hidden"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is hidden, &amp;gt; 1 is a date to hide until (prevents viewing)" PREVIOUS="sortorder" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is locked, &amp;gt; 1 is a date to lock until (prevents update)" PREVIOUS="hidden" NEXT="locktime"/>
-        <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="deleted"/>
-        <FIELD NAME="deleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 means the associated module instance has been deleted" PREVIOUS="locktime" NEXT="needsupdate"/>
-        <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="deleted" NEXT="timecreated"/>
+        <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="needsupdate"/>
+        <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="locktime" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The first time this grade_item was created" PREVIOUS="needsupdate" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="timecreated"/>
       </FIELDS>
@@ -1338,7 +1337,7 @@
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="gradeid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as “Not met, Borderline, Met” (stored as 0,1 or 2)" PREVIOUS="grade_grades_text" NEXT="grade_history">
+    <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as “Not met, Borderline, Met” (stored as 0,1 or 2)" PREVIOUS="grade_grades_text" NEXT="grade_items_history">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="id" NEXT="shortname"/>
@@ -1356,26 +1355,185 @@
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="scaleid"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="grade_history" COMMENT="This table keeps track of grade changes. Using this it should be possible to reconstruct the grades at any point in time in the past, or to audit grade changes over time. It should be quicker to use this table for that, rather than storing this information in the main Moodle log.  Note we use itemid and userid as a key rather than grade_grade id, just in case one of the things we want to log here is the deletion of a grade entirely." PREVIOUS="grade_outcomes" NEXT="grade_import_values">
+    <TABLE NAME="grade_items_history" COMMENT="History of grade_items" PREVIOUS="grade_outcomes" NEXT="grade_categories_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
-        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The grade_item the grade is from" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="The user that the grade belongs to" PREVIOUS="itemid" NEXT="oldgrade"/>
-        <FIELD NAME="oldgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The original grade before the change" PREVIOUS="userid" NEXT="newgrade"/>
-        <FIELD NAME="newgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The new grade after the change" PREVIOUS="oldgrade" NEXT="note"/>
-        <FIELD NAME="note" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="An optional note about why this change was made" PREVIOUS="newgrade" NEXT="howmodified"/>
-        <FIELD NAME="howmodified" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="manual" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="note" NEXT="usermodified"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The user id of the person who made the change" PREVIOUS="howmodified" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The exact time this change was made" PREVIOUS="usermodified"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this item is part of" PREVIOUS="loggeduser" NEXT="categoryid"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="(optional) the category group this item belongs to" PREVIOUS="courseid" NEXT="itemname"/>
+        <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="The name of this item (pushed in by the module)" PREVIOUS="categoryid" NEXT="itemtype"/>
+        <FIELD NAME="itemtype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="'mod', 'blocks', 'import', 'calculated' etc" PREVIOUS="itemname" NEXT="itemmodule"/>
+        <FIELD NAME="itemmodule" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="'forum', 'quiz', 'csv', etc" PREVIOUS="itemtype" NEXT="iteminstance"/>
+        <FIELD NAME="iteminstance" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the item module" PREVIOUS="itemmodule" NEXT="itemnumber"/>
+        <FIELD NAME="itemnumber" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Can be used to distinguish multiple grades for an activity" PREVIOUS="iteminstance" NEXT="iteminfo"/>
+        <FIELD NAME="iteminfo" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Info and notes about this item XXX" PREVIOUS="itemnumber" NEXT="idnumber"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Arbitrary idnumber provided by the module responsible" PREVIOUS="iteminfo" NEXT="calculation"/>
+        <FIELD NAME="calculation" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Formula describing how to derive this grade from other items, referring to them using giXXX where XXX is grade item id ... eg something like: =sin(square([#gi20#])) + [#gi30#]" PREVIOUS="idnumber" NEXT="gradetype"/>
+        <FIELD NAME="gradetype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="0 = none, 1 = value, 2 = scale, 3 = text" PREVIOUS="calculation" NEXT="grademax"/>
+        <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the maximum allowable grade?" PREVIOUS="gradetype" NEXT="grademin"/>
+        <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the minimum allowable grade?" PREVIOUS="grademax" NEXT="scaleid"/>
+        <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is based on a scale, which one is it?" PREVIOUS="grademin" NEXT="outcomeid"/>
+        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
+        <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What grade is needed to pass? grademin &amp;lt; gradepass &amp;lt;= grademax" PREVIOUS="outcomeid" NEXT="multfactor"/>
+        <FIELD NAME="multfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Multiply all grades by this" PREVIOUS="gradepass" NEXT="plusfactor"/>
+        <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="plusfactor" NEXT="hidden"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is hidden, &amp;gt; 1 is a date to hide until (prevents viewing)" PREVIOUS="sortorder" NEXT="locked"/>
+        <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is locked, &amp;gt; 1 is a date to lock until (prevents update)" PREVIOUS="hidden" NEXT="locktime"/>
+        <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="needsupdate"/>
+        <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="locktime"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="itemid"/>
-        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
-        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="itemid" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="userid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="categoryid"/>
+        <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="scaleid"/>
+        <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="categoryid" NEXT="outcomeid"/>
+        <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="scaleid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
     </TABLE>
-    <TABLE NAME="grade_import_values" COMMENT="Temporary table for importing grades" PREVIOUS="grade_history" NEXT="grade_import_newitem">
+    <TABLE NAME="grade_categories_history" COMMENT="History of grade_categories" PREVIOUS="grade_items_history" NEXT="grade_grades_history">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this grade category is part of" PREVIOUS="loggeduser" NEXT="parent"/>
+        <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Categories can be hierarchical" PREVIOUS="courseid" NEXT="depth"/>
+        <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="How many parents does this category have?" PREVIOUS="parent" NEXT="path"/>
+        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="shows the path as /1/2/3 (like course_categories)" PREVIOUS="depth" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The name of this grade category" PREVIOUS="path" NEXT="aggregation"/>
+        <FIELD NAME="aggregation" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="A constant pointing to one of the predefined aggregation strategies (none, mean,median,sum, etc)" PREVIOUS="fullname" NEXT="keephigh"/>
+        <FIELD NAME="keephigh" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Keep only the X highest items" PREVIOUS="aggregation" NEXT="droplow"/>
+        <FIELD NAME="droplow" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Drop the X lowest items" PREVIOUS="keephigh"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="parent"/>
+        <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_grades_history" COMMENT="History table" PREVIOUS="grade_categories_history" NEXT="grade_grades_text_history">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The item this grade belongs to" PREVIOUS="loggeduser" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The user who this grade is for" PREVIOUS="itemid" NEXT="rawgrade"/>
+        <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="If the grade is a float value (or has been converted to one)" PREVIOUS="userid" NEXT="rawgrademax"/>
+        <FIELD NAME="rawgrademax" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The maximum allowable grade when this was created" PREVIOUS="rawgrade" NEXT="rawgrademin"/>
+        <FIELD NAME="rawgrademin" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The minimum allowable grade when this was created" PREVIOUS="rawgrademax" NEXT="rawscaleid"/>
+        <FIELD NAME="rawscaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is based on a scale, which one was it?" PREVIOUS="rawgrademin" NEXT="usermodified"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this grade" PREVIOUS="rawscaleid" NEXT="finalgrade"/>
+        <FIELD NAME="finalgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="The final grade (cached) after all calculations are made" PREVIOUS="usermodified" NEXT="hidden"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="show 0, hide 1 or hide until date" PREVIOUS="finalgrade" NEXT="locked"/>
+        <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="not locked 0, locked from date" PREVIOUS="hidden" NEXT="locktime"/>
+        <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="automatic locking of final grade, 0 means none, date otherwise" PREVIOUS="locked" NEXT="exported"/>
+        <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="primary" NEXT="itemid"/>
+        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="oldid" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="itemid" NEXT="rawscaleid"/>
+        <KEY NAME="rawscaleid" TYPE="foreign" FIELDS="rawscaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="userid" NEXT="usermodified"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="rawscaleid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="usermodified"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_grades_text_history" COMMENT="History table" PREVIOUS="grade_grades_history" NEXT="grade_outcomes_history">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="gradeid"/>
+        <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="loggeduser" NEXT="information"/>
+        <FIELD NAME="information" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Further information like forum rating distribution 4/5/7/0/1" PREVIOUS="gradeid" NEXT="informationformat"/>
+        <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Text format for information" PREVIOUS="information" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Manual feedback from the teacher. Could be a code like 'mi'." PREVIOUS="informationformat" NEXT="feedbackformat"/>
+        <FIELD NAME="feedbackformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Text format for feedback" PREVIOUS="feedback" NEXT="usermodified"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this grade" PREVIOUS="feedbackformat"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_grades_text" REFFIELDS="id" PREVIOUS="primary" NEXT="gradeid"/>
+        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="oldid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="gradeid" NEXT="usermodified"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="loggeduser"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_outcomes_history" COMMENT="History table" PREVIOUS="grade_grades_text_history" NEXT="scale_history">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="loggeduser" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The short name or code for this outcome statement" PREVIOUS="courseid" NEXT="fullname"/>
+        <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
+        <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The recommended scale for this outcome." PREVIOUS="fullname"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="scaleid"/>
+        <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="courseid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="scaleid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scale_history" COMMENT="History table" PREVIOUS="grade_outcomes_history" NEXT="grade_import_values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
+        <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="loggeduser" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="scale"/>
+        <FIELD NAME="scale" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="scale"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
+        <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="scales" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="grade_import_values" COMMENT="Temporary table for importing grades" PREVIOUS="scale_history" NEXT="grade_import_newitem">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="if set, this points to existing grade_items id" PREVIOUS="id" NEXT="newgradeitem"/>

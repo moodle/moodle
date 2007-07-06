@@ -166,43 +166,81 @@ class grade_object {
 
     /**
      * Updates this object in the Database, based on its object variables. ID must be set.
-     *
-     * @return boolean
+     * @param string $source from where was the object updated (mod/forum, manual, etc.)
+     * @return boolean success
      */
-    function update() {
+    function update($source=null) {
         global $USER;
 
         $this->timemodified = time();
-
-        if (array_key_exists('usermodified', $this)) {
-            $this->usermodified = $USER->id;
-        }
 
         // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
         $data = new object();
         foreach ($this as $var=>$value) {
             if (!in_array($var, $this->nonfields)) {
-                $data->$var = addslashes_recursive($value);
+                if (is_object($value) or is_array($value)) {
+                    debugging("Incorrect property '$var' found when updating grade object");
+                } else {
+                    $data->$var = $value;
+                }
             }
         }
 
-        return update_record($this->table, $data);
+        if(!update_record($this->table, addslashes_recursive($data))) {
+            return false;
+        }
+
+        // track history
+        // TODO: add history disable switch
+        unset($data->timecreated);
+        $data->action     = GRADE_HISTORY_UPDATE;
+        $data->oldid      = $this->id;
+        $data->source     = $source;
+        $data->userlogged = $USER->id;
+        insert_record($this->table.'_history', addslashes_recursive($data));
+
+        return true;
     }
 
     /**
      * Deletes this object from the database.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
      */
-    function delete() {
-        return delete_records($this->table, 'id', $this->id);
+    function delete($source=null) {
+        global $USER;
+
+        // track history
+        // TODO: add history disable switch
+        if ($data = get_record($this->table, 'id', $this->id)) {
+            unset($data->id);
+            unset($data->timecreated);
+            $data->action       = GRADE_HISTORY_DELETE;
+            $data->oldid        = $this->id;
+            $data->source       = $source;
+            $data->timemodified = time();
+            $data->userlogged   = $USER->id;
+        }
+
+        if (delete_records($this->table, 'id', $this->id)) {
+            if ($data) {
+                insert_record($this->table.'_history', addslashes_recursive($data));
+            }
+            return true;
+
+        } else {
+            return false;
+        }
     }
 
     /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
-    function insert() {
+    function insert($source=null) {
         global $USER;
 
         if (!empty($this->id)) {
@@ -212,15 +250,15 @@ class grade_object {
 
         $this->timecreated = $this->timemodified = time();
 
-        if (array_key_exists('usermodified', $this)) {
-            $this->usermodified = $USER->id;
-        }
-
         // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
         $data = new object();
         foreach ($this as $var=>$value) {
             if (!in_array($var, $this->nonfields)) {
-                $data->$var = addslashes_recursive($value);
+                if (is_object($value) or is_array($value)) {
+                    debugging("Incorrect property '$var' found when inserting grade object");
+                } else {
+                    $data->$var = $value;
+                }
             }
         }
 
@@ -231,6 +269,15 @@ class grade_object {
 
         // set all object properties from real db data
         $this->update_from_db();
+
+        // track history
+        // TODO: add history disable switch
+        unset($data->timecreated);
+        $data->action     = GRADE_HISTORY_INSERT;
+        $data->oldid      = $this->id;
+        $data->source     = $source;
+        $data->userlogged = $USER->id;
+        insert_record($this->table.'_history', addslashes_recursive($data));
 
         return $this->id;
     }

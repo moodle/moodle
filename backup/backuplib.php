@@ -1507,7 +1507,6 @@
 
                 // back up the other stuff here                
                 $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
-                $status = backup_gradebook_grades_history_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
 
                 //End grade_item
@@ -1605,31 +1604,6 @@
                 fwrite ($bf,end_tag("GRADE_TEXT",6,true));
             }  
             $stauts = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
-        }
-        return $status;
-    }
-    
-    function backup_gradebook_grades_history_info($bf, $preferences, $itemid) {
-
-        global $CFG;
-
-        $status = true;
-        
-        // find all grade history belonging to this item
-        if ($histories = get_records('grade_history', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_GRADES_HISTORY",5,true));
-            foreach ($histories as $history) {
-                fwrite ($bf,start_tag("GRADE_HISTORY",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$history->id));
-                fwrite ($bf,full_tag("USERID",7,false,$history->userid));
-                fwrite ($bf,full_tag("OLDGRADE",7,false,$history->oldgrade));                
-                fwrite ($bf,full_tag("NEWGRADE",7,false,$history->newgrade));
-                fwrite ($bf,full_tag("NOTE",7,false,$history->note));
-                fwrite ($bf,full_tag("HOWMODIFIED",7,false,$history->howmodified));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$history->usermodified));
-                fwrite ($bf,end_tag("GRADE_HISTORY",6,true));
-            }
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",5,true));
         }
         return $status;
     }

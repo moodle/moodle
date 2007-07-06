@@ -40,7 +40,7 @@ class grade_item extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'formula', 'calculation_normalized', 'scale', 'item_category', 'parent_category', 'outcome');
+    var $nonfields = array('table', 'nonfields', 'required_fields', 'formula', 'calculation_normalized', 'scale', 'item_category', 'parent_category', 'outcome');
 
     /**
      * The course this grade_item belongs to.
@@ -225,10 +225,10 @@ class grade_item extends grade_object {
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      * Force regrading if necessary
-     *
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return boolean success
      */
-    function update() {
+    function update($source=null) {
         // Retrieve scale and infer grademax/min from it if needed
         $this->load_scale();
 
@@ -236,7 +236,7 @@ class grade_item extends grade_object {
             return $this->force_regrading();
 
         } else {
-            return parent::update();
+            return parent::update($source);
         }
     }
 
@@ -295,27 +295,35 @@ class grade_item extends grade_object {
     }
 
     /**
-     * If parent::delete() is successful, send force_regrading message to parent category.
-     * @return boolean Success or failure.
+     * Delete all grades and force_regrading of parent category.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
      */
-    function delete() {
+    function delete($source=null) {
         if ($this->is_course_item()) {
             debuggin('Can not delete course or category item!');
             return false;
         }
 
         if (!$this->is_category_item() and $category = $this->get_parent_category()) {
-            $category->force_regrading();
+            $category->force_regrading($source);
         }
 
-        return parent::delete();;
+        if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+            foreach ($grades as $grade) {
+                $grade->delete($source);
+            }
+        }
+
+        return parent::delete($source);
     }
 
     /**
      * In addition to perform parent::insert(), this calls the grade_item's category's (if applicable) force_regrading() method.
-     * @return int ID of the new grade_item record.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return int PK ID if successful, false otherwise
      */
-    function insert() {
+    function insert($source=null) {
         global $CFG;
 
         if (empty($this->courseid)) {
@@ -359,12 +367,10 @@ class grade_item extends grade_object {
             }
         }
 
-        $result = parent::insert();
-
-        if ($result) {
+        if (parent::insert($source)) {
             // force regrading of items if needed
             $this->force_regrading();
-            return true;
+            return $this->id;
 
         } else {
             debugging("Could not insert this grade_item in the database!");
@@ -679,12 +685,13 @@ class grade_item extends grade_object {
      * for this grade_item to require an update. The flag needs to be propagated up all
      * levels until it reaches the top category. This is then used to determine whether or not
      * to regenerate the raw and final grades for each category grade_item.
+     * @param string $source from where was the object updated (mod/forum, manual, etc.)
      * @return boolean Success or failure
      */
-    function force_regrading() {
+    function force_regrading($source=null) {
         $this->needsupdate = true;
 
-        if (!parent::update()) {
+        if (!parent::update($source)) {
             return false;
         }
 
@@ -693,7 +700,7 @@ class grade_item extends grade_object {
 
         } else {
             $parent = $this->load_parent_category();
-            $parent->force_regrading();
+            $parent->force_regrading($source);
 
         }
 
@@ -950,7 +957,7 @@ class grade_item extends grade_object {
         $sql = "UPDATE {$CFG->prefix}grade_items
                    SET sortorder = sortorder + 1
                  WHERE sortorder > $sortorder AND courseid = {$this->courseid}";
-        execute_sql($sql);
+        execute_sql($sql, false);
 
         $this->set_sortorder($sortorder + 1);
     }
@@ -1058,9 +1065,13 @@ class grade_item extends grade_object {
      * @param int $feedbackformat
      * @return mixed grade_grades object if ok, false if error
      */
-    function update_raw_grade($userid, $rawgrade=false, $source='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE) {
-        global $CFG;
+    function update_raw_grade($userid, $rawgrade=false, $source='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+        global $CFG, $USER;
         require_once($CFG->libdir.'/eventslib.php');
+
+        if (empty($usermodified)) {
+            $usermodified = $USER->id;
+        }
 
         // calculated grades can not be updated
         if ($this->is_calculated()) {
@@ -1072,7 +1083,7 @@ class grade_item extends grade_object {
             return false;
         }
 
-        $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid));
+        $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid, 'usermodified'=>$usermodified));
         $grade->grade_item =& $this; // prevent db fetching of cached grade_item
 
         if (!empty($grade->id)) {
@@ -1101,12 +1112,12 @@ class grade_item extends grade_object {
             if (empty($grade->id)) {
                 $oldgrade = null;
                 $grade->rawgrade = $rawgrade;
-                $result = $grade->insert();
+                $result = $grade->insert($source);
 
             } else {
                 $oldgrade = $grade->rawgrade;
                 $grade->rawgrade = $rawgrade;
-                $result = $grade->update();
+                $result = $grade->update($source);
             }
         }
 
@@ -1115,13 +1126,12 @@ class grade_item extends grade_object {
             if (empty($grade->id)) {
                 // create new grade
                 $oldgrade = null;
-                $result = $grade->insert();
+                $result = $grade->insert($source);
             }
-            $result = $result && $grade->update_feedback($feedback, $feedbackformat);
+            $result = $result && $grade->update_feedback($feedback, $feedbackformat, $usermodified);
         }
 
         // TODO Handle history recording error, such as displaying a notice, but still return true
-        grade_history::insert_change($userid, $this->id, $grade->rawgrade, $oldgrade, $source, $note);
 
         // This grade item needs update
         $this->force_regrading();

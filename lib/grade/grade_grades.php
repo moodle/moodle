@@ -37,7 +37,7 @@ class grade_grades extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'grade_grades_text', 'grade_item');
+    var $nonfields = array('table', 'nonfields', 'required_fields', 'grade_grades_text', 'grade_item');
 
     /**
      * The id of the grade_item this grade belongs to.
@@ -248,6 +248,19 @@ class grade_grades extends grade_object {
         return grade_object::fetch_all_helper('grade_grades', 'grade_grades', $params);
     }
 
+
+    /**
+     * Delete grade together with feedback.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
+     */
+    function delete($source=null) {
+        if ($text = $this->load_text()) {
+            $text->delete($source);
+        }
+        return parent::delete($source);
+    }
+
     /**
      * Updates this grade with the given textual information. This will create a new grade_grades_text entry
      * if none was previously in DB for this raw grade, or will update the existing one.
@@ -288,8 +301,14 @@ class grade_grades extends grade_object {
      * @param int $feedbackformat Text format for the feedback
      * @return boolean Success or Failure
      */
-    function update_feedback($feedback, $feedbackformat) {
+    function update_feedback($feedback, $feedbackformat, $usermodified=null) {
+        global $USER;
+
         $this->load_text();
+
+        if (empty($usermodified)) {
+            $usermodified = $USER->id;
+        }
 
         if (empty($this->grade_grades_text->id)) {
             $this->grade_grades_text = new grade_grades_text();
@@ -297,6 +316,7 @@ class grade_grades extends grade_object {
             $this->grade_grades_text->gradeid        = $this->id;
             $this->grade_grades_text->feedback       = $feedback;
             $this->grade_grades_text->feedbackformat = $feedbackformat;
+            $this->grade_grades_text->usermodified   = $usermodified;
 
             return $this->grade_grades_text->insert();
 
@@ -306,6 +326,8 @@ class grade_grades extends grade_object {
 
                 $this->grade_grades_text->feedback       = $feedback;
                 $this->grade_grades_text->feedbackformat = $feedbackformat;
+                $this->grade_grades_text->usermodified   = $usermodified;
+
                 return  $this->grade_grades_text->update();
             } else {
                 return true;

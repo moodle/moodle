@@ -66,7 +66,7 @@ class grade_tree {
      * @param boolean $category_grade_last category grade item is the last child
      * @param boolean $aggregation_view Either full view (0) or compact view (1)
      */
-    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true, 
+    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true,
                         $aggregation_view=GRADER_REPORT_AGGREGATION_VIEW_FULL) {
         global $USER;
 

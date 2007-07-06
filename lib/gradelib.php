@@ -59,6 +59,11 @@ define('GRADE_UPDATE_MULTIPLE', 2);
 define('GRADE_UPDATE_ITEM_DELETED', 3);
 define('GRADE_UPDATE_ITEM_LOCKED', 4);
 
+// Grate teables history tracking actions
+define('GRADE_HISTORY_INSERT', 1);
+define('GRADE_HISTORY_UPDATE', 2);
+define('GRADE_HISTORY_DELETE', 3);
+
 // Set up constants for report preferences
 define('GRADER_REPORT_AGGREGATION_POSITION_LEFT', 0);
 define('GRADER_REPORT_AGGREGATION_POSITION_RIGHT', 1);
@@ -75,7 +80,6 @@ require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grades.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
-require_once($CFG->libdir . '/grade/grade_history.php');
 require_once($CFG->libdir . '/grade/grade_grades_text.php');
 require_once($CFG->libdir . '/grade/grade_tree.php');
 
@@ -99,6 +103,7 @@ require_once($CFG->libdir . '/grade/grade_tree.php');
  * @param mixed $itemdetails object or array describing the grading item, NULL if no change
  */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
+    global $USER;
 
     // only following grade_item properties can be changed in this function
     $allowed = array('itemname', 'idnumber', 'gradetype', 'grademax', 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted');
@@ -122,6 +127,17 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     } else {
         debugging('Found more than one grade item');
         return GRADE_UPDATE_MULTIPLE;
+    }
+
+    if (!empty($itemdetails['deleted'])) {
+        if ($grade_item) {
+            if ($grade_item->delete($source)) {
+                return GRADE_UPDATE_OK;
+            } else {
+                return GRADE_UPDATE_FAILED;
+            }
+        }
+        return GRADE_UPDATE_OK;
     }
 
 /// Create or update the grade_item if needed
@@ -188,12 +204,6 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         return GRADE_UPDATE_OK;
     }
 
-    // no grading in deleted items
-    if ($grade_item->deleted) {
-        debugging('Grade item was already deleted!');
-        return GRADE_UPDATE_ITEM_DELETED;
-    }
-
 /// Finally start processing of grades
     if (is_object($grades)) {
         $grades = array($grades);
@@ -230,8 +240,14 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             $feedbackformat = $grade['feedbackformat'];
         }
 
+        if (array_key_exists('usermodified', $grade)) {
+            $usermodified = $grade['usermodified'];
+        } else {
+            $usermodified = $USER->id;
+        }
+
         // update or insert the grade
-        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat)) {
+        if (!$grade_item->update_raw_grade($userid, $rawgrade, $source, null, $feedback, $feedbackformat, $usermodified)) {
             $failed = true;
         }
     }
@@ -709,7 +725,7 @@ function grade_oldgradebook_upgrade($courseid) {
 function grade_get_icons($element, $tree) {
     global $CFG;
     global $USER;
-    
+
     // Load language strings
     $straddfeedback    = get_string("addfeedback", 'grades');
     $stredit           = get_string("edit");
@@ -738,7 +754,7 @@ function grade_get_icons($element, $tree) {
     $object = $element['object'];
     $type   = $element['type'];
 
-    // Load user preferences 
+    // Load user preferences
     $aggregationview = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
 
     // Icons shown when edit mode is on
@@ -780,12 +796,12 @@ function grade_get_icons($element, $tree) {
         if ($type == 'grade' and $USER->gradefeedback) {
             // Display Edit/Add feedback icon
             if (empty($object->feedback)) {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
                       . "&amp;action=add&amp;courseid=$object->courseid\">\n";
                 $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
                       . 'title="'.$straddfeedback.'" /></a>'. "\n";
             } else {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
                       . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
                 $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
                       . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
@@ -830,7 +846,7 @@ function grade_get_icons($element, $tree) {
         if ($USER->gradefeedback) {
             // Display view feedback icon
             if (!empty($object->feedback)) {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 
+                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
                       . "&amp;action=view&amp;courseid=$object->courseid\">\n";
                 $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                       . $strfeedback.'\');" onmouseout="return nd();" '
