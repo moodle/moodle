@@ -448,12 +448,8 @@ class moodleform {
      * @return bool array of errors or true if ok
      */
     function validation($data) {
-        return true;
+        return array();
     }
-
-
-
-
 
     /**
      * Method to add a repeating group of elements to a form.
@@ -625,7 +621,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @var unknown_type
      */
     var $_formName = '';
-    
+
     /**
      * String with the html for hidden params passed in as part of a moodle_url object for the action. Output in the form.
      *
@@ -1172,7 +1168,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
     frm.elements[\''.$elementName.'\'].focus();
   }
 ';
-  
+
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
@@ -1190,7 +1186,7 @@ function validate_' . $this->_formName . '(frm) {
      return true;
   }
   var ret = true;
-    
+
   var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
   var first_focus = false;
 ' . $validateJS . ';
@@ -1363,7 +1359,7 @@ function validate_' . $this->_formName . '(frm) {
     }
     /**
      * Hard freeze all elements in a form except those whose names are in $elementList or hidden elements in a form.
-     *  
+     *
      * This function also removes all previously defined rules of elements it freezes.
      *
      * @param    array   $elementList       array or string of element(s) not to be frozen
@@ -1483,7 +1479,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
 
         'static'=>"\n\t\t".'<div class="fitem {advanced}"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement fstatic <!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}&nbsp;</div></div>',
-        
+
         'nodisplay'=>'');
 
         parent::HTML_QuickForm_Renderer_Tableless();
@@ -1509,8 +1505,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         } else {
             $this->_hiddenHtml .= $form->_pageparams;
         }
- 
-        
+
+
     }
 
     function startGroup(&$group, $required, $error){
