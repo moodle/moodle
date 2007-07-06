@@ -714,6 +714,7 @@ function grade_get_icons($element, $tree) {
     $straddfeedback    = get_string("addfeedback", 'grades');
     $stredit           = get_string("edit");
     $streditfeedback   = get_string("editfeedback", 'grades');
+    $streditcalculation= get_string("editcalculation", 'grades');
     $strfeedback       = get_string("feedback");
     $strmove           = get_string("move");
     $strmoveup         = get_string("moveup");
@@ -754,9 +755,19 @@ function grade_get_icons($element, $tree) {
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
 
         } else if ($type == 'grade') {
+            // What is the purpose of edit_grade page?
+            /*
             $html .= '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+            */      
+        }
+        
+        // Calculation icon for items and categories
+        if ($type != 'grade') {
+            $html .= '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
+            $html .= '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
+                  .$streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n"; 
         }
 
         // Prepare Hide/Show icon state
@@ -766,7 +777,7 @@ function grade_get_icons($element, $tree) {
         }
 
         // Setup object identifier and show feedback icon if applicable
-        if ($type != 'category' and $USER->gradefeedback) {
+        if ($type == 'grade' and $USER->gradefeedback) {
             // Display Edit/Add feedback icon
             if (empty($object->feedback)) {
                 $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id 

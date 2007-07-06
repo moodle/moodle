@@ -3,20 +3,20 @@
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
                                           get_string('configaggregationposition', 'grades'), false,
-                                          array(get_string('left', 'grades'), get_string('right', 'grades')));
+                                          array(get_string('left', 'grades'), get_string('right', 'grades'))));
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), false,
-                                          array(get_string('full', 'grades'), get_string('compact', 'grades')));
+                                          array(get_string('full', 'grades'), get_string('compact', 'grades'))));
 $settings->add(new admin_setting_configcheckbox('grade_report_bulkcheckboxes', get_string('bulkcheckboxes', 'grades'),
                                             get_string('configbulkcheckboxes', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_string('enableajax', 'grades'),
                                             get_string('configenableajax', 'grades'), 0));
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,
-                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades')));
+                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 $settings->add(new admin_setting_configselect('grade_report_grandtotalsdisplaytype', get_string('grandtotalsdisplaytype', 'grades'),
                                           get_string('configgrandtotalsdisplaytype', 'grades'), false, 
-                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades')));
+                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
                                             get_string('configshowcalculations', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_string('showeyecons', 'grades'),
@@ -35,7 +35,7 @@ $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_
                                         get_string('configstudentsperpage', 'grades'), 20));
 $settings->add(new admin_setting_configselect('grade_report_feedbackformat', get_string('feedbackformat', 'grades'),
                                           get_string('configfeedbackformat', 'grades'), false,
-                                          array(get_string('text', 'grades'), get_string('html', 'grades')));
+                                          array(get_string('text', 'grades'), get_string('html', 'grades'))));
 $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_string('decimalpoints', 'grades'),
                                           get_string('configdecimalpoints', 'grades'), 2,
                                           array( '0' => '0',

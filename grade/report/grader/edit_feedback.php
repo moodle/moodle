@@ -20,11 +20,11 @@ require_capability('gradereport/grader:manage', $context);
 // default return url
 $returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
 
-$mform = new edit_feedback_form('edit_feedback.php', compact('course', 'id'));
+$mform = new edit_feedback_form();
 if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
     $mform->set_data($grade_text);
 } else {
-    $mform->set_data(array('courseid'=>$course->id));
+    $mform->set_data(array('courseid'=>$course->id, 'id' => $id));
 }
 
 if ($mform->is_cancelled()) {
