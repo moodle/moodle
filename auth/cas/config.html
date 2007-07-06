@@ -56,14 +56,14 @@
         {$config->groupecreators = ''; }
     if (!isset($config->attrcreators))
         {$config->attrcreators = ''; }
-     if (!isset($config->removeuser))
+    if (!isset($config->removeuser))
         {$config->removeuser = 0; }
 
     $yesno = array( get_string('no'), get_string('yes') );
 
 if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     notify(get_string('auth_ldap_noextension','auth'));
-	}
+}
 
 
 ?>
@@ -166,9 +166,9 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <td align="right"><?php print_string('auth_cas_proxycas_key', 'auth') ?>:</td>
     <td>
         <?php
-	        unset($options);
-      	  $options[1] = get_string('yes');
-	        choose_from_menu ($options, 'proxycas', $config->proxycas, get_string('no'), '', '');
+        unset($options);
+        $options[1] = get_string('yes');
+        choose_from_menu ($options, 'proxycas', $config->proxycas, get_string('no'), '', '');
         ?>
     </td>
     <td><?php print_string('auth_cas_proxycas', 'auth') ?></td>
@@ -178,9 +178,9 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <td align="right"><?php print_string('auth_cas_logoutcas_key', 'auth') ?>:</td>
     <td>
         <?php
-	        unset($options);
-      	  $options[1] = get_string('yes');
-	        choose_from_menu ($options, 'logoutcas', $config->logoutcas, get_string('no'), '', '');
+        unset($options);
+        $options[1] = get_string('yes');
+        choose_from_menu ($options, 'logoutcas', $config->logoutcas, get_string('no'), '', '');
         ?>
     </td>
     <td><?php print_string('auth_cas_logoutcas', 'auth') ?></td>
@@ -190,9 +190,9 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <td align="right"><?php print_string('auth_cas_multiauth_key', 'auth') ?>:</td>
     <td>
         <?php
-	        unset($options);
-      	  $options[1] = get_string('yes');
-	        choose_from_menu ($options, 'multiauth', $config->multiauth, get_string('no'), '', '');
+        unset($options);
+        $options[1] = get_string('yes');
+        choose_from_menu ($options, 'multiauth', $config->multiauth, get_string('no'), '', '');
         ?>
     </td>
     <td><?php print_string('auth_cas_multiauth', 'auth') ?></td>
@@ -417,9 +417,6 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_remove_user','auth') ?>
     </td>
 </tr>
-
-</table>
-
 <?php
 
 $help  = get_string('auth_ldapextrafields','auth');
@@ -432,3 +429,4 @@ $help .= get_string('auth_updateremote_ldap','auth');
 print_auth_lock_options('cas', $user_fields, $help, true, true);
 
 ?>
+</table>

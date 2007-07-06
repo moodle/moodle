@@ -11,18 +11,15 @@
  *
  * 2006-08-28  File created.
  */
-
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
-
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
 /**
  * CAS authentication plugin.
  */
 class auth_plugin_cas extends auth_plugin_base {
-
     /**
      * Constructor.
      */
@@ -35,9 +32,7 @@ class auth_plugin_cas extends auth_plugin_base {
         if (empty($this->config->user_type)) {
             $this->config->user_type = 'default';
         }
-
         $default = $this->ldap_getdefaults();
-
         //use defaults if values not given
         foreach ($default as $key => $value) {
             // watch out - 0, false are correct values too
@@ -51,9 +46,7 @@ class auth_plugin_cas extends auth_plugin_base {
         } else if (strpos($this->config->objectclass, 'objectClass=') !== 0) {
             $this->config->objectclass = 'objectClass='.$this->config->objectclass;
         }
-
     }
-
     /**
      * Authenticates user againt CAS 
      * Returns true if the username and password work and false if they are
@@ -64,11 +57,9 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
+		$this->connectCAS();
         return phpCAS::isAuthenticated();
     }
-
-
-
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
@@ -77,7 +68,6 @@ class auth_plugin_cas extends auth_plugin_base {
     function is_internal() {
         return false;
     }
-
     /**
      * Returns true if this authentication plugin can change the user's
      * password.
@@ -87,7 +77,6 @@ class auth_plugin_cas extends auth_plugin_base {
     function can_change_password() {
         return false;
     }
-
     /**
      * authentication choice (CAS or other)
      * redirection to the CAS form or to login/index.php
@@ -97,20 +86,23 @@ class auth_plugin_cas extends auth_plugin_base {
       global $frm;
       global $test;
       global $CFG;
-
       $site = get_site();
       $CASform = get_string("CASform","auth");
       $username = optional_param("username");
-
       if (!empty($username)) {
-
           return;
         }
 
 // Connection to CAS server
 	 $this->connectCAS();
 
-
+	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
+	 if (phpCAS::checkAuthentication()) {
+		$frm->username=phpCAS::getUser();
+		$frm->password="cas";		  
+		return;
+	 }
+	 
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS");
           if ($authCAS=="NOCAS") 
@@ -119,25 +111,17 @@ class auth_plugin_cas extends auth_plugin_base {
 // choice authentication form for multi-authentication
 // test pgtIou parameter for proxy mode (https connection
 // in background from CAS server to the php server)
-      if ($authCAS!="CAS" && !isset($_GET["pgtIou"]))
-         {
+      if ($authCAS!="CAS" && !isset($_GET["pgtIou"])) {
             print_header("$site->fullname: $CASform", $site->fullname, $CASform);
             include($CFG->dirroot."/auth/cas/cas_form.html");
             print_footer();
             exit();
-         }
+		 }
      }
-
 // CAS authentication
      if (!phpCAS::isAuthenticated())
         {phpCAS::forceAuthentication();}
-
-     $frm->username=phpCAS::getUser();
-     $frm->password="cas";
-
-
 }
-
     /**
      * logout from the cas 
      *
@@ -152,8 +136,6 @@ class auth_plugin_cas extends auth_plugin_base {
 	        phpCAS::logout($backurl);        
 	     }
     }
-
-
     /**
      * Connect to the cas (clientcas connection or proxycas connection 
      *
@@ -161,7 +143,10 @@ class auth_plugin_cas extends auth_plugin_base {
      *
      */
     function connectCAS() {
+	
+	global $PHPCAS_CLIENT;
 // mode proxy CAS
+if ( !is_object($PHPCAS_CLIENT) ) {
 	if  ($this->config->proxycas) {
 	    phpCAS::proxy($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
 	}
@@ -170,7 +155,8 @@ class auth_plugin_cas extends auth_plugin_base {
 	    phpCAS::client($this->config->casversion, $this-> config->hostname, (int) $this->config->port, $this->config->baseuri);
 	}
     }
-
+	
+	}
     /**
      * Prints a form for configuring this authentication plugin.
      *
@@ -182,7 +168,6 @@ class auth_plugin_cas extends auth_plugin_base {
     function config_form($config, $err, $user_fields) {
         include 'config.html';
     }
-
     /**
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
@@ -192,7 +177,6 @@ class auth_plugin_cas extends auth_plugin_base {
     function change_password_url() {
         return "";
     }
-
     /**
      * returns predefined usertypes
      *
@@ -208,8 +192,6 @@ class auth_plugin_cas extends auth_plugin_base {
         $types['default']=get_string('default');
         return $types;
     }
-
-
     /**
      * Processes and stores configuration data for this authentication plugin.
      */
@@ -267,7 +249,6 @@ class auth_plugin_cas extends auth_plugin_base {
             {$config->groupecreators = ''; }
         if (!isset($config->removeuser))
             {$config->removeuser = 0; }
-
         // save CAS settings
         set_config('hostname',    $config->hostname,    'auth/cas');
         set_config('port',        $config->port,        'auth/cas');
@@ -296,10 +277,8 @@ class auth_plugin_cas extends auth_plugin_base {
         set_config('attrcreators', $config->attrcreators, 'auth/cas');
         set_config('groupecreators', $config->groupecreators, 'auth/cas');
         set_config('removeuser', $config->removeuser, 'auth/cas');
-
         return true;
     }
-
     /**
      * Initializes needed ldap variables for cas-module
      *
@@ -348,7 +327,6 @@ class auth_plugin_cas extends auth_plugin_base {
                             );
         return $default;
     }
-
     /**
      * reads userinformation from ldap and return it in array()
      *
@@ -361,16 +339,12 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {
-
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
-
         $ldapconnection = $this->ldap_connect();
         $attrmap = $this->ldap_attributes();
-
         $result = array();
         $search_attribs = array();
-
         foreach ($attrmap as $key=>$values) {
             if (!is_array($values)) {
                 $values = array($values);
@@ -381,18 +355,14 @@ class auth_plugin_cas extends auth_plugin_base {
                 }
             }
         }
-
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
-
         if (!$user_info_result = ldap_read($ldapconnection, $user_dn, $this->config->objectclass, $search_attribs)) {
             return false; // error!
         }
-
         $user_entry = $this->ldap_get_entries($ldapconnection, $user_info_result);
         if (empty($user_entry)) {
             return false; // entry not found
         }
-
         foreach ($attrmap as $key=>$values) {
             if (!is_array($values)) {
                 $values = array($values);
@@ -402,15 +372,15 @@ class auth_plugin_cas extends auth_plugin_base {
                 if ($value == 'dn') {
                     $result[$key] = $user_dn;
                 }
-                if (!array_key_exists($value, $user_entry[0])) {
+                if (!array_key_exists(strtolower($value), $user_entry[0])) {
                     continue; // wrong data mapping!
                 }
-                if (is_array($user_entry[0][$value])) {
-
-                    $newval = $textlib->convert($user_entry[0][$value][0], $this->config->ldapencoding, 'utf-8');
+                if (is_array($user_entry[0][strtolower($value)])) {
+                    $newval = $textlib->convert($user_entry[0][strtolower($value)][0], $this->config->ldapencoding, 'utf-8');
                 } else {
-                    $newval = $textlib->convert($user_entry[0][$value], $this->config->ldapencoding, 'utf-8');
+                    $newval = $textlib->convert($user_entry[0][strtolower($value)], $this->config->ldapencoding, 'utf-8');
                 }
+
                 if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;
                 }
@@ -419,11 +389,9 @@ class auth_plugin_cas extends auth_plugin_base {
                 $result[$key] = $ldapval;
             }
         }
-
         @ldap_close($ldapconnection);
         return $result;
     }
-
     /**
      * reads userinformation from ldap and return it in an object
      *
@@ -442,7 +410,6 @@ class auth_plugin_cas extends auth_plugin_base {
         }
         return $user;
     }
-
     /**
      * connects to ldap server
      *
@@ -462,22 +429,17 @@ class auth_plugin_cas extends auth_plugin_base {
                $bindpwd = $this->config->bind_pw;
             }
         }
-
         $urls = explode(";",$this->config->host_url);
-
         foreach ($urls as $server) {
             $server = trim($server);
             if (empty($server)) {
                 continue;
             }
-
             $connresult = ldap_connect($server);
             //ldap_connect returns ALWAYS true
-
             if (!empty($this->config->version)) {
                 ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $this->config->version);
             }
-
             if (!empty($binddn)) {
                 //bind with search-user
                 //$debuginfo .= 'Using bind user'.$binddn.'and password:'.$bindpwd;
@@ -487,29 +449,23 @@ class auth_plugin_cas extends auth_plugin_base {
                 //bind anonymously
                 $bindresult=@ldap_bind($connresult);
             }
-
             if (!empty($this->config->opt_deref)) {
                 ldap_set_option($connresult, LDAP_OPT_DEREF, $this->config->opt_deref);
             }
-
             if ($bindresult) {
                 return $connresult;
             }
-
             $debuginfo .= "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
         }
-
         //If any of servers are alive we have already returned connection
         print_error('auth_ldap_noconnect_all','auth',$this->config->user_type);
         return false;
     }
-
     /**
      * retuns user attribute mappings between moodle and ldap
      *
      * @return array
      */
-
     function ldap_attributes () {
         $fields = array("firstname", "lastname", "email", "phone1", "phone2",
                         "department", "address", "city", "country", "description",
@@ -526,7 +482,6 @@ class auth_plugin_cas extends auth_plugin_base {
         $moodleattributes['username'] = $this->config->user_attribute;
         return $moodleattributes;
     }
-
     /**
      * retuns dn of username
      *
@@ -537,47 +492,35 @@ class auth_plugin_cas extends auth_plugin_base {
      * @param mixed $username username (external encoding no slashes)
      *
      */
-
     function ldap_find_userdn ($ldapconnection, $extusername) {
-
         //default return value
         $ldap_user_dn = FALSE;
-
         //get all contexts and look for first matching user
         $ldap_contexts = explode(";",$this->config->contexts);
-
         if (!empty($this->config->create_context)) {
           array_push($ldap_contexts, $this->config->create_context);
         }
-
         foreach ($ldap_contexts as $context) {
-
             $context = trim($context);
             if (empty($context)) {
                 continue;
             }
-
             if ($this->config->search_sub) {
                 //use ldap_search to find first user from subtree
                 $ldap_result = ldap_search($ldapconnection, $context, "(".$this->config->user_attribute."=".$this->filter_addslashes($extusername).")",array($this->config->user_attribute));
-
             }
             else {
                 //search only in this context
                 $ldap_result = ldap_list($ldapconnection, $context, "(".$this->config->user_attribute."=".$this->filter_addslashes($extusername).")",array($this->config->user_attribute));
             }
-
             $entry = ldap_first_entry($ldapconnection,$ldap_result);
-
             if ($entry) {
                 $ldap_user_dn = ldap_get_dn($ldapconnection, $entry);
                 break ;
             }
         }
-
         return $ldap_user_dn;
     }
-
     /**
      * Quote control characters in quoted "texts" used in ldap
      *
@@ -589,7 +532,6 @@ class auth_plugin_cas extends auth_plugin_base {
                             array('\\"', '\\00'), $text);
         return $text;
     }
-
     /**
      * returns all usernames from external database
      *
@@ -600,22 +542,18 @@ class auth_plugin_cas extends auth_plugin_base {
     function get_userlist() {
         return $this->ldap_get_userlist("({$this->config->user_attribute}=*)");
     }
-
     /**
      * checks if user exists on external db
      *
      * @param string $username (with system magic quotes)
      */
     function user_exists($username) {
-
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
-
         //returns true if given username exist on ldap
         $users = $this->ldap_get_userlist("({$this->config->user_attribute}=".$this->filter_addslashes($extusername).")");
         return count($users);
     }
-
     /**
      * syncronizes user fron external db to moodle user table
      *
@@ -631,15 +569,11 @@ class auth_plugin_cas extends auth_plugin_base {
      * @param bool $do_updates will do pull in data updates from ldap if relevant
      */
     function sync_users ($bulk_insert_records = 1000, $do_updates = true) {
-
         global $CFG;
-
         $textlib = textlib_get_instance();
-
         $droptablesql = array(); /// sql commands to drop the table (because session scope could be a problem for
                                  /// some persistent drivers like ODBTP (mssql) or if this function is invoked
                                  /// from within a PHP application using persistent connections
-
         // configure a temp table
         print "Configuring temp table\n";
         switch (strtolower($CFG->dbfamily)) {
@@ -676,28 +610,22 @@ class auth_plugin_cas extends auth_plugin_base {
                 execute_sql('CREATE GLOBAL TEMPORARY TABLE '.$temptable.' (username VARCHAR(64), PRIMARY KEY (username)) ON COMMIT PRESERVE ROWS', false);
                 break;
         }
-
         print "Connecting to ldap...\n";
         $ldapconnection = $this->ldap_connect();
-
         if (!$ldapconnection) {
             @ldap_close($ldapconnection);
             print get_string('auth_ldap_noconnect','auth',$this->config->host_url);
             exit;
         }
-
         ////
         //// get user's list from ldap to sql in a scalable fashion
         ////
         // prepare some data we'll need
         $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
-
         $contexts = explode(";",$this->config->contexts);
-
         if (!empty($this->config->create_context)) {
               array_push($contexts, $this->config->create_context);
         }
-
         $fresult = array();
         foreach ($contexts as $context) {
             $context = trim($context);
@@ -716,7 +644,6 @@ class auth_plugin_cas extends auth_plugin_base {
                                          $filter,
                                          array($this->config->user_attribute));
             }
-
             if ($entry = ldap_first_entry($ldapconnection, $ldap_result)) {
                 do {
                     $value = ldap_get_values_len($ldapconnection, $entry, $this->config->user_attribute);
@@ -729,7 +656,6 @@ class auth_plugin_cas extends auth_plugin_base {
                 } while ($entry = ldap_next_entry($ldapconnection, $entry));
             }
             unset($ldap_result); // free mem
-
             // insert any remaining users and release mem
             if (count($fresult)) {
                 $this->ldap_bulk_insert($fresult, $temptable);
@@ -737,7 +663,6 @@ class auth_plugin_cas extends auth_plugin_base {
             }
             commit_sql();
         }
-
         /// preserve our user database
         /// if the temp table is empty, it probably means that something went wrong, exit
         /// so as to avoid mass deletion of users; which is hard to undo
@@ -749,8 +674,6 @@ class auth_plugin_cas extends auth_plugin_base {
         } else {
             print "Got $count records from LDAP\n\n";
         }
-
-
 /// User removal
         // find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable (but how often do we mass delete?)
@@ -762,10 +685,8 @@ class auth_plugin_cas extends auth_plugin_base {
                         AND u.deleted=0
                         AND e.username IS NULL";
             $remove_users = get_records_sql($sql);
-
             if (!empty($remove_users)) {
                 print "User entries to remove: ". count($remove_users) . "\n";
-
                 begin_sql();
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == 2) {
@@ -802,7 +723,6 @@ class auth_plugin_cas extends auth_plugin_base {
             }
             unset($remove_users); // free mem!
         }
-
 /// Revive suspended users
         if (!empty($this->config->removeuser) and $this->config->removeuser == 1) {
             $sql = "SELECT u.id, u.username
@@ -810,10 +730,8 @@ class auth_plugin_cas extends auth_plugin_base {
                     WHERE e.username=u.username
                         AND u.auth='nologin'";
             $revive_users = get_records_sql($sql);
-
             if (!empty($revive_users)) {
                 print "User entries to be revived: ". count($revive_users) . "\n";
-
                 begin_sql();
                 foreach ($revive_users as $user) {
                     $updateuser = new object();
@@ -829,11 +747,8 @@ class auth_plugin_cas extends auth_plugin_base {
             } else {
                 print "No user entries to be revived\n";
             }
-
             unset($revive_users);
         }
-
-
 /// User Updates - time-consuming (optional)
         if ($do_updates) {
             // narrow down what fields we need to update
@@ -852,7 +767,6 @@ class auth_plugin_cas extends auth_plugin_base {
             }
             // print_r($all_keys); print_r($updatekeys);
             unset($all_keys); unset($key);
-
         } else {
             print "No updates to be done\n";
         }
@@ -862,7 +776,6 @@ class auth_plugin_cas extends auth_plugin_base {
                                       WHERE u.deleted=0 AND u.auth='cas'");
             if (!empty($users)) {
                 print "User entries to update: ". count($users). "\n";
-
                 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
                 if (!empty($this->config->creators) and !empty($this->config->memberattribute)
                   and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
@@ -870,11 +783,9 @@ class auth_plugin_cas extends auth_plugin_base {
                 } else {
                     $creatorrole = false;
                 }
-
                 begin_sql();
                 $xcount = 0;
                 $maxxcount = 100;
-
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth', array($user->username, $user->id));
                     if (!$this->update_user_record(addslashes($user->username), $updatekeys)) {
@@ -882,7 +793,6 @@ class auth_plugin_cas extends auth_plugin_base {
                     }
                     echo "\n";
                     $xcount++;
-
                     // update course creators if needed
                     if ($creatorrole !== false) {
                         if ($this->iscreator($user->username)) {
@@ -891,7 +801,6 @@ class auth_plugin_cas extends auth_plugin_base {
                             role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id, 'cas');
                         }
                     }
-
                     if ($xcount++ > $maxxcount) {
                         commit_sql();
                         begin_sql();
@@ -904,7 +813,6 @@ class auth_plugin_cas extends auth_plugin_base {
         } else { // end do updates
             print "No updates to be done\n";
         }
-
 /// User Additions
         // find users missing in DB that are in LDAP
         // note that get_records_sql wants at least 2 fields returned,
@@ -914,10 +822,8 @@ class auth_plugin_cas extends auth_plugin_base {
                 FROM $temptable e LEFT JOIN {$CFG->prefix}user u ON e.username = u.username
                 WHERE u.id IS NULL";
         $add_users = get_records_sql($sql); // get rid of the fat
-
         if (!empty($add_users)) {
             print "User entries to add: ". count($add_users). "\n";
-
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if (!empty($this->config->creators) and !empty($this->config->memberattribute)
               and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
@@ -925,11 +831,9 @@ class auth_plugin_cas extends auth_plugin_base {
             } else {
                 $creatorrole = false;
             }
-
             begin_sql();
             foreach ($add_users as $user) {
                 $user = $this->get_userinfo_asobj(addslashes($user->username));
-
                 // prep a few params
                 $user->modified   = time();
                 $user->confirmed  = 1;
@@ -938,9 +842,7 @@ class auth_plugin_cas extends auth_plugin_base {
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
-
                 $user = addslashes_recursive($user);
-
                 if ($id = insert_record('user',$user)) {
                     echo "\t"; print_string('auth_dbinsertuser', 'auth', array(stripslashes($user->username), $id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);
@@ -950,7 +852,6 @@ class auth_plugin_cas extends auth_plugin_base {
                 } else {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
                 }
-
                 // add course creators if needed
                 if ($creatorrole !== false and $this->iscreator(stripslashes($user->username))) {
                     role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'cas');
@@ -963,7 +864,6 @@ class auth_plugin_cas extends auth_plugin_base {
         }
         return true;
     }
-
     /**
      * Update a local user record from an external source.
      * This is a lighter version of the one in moodlelib -- won't do
@@ -976,10 +876,8 @@ class auth_plugin_cas extends auth_plugin_base {
      */
     function update_user_record($username, $updatekeys = false) {
         global $CFG;
-
         //just in case check text case
         $username = trim(moodle_strtolower($username));
-
         // get the current user record
         $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
         if (empty($user)) { // trouble
@@ -987,24 +885,19 @@ class auth_plugin_cas extends auth_plugin_base {
             print_error('auth_dbusernotexist','auth',$username);
             die;
         }
-
         // Protect the userid from being overwritten
         $userid = $user->id;
-
         if ($newinfo = $this->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
-
             if (empty($updatekeys)) { // all keys? this does not support removing values
                 $updatekeys = array_keys($newinfo);
             }
-
             foreach ($updatekeys as $key) {
                 if (isset($newinfo[$key])) {
                     $value = $newinfo[$key];
                 } else {
                     $value = '';
                 }
-
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if ($user->{$key} != $value) { // only update if it's changed
                         set_field('user', $key, addslashes($value), 'id', $userid);
@@ -1016,13 +909,11 @@ class auth_plugin_cas extends auth_plugin_base {
         }
         return get_record_select('user', "id = $userid AND deleted = 0");
     }
-
     /**
      * Bulk insert in SQL's temp table
      * @param array $users is an array of usernames
      */
     function ldap_bulk_insert($users, $temptable) {
-
         // bulk insert -- superfast with $bulk_insert_records
         $sql = 'INSERT INTO ' . $temptable . ' (username) VALUES ';
         // make those values safe
@@ -1032,9 +923,6 @@ class auth_plugin_cas extends auth_plugin_base {
         print "\t+ " . count($users) . " users\n";
         execute_sql($sql, false);
     }
-
-
-
     /**
      * Returns true if user should be coursecreator.
      *
@@ -1042,20 +930,15 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return boolean result
      */
     function iscreator($username) {
-
         if ((empty($this->config->attrcreators) && empty($this->config->groupecreators)) or empty($this->config->memberattribute)) {
             return null;
         }
-
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
-
 //test for groupe creator
-
 if (!empty($this->config->groupecreators))
    if ((boolean)$this->ldap_isgroupmember($extusername, $this->config->groupecreators))
         return true;
-
 //build filter for attrcreator
 if (!empty($this->config->attrcreators)) {
     $attrs = explode(";",$this->config->attrcreators);
@@ -1069,14 +952,12 @@ if (!empty($this->config->attrcreators)) {
     $filter .= "))";
     //search
     $result = $this->ldap_get_userlist($filter);
-
     if (count($result)!=0)
     	return true;
  	}
 
     return false;
     }
-
    /**
      * checks if user belong to specific group(s)
      *
@@ -1089,25 +970,19 @@ if (!empty($this->config->attrcreators)) {
     function ldap_isgroupmember($extusername='', $groupdns='') {
     // Takes username and groupdn(s) , separated by ;
     // Returns true if user is member of any given groups
-
         $ldapconnection = $this->ldap_connect();
-
         if (empty($extusername) or empty($groupdns)) {
             return false;
             }
-
         if ($this->config->memberattribute_isdn) {
             $memberuser = $this->ldap_find_userdn($ldapconnection, $extusername);
         } else {
             $memberuser = $extusername;
         }
-
         if (empty($memberuser)) {
             return false;
         }
-
         $groups = explode(";",$groupdns);
-
         $result = false;
         foreach ($groups as $group) {
             $group = trim($group);
@@ -1118,7 +993,6 @@ if (!empty($this->config->attrcreators)) {
             $search = ldap_read($ldapconnection, $group,  '('.$this->config->memberattribute.'='.$this->filter_addslashes($memberuser).')', array($this->config->memberattribute));
             if (!empty($search) and ldap_count_entries($ldapconnection, $search)) {
                 $info = $this->ldap_get_entries($ldapconnection, $search);
-
                 if (count($info) > 0 ) {
                     // user is member of group
                     $result = true;
@@ -1126,40 +1000,29 @@ if (!empty($this->config->attrcreators)) {
                 }
           }
         }
-
         return $result;
-
     }
-
    /**
      * return all usernames from ldap
      *
      * @return array
      */
-
     function ldap_get_userlist($filter="*") {
     /// returns all users from ldap servers
         $fresult = array();
-
         $ldapconnection = $this->ldap_connect();
-
         if ($filter=="*") {
            $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
         }
-
         $contexts = explode(";",$this->config->contexts);
-
         if (!empty($this->config->create_context)) {
               array_push($contexts, $this->config->create_context);
         }
-
         foreach ($contexts as $context) {
-
             $context = trim($context);
             if (empty($context)) {
                 continue;
             }
-
             if ($this->config->search_sub) {
                 //use ldap_search to find first user from subtree
                 $ldap_result = ldap_search($ldapconnection, $context,$filter,array($this->config->user_attribute));
@@ -1170,18 +1033,14 @@ if (!empty($this->config->attrcreators)) {
                                          $filter,
                                          array($this->config->user_attribute));
             }
-
             $users = $this->ldap_get_entries($ldapconnection, $ldap_result);
-
             //add found users to list
             for ($i=0;$i<count($users);$i++) {
                 array_push($fresult, ($users[$i][$this->config->user_attribute][0]) );
             }
         }
-
         return $fresult;
     }
-
     /**
      * return entries from ldap
      *
@@ -1190,32 +1049,31 @@ if (!empty($this->config->attrcreators)) {
      *
      * @return array ldap-entries
      */
-
     function ldap_get_entries($conn, $searchresult) {
     //Returns values like ldap_get_entries but is
     //binary compatible
         $i=0;
         $fresult=array();
         $entry = ldap_first_entry($conn, $searchresult);
-
         do {
             $attributes = @ldap_get_attributes($conn, $entry);
             for ($j=0; $j<$attributes['count']; $j++) {
-                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
+                $values = ldap_get_values_len($conn, $entry,$attributes[$j]);				
+
                 if (is_array($values)) {
-                $fresult[$i][$attributes[$j]] = $values;
+                $fresult[$i][strtolower($attributes[$j])] = $values;
                 }
                 else {
-                    $fresult[$i][$attributes[$j]] = array($values);
+                    $fresult[$i][strtolower($attributes[$j])] = array($values);
                 }
             }
             $i++;
         }
         while ($entry = @ldap_next_entry($conn, $entry));
         //were done
+
         return ($fresult);
     }
-
     /**
      * Sync roles for this user
      *
@@ -1226,11 +1084,9 @@ if (!empty($this->config->attrcreators)) {
         if ($iscreator === null) {
             return; //nothing to sync - creators not configured
         }
-
         if ($roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
             $creatorrole = array_shift($roles);      // We can only use one, let's use the first one
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-
             if ($iscreator) { // Following calls will not create duplicates
                 role_assign($creatorrole->id, $user->id, 0, $systemcontext->id, 0, 0, 0, 'cas');
             } else {
@@ -1239,7 +1095,6 @@ if (!empty($this->config->attrcreators)) {
             }
         }
     }
-
    /**
      * Quote control characters in texts used in ldap filters - see rfc2254.txt
      *
@@ -1251,8 +1106,5 @@ if (!empty($this->config->attrcreators)) {
                             array('\\2a', '\\28', '\\29', '\\00'), $text);
         return $text;
     }
-
 }
-
-
 ?>
