@@ -75,7 +75,7 @@ class question_essay_qtype extends default_questiontype {
 
         // feedback handling
         $feedback = '';
-        if ($options->feedback) {
+        if ($options->feedback && !empty($answers)) {
             foreach ($answers as $answer) {
                 $feedback = format_text($answer->feedback, '', $formatoptions, $cmoptions->course);
             }
