@@ -80,7 +80,7 @@ function display() {
                 
                 print_header();
                 print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id),
-                        "center", "", "", "20");
+                        "center clearfix", "", "", "20");
                 print_footer($course);
             } else {                           /// Make a page and a pop-up window
 
@@ -95,7 +95,7 @@ function display() {
                 echo '</script>';
 
                 if (trim(strip_tags($resource->summary))) {
-                    print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+                    print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center clearfix");
                 }
 
                 $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" onclick=\"this.target='resource{$resource->id}'; return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
@@ -114,7 +114,7 @@ function display() {
                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource),
                     navmenu($course, $cm));
 
-            print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center", "", "", "20");
+            print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center clearfix", "", "", "20");
 
             $strlastmodified = get_string("lastmodified");
             echo "<div class=\"modified\">$strlastmodified: ".userdate($resource->timemodified)."</div>";
