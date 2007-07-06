@@ -21,6 +21,8 @@ $settings->add(new admin_setting_configselect('grade_report_grandtotalsdisplayty
                                           get_string('configgrandtotalsdisplaytype', 'grades'), false, 
                                           array( '0' => 'raw', 
                                                  '1' => 'percentage')));
+$settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
+                                            get_string('configshowcalculations', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_string('showeyecons', 'grades'),
                                             get_string('configshoweyecons', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showgroups', get_string('showgroups', 'grades'),

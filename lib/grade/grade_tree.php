@@ -61,11 +61,13 @@ class grade_tree {
      * objects for the given courseid. Full objects are instantiated.
      * and renumbering.
      * @param int $courseid
-     * @param boolean $fillers include fillers and colspans, make the levels var "rectabgular"
+     * @param boolean $fillers include fillers and colspans, make the levels var "rectangular"
      * @param boolean $include_grades
-     * &param boolean $category_grade_last category grade item is the last child
+     * @param boolean $category_grade_last category grade item is the last child
+     * @param boolean $aggregation_view Either full view (0) or compact view (1)
      */
-    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true) {
+    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true, 
+                        $aggregation_view=GRADER_REPORT_AGGREGATION_VIEW_FULL) {
         global $USER;
 
         $this->courseid = $courseid;
@@ -93,6 +95,9 @@ class grade_tree {
 
     /**
      * Static recursive helper - makes the grade_item for category the last children
+     * @static
+     * @param array $element The seed of the recursion
+     * @return void
      */
     function category_grade_last(&$element) {
         if (empty($element['children'])) {
@@ -112,6 +117,11 @@ class grade_tree {
 
     /**
      * Static recursive helper - fills the levels array, useful when accessing tree elements of one level
+     * @static
+     * @param int $levels
+     * @param array $element The seed of the recursion
+     * @param int $depth
+     * @return void
      */
     function fill_levels(&$levels, &$element, $depth) {
         if (!array_key_exists($depth, $levels)) {
