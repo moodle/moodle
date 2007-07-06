@@ -55,12 +55,16 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 // Get the user preferences
 $perpage  = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
 $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
+$displaytotals = get_user_preferences('grade_report_showgrandtotals', $CFG->grade_report_showgrandtotals);
+$displaygrouptotals = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
 $aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
 
 // Override perpage if set in URL
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
     $perpage = $perpageurl;
 }
+
+/// setting up groups
 
 // Prepare language strings
 $strsortasc  = get_string('sortasc', 'grades');
@@ -70,6 +74,23 @@ $strsortdesc = get_string('sortdesc', 'grades');
 $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
 // base url for paging
 $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
+
+/// find out current groups mode
+$course = get_record('course', 'id', $courseid);
+$groupmode = $course->groupmode;
+$currentgroup = setup_and_print_groups($course, $groupmode, $baseurl);
+
+// update paging after group
+$baseurl .= 'group='.$currentgroup.'&amp;';
+$pbarurl .= 'group='.$currentgroup.'&amp;';
+
+if ($currentgroup) {
+    $groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
+    $groupwheresql = " AND gm.groupid = $currentgroup ";
+} else {
+    $groupsql = '';
+    $groupwheresql = '';
+}
 
 // Grab the grade_tree for this course
 $gtree = new grade_tree($courseid, true, false, $aggregation_position);
@@ -183,14 +204,18 @@ if (is_numeric($sortitemid)) {
             FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                  {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $sortitemid)
                  LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                 $groupsql
             WHERE ra.roleid in ($gradebookroles)
-                AND ra.contextid ".get_related_contexts_string($context)."
+                 $groupwheresql
+            AND ra.contextid ".get_related_contexts_string($context)."
             ORDER BY g.finalgrade $sortorder";
     $users = get_records_sql($sql, $perpage * $page, $perpage);
 } else {
     // default sort
     // get users sorted by lastname
-    $users = get_role_users(@implode(',', $CFG->gradebookroles), $context, false, 'u.id, u.firstname, u.lastname', 'u.'.$sortitemid .' '. $sortorder, false, $page * $perpage, $perpage);
+    $users = get_role_users(@implode(',', $CFG->gradebookroles), $context, false, 'u.id, u.firstname, u.lastname', 'u.'.$sortitemid .' '. $sortorder, false, $page * $perpage, $perpage, $currentgroup);
+    // need to cut users down by groups
+    
 }
 
 /// count total records for paging
@@ -199,8 +224,10 @@ $countsql = "SELECT COUNT(DISTINCT u.id)
             FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                  {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $sortitemid)
                  LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                 $groupsql
             WHERE ra.roleid in ($gradebookroles)
-                AND ra.contextid ".get_related_contexts_string($context);
+                 $groupwheresql
+            AND ra.contextid ".get_related_contexts_string($context);
 $numusers = count_records_sql($countsql);
 
 // print_object($users); // debug
@@ -220,7 +247,7 @@ $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.loc
               {$CFG->prefix}grade_grades g
         LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.id = gt.gradeid
         WHERE g.itemid = gi.id
-              AND gi.courseid = $courseid $userselect";
+        AND gi.courseid = $courseid $userselect";
 
 ///print_object($grades); //debug
 
@@ -315,7 +342,6 @@ foreach ($gtree->levels as $key=>$row) {
 
         if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
             $headerhtml .= '<td class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</td>';
-
         } else if ($type == 'category') {
             $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
 
@@ -325,7 +351,6 @@ foreach ($gtree->levels as $key=>$row) {
             }
 
             $headerhtml .= '</td>';
-
         } else {
             if ($element['object']->id == $sortitemid) {
                 if ($sortorder == 'ASC') {
@@ -360,6 +385,7 @@ foreach ($gtree->levels as $key=>$row) {
 
             $items[$element['object']->sortorder] =& $element['object'];
         }
+        
     }
 
     $headerhtml .= '</tr>';
@@ -379,16 +405,7 @@ foreach ($users as $userid => $user) {
 
         if (isset($finalgrades[$userid][$item->id])) {
 
-            $gradeval = $finalgrades[$userid][$item->id]->finalgrade;
-
-            // trim trailing "0"s
-            if (isset($gradeval)) {
-                if ($gradeval != 0) {
-                    $gradeval = trim($gradeval, ".0");
-                } else {
-                    $gradeval = 0;
-                }
-            }
+            $gradeval = get_grade_clean($finalgrades[$userid][$item->id]->finalgrade);
 
             $grade = new grade_grades($finalgrades[$userid][$item->id], false);
             $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
@@ -437,7 +454,7 @@ foreach ($users as $userid => $user) {
                     if ((int) $gradeval < 1) {
                         $studentshtml .= '-';
                     } else {
-                        $studentshtml .= round($scales[$gradeval-1], $decimals);
+                        $studentshtml .= $scales[$gradeval-1];
                     }
                 } else {
                     // no such scale, throw error?
@@ -461,8 +478,81 @@ foreach ($users as $userid => $user) {
     $studentshtml .= '</tr>';
 }
 
+// if user preference to display group sum
+if ($currentgroup && ($displaygrouptotals || 1)) {
+    
+/** SQL for finding group sum */
+    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum 
+        FROM {$CFG->prefix}grade_items gi LEFT JOIN
+             {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
+             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN 
+             {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+             $groupsql
+        WHERE gi.courseid = $courseid
+             $groupwheresql
+        AND ra.roleid in ($gradebookroles)
+        AND ra.contextid ".get_related_contexts_string($context)."
+        GROUP BY g.itemid";
+
+    $groupsum = array();
+    $sums = get_records_sql($SQL);
+    foreach ($sums as $itemid => $csum) {
+        $groupsum[$itemid] = $csum;
+    }
+      
+    $groupsumhtml = '<tr><th>Group total</th>';
+    foreach ($items as $item) {
+        if (!isset($groupsum[$item->id])) {
+            $groupsumhtml .= '<td>-</td>';      
+        } else {
+            $sum = $groupsum[$item->id];
+            $groupsumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+        }
+    }
+    $groupsumhtml .= '</tr>';
+} else {
+    $groupsumhtml = '';  
+}
+
+// user preference not implemented yet
+if ($displaytotals || 1) {
+
+/** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
+
+    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum 
+        FROM {$CFG->prefix}grade_items gi LEFT JOIN
+             {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
+             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN 
+             {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+        WHERE gi.courseid = $courseid
+        AND ra.roleid in ($gradebookroles)
+        AND ra.contextid ".get_related_contexts_string($context)."
+        GROUP BY g.itemid";
+
+    $classsum = array();
+    $sums = get_records_sql($SQL);
+    foreach ($sums as $itemid => $csum) {
+        $classsum[$itemid] = $csum;
+    }
+
+    $gradesumhtml = '<tr><th>Total</th>';
+    foreach ($items as $item) {
+        if (!isset($classsum[$item->id])) {
+            $gradesumhtml .= '<td>-</td>';      
+        } else {
+            $sum = $classsum[$item->id];
+            $gradesumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+        }
+    }
+    $gradesumhtml .= '</tr>';
+} else {
+    $gradesumhtml = '';  
+}
+
 $reporthtml = "<table class=\"boxaligncenter\">$headerhtml";
 $reporthtml .= $studentshtml;
+$reporthtml .= $groupsumhtml;
+$reporthtml .= $gradesumhtml;
 $reporthtml .= "</table>";
 
 // print submit button
@@ -480,5 +570,17 @@ echo $reporthtml;
 if ($USER->gradeediting) {
     echo '<div style="text-align:center"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
+}
+
+// remove trailing 0s and "."s
+function get_grade_clean($gradeval) {
+    
+    if ($gradeval != 0) {
+        $gradeval = trim($gradeval, ".0");
+    } else {
+        $gradeval = 0;
+    }
+    
+    return $gradeval;
 }
 ?>
