@@ -6,14 +6,14 @@
     require_once('../../lib.php');
     require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
     
-    $mycourseid = required_param('id', PARAM_INT);    // Course id
+    $id = required_param('id', PARAM_INT);    // Course id
     
-    if (! $course = get_record('course', 'id', $mycourseid) ) {
+    if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
     }
     
     require_login($course->id);
-    $context = get_context_instance(CONTEXT_COURSE, $mycourseid);
+    $context = get_context_instance(CONTEXT_COURSE, $id);
     
     
     if (!has_capability('moodle/course:managegroups', $context)) {
@@ -78,10 +78,12 @@
         // check for valid field names
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
-            if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
+            if ( !(isset($required[$h]) or 
+                isset($optionalDefaults[$h]) or 
+                isset($optional[$h])) ) {
                 error(get_string('invalidfieldname', 'error', $h), 'index.php?id='.$id.'&amp;sesskey='.$USER->sesskey);
             }
-            if ($required[$h]) {
+            if ( isset($required[$h]) ) {
                 $required[$h] = 2;
             }
         }
@@ -112,7 +114,7 @@
                 // add fields to object $user
                 foreach ($record as $name => $value) {
                     // check for required values
-                    if ($required[$name] and !$value) {
+                    if (isset($required[$name]) and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
                               get_string('erroronline', 'error', $linenum) .". ".
                               get_string('processingstops', 'error'), 
@@ -149,7 +151,7 @@
                 }
                 //else juse use current id
                 else{
-                    $newgroup->courseid = $mycourseid;
+                    $newgroup->courseid = $id;
                 }
                 
                 //if courseid is set
@@ -162,20 +164,20 @@
                     
                     ///Users cannot upload groups in courses they cannot update.
                     if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
-                        notify("$newgroup->name ".get_string('notaddedto').$newgroup->coursename.get_string('notinyourcapacity'));
+                        notify( get_string('nopermissionforcreation','group',$newgroup->name) );
                     } else {
                         if ( $group = groups_group_name_exists($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup->courseid, $newgroup)) ) {
     
                             //Record not added - probably because group is already registered
                             //In this case, output groupname from previous registration
                             if ($group) {
-                                notify("$newgroup->name ".get_string('groupexistforcourse', 'error', $groupname));
+                                notify("$newgroup->name :".get_string('groupexistforcourse', 'error', $groupname));
                             } else {
                                 notify(get_string('groupnotaddederror', 'error', $groupname));
                             } 
                         }  
                         else {
-                            notify(get_string('group')." $newgroup->name ".get_string('addedsuccessfully'));
+                            notify( get_string('groupaddedsuccesfully', 'group', $newgroup->name) );
                         }
                     }
                 } //close courseid validity check
