@@ -48,3 +48,7 @@ form.mform input {
 form.mform textarea {
  margin-left: -10px;
 }
+
+.que .info {
+  margin-left: 0.6em;
+}

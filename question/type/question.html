@@ -16,11 +16,13 @@
     <?php } ?>
   </div>
   <div class="content">
-    <?php $this->print_question_formulation_and_controls($question, $state, $cmoptions, $options); ?>
-    <div class="grading">
-      <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
-    </div>
-    <?php if ($comment) { ?>
+    <?php $this->print_question_formulation_and_controls($question, $state, $cmoptions, $options);
+    if ($generalfeedback) { ?>
+      <div class="generalfeedback">
+        <?php echo $generalfeedback ?>
+      </div>
+    <?php }
+    if ($comment) { ?>
       <div class="comment">
         <?php
           echo get_string('comment', 'quiz').': ';
@@ -28,12 +30,10 @@
         ?>
       </div>
     <?php }
-    echo $commentlink;
-    if ($generalfeedback) { ?>
-      <div class="generalfeedback">
-        <?php echo $generalfeedback ?>
-      </div>
-    <?php }
+    echo $commentlink;  ?>
+    <div class="grading">
+      <?php $this->print_question_grading_details($question, $state, $cmoptions, $options); ?>
+    </div><?php
     if ($history) { ?>
       <div class="history">
         <?php

@@ -148,6 +148,22 @@
     } else {
         print_heading(format_string($quiz->name));
     }
+    if ($isteacher and $attempt->userid == $USER->id) {
+        // the teacher is at the end of a preview. Print button to start new preview
+        unset($buttonoptions);
+        $buttonoptions['q'] = $quiz->id;
+        $buttonoptions['forcenew'] = true;
+        echo '<div class="controls">';
+        print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
+        echo '</div>';
+    } else { // print number of the attempt
+        print_heading(get_string('reviewofattempt', 'quiz', $attempt->attempt));
+    }
+
+    // print javascript button to close the window, if necessary
+    if (!$isteacher) {
+        include('attempt_close_js.php');
+    }
 
 /// Print infobox
 
@@ -167,14 +183,16 @@
     } else {
         $timetaken = get_string('unfinished', 'quiz');
     }
-
-    $table->align  = array("right", "left");
+    echo '<table class="generaltable generalbox quizreviewsummary"><tbody>';
     if ($attempt->userid <> $USER->id) {
-       $student = get_record('user', 'id', $attempt->userid);
-       $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-       $table->data[] = array($picture, '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student, true).'</a>');
+        $student = get_record('user', 'id', $attempt->userid);
+        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
+        echo '<tr><th scope="row" class="cell">', $picture, '</th><td class="cell"><a href="', $CFG->wwwroot,
+            '/user/view.php?id=', $student->id, '&amp;course='.$course->id.'">',
+            fullname($student, true), '</a></td></tr>';
     }
-    if (has_capability('mod/quiz:grade', $context) and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+    if (has_capability('mod/quiz:grade', $context) and
+            count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
         // print list of attempts
         $attemptlist = '';
         foreach ($attempts as $at) {
@@ -182,16 +200,20 @@
                 ? '<strong>'.$at->attempt.'</strong>, '
                 : '<a href="review.php?attempt='.$at->id.($showall?'&amp;showall=true':'').'">'.$at->attempt.'</a>, ';
         }
-        $table->data[] = array(get_string('attempts', 'quiz').':', trim($attemptlist, ' ,'));
+        echo '<tr><th scope="row" class="cell">', get_string('attempts', 'quiz'), '</th><td class="cell">',
+                trim($attemptlist, ' ,'), '</td></tr>';
     }
 
-    $table->data[] = array(get_string('startedon', 'quiz').':', userdate($attempt->timestart));
+    echo '<tr><th scope="row" class="cell">', get_string('startedon', 'quiz'), '</th><td class="cell">',
+            userdate($attempt->timestart), '</td></tr>';
     if ($attempt->timefinish) {
-        $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
-        $table->data[] = array("$strtimetaken:", $timetaken);
+        echo '<tr><th scope="row" class="cell">', $strtimecompleted, '</th><td class="cell">',
+                userdate($attempt->timefinish), '</td></tr>';
+        echo '<tr><th scope="row" class="cell">', $strtimetaken, '</th><td class="cell">',
+                $timetaken, '</td></tr>';
     }
     if (!empty($overtime)) {
-        $table->data[] = array("$stroverdue:", $overtime);
+        echo '<tr><th scope="row" class="cell">', $stroverdue, '</th><td class="cell">',$overtime, '</td></tr>';
     }
     //if the student is allowed to see their score
     if ($options->scores) {
@@ -206,30 +228,17 @@
             $a->grade = $grade;
             $a->maxgrade = $quiz->grade;
             $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
-            $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
-            $table->data[] = array("$strgrade:", get_string('outof', 'quiz', $a));
+            echo '<tr><th scope="row" class="cell">', $strscore, '</th><td class="cell">',
+                "$rawscore/$quiz->sumgrades ($percentage %)", '</td></tr>';
+            echo '<tr><th scope="row" class="cell">', $strgrade, '</th><td class="cell">',
+                get_string('outof', 'quiz', $a), '</td></tr>';
         }
     }
     if ($options->overallfeedback && $feedback) {
-        $table->data[] = array(get_string('feedback', 'quiz'), $feedback);
+        echo '<tr><th scope="row" class="cell">', get_string('feedback', 'quiz'), '</th><td class="cell">',
+                $feedback, '</td></tr>';
     }
-    if ($isteacher and $attempt->userid == $USER->id) {
-        // the teacher is at the end of a preview. Print button to start new preview
-        unset($buttonoptions);
-        $buttonoptions['q'] = $quiz->id;
-        $buttonoptions['forcenew'] = true;
-        echo '<div class="controls">';
-        print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
-        echo '</div>';
-    } else { // print number of the attempt
-        print_heading(get_string('reviewofattempt', 'quiz', $attempt->attempt));
-    }
-    print_table($table);
-
-    // print javascript button to close the window, if necessary
-    if (!$isteacher) {
-        include('attempt_close_js.php');
-    }
+    echo '</tbody></table>';
 
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
@@ -255,9 +264,6 @@
         $options->validation = QUESTION_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
         // Print the question
-        if ($i > 0) {
-            echo "<br />\n";
-        }
         print_question($questions[$i], $states[$i], $number, $quiz, $options);
         $number += $questions[$i]->length;
     }

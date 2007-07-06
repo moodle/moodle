@@ -2418,22 +2418,27 @@ body#message-messages {
 
 .que {
   text-align: left;
-  margin: 10px auto 15px auto;
+  margin: 0 auto 1.8em auto;
   border: 1px solid;
   clear: both;
 }
 .que .info {
   float: left;
-  margin: 5px 0 5px 5px;
+  margin: 0.5em 0 0.5em 1.2em;
   width: 8%;
-}
-.que .grade {
-  margin-top: 0.5em;
 }
 .que .content {
   float: left;
-  margin: 5px 0 5px 5px;
-  width: 88%;
+  margin: 0.5em 1.2em 0.5em 0;
+  width: 85%;
+}
+.que.description .info {
+  display: none;
+}
+.que.description .content {
+  margin-left: 1.2em;
+  float: none;
+  width: auto;
 }
 .que .qtext {
   margin-bottom: 1.5em;
@@ -2492,25 +2497,24 @@ body#message-messages {
 }
 .calculated .answer,
 .numerical .answer,
-.shortanswer .answer,
-.truefalse .answer {
-  padding: 0.3em 0 0.3em 0.3em;
-}
-.calculated .answer input,
-.numerical .answer input,
-.shortanswer .answer input {
-  width: 85%;
+.shortanswer .answer {
+  padding: 0.3em;
+  width: auto;
 }
 .truefalse .answer span {
   float: left;
   clear: left;
-  padding: 0.2em 0;
+  padding: 0.3em;
+  width: 100%;
 }
 .que .grading,
 .que .comment,
 .que .commentlink,
 .que .generalfeedback,
 .que .history {
+  margin-top: 0.5em;
+}
+.que .grade {
   margin-top: 0.5em;
 }
 
@@ -3343,10 +3347,57 @@ body#mod-forum-search .introcontent {
  *** Modules: Quiz
  ***/
 
+#mod-quiz-view .quizinfo {
+  text-align: center;
+}
+#mod-quiz-view #page .quizgradefeedback,
+#mod-quiz-view #page .quizattempt
+{
+  text-align: center;
+}
 
 #mod-quiz-attempt #page {
   text-align: center;
 }
+#mod-quiz-attempt .pagingbar {
+  margin: 1.5em auto;
+}
+
+body#question-preview .quemodname,
+body#question-preview .controls
+{
+  text-align: center;
+}
+body#question-preview .quemodname, body#question-preview .controls {
+  text-align: center;
+}
+
+#mod-quiz-review #page .controls {
+  text-align: center;
+  margin: 1.5em auto;
+}
+#mod-quiz-review .pagingbar {
+  margin: 1.5em auto;
+}
+#mod-quiz-review .pagingbar {
+  margin: 1.5em auto;
+}
+table.quizreviewsummary {
+  margin-bottom: 1.8em;
+  width: 100%;
+}
+table.quizreviewsummary tr {
+}
+table.quizreviewsummary th.cell {
+  padding: 1px 0.5em 1px 1em;
+  font-weight: bold;
+  text-align: right;
+  width: 10em;
+}
+table.quizreviewsummary td.cell {
+  padding: 1px 1em 1px 0.5em;
+}
+
 #mod-quiz-edit #page .controls,
 #mod-quiz-edit #page .attemptsnotice
 {
@@ -3358,11 +3409,10 @@ body#mod-forum-search .introcontent {
 #mod-quiz-edit #showbreaks {
   margin-top: 0.7em;
 }
-body#question-preview .quemodname,
-body#question-preview .controls
-{
+.quizquestionlistcontrols {
   text-align: center;
 }
+
 body#mod-quiz-report table#attempts,
 body#mod-quiz-report table#commands,
 body#mod-quiz-report table#itemanalysis
@@ -3402,23 +3452,6 @@ body#mod-quiz-report table#attempts .picture {
   text-align: center !important;
 }
 body#mod-quiz-report .controls {
-  text-align: center;
-}
-#mod-quiz-review #page .controls {
-  text-align: center;
-}
-#mod-quiz-view .quizinfo {
-  text-align: center;
-}
-#mod-quiz-view #page .quizgradefeedback,
-#mod-quiz-view #page .quizattempt
-{
-  text-align: center;
-}
-.quizquestionlistcontrols {
-  text-align: center;
-}
-body#question-preview .quemodname, body#question-preview .controls {
   text-align: center;
 }
 

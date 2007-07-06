@@ -467,7 +467,6 @@
         </script>
         <?php
         quiz_print_navigation_panel($page, $numpages);
-        echo "<br />\n";
     }
 
 /// Print all the questions
@@ -479,9 +478,6 @@
     foreach ($pagequestions as $i) {
         $options = quiz_get_renderoptions($quiz->review, $states[$i]);
         // Print the question
-        if ($i > 0) {
-            echo "<br />\n";
-        }
         print_question($questions[$i], $states[$i], $number, $quiz, $options);
         save_question_session($questions[$i], $states[$i]);
         $number += $questions[$i]->length;
@@ -503,9 +499,7 @@
 
     // Print the navigation panel if required
     if ($numpages > 1) {
-        echo "<br />\n";
         quiz_print_navigation_panel($page, $numpages);
-        echo '<br />';
     }
 
     // Finish the form

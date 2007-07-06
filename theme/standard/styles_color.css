@@ -761,8 +761,7 @@ table.message_search_results td {
 }
 .calculated .answer,
 .numerical .answer,
-.shortanswer .answer,
-.truefalse .answer {
+.shortanswer .answer {
     background-color: #EEE;
 }
 .que .feedback {
@@ -963,13 +962,16 @@ table.message_search_results td {
  *** Modules: Quiz
  ***/
 
-/* body#mod-quiz-report table#attempts td {
-  border-color: #dddddd;
+table.quizattemptsummary .bestrow td {
+  background-color: #e8e8e8;
 }
-body#mod-quiz-report table#attempts .r1 {
-  background-color: #eeeeee;
+
+table.quizreviewsummary th.cell {
+  background: #f0f0f0;
 }
- */
+table.quizreviewsummary td.cell {
+  background: #fafafa;
+}
 
 /***
  *** Modules: Resource

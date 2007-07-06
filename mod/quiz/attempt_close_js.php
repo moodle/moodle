@@ -1,6 +1,6 @@
 <?php defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');?>
 
-<div class="boxaligncenter">
+<div class="controls">
 <?php
 if (!empty($popup)) {
 ?>

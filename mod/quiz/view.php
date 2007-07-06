@@ -175,6 +175,8 @@
         // Print table with existing attempts
         if ($attempts) {
 
+            print_heading('Summary of your previous attempts');
+
             // Work out which columns we need, taking account what data is available in each attempt.
             list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
@@ -186,17 +188,18 @@
             $overallfeedback = $feedbackcolumn && $alloptions->overallfeedback;
 
             // prepare table header
+            $table->class = 'generaltable quizattemptsummary';
             $table->head = array($strattempt, $strtimecompleted);
             $table->align = array("center", "left");
             $table->size = array("", "");
             if ($markcolumn) {
                 $table->head[] = "$strmarks / $quiz->sumgrades";
-                $table->align[] = 'right';
+                $table->align[] = 'center';
                 $table->size[] = '';
             }
             if ($gradecolumn) {
                 $table->head[] = "$strgrade / $quiz->grade";
-                $table->align[] = 'right';
+                $table->align[] = 'center';
                 $table->size[] = '';
             }
             if ($feedbackcolumn) {
@@ -216,7 +219,7 @@
                 $row = array();
 
                 // Add the attempt number, making it a link, if appropriate.
-                $row[] = make_review_link('#' . $attempt->attempt, $quiz, $attempt);
+                $row[] = make_review_link($attempt->attempt, $quiz, $attempt);
 
                 // prepare strings for time taken and date completed
                 $timetaken = '';
@@ -253,11 +256,10 @@
 
                 if ($gradecolumn) {
                     if ($attemptoptions->scores) {
+                        $formattedgrade = $attemptgrade;
                         // highlight the highest grade if appropriate
-                        if ($overallstats && !is_null($mygrade) && $attemptgrade == $mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
-                            $formattedgrade = "<span class='highlight'>$attemptgrade</span>";
-                        } else {
-                            $formattedgrade = $attemptgrade;
+                        if ($overallstats && $numattempts > 1 && !is_null($mygrade) && $attemptgrade == $mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
+                            $table->rowclass[$attempt->attempt] = 'bestrow';
                         }
 
                         $row[] = make_review_link($formattedgrade, $quiz, $attempt);
@@ -278,7 +280,7 @@
                     $row[] = $timetaken;
                 }
 
-                $table->data[] = $row;
+                $table->data[$attempt->attempt] = $row;
             } // End of loop over attempts.
             print_table($table);
         }
