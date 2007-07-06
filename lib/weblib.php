@@ -3879,7 +3879,8 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  * Print a nicely formatted table.
  *
  * @param array $table is an object with several properties.
- *     <ul<li>$table->head - An array of heading names.
+ * <ul>
+ *     <li>$table->head - An array of heading names.
  *     <li>$table->align - An array of column alignments
  *     <li>$table->size  - An array of column sizes
  *     <li>$table->wrap - An array of "nowrap"s or nothing
@@ -3888,6 +3889,9 @@ function print_png($url, $sizex, $sizey, $return, $parameters='alt=""') {
  *     <li>$table->tablealign  - Align the whole table
  *     <li>$table->cellpadding  - Padding on each cell
  *     <li>$table->cellspacing  - Spacing between cells
+ *     <li>$table->class - class attribute to put on the table
+ *     <li>$table->id - id attribute to put on the table.
+ *     <li>$table->rowclass[] - classes to add to particular rows.
  * </ul>
  * @param bool $return whether to return an output string or echo now
  * @return boolean or $string
@@ -3974,7 +3978,10 @@ function print_table($table, $return=false) {
         $oddeven = 1;
         foreach ($table->data as $key => $row) {
             $oddeven = $oddeven ? 0 : 1;
-            $output .= '<tr class="r'.$oddeven.'">'."\n";
+            if (!isset($table->rowclass[$key])) {
+                $table->rowclass[$key] = '';
+            }
+            $output .= '<tr class="r'.$oddeven.' '.$table->rowclass[$key].'">'."\n";
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
