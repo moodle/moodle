@@ -4,7 +4,6 @@ require_once($CFG->libdir.'/formslib.php');
 
 /**
  * First implementation of the preferences in the form of a moodleform.
- * TODO add submit button
  * TODO add "reset to site defaults" button
  * TODO show site defaults near each setting
  */
