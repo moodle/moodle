@@ -32,4 +32,22 @@ function question_check_no_rqp_questions($result) {
     }
     return $result;
 }
+
+function question_remove_rqp_qtype() {
+    $result = true;
+    
+    $table = new XMLDBTable('question_rqp_states');
+    $result = $result && drop_table($table);
+    
+    $table = new XMLDBTable('question_rqp');
+    $result = $result && drop_table($table);
+    
+    $table = new XMLDBTable('question_rqp_types');
+    $result = $result && drop_table($table);
+    
+    $table = new XMLDBTable('question_rqp_servers');
+    $result = $result && drop_table($table);
+    
+    return $result;
+}
 ?>

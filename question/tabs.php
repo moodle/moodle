@@ -18,7 +18,7 @@
     $tabs = array();
     $inactive = array();
     $row  = array();
-    questionbank_navigation_tabs($row, $context, $course->id);
+    questionbank_navigation_tabs($row, $context, 'courseid='.$course->id);
     $tabs[] = $row;
 
     print_tabs($tabs, $currenttab, array());

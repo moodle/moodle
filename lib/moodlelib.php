@@ -2479,6 +2479,34 @@ function get_user_fieldnames() {
 }
 
 /**
+ * Creates the default "guest" user. Used both from
+ * admin/index.php and login/index.php
+ * @return mixed user object created or boolean false if the creation has failed
+ */
+function create_guest_record() {
+
+    global $CFG;
+
+    $guest->auth        = 'manual';
+    $guest->username    = 'guest';
+    $guest->password    = hash_internal_user_password('guest');
+    $guest->firstname   = addslashes(get_string('guestuser'));
+    $guest->lastname    = ' ';
+    $guest->email       = 'root@localhost';
+    $guest->description = addslashes(get_string('guestuserinfo'));
+    $guest->mnethostid  = $CFG->mnet_localhost_id;
+    $guest->confirmed   = 1;
+    $guest->lang        = $CFG->lang;
+    $guest->timemodified= time();
+
+    if (! $guest->id = insert_record("user", $guest)) {
+        return false;
+    }
+
+    return $guest;
+}
+
+/**
  * Creates a bare-bones user record
  *
  * @uses $CFG

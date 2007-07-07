@@ -26,19 +26,7 @@
 
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists('user', 'username', 'guest')) {
-        $guest = new object();
-        $guest->auth        = 'manual'; 
-        $guest->username    = 'guest'; 
-        $guest->password    = hash_internal_user_password('guest');
-        $guest->firstname   = addslashes(get_string('guestuser'));
-        $guest->lastname    = ' ';
-        $guest->email       = 'root@localhost';
-        $guest->description = addslashes(get_string('guestuserinfo'));
-        $guest->confirmed   = 1;
-        $guest->lang        = $CFG->lang;
-        $guest->timemodified= time();
-
-        if (! $guest->id = insert_record('user', $guest)) {
+        if (! $guest = create_guest_record()) {
             notify('Could not create guest user record !!!');
         }
     }

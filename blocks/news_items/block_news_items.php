@@ -29,46 +29,29 @@ class block_news_items extends block_base {
             $text = '';
 
             if (!$forum = forum_get_course_forum($COURSE->id, 'news')) {
-                return $this->content;
+                return '';
             }
 
+            if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $COURSE->id)) {
+                return '';
+            }
+
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         /// First work out whether we can post to this group and if so, include a link
+            $groupmode    = groupmode($COURSE, $cm);
+            $currentgroup = get_and_set_current_group($COURSE, $groupmode);
+            
 
-            if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $COURSE->id))) {     /// Teachers can always post
-                $visiblegroups = -1; 
-
+            if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context)) {
                 $text .= '<div class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
                           get_string('addanewtopic', 'forum').'</a>...</div>';
-
-            } else {                              /// Check the group situation
-                $currentgroup = get_current_group($COURSE->id);
-
-                if (forum_user_can_post_discussion($forum, $currentgroup)) {
-                    $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
-                              get_string('addanewtopic', 'forum').'</a>...</div>';
-                }
-
-                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $COURSE->id)) {
-                    $this->content->text = $text;
-                    return $this->content;
-                }
-    
-                $groupmode = groupmode($COURSE, $cm);
-    
-                /// Decides if current user is allowed to see ALL the current discussions or not
-    
-                if (!$currentgroup and ($groupmode != SEPARATEGROUPS) ) {
-                    $visiblegroups = -1;
-                } else {
-                    $visiblegroups = $currentgroup;
-                }
             }
 
         /// Get all the recent discussions we're allowed to see
 
             if (! $discussions = forum_get_discussions($forum->id, 'p.modified DESC', 0, false, 
-                                                       $visiblegroups, $COURSE->newsitems) ) {
+                                                       $currentgroup, $COURSE->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
                 return $this->content;

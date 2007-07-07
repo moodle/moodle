@@ -3,7 +3,7 @@
     require('../../../../config.php');
     require('../../lib.php');
 
-    $choose = required_param('choose');
+    $choose = required_param('choose', PARAM_FILE);
 
     require_login();
 
@@ -14,8 +14,6 @@
     print_header(get_string('localfilechoose', 'resource'));
 
     print_simple_box(get_string('localfileinfo', 'resource'), 'center');
-
-    $chooseparts = explode('.', $choose);
 
     ?>
     <script type="text/javascript">
@@ -28,7 +26,7 @@
         } else {
             window.close();
         }
-        opener.document.forms['<?php echo $chooseparts[0]."'].".$chooseparts[1] ?>.value = '<?php p(RESOURCE_LOCALPATH) ?>'+path;
+        opener.document.getElementById('<?php echo $choose ?>').value = '<?php p(RESOURCE_LOCALPATH) ?>'+path;
         window.close();
     }
     //]]>

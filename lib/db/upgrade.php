@@ -1391,6 +1391,10 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007070603) {
+        // Small update of guest user to be 100% sure it has the correct mnethostid (MDL-10375)
+        set_field('user', 'mnethostid', $CFG->mnet_localhost_id, 'username', 'guest');
+    }
 
     return $result;
 }

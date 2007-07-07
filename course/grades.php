@@ -22,11 +22,8 @@
     $stractivityreport = get_string("activityreport");
 
 /// Check to see if groups are being used in this course
-    if ($groupmode = groupmode($course)) {   // Groups are being used
-        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course);
+    $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 
 /// Get a list of all students
     if ($currentgroup) {
@@ -308,7 +305,6 @@
         $options["download"] = "xls";
         print_single_button("grades.php", $options, get_string("downloadexcel"));
         echo "<td>";
-        $options = array();
         $options["download"] = "txt";
         print_single_button("grades.php", $options, get_string("downloadtext"));
         echo "</table>";

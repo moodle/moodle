@@ -283,12 +283,17 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
 }
 
 
-function choice_show_reportlink($choice, $courseid, $cmid) {
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
+function choice_show_reportlink($choice, $courseid, $cmid, $groupmode) {
+    //TODO: rewrite with SQL
+    $currentgroup = get_current_group($courseid);
+    if ($allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
         $responsecount = 0;
         foreach ($allanswers as $aa) {
-            if (has_capability('mod/choice:readresponses', $context)) {
+            if ($groupmode and $currentgroup) {
+                if (ismember($currentgroup, $aa->userid)) {
+                    $responsecount++;
+                }
+            } else {
                 $responsecount++;
             }
         }
@@ -304,34 +309,34 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
 
     global $CFG, $COLUMN_HEIGHT, $USER;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     print_heading(get_string("responses", "choice"));
+
     if (empty($forcepublish)) { //alow the publish setting to be overridden
         $forcepublish = $choice->publish;
     }
 
-        /// Check to see if groups are being used in this choice
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, $_SERVER['PHP_SELF']."?id=$cm->id");
-    } else {
-        $currentgroup = false;
-    }
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_current_group($course->id);
 
-    if ($currentgroup) {
-        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber');
-    } else {
-        $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');
-    }
+    $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false);
 
     if (!$users) {
         print_heading(get_string("nousersyet"));
     }
 
+    $answers = array () ;
     if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
         foreach ($allresponses as $aa) {
-            $answers[$aa->userid] = $aa;
+            //TODO: rewrite with SQL
+            if ($groupmode and $currentgroup) {
+                if (ismember($currentgroup, $aa->userid)) {
+                    $answers[$aa->userid] = $aa;
+                }
+            } else {
+                $answers[$aa->userid] = $aa;
+            }
         }
-    } else {
-        $answers = array () ;
     }
 
     $timenow = time();
@@ -401,10 +406,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 // MDL-7861
                 echo "<table class=\"choiceresponse\"><tr><td></td></tr>";
                 foreach ($userlist as $user) {
-                    // this needs to be fixed
-                    // hide admin/editting teacher (users with editting privilages)
-                    // show users without? I could be wrong.
-                    if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) { // make sure admins and hidden teachers are not shown in not answered yet column.
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
                         $columncount[$optionid] += 1;
                         echo "<tr>";
                         if (has_capability('mod/choice:readresponses', $context) && $optionid!=0) {
@@ -494,7 +496,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
                 }
                 $column[$optionid] = 0;
                 foreach ($userlist as $user) {
-                    if (!($optionid==0 && has_capability('mod/choice:readresponses', $context, $user->id))) { //make sure admins and hidden teachers are not shown in not answered yet column.
+                    if ($optionid!=0 or has_capability('mod/choice:choose', $context, $user->id, false)) {
                          $column[$optionid]++;
                     }
                 }

@@ -47,12 +47,16 @@ class group_edit_form extends moodleform {
             $mform->setHelpButton('imagefile', array ('picture', get_string('helppicture')), true);
         }
 
-        
+
         if ($group) {
             $buttonstr = get_string('save', 'group');
             $mform->addElement('hidden','id', null);
             $mform->setType('id', PARAM_INT);
-
+if (empty($CFG->enablegroupings)) {
+    // NO GROUPINGS YET!
+            $mform->addElement('hidden', 'newgrouping', GROUP_NOT_IN_GROUPING);
+            $mform->setType('newgrouping', PARAM_INT);
+} else {
             // Options to move group to another grouping
             $groupingids = groups_get_groupings($courseid);
             
@@ -67,8 +71,9 @@ class group_edit_form extends moodleform {
                 $mform->addElement('select', 'newgrouping', get_string('addgroupstogrouping', 'group'), $listgroupings);
                 $mform->setDefault('newgrouping', $groupingid);
             }
+}
         }
-        
+
         if($groupingid) {
             $mform->addElement('hidden', 'grouping', $groupingid);
             $mform->setType('grouping', PARAM_INT);
