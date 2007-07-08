@@ -53,11 +53,12 @@ $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
 
 // Get the user preferences
-$perpage  = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
-$decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
-$displaytotals = get_user_preferences('grade_report_showgrandtotals', $CFG->grade_report_showgrandtotals);
-$displaygrouptotals = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
+$perpage              = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
+$decimals             = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
+$displaytotals        = get_user_preferences('grade_report_showgrandtotals', $CFG->grade_report_showgrandtotals);
+$displaygrouptotals   = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
 $aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
+$showscales           = get_user_preferences('grade_report_showscales', $CFG->grade_report_showscales);
 
 // Override perpage if set in URL
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
@@ -215,7 +216,7 @@ if (is_numeric($sortitemid)) {
     // get users sorted by lastname
     $users = get_role_users(@implode(',', $CFG->gradebookroles), $context, false, 'u.id, u.firstname, u.lastname', 'u.'.$sortitemid .' '. $sortorder, false, $page * $perpage, $perpage, $currentgroup);
     // need to cut users down by groups
-    
+
 }
 
 /// count total records for paging
@@ -385,7 +386,7 @@ foreach ($gtree->levels as $key=>$row) {
 
             $items[$element['object']->sortorder] =& $element['object'];
         }
-        
+
     }
 
     $headerhtml .= '</tr>';
@@ -480,12 +481,12 @@ foreach ($users as $userid => $user) {
 
 // if user preference to display group sum
 if ($currentgroup && ($displaygrouptotals || 1)) {
-    
+
 /** SQL for finding group sum */
-    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum 
+    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
         FROM {$CFG->prefix}grade_items gi LEFT JOIN
              {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
-             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN 
+             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
              {$CFG->prefix}role_assignments ra ON u.id = ra.userid
              $groupsql
         WHERE gi.courseid = $courseid
@@ -499,11 +500,11 @@ if ($currentgroup && ($displaygrouptotals || 1)) {
     foreach ($sums as $itemid => $csum) {
         $groupsum[$itemid] = $csum;
     }
-      
+
     $groupsumhtml = '<tr><th>Group total</th>';
     foreach ($items as $item) {
         if (!isset($groupsum[$item->id])) {
-            $groupsumhtml .= '<td>-</td>';      
+            $groupsumhtml .= '<td>-</td>';
         } else {
             $sum = $groupsum[$item->id];
             $groupsumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
@@ -511,7 +512,7 @@ if ($currentgroup && ($displaygrouptotals || 1)) {
     }
     $groupsumhtml .= '</tr>';
 } else {
-    $groupsumhtml = '';  
+    $groupsumhtml = '';
 }
 
 // user preference not implemented yet
@@ -519,10 +520,10 @@ if ($displaytotals || 1) {
 
 /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
 
-    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum 
+    $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
         FROM {$CFG->prefix}grade_items gi LEFT JOIN
              {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
-             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN 
+             {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
              {$CFG->prefix}role_assignments ra ON u.id = ra.userid
         WHERE gi.courseid = $courseid
         AND ra.roleid in ($gradebookroles)
@@ -538,7 +539,7 @@ if ($displaytotals || 1) {
     $gradesumhtml = '<tr><th>Total</th>';
     foreach ($items as $item) {
         if (!isset($classsum[$item->id])) {
-            $gradesumhtml .= '<td>-</td>';      
+            $gradesumhtml .= '<td>-</td>';
         } else {
             $sum = $classsum[$item->id];
             $gradesumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
@@ -546,7 +547,7 @@ if ($displaytotals || 1) {
     }
     $gradesumhtml .= '</tr>';
 } else {
-    $gradesumhtml = '';  
+    $gradesumhtml = '';
 }
 
 $reporthtml = "<table class=\"boxaligncenter\">$headerhtml";
@@ -574,13 +575,13 @@ if ($USER->gradeediting) {
 
 // remove trailing 0s and "."s
 function get_grade_clean($gradeval) {
-    
+
     if ($gradeval != 0) {
         $gradeval = trim($gradeval, ".0");
     } else {
         $gradeval = 0;
     }
-    
+
     return $gradeval;
 }
 ?>

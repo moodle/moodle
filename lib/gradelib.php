@@ -755,7 +755,11 @@ function grade_get_icons($element, $tree) {
     $type   = $element['type'];
 
     // Load user preferences
-    $aggregationview = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
+    $aggregationview  = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
+    $showeyecons      = get_user_preferences('grade_report_showeyecons', $CFG->grade_report_showeyecons);
+    $showlocks        = get_user_preferences('grade_report_showlocks', $CFG->grade_report_showlocks);
+    $shownotes        = get_user_preferences('grade_report_notes', $CFG->grade_report_notes);
+    $showcalculations = get_user_preferences('grade_report_showcalculations', $CFG->grade_report_showcalculations);
 
     // Icons shown when edit mode is on
     if ($USER->gradeediting) {
@@ -776,56 +780,66 @@ function grade_get_icons($element, $tree) {
             $html .= '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                   .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            */      
+            */
         }
-        
+
+        /* Not sure if there is a good reason to have a calculation icon: the calculation field is in the grade_edit form */
+        /*
         // Calculation icon for items and categories
         if ($type != 'grade') {
             $html .= '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
-                  .$streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n"; 
+                  .$streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
         }
+        */
 
-        // Prepare Hide/Show icon state
-        $hide_show = 'hide';
-        if ($object->is_hidden()) {
-            $hide_show = 'show';
-        }
-
-        // Setup object identifier and show feedback icon if applicable
-        if ($type == 'grade' and $USER->gradefeedback) {
-            // Display Edit/Add feedback icon
-            if (empty($object->feedback)) {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                      . "&amp;action=add&amp;courseid=$object->courseid\">\n";
-                $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
-                      . 'title="'.$straddfeedback.'" /></a>'. "\n";
-            } else {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                      . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
-                $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
-                      . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                  . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
+        if ($shownotes) {
+            // Setup object identifier and show feedback icon if applicable
+            if ($type == 'grade' and $USER->gradefeedback) {
+                // Display Edit/Add feedback icon
+                if (empty($object->feedback)) {
+                    $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
+                          . "&amp;action=add&amp;courseid=$object->courseid\">\n";
+                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
+                          . 'title="'.$straddfeedback.'" /></a>'. "\n";
+                } else {
+                    $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
+                          . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
+                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
+                          . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                      . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
+                }
             }
         }
 
-        // Display Hide/Show icon
-        $html .= '<a href="report.php?report=grader&amp;target='.$eid
-              . "&amp;action=$hide_show$tree->commonvars\">\n";
-        $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
-              .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+        if ($showeyecons) {
 
-        // Prepare lock/unlock string
-        $lock_unlock = 'lock';
-        if ($object->is_locked()) {
-            $lock_unlock = 'unlock';
+            // Prepare Hide/Show icon state
+            $hide_show = 'hide';
+            if ($object->is_hidden()) {
+                $hide_show = 'show';
+            }
+
+            // Display Hide/Show icon
+            $html .= '<a href="report.php?report=grader&amp;target='.$eid
+                  . "&amp;action=$hide_show$tree->commonvars\">\n";
+            $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+                  .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
         }
 
-        // Print lock/unlock icon
-        $html .= '<a href="report.php?report=grader&amp;target='.$eid
-              . "&amp;action=$lock_unlock$tree->commonvars\">\n";
-        $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
-              .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+        if ($showlocks) {
+            // Prepare lock/unlock string
+            $lock_unlock = 'lock';
+            if ($object->is_locked()) {
+                $lock_unlock = 'unlock';
+            }
+
+            // Print lock/unlock icon
+            $html .= '<a href="report.php?report=grader&amp;target='.$eid
+                  . "&amp;action=$lock_unlock$tree->commonvars\">\n";
+            $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+                  .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+        }
 
         // If object is a category, display expand/contract icon
         if (get_class($object) == 'grade_category' && $aggregationview == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
@@ -843,7 +857,7 @@ function grade_get_icons($element, $tree) {
                   .${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
         }
     } else {
-        if ($USER->gradefeedback) {
+        if ($shownotes) {
             // Display view feedback icon
             if (!empty($object->feedback)) {
                 $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
