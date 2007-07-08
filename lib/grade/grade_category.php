@@ -819,7 +819,7 @@ class grade_category extends grade_object {
         $this->depth           = null;       // remove old path and depth - will be recalculated in update()
         $this->update($source);
 
-        return $grade_item->update($source);
+        return $this->update($source);
     }
 
     /**

@@ -1255,16 +1255,13 @@ class grade_item extends grade_object {
             $grade->grade_item =& $this;
 
         } else {
-            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid, 'rawgrademin'=>null, 'rawgrademax'=>null, 'rawscaledi'=>null), false);
+            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
             $grade->insert('system');
             $grade->grade_item =& $this;
 
             $oldgrade = new object();
             $oldgrade->finalgrade  = $grade->finalgrade;
             $oldgrade->rawgrade    = $grade->rawgrade;
-            $oldgrade->rawgrademin = $grade->rawgrademin;
-            $oldgrade->rawgrademax = $grade->rawgrademax;
-            $oldgrade->rawscaleid  = $grade->rawscaleid;
         }
 
         // no need to recalculate locked grades
@@ -1277,9 +1274,6 @@ class grade_item extends grade_object {
         $result = $this->formula->evaluate();
 
         // no raw grade for calculated grades - only final
-        $grade->rawgrademin = null;
-        $grade->rawgrademax = null;
-        $grade->rawscaleid  = null;
         $grade->rawgrade    = null;
 
 
@@ -1297,10 +1291,7 @@ class grade_item extends grade_object {
 
         // update in db if changed
         if (   $grade->finalgrade  !== $oldgrade->finalgrade
-            or $grade->rawgrade    !== $oldgrade->rawgrade
-            or $grade->rawgrademin !== $oldgrade->rawgrademin
-            or $grade->rawgrademax !== $oldgrade->rawgrademax
-            or $grade->rawscaleid  !== $oldgrade->rawscaleid) {
+            or $grade->rawgrade    !== $oldgrade->rawgrade) {
 
             $grade->update('system');
         }
