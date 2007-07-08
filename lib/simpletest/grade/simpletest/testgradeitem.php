@@ -69,17 +69,7 @@ class grade_item_test extends grade_test {
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminfo = 'Grade item used for unit testing';
 
-        // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_parent_category();
-        $category->load_grade_item();
-        $category->grade_item->needsupdate = false;
-        $this->assertNotNull($category->grade_item);
-
         $grade_item->insert();
-
-        // Now check the needsupdate variable, it should have been set to true
-        $category->grade_item->update_from_db();
-        $this->assertTrue($category->grade_item->needsupdate);
 
         $last_grade_item = end($this->grade_items);
 
@@ -104,12 +94,6 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'delete'));
 
-        // Check the grade_category's needsupdate variable first
-        $category = $grade_item->get_parent_category();
-        $category->load_grade_item();
-        $this->assertNotNull($category->grade_item);
-        $category->grade_item->needsupdate = false;
-
         $this->assertTrue($grade_item->delete());
 
         $this->assertFalse(get_record('grade_items', 'id', $grade_item->id));
@@ -121,29 +105,11 @@ class grade_item_test extends grade_test {
 
         $grade_item->iteminfo = 'Updated info for this unittest grade_item';
 
-        // Check the grade_category's needsupdate variable first
-        $category= $grade_item->get_parent_category();
-        $category->load_grade_item();
-        $this->assertNotNull($category->grade_item);
-        $category->grade_item->needsupdate = false;
-
         $this->assertTrue($grade_item->update());
-
-        // Now check the needsupdate variable, it should NOT have been set to true, because insufficient changes to justify update.
-        $this->assertFalse($category->grade_item->needsupdate);
 
         $grade_item->grademin = 14;
         $this->assertTrue($grade_item->qualifies_for_regrading());
-        $this->assertTrue($grade_item->update(true));
-
-        // Now check the needsupdate variable, it should have been set to true
-        $category->grade_item->update_from_db();
-        $this->assertTrue($category->grade_item->needsupdate);
-
-        // Also check parent
-        $category->load_parent_category();
-        $category->parent_category->load_grade_item();
-        $this->assertTrue($category->parent_category->grade_item->needsupdate);
+        $this->assertTrue($grade_item->update());
 
         $iteminfo = get_field('grade_items', 'iteminfo', 'id', $this->grade_items[0]->id);
         $this->assertEqual($grade_item->iteminfo, $iteminfo);
@@ -182,17 +148,12 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'force_regrading'));
 
-        $grade_category = $grade_item->get_parent_category();
-        $grade_category->load_grade_item();
         $this->assertEqual(0, $grade_item->needsupdate);
-        $this->assertEqual(0, $grade_category->grade_item->needsupdate);
 
-        $this->assertTrue($grade_item->force_regrading());
-
-        $grade_category = $grade_item->get_parent_category();
-        $grade_category->load_grade_item();
+        $grade_item->force_regrading();
         $this->assertEqual(1, $grade_item->needsupdate);
-        $this->assertEqual(1, $grade_category->grade_item->needsupdate);
+        $grade_item->update_from_db();
+        $this->assertEqual(1, $grade_item->needsupdate);
     }
 
     function test_grade_item_fetch() {
@@ -278,19 +239,14 @@ class grade_item_test extends grade_test {
         $this->assertTrue(method_exists($grade_item, 'set_parent'));
 
         $old = $grade_item->get_parent_category();
-        $old_item = $old->get_grade_item();
         $new = new grade_category($this->grade_categories[3]);
         $new_item = $new->get_grade_item();
-
-        $this->assertEqual($old_item->needsupdate, 0);
 
         $this->assertTrue($grade_item->set_parent($new->id));
 
         $new_item->update_from_db();
-        $old_item->update_from_db();
         $grade_item->update_from_db();
 
-        $this->assertEqual($old_item->needsupdate, 1);
         $this->assertEqual($grade_item->categoryid, $new->id);
     }
 
