@@ -9,6 +9,12 @@ $string['binaryincorrectlength'] = 'Incorrect length for binary field';
 $string['cannotuseidfield'] = 'Cannot insert the \"id\" field. It is an autonumeric column';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
+$string['checkindexes'] = 'Check Indexes';
+$string['check_indexes'] = 'Look for missing DB indexes';
+$string['completelogbelow'] = '(see the complete log of the search below)';
+$string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) automatically the needed SQL statements to keep everything updated. Once generated you can copy such statements and execute them safely with your favourite SQL interface.<br /><br />
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of missing indexes.<br /><br />
+This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmdeletefield'] = 'Are you absolutely sure that you want to delete the field:';
 $string['confirmdeleteindex'] = 'Are you absolutely sure that you want to delete the index:';
 $string['confirmdeletekey'] = 'Are you absolutely sure that you want to delete the key:';
@@ -48,11 +54,15 @@ $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float fiel
 $string['floatincorrectlength'] = 'Incorrect length for float field';
 $string['gotolastused'] = 'Go to last used file';
 $string['incorrectfieldname'] = 'Incorrect name';
+$string['index'] = 'Index';
 $string['indexes'] = 'Indexes';
 $string['integerincorrectlength'] = 'Incorrect length for integer field';
+$string['key'] = 'Key';
 $string['keys'] = 'Keys';
 $string['listreservedwords'] = 'List of Reserved Words<br/>(used to keep <a href=\"http://docs.moodle.org/en/XMLDB_reserved_words\" target=\"_blank\">XMLDB_reserved_words</a> updated)';
 $string['load'] = 'Load';
+$string['missing'] = 'Missing';
+$string['missingindexes'] = 'Missing Indexes Found';
 $string['main_view'] = 'Main View';
 $string['missingfieldsinsentence'] = 'Missing fields in sentence';
 $string['missingvaluesinsentence'] = 'Missing values in sentence';
@@ -68,6 +78,7 @@ $string['newsentence'] = 'New Sentence';
 $string['newstatement'] = 'New Statement';
 $string['newtable'] = 'New Table';
 $string['newtablefrommysql'] = 'New Table From MySQL';
+$string['nomissingindexesfound'] = 'No missing indexes have been found, your DB doesn\'t need further actions.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
 $string['reserved'] = 'Reserved';
@@ -75,6 +86,7 @@ $string['reservedwords'] = 'Reserved Words';
 $string['revert'] = 'Revert';
 $string['revert_changes'] = 'Revert Changes';
 $string['save'] = 'Save';
+$string['searchresults'] = 'Search Results';
 $string['selectaction'] = 'Select Action:';
 $string['selectdb'] = 'Select Database:';
 $string['selectfieldkeyindex'] = 'Select Field/Key/Index:';
@@ -104,5 +116,5 @@ $string['viewsqlcode'] = 'View SQL Code';
 $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongnumberoffieldsorvalues'] = 'Incorrect number of fields or values in sentence';
 $string['wrongreservedwords'] = 'Currently Used Reserved Words<br />(note that table names aren\'t important if using $CFG->prefix)';
-
+$string['yesmissingindexesfound'] = 'Some missing indexes have been found in your DB. Here there are their details and the needed SQL statements to be executed with your your favourite SQL interface to create all them.<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.';
 ?>
