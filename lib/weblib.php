@@ -548,7 +548,7 @@ function addslashes_recursive($var) {
     } else if (is_string($var)) {
         $new_var = addslashes($var);
 
-    } else {
+    } else { // nulls, integers, etc.
         $new_var = $var;
     }
 

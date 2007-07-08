@@ -299,74 +299,62 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
 
 /***** END OF PUBLIC API *****/
 
+function grade_force_full_regrading($courseid) {
+    set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
+}
 
 /**
  * Updates all final grades in course.
  *
  * @param int $courseid
- * @param boolean $regradeall force regrading of all items
- *
- * @return boolean true if ok, array of errors if problems found
+ * @param int $userid if specified, try to do a quick regrading of grades of this user only
+ * @param object $updated_item the item in which
+ * @return boolean true if ok, array of errors if problems found (item id is used as key)
  */
-function grade_update_final_grades($courseid, $regradeall=false) {
+function grade_update_final_grades($courseid, $userid=null, $updated_item=null) {
 
-    if ($regradeall) {
-        set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
-    }
+    $course_item = grade_item::fetch_course_item($courseid);
 
-    if (!$grade_items = grade_item::fetch_all(array('courseid'=>$courseid))) {
-        return true;
-    }
-
-    if (!$regradeall) {
-        $needsupdate = false;
-        $calculated = false;
-        foreach ($grade_items as $gid=>$gitem) {
-            $grade_item =& $grade_items[$gid];
-            if ($grade_item->needsupdate) {
-                $needsupdate = true;
-            }
-            if ($grade_item->is_calculated()) {
-                $calculated = true;
-            }
+    if ($userid) {
+        // one raw grade updated for one user
+        if (empty($updated_item)) {
+            error("updated_item_id can not be null!");
+        }
+        if ($course_item->needsupdate) {
+            $updated_item->force_regrading();
+            return 'Can not do fast regrading after updating of raw grades';
         }
 
-        if (!$needsupdate) {
-            // no update needed
+    } else {
+        if (!$course_item->needsupdate) {
+            // nothing to do :-)
             return true;
-
-        } else if ($calculated) {
-            // flag all calculated grade items with needsupdate
-            // we want to make sure all are ok, this can be improved later with proper dependency calculation
-            foreach ($grade_items as $gid=>$gitem) {
-                $grade_item =& $grade_items[$gid];
-                if (!$grade_item->is_calculated()) {
-                    continue;
-                }
-                $grade_item->update_from_db(); // make sure we have current data, it might have been updated in this loop already
-                if (!$grade_item->needsupdate) {
-                    //force recalculation and forced update of all parents
-                    $grade_item->force_regrading();
-                }
-            }
-
-            // again make sure all date is up-to-date - the needsupdate flag might have changed
-            foreach ($grade_items as $gid=>$gitem) {
-                $grade_item =& $grade_items[$gid];
-                $grade_item->update_from_db();
-                unset($grade_item->category);
-            }
         }
     }
 
+    $grade_items = grade_item::fetch_all(array('courseid'=>$courseid));
+    $depends_on = array();
 
+    // first mark all category and calculated items as needing regrading
+    // this is slower, but 100% accurate - this function is called only when there is
+    // a change in grading setup, update of individual grade does not trigger this function
+    foreach ($grade_items as $gid=>$gitem) {
+        if (!empty($updated_item) and $updated_item->id = $gid) {
+            $grade_items[$gid]->needsupdate = 1;
+
+        } else if ($grade_items[$gid]->is_category_item() or $grade_items[$gid]->is_calculated()) {
+            $grade_items[$gid]->needsupdate = 1;
+        }
+
+        // construct depends_on lookup array
+        $depends_on[$gid] = $grade_items[$gid]->depends_on();
+    }
     $errors = array();
 
-    // now the hard way with calculated grade_items or categories
     $finalitems = array();
     $finalids = array();
     while (count($grade_items) > 0) {
-        $count = 0;
+        $count = 0; // count how many items were updated in this cycle
         foreach ($grade_items as $gid=>$gitem) {
             $grade_item =& $grade_items[$gid];
             if (!$grade_item->needsupdate) {
@@ -376,32 +364,35 @@ function grade_update_final_grades($courseid, $regradeall=false) {
                 continue;
             }
 
-            //do we have all data for finalizing of this item?
-            $depends_on = $grade_item->depends_on();
-
             $doupdate = true;
-            foreach ($depends_on as $did) {
+            foreach ($depends_on[$gid] as $did) {
                 if (!in_array($did, $finalids)) {
                     $doupdate = false;
+                    break;
                 }
             }
 
             //oki - let's update, calculate or aggregate :-)
             if ($doupdate) {
-                $result = $grade_item->update_final_grades();
-                if ($result !== true) {
-                    $errors = array_merge($errors, $result);
-                } else {
+                $result = $grade_item->update_final_grades($userid);
+
+                if ($result === true) {
+                    $grade_item->regrading_finished();
+                    $count++;
                     $finalitems[$gid] = $grade_item;
                     $finalids[] = $gid;
                     unset($grade_items[$gid]);
+                } else {
+                    $grade_item->force_regrading();
+                    $errors[$gid] = $result;
                 }
             }
         }
 
         if ($count == 0) {
             foreach($grade_items as $grade_item) {
-                $errors[] = 'Probably circular reference or broken calculation formula in grade_item id:'.$grade_item->id; // TODO: localize
+                $grade_item->force_regrading();
+                $errors[$grade_item->id] = 'Probably circular reference or broken calculation formula'; // TODO: localize
             }
             break;
         }
