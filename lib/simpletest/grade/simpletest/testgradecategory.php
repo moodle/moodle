@@ -161,21 +161,14 @@ class grade_category_test extends grade_test {
         $this->assertTrue(method_exists($grade_category, 'force_regrading'));
 
         $grade_category->load_grade_item();
-        $parent_category = new grade_category($this->grade_categories[1]);
-        $parent_category->load_grade_item();
-
         $this->assertEqual(0, $grade_category->grade_item->needsupdate);
-        $this->assertEqual(0, $parent_category->grade_item->needsupdate);
 
-        $this->assertTrue($grade_category->force_regrading());
+        $grade_category->force_regrading();
 
         $grade_category->grade_item = null;
-        $parent_category->grade_item = null;
         $grade_category->load_grade_item();
-        $parent_category->load_grade_item();
 
         $this->assertEqual(1, $grade_category->grade_item->needsupdate);
-        $this->assertEqual(1, $parent_category->grade_item->needsupdate);
     }
 
     function test_grade_category_delete() {
