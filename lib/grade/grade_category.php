@@ -482,6 +482,7 @@ class grade_category extends grade_object {
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
                 rsort($modes, SORT_NUMERIC);       // get highes mode
                 $rawgrade = reset($modes);
+                break;
 
             case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished are not calculated
             default:
