@@ -692,7 +692,7 @@ function data_delete_instance($id) {    //takes the dataid
 
     $result = delete_records('data', 'id', $id);
 
-    glossary_grade_item_delete($data);
+    data_grade_item_delete($data);
 
     return $result;
 }
