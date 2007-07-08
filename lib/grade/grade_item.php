@@ -214,7 +214,7 @@ class grade_item extends grade_object {
      * If set, the whole column will be recalculated, then this flag will be switched off.
      * @var boolean $needsupdate
      */
-    var $needsupdate = 0;
+    var $needsupdate = 1;
 
     /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
