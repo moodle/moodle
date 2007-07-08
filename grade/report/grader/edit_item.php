@@ -20,7 +20,9 @@ $returnurl = 'category.php?id='.$course->id;
 
 $mform = new edit_item_form(qualified_me(), array('id'=>$id));
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
+    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
     $mform->set_data($item);
+
 } else {
     $mform->set_data(array('courseid'=>$course->id, 'itemtype'=>'manual'));
 }
@@ -33,11 +35,15 @@ if ($mform->is_cancelled()) {
         $data->checkbox = 0; // work around the missing value if checkbox not selected
     }
 
+    if (array_key_exists('calculation', $data)) {
+        $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
+    }
+
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$course->id));
     grade_item::set_properties($grade_item, $data);
 
     if (empty($grade_item->id)) {
-        $grade_item->itemtype = 'manual'; // for all new items to be manual only
+        $grade_item->itemtype = 'manual'; // all new items to be manual only
         $grade_item->insert();
 
     } else {

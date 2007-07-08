@@ -47,7 +47,8 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $returnurl = 'category.php?id='.$course->id;
 
 // get the grading tree object
-$gtree = new grade_tree($courseid, false);
+// note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
+$gtree = new grade_tree($courseid, false, false, false);
 
 if (empty($eid)) {
     $element = null;

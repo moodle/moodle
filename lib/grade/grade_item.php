@@ -811,19 +811,12 @@ class grade_item extends grade_object {
          * Also if user changes the idnumber the formula does not need to be updated.
          */
 
-        // first detect if we need to update calculation formula from [idnumber] to [#giXXX#] (after backup, etc.)
-        if (!$this->calculation_normalized and preg_match_all('/\[(?!#gi)(.*?)\]/', $this->calculation, $matches)) {
-            foreach ($matches[1] as $idnumber) {
-                if ($grade_item = grade_item::fetch(array('courseid'=>$this->courseid, 'idnumber'=>$idnumber))) {
-                    $this->calculation = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $this->calculation);
-                }
-            }
-            $this->update(); // update in db if needed
-            $this->calculation_normalized = true;
-            return !empty($this->calculation);
+        // first detect if we need to change calculation formula from [idnumber] to [#giXXX#] (after backup, etc.)
+        if (!$this->calculation_normalized and preg_match('/\[(?!#gi)(.*?)\]/', $this->calculation)) {
+            $this->set_calculation($this->calculation);
         }
 
-        return true;
+        return !empty($this->calculation);
     }
 
     /**
@@ -832,19 +825,7 @@ class grade_item extends grade_object {
      */
     function get_calculation() {
         if ($this->is_calculated()) {
-            $formula = $this->calculation;
-            // denormalize formula - convert [#giXX#] to [idnumber]
-            if (preg_match_all('/\[#gi([0-9]+)#\]/', $formula, $matches)) {
-                foreach ($matches[1] as $id) {
-                    if ($grade_item = grade_item::fetch(array('id'=>$id))) {
-                        if (!empty($grade_item->idnumber)) {
-                            $formula = str_replace('[#gi'.$grade_item->id.'#]', '['.$grade_item->idnumber.']', $formula);
-                        }
-                    }
-                }
-            }
-
-            return $formula;
+            return grade_item::denormalize_formula($this->calculation, $this->courseid);
 
         } else {
             return NULL;
@@ -859,28 +840,57 @@ class grade_item extends grade_object {
      * @return boolean success
      */
     function set_calculation($formula) {
+        $this->calculation = grade_item::normalize_formula($formula, $this->courseid);
+        $this->calculation_normalized = true;
+        return $this->update();
+    }
+
+    /**
+     * Denormalizes the calculation formula to [idnumber] form
+     * @param string $formula
+     * @return string denormalized string
+     */
+    function denormalize_formula($formula, $courseid) {
+        if (empty($formula)) {
+            return '';
+        }
+
+        // denormalize formula - convert [#giXX#] to [idnumber]
+        if (preg_match_all('/\[#gi([0-9]+)#\]/', $formula, $matches)) {
+            foreach ($matches[1] as $id) {
+                if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
+                    if (!empty($grade_item->idnumber)) {
+                        $formula = str_replace('[#gi'.$grade_item->id.'#]', '['.$grade_item->idnumber.']', $formula);
+                    }
+                }
+            }
+        }
+
+        return $formula;
+
+    }
+
+    /**
+     * Normalizes the calculation formula to [#giXX#] form
+     * @param string $formula
+     * @return string normalized string
+     */
+    function normalize_formula($formula, $courseid) {
         $formula = trim($formula);
 
         if (empty($formula)) {
-            $this->calculation = NULL;
+            return NULL;
 
-        } else {
-            if (strpos($formula, '=') !== 0) {
-                $formula = '='.$formula;
-            }
-
-            // normalize formula - we want grade item ids [#giXXX#] instead of [idnumber]
-            if ($grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
-                foreach ($grade_items as $grade_item) {
-                    $formula = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $formula);
-                }
-            }
-
-            $this->calculation = $formula;
         }
 
-        $this->calculation_normalized = true;
-        return $this->update();
+        // normalize formula - we want grade item ids [#giXXX#] instead of [idnumber]
+        if ($grade_items = grade_item::fetch_all(array('courseid'=>$courseid))) {
+            foreach ($grade_items as $grade_item) {
+                $formula = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $formula);
+            }
+        }
+
+        return $formula;
     }
 
     /**
