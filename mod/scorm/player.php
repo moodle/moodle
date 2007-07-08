@@ -245,7 +245,7 @@
 <?php
         } else {
 ?>
-                    <script lanuguage="javascript">
+                    <script language="javascript">
                         function openpopup(url,name,options,width,height) {
                             fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
                             windowobj = window.open(fullurl,name,options);
