@@ -1,8 +1,11 @@
 <?php
+
     global $CFG;
     require_once 'languages.php';
+
     $createoptions[0] = get_string("no");
     $createoptions[1] = get_string("yes");
+
     // set to defaults if undefined (CAS)
     if (!isset ($config->hostname)) 
         $config->hostname = '';
@@ -53,87 +56,112 @@
         {$config->groupecreators = ''; }
     if (!isset($config->attrcreators))
         {$config->attrcreators = ''; }
-     if (!isset($config->removeuser))
+    if (!isset($config->removeuser))
         {$config->removeuser = 0; }
+
     $yesno = array( get_string('no'), get_string('yes') );
+
 if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     notify(get_string('auth_ldap_noextension','auth'));
 }
+
+
 ?>
+
 <table cellspacing="0" cellpadding="5" border="0" align="center">
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('auth_cas_server_settings', 'auth') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_use_cas', 'auth') ?>:</td>
     <td>
         <?php
+
         unset($options);
         $options[1] = get_string('yes');
         choose_from_menu ($options, 'use_cas', $config->use_cas, get_string('no'), '', '');
+
         ?>
     </td>
     <td><?php print_string('auth_cas_enabled', 'auth') ?></td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><?php print_string('auth_cas_hostname_key', 'auth') ?>:</td>
     <td>
         <input name="hostname" type="text" size="30" value="<?php echo $config->hostname ?>" />
         <?php
+
         if (isset($err['hostname'])) {
             formerr($err['hostname']);
         }
+
         ?>
     </td>
     <td><?php print_string('auth_cas_hostname', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_baseuri_key', 'auth') ?>:</td>
     <td>
         <input name="baseuri" type="text" size="30" value="<?php echo $config->baseuri ?>" />
         <?php
+
         if (isset($err['baseuri'])) {
             formerr($err['baseuri']);
         }
+
         ?>
     </td>
     <td><?php print_string('auth_cas_baseuri', 'auth') ?></td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><?php print_string('auth_cas_port_key', 'auth') ?>:</td>
     <td>
         <input name="port" type="text" size="30" value="<?php echo $config->port ?>" />
         <?php
+
         if (isset($err['port'])) {
             formerr($err['port']);
         }
+
         ?>
     </td>
     <td><?php print_string('auth_cas_port', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_casversion', 'auth') ?>:</td>
     <td>
         <input name="casversion" type="text" size="30" value="<?php echo $config->casversion ?>" />
         <?php
+
         if (isset($err['casversion'])) {
             formerr($err['casversion']);
         }
+
         ?>
     </td>
     <td><?php print_string('auth_cas_version', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_language_key', 'auth') ?>:</td>
     <td>
         <?php
+
         choose_from_menu($CASLANGUAGES, 'language', $config->language, '');
+
         ?>
     </td>
     <td><?php print_string('auth_cas_language', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_proxycas_key', 'auth') ?>:</td>
     <td>
@@ -145,6 +173,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
     <td><?php print_string('auth_cas_proxycas', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_logoutcas_key', 'auth') ?>:</td>
     <td>
@@ -156,6 +185,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
     <td><?php print_string('auth_cas_logoutcas', 'auth') ?></td>
 </tr>
+
 <tr valign="top"  class="required">
     <td align="right"><?php print_string('auth_cas_multiauth_key', 'auth') ?>:</td>
     <td>
@@ -167,11 +197,13 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
     <td><?php print_string('auth_cas_multiauth', 'auth') ?></td>
 </tr>
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('auth_ldap_server_settings', 'auth') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="host_url"><?php print_string('auth_ldap_host_url_key','auth') ?></label></td>
     <td>
@@ -182,6 +214,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_host_url','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="menuversion"><?php print_string('auth_ldap_version_key','auth') ?></label></td>
     <td>
@@ -197,23 +230,28 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_version','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="ldapencoding"><?php print_string("auth_ldap_ldap_encoding_key", "auth") ?></label></td>
     <td>
         <input id="ldapencoding" name="ldapencoding" type="text" value="<?php echo $config->ldapencoding ?>" />
         <?php
+
         if (isset($err['ldapencoding'])) {
             formerr($err['ldapencoding']);
         }
+
         ?>
     </td>
     <td><?php print_string('auth_ldap_ldap_encoding', 'auth') ?></td>
 </tr>
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('auth_ldap_bind_settings', 'auth') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="bind_dn"><?php print_string('auth_ldap_bind_dn_key','auth') ?></label></td>
     <td>
@@ -223,6 +261,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_bind_dn','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="bind_pw"><?php print_string('auth_ldap_bind_pw_key','auth') ?></label></td>
     <td>
@@ -232,11 +271,13 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_bind_pw','auth') ?>
     </td>
 </tr>
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('auth_ldap_user_settings', 'auth') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="menuuser_type"><?php print_string('auth_ldap_user_type_key','auth') ?></label></td>
     <td>
@@ -247,6 +288,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_user_type', 'auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="contexts"><?php print_string('auth_ldap_contexts_key','auth') ?></label></td>
     <td>
@@ -257,6 +299,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_contexts', 'auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="menusearch_sub"><?php print_string('auth_ldap_search_sub_key','auth') ?></label></td>
     <td>
@@ -266,6 +309,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_search_sub','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="menuopt_deref"><?php print_string('auth_ldap_opt_deref_key','auth') ?></label></td>
     <td>
@@ -281,6 +325,9 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_opt_deref','auth') ?>
     </td>
 </tr>
+
+
+
 <tr valign="top" class="required">
     <td align="right"><label for="user_attribute"><?php print_string('auth_ldap_user_attribute_key','auth') ?></label></td>
     <td>
@@ -291,6 +338,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_user_attribute','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
         <td align="right"><label for="memberattribute"><?php print_string('auth_ldap_memberattribute_key','auth') ?></label></td>
         <td>
@@ -300,6 +348,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_memberattribute','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
         <td align="right"><label for="memberattribute_isdn"><?php print_string('auth_ldap_memberattribute_isdn_key','auth') ?></label></td>
         <td>
@@ -309,6 +358,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_memberattribute_isdn','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
     <td align="right"><label for="objectclass"><?php print_string('auth_ldap_objectclass_key','auth') ?></label></td>
     <td>
@@ -319,11 +369,13 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_objectclass','auth') ?>
     </td>
 </tr>
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('coursecreators') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top" class="required">
         <td align="right"><label for="attrcreators_key"><?php print_string('auth_ldap_attrcreators_key','auth') ?></label></td>
         <td>
@@ -333,6 +385,7 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_attrcreators','auth') ?>
     </td>
 </tr>
+
 <tr valign="top" class="required">
         <td align="right"><label for="groupecreators_key"><?php print_string('auth_ldap_groupecreators_key','auth') ?></label></td>
         <td>
@@ -342,11 +395,13 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     <?php print_string('auth_ldap_groupecreators','auth') ?>
     </td>
 </tr>
+
 <tr>
    <td colspan="2">
         <h4><?php print_string('auth_sync_script', 'auth') ?> </h4>
    </td>
 </tr>
+
 <tr valign="top">
     <td align="right"><label for="menuremoveuser"><?php print_string('auth_remove_user_key','auth') ?></label></td>
     <td>
@@ -363,12 +418,15 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
 </tr>
 <?php
+
 $help  = get_string('auth_ldapextrafields','auth');
 $help .= get_string('auth_updatelocal_expl','auth');
 $help .= get_string('auth_fieldlock_expl','auth');
 $help .= get_string('auth_updateremote_expl','auth');
 $help .= '<hr />';
 $help .= get_string('auth_updateremote_ldap','auth');
+
 print_auth_lock_options('cas', $user_fields, $help, true, true);
+
 ?>
 </table>
