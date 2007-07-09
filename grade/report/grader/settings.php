@@ -15,7 +15,7 @@ $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', g
                                           get_string('configgradedisplaytype', 'grades'), false,
                                           array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 $settings->add(new admin_setting_configselect('grade_report_grandtotalsdisplaytype', get_string('grandtotalsdisplaytype', 'grades'),
-                                          get_string('configgrandtotalsdisplaytype', 'grades'), false, 
+                                          get_string('configgrandtotalsdisplaytype', 'grades'), false,
                                           array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
                                             get_string('configshowcalculations', 'grades'), 0));
@@ -27,10 +27,14 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showgrandtotals', 
                                             get_string('configshowgrandtotals', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
                                             get_string('configshowlocks', 'grades'), 0));
-$settings->add(new admin_setting_configcheckbox('grade_report_shownotes', get_string('shownotes', 'grades'),
-                                            get_string('configshownotes', 'grades'), 0));
+$settings->add(new admin_setting_configcheckbox('grade_report_showfeedback', get_string('showfeedback', 'grades'),
+                                            get_string('configshowfeedback', 'grades'), 0));
 $settings->add(new admin_setting_configcheckbox('grade_report_showscales', get_string('showscales', 'grades'),
                                             get_string('configshowscales', 'grades'), 0));
+$settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get_string('quickgrading', 'grades'),
+                                            get_string('configquickgrading', 'grades'), 1));
+$settings->add(new admin_setting_configcheckbox('grade_report_quickfeedback', get_string('quickfeedback', 'grades'),
+                                            get_string('configquickfeedback', 'grades'), 1));
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
                                         get_string('configstudentsperpage', 'grades'), 20));
 $settings->add(new admin_setting_configselect('grade_report_feedbackformat', get_string('feedbackformat', 'grades'),

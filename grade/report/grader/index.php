@@ -31,8 +31,7 @@ function grader_report_print_toggle($type, $baseurl, $return=false) {
     $icons = array('eyecons' => 'hide',
                    'calculations' => 'calc',
                    'locks' => 'lock',
-                   'grandtotals' => 'sigma',
-                   'notes' => 'feedback');
+                   'grandtotals' => 'sigma');
 
     $pref_name = 'grade_report_show' . $type;
     $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
@@ -131,6 +130,9 @@ $showgrandtotals      = get_user_preferences('grade_report_showgrandtotals', $CF
 $showgroups           = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
 $aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
 $showscales           = get_user_preferences('grade_report_showscales', $CFG->grade_report_showscales);
+$showfeedback         = get_user_preferences('grade_report_showfeedback', $CFG->grade_report_showfeedback);
+$quickgrading         = get_user_preferences('grade_report_quickgrading', $CFG->grade_report_quickgrading);
+$quickfeedback        = get_user_preferences('grade_report_quickfeedback', $CFG->grade_report_quickfeedback);
 
 // Override perpage if set in URL
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
@@ -140,8 +142,8 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 /// setting up groups
 
 // Prepare language strings
-$strsortasc          = get_string('sortasc', 'grades');
-$strsortdesc         = get_string('sortdesc', 'grades');
+$strsortasc  = get_string('sortasc', 'grades');
+$strsortdesc = get_string('sortdesc', 'grades');
 
 // base url for sorting by first/last name
 $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
@@ -388,7 +390,7 @@ if ($USER->gradeediting) {
     grader_report_print_toggle('calculations', $baseurl);
 }
 
-grader_report_print_toggle('notes', $baseurl);
+grader_report_print_toggle('feedback', $baseurl);
 grader_report_print_toggle('grandtotals', $baseurl);
 grader_report_print_toggle('groups', $baseurl);
 grader_report_print_toggle('scales', $baseurl);
@@ -493,7 +495,6 @@ $studentshtml = '';
 
 foreach ($users as $userid => $user) {
     // Student name and link
-
     $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id='
                   . $user->id . '">' . fullname($user) . '</a></th>';
     foreach ($items as $item) {
@@ -533,13 +534,50 @@ foreach ($users as $userid => $user) {
                         $i++;
                         $scaleopt[$i] = $scaleoption;
                     }
-                    $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
+
+                    if ($quickgrading) {
+                        $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
                                                       $gradeval, get_string('nograde'), '', -1, true);
+                    } elseif ($scale = get_record('scale', 'id', $item->scaleid)) {
+                        $scales = explode(",", $scale->scale);
+
+                        // invalid grade if gradeval < 1
+                        if ((int) $gradeval < 1) {
+                            $studentshtml .= '-';
+                        } else {
+                            $studentshtml .= $scales[$gradeval-1];
+                        }
+                    } else {
+                        // no such scale, throw error?
+                    }
                 }
             } else {
-                $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
+                if ($quickgrading) {
+                    $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
+                } else {
+                    $studentshtml .= $gradeval;
+                }
             }
 
+            $icons_html = '<div class="grade_icons">';
+
+            if (!$quickgrading) {
+                // If quickgrading is off, print an edit icon
+                $icons_html .= grade_get_icons($element, $gtree, array('edit'));
+            }
+
+            if ($showfeedback && $quickfeedback) {
+                $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'. @$grade->feedback . '"/>';
+            } elseif ($showfeedback) { // If quickfeedback is off but showfeedback is on, print an edit feedback icon
+                if (empty($grade->feedback)) {
+                    $icons_html .= grade_get_icons($element, $gtree, array('add_feedback'));
+                } else {
+                    $icons_html .= grade_get_icons($element, $gtree, array('edit_feedback'));
+                }
+            }
+
+            $icons_html .= '</div>';
+            $studentshtml .= $icons_html;
         } else {
             // finalgrades[$userid][$itemid] could be null because of the outer join
             // in this case it's different than a 0

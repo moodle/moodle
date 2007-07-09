@@ -711,11 +711,14 @@ function grade_oldgradebook_upgrade($courseid) {
  *
  * @param object $object
  * @param object $tree (A complete grade_tree object)
+ * @param array $icons An array of icon names that this function is explicitly requested to print, regardless of settings
+ * @param bool $limit If true, use the $icons array as the only icons that will be printed. If false, use it to exclude these icons.
  * @return string HTML
  */
-function grade_get_icons($element, $tree) {
+function grade_get_icons($element, $tree, $icons=null, $limit=true) {
     global $CFG;
     global $USER;
+
 
     // Load language strings
     $straddfeedback    = get_string("addfeedback", 'grades');
@@ -745,114 +748,140 @@ function grade_get_icons($element, $tree) {
     $object = $element['object'];
     $type   = $element['type'];
 
+    // Add mock attributes in case the object is not of the right type
+    if ($type != 'grade') {
+        $object->feedback = '';
+    }
+
     // Load user preferences
     $aggregationview  = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
     $showeyecons      = get_user_preferences('grade_report_showeyecons', $CFG->grade_report_showeyecons);
     $showlocks        = get_user_preferences('grade_report_showlocks', $CFG->grade_report_showlocks);
-    $shownotes        = get_user_preferences('grade_report_shownotes', $CFG->grade_report_shownotes);
+    $showfeedback     = get_user_preferences('grade_report_showfeedback', $CFG->grade_report_showfeedback);
     $showcalculations = get_user_preferences('grade_report_showcalculations', $CFG->grade_report_showcalculations);
+
+    // Prepare image strings
+    $edit_category_icon = '<a href="report/grader/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                        . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                        . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+    $edit_item_icon = '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                    . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                    . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+    $edit_grade_icon = '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                     . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                     . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
+    $edit_calculation_icon = '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                           . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
+                           . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+
+    $add_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
+                       . "&amp;action=add&amp;courseid=$object->courseid\">\n"
+                       . '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
+                       . 'title="'.$straddfeedback.'" /></a>'. "\n";
+
+    $edit_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
+                        . "&amp;action=edit&amp;courseid=$object->courseid\">\n"
+                        . '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
+                        . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                        . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
+
+    $view_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
+                        . "&amp;action=view&amp;courseid=$object->courseid\">\n"
+                        . '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                        . $strfeedback.'\');" onmouseout="return nd();" '
+                        . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
+
+    // Prepare Hide/Show icon state
+    $hide_show = 'hide';
+    if ($object->is_hidden()) {
+        $hide_show = 'show';
+    }
+
+    $show_hide_icon = '<a href="report.php?report=grader&amp;target='.$eid
+                    . "&amp;action=$hide_show$tree->commonvars\">\n"
+                    . '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
+                    . ${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+
+    // Prepare lock/unlock string
+    $lock_unlock = 'lock';
+    if ($object->is_locked()) {
+        $lock_unlock = 'unlock';
+    }
+
+    // Print lock/unlock icon
+    $lock_unlock_icon = '<a href="report.php?report=grader&amp;target='.$eid
+                      . "&amp;action=$lock_unlock$tree->commonvars\">\n"
+                      . '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
+                      . ${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+
+    // Prepare expand/contract string
+    $expand_contract = 'switch_minus'; // Default: expanded
+    $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
+    if ($state == GRADE_CATEGORY_CONTRACTED) {
+        $expand_contract = 'switch_plus';
+    }
+
+    $contract_expand_icon = '<a href="report.php?report=grader&amp;target=' . $eid
+                          . "&amp;action=$expand_contract$tree->commonvars\">\n"
+                          . '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
+                          . ${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
+
+    // If an array of icon names is given, return only these in the order they are given
+    if (!empty($icons) && is_array($icons)) {
+        $new_html = '';
+
+        foreach ($icons as $icon_name) {
+            if ($icon_name == 'edit') {
+                $icon_name .= "_$type";
+            }
+            if ($limit) {
+                $new_html .= ${$icon_name . '_icon'};
+            } else {
+                ${'show_' . $icon_name} = false;
+            }
+        }
+        if ($limit) {
+            return $new_html;
+        } else {
+            $html .= $new_html;
+        }
+    }
 
     // Icons shown when edit mode is on
     if ($USER->gradeediting) {
         // Edit icon (except for grade_grades)
         if ($type == 'category') {
-            $html .= '<a href="report/grader/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
-            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
+            $html .= $edit_category_icon;
 
         } else if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
-            $html .= '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
-            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
-
-        } else if ($type == 'grade') {
-            // What is the purpose of edit_grade page?
-            /*
-            $html .= '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
-            $html .= '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                  .$stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            */
+            $html .= $edit_item_icon;
         }
 
         // Calculation icon for items and categories
         if ($showcalculations && $type != 'grade') {
-            $html .= '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
-            $html .= '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
-                  .$streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
-        }
-
-        if ($shownotes) {
-            // Setup object identifier and show feedback icon if applicable
-            if ($type == 'grade' and $shownotes) {
-                // Display Edit/Add feedback icon
-                if (empty($object->feedback)) {
-                    $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                          . "&amp;action=add&amp;courseid=$object->courseid\">\n";
-                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
-                          . 'title="'.$straddfeedback.'" /></a>'. "\n";
-                } else {
-                    $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                          . "&amp;action=edit&amp;courseid=$object->courseid\">\n";
-                    $html .= '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
-                          . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                      . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
-                }
-            }
+            $html .= $edit_calculation_icon;
         }
 
         if ($showeyecons) {
-
-            // Prepare Hide/Show icon state
-            $hide_show = 'hide';
-            if ($object->is_hidden()) {
-                $hide_show = 'show';
-            }
-
-            // Display Hide/Show icon
-            $html .= '<a href="report.php?report=grader&amp;target='.$eid
-                  . "&amp;action=$hide_show$tree->commonvars\">\n";
-            $html .= '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
-                  .${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
+            $html .= $show_hide_icon;
         }
 
         if ($showlocks) {
-            // Prepare lock/unlock string
-            $lock_unlock = 'lock';
-            if ($object->is_locked()) {
-                $lock_unlock = 'unlock';
-            }
-
-            // Print lock/unlock icon
-            $html .= '<a href="report.php?report=grader&amp;target='.$eid
-                  . "&amp;action=$lock_unlock$tree->commonvars\">\n";
-            $html .= '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
-                  .${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
+            $html .= $lock_unlock_icon;
         }
 
         // If object is a category, display expand/contract icon
         if (get_class($object) == 'grade_category' && $aggregationview == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
-            $expand_contract = 'switch_minus'; // Default: expanded
-
-            $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
-
-            if ($state == GRADE_CATEGORY_CONTRACTED) {
-                $expand_contract = 'switch_plus';
-            }
-
-            $html .= '<a href="report.php?report=grader&amp;target=' . $eid
-                  . "&amp;action=$expand_contract$tree->commonvars\">\n";
-            $html .= '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
-                  .${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
+            $html .= $contract_expand_icon;
         }
     } else { // Editing mode is off
-        if ($shownotes) {
+        if ($showfeedback) {
             // Display view feedback icon
             if (!empty($object->feedback)) {
-                $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                      . "&amp;action=view&amp;courseid=$object->courseid\">\n";
-                $html .= '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                      . $strfeedback.'\');" onmouseout="return nd();" '
-                      . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
+                $html .= $view_feedback_icon;
             }
         }
     }

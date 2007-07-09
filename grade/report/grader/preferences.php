@@ -51,6 +51,7 @@ if ($form = data_submitted()) {
                 break;
         }
     }
+
     redirect($CFG->wwwroot . '/grade/report.php?report=grader&amp;id='.$courseid, get_string('changessaved'), 1);
     exit;
 }

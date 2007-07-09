@@ -19,15 +19,17 @@ class grader_report_preferences_form extends moodleform {
 
 /// form definition with preferences defaults
 //--------------------------------------------------------------------------------
-        $preferences = array('bulkcheckboxes'         => 'checkbox', 
-                             'enableajax'             => 'checkbox', 
-                             'showcalculations'       => 'checkbox',
-                             'showeyecons'            => 'checkbox', 
-                             'showgrandtotals'        => 'checkbox', 
-                             'showgroups'             => 'checkbox',
-                             'showlocks'              => 'checkbox',
-                             'shownotes'              => 'checkbox',
-                             'showscales'             => 'checkbox', 
+        $preferences = array('bulkcheckboxes'         => 'advcheckbox',
+                             'enableajax'             => 'advcheckbox',
+                             'showcalculations'       => 'advcheckbox',
+                             'showeyecons'            => 'advcheckbox',
+                             'showgrandtotals'        => 'advcheckbox',
+                             'showgroups'             => 'advcheckbox',
+                             'showlocks'              => 'advcheckbox',
+                             'showfeedback'           => 'advcheckbox',
+                             'showscales'             => 'advcheckbox',
+                             'quickgrading'           => 'advcheckbox',
+                             'quickfeedback'          => 'advcheckbox',
                              'aggregationposition'    => array(get_string('left', 'grades'), get_string('right', 'grades')),
                              'aggregationview'        => array(get_string('full', 'grades'), get_string('compact', 'grades')),
                              'gradedisplaytype'       => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
@@ -39,7 +41,7 @@ class grader_report_preferences_form extends moodleform {
         foreach ($preferences as $pref => $type) {
             $full_pref  = 'grade_report_' . $pref;
             $pref_value = get_user_preferences($full_pref, $CFG->$full_pref);
-            
+
             $options = null;
             if (is_array($type)) {
                 $options = $type;
@@ -51,7 +53,7 @@ class grader_report_preferences_form extends moodleform {
             $mform->setDefault($full_pref, $pref_value);
             $mform->setType($full_pref, PARAM_INT);
         }
-        
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $course->id);
