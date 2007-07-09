@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070706" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070709" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1393,7 +1393,8 @@
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="categoryid"/>
         <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="scaleid"/>
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="categoryid" NEXT="outcomeid"/>
-        <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="scaleid"/>
+        <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="scaleid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="outcomeid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
@@ -1420,7 +1421,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="parent"/>
-        <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid"/>
+        <KEY NAME="parent" TYPE="foreign" FIELDS="parent" REFTABLE="grade_categories" REFFIELDS="id" PREVIOUS="courseid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="parent"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
@@ -1478,9 +1480,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="grade_grades_text" REFFIELDS="id" PREVIOUS="primary" NEXT="gradeid"/>
-        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="oldid" NEXT="loggeduser"/>
-        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="gradeid" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="loggeduser"/>
+        <KEY NAME="gradeid" TYPE="foreign" FIELDS="gradeid" REFTABLE="grade_grades" REFFIELDS="id" PREVIOUS="oldid" NEXT="usermodified"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="gradeid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="usermodified"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>
@@ -1527,7 +1529,8 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>
         <KEY NAME="oldid" TYPE="foreign" FIELDS="oldid" REFTABLE="scales" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
-        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="oldid" NEXT="loggeduser"/>
+        <KEY NAME="loggeduser" TYPE="foreign" FIELDS="loggeduser" REFTABLE="user" REFFIELDS="id" PREVIOUS="courseid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="false" FIELDS="action" COMMENT="insert/update/delete"/>

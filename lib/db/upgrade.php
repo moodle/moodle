@@ -1220,6 +1220,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'grade_categories', array('id'));
         $table->addKeyInfo('scaleid', XMLDB_KEY_FOREIGN, array('scaleid'), 'scale', array('id'));
         $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
+        $table->addKeyInfo('userlogged', XMLDB_KEY_FOREIGN, array('userlogged'), 'user', array('id'));
 
     /// Adding indexes to table grade_items_history
         $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
@@ -1252,6 +1253,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('oldid', XMLDB_KEY_FOREIGN, array('oldid'), 'grade_categories', array('id'));
         $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
         $table->addKeyInfo('parent', XMLDB_KEY_FOREIGN, array('parent'), 'grade_categories', array('id'));
+        $table->addKeyInfo('userlogged', XMLDB_KEY_FOREIGN, array('userlogged'), 'user', array('id'));
 
     /// Adding indexes to table grade_categories_history
         $table->addIndexInfo('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
@@ -1394,6 +1396,23 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007070603) {
         // Small update of guest user to be 100% sure it has the correct mnethostid (MDL-10375)
         set_field('user', 'mnethostid', $CFG->mnet_localhost_id, 'username', 'guest');
+    }
+
+    if ($result && $oldversion < 2007070900) {
+        // fix loggeduser foreign key
+        $tables = array('grade_categories_history',
+                        'scale_history',
+                        'grade_items_history',
+                        'grade_grades_history',
+                        'grade_grades_text_history',
+                        'grade_outcomes_history');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable($table);
+            $key = new XMLDBKey('userlogged');
+            $key->setAttributes(XMLDB_KEY_FOREIGN, array('userlogged'), 'user', array('id'));
+            add_key($table, $key);
+        }
     }
 
     return $result;
