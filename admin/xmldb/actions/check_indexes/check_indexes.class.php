@@ -222,6 +222,7 @@ class check_indexes extends XMLDBAction {
             }
 
         /// We have finished, let's show the results of the search
+            $s = '';
             $r = '<table class="generalbox boxaligncenter boxwidthwide" border="0" cellpadding="5" cellspacing="0" id="results">';
             $r.= '  <tr><td class="generalboxcontent">';
             $r.= '    <h2 class="main">' . $this->str['searchresults'] . '</h2>';
@@ -236,18 +237,21 @@ class check_indexes extends XMLDBAction {
                 foreach ($missing_indexes as $obj) {
                     $xmldb_table = $obj->table;
                     $xmldb_index = $obj->index;
-                    $sqlarr = $xmldb_table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $xmldb_index, false);
+                    $sqlarr = $xmldb_table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $xmldb_index, true);
                     $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
-                                              $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '<br />' .
-                                              '<p><code>' . implode('<br />', $sqlarr) . '</code></p></li>';
+                                              $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '</li>';
+                    $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
                     
                 }
                 $r.= '        </ul>';
+            /// Add the SQL statements (all together)
+                $r.= '<hr />' . $s;
             } else {
                 $r.= '    <p class="centerpara">' . $this->str['nomissingindexesfound'] . '</p>';
             }
             $r.= '  </td></tr>';
             $r.= '  <tr><td class="generalboxcontent">';
+        /// Add the complete log message
             $r.= '    <p class="centerpara">' . $this->str['completelogbelow'] . '</p>';
             $r.= '  </td></tr>';
             $r.= '</table>';
