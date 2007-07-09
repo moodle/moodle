@@ -14,44 +14,52 @@
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @subpackage Analysis
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
-
-/** Zend_Search_Lucene_Analysis_TokenFilter */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/TokenFilter.php';
 
 
 /**
- * Lower case Token filter.
+ * Abstract Finite State Machine
+ *
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @subpackage Analysis
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-
-class Zend_Search_Lucene_Analysis_TokenFilter_LowerCase extends Zend_Search_Lucene_Analysis_TokenFilter
+class Zend_Search_Lucene_FSMAction
 {
     /**
-     * Normalize Token or remove it (if null is returned)
+     * Object reference
      *
-     * @param Zend_Search_Lucene_Analysis_Token $srcToken
-     * @return Zend_Search_Lucene_Analysis_Token
+     * @var object
      */
-    public function normalize(Zend_Search_Lucene_Analysis_Token $srcToken)
+    private $_object;
+
+    /**
+     * Method name
+     *
+     * @var string
+     */
+    private $_method;
+
+    /**
+     * Object constructor
+     *
+     * @param object $object
+     * @param string $method
+     */
+    public function __construct($object, $method)
     {
-        $newToken = new Zend_Search_Lucene_Analysis_Token(
-                                     strtolower( $srcToken->getTermText() ),
-                                     $srcToken->getStartOffset(),
-                                     $srcToken->getEndOffset());
+        $this->_object = $object;
+        $this->_method = $method;
+    }
 
-        $newToken->setPositionIncrement($srcToken->getPositionIncrement());
-
-        return $newToken;
+    public function doAction()
+    {
+        $methodName = $this->_method;
+        $this->_object->$methodName();
     }
 }
 

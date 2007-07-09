@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Field */
-require_once 'Zend/Search/Lucene/Field.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Field.php';
 
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Search/Lucene/Field.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Document
@@ -90,9 +90,9 @@ class Zend_Search_Lucene_Document
      */
     public function getField($fieldName)
     {
-		if (!array_key_exists($fieldName, $this->_fields)) {
-			throw new Zend_Search_Lucene_Exception("Field name \"$fieldName\" not found in document.");
-		}
+        if (!array_key_exists($fieldName, $this->_fields)) {
+            throw new Zend_Search_Lucene_Exception("Field name \"$fieldName\" not found in document.");
+        }
         return $this->_fields[$fieldName];
     }
 
@@ -105,7 +105,17 @@ class Zend_Search_Lucene_Document
      */
     public function getFieldValue($fieldName)
     {
-    	return $this->getField($fieldName)->stringValue;
+    	return $this->getField($fieldName)->value;
     }
 
+    /**
+     * Returns the string value of a named field in UTF-8 encoding.
+     *
+     * @see __get()
+     * @return string
+     */
+    public function getFieldUtf8Value($fieldName)
+    {
+    	return $this->getField($fieldName)->getUtf8Value();
+    }
 }

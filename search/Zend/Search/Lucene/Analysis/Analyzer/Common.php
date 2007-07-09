@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_Analyzer */
-require_once 'Zend/Search/Lucene/Analysis/Analyzer.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer.php';
 
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Search/Lucene/Analysis/Analyzer.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_Analysis_Analyzer_Common extends Zend_Search_Lucene_Analysis_Analyzer
@@ -58,7 +58,7 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer_Common extends Zend_Search_L
     }
 
     /**
-     * Apply filters to the token.
+     * Apply filters to the token. Can return null when the token was removed.
      *
      * @param Zend_Search_Lucene_Analysis_Token $token
      * @return Zend_Search_Lucene_Analysis_Token
@@ -67,6 +67,11 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer_Common extends Zend_Search_L
     {
         foreach ($this->_filters as $filter) {
             $token = $filter->normalize($token);
+
+            // resulting token can be null if the filter removed it
+            if (is_null($token)) {
+                return null;
+            }
         }
 
         return $token;

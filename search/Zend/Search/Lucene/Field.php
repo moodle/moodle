@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,15 +31,20 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Field
 {
-    public $kind;
+    /**
+     * Field name
+     *
+     * @var string
+     */
+    public $name;
 
-    public $name        = 'body';
-    public $stringValue = null;
+
+    public $value;
     public $isStored    = false;
     public $isIndexed   = true;
     public $isTokenized = true;
@@ -47,26 +52,48 @@ class Zend_Search_Lucene_Field
 
     public $storeTermVector = false;
 
+    /**
+     * Field boos factor
+     * It's not stored directly in the index, but affects on normalizetion factor
+     *
+     * @var float
+     */
     public $boost = 1.0;
 
-    public function __construct($name, $stringValue, $isStored, $isIndexed, $isTokenized, $isBinary = false)
+    /**
+     * Field value encoding.
+     *
+     * @var string
+     */
+    public $encoding;
+
+    /**
+     * Object constructor
+     *
+     * @param string $name
+     * @param string $value
+     * @param string $encoding
+     * @param boolean $isStored
+     * @param boolean $isIndexed
+     * @param boolean $isTokenized
+     * @param boolean $isBinary
+     */
+    public function __construct($name, $value, $encoding, $isStored, $isIndexed, $isTokenized, $isBinary = false)
     {
-        $this->name        = $name;
+        $this->name  = $name;
+        $this->value = $value;
 
         if (!$isBinary) {
-            /**
-             * @todo Correct UTF-8 string should be required in future
-             * Until full UTF-8 support is not completed, string should be normalized to ANSII encoding
-             */
-            $this->stringValue = iconv(mb_detect_encoding($stringValue), 'ASCII//TRANSLIT', $stringValue);
-            //$this->stringValue = iconv('', 'ASCII//TRANSLIT', $stringValue);
+            $this->encoding    = $encoding;
+            $this->isTokenized = $isTokenized;
         } else {
-            $this->stringValue = $stringValue;
+            $this->encoding    = '';
+            $this->isTokenized = false;
         }
-        $this->isStored    = $isStored;
-        $this->isIndexed   = $isIndexed;
-        $this->isTokenized = $isTokenized;
-        $this->isBinary    = $isBinary;
+
+        $this->isStored  = $isStored;
+        $this->isIndexed = $isIndexed;
+        $this->isBinary  = $isBinary;
 
         $this->storeTermVector = false;
         $this->boost           = 1.0;
@@ -79,11 +106,12 @@ class Zend_Search_Lucene_Field
      *
      * @param string $name
      * @param string $value
+     * @param string $encoding
      * @return Zend_Search_Lucene_Field
      */
-    static public function Keyword($name, $value)
+    public static function Keyword($name, $value, $encoding = '')
     {
-        return new self($name, $value, true, true, false);
+        return new self($name, $value, $encoding, true, true, false);
     }
 
 
@@ -93,11 +121,12 @@ class Zend_Search_Lucene_Field
      *
      * @param string $name
      * @param string $value
+     * @param string $encoding
      * @return Zend_Search_Lucene_Field
      */
-    static public function UnIndexed($name, $value)
+    public static function UnIndexed($name, $value, $encoding = '')
     {
-        return new self($name, $value, true, false, false);
+        return new self($name, $value, $encoding, true, false, false);
     }
 
 
@@ -107,11 +136,12 @@ class Zend_Search_Lucene_Field
      *
      * @param string $name
      * @param string $value
+     * @param string $encoding
      * @return Zend_Search_Lucene_Field
      */
-    static public function Binary($name, $value)
+    public static function Binary($name, $value)
     {
-        return new self($name, $value, true, false, false, true);
+        return new self($name, $value, '', true, false, false, true);
     }
 
     /**
@@ -121,11 +151,12 @@ class Zend_Search_Lucene_Field
      *
      * @param string $name
      * @param string $value
+     * @param string $encoding
      * @return Zend_Search_Lucene_Field
      */
-    static public function Text($name, $value)
+    public static function Text($name, $value, $encoding = '')
     {
-        return new self($name, $value, true, true, true);
+        return new self($name, $value, $encoding, true, true, true);
     }
 
 
@@ -135,12 +166,27 @@ class Zend_Search_Lucene_Field
      *
      * @param string $name
      * @param string $value
+     * @param string $encoding
      * @return Zend_Search_Lucene_Field
      */
-    static public function UnStored($name, $value)
+    public static function UnStored($name, $value, $encoding = '')
     {
-        return new self($name, $value, false, true, true);
+        return new self($name, $value, $encoding, false, true, true);
     }
 
+    /**
+     * Get field value in UTF-8 encoding
+     *
+     * @return string
+     */
+    public function getUtf8Value()
+    {
+        if (strcasecmp($this->encoding, 'utf8' ) == 0  ||
+            strcasecmp($this->encoding, 'utf-8') == 0 ) {
+                return $this->value;
+        } else {
+            return iconv($this->encoding, 'UTF-8', $this->value);
+        }
+    }
 }
 

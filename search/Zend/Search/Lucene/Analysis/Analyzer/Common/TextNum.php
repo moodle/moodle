@@ -32,7 +32,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common.
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-class Zend_Search_Lucene_Analysis_Analyzer_Common_Text extends Zend_Search_Lucene_Analysis_Analyzer_Common
+class Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum extends Zend_Search_Lucene_Analysis_Analyzer_Common
 {
     /**
      * Current position in a stream
@@ -70,9 +70,8 @@ class Zend_Search_Lucene_Analysis_Analyzer_Common_Text extends Zend_Search_Lucen
             return null;
         }
 
-
         do {
-            if (! preg_match('/[a-zA-Z]+/', $this->_input, $match, PREG_OFFSET_CAPTURE, $this->_position)) {
+            if (! preg_match('/[a-zA-Z0-9]+/', $this->_input, $match, PREG_OFFSET_CAPTURE, $this->_position)) {
                 // It covers both cases a) there are no matches (preg_match(...) === 0)
                 // b) error occured (preg_match(...) === FALSE)
             	return null;

@@ -15,20 +15,37 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_Token */
-require_once 'Zend/Search/Lucene/Analysis/Token.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Token.php';
+
+/** Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8 */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8.php';
+
+/** Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8Num.php';
 
 /** Zend_Search_Lucene_Analysis_Analyzer_Common_Text */
-require_once 'Zend/Search/Lucene/Analysis/Analyzer/Common/Text.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/Text.php';
 
 /** Zend_Search_Lucene_Analysis_Analyzer_Common_Text_CaseInsensitive */
-require_once 'Zend/Search/Lucene/Analysis/Analyzer/Common/Text/CaseInsensitive.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/Text/CaseInsensitive.php';
 
+/** Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/TextNum.php';
+
+/** Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common/TextNum/CaseInsensitive.php';
+
+/** Zend_Search_Lucene_Analysis_TokenFilter_StopWords */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/TokenFilter/StopWords.php';
+
+/** Zend_Search_Lucene_Analysis_TokenFilter_ShortWords */
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/TokenFilter/ShortWords.php';
 
 
 /**
@@ -44,7 +61,7 @@ require_once 'Zend/Search/Lucene/Analysis/Analyzer/Common/Text/CaseInsensitive.p
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -55,16 +72,74 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
      *
      * @var Zend_Search_Lucene_Analysis_Analyzer
      */
-    static private $_defaultImpl;
+    private static $_defaultImpl;
+
+    /**
+     * Input string
+     *
+     * @var string
+     */
+    protected $_input = null;
+
+    /**
+     * Input string encoding
+     *
+     * @var string
+     */
+    protected $_encoding = '';
 
     /**
      * Tokenize text to a terms
      * Returns array of Zend_Search_Lucene_Analysis_Token objects
      *
+     * Tokens are returned in UTF-8 (internal Zend_Search_Lucene encoding)
+     *
      * @param string $data
      * @return array
      */
-    abstract public function tokenize($data);
+    public function tokenize($data, $encoding = '')
+    {
+        $this->setInput($data, $encoding);
+
+        $tokenList = array();
+        while (($nextToken = $this->nextToken()) !== null) {
+            $tokenList[] = $nextToken;
+        }
+
+        return $tokenList;
+    }
+
+
+    /**
+     * Tokenization stream API
+     * Set input
+     *
+     * @param string $data
+     */
+    public function setInput($data, $encoding = '')
+    {
+        $this->_input    = $data;
+        $this->_encoding = $encoding;
+        $this->reset();
+    }
+
+    /**
+     * Reset token stream
+     */
+    abstract public function reset();
+
+    /**
+     * Tokenization stream API
+     * Get next token
+     * Returns null at the end of stream
+     *
+     * Tokens are returned in UTF-8 (internal Zend_Search_Lucene encoding)
+     *
+     * @return Zend_Search_Lucene_Analysis_Token|null
+     */
+    abstract public function nextToken();
+
+
 
 
     /**
@@ -72,7 +147,7 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
      *
      * @param Zend_Search_Lucene_Analysis_Analyzer $similarity
      */
-    static public function setDefault(Zend_Search_Lucene_Analysis_Analyzer $analyzer)
+    public static function setDefault(Zend_Search_Lucene_Analysis_Analyzer $analyzer)
     {
         self::$_defaultImpl = $analyzer;
     }
@@ -83,7 +158,7 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
      *
      * @return Zend_Search_Lucene_Analysis_Analyzer
      */
-    static public function getDefault()
+    public static function getDefault()
     {
         if (!self::$_defaultImpl instanceof Zend_Search_Lucene_Analysis_Analyzer) {
             self::$_defaultImpl = new Zend_Search_Lucene_Analysis_Analyzer_Common_Text_CaseInsensitive();
@@ -91,6 +166,5 @@ abstract class Zend_Search_Lucene_Analysis_Analyzer
 
         return self::$_defaultImpl;
     }
-
 }
 

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Index_Term
@@ -52,21 +52,57 @@ class Zend_Search_Lucene_Index_Term
 
 
     /**
-     * @todo docblock
+     * Object constructor
      */
-    public function __construct( $text, $field = 'contents' )
+    public function __construct($text, $field = null)
     {
-        $this->field = $field;
-        $this->text = $text;
+        $this->field = ($field === null)?  Zend_Search_Lucene::getDefaultSearchField() : $field;
+        $this->text  = $text;
     }
 
 
     /**
-     * @todo docblock
+     * Returns term key
+     *
+     * @return string
      */
     public function key()
     {
         return $this->field . chr(0) . $this->text;
+    }
+
+    /**
+     * Get term prefix
+     *
+     * @param integer $length
+     * @return string
+     */
+    public static function getPrefix($str, $length)
+    {
+        $prefixBytes = 0;
+        $prefixChars = 0;
+        while ($prefixBytes < strlen($str)  &&  $prefixChars < $length) {
+            $charBytes = 1;
+            if ((ord($str[$prefixBytes]) & 0xC0) == 0xC0) {
+                $charBytes++;
+                if (ord($str[$prefixBytes]) & 0x20 ) {
+                    $charBytes++;
+                    if (ord($str[$prefixBytes]) & 0x10 ) {
+                        $charBytes++;
+                    }
+                }
+            }
+
+            if ($prefixBytes + $charBytes > strlen($str)) {
+                // wrong character
+                break;
+            }
+
+            $prefixChars++;
+            $prefixBytes += $charBytes;
+        }
+
+        return substr($str, 0, $prefixBytes);
     }
 }
 
