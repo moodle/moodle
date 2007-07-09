@@ -550,7 +550,21 @@ if ($displaytotals || 1) {
     $gradesumhtml = '';
 }
 
+
+// finding the ranges of each gradeitem
+
+if ($showscales) {
+    $scalehtml = '<tr><td>'.get_string('range','grades').'</td>';
+    foreach ($items as $item) {
+        $scalehtml .= '<td>'. get_grade_clean($item->grademin).'-'. get_grade_clean($item->grademax).'</td>';
+    }
+    $scalehtml .= '</tr>';
+} else {
+    $scalehtml = '';
+}
+
 $reporthtml = "<table class=\"boxaligncenter\">$headerhtml";
+$reporthtml .= $scalehtml;
 $reporthtml .= $studentshtml;
 $reporthtml .= $groupsumhtml;
 $reporthtml .= $gradesumhtml;
@@ -577,7 +591,7 @@ if ($USER->gradeediting) {
 function get_grade_clean($gradeval) {
 
     if ($gradeval != 0) {
-        $gradeval = trim($gradeval, ".0");
+        $gradeval = rtrim(trim($gradeval, "0"), ".");
     } else {
         $gradeval = 0;
     }
