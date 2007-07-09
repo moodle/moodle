@@ -96,7 +96,11 @@ function print_entry($course) {
         }
     }
 
-    $teacher = get_teacher($course->id);
+    if ($teachers = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'moodle/course:update', 
+                                                            'u.*,ra.hidden', 'r.sortorder ASC',
+                                                            0, 1, '', '', false, true)) {  
+        $teacher = array_shift($teachers);
+    }
     if (!isset($password)) {
         $password = '';
     }

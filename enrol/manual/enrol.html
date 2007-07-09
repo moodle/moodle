@@ -4,10 +4,10 @@
     
         print_box_start('generalbox centerpara');
         echo '<p align="center">';
-        if ($teacher) {
+        if (!empty($teacher)) {
             $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
         } else {
-            $teachername = get_string('yourteacher', '', $course->teacher);
+            $teachername = get_string('defaultcourseteacher'); //get_string('yourteacher', '', $course->teacher);
         }
         print_string('enrolmentkeyfrom', '', $teachername);
  ?>
