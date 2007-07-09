@@ -3699,7 +3699,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
  * @param bool parent if true, get list of users assigned in higher context too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $view=false, $limitfrom='', $limitnum='') {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $view=false, $limitfrom='', $limitnum='', $group='') {
     global $CFG;
 
     if (empty($fields)) {
@@ -3726,11 +3726,21 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
     } else {
         $roleselect = '';
     }
+    
+    if ($group) {
+        $groupsql = "{$CFG->prefix}groups_members gm, ";
+        $groupwheresql = " AND gm.userid = u.id AND gm.groupid = $group ";  
+    } else {
+        $groupsql = '';
+        $groupwheresql = '';   
+    }
 
     $SQL = "SELECT $fields
             FROM {$CFG->prefix}role_assignments r,
+                 $groupsql
                  {$CFG->prefix}user u
             WHERE (r.contextid = $context->id $parentcontexts)
+                 $groupwheresql
             AND u.id = r.userid $roleselect
             $hiddensql
             ORDER BY $sort
