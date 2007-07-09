@@ -27,6 +27,13 @@ function get_grade_clean($gradeval) {
 */
 function grader_report_print_toggle($type, $baseurl, $return=false) {
     global $CFG;
+
+    $icons = array('eyecons' => 'hide',
+                   'calculations' => 'calc',
+                   'locks' => 'lock',
+                   'grandtotals' => 'sigma',
+                   'notes' => 'feedback');
+
     $pref_name = 'grade_report_show' . $type;
     $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
 
@@ -41,8 +48,19 @@ function grader_report_print_toggle($type, $baseurl, $return=false) {
         $toggle_action = 0;
     }
 
-    $retval = '<div class="gradertoggle"><a href="' . $baseurl . "&amp;toggle=$toggle_action&amp;toggle_type=$type\">"
-         . ${'str' . $show_hide} . '</a></div>';
+    if (array_key_exists($type, $icons)) {
+        $image_name = $icons[$type];
+    } else {
+        $image_name = $type;
+    }
+
+    $string = ${'str' . $show_hide};
+
+    $img = '<img src="'.$CFG->pixpath.'/t/'.$image_name.'.gif" class="iconsmall" alt="'
+                  .$string.'" title="'.$string.'" />'. "\n";
+
+    $retval = '<div class="gradertoggle">' . $img . '<a href="' . $baseurl . "&amp;toggle=$toggle_action&amp;toggle_type=$type\">"
+         . $string . '</a></div>';
 
     if ($return) {
         return $retval;
@@ -100,11 +118,17 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
+// Handle toggle change request
+// TODO print visual feedback
+if (!is_null($toggle) && !empty($toggle_type)) {
+    set_user_preferences(array('grade_report_show' . $toggle_type => $toggle));
+}
+
 // Get the user preferences
 $perpage              = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
 $decimals             = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints); // decimals in grades
-$displaytotals        = get_user_preferences('grade_report_showgrandtotals', $CFG->grade_report_showgrandtotals);
-$displaygrouptotals   = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
+$showgrandtotals      = get_user_preferences('grade_report_showgrandtotals', $CFG->grade_report_showgrandtotals);
+$showgroups           = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
 $aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
 $showscales           = get_user_preferences('grade_report_showscales', $CFG->grade_report_showscales);
 
@@ -124,29 +148,27 @@ $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grad
 // base url for paging
 $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
 
-// Handle toggle change request
-// TODO print visual feedback
-if (!is_null($toggle) && !empty($toggle_type)) {
-    set_user_preferences(array('grade_report_show' . $toggle_type => $toggle));
-}
+$groupsql = '';
+$groupwheresql = '';
+$group_selector = null;
+$currentgroup = null;
 
-/// find out current groups mode
-$course = get_record('course', 'id', $courseid);
-$groupmode = $course->groupmode;
-ob_start();
-$currentgroup = setup_and_print_groups($course, $groupmode, $baseurl);
-$group_selector = ob_get_clean();
+if ($showgroups) {
+    /// find out current groups mode
+    $course = get_record('course', 'id', $courseid);
+    $groupmode = $course->groupmode;
+    ob_start();
+    $currentgroup = setup_and_print_groups($course, $groupmode, $baseurl);
+    $group_selector = ob_get_clean();
 
-// update paging after group
-$baseurl .= 'group='.$currentgroup.'&amp;';
-$pbarurl .= 'group='.$currentgroup.'&amp;';
+    // update paging after group
+    $baseurl .= 'group='.$currentgroup.'&amp;';
+    $pbarurl .= 'group='.$currentgroup.'&amp;';
 
-if ($currentgroup) {
-    $groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
-    $groupwheresql = " AND gm.groupid = $currentgroup ";
-} else {
-    $groupsql = '';
-    $groupwheresql = '';
+    if ($currentgroup) {
+        $groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
+        $groupwheresql = " AND gm.groupid = $currentgroup ";
+    }
 }
 
 // Grab the grade_tree for this course
@@ -359,6 +381,7 @@ include('tabs.php');
 echo $group_selector;
 
 // Show/hide toggles
+echo '<div id="grade-report-toggles">';
 if ($USER->gradeediting) {
     grader_report_print_toggle('eyecons', $baseurl);
     grader_report_print_toggle('locks', $baseurl);
@@ -369,6 +392,7 @@ grader_report_print_toggle('notes', $baseurl);
 grader_report_print_toggle('grandtotals', $baseurl);
 grader_report_print_toggle('groups', $baseurl);
 grader_report_print_toggle('scales', $baseurl);
+echo '</div>';
 
 // Paging bar
 print_paging_bar($numusers, $page, $perpage, $pbarurl);
@@ -552,7 +576,9 @@ foreach ($users as $userid => $user) {
 }
 
 // if user preference to display group sum
-if ($currentgroup && ($displaygrouptotals || 1)) {
+$groupsumhtml = '';
+
+if ($currentgroup && $showgroups) {
 
 /** SQL for finding group sum */
     $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
@@ -583,12 +609,11 @@ if ($currentgroup && ($displaygrouptotals || 1)) {
         }
     }
     $groupsumhtml .= '</tr>';
-} else {
-    $groupsumhtml = '';
 }
 
 // Grand totals
-if ($displaytotals) {
+$gradesumhtml = '';
+if ($showgrandtotals) {
 
 /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
 
@@ -618,21 +643,16 @@ if ($displaytotals) {
         }
     }
     $gradesumhtml .= '</tr>';
-} else {
-    $gradesumhtml = '';
 }
 
-
 // finding the ranges of each gradeitem
-
+$scalehtml = '';
 if ($showscales) {
     $scalehtml = '<tr><td>'.get_string('range','grades').'</td>';
     foreach ($items as $item) {
         $scalehtml .= '<td>'. get_grade_clean($item->grademin).'-'. get_grade_clean($item->grademax).'</td>';
     }
     $scalehtml .= '</tr>';
-} else {
-    $scalehtml = '';
 }
 
 $reporthtml = "<table class=\"boxaligncenter\">$headerhtml";

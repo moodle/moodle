@@ -2163,6 +2163,10 @@ body#grade-index .grades .weighted {
   margin-left: 4px;
 }
 
+#grade-report-toggles {
+  text-align: center;
+}
+
 /***
  *** Login
  ***/
