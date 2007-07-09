@@ -31,7 +31,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight.php';
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Search_Weight
+class Zend_Search_Lucene_Search_Weight_Boolean extends Zend_Search_Lucene_Search_Weight
 {
     /**
      * IndexReader.
@@ -48,8 +48,8 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
     private $_query;
 
     /**
-     * Query terms weights
-     * Array of Zend_Search_Lucene_Search_Weight_Term
+     * Queries weights
+     * Array of Zend_Search_Lucene_Search_Weight
      *
      * @var array
      */
@@ -57,7 +57,7 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
 
 
     /**
-     * Zend_Search_Lucene_Search_Weight_MultiTerm constructor
+     * Zend_Search_Lucene_Search_Weight_Boolean constructor
      * query - the query that this concerns.
      * reader - index reader
      *
@@ -73,10 +73,9 @@ class Zend_Search_Lucene_Search_Weight_MultiTerm extends Zend_Search_Lucene_Sear
 
         $signs = $query->getSigns();
 
-        foreach ($query->getTerms() as $id => $term) {
-            if ($signs === null || $signs[$id] === null || $signs[$id]) {
-                $this->_weights[$id] = new Zend_Search_Lucene_Search_Weight_Term($term, $query, $reader);
-                $query->setWeight($id, $this->_weights[$id]);
+        foreach ($query->getSubqueries() as $num => $subquery) {
+            if ($signs === null || $signs[$num] === null || $signs[$num]) {
+                $this->_weights[$num] = $subquery->createWeight($reader);
             }
         }
     }

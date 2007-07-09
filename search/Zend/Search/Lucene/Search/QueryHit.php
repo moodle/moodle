@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,14 +24,14 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_QueryHit
 {
     /**
      * Object handle of the index
-     * @var Zend_Search_Lucene
+     * @var Zend_Search_Lucene_Interface
      */
     protected $_index = null;
 
@@ -55,15 +55,15 @@ class Zend_Search_Lucene_Search_QueryHit
 
 
     /**
-     * Constructor - pass object handle of Zend_Search_Lucene index that produced
+     * Constructor - pass object handle of Zend_Search_Lucene_Interface index that produced
      * the hit so the document can be retrieved easily from the hit.
      *
-     * @param Zend_Search_Lucene $index
+     * @param Zend_Search_Lucene_Interface $index
      */
 
-    public function __construct(Zend_Search_Lucene $index)
+    public function __construct(Zend_Search_Lucene_Interface $index)
     {
-        $this->_index = $index;
+        $this->_index = new Zend_Search_Lucene_Proxy($index);
     }
 
 
@@ -98,7 +98,7 @@ class Zend_Search_Lucene_Search_QueryHit
     /**
      * Return the index object for this hit
      *
-     * @return Zend_Search_Lucene
+     * @return Zend_Search_Lucene_Interface
      */
     public function getIndex()
     {

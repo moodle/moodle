@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,12 +23,12 @@
 /**
  * Zend_Search_Lucene_Search_Query
  */
-require_once 'Zend/Search/Lucene/Search/Query.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query.php';
 
 /**
  * Zend_Search_Lucene_Search_Weight_MultiTerm
  */
-require_once 'Zend/Search/Lucene/Search/Weight/Phrase.php';
+require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight/Phrase.php';
 
 
 /**
@@ -37,7 +37,7 @@ require_once 'Zend/Search/Lucene/Search/Weight/Phrase.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2006 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Query
@@ -73,16 +73,14 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
      *
      * The slop is zero by default, requiring exact matches.
      *
-     * @var unknown_type
+     * @var integer
      */
     private $_slop;
 
     /**
      * Result vector.
-     * Bitset or array of document IDs
-     * (depending from Bitset extension availability).
      *
-     * @var mixed
+     * @var array
      */
     private $_resVector = null;
 
@@ -184,6 +182,70 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
 
 
     /**
+     * Re-write query into primitive queries in the context of specified index
+     *
+     * @param Zend_Search_Lucene_Interface $index
+     * @return Zend_Search_Lucene_Search_Query
+     */
+    public function rewrite(Zend_Search_Lucene_Interface $index)
+    {
+        if (count($this->_terms) == 0) {
+            return new Zend_Search_Lucene_Search_Query_Empty();
+        } else if ($this->_terms[0]->field !== null) {
+            return $this;
+        } else {
+            $query = new Zend_Search_Lucene_Search_Query_Boolean();
+            $query->setBoost($this->getBoost());
+
+            foreach ($index->getFieldNames(true) as $fieldName) {
+                $subquery = new Zend_Search_Lucene_Search_Query_Phrase();
+                $subquery->setSlop($this->getSlop());
+
+                foreach ($this->_terms as $termId => $term) {
+                    $qualifiedTerm = new Zend_Search_Lucene_Index_Term($term->text, $fieldName);
+
+                    $subquery->addTerm($qualifiedTerm, $this->_offsets[$termId]);
+                }
+
+                $query->addSubquery($subquery);
+            }
+
+            return $query;
+        }
+    }
+
+    /**
+     * Optimize query in the context of specified index
+     *
+     * @param Zend_Search_Lucene_Interface $index
+     * @return Zend_Search_Lucene_Search_Query
+     */
+    public function optimize(Zend_Search_Lucene_Interface $index)
+    {
+        // Check, that index contains all phrase terms
+        foreach ($this->_terms as $term) {
+            if (!$index->hasTerm($term)) {
+                return new Zend_Search_Lucene_Search_Query_Empty();
+            }
+        }
+
+        if (count($this->_terms) == 1) {
+            // It's one term query
+            $optimizedQuery = new Zend_Search_Lucene_Search_Query_Term(reset($this->_terms));
+            $optimizedQuery->setBoost($this->getBoost());
+
+            return $optimizedQuery;
+        }
+
+        if (count($this->_terms) == 0) {
+            return new Zend_Search_Lucene_Search_Query_Empty();
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Returns query term
      *
      * @return array
@@ -209,50 +271,13 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
     /**
      * Constructs an appropriate Weight implementation for this query.
      *
-     * @param Zend_Search_Lucene $reader
+     * @param Zend_Search_Lucene_Interface $reader
      * @return Zend_Search_Lucene_Search_Weight
      */
-    protected function _createWeight($reader)
+    public function createWeight(Zend_Search_Lucene_Interface $reader)
     {
-        return new Zend_Search_Lucene_Search_Weight_Phrase($this, $reader);
-    }
-
-
-    /**
-     * Calculate result vector
-     *
-     * @param Zend_Search_Lucene $reader
-     */
-    private function _calculateResult($reader)
-    {
-        if (extension_loaded('bitset')) {
-            foreach( $this->_terms as $termId=>$term ) {
-                if($this->_resVector === null) {
-                    $this->_resVector = bitset_from_array($reader->termDocs($term));
-                } else {
-                    $this->_resVector = bitset_intersection(
-                                $this->_resVector,
-                                bitset_from_array($reader->termDocs($term)) );
-                }
-
-                $this->_termsPositions[$termId] = $reader->termPositions($term);
-            }
-        } else {
-            foreach( $this->_terms as $termId=>$term ) {
-                if($this->_resVector === null) {
-                    $this->_resVector = array_flip($reader->termDocs($term));
-                } else {
-                    $termDocs = array_flip($reader->termDocs($term));
-                    foreach($this->_resVector as $key=>$value) {
-                        if (!isset( $termDocs[$key] )) {
-                            unset( $this->_resVector[$key] );
-                        }
-                    }
-                }
-
-                $this->_termsPositions[$termId] = $reader->termPositions($term);
-            }
-        }
+        $this->_weight = new Zend_Search_Lucene_Search_Weight_Phrase($this, $reader);
+        return $this->_weight;
     }
 
 
@@ -305,10 +330,10 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
      * Score calculator for sloppy phrase queries (terms sequence is fixed)
      *
      * @param integer $docId
-     * @param Zend_Search_Lucene $reader
+     * @param Zend_Search_Lucene_Interface $reader
      * @return float
      */
-    public function _sloppyPhraseFreq($docId, Zend_Search_Lucene $reader)
+    public function _sloppyPhraseFreq($docId, Zend_Search_Lucene_Interface $reader)
     {
         $freq = 0;
 
@@ -377,50 +402,141 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
         return $freq;
     }
 
+    /**
+     * Execute query in context of index reader
+     * It also initializes necessary internal structures
+     *
+     * @param Zend_Search_Lucene_Interface $reader
+     */
+    public function execute(Zend_Search_Lucene_Interface $reader)
+    {
+        $this->_resVector = null;
+
+        if (count($this->_terms) == 0) {
+            $this->_resVector = array();
+        }
+
+        foreach( $this->_terms as $termId=>$term ) {
+            if($this->_resVector === null) {
+                $this->_resVector = array_flip($reader->termDocs($term));
+            } else {
+                $this->_resVector = array_intersect_key($this->_resVector, array_flip($reader->termDocs($term)));
+            }
+
+            if (count($this->_resVector) == 0) {
+                // Empty result set, we don't need to check other terms
+                break;
+            }
+
+            $this->_termsPositions[$termId] = $reader->termPositions($term);
+        }
+
+        ksort($this->_resVector, SORT_NUMERIC);
+
+        // Initialize weight if it's not done yet
+        $this->_initWeight($reader);
+    }
+
+    /**
+     * Get document ids likely matching the query
+     *
+     * It's an array with document ids as keys (performance considerations)
+     *
+     * @return array
+     */
+    public function matchedDocs()
+    {
+        return $this->_resVector;
+    }
 
     /**
      * Score specified document
      *
      * @param integer $docId
-     * @param Zend_Search_Lucene $reader
+     * @param Zend_Search_Lucene_Interface $reader
      * @return float
      */
-    public function score($docId, $reader)
+    public function score($docId, Zend_Search_Lucene_Interface $reader)
     {
-        // optimize zero-term case
-        if (count($this->_terms) == 0) {
-            return 0;
-        }
-
-        if($this->_resVector === null) {
-            $this->_calculateResult($reader);
-            $this->_initWeight($reader);
-        }
-
-        if ( (extension_loaded('bitset')) ?
-                bitset_in($this->_resVector, $docId) :
-                isset($this->_resVector[$docId])  ) {
+        if (isset($this->_resVector[$docId])) {
             if ($this->_slop == 0) {
                 $freq = $this->_exactPhraseFreq($docId);
             } else {
                 $freq = $this->_sloppyPhraseFreq($docId, $reader);
             }
 
-/*
-            return $reader->getSimilarity()->tf($freq) *
-                   $this->_weight->getValue() *
-                   $reader->norm($docId, reset($this->_terms)->field);
-*/
             if ($freq != 0) {
                 $tf = $reader->getSimilarity()->tf($freq);
                 $weight = $this->_weight->getValue();
                 $norm = $reader->norm($docId, reset($this->_terms)->field);
 
-                return $tf*$weight*$norm;
+                return $tf * $weight * $norm * $this->getBoost();
             }
+
+            // Included in result, but culculated freq is zero
+            return 0;
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Return query terms
+     *
+     * @return array
+     */
+    public function getQueryTerms()
+    {
+        return $this->_terms;
+    }
+
+    /**
+     * Highlight query terms
+     *
+     * @param integer &$colorIndex
+     * @param Zend_Search_Lucene_Document_Html $doc
+     */
+    public function highlightMatchesDOM(Zend_Search_Lucene_Document_Html $doc, &$colorIndex)
+    {
+        $words = array();
+        foreach ($this->_terms as $term) {
+            $words[] = $term->text;
+        }
+
+        $doc->highlight($words, $this->_getHighlightColor($colorIndex));
+    }
+
+    /**
+     * Print a query
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        // It's used only for query visualisation, so we don't care about characters escaping
+
+        $query = '';
+
+        if (isset($this->_terms[0]) && $this->_terms[0]->field !== null) {
+            $query .= $this->_terms[0]->field . ':';
+        }
+
+        $query .= '"';
+
+        foreach ($this->_terms as $id => $term) {
+            if ($id != 0) {
+                $query .= ' ';
+            }
+            $query .= $term->text;
+        }
+
+        $query .= '"';
+
+        if ($this->_slop != 0) {
+            $query .= '~' . $this->_slop;
+        }
+
+        return $query;
     }
 }
 
