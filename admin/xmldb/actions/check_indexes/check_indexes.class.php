@@ -232,17 +232,16 @@ class check_indexes extends XMLDBAction {
         /// If we have found missing indexes inform about them
             if (count($missing_indexes)) {
                 $r.= '    <p class="centerpara">' . $this->str['yesmissingindexesfound'] . '</p>';
-                $r.= '        <ul>';
+                $r.= '       <br /><br />';
                 foreach ($missing_indexes as $obj) {
                     $xmldb_table = $obj->table;
                     $xmldb_index = $obj->index;
                     $sqlarr = $xmldb_table->getAddIndexSQL($CFG->dbtype, $CFG->prefix, $xmldb_index, false);
-                    $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
+                    $r.= '            #' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                               $this->str['index'] . ': ' . $xmldb_index->readableInfo() . '<br />' .
-                                              '<p><code>' . implode('<br />', $sqlarr) . '</code></p></li>';
+                                              '<code>' . implode('<br />', $sqlarr) . ';</code><br /><br />';
                     
                 }
-                $r.= '        </ul>';
             } else {
                 $r.= '    <p class="centerpara">' . $this->str['nomissingindexesfound'] . '</p>';
             }
