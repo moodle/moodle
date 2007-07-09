@@ -106,11 +106,12 @@
                 redirect($CFG->wwwroot."/$CFG->admin/roles/assign.php?contextid=$context->id");
             }
             
-        } else {
+        } else {            
             if (!update_course($data)) {
                 print_error('coursenotupdated');
             }
-
+            // MDL-9983
+            events_trigger('course_updated', $data);
             redirect($CFG->wwwroot."/course/view.php?id=$course->id");
         }
     }

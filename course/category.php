@@ -87,6 +87,9 @@
                 fix_course_sortorder($category->id);
             }
         }
+        
+        // MDL-9983
+        events_trigger('category_updated', $category);
     }
 
 

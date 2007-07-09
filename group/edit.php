@@ -83,6 +83,8 @@ if ($delete) {
         error('Sesskey error');
     }
     if (groups_delete_group($id)) {
+        // MDL-9983
+        events_trigger('group_deleted', $id);
         redirect(groups_home_url($course->id, null, $groupingid, false));
     } else {
         print_error('erroreditgroup', 'group', groups_home_url($course->id));
@@ -108,8 +110,12 @@ if ($editform->is_cancelled()) {
             $data->id = $id;
             if ($groupingid) {
                 $success = $success && groups_add_group_to_grouping($id, $groupingid);
-            } 
-        }
+            }
+            // MDL-9983
+            if ($success) {
+                events_trigger('group_created', $data);
+            }
+        }      
     } elseif ($groupingid != $newgrouping) { // Moving group to new grouping
         $success = $success && groups_remove_group_from_grouping($id, $groupingid);
         $success = $success && groups_add_group_to_grouping($id, $newgrouping);
@@ -120,6 +126,10 @@ if ($editform->is_cancelled()) {
             $success = false;
         } elseif (!groups_update_group($data, $course->id)) {
             print_error('groupnotupdated');
+        }
+        // MDL-9983
+        if ($success) {
+            events_trigger('group_updated', $data);
         }
     }
     // Handle file upload

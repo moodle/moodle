@@ -113,6 +113,12 @@
             }
         }
 
+        // MDL-9983
+        $eventdata = new object();
+        $eventdata -> user = $USER;
+        $eventdata -> newpassword = $data -> newpassword1;
+        events_trigger('password_changed', $eventdata);
+
         redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
     }
 

@@ -149,7 +149,9 @@
                 /// Finally delete the category itself
                 if (delete_records('course_categories', 'id', $deletecat->id)) {
                     notify(get_string('categorydeleted', '', format_string($deletecat->name)));
-                }
+                    // MLD-9983
+                    events_trigger('category_deleted', $deletecat);
+                }             
             }
             else {
                 $strdeletecategorycheck = get_string('deletecategorycheck','', format_string($deletecat->name));

@@ -100,6 +100,9 @@
                     }
                 }
             }
+            
+            // MDL-9983   
+            events_trigger('user_updated', $usernew);
         }
 
         //update preferences

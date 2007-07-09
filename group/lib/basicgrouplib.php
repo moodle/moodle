@@ -346,6 +346,12 @@ function groups_add_member($groupid, $userid) {
         $useradded = groups_db_add_member($groupid, $userid);
     }
     if ($useradded) {
+      
+        // MDL-9983
+        $eventdata = new object();
+        $eventdata -> groupid = $groupid;
+        $eventdata -> userid = $userid;
+        events_trigger('group_user_added', $eventdata);      
         $useradded = groups_db_set_group_modified($groupid);
     }
     return $useradded;

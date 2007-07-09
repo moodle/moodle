@@ -67,6 +67,12 @@ if ($success) {
                 if (! $success) {
                     print_error('erroraddremoveuser', 'group', groups_home_url($courseid));
                 }
+                
+                // MDL-9983
+                $eventdata = new object();
+                $eventdata -> groupid = $groupid;
+                $eventdata -> userid = $userid;
+                events_trigger('group_user_removed', $eventdata);           
             }
         }
     }
