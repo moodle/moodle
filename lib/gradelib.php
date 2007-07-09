@@ -749,7 +749,7 @@ function grade_get_icons($element, $tree) {
     $aggregationview  = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
     $showeyecons      = get_user_preferences('grade_report_showeyecons', $CFG->grade_report_showeyecons);
     $showlocks        = get_user_preferences('grade_report_showlocks', $CFG->grade_report_showlocks);
-    $shownotes        = get_user_preferences('grade_report_notes', $CFG->grade_report_notes);
+    $shownotes        = get_user_preferences('grade_report_shownotes', $CFG->grade_report_shownotes);
     $showcalculations = get_user_preferences('grade_report_showcalculations', $CFG->grade_report_showcalculations);
 
     // Icons shown when edit mode is on
@@ -774,19 +774,16 @@ function grade_get_icons($element, $tree) {
             */
         }
 
-        /* Not sure if there is a good reason to have a calculation icon: the calculation field is in the grade_edit form */
-        /*
         // Calculation icon for items and categories
-        if ($type != 'grade') {
+        if ($showcalculations && $type != 'grade') {
             $html .= '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">';
             $html .= '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                   .$streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
         }
-        */
 
         if ($shownotes) {
             // Setup object identifier and show feedback icon if applicable
-            if ($type == 'grade' and $USER->gradefeedback) {
+            if ($type == 'grade' and $shownotes) {
                 // Display Edit/Add feedback icon
                 if (empty($object->feedback)) {
                     $html .= '<a href="report/grader/edit_feedback.php?id=' . $object->id
@@ -847,7 +844,7 @@ function grade_get_icons($element, $tree) {
             $html .= '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
                   .${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
         }
-    } else {
+    } else { // Editing mode is off
         if ($shownotes) {
             // Display view feedback icon
             if (!empty($object->feedback)) {

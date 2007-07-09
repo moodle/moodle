@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // grades.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -119,6 +119,9 @@ $string['gradeweighthelp'] = 'Grade Weight Help';
 $string['grandtotalsdisplaytype'] = 'Grand totals display type';
 $string['hideadvanced'] = 'Hide Advanced Features';
 $string['hidecategory'] = 'Hidden';
+$string['hideeyecons'] = 'Hide eyecons';
+$string['hidelocks'] = 'Hide locks';
+$string['hidenotes'] = 'Hide feedback';
 $string['highgradeascending'] = 'Sort by high grade ascending';
 $string['highgradedescending'] = 'Sort by high grade descending';
 $string['highgradeletter'] = 'High';

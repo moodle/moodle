@@ -266,8 +266,8 @@ div.groupselector {
 }
 
 #participationreport .reporttable {
-  text-align: center;  
-  margin-left:auto; 
+  text-align: center;
+  margin-left:auto;
   margin-right:auto;
 }
 
@@ -722,9 +722,9 @@ table.navbar {
 
 #navmenupopup option,
 #navmenufooterpopup option {
-  padding: 2px 0 2px 20px; 
-  background-repeat: no-repeat; 
-  background-position: 1px 2px; 
+  padding: 2px 0 2px 20px;
+  background-repeat: no-repeat;
+  background-position: 1px 2px;
   vertical-align: middle;
 }
 
@@ -2055,6 +2055,8 @@ body#grade-index .grades .weighted {
 #grade-report table {
   border-width:1px;
   border-style:solid;
+  float: left;
+  margin-top: 20px;
 }
 
 #grade-report table td {
@@ -2369,7 +2371,7 @@ body#message-messages {
     font-weight: bolder;
 }
 
-.notepost .header {  
+.notepost .header {
 }
 
 .notepost .user {
@@ -3471,7 +3473,7 @@ body#mod-quiz-report .controls {
   }
 
 .resourcecontent object {
-    height:480px; 
+    height:480px;
     width:600px;
 }
 

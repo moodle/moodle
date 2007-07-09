@@ -68,8 +68,14 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 /// setting up groups
 
 // Prepare language strings
-$strsortasc  = get_string('sortasc', 'grades');
-$strsortdesc = get_string('sortdesc', 'grades');
+$strsortasc     = get_string('sortasc', 'grades');
+$strsortdesc    = get_string('sortdesc', 'grades');
+$strshoweyecons = get_string('showeyecons', 'grades');
+$strhideeyecons = get_string('hideeyecons', 'grades');
+$strshowlocks   = get_string('showlocks', 'grades');
+$strhidelocks   = get_string('hidelocks', 'grades');
+$strshownotes   = get_string('shownotes', 'grades');
+$strhidenotes   = get_string('hidenotes', 'grades');
 
 // base url for sorting by first/last name
 $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
@@ -79,7 +85,9 @@ $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grad
 /// find out current groups mode
 $course = get_record('course', 'id', $courseid);
 $groupmode = $course->groupmode;
+ob_start();
 $currentgroup = setup_and_print_groups($course, $groupmode, $baseurl);
+$group_selector = ob_get_clean();
 
 // update paging after group
 $baseurl .= 'group='.$currentgroup.'&amp;';
@@ -299,6 +307,12 @@ print_heading('Grader Report');
 $currenttab = 'graderreport';
 include('tabs.php');
 
+// Group selection drop-down
+echo $group_selector;
+
+// Show/hide toggles
+
+// Paging bar
 print_paging_bar($numusers, $page, $perpage, $pbarurl);
 
 $items = array();
@@ -507,7 +521,7 @@ if ($currentgroup && ($displaygrouptotals || 1)) {
             $groupsumhtml .= '<td>-</td>';
         } else {
             $sum = $groupsum[$item->id];
-            $groupsumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+            $groupsumhtml .= '<td>'.get_grade_clean(round($sum->sum, $decimals)).'</td>';
         }
     }
     $groupsumhtml .= '</tr>';
@@ -515,8 +529,8 @@ if ($currentgroup && ($displaygrouptotals || 1)) {
     $groupsumhtml = '';
 }
 
-// user preference not implemented yet
-if ($displaytotals || 1) {
+// Grand totals
+if ($displaytotals) {
 
 /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
 
@@ -542,7 +556,7 @@ if ($displaytotals || 1) {
             $gradesumhtml .= '<td>-</td>';
         } else {
             $sum = $classsum[$item->id];
-            $gradesumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+            $gradesumhtml .= '<td>'.get_grade_clean(round($sum->sum, $decimals)).'</td>';
         }
     }
     $gradesumhtml .= '</tr>';

@@ -25,7 +25,7 @@
 
     require_once("../config.php");
     require_once("../lib/gradelib.php");
-    
+
     $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
@@ -43,13 +43,13 @@
 
 
 /// Now check what reports are available
-  
+
     if ($reports = get_list_of_plugins('grade/report', 'CVS')) {         // Get all installed reports
         foreach ($reports as $key => $plugin) {                      // Remove ones we can't see
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
                 unset($reports[$key]);
             }
-        }  
+        }
     }
 
     if (!$reports) {
@@ -70,7 +70,7 @@
     $reportnames = array();
 
     if (count($reports) > 1) {
-        foreach ($reports as $plugin) { 
+        foreach ($reports as $plugin) {
             $reportnames[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
         }
     }
@@ -84,11 +84,11 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
     $navlinks[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
-    
-    $navigation = build_navigation($navlinks);    
-    
+
+    $navigation = build_navigation($navlinks);
+
     // build buttons here
-    /// setting up editting mode 
+    /// setting up editting mode
     if (!isset($USER->gradeediting)) {
         $USER->gradeediting = 0;
     }
@@ -98,28 +98,17 @@
     } else if (($edit == 0) and confirm_sesskey()) {
         $USER->gradeediting = 0;
     }
-    
-    // Setup feedback mode
-    if (!isset($USER->gradefeedback)) {
-        $USER->gradefeedback = 0;
-    }
-
-    if (($feedback == 1) and confirm_sesskey()) {
-        $USER->gradefeedback = 1;
-    } else if (($feedback == 0) and confirm_sesskey()) {
-        $USER->gradefeedback = 0;
-    }
 
     // params for the turn editting on and feedback buttons
     $options['id'] = $courseid;
     $options['report'] = $report;
-    
+
     if ($USER->gradeediting) {
         $options['edit'] = 0;
         $string = get_string('turneditingoff');
     } else {
         $options['edit'] = 1;
-        $string = get_string('turneditingon'); 
+        $string = get_string('turneditingon');
     }
 
     $options['sesskey'] = sesskey();
@@ -127,26 +116,14 @@
 
     // turn editting on and off buttons
     $buttons = print_single_button($link, $options, $string, 'get', '_self', true);
-    unset($options['edit']);
 
-    if ($USER->gradefeedback) {
-        $options['feedback'] = 0;
-        $string = get_string('turnfeedbackoff', 'grades');
-    } else {
-        $options['feedback'] = 1;
-        $string = get_string('turnfeedbackon', 'grades'); 
-    }
-
-    // turn editting on and off buttons
-    $buttons .= print_single_button($link, $options, $string, 'get', '_self', true);
-    
-    print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation, 
+    print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation,
                         '', '', true, $buttons, navmenu($course));
 
 /// Print the report selector at the top if there is more than one report
 
     if ($reportnames) {
-        popup_form($CFG->wwwroot.'/grade/report.php?id='.$course->id.'&amp;report=', $reportnames, 
+        popup_form($CFG->wwwroot.'/grade/report.php?id='.$course->id.'&amp;report=', $reportnames,
                    'choosegradereport', $report, '', '', '', false, 'self', get_string('gradereports', 'grades').':');
     }
 
