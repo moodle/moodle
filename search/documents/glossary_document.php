@@ -1,88 +1,235 @@
 <?php
-  /* This document illustrates how easy it is to add a module to
-   * the search index - the only modifications made were creating
-   * this file, and adding the SEARCH_TYPE_GLOSSARY constant to
-   * search/lib.php - everything else is automatically handled
-   * by the indexer script.
-   * */
+/**
+* Global Search Engine for Moodle
+* Michael Champanis (mchampan) [cynnical@gmail.com]
+* review 1.8+ : Valery Fremaux [valery.fremaux@club-internet.fr] 
+* 2007/08/02
+*
+* document handling for glossary activity module
+* This file contains a mapping between a glossary entry and it's indexable counterpart,
+*
+* Functions for iterating and retrieving the necessary records are now also included
+* in this file, rather than mod/glossary/lib.php
+**/
 
-  require_once("$CFG->dirroot/search/documents/document.php");
+require_once("$CFG->dirroot/search/documents/document.php");
 
-  class GlossarySearchDocument extends SearchDocument {
-    public function __construct(&$entry, $glossary_id, $course_id, $group_id) {
-      // generic information; required
-      $doc->docid     = $entry['id'];
-      $doc->title     = $entry['concept'];
-      $doc->date      = $entry['timecreated'];
+/* 
+* a class for representing searchable information
+* 
+**/
+class GlossarySearchDocument extends SearchDocument {
+    
+    /**
+    * document constructor
+    *
+    */
+    public function __construct(&$entry, $course_id, $context_id) {
+        // generic information; required
+        $doc->docid     = $entry['id'];
+        $doc->documenttype  = SEARCH_TYPE_GLOSSARY;
+        $doc->itemtype      = 'standard';
+        $doc->contextid     = $context_id;
 
-      $user = get_recordset('user', 'id', $entry['userid'])->fields;
+        $doc->title     = $entry['concept'];
+        $doc->date      = $entry['timecreated'];
 
-      $doc->author    = $user['firstname'].' '.$user['lastname'];
-      $doc->contents  = $entry['definition'];
-      $doc->url       = glossary_make_link($entry['id']);
-
-      // module specific information; optional
-      $data->glossary = $glossary_id;
-
-      // construct the parent class
-      parent::__construct($doc, $data, SEARCH_TYPE_GLOSSARY, $course_id, $group_id);
+        if ($entry['userid'])
+            $user = get_record('user', 'id', $entry['userid']);
+        $doc->author    = ($user ) ? $user->firstname.' '.$user->lastname : '' ;
+        $doc->contents  = strip_tags($entry['definition']);
+        $doc->url       = glossary_make_link($entry['id']);
+        
+        // module specific information; optional
+        $data->glossary = $entry['glossaryid'];
+        
+        // construct the parent class
+        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
     } //constructor
-  } //GlossarySearchDocument
+} //GlossarySearchDocument
 
-  function glossary_make_link($entry_id) {
+/* 
+* a class for representing searchable information
+* 
+**/
+class GlossaryCommentSearchDocument extends SearchDocument {
+    
+    /**
+    * document constructor
+    *
+    */
+    public function __construct(&$entry, $glossary_id, $course_id, $context_id) {
+        // generic information; required
+        $doc->docid     = $entry['id'];
+        $doc->documenttype  = SEARCH_TYPE_GLOSSARY;
+        $doc->itemtype      = 'comment';
+        $doc->contextid     = $context_id;
+
+        $doc->title     = get_string('commenton', 'search') . ' ' . $entry['concept'];
+        $doc->date      = $entry['timemodified'];
+
+        if ($entry['userid'])
+            $user = get_record('user', 'id', $entry['userid']);
+        $doc->author    = ($user ) ? $user->firstname.' '.$user->lastname : '' ;
+        $doc->contents  = strip_tags($entry['entrycomment']);
+        $doc->url       = glossary_make_link($entry['entryid']);
+        
+        // module specific information; optional
+        $data->glossary = $glossary_id;
+        
+        // construct the parent class
+        parent::__construct($doc, $data, $course_id, -1, $entry['userid'], PATH_FOR_SEARCH_TYPE_GLOSSARY);
+    } //constructor
+} //GlossaryCommentSearchDocument
+  
+/**
+* constructs valid access links to information
+* @param entry_id the id of the glossary entry
+* @return a full featured link element as a string
+*/
+function glossary_make_link($entry_id) {
     global $CFG;
 
     //links directly to entry
-    //return $CFG->wwwroot.'/mod/glossary/showentry.php?eid='.$entry_id;
+    // return $CFG->wwwroot.'/mod/glossary/showentry.php?eid='.$entry_id;
 
-    //preserve glossary pop-up, be careful where you place your ' and "s
+    // TOO LONG URL
+    // Suggestion : bounce on popup within the glossarie's showentry page
+    // preserve glossary pop-up, be careful where you place your ' and "s
     //this function is meant to return a url that is placed between href='[url here]'
-    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid=$entry_id\", \"entry\", \"menubar=0,location=0,scrollbars,resizable,width=600,height=450\", 0);";
-  } //glossary_make_link
+    return "$CFG->wwwroot/mod/glossary/showentry.php?eid=$entry_id' onclick='return openpopup(\"/mod/glossary/showentry.php?eid=$entry_id\", \"entry\", DEFAULT_POPUP_SETTINGS, 0);";
+} //glossary_make_link
 
-  function glossary_iterator() {
-    return get_all_instances_in_courses("glossary", get_courses());
-  } //glossary_iterator
+/**
+* part of search engine API
+*
+*/
+function glossary_iterator() {
+     $glossaries = get_records('glossary');
+     return $glossaries;
+} //glossary_iterator
 
-  function glossary_get_content_for_index(&$glossary) {
+/**
+* part of search engine API
+* @glossary a glossary instance
+* @return an array of searchable documents
+*/
+function glossary_get_content_for_index(&$glossary) {
+
+    // get context
+    $coursemodule = get_field('modules', 'id', 'name', 'glossary');
+    $cm = get_record('course_modules', 'course', $glossary->course, 'module', $coursemodule, 'instance', $glossary->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     $documents = array();
-
-    $entries = get_recordset('glossary_entries', 'glossaryid', $glossary->id);
-
-    while (!$entries->EOF) {
-      $entry = $entries->fields;
-
-      if ($entry and strlen($entry['definition']) > 0) {
-        $documents[] = new GlossarySearchDocument($entry, $glossary->id, $glossary->course, -1);
-      } //if
-
-      $entries->MoveNext();
-    } //foreach
-
+    $entryIds = array();
+    // index entries
+    $entries = get_records('glossary_entries', 'glossaryid', $glossary->id);
+    if ($entries){
+        foreach($entries as $entry) {
+            $concepts[$entry->id] = $entry->concept;
+            if (strlen($entry->definition) > 0) {
+                $entryIds[] = $entry->id;
+                $documents[] = new GlossarySearchDocument(get_object_vars($entry), $glossary->course, $context->id);
+            } 
+        } 
+    }
+    
+    // index comments
+    if (count($entryIds)){
+        $entryIdList = implode(',', $entryIds);
+        $comments = get_records_list('glossary_comments', 'entryid', $entryIdList);
+        if ($comments){
+            foreach($comments as $comment) {
+                if (strlen($comment->entrycomment) > 0) {
+                    $comment->concept = $concepts[$comment->entryid];
+                    $documents[] = new GlossaryCommentSearchDocument(get_object_vars($comment), $glossary->id, $glossary->course, $context->id);
+                } 
+            } 
+        }
+    }
     return $documents;
-  } //glossary_get_content_for_index
+} //glossary_get_content_for_index
 
-  //returns a single glossary search document based on a glossary_entry id
-  function glossary_single_document($id) {
-    $entries = get_recordset('glossary_entries', 'id', $id);
-    $entry = $entries->fields;
+/**
+* part of search engine API
+* @param id the glossary entry identifier
+* @itemtype the type of information
+* @return a single search document based on a glossary entry
+*/
+function glossary_single_document($id, $itemtype) {
+    if ($itemtype == 'standard'){
+        $entry = get_record('glossary_entries', 'id', $id);
+    }
+    elseif ($itemtype == 'comment'){
+        $comment = get_record('glossary_comments', 'id', $id);
+        $entry = get_record('glossary_entries', 'id', $comment->entryid);
+    }
+    $glossary_course = get_field('glossary', 'course', 'id', $entry->glossaryid);
+    $coursemodule = get_field('modules', 'id', 'name', 'glossary');
+    $cm = get_record('course_modules', 'course', $glossary_course, 'module', $coursemodule, 'instance', $entry->glossaryid);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if ($itemtype == 'standard'){
+        return new GlossarySearchDocument(get_object_vars($entry), $glossary_course, $context->id);
+    }
+    elseif ($itemtype == 'comment'){
+        return new GlossaryCommentSearchDocument(get_object_vars($comment), $entry->glossaryid, $glossary_course, $context->id);
+    }
+} //glossary_single_document
 
-    $glossaries = get_recordset('glossary', 'id', $entry['glossaryid']);
-    $glossary = $glossaries->fields;
+/**
+* dummy delete function that packs id with itemtype.
+* this was here for a reason, but I can't remember it at the moment.
+*
+*/
+function glossary_delete($info, $itemtype) {
+    $object->id = $info;
+    $object->itemtype = $itemtype;
+    return $object;
+} //glossary_delete
 
-    return new GlossarySearchDocument($entry, $entry['glossaryid'], $glossary['course'], -1);
-  } //glossary_single_document
-
-  //dummy delete function that converts docid from the search table to itself..
-  //this was here for a reason, but I can't remember it at the moment.
-  function glossary_delete($info) {
-    return $info;
-  } //glossary_delete
-
-  //returns the var names needed to build a sql query for addition/deletions
-  function glossary_db_names() {
+/**
+* returns the var names needed to build a sql query for addition/deletions
+*
+*/
+function glossary_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name]
-    return array('id', 'glossary_entries', 'timecreated', 'timemodified');
-  } //glossary_db_names
+    return array(
+        array('id', 'glossary_entries', 'timecreated', 'timemodified', 'standard'),
+        array('id', 'glossary_comments', 'timemodified', 'timemodified', 'comment')
+    );
+} //glossary_db_names
+
+/**
+* this function handles the access policy to contents indexed as searchable documents. If this 
+* function does not exist, the search engine assumes access is allowed.
+* When this point is reached, we already know that : 
+* - user is legitimate in the surrounding context
+* - user may be guest and guest access is allowed to the module
+* - the function may perform local checks within the module information logic
+* @param path the access path to the module script code
+* @param itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
+* @param this_id the item id within the information class denoted by itemtype. In glossaries, this id 
+* points out the indexed glossary item.
+* @param user the user record denoting the user who searches
+* @param group_id the current group used by the user when searching
+* @return true if access is allowed, false elsewhere
+*/
+function glossary_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
+    global $CFG;
+    
+    // get the glossary object and all related stuff
+    $entry = get_record('glossary_entries', 'id', $id);
+    $glossary = get_record('glossary', 'id', $entry->glossaryid);
+    $course = get_record('course', 'id', $glossary->course);
+    $module_context = get_record('context', 'id', $context_id);
+    $cm = get_record('course_modules', 'id', $module_context->instance);
+    if (!$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $module_context)) return false;
+    
+    //approval check : entries should be approved for being viewed, or belongs to the user unless the viewer can approve them or manage them 
+    if (!$entry->approved && $user != $entry->userid && !has_capability('mod/glossary:approve', $module_context) && !has_capability('mod/glossary:manageentries', $module_context)) return false;
+    
+    return true;
+} //glossary_check_text_access
 
 ?>
