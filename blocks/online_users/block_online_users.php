@@ -73,7 +73,7 @@ class block_online_users extends block_base {
                       $courseselect
                       $timeselect
                       $groupselect
-                GROUP BY u.id 
+                GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, ul.timeaccess
                 ORDER BY ul.timeaccess DESC";
         
         
