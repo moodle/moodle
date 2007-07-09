@@ -2059,6 +2059,11 @@ body#grade-index .grades .weighted {
   margin-top: 20px;
 }
 
+#grade-report div.submit {
+  margin-top: 20px;
+  text-align: center;
+}
+
 #grade-report table td {
   border-width:1px;
   border-style:solid;
@@ -2104,6 +2109,11 @@ body#grade-index .grades .weighted {
 #grade-report th.item {
   border-width:1px 1px 1px 1px;
   border-style:solid;
+}
+
+#grade-report div.gradertoggle {
+  display: inline;
+  margin-left: 20px;
 }
 
 /* gradebook edit tree */

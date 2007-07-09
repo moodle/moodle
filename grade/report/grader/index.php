@@ -5,6 +5,52 @@
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
+
+// remove trailing 0s and "."s
+function get_grade_clean($gradeval) {
+
+    if ($gradeval != 0) {
+        $gradeval = rtrim(trim($gradeval, "0"), ".");
+    } else {
+        $gradeval = 0;
+    }
+
+    return $gradeval;
+}
+
+/**
+* Shortcut function for printing the grader report toggles.
+* @param string $type The type of toggle
+* @param string $baseurl The base of the URL the toggles will link to
+* @param bool $return Whether to return the HTML string rather than printing it
+* @return void
+*/
+function grader_report_print_toggle($type, $baseurl, $return=false) {
+    global $CFG;
+    $pref_name = 'grade_report_show' . $type;
+    $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
+
+    $strshow = get_string('show' . $type, 'grades');
+    $strhide = get_string('hide' . $type, 'grades');
+
+    $show_hide = 'show';
+    $toggle_action = 1;
+
+    if ($show_pref) {
+        $show_hide = 'hide';
+        $toggle_action = 0;
+    }
+
+    $retval = '<div class="gradertoggle"><a href="' . $baseurl . "&amp;toggle=$toggle_action&amp;toggle_type=$type\">"
+         . ${'str' . $show_hide} . '</a></div>';
+
+    if ($return) {
+        return $retval;
+    } else {
+        echo $retval;
+    }
+}
+
 /// processing posted grades here
 
 if ($data = data_submitted()) {
@@ -51,6 +97,8 @@ $action        = optional_param('action', 0, PARAM_ALPHA);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
+$toggle        = optional_param('toggle', NULL, PARAM_INT);
+$toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
 // Get the user preferences
 $perpage              = get_user_preferences('grade_report_studentsperpage', $CFG->grade_report_studentsperpage); // number of users on a page
@@ -68,19 +116,19 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 /// setting up groups
 
 // Prepare language strings
-$strsortasc     = get_string('sortasc', 'grades');
-$strsortdesc    = get_string('sortdesc', 'grades');
-$strshoweyecons = get_string('showeyecons', 'grades');
-$strhideeyecons = get_string('hideeyecons', 'grades');
-$strshowlocks   = get_string('showlocks', 'grades');
-$strhidelocks   = get_string('hidelocks', 'grades');
-$strshownotes   = get_string('shownotes', 'grades');
-$strhidenotes   = get_string('hidenotes', 'grades');
+$strsortasc          = get_string('sortasc', 'grades');
+$strsortdesc         = get_string('sortdesc', 'grades');
 
 // base url for sorting by first/last name
 $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
 // base url for paging
 $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
+
+// Handle toggle change request
+// TODO print visual feedback
+if (!is_null($toggle) && !empty($toggle_type)) {
+    set_user_preferences(array('grade_report_show' . $toggle_type => $toggle));
+}
 
 /// find out current groups mode
 $course = get_record('course', 'id', $courseid);
@@ -311,6 +359,16 @@ include('tabs.php');
 echo $group_selector;
 
 // Show/hide toggles
+if ($USER->gradeediting) {
+    grader_report_print_toggle('eyecons', $baseurl);
+    grader_report_print_toggle('locks', $baseurl);
+    grader_report_print_toggle('calculations', $baseurl);
+}
+
+grader_report_print_toggle('notes', $baseurl);
+grader_report_print_toggle('grandtotals', $baseurl);
+grader_report_print_toggle('groups', $baseurl);
+grader_report_print_toggle('scales', $baseurl);
 
 // Paging bar
 print_paging_bar($numusers, $page, $perpage, $pbarurl);
@@ -597,19 +655,7 @@ echo $reporthtml;
 
 // print submit button
 if ($USER->gradeediting) {
-    echo '<div style="text-align:center"><input type="submit" value="'.get_string('update').'" /></div>';
+    echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
-}
-
-// remove trailing 0s and "."s
-function get_grade_clean($gradeval) {
-
-    if ($gradeval != 0) {
-        $gradeval = rtrim(trim($gradeval, "0"), ".");
-    } else {
-        $gradeval = 0;
-    }
-
-    return $gradeval;
 }
 ?>
