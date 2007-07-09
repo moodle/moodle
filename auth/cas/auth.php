@@ -99,7 +99,7 @@ class auth_plugin_cas extends auth_plugin_base {
 	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
-		$frm->password="cas";		  
+		$frm->password="passwdCas";		  
 		return;
 	 }
 	 
