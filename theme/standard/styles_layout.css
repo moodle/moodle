@@ -1310,6 +1310,10 @@ a.skip-block, .skip-block {
   text-align: center;
 }
 
+.block_search_forums .invisiblefieldset {
+  display: block;
+}
+
 /***
  *** Blogs
  ***/
