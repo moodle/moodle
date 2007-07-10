@@ -58,6 +58,8 @@
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
             }
+            // MDL-9983
+            events_trigger('category_updated', $category);
         }
 
         /// Set the category theme if requested
@@ -87,9 +89,6 @@
                 fix_course_sortorder($category->id);
             }
         }
-        
-        // MDL-9983
-        events_trigger('category_updated', $category);
     }
 
 

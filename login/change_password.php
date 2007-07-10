@@ -68,6 +68,12 @@
 
         $strpasswordchanged = get_string('passwordchanged');
 
+        // MDL-9983
+        $eventdata = new object();
+        $eventdata -> user = $USER;
+        $eventdata -> newpassword = $data -> newpassword1;
+        events_trigger('password_changed', $eventdata);
+
         add_to_log($course->id, 'user', 'change password', "view.php?id=$USER->id&amp;course=$course->id", "$USER->id");
 
         $fullname = fullname($USER, true);

@@ -84,7 +84,10 @@ if ($delete) {
     }
     if (groups_delete_group($id)) {
         // MDL-9983
-        events_trigger('group_deleted', $id);
+        $eventdata = new object();
+        $eventdata->group = $id;
+        $eventdata->course = $courseid;
+        events_trigger('group_deleted', $eventdata); 
         redirect(groups_home_url($course->id, null, $groupingid, false));
     } else {
         print_error('erroreditgroup', 'group', groups_home_url($course->id));
