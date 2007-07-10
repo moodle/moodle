@@ -1193,7 +1193,7 @@
     </TABLE>
     <TABLE NAME="events_handlers" COMMENT="This table is for storing which components requests what type of event, and the location of the responsible handlers. For example, the assignment registers 'grade_updated' event with a function assignment_grade_handler() that should be called event time an 'grade_updated' event is triggered by grade_update() function." PREVIOUS="mnet_sso_access_control" NEXT="events_queue">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventname"/>
         <FIELD NAME="eventname" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="name of the event, e.g. 'grade_updated'" PREVIOUS="id" NEXT="handlermodule"/>
         <FIELD NAME="handlermodule" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="e.g. moodle, mod/forum, block/rss_client" PREVIOUS="eventname" NEXT="handlerfile"/>
         <FIELD NAME="handlerfile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="path to the file of the function, eg /grade/export/lib.php" PREVIOUS="handlermodule" NEXT="handlerfunction"/>
@@ -1210,7 +1210,7 @@
     </TABLE>
     <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="events_handlers" NEXT="events_queue_handlers">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventdata"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventdata"/>
         <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
         <FIELD NAME="stackdump" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="serialized debug_backtrace showing where the event was fired from" PREVIOUS="eventdata" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="$USER-&amp;gt;id when the event was fired" PREVIOUS="stackdump" NEXT="timecreated"/>
@@ -1223,7 +1223,7 @@
     </TABLE>
     <TABLE NAME="events_queue_handlers" COMMENT="This is the list of queued handlers for processing. The event object is retrieved from the events_queue table. When no further reference is made to the event_queues table, the corresponding entry in the events_queue table should be deleted. Entry should get deleted after a successful event processing by the specified handler." PREVIOUS="events_queue" NEXT="grade_items">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="queuedeventid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="queuedeventid"/>
         <FIELD NAME="queuedeventid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="foreign key id corresponding to the id of the event_queues table" PREVIOUS="id" NEXT="handlerid"/>
         <FIELD NAME="handlerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="foreign key id corresponding to the id of the event_handlers table" PREVIOUS="queuedeventid" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="number of failed attempts to process this handler" PREVIOUS="handlerid" NEXT="errormessage"/>
@@ -1238,7 +1238,7 @@
     </TABLE>
     <TABLE NAME="grade_items" COMMENT="This table keeps information about gradeable items (ie columns). If an activity (eg an assignment or quiz) has multiple grade_items associated with it (eg several outcomes or numerical grades), then there will be a corresponding multiple number of rows in this table." PREVIOUS="events_queue_handlers" NEXT="grade_categories">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this item is part of" PREVIOUS="id" NEXT="categoryid"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="(optional) the category group this item belongs to" PREVIOUS="courseid" NEXT="itemname"/>
         <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="The name of this item (pushed in by the module)" PREVIOUS="categoryid" NEXT="itemtype"/>
@@ -1275,7 +1275,7 @@
     </TABLE>
     <TABLE NAME="grade_categories" COMMENT="This table keeps information about categories, used for grouping items." PREVIOUS="grade_items" NEXT="grade_grades">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The course this grade category is part of" PREVIOUS="id" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Categories can be hierarchical" PREVIOUS="courseid" NEXT="depth"/>
         <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="How many parents does this category have?" PREVIOUS="parent" NEXT="path"/>
@@ -1295,7 +1295,7 @@
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value." PREVIOUS="grade_categories" NEXT="grade_grades_text">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The item this grade belongs to" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The user who this grade is for" PREVIOUS="itemid" NEXT="rawgrade"/>
         <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="If the grade is a float value (or has been converted to one)" PREVIOUS="userid" NEXT="rawgrademax"/>
@@ -1321,7 +1321,7 @@
     </TABLE>
     <TABLE NAME="grade_grades_text" COMMENT="This table keeps additional textual information about each individual grade, whether it be automatically generated from the module or entered manually by the teacher. It's here separate from the all-numeric grade_grades for database efficiency reasons." PREVIOUS="grade_grades" NEXT="grade_outcomes">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="gradeid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="gradeid"/>
         <FIELD NAME="gradeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="information"/>
         <FIELD NAME="information" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Further information like forum rating distribution 4/5/7/0/1" PREVIOUS="gradeid" NEXT="informationformat"/>
         <FIELD NAME="informationformat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Text format for information" PREVIOUS="information" NEXT="feedback"/>
@@ -1339,7 +1339,7 @@
     </TABLE>
     <TABLE NAME="grade_outcomes" COMMENT="This table describes the outcomes used in the system. An outcome is a statement tied to a rubric scale from low to high, such as “Not met, Borderline, Met” (stored as 0,1 or 2)" PREVIOUS="grade_grades_text" NEXT="grade_items_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Mostly these are defined site wide ie NULL" PREVIOUS="id" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The short name or code for this outcome statement" PREVIOUS="courseid" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
@@ -1357,7 +1357,7 @@
     </TABLE>
     <TABLE NAME="grade_items_history" COMMENT="History of grade_items" PREVIOUS="grade_outcomes" NEXT="grade_categories_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
@@ -1402,7 +1402,7 @@
     </TABLE>
     <TABLE NAME="grade_categories_history" COMMENT="History of grade_categories" PREVIOUS="grade_items_history" NEXT="grade_grades_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
@@ -1430,7 +1430,7 @@
     </TABLE>
     <TABLE NAME="grade_grades_history" COMMENT="History table" PREVIOUS="grade_categories_history" NEXT="grade_grades_text_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
@@ -1464,7 +1464,7 @@
     </TABLE>
     <TABLE NAME="grade_grades_text_history" COMMENT="History table" PREVIOUS="grade_grades_history" NEXT="grade_outcomes_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
@@ -1490,7 +1490,7 @@
     </TABLE>
     <TABLE NAME="grade_outcomes_history" COMMENT="History table" PREVIOUS="grade_grades_text_history" NEXT="scale_history">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
         <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
@@ -1538,7 +1538,7 @@
     </TABLE>
     <TABLE NAME="grade_import_values" COMMENT="Temporary table for importing grades" PREVIOUS="scale_history" NEXT="grade_import_newitem">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="if set, this points to existing grade_items id" PREVIOUS="id" NEXT="newgradeitem"/>
         <FIELD NAME="newgradeitem" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="if set, points to the id of grade_import_newitem" PREVIOUS="itemid" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="newgradeitem" NEXT="rawgrade"/>
@@ -1553,7 +1553,7 @@
     </TABLE>
     <TABLE NAME="grade_import_newitem" COMMENT="temporary table for storing new grade_item names from grade import" PREVIOUS="grade_import_values">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="itemname"/>
         <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="new grade item name" PREVIOUS="id" NEXT="import_code"/>
         <FIELD NAME="import_code" TYPE="int" LENGTH="12" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="import batch code for identification" PREVIOUS="itemname"/>
       </FIELDS>
