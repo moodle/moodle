@@ -122,7 +122,8 @@ function xmldb_main_upgrade($oldversion=0) {
         execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms'", true);
     }
     
-    if ($oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
+    if (!empty($CFG->rolesactive) && $oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
+        // note: use of assign_capability() is discouraged in upgrade script!
         if ($roles = get_records('role')) {
             $context = get_context_instance(CONTEXT_SYSTEM);
             foreach ($roles as $roleid=>$role) {
@@ -861,8 +862,9 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
-    if ($result && $oldversion < 2007051801) {
-        //  Get the role id of the "Auth. User" role and check if the default role id is different
+    if (!empty($CFG->rolesactive) && $result && $oldversion < 2007051801) {
+        // Get the role id of the "Auth. User" role and check if the default role id is different
+        // note: use of assign_capability() is discouraged in upgrade script!
         $userrole = get_record( 'role', 'shortname', 'user' );
         $defaultroleid = $CFG->defaultuserroleid;
 
