@@ -311,7 +311,7 @@ function grade_force_full_regrading($courseid) {
  * @param object $updated_item the item in which
  * @return boolean true if ok, array of errors if problems found (item id is used as key)
  */
-function grade_update_final_grades($courseid, $userid=null, $updated_item=null) {
+function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {
 
     $course_item = grade_item::fetch_course_item($courseid);
 
@@ -374,7 +374,7 @@ function grade_update_final_grades($courseid, $userid=null, $updated_item=null) 
 
             //oki - let's update, calculate or aggregate :-)
             if ($doupdate) {
-                $result = $grade_item->update_final_grades($userid);
+                $result = $grade_item->regrade_final_grades($userid);
 
                 if ($result === true) {
                     $grade_item->regrading_finished();

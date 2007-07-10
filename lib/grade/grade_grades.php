@@ -126,6 +126,12 @@ class grade_grades extends grade_object {
     var $exported = 0;
 
     /**
+     * Overridden flag
+     * @var boolean $overridden
+     */
+    var $overridden = 0;
+
+    /**
      * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
      * saves it as a class variable for this final object.
      * @return object
@@ -160,6 +166,10 @@ class grade_grades extends grade_object {
         $this->load_grade_item();
 
         return !empty($this->locked) or $this->grade_item->is_locked();
+    }
+
+    function is_overridden() {
+        return !empty($this->overridden);
     }
 
     /**

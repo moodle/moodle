@@ -287,10 +287,10 @@ class grade_item_test extends grade_test {
     /**
      * Test update of all final grades
      */
-    function test_grade_item_update_final_grades() {
+    function test_grade_item_regrade_final_grades() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $this->assertTrue(method_exists($grade_item, 'update_final_grades'));
-        $this->assertEqual(true, $grade_item->update_final_grades());
+        $this->assertTrue(method_exists($grade_item, 'regrade_final_grades'));
+        $this->assertEqual(true, $grade_item->regrade_final_grades());
         //TODO: add more tests
     }
 

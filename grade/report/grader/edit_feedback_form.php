@@ -8,7 +8,7 @@ class edit_feedback_form extends moodleform {
         $mform =& $this->_form;
 
         $feedbackformat = get_user_preferences('grade_report_feedbackformat', $CFG->grade_report_feedbackformat);
-        
+
         // visible elements
         // User preference determines the format
         if ($CFG->htmleditor && $USER->htmleditor && $feedbackformat == GRADER_REPORT_FEEDBACK_FORMAT_HTML) {

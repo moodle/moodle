@@ -42,14 +42,20 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
-        $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
+        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_VALUE);
 
         $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
-        $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setDefault('grademin', 100);
+        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_SCALE);
+        $mform->setDefault('grademax', 100);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
-        $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_SCALE);
         $mform->setDefault('grademin', 0);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
@@ -64,7 +70,7 @@ class edit_item_form extends moodleform {
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->setDefault('plusfactor', 0);
 
-        $mform->addElement('checkbox', 'locked', get_string('locked', 'grades'));
+        $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
 
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
@@ -93,9 +99,13 @@ class edit_item_form extends moodleform {
 
         if ($id = $mform->getElementValue('id')) {
             $grade_item = grade_item::fetch(array('id'=>$id));
-            if (!in_array($grade_item->itemtype, array('manual', 'course', 'category'))) {
+            if ($grade_item->is_normal_item()) {
                 // following items are set up from modules and should not be overrided by user
                 $mform->hardFreeze('itemname,idnumber,calculation,gradetype,grademax,grademin,scaleid');
+            }
+            if ($grade_item->is_manual_item()) {
+                // manual grade item does not use these - uses only final grades
+                $mform->hardFreeze('plusfactor,multfactor');
             }
         }
     }
@@ -109,6 +119,13 @@ class edit_item_form extends moodleform {
             if (strpos($data['calculation'], '=') !== 0) {
                 $errors['calculation'] = get_string('calculationerror', 'grades');
                 //TODO: add better formula validation
+            }
+        }
+
+        if (array_key_exists('grademin', $data) and array_key_exists('grademax', $data)) {
+            if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
+                $errors['grademin'] = get_String('incorrectminmax', 'grades');
+                $errors['grademax'] = get_String('incorrectminmax', 'grades');
             }
         }
 

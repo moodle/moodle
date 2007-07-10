@@ -3,17 +3,29 @@
 /// This creates and handles the whole grader report interface, sans header and footer
 
 require_once($CFG->libdir.'/tablelib.php');
-include_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
+$gradeserror = array();
 
 /**
- * format number using lang specific decimal point and thousand separator
+ * format grade using lang specific decimal point and thousand separator
+ * the result is suitable for printing on html page
  * @param float $gradeval raw grade value pulled from db
  * @return string $gradeval formatted grade value
  */
 function get_grade_clean($gradeval) {
     global $CFG;
-    
+
+    if (is_null($gradeval)) {
+        $gradeval = '';
+	} else {
+        // decimal points as specified by user
+        $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
+        $gradeval = number_format($gradeval, $decimals, get_string('decpoint', 'langconfig'), get_string('thousandsep', 'langconfig'));
+    }
+
+    return $gradeval;
+
     /*
     // commenting this out, if this is added, we also need to find the number of decimal place preserved
     // so it can go into number_format
@@ -23,11 +35,7 @@ function get_grade_clean($gradeval) {
         $gradeval = 0;
     }
     */
-    // decimal points as specified by user
-    $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
-    $gradeval = number_format($gradeval, $decimals, get_string('decpoint', 'langconfig'), get_string('thousandsep', 'langconfig'));
 
-    return $gradeval;
 }
 
 /**
@@ -97,15 +105,18 @@ function grader_report_print_toggle($type, $baseurl, $return=false) {
     }
 }
 
+
 /// processing posted grades here
 
-if ($data = data_submitted()) {
-    foreach ($data as $varname => $postedgrade) {
+if ($data = data_submitted() and confirm_sesskey()) {
 
-        // clean posted values
-        $postedgrade = clean_param($postedgrade, PARAM_RAW); 
-        // can not use param number here, because we can have "," in grade
-        $varname = clean_param($varname, PARAM_RAW);
+    // always initialize all arrays
+    $queue = array();
+
+    foreach ($data as $varname => $postedgrade) {
+        // this is a bit tricky - we have to first load all grades into memory,
+        // check if changed and only then start updating the final grades because
+        // columns might depend one on another - the result would be overriden calculated and category grades
 
         // skip, not a grade
         if (!strstr($varname, 'grade')) {
@@ -114,40 +125,54 @@ if ($data = data_submitted()) {
 
         $gradeinfo = explode("_", $varname);
 
-        $grade = new object();
-        $grade->userid = clean_param($gradeinfo[1], PARAM_INT);
-        $gradeitemid = clean_param($gradeinfo[2], PARAM_INT);
-        // grade needs to formatted to proper format for storage
-        $grade->rawgrade = format_grade($postedgrade);
+        $userid = clean_param($gradeinfo[1], PARAM_INT);
+        $itemid = clean_param($gradeinfo[2], PARAM_INT);
 
-        // put into grades array
-        $grades[$gradeitemid][] = $grade;
-    }
-}
+        if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$course->id))) { // we must verify course id here!
+            error('Incorrect grade item id');
+        }
 
-// array to hold all error found during grade processing, e.g. outofrange
-$gradeserror = array();
-
-// now we update the raw grade for each posted grades
-if (!empty($grades)) {
-    foreach ($grades as $gradeitemid => $itemgrades) {
-        foreach ($itemgrades as $gradedata) {
-            $gradeitem = new grade_item(array('id'=>$gradeitemid), true);
-            
-            // cbeck if grade is in range, if not, add to error array
-            // MDL-10369
-            
-            // -1 is accepted for scale grades (no grade)            
-            if ($gradedata->rawgrade == -1 && $gradeitem->gradetype == 2) {
-                $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade); 
+        if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+            if ($postedgrade == -1) { // -1 means no grade
+                $finalgrade = null;
             } else {
-                if ($gradeitem->grademax < $gradedata->rawgrade || $gradeitem->grademin > $gradedata->rawgrade) {
-                    $gradeserror[$gradeitem->id][$gradedata->userid] = 'outofrange';
-                } else {
-                    $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade);
-                }
+                $finalgrade = (float)$postedgrade;
+            }
+        } else {
+            if ($postedgrade == '') { // empty string means no grade
+                $finalgrade = null;
+            } else {
+                $finalgrade = format_grade($postedgrade);
             }
         }
+
+        if (!is_null($finalgrade) and ($finalgrade < $grade_item->grademin or $finalgrade > $grade_item->grademax)) {
+            $gradeserror[$grade_item->id][$userid] = 'outofrange'; //TODO: localize
+            // another possiblity is to use bounded number instead
+            continue;
+        }
+
+        if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
+            if (!is_null($grade->finalgrade)) {
+                $grade->finalgrade = (float)$grade->finalgrade;
+            }
+            if ($grade->finalgrade === $finalgrade) {
+                // we must not update all grades, only changed ones - we do not want to mark everything as overriden
+                continue;
+            }
+        }
+
+        $gradedata = new object();
+        $gradedata->grade_item = $grade_item;
+        $gradedata->finalgrade = $finalgrade;
+        $gradedata->userid     = $userid;
+
+        $queue[] = $gradedata;
+    }
+
+    // now we update the new final grade for each changed grade
+    foreach ($queue as $gradedata) {
+        $gradedata->grade_item->update_final_grade($gradedata->userid, $gradedata->finalgrade, 'gradebook');
     }
 }
 
@@ -315,7 +340,7 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 // first make sure we have all final grades
 // TODO: check that no grade_item has needsupdate set
-grade_update_final_grades($courseid);
+grade_regrade_final_grades($courseid);
 
 // roles to be displaye in the gradebook
 $gradebookroles = $CFG->gradebookroles;
@@ -370,7 +395,7 @@ if (empty($users)) {
 
 // phase 2 sql, we supply the userids in this query, and get all the grades
 // pulls out all the grades, this does not need to worry about paging
-$sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, gt.feedback
+$sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, g.overridden, gt.feedback
         FROM  {$CFG->prefix}grade_items gi,
               {$CFG->prefix}grade_grades g
         LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.id = gt.gradeid
@@ -462,7 +487,7 @@ foreach ($gtree->levels as $key=>$row) {
     $headerhtml .= '<tr class="heading">';
 
     if ($key == $numrows - 1) {
-        $headerhtml .= '<th class="user"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> '
+        $headerhtml .= '<th class="user"><a href="'.$baseurl.'&amp;sortitemid=firstname">Firstname</a> ' //TODO: localize
                     . $firstarrow. '/ <a href="'.$baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
     } else {
         $headerhtml .= '<td class="topleft">&nbsp;</td>';
@@ -519,7 +544,7 @@ foreach ($gtree->levels as $key=>$row) {
             } else if ($object->itemtype == 'manual') {
                 //TODO: add manual grading icon
                 $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades')
-                      .'"/>'; // TODO: localize
+                      .'"/>';
             }
 
 
@@ -546,29 +571,29 @@ foreach ($users as $userid => $user) {
                   . $user->id . '">' . fullname($user) . '</a></th>';
     foreach ($items as $item) {
 
-        $studentshtml .= '<td>';
-
         if (isset($finalgrades[$userid][$item->id])) {
-
-            $gradeval = get_grade_clean($finalgrades[$userid][$item->id]->finalgrade);
-
+            $gradeval = $finalgrades[$userid][$item->id]->finalgrade;
             $grade = new grade_grades($finalgrades[$userid][$item->id], false);
             $grade->feedback = $finalgrades[$userid][$item->id]->feedback;
+
         } else {
-            // if itemtype is course or category, the grades in this item is not directly editable
-            if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
-                $gradeval ='';
-            } else {
-                $gradeval = '-';
-            }
+            $gradeval = null;
             $grade = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
+            $grade->feedback = '';
         }
+
+        if ($grade->is_overridden()) {
+            $studentshtml .= '<td class="overridden">';
+        } else {
+            $studentshtml .= '<td>';
+        }
+
 
         // if in editting mode, we need to print either a text box
         // or a drop down (for scales)
 
         // grades in item of type grade category or course are not directly editable
-        if ($USER->gradeediting && $item->itemtype != 'course' && $item->itemtype != 'category') {
+        if ($USER->gradeediting) {
             // We need to retrieve each grade_grade object from DB in order to
             // know if they are hidden/locked
 
@@ -600,9 +625,9 @@ foreach ($users as $userid => $user) {
                 }
             } else {
                 if ($quickgrading) {
-                    $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.$gradeval.'"/>';
+                    $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'.$item->id.'" value="'.get_grade_clean($gradeval).'"/>';
                 } else {
-                    $studentshtml .= $gradeval;
+                    $studentshtml .= get_grade_clean($gradeval);
                 }
             }
 
@@ -614,8 +639,9 @@ foreach ($users as $userid => $user) {
             }
 
             if ($showfeedback && $quickfeedback) {
-                $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'. @$grade->feedback . '"/>';
-            } elseif ($showfeedback) { // If quickfeedback is off but showfeedback is on, print an edit feedback icon
+                $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'. s($grade->feedback) . '"/>';
+
+            } else if ($showfeedback) { // If quickfeedback is off but showfeedback is on, print an edit feedback icon
                 if (empty($grade->feedback)) {
                     $icons_html .= grade_get_icons($element, $gtree, array('add_feedback'));
                 } else {
@@ -625,6 +651,7 @@ foreach ($users as $userid => $user) {
 
             $icons_html .= '</div>';
             $studentshtml .= $icons_html;
+
         } else {
             // finalgrades[$userid][$itemid] could be null because of the outer join
             // in this case it's different than a 0
@@ -642,7 +669,11 @@ foreach ($users as $userid => $user) {
                     // no such scale, throw error?
                 }
             } else {
-                $studentshtml .=  get_grade_clean($gradeval);
+                if (is_null($gradeval)) {
+                    $studentshtml .= '-';
+                } else {
+                    $studentshtml .=  get_grade_clean($gradeval);
+                }
             }
         }
 

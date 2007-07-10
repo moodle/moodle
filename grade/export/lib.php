@@ -84,7 +84,7 @@ class grade_export {
 
         // first make sure we have all final grades
         // TODO: check that no grade_item has needsupdate set
-        grade_update_final_grades($id);
+        grade_regrade_final_grades($id);
 
         /// Check to see if groups are being used in this course
         if ($groupmode = groupmode($course)) {   // Groups are being used

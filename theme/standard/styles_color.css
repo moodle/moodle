@@ -712,6 +712,10 @@ body#grade-index .grades .r1 {
   background-color: #dddddd;
 }
 
+#grade-report td.overridden {
+  background-color: #efefef;
+}
+
 /***
  *** Login
  ***/

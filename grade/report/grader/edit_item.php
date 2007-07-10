@@ -31,10 +31,6 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data()) {
-    if (empty($data->checkbox)) {
-        $data->checkbox = 0; // work around the missing value if checkbox not selected
-    }
-
     if (array_key_exists('calculation', $data)) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }

@@ -516,12 +516,12 @@ class grade_item extends grade_object {
      * Performs the necessary calculations on the grades_final referenced by this grade_item.
      * Also resets the needsupdate flag once successfully performed.
      *
-     * This function must be used ONLY from lib/gradeslib.php/grade_update_final_grades(),
+     * This function must be used ONLY from lib/gradeslib.php/grade_regrade_final_grades(),
      * because the regrading must be done in correct order!!
      *
      * @return boolean true if ok, error string otherwise
      */
-    function update_final_grades($userid=null) {
+    function regrade_final_grades($userid=null) {
         global $CFG;
 
         // locked grade items already have correct final grades
@@ -547,6 +547,9 @@ class grade_item extends grade_object {
             } else {
                 return "Could not aggregate final grades for category:".$this->id; // TODO: improve and localize
             }
+        } else if ($this->is_manual_item()) {
+            // manual items track only final grades, no raw grades
+            return true;
         }
 
         // normal grade item - just new final grades
@@ -559,7 +562,7 @@ class grade_item extends grade_object {
         if ($rs) {
             if ($rs->RecordCount() > 0) {
                 while ($grade_record = rs_fetch_next_record($rs)) {
-                    if (!empty($grade_record->locked)) {
+                    if (!empty($grade_record->locked) or !empty($grade_record->overridden)) {
                         // this grade is locked - final grade must be ok
                         continue;
                     }
@@ -649,8 +652,6 @@ class grade_item extends grade_object {
             dubugging("Unkown grade type");
             return null;;
         }
-
-
     }
 
     /**
@@ -773,11 +774,19 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Is this a manualy graded item?
+     * @return boolean
+     */
+    function is_manual_item() {
+        return ($this->itemtype == 'manual');
+    }
+
+    /**
      * Is the grade item normal - associated with module, plugin or something else?
      * @return boolean
      */
     function is_normal_item() {
-        return ($this->itemtype != 'course' and $this->itemtype != 'category');
+        return ($this->itemtype != 'course' and $this->itemtype != 'category' and $this->itemtype != 'manual');
     }
 
     /**
@@ -1038,12 +1047,113 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Updates raw grade value for given user, this is a only way to update raw
-     * grades from external source (module, gradebook, import, etc.),
-     * because it logs the change in history table and deals with final grade recalculation.
+     * Updates final grade value for given user, this is a only way to update final
+     * grades from gradebook and import because it logs the change in history table
+     * and deals with overridden flag. This flag is set to prevent later overriding
+     * from raw grades submitted from modules.
      *
-     * The only exception is category grade item which stores the raw grades directly.
-     * Calculated grades do not use raw grades at all, the rawgrade changes there are not logged too.
+     * @param int $userid the graded user
+     * @param mixed $finalgrade float value of final grade - false means do not change
+     * @param string $howmodified modification source
+     * @param string $note optional note
+     * @param mixed $feedback teachers feedback as string - false means do not change
+     * @param int $feedbackformat
+     * @return boolean success
+     */
+    function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+        global $USER;
+
+        if (empty($usermodified)) {
+            $usermodified = $USER->id;
+        }
+
+        // no grading used or locked
+        if ($this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
+            return false;
+        }
+
+        if (!$grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
+        }
+
+        $grade->grade_item =& $this; // prevent db fetching of this grade_item
+        $oldgrade = new object();
+        $oldgrade->finalgrade  = $grade->finalgrade;
+        $oldgrade->rawgrade    = $grade->rawgrade;
+        $oldgrade->rawgrademin = $grade->rawgrademin;
+        $oldgrade->rawgrademax = $grade->rawgrademax;
+        $oldgrade->rawscaleid  = $grade->rawscaleid;
+        $oldgrade->overridden  = $grade->overridden;
+
+        if ($grade->is_locked()) {
+            // do not update locked grades at all
+            return false;
+        }
+
+        if (!empty($grade->locktime) and $grade->locktime < time()) {
+            // do not update grades that should be already locked
+            // this does not solve all problems, cron is still needed to recalculate the final grades periodically
+            return false;
+        }
+
+        if ($finalgrade !== false) {
+            $grade->finalgrade = $finalgrade;
+            // if we can update the raw grade, do update it
+            if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
+             or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
+                if (!$grade->overridden) {
+                    $grade->overridden = time();
+                }
+            } else {
+                $grade->rawgrade = $finalgrade;
+                // copy current grademin/max and scale
+                $grade->rawgrademin = $this->grademin;
+                $grade->rawgrademax = $this->grademax;
+                $grade->rawscaleid  = $this->scaleid;
+            }
+        }
+
+        if (empty($grade->id)) {
+            $result = (boolean)$grade->insert($source);
+
+        } else if ($grade->finalgrade  !== $oldgrade->finalgrade
+                or $grade->rawgrade    !== $oldgrade->rawgrade
+                or $grade->rawgrademin !== $oldgrade->rawgrademin
+                or $grade->rawgrademax !== $oldgrade->rawgrademax
+                or $grade->rawscaleid  !== $oldgrade->rawscaleid
+                or $grade->overridden  !== $oldgrade->overridden) {
+
+            $result = $grade->update($source);
+        }
+
+        // do we have comment from teacher?
+        if ($result and $feedback !== false) {
+            $result = $grade->update_feedback($feedback, $feedbackformat, $usermodified);
+        }
+
+        if (!$this->needsupdate) {
+            $course_item = grade_item::fetch_course_item($this->courseid);
+            if (!$course_item->needsupdate) {
+                if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
+                    $this->force_regrading();
+                }
+            } else {
+                $this->force_regrading();
+            }
+        }
+
+        if ($result and !$grade->overridden) {
+            $this->trigger_raw_updated($grade, $source);
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Updates raw grade value for given user, this is a only way to update raw
+     * grades from external source (modules, etc.),
+     * because it logs the change in history table and deals with final grade recalculation.
      *
      * @param int $userid the graded user
      * @param mixed $rawgrade float value of raw grade - false means do not change
@@ -1051,26 +1161,17 @@ class grade_item extends grade_object {
      * @param string $note optional note
      * @param mixed $feedback teachers feedback as string - false means do not change
      * @param int $feedbackformat
-     * @return mixed grade_grades object if ok, false if error
+     * @return boolean success
      */
-    function update_raw_grade($userid, $rawgrade=false, $source='manual', $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
-        global $CFG, $USER;
-        require_once($CFG->libdir.'/eventslib.php');
+    function update_raw_grade($userid, $rawgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
+        global $USER;
 
         if (empty($usermodified)) {
             $usermodified = $USER->id;
         }
 
-        // calculated grades can not be updated
-        if ($this->is_calculated()) {
-            return false;
-        }
-
-        // TODO: we should IMO prevent modification of raw grades for course and categroy item too because
-        //       there is no way to prevent overriding of it
-
-        // do not allow grade updates when item locked - this prevents fetching of grade from db
-        if ($this->is_locked()) {
+        // calculated grades can not be updated; course and category can not be updated  because they are aggregated
+        if ($this->is_calculated() or !$this->is_normal_item() or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
             return false;
         }
 
@@ -1126,7 +1227,7 @@ class grade_item extends grade_object {
         if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
-                if (!grade_update_final_grades($this->courseid, $userid, $this)) {
+                if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
                     $this->force_regrading();
                 }
             } else {
@@ -1135,36 +1236,42 @@ class grade_item extends grade_object {
         }
 
         if ($result) {
-
-            // trigger grade_updated event notification
-            $eventdata = new object();
-
-            $eventdata->source       = $source;
-            $eventdata->itemid       = $this->id;
-            $eventdata->courseid     = $this->courseid;
-            $eventdata->itemtype     = $this->itemtype;
-            $eventdata->itemmodule   = $this->itemmodule;
-            $eventdata->iteminstance = $this->iteminstance;
-            $eventdata->itemnumber   = $this->itemnumber;
-            $eventdata->idnumber     = $this->idnumber;
-            $eventdata->userid       = $grade->userid;
-            $eventdata->rawgrade     = $grade->rawgrade;
-
-            // load existing text annotation
-            if ($grade_text = $grade->load_text()) {
-                $eventdata->feedback          = $grade_text->feedback;
-                $eventdata->feedbackformat    = $grade_text->feedbackformat;
-                $eventdata->information       = $grade_text->information;
-                $eventdata->informationformat = $grade_text->informationformat;
-            }
-
-            events_trigger('grade_updated', $eventdata);
-
-            return $grade;
-
-        } else {
-            return false;
+            $this->trigger_raw_updated($grade, $source);
         }
+
+        return $result;
+    }
+
+    /**
+     * Internal function used by update_final/raw_grade() only.
+     */
+    function trigger_raw_updated($grade, $source) {
+        global $CFG;
+        require_once($CFG->libdir.'/eventslib.php');
+
+        // trigger grade_updated event notification
+        $eventdata = new object();
+
+        $eventdata->source       = $source;
+        $eventdata->itemid       = $this->id;
+        $eventdata->courseid     = $this->courseid;
+        $eventdata->itemtype     = $this->itemtype;
+        $eventdata->itemmodule   = $this->itemmodule;
+        $eventdata->iteminstance = $this->iteminstance;
+        $eventdata->itemnumber   = $this->itemnumber;
+        $eventdata->idnumber     = $this->idnumber;
+        $eventdata->userid       = $grade->userid;
+        $eventdata->rawgrade     = $grade->rawgrade;
+
+        // load existing text annotation
+        if ($grade_text = $grade->load_text()) {
+            $eventdata->feedback          = $grade_text->feedback;
+            $eventdata->feedbackformat    = $grade_text->feedbackformat;
+            $eventdata->information       = $grade_text->information;
+            $eventdata->informationformat = $grade_text->informationformat;
+        }
+
+        events_trigger('grade_updated', $eventdata);
     }
 
     /**
@@ -1274,8 +1381,8 @@ class grade_item extends grade_object {
             $oldgrade->rawgrade    = $grade->rawgrade;
         }
 
-        // no need to recalculate locked grades
-        if ($grade->is_locked()) {
+        // no need to recalculate locked or overridden grades
+        if ($grade->is_locked() or $grade->is_overridden()) {
             return;
         }
 

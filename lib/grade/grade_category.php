@@ -307,7 +307,7 @@ class grade_category extends grade_object {
      *
      * Please note that category grade is either calculated or aggregated - not both at the same time.
      *
-     * This method must be used ONLY from grade_item::update_final_grades(),
+     * This method must be used ONLY from grade_item::regrade_final_grades(),
      * because the calculation must be done in correct order!
      *
      * Steps to follow:
@@ -404,8 +404,8 @@ class grade_category extends grade_object {
             $oldgrade->rawscaleid  = $grade->rawscaleid;
         }
 
-        // locked grades are not regraded
-        if ($grade->is_locked()) {
+        // no need to recalculate locked or overridden grades
+        if ($grade->is_locked() or $grade->is_overridden()) {
             return;
         }
 
