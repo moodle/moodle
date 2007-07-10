@@ -21,7 +21,7 @@ function get_text_for_indexing_htm(&$resource){
     if (preg_match('/(.*)<meta ([^>]*)>(.*)/is',$text, $matches)){
         $prefix = $matches[1];
         $meta_attributes = $matches[2];
-        $suffix = $matches{3];
+        $suffix = $matches[3];
         if (preg_match('/name="(keywords|description)"/i', $attributes)){
             preg_match('/content="[^"]+"/i', $attributes, $matches);
             $text = $prefix.' '.$matches[1].' '.$suffix;
