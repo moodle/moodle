@@ -6,16 +6,45 @@ require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
 
 
-// remove trailing 0s and "."s
+/**
+ * format number using lang specific decimal point and thousand separator
+ * @param float $gradeval raw grade value pulled from db
+ * @return string $gradeval formatted grade value
+ */
 function get_grade_clean($gradeval) {
-
+    global $CFG;
+    
+    /*
+    // commenting this out, if this is added, we also need to find the number of decimal place preserved
+    // so it can go into number_format
     if ($gradeval != 0) {
         $gradeval = rtrim(trim($gradeval, "0"), ".");
     } else {
         $gradeval = 0;
     }
+    */
+    // decimal points as specified by user
+    $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
+    $gradeval = number_format($gradeval, $decimals, get_string('decpoint', 'langconfig'), get_string('thousandsep', 'langconfig'));
 
     return $gradeval;
+}
+
+/**
+ * Given a user input grade, format it to standard format i.e. no thousand separator, and . as decimal point
+ * @param string $gradeval grade value from user input, language specific format
+ * @return string - grade value for storage, en format
+ */
+function format_grade($gradeval) {
+
+    $decimalpt = get_string('decpoint', 'langconfig');
+    $thousandsep = get_string('thousandsep', 'langconfig');
+    // replace decimal point with '.';
+    $gradeval = str_replace($decimalpt, '.', $gradeval);
+    // thousand separator is not useful
+    $gradeval = str_replace($thousandsep, '', $gradeval);
+
+    return clean_param($gradeval, PARAM_NUMBER);
 }
 
 /**
@@ -74,7 +103,8 @@ if ($data = data_submitted()) {
     foreach ($data as $varname => $postedgrade) {
 
         // clean posted values
-        $postedgrade = clean_param($postedgrade, PARAM_NUMBER);
+        $postedgrade = clean_param($postedgrade, PARAM_RAW); 
+        // can not use param number here, because we can have "," in grade
         $varname = clean_param($varname, PARAM_RAW);
 
         // skip, not a grade
@@ -87,19 +117,36 @@ if ($data = data_submitted()) {
         $grade = new object();
         $grade->userid = clean_param($gradeinfo[1], PARAM_INT);
         $gradeitemid = clean_param($gradeinfo[2], PARAM_INT);
-        $grade->rawgrade = $postedgrade;
+        // grade needs to formatted to proper format for storage
+        $grade->rawgrade = format_grade($postedgrade);
 
         // put into grades array
         $grades[$gradeitemid][] = $grade;
     }
 }
 
+// array to hold all error found during grade processing, e.g. outofrange
+$gradeserror = array();
+
 // now we update the raw grade for each posted grades
 if (!empty($grades)) {
     foreach ($grades as $gradeitemid => $itemgrades) {
         foreach ($itemgrades as $gradedata) {
             $gradeitem = new grade_item(array('id'=>$gradeitemid), true);
-            $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade);
+            
+            // cbeck if grade is in range, if not, add to error array
+            // MDL-10369
+            
+            // -1 is accepted for scale grades (no grade)            
+            if ($gradedata->rawgrade == -1 && $gradeitem->gradetype == 2) {
+                $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade); 
+            } else {
+                if ($gradeitem->grademax < $gradedata->rawgrade || $gradeitem->grademin > $gradedata->rawgrade) {
+                    $gradeserror[$gradeitem->id][$gradedata->userid] = 'outofrange';
+                } else {
+                    $gradeitem->update_raw_grade($gradedata->userid, $gradedata->rawgrade);
+                }
+            }
         }
     }
 }
@@ -595,7 +642,7 @@ foreach ($users as $userid => $user) {
                     // no such scale, throw error?
                 }
             } else {
-                $studentshtml .=  round($gradeval, $decimals);
+                $studentshtml .=  get_grade_clean($gradeval);
             }
         }
 
@@ -606,6 +653,10 @@ foreach ($users as $userid => $user) {
             $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grades methods
             $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
             $studentshtml .= grade_get_icons($element, $gtree);
+        }
+
+        if (!empty($gradeserror[$item->id][$userid])) {
+            $studentshtml .= $gradeserror[$item->id][$userid];
         }
 
         $studentshtml .=  '</td>' . "\n";
@@ -643,7 +694,7 @@ if ($currentgroup && $showgroups) {
             $groupsumhtml .= '<td>-</td>';
         } else {
             $sum = $groupsum[$item->id];
-            $groupsumhtml .= '<td>'.get_grade_clean(round($sum->sum, $decimals)).'</td>';
+            $groupsumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
         }
     }
     $groupsumhtml .= '</tr>';
@@ -677,7 +728,7 @@ if ($showgrandtotals) {
             $gradesumhtml .= '<td>-</td>';
         } else {
             $sum = $classsum[$item->id];
-            $gradesumhtml .= '<td>'.get_grade_clean(round($sum->sum, $decimals)).'</td>';
+            $gradesumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
         }
     }
     $gradesumhtml .= '</tr>';
