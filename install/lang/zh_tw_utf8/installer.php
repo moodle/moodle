@@ -36,6 +36,7 @@ $string['configfilewritten'] = 'CONFIG.PHP成功建立';
 $string['configurationcompletehead'] = '設定完成';
 $string['configurationcompletesub'] = 'Moodle 嘗試儲存設定資料於根目錄的一個檔案中。';
 $string['continue'] = '下一頁';
+$string['curlrecommended'] = '建議安裝額外的 Curl 函式庫來啟用 Moodle 網路功能。';
 $string['database'] = '資料庫';
 $string['databasecreationsettingshead'] = '現在您需要設定大部分 Moodle 資料儲存的資料庫，透過下面指定的設定，安裝程式可以自動建立資料庫。';
 $string['databasecreationsettingssub'] = '<b>類型：</b> 安裝程式固定使用 \"mysql\" <br />
@@ -117,14 +118,14 @@ $string['memorylimithelp'] = '<p>您伺服器的記憶體限制目前設為$a。
 
 <p>這可能會影響往後moodle運作時記憶體的使用，尤其是您有許多模組和(或)使用者的時候</p>
 
-<p>我們建議您在php中的記憶體儘量設定較高的記憶體使用，如40MB，有幾種方式可以進行:</p>
+<p>我們建議您在php中的記憶體儘量設定較高的記憶體使用，如16MB，有幾種方式可以進行:</p>
 <ol>
 <li>如果您可以重新編譯PHP請使用 <i>--enable-memory-limit</i>。
 這可以讓MOODLE 自行設定記憶體上限。</li>
 <li>如果您可以存取php.ini，您可以變更 <b>memory_limit</b>
-將它設為40M或更高。如果您無法存取，可洽您的系統管理員，幫您調整設定。</li>
+將它設為16M或更高。如果您無法存取，可洽您的系統管理員，幫您調整設定。</li>
 <li>在一些PHP 伺服器中您可以在MOODL目錄建立一個 .htaccess 檔案，檔案內容包含:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
+<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>但是，在一些伺服器上，這樣的設定會使<b>所有</b> PHP 頁面無法正常動作(瀏覽時會發生錯誤)，此時您必須移除 .htaccess 檔案。</p></li>
 </ol>';
 $string['missingrequiredfield'] = '缺少部份必填欄位';
@@ -135,6 +136,7 @@ $string['mysqlextensionisnotpresentinphp'] = 'PHP並未正確設定支援MySQL�
 $string['name'] = '名稱';
 $string['next'] = '下一個';
 $string['ok'] = '確定';
+$string['opensslrecommended'] = '強烈建議您安裝 OpenSSL 函式庫，這樣才能夠使用 Moodle 網路功能';
 $string['parentlanguage'] = '主顯示語言';
 $string['pass'] = '測試通過';
 $string['password'] = '密碼';
@@ -156,6 +158,8 @@ $string['skipdbencodingtest'] = '略過資料庫編碼測試';
 $string['status'] = '狀態';
 $string['thischarset'] = "UTF-8";
 $string['thislanguage'] = "正體中文";
+$string['unicoderecommended'] = '建議將所有資料儲存為萬國編碼(UTF-8)，新安裝的網站在存取資料庫時預設編碼都是萬國編碼，如果您正在進行升級，您應該執行 UTF-8 轉換程式（請參考管理首頁）';
+$string['unicoderequired'] = '您必須將資料儲存為萬國編碼格式 (UTF-8)，新安裝的網站在存取資料庫時預設編碼都是萬國編碼，如果您正在進行升級，您應該執行 UTF-8 轉換程式（請參考管理首頁）';
 $string['user'] = '使用者';
 $string['welcomep10'] = '$a->installername ($a->installerversion';
 $string['welcomep20'] = '這個頁面是提醒您已經成功安裝與啟動 <strong>$a->packname $a->packversion</strong> ，恭喜！';
