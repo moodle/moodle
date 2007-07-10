@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070709" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070710" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1307,8 +1307,9 @@
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="show 0, hide 1 or hide until date" PREVIOUS="finalgrade" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="not locked 0, locked from date" PREVIOUS="hidden" NEXT="locktime"/>
         <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="automatic locking of final grade, 0 means none, date otherwise" PREVIOUS="locked" NEXT="exported"/>
-        <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the time this grade was first created" PREVIOUS="exported" NEXT="timemodified"/>
+        <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime" NEXT="overridden"/>
+        <FIELD NAME="overridden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="indicates grade overridden from gradebook, 0 means none, date means overridden" PREVIOUS="exported" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the time this grade was first created" PREVIOUS="overridden" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the time this grade was last modified" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
@@ -1447,7 +1448,8 @@
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="show 0, hide 1 or hide until date" PREVIOUS="finalgrade" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="not locked 0, locked from date" PREVIOUS="hidden" NEXT="locktime"/>
         <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="automatic locking of final grade, 0 means none, date otherwise" PREVIOUS="locked" NEXT="exported"/>
-        <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime"/>
+        <FIELD NAME="exported" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="date of last grade export, 0 if none" PREVIOUS="locktime" NEXT="overridden"/>
+        <FIELD NAME="overridden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="indicates grade overridden from gradebook, 0 means none, date means overridden" PREVIOUS="exported"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="oldid"/>

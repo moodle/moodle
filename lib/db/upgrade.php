@@ -1059,6 +1059,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('overridden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
 
@@ -1133,24 +1134,6 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007070602) {
-    /// Remove obsoleted unitt tests tables - they will be recreated automatically
-        $tables = array('grade_categories',
-                        'scale',
-                        'grade_items',
-                        'grade_calculations',
-                        'grade_grades',
-                        'grade_grades_raw',
-                        'grade_grades_final',
-                        'grade_grades_text',
-                        'grade_outcomes',
-                        'grade_history');
-
-        foreach ($tables as $table) {
-            $table = new XMLDBTable('unittest_'.$table);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-        }
 
     /// drop old grade history table
         $table = new XMLDBTable('grade_history');
@@ -1271,6 +1254,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locktime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('exported', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('overridden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
     /// Adding keys to table grade_grades_history
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1400,6 +1384,48 @@ function xmldb_main_upgrade($oldversion=0) {
             $key->setAttributes(XMLDB_KEY_FOREIGN, array('userlogged'), 'user', array('id'));
             add_key($table, $key);
         }
+    }
+
+    if ($result && $oldversion < 2007071000) {
+    /// Remove obsoleted unitt tests tables - they will be recreated automatically
+        $tables = array('grade_categories',
+                        'scale',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_history');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable('unittest_'.$table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+
+    /// Define field overridden to be added to grade_grades
+        $table = new XMLDBTable('grade_grades');
+        $field = new XMLDBField('overridden');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'exported');
+
+    /// Launch add field overridden
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field overridden to be added to grade_grades_history
+        $table = new XMLDBTable('grade_grades_history');
+        $field = new XMLDBField('overridden');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'exported');
+
+    /// Launch add field overridden
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
     }
 
     return $result;
