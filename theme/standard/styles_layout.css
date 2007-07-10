@@ -1,3 +1,4 @@
+/* @override http://moodle18.userver.lan/theme/standard/styles_layout.css */
 /*******************************************************************
  styles_layout.css
 
@@ -1288,6 +1289,10 @@ a.skip-block, .skip-block {
 
 #block_rss {
   text-align: center;
+}
+
+.block_search_forums .invisiblefieldset {
+  display: block;
 }
 
 /***
