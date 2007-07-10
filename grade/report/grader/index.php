@@ -211,8 +211,6 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
     $perpage = $perpageurl;
 }
 
-/// setting up groups
-
 // Prepare language strings
 $strsortasc  = get_string('sortasc', 'grades');
 $strsortdesc = get_string('sortdesc', 'grades');
@@ -222,6 +220,7 @@ $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grad
 // base url for paging
 $pbarurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;';
 
+/// setting up groups
 $groupsql = '';
 $groupwheresql = '';
 $group_selector = null;
@@ -631,13 +630,15 @@ foreach ($users as $userid => $user) {
                 }
             }
 
+            // Prepare icons for when quickgrading or quickfeedback are switched off
             $icons_html = '<div class="grade_icons">';
 
+            // If quickgrading is off, print an edit icon
             if (!$quickgrading) {
-                // If quickgrading is off, print an edit icon
                 $icons_html .= grade_get_icons($element, $gtree, array('edit'));
             }
 
+            // If quickfeedback is on, print an input element
             if ($showfeedback && $quickfeedback) {
                 $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'. s($grade->feedback) . '"/>';
 
@@ -650,7 +651,10 @@ foreach ($users as $userid => $user) {
             }
 
             $icons_html .= '</div>';
-            $studentshtml .= $icons_html;
+
+            if (!$quickfeedback || !$quickgrading) {
+                $studentshtml .= $icons_html;
+            }
 
         } else {
             // finalgrades[$userid][$itemid] could be null because of the outer join
@@ -794,7 +798,7 @@ if ($USER->gradeediting) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting) {
+if ($USER->gradeediting && ($quickfeedback || $quickgrading)) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
