@@ -3611,7 +3611,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
         
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context,
-                    'moodle/site:accessallgroups', $fields='id, id', '', '', '', '', $exceptions);
+                    'moodle/site:accessallgroups', 'u.id, u,id', '', '', '', '', $exceptions);
             $groupsql = ' AND (' . $grouptest . ' OR ra.userid IN (' . 
                     implode(',', array_keys($viewallgroupsusers)) . '))';
         } else {  
