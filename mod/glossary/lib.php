@@ -340,6 +340,7 @@ function glossary_get_user_grades($glossary, $userid=0) {
  */
 function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
     global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
 
     if ($glossary != null) {
         if ($grades = glossary_get_user_grades($glossary, $userid)) {
