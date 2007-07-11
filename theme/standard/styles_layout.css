@@ -2059,7 +2059,6 @@ body#grade-index .grades .weighted {
 #grade-report table {
   border-width:1px;
   border-style:solid;
-  float: left;
   margin-top: 20px;
 }
 
