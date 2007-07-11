@@ -1577,7 +1577,8 @@
                 fwrite ($bf,full_tag("LOCKED",7,false,$final->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$final->locktime));
                 fwrite ($bf,full_tag("EXPORTED",7,false,$final->exported));
-                fwrite ($bf,end_tag("GRADE_RAW",6,true));
+                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$final->overridden));
+                fwrite ($bf,end_tag("GRADE",6,true));
             }  
             $stauts = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
         }
