@@ -1093,6 +1093,10 @@ body#admin-modules table.generaltable td.c0
   margin-right: auto;
 }
 
+#admin-report-stats-index .invisiblefieldset {
+  display: block;
+}
+
 /***
  *** Blocks
  ***/
