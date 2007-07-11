@@ -5,7 +5,6 @@ $temp = new admin_settingpage('locationsettings', get_string('locationsettings',
 $options = get_list_of_timezones();
 $options[99] = get_string('serverlocaltime');
 $temp->add(new admin_setting_configselect('timezone', get_string('timezone','admin'), get_string('configtimezone', 'admin'), 99, $options));
-$options = get_list_of_timezones();
 $options[99] = get_string('timezonenotforced', 'admin');
 $temp->add(new admin_setting_configselect('forcetimezone', get_string('forcetimezone', 'admin'), get_string('helpforcetimezone', 'admin'), 99, $options));
 $options = get_list_of_countries();
