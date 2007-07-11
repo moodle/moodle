@@ -18,7 +18,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 // default return url
 $returnurl = 'category.php?id='.$course->id;
 
-$mform = new edit_item_form(qualified_me(), array('id'=>$id));
+$mform = new edit_item_form();
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
     $mform->set_data($item);

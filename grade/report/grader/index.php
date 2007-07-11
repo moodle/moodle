@@ -743,4 +743,9 @@ if ($USER->gradeediting && ($quickfeedback || $quickgrading)) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
+
+// prints paging bar at bottom for large pages
+if ($perpage >= 20) {
+    print_paging_bar($numusers, $page, $perpage, $pbarurl);
+}
 ?>
