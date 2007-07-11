@@ -9,13 +9,14 @@ Changes:
 - 11. 2004: Created by Markus Hagman
 - 05. 2005: Modifications to login process by Martin Dougiamas
 - 05. 2005: Various extensions and fixes by Lukas Haemmerle
-- 06. 2005: Adaptions to new field locks and plugin config structures by Marting
+- 06. 2005: Adaptions to new field locks and plugin config structures by Martin
             Langhoff and Lukas Haemmerle
 - 10. 2005: Added better error messages and moved text to language directories
 - 02. 2006: Simplified authentication so that authorization works properly
             Added instructions for IIS
 - 11. 2006: User capabilities are now loaded properly as of Moodle 1.7+
 - 03. 2007: Adapted authentication method to Moodle 1.8
+- 07. 2007: Fixed a but that caused problems with uppercase usernames
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         
         // If we are in the shibboleth directory then we trust the server var
         if (!empty($_SERVER[$this->config->user_attribute])) {
-            return ($_SERVER[$this->config->user_attribute] == $username);
+            return (strtolower($_SERVER[$this->config->user_attribute]) == strtolower($username));
         } else {
             // If we are not, the user has used the manual login and the login name is
             // unknown, so we return false.
@@ -87,7 +87,13 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         $search_attribs = array();
 
         foreach ($attrmap as $key=>$value) {
-            $result[$key] = $this->get_first_string($_SERVER[$value]);
+            
+            // Make usename lowercase
+            if ($key == 'username'){
+                $result[$key] = strtolower($this->get_first_string($_SERVER[$value]));
+            } else {
+                $result[$key] = $this->get_first_string($_SERVER[$value]);
+            }
         }
 
          // Provide an API to modify the information to fit the Moodle internal
@@ -118,7 +124,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
         $moodleattributes = array();
         foreach ($fields as $field) {
-            if ($configarray["field_map_$field"]) {
+            if (isset($configarray["field_map_$field"])) {
                 $moodleattributes[$field] = $configarray["field_map_$field"];
             }
         }
