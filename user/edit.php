@@ -112,7 +112,7 @@
                 $USER->$variable = $value;
             }
         }
-
+        events_trigger('user_updated', $usernew);
         redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
     }
 
