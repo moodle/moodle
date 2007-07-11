@@ -4885,6 +4885,12 @@ function get_list_of_pixnames($lang = '') {
 function get_list_of_timezones() {
     global $CFG;
 
+    static $timezones;
+
+    if (!empty($timezones)) {    // This function has been called recently
+        return $timezones;
+    }
+
     $timezones = array();
 
     if ($rawtimezones = get_records_sql('SELECT MAX(id), name FROM '.$CFG->prefix.'timezone GROUP BY name')) {
