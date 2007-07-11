@@ -1124,6 +1124,9 @@ class grade_item extends grade_object {
                 or $grade->overridden  !== $oldgrade->overridden) {
 
             $result = $grade->update($source);
+
+        } else {
+            $result = true;
         }
 
         // do we have comment from teacher?
