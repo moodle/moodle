@@ -87,7 +87,12 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         $search_attribs = array();
 
         foreach ($attrmap as $key=>$value) {
-            
+          // Check if attribute is present  
+	  if (!isset($_SERVER[$value])){
+	   	$result[$key] = '';
+		continue;
+	   }
+
             // Make usename lowercase
             if ($key == 'username'){
                 $result[$key] = strtolower($this->get_first_string($_SERVER[$value]));
