@@ -76,7 +76,7 @@ class grade_tree {
         $this->levels = array();
 
         // get course grade tree
-        $this->top_element =& grade_category::fetch_course_tree($courseid, $include_grades, true);
+        $this->top_element = grade_category::fetch_course_tree($courseid, $include_grades, true);
 
         if ($category_grade_last) {
             grade_tree::category_grade_last($this->top_element);
