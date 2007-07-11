@@ -318,9 +318,12 @@ function create_raw_question($quest) {
                 break;
             case 'RIGHT_MATCH_BLOCK':
                 $matching_answerset = $pblock['#']['flow'];
+
                 $answerset = array();
                 foreach($matching_answerset as $answer) {
-                    $this->process_block($answer, $bb_answer);
+                    // $answerset[] = $this->process_block($answer, $bb_answer);
+                    $bb_answer = null;
+                    $bb_answer->text = $answer['#']['flow'][0]['#']['material'][0]['#']['mat_extension'][0]['#']['mat_formattedtext'][0]['#'];
                     $answerset[] = $bb_answer;
                 }
                 $block->matching_answerset = $answerset;
@@ -801,10 +804,13 @@ function process_essay($quest, &$questions) {
 // Process Matching Questions
 //----------------------------------------
 function process_matching($quest, &$questions) {
-    if (defined("RENDEREDMATCH")) {
+    global $QTYPES;
+
+    // renderedmatch is an optional plugin, so we need to check if it is defined
+    if (!empty($QTYPES['renderedmatch'])) {
         $question = $this->defaultquestion($this->defaultquestion());
         $question->valid = true;
-        $question->qtype = RENDEREDMATCH;
+        $question->qtype = 'renderedmatch';
         $question->defaultgrade = 1;
         $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
         $question->name = shorten_text($question->questiontext, 250);
