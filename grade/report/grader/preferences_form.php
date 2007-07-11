@@ -26,7 +26,6 @@ class grader_report_preferences_form extends moodleform {
                              'showgrandtotals'        => 'advcheckbox',
                              'showgroups'             => 'advcheckbox',
                              'showlocks'              => 'advcheckbox',
-                             'showfeedback'           => 'advcheckbox',
                              'showscales'             => 'advcheckbox',
                              'quickgrading'           => 'advcheckbox',
                              'quickfeedback'          => 'advcheckbox',

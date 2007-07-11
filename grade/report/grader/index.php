@@ -154,7 +154,6 @@ $showgrandtotals      = get_user_preferences('grade_report_showgrandtotals', $CF
 $showgroups           = get_user_preferences('grade_report_showgroups', $CFG->grade_report_showgroups);
 $aggregation_position = get_user_preferences('grade_report_aggregationposition', $CFG->grade_report_aggregationposition);
 $showscales           = get_user_preferences('grade_report_showscales', $CFG->grade_report_showscales);
-$showfeedback         = get_user_preferences('grade_report_showfeedback', $CFG->grade_report_showfeedback);
 $quickgrading         = get_user_preferences('grade_report_quickgrading', $CFG->grade_report_quickgrading);
 $quickfeedback        = get_user_preferences('grade_report_quickfeedback', $CFG->grade_report_quickfeedback);
 
@@ -166,6 +165,7 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 // Prepare language strings
 $strsortasc  = get_string('sortasc', 'grades');
 $strsortdesc = get_string('sortdesc', 'grades');
+$strfeedback = get_string("feedback");
 
 // base url for sorting by first/last name
 $baseurl = 'report.php?id='.$courseid.'&amp;perpage='.$perpage.'&amp;report=grader&amp;page='.$page;
@@ -413,7 +413,6 @@ if ($USER->gradeediting) {
     grader_report_print_toggle('calculations', $baseurl);
 }
 
-grader_report_print_toggle('feedback', $baseurl);
 grader_report_print_toggle('grandtotals', $baseurl);
 grader_report_print_toggle('groups', $baseurl);
 grader_report_print_toggle('scales', $baseurl);
@@ -539,6 +538,15 @@ foreach ($users as $userid => $user) {
             $studentshtml .= '<td>';
         }
 
+        // Do not show any icons if no grade (no record in DB to match)
+        if (!empty($grade->id)) {
+            // emulate grade element
+            $grade->courseid = $course->id;
+            $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grades methods
+            $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
+            $studentshtml .= grade_get_icons($element, $gtree);
+        }
+
 
         // if in editting mode, we need to print either a text box
         // or a drop down (for scales)
@@ -582,33 +590,20 @@ foreach ($users as $userid => $user) {
                 }
             }
 
-            // Prepare icons for when quickgrading or quickfeedback are switched off
-            $icons_html = '<div class="grade_icons">';
-
-            // If quickgrading is off, print an edit icon
-            if (!$quickgrading) {
-                $icons_html .= grade_get_icons($element, $gtree, array('edit'));
-            }
 
             // If quickfeedback is on, print an input element
-            if ($showfeedback && $quickfeedback) {
+            if ($quickfeedback) {
                 $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'. s($grade->feedback) . '"/>';
-
-            } else if ($showfeedback) { // If quickfeedback is off but showfeedback is on, print an edit feedback icon
-                if (empty($grade->feedback)) {
-                    $icons_html .= grade_get_icons($element, $gtree, array('add_feedback'));
-                } else {
-                    $icons_html .= grade_get_icons($element, $gtree, array('edit_feedback'));
-                }
             }
 
-            $icons_html .= '</div>';
-
-            if (!$quickfeedback || !$quickgrading) {
-                $studentshtml .= $icons_html;
-            }
-
+            $studentshtml .= '<div class="grade_icons">' . grade_get_icons($element, $gtree, array('edit')) . '</div>';
         } else {
+            // If feedback present, surround grade with feedback tooltip
+            if (!empty($grade->feedback)) {
+                $studentshtml .= '<span onmouseover="return overlib(\''.$grade->feedback.'\', CAPTION, \''
+                        . $strfeedback.'\');" onmouseout="return nd();">';
+            }
+
             // finalgrades[$userid][$itemid] could be null because of the outer join
             // in this case it's different than a 0
             if ($item->scaleid) {
@@ -631,15 +626,9 @@ foreach ($users as $userid => $user) {
                     $studentshtml .=  get_grade_clean($gradeval);
                 }
             }
-        }
-
-        // Do not show any icons if no grade (no record in DB to match)
-        if (!empty($grade->id)) {
-            // emulate grade element
-            $grade->courseid = $course->id;
-            $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grades methods
-            $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
-            $studentshtml .= grade_get_icons($element, $gtree);
+            if (!empty($grade->feedback)) {
+                $studentshtml .= '</span>';
+            }
         }
 
         if (!empty($gradeserror[$item->id][$userid])) {

@@ -721,9 +721,7 @@ function grade_get_icons($element, $tree, $icons=null, $limit=true) {
 
 
     // Load language strings
-    $straddfeedback    = get_string("addfeedback", 'grades');
     $stredit           = get_string("edit");
-    $streditfeedback   = get_string("editfeedback", 'grades');
     $streditcalculation= get_string("editcalculation", 'grades');
     $strfeedback       = get_string("feedback");
     $strmove           = get_string("move");
@@ -757,7 +755,6 @@ function grade_get_icons($element, $tree, $icons=null, $limit=true) {
     $aggregationview  = get_user_preferences('grade_report_aggregationview', $CFG->grade_report_aggregationview);
     $showeyecons      = get_user_preferences('grade_report_showeyecons', $CFG->grade_report_showeyecons);
     $showlocks        = get_user_preferences('grade_report_showlocks', $CFG->grade_report_showlocks);
-    $showfeedback     = get_user_preferences('grade_report_showfeedback', $CFG->grade_report_showfeedback);
     $showcalculations = get_user_preferences('grade_report_showcalculations', $CFG->grade_report_showcalculations);
 
     // Prepare image strings
@@ -768,31 +765,20 @@ function grade_get_icons($element, $tree, $icons=null, $limit=true) {
     $edit_item_icon = '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                     . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                     . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+    $overlib = '';
+    if (!empty($object->feedback)) {
+        $overlib = 'onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
+                     . $strfeedback.'\');" onmouseout="return nd();"';
+    }
 
     $edit_grade_icon = '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
-                     . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                     . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+                     . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
+                     . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+
 
     $edit_calculation_icon = '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                            . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
-
-    $add_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                       . "&amp;action=add&amp;courseid=$object->courseid\">\n"
-                       . '<img src="'.$CFG->pixpath.'/t/feedback_add.gif" class="iconsmall" alt="'.$straddfeedback.'" '
-                       . 'title="'.$straddfeedback.'" /></a>'. "\n";
-
-    $edit_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                        . "&amp;action=edit&amp;courseid=$object->courseid\">\n"
-                        . '<img src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="'.$streditfeedback.'" '
-                        . 'title="'.$streditfeedback.'" onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                        . $strfeedback.'\');" onmouseout="return nd();" /></a>'. "\n";
-
-    $view_feedback_icon = '<a href="report/grader/edit_feedback.php?id=' . $object->id
-                        . "&amp;action=view&amp;courseid=$object->courseid\">\n"
-                        . '<img onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                        . $strfeedback.'\');" onmouseout="return nd();" '
-                        . 'src="'.$CFG->pixpath.'/t/feedback.gif" class="iconsmall" alt="" /></a>'. "\n";
 
     // Prepare Hide/Show icon state
     $hide_show = 'hide';
@@ -812,6 +798,7 @@ function grade_get_icons($element, $tree, $icons=null, $limit=true) {
     }
 
     // Print lock/unlock icon
+
     $lock_unlock_icon = '<a href="report.php?report=grader&amp;target='.$eid
                       . "&amp;action=$lock_unlock$tree->commonvars\">\n"
                       . '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
@@ -878,12 +865,6 @@ function grade_get_icons($element, $tree, $icons=null, $limit=true) {
             $html .= $contract_expand_icon;
         }
     } else { // Editing mode is off
-        if ($showfeedback) {
-            // Display view feedback icon
-            if (!empty($object->feedback)) {
-                $html .= $view_feedback_icon;
-            }
-        }
     }
 
     return $html . '</div>';
