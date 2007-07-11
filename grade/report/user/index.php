@@ -4,7 +4,7 @@
 
 require_once($CFG->libdir.'/tablelib.php');
 include_once($CFG->libdir.'/gradelib.php');
-
+require_once($CFG->dirroot.'/grade/report/lib.php');
 // get the params
 $courseid = required_param('id', PARAM_INT);
 if (!$userid = optional_param('user', 0, PARAM_INT)) {
@@ -40,7 +40,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
 
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'user-grade');
-    $table->set_attribute('class', 'generaltable generalbox');
+    $table->set_attribute('class', 'boxaligncenter generaltable');
 
     // not sure tables should be sortable or not, because if we allow it then sorted resutls distort grade category structure and sortorder
     $table->set_control_variables(array(
@@ -114,7 +114,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
                 }
             } else {
                 // normal grade, or text, just display
-                $data[] = $grade_grades->finalgrade;
+                $data[] = get_grade_clean($grade_grades->finalgrade);
             }
 
             /// prints percentage
@@ -122,7 +122,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                 // processing numeric grade
                 if ($grade_grades->finalgrade) {
-                    $percentage = (($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
+                    $percentage = get_grade_clean(($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
                 } else {
                     $percentage = '-';
                 }
@@ -131,7 +131,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
                 // processing scale grade
                 $scale = get_record('scale', 'id', $grade_item->scaleid);
                 $scalevals = explode(",", $scale->scale);
-                $percentage = (($grade_grades->finalgrade) / count($scalevals) * 100).'%';
+                $percentage = get_grade_clean(($grade_grades->finalgrade) / count($scalevals) * 100).'%';
 
             } else {
                 // text grade
@@ -161,11 +161,13 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             } else {
                 $data[] = '&nbsp;';
             }
-
             $table->add_data($data);
         }
+        
+        //echo "<div><table class='boxaligncenter'><tr><td>asdfas</td></tr></table></div>";
         $table->print_html();
     } else {
         notify(get_string('nogradeitem', 'grades'));
     }
+    
 ?>
