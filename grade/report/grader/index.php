@@ -58,20 +58,28 @@ function grader_report_print_toggle($type, $baseurl, $return=false) {
 }
 
 
-/// processing posted grades here
+/// processing posted grades & feedback here
 
 if ($data = data_submitted() and confirm_sesskey()) {
 
     // always initialize all arrays
     $queue = array();
 
-    foreach ($data as $varname => $postedgrade) {
+    foreach ($data as $varname => $postedvalue) {
         // this is a bit tricky - we have to first load all grades into memory,
         // check if changed and only then start updating the final grades because
         // columns might depend one on another - the result would be overriden calculated and category grades
 
-        // skip, not a grade
-        if (!strstr($varname, 'grade')) {
+        $needsupdate = false;
+        $note = false; // TODO implement note??
+
+        // skip, not a grade nor feedback
+        $data_type = '';
+        if (strstr($varname, 'grade')) {
+            $data_type = 'grade';
+        } elseif (strstr($varname, 'feedback')) {
+            $data_type = 'feedback';
+        } else {
             continue;
         }
 
@@ -84,47 +92,71 @@ if ($data = data_submitted() and confirm_sesskey()) {
             error('Incorrect grade item id');
         }
 
-        if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-            if ($postedgrade == -1) { // -1 means no grade
-                $finalgrade = null;
-            } else {
-                $finalgrade = (float)$postedgrade;
-            }
-        } else {
-            if ($postedgrade == '') { // empty string means no grade
-                $finalgrade = null;
-            } else {
-                $finalgrade = format_grade($postedgrade);
-            }
-        }
+        // Pre-process grade
+        if ($data_type == 'grade') {
 
-        if (!is_null($finalgrade) and ($finalgrade < $grade_item->grademin or $finalgrade > $grade_item->grademax)) {
-            $gradeserror[$grade_item->id][$userid] = 'outofrange'; //TODO: localize
-            // another possiblity is to use bounded number instead
-            continue;
-        }
-
-        if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
-            if (!is_null($grade->finalgrade)) {
-                $grade->finalgrade = (float)$grade->finalgrade;
+            if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+                if ($postedvalue == -1) { // -1 means no grade
+                    $finalgrade = null;
+                } else {
+                    $finalgrade = (float)$postedvalue;
+                }
+            } else {
+                if ($postedvalue == '') { // empty string means no grade
+                    $finalgrade = null;
+                } else {
+                    $finalgrade = format_grade($postedvalue);
+                }
             }
-            if ($grade->finalgrade === $finalgrade) {
-                // we must not update all grades, only changed ones - we do not want to mark everything as overriden
+
+            if (!is_null($finalgrade) and ($finalgrade < $grade_item->grademin or $finalgrade > $grade_item->grademax)) {
+                $gradeserror[$grade_item->id][$userid] = 'outofrange'; //TODO: localize
+                // another possiblity is to use bounded number instead
                 continue;
             }
         }
 
-        $gradedata = new object();
-        $gradedata->grade_item = $grade_item;
-        $gradedata->finalgrade = $finalgrade;
-        $gradedata->userid     = $userid;
+        // Get the grade object to compare old value with new value
+        if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
+            if ($data_type == 'feedback') {
+                $finalgrade = false;
+                $text = $grade->load_text();
+                if ($text != s($postedvalue)) {
+                    $feedback = s($postedvalue);
+                    $feedbackformat = GRADER_REPORT_FEEDBACK_FORMAT_TEXT;
+                    $needsupdate = true;
+                }
+            } elseif ($data_type == 'grade') {
+                $feedback = false;
+                $feedbackformat = false;
+                if (!is_null($grade->finalgrade)) {
+                    $grade->finalgrade = (float)$grade->finalgrade;
+                }
+                if ($grade->finalgrade === $finalgrade) {
+                    $needsupdate = true;
+                }
+            }
 
-        $queue[] = $gradedata;
+        }
+
+        // we must not update all grades, only changed ones - we do not want to mark everything as overriden
+        if ($needsupdate) {
+            $gradedata = new object();
+            $gradedata->grade_item     = $grade_item;
+            $gradedata->userid         = $userid;
+            $gradedata->note           = $note;
+            $gradedata->finalgrade     = $finalgrade;
+            $gradedata->feedback       = $feedback;
+            $gradedata->feedbackformat = $feedbackformat;
+
+            $queue[] = $gradedata;
+        }
     }
 
     // now we update the new final grade for each changed grade
     foreach ($queue as $gradedata) {
-        $gradedata->grade_item->update_final_grade($gradedata->userid, $gradedata->finalgrade, 'gradebook');
+        $gradedata->grade_item->update_final_grade($gradedata->userid, $gradedata->finalgrade, 'gradebook',
+                                                   $gradedata->note, $gradedata->feedback, $gradedata->feedbackformat);
     }
 }
 

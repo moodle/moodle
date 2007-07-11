@@ -1059,6 +1059,7 @@ class grade_item extends grade_object {
      * @param mixed $feedback teachers feedback as string - false means do not change
      * @param int $feedbackformat
      * @return boolean success
+     * TODO Allow for a change of feedback without a change of finalgrade. Currently I get notice about uninitialised $result
      */
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER;
