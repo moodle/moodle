@@ -14,7 +14,7 @@ $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
-$db->debug=true;
+
 // Handle toggle change request
 if (!is_null($toggle) && !empty($toggle_type)) {
     set_user_preferences(array('grade_report_show' . $toggle_type => $toggle));
@@ -30,7 +30,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
 // Override perpage if set in URL
 if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
-    $report->studentsperpage = $perpageurl;
+    $report->user_prefs['studentsperpage'] = $perpageurl;
 }
 
 // Perform actions on categories, items and grades
@@ -58,7 +58,7 @@ include('tabs.php');
 
 echo $report->group_selector;
 echo $report->get_toggles_html();
-print_paging_bar($numusers, $report->page, $report->studentsperpage, $report->pbarurl);
+print_paging_bar($numusers, $report->page, $report->get_user_pref('studentsperpage'), $report->pbarurl);
 echo '<br />';
 
 $reporthtml = '<table class="boxaligncenter">';
@@ -80,13 +80,13 @@ if ($USER->gradeediting) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting && ($report->quickfeedback || $report->quickgrading)) {
+if ($USER->gradeediting && ($report->get_user_pref('quickfeedback') || $report->get_user_pref('quickgrading'))) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
 
 // prints paging bar at bottom for large pages
-if ($report->studentsperpage >= 20) {
-    print_paging_bar($numusers, $report->page, $report->studentsperpage, $report->pbarurl);
+if ($report->get_user_pref('studentsperpage') >= 20) {
+    print_paging_bar($numusers, $report->page, $report->get_user_pref('studentsperpage'), $report->pbarurl);
 }
 ?>
