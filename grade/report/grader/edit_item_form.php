@@ -42,32 +42,29 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
-        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('scaleid', 'gradetype', 'eq', GRADE_TYPE_VALUE);
+        $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
 
         $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
-        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('grademax', 'gradetype', 'eq', GRADE_TYPE_SCALE);
+        $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->setDefault('grademax', 100);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
-        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        $mform->disabledIf('grademin', 'gradetype', 'eq', GRADE_TYPE_SCALE);
+        $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->setDefault('grademin', 0);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('gradepass', 0);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('multfactor', 1);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('plusfactor', 0);
 
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));

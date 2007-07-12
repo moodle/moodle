@@ -54,9 +54,15 @@ class edit_category_form extends moodleform {
 
             if ($grade_item->is_calculated()) {
                 // following elements are ignored when calculation formula used
-                $mform->removeElement('aggregation');
-                $mform->removeElement('keephigh');
-                $mform->removeElement('droplow');
+                if ($mform->elementExists('aggregation')) {
+                    $mform->removeElement('aggregation');
+                }
+                if ($mform->elementExists('keephigh')) {
+                    $mform->removeElement('keephigh');
+                }
+                if ($mform->elementExists('droplow')) {
+                    $mform->removeElement('droplow');
+                }
             }
         }
     }
