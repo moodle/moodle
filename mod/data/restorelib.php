@@ -220,6 +220,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
         $rec_info = $records[$i];
         $oldid = backup_todb($rec_info['#']['ID']['0']['#']);
 
+        $record = new object();
         $record -> dataid = $new_data_id;
         $record -> userid = backup_todb($rec_info['#']['USERID']['0']['#']);
         $record -> groupid = backup_todb($rec_info['#']['GROUPID']['0']['#']);
@@ -227,9 +228,13 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
         $record -> timemodified = backup_todb($rec_info['#']['TIMEMODIFIED']['0']['#']);
         $record -> approved = backup_todb($rec_info['#']['APPROVED']['0']['#']);
         $user = backup_getid($restore->backup_unique_code,"user",$record->userid);
+        $group= backup_getid($restore->backup_unique_code,"groups",$record->groupid);
 
         if ($user) {
             $record->userid = $user->new_id;
+        }
+        if ($group) {
+            $record->groupid= $group->new_id;
         }
 
         $newid = insert_record ("data_records",$record);
