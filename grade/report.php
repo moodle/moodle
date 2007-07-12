@@ -29,7 +29,6 @@
     $courseid = required_param('id');              // course id
     $report   = optional_param('report', 'user', PARAM_FILE);              // course id
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
-    $feedback = optional_param('feedback', -1, PARAM_BOOL); // sticky feedback mode
 
 /// Make sure they can even access this course
 
@@ -99,7 +98,7 @@
         $USER->gradeediting = 0;
     }
 
-    // params for the turn editting on and feedback buttons
+    // params for the turn editting on
     $options['id'] = $courseid;
     $options['report'] = $report;
 

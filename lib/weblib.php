@@ -3748,7 +3748,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
     if (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context)) {
         $output .= '<a href="'.$CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&amp;user='.$user->id.'">'.get_string('notes','notes').'</a><br />';
     }
-    
+
     if (has_capability('moodle/site:viewreports', $context)) {
         $timemidnight = usergetmidnight(time());
         $output .= '<a href="'. $CFG->wwwroot .'/course/user.php?id='. $course->id .'&amp;user='. $user->id .'">'. $string->activity .'</a><br />';
@@ -6291,7 +6291,7 @@ function print_location_comment($file, $line, $return = false)
 }
 
 
-/** 
+/**
  * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
  * provide this function with the language strings for sortasc and sortdesc.
  * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
@@ -6299,17 +6299,17 @@ function print_location_comment($file, $line, $return = false)
  * @param string $strsort The language string used for the alt attribute of this image
  * @param bool $return Whether to print directly or return the html string
  * @return string HTML for the image
- * 
+ *
  * TODO See if this isn't already defined somewhere. If not, move this to weblib
  */
 function print_arrow($direction='up', $strsort=null, $return=false) {
     global $CFG;
-    
+
     if (!in_array($direction, array('up', 'down', 'right', 'left'))) {
         return null;
     }
-    
-    $return = null; 
+
+    $return = null;
 
     switch ($direction) {
         case 'up':
