@@ -11,10 +11,11 @@ class edit_grade_form extends moodleform {
         $gradeitem = $this->_customdata['gradeitem'];
 
          /// actual grade - numeric or scale
-        if ($gradeitem->gradetype == 1) {
+        if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
-        } else if ($gradeitem->gradetype == 2) {
+
+        } else if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
             // scale grade
             $scaleopt[-1] = get_string('nograde');
 
@@ -38,21 +39,13 @@ class edit_grade_form extends moodleform {
         /// locktime
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
-        /// hidden/visible
 
-        /// feedback
-        $feedbackformat = get_user_preferences('grade_report_feedbackformat', $CFG->grade_report_feedbackformat);
-
-        // visible elements
-        // User preference determines the format
-        if ($CFG->htmleditor && $USER->htmleditor && $feedbackformat == GRADER_REPORT_FEEDBACK_FORMAT_HTML) {
-            $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
-                array('rows'=> '15', 'course' => $gradeitem->courseid, 'cols'=>'45'));
-        } else {
-            $mform->addElement('textarea', 'feedback', get_string('feedback', 'grades'));
-        }
-
-        //TODO: add other elements
+        // Feedback format is automatically converted to html if user has enabled editor
+        $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
+            array('rows'=> '15', 'course' => $gradeitem->courseid, 'cols'=>'45'));
+        $mform->setType('text', PARAM_RAW); // to be cleaned before display
+        $mform->addElement('format', 'feedbackformat', get_string('format'));
+        $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);

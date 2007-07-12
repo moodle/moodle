@@ -10,8 +10,6 @@ define('GRADER_REPORT_AGGREGATION_VIEW_FULL', 0);
 define('GRADER_REPORT_AGGREGATION_VIEW_COMPACT', 1);
 define('GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
 define('GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
-define('GRADER_REPORT_FEEDBACK_FORMAT_TEXT', 0);
-define('GRADER_REPORT_FEEDBACK_FORMAT_HTML', 1);
 
 require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->libdir.'/gradelib.php');
@@ -218,10 +216,9 @@ class grade_report_grader {
             $note = false; // TODO implement note??
 
             // skip, not a grade nor feedback
-            $data_type = '';
-            if (strstr($varname, 'grade')) {
+            if (strpos($varname, 'grade') === 0) {
                 $data_type = 'grade';
-            } elseif (strstr($varname, 'feedback')) {
+            } else if (strpos($varname, 'feedback') === 0) {
                 $data_type = 'feedback';
             } else {
                 continue;
@@ -238,7 +235,6 @@ class grade_report_grader {
 
             // Pre-process grade
             if ($data_type == 'grade') {
-
                 if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
                     if ($postedvalue == -1) { // -1 means no grade
                         $finalgrade = null;
@@ -258,25 +254,37 @@ class grade_report_grader {
                     // another possiblity is to use bounded number instead
                     continue;
                 }
+
+            } else if ($data_type == 'feedback') {
+                $trimmed = trim($postedvalue);
+                if (empty($trimmed)) {
+                    $postedvalue = NULL;
+                }
             }
 
             // Get the grade object to compare old value with new value
             if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
                 if ($data_type == 'feedback') {
                     $finalgrade = false;
-                    $text = $grade->load_text();
-                    if ($text != s($postedvalue)) {
-                        $feedback = s($postedvalue);
-                        $feedbackformat = GRADER_REPORT_FEEDBACK_FORMAT_TEXT;
-                        $needsupdate = true;
+                    if ($text = $grade->load_text()) {
+                        if ($text->feedback !== $postedvalue) {
+                            $feedback       = $postedvalue;
+                            $feedbackformat = $text->feedbackformat; // keep original format or else we would have to do proper conversion (but it is not always possible)
+                            $needsupdate    = true;
+                        }
+                    } else {
+                        $feedback       = $postedvalue;
+                        $feedbackformat = MOODLE_FORMAT; // this is the default format option everywhere else
+                        $needsupdate    = true;
                     }
-                } elseif ($data_type == 'grade') {
+
+                } else if ($data_type == 'grade') {
                     $feedback = false;
                     $feedbackformat = false;
                     if (!is_null($grade->finalgrade)) {
                         $grade->finalgrade = (float)$grade->finalgrade;
                     }
-                    if ($grade->finalgrade === $finalgrade) {
+                    if ($grade->finalgrade !== $finalgrade) {
                         $needsupdate = true;
                     }
                 }
@@ -731,6 +739,7 @@ class grade_report_grader {
                 $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
 
                 // Do not show any icons if no grade (no record in DB to match)
+                // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
                 if (!empty($grade->id)) {
                     $studentshtml .= $this->get_icons($element);
                 }
@@ -753,7 +762,7 @@ class grade_report_grader {
                                 $scaleopt[$i] = $scaleoption;
                             }
 
-                            if ($this->get_user_pref('quickgrading')) {
+                            if ($this->get_user_pref('quickgrading') and $grade->is_editable()) {
                                 $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
                                                               $gradeval, get_string('nograde'), '', -1, true);
                             } elseif ($scale = get_record('scale', 'id', $item->scaleid)) {
@@ -769,8 +778,9 @@ class grade_report_grader {
                                 // no such scale, throw error?
                             }
                         }
-                    } else {
-                        if ($this->get_user_pref('quickgrading')) {
+
+                    } else if ($item->gradetype != GRADE_TYPE_TEXT) {
+                        if ($this->get_user_pref('quickgrading') and $grade->is_editable()) {
                             $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'
                                           .$item->id.'" value="'.get_grade_clean($gradeval).'"/>';
                         } else {
@@ -780,7 +790,7 @@ class grade_report_grader {
 
 
                     // If quickfeedback is on, print an input element
-                    if ($this->get_user_pref('quickfeedback')) {
+                    if ($this->get_user_pref('quickfeedback') and $grade->is_editable()) {
                         if ($this->get_user_pref('quickgrading')) {
                             $studentshtml .= '<br />';
                         }
@@ -788,7 +798,6 @@ class grade_report_grader {
                                       . s($grade->feedback) . '"/>';
                     }
 
-                    $studentshtml .= '<div class="grade_icons">' . $this->get_icons($element, array('edit')) . '</div>';
                 } else {
                     // If feedback present, surround grade with feedback tooltip
                     if (!empty($grade->feedback)) {
@@ -981,24 +990,30 @@ class grade_report_grader {
             $object->feedback = '';
         }
 
-        // Prepare image strings
-        $edit_category_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
-                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-
-        $edit_item_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
-                        . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                        . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
         $overlib = '';
         if (!empty($object->feedback)) {
             $overlib = 'onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
                          . $strfeedback.'\');" onmouseout="return nd();"';
         }
 
-        $edit_grade_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
-                         . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
-                         . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-
+        // Prepare image strings
+        $edit_icon = '';
+        if ($object->is_editable()) {
+            if ($type == 'category') {
+                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                           . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                           . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+            } else if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem'){
+                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                           . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
+                           . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+            } else if ($type == 'grade' and ($object->is_editable() or empty($object->id))) {
+            // TODO: change link to use itemid and userid to allow creating of new grade objects
+                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                                 . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
+                                 . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
+            }
+        }
 
         $edit_calculation_icon = '';
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
@@ -1051,9 +1066,6 @@ class grade_report_grader {
             $new_html = '';
 
             foreach ($icons as $icon_name) {
-                if ($icon_name == 'edit') {
-                    $icon_name .= "_$type";
-                }
                 if ($limit) {
                     $new_html .= ${$icon_name . '_icon'};
                 } else {
@@ -1070,11 +1082,8 @@ class grade_report_grader {
         // Icons shown when edit mode is on
         if ($USER->gradeediting) {
             // Edit icon (except for grade_grades)
-            if ($type == 'category') {
-                $html .= $edit_category_icon;
-
-            } else if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
-                $html .= $edit_item_icon;
+            if ($edit_icon) {
+                $html .= $edit_icon;
             }
 
             // Calculation icon for items and categories

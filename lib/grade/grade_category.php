@@ -892,6 +892,14 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Is grading object editable?
+     * @return boolean
+     */
+    function is_editable() {
+        return true;
+    }
+
+    /**
      * Returns the locked state/date of the associated grade_item. This method is also available in
      * grade_item, for cases where the object type is not known.
      * @return boolean

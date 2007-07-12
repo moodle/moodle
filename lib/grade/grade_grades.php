@@ -156,6 +156,25 @@ class grade_grades extends grade_object {
     }
 
     /**
+     * Is grading object editable?
+     * @return boolean
+     */
+    function is_editable() {
+        if ($this->is_locked()) {
+            return false;
+        }
+
+
+        $grade_item = $this->load_grade_item();
+
+        if ($grade_item->gradetype == GRADE_TYPE_NONE) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check grade lock status. Uses both grade item lock and grade lock.
      * Internally any date in locked field (including future ones) means locked,
      * the date is stored for logging purposes only.

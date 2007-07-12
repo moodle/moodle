@@ -33,7 +33,6 @@ class grader_report_preferences_form extends moodleform {
                              'aggregationview'        => array(get_string('full', 'grades'), get_string('compact', 'grades')),
                              'gradedisplaytype'       => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
                              'grandtotalsdisplaytype' => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
-                             'feedbackformat'         => array(get_string('text', 'grades'), get_string('html', 'grades')),
                              'decimalpoints'          => array(0, 1, 2, 3, 4, 5),
                              'studentsperpage'        => 'text');
 

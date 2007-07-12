@@ -50,10 +50,6 @@ $settings->add(new admin_setting_configcheckbox('grade_report_quickfeedback', ge
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
                                         get_string('configstudentsperpage', 'grades'), 20));
 
-$settings->add(new admin_setting_configselect('grade_report_feedbackformat', get_string('feedbackformat', 'grades'),
-                                          get_string('configfeedbackformat', 'grades'), false,
-                                          array(get_string('text', 'grades'), get_string('html', 'grades'))));
-
 $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_string('decimalpoints', 'grades'),
                                           get_string('configdecimalpoints', 'grades'), 2,
                                           array( '0' => '0',

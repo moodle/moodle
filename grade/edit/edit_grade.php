@@ -21,12 +21,21 @@ require_capability('gradereport/grader:manage', $context);
 //TODO: implement proper return support
 $returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
 
+// TODO: add proper check that grade is editable
+
 $grade_grades = get_record('grade_grades', 'id', $id);
 $gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
 
 $mform = new edit_grade_form(qualified_me(), array('gradeitem'=>$gradeitem));
 if ($grade_grades = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
+        if (can_use_html_editor()) {
+            $options = new object();
+            $options->smiley = false;
+            $options->filter = false;
+            $grade_text->feedback = format_text($grade_text->feedback, $grade_text->feedbackformat, $options);
+            $grade_text->feedbackformat = FORMAT_HTML;
+        }
         $mform->set_data($grade_text);
     }
 
@@ -45,7 +54,7 @@ if ($mform->is_cancelled()) {
 
     $grade_grades = new grade_grades(array('id'=>$id));
     $grade_item = new grade_item(array('id'=>$grade_grades->itemid));
-    $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback);
+    $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback, $data->feedbackformat);
 
     // set locked
     $grade_grades->set_locked($data->locked);

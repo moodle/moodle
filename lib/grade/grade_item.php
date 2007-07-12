@@ -844,6 +844,14 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Is grading object editable?
+     * @return boolean
+     */
+    function is_editable() {
+        return true;
+    }
+
+    /**
      * Checks if grade calculated. Returns this object's calculation.
      * @return boolean true if grade item calculated.
      */
@@ -1430,7 +1438,7 @@ class grade_item extends grade_object {
 
         // no need to recalculate locked or overridden grades
         if ($grade->is_locked() or $grade->is_overridden()) {
-            return;
+            return true;
         }
 
         // do the calculation
@@ -1438,7 +1446,7 @@ class grade_item extends grade_object {
         $result = $this->formula->evaluate();
 
         // no raw grade for calculated grades - only final
-        $grade->rawgrade    = null;
+        $grade->rawgrade = null;
 
 
         if ($result === false) {
