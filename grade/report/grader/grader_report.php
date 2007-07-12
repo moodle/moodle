@@ -1000,9 +1000,15 @@ class grade_report_grader {
                          . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
 
 
-        $edit_calculation_icon = '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
-                               . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
-                               . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+        $edit_calculation_icon = '';
+        if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
+            // show calculation icon only when calculation possible
+            if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
+                $edit_calculation_icon = '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                                       . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
+                                       . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+            }
+        }
 
         // Prepare Hide/Show icon state
         $hide_show = 'hide';
@@ -1072,7 +1078,7 @@ class grade_report_grader {
             }
 
             // Calculation icon for items and categories
-            if ($this->get_user_pref('showcalculations') && $type != 'grade') {
+            if ($this->get_user_pref('showcalculations')) {
                 $html .= $edit_calculation_icon;
             }
 
