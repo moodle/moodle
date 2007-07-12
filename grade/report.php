@@ -99,6 +99,7 @@
     }
 
     // params for the turn editting on
+    $options = array();
     $options['id'] = $courseid;
     $options['report'] = $report;
 
