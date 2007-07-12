@@ -457,7 +457,7 @@ class grade_item extends grade_object {
 
         }
     }
-    
+
     /**
      * Set the locktime for this grade.
      *
@@ -468,9 +468,9 @@ class grade_item extends grade_object {
 
         if ($locktime) {
             // if current locktime is before, no need to reset
-            
+
             if ($this->locktime && $this->locktime <= $locktime) {
-                return true;  
+                return true;
             }
 
             /*
@@ -894,6 +894,7 @@ class grade_item extends grade_object {
 
     /**
      * Denormalizes the calculation formula to [idnumber] form
+     * @static
      * @param string $formula
      * @return string denormalized string
      */
@@ -919,6 +920,7 @@ class grade_item extends grade_object {
 
     /**
      * Normalizes the calculation formula to [#giXX#] form
+     * @static
      * @param string $formula
      * @return string normalized string
      */
@@ -1466,5 +1468,54 @@ class grade_item extends grade_object {
 
     }
 
+    /**
+     * Validate the formula.
+     * @param string $formula
+     * @return boolean true if calculation possible, false otherwise
+     */
+    function validate_formula($formula) {
+        global $CFG;
+        require_once($CFG->libdir.'/mathslib.php');
+
+        $formula = grade_item::normalize_formula($formula, $this->courseid);
+
+        if (empty($formula)) {
+            return true;
+        }
+
+        // prepare formula and init maths library
+        $formula = preg_replace('/\[#(gi[0-9]+)#\]/', '\1', $formula);
+        $formula = new calc_formula($formula);
+
+        // get used items
+        $useditems = $this->depends_on();
+        $gis = implode(',', $useditems);
+
+        $sql = "SELECT gi.*
+                  FROM {$CFG->prefix}grade_items gi
+                 WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
+
+        if (!$grade_items = get_records_sql($sql)) {
+            $grade_items = array();
+        }
+
+        $params = array();
+        foreach ($useditems as $itemid) {
+            // make sure all grade items exist in this course
+            if (!array_key_exists($itemid, $grade_items)) {
+                return false;
+            }
+            // use max grade when testing formula, this should be ok in 99.9%
+            // division by 0 is one of possible problems
+            $params['gi'.$grade_items[$itemid]->id] = $grade_items[$itemid]->grademax;
+        }
+
+        // do the calculation
+        $formula->set_params($params);
+        $result = $formula->evaluate();
+
+        // false as result indicates some problem
+        return ($result !== false);
+    }
 }
 ?>
