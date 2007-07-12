@@ -1219,9 +1219,6 @@ function validate_' . $this->_formName . '(frm) {
         $js .= "var $iname = Array();\n";
 
         foreach ($this->_dependencies as $dependentOn => $conditions){
-            if (!$this->elementExists($dependentOn)) {
-                continue;
-            }
             $js .= "{$iname}['$dependentOn'] = Array();\n";
             foreach ($conditions as $condition=>$values) {
                 $js .= "{$iname}['$dependentOn']['$condition'] = Array();\n";
