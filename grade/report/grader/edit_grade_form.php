@@ -19,9 +19,11 @@ class edit_grade_form extends moodleform {
             // scale grade
             $scaleopt[-1] = get_string('nograde');
             
+            $i = 1;
             if ($scale = get_record('scale', 'id', $gradeitem->scaleid)) {
                 foreach (split(",", $scale->scale) as $option) {
-                    $scaleopt[] = $option;
+                    $scaleopt[$i] = $option;
+                    $i++;
                 }
             }
             

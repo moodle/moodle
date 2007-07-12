@@ -24,8 +24,9 @@ $mform = new edit_grade_form(qualified_me(), array('id'=>$id));
 if ($grade_grades = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
         $mform->set_data($grade_text); 
-    }
+    }  
     
+    $grade_grades->courseid = $courseid;
     $mform->set_data($grade_grades);
 } else {
     $mform->set_data(array('courseid'=>$course->id, 'id' => $id));
@@ -35,17 +36,18 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 // form processing
 } else if ($data = $mform->get_data()) {
-    $data->gradeid = $data->id;
-    unset($data->id);
-
-    $grade_text = new grade_grades_text(array('gradeid'=>$id));
-    grade_grades_text::set_properties($grade_text, $data);
-    if (empty($grade_text->id)) {
-        $grade_text->insert();
-
-    } else {
-        $grade_text->update();
-    }
+ 
+    $grade_grades = new grade_grades(array('id'=>$id));
+    $grade_item = new grade_item(array('id'=>$grade_grades->itemid));
+    $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback);
+    
+    // set locked
+    $grade_grades->set_locked($data->locked);
+    // set hidden
+    $grade_grades->set_hidden($data->hidden);
+    
+    // set locktime
+    $grade_grades->set_locktime($data->locktime);
 
     redirect($returnurl, get_string('feedbacksaved', 'grades'), 1);
 }
@@ -112,30 +114,8 @@ if (!empty($extra_info->course_module) && !empty($extra_info->itemmodule)) {
          . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
 }
 
-// Final grade and link to scale if applicable
-if (!empty($extra_info->finalgrade)) {
-    $openlink = '';
-    $closelink = '';
-
-    if (!empty($extra_info->scaleid)) {
-        $openlink = '<a href="' . $CFG->wwwroot . '/course/scales.php?id=' . $courseid . '&amp;scaleid='
-                  . $extra_info->scaleid . '">';
-        $closelink = '</a>';
-    }
-    echo "<p><strong>$strgrade:</strong> " . $extra_info->finalgrade . "$openlink $stronascaleof $closelink</p>";
-}
-
 // Form if in edit or add modes
 $mform->display();
-/*
-if ($action != 'view') {
-    $mform->display();
-} else { // Feedback string and Back button if in View mode
-    echo $feedback;
-    echo "<button onclick=\"window.location='" . $CFG->wwwroot . "/grade/report.php?report=grader&amp;id=$courseid';\">"
-         . get_string('back') . '</button>';
-}
-*/
 
 print_simple_box_end();
 

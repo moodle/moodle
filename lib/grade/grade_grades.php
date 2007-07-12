@@ -214,6 +214,45 @@ class grade_grades extends grade_object {
         }
     }
 
+
+    /**
+     * Set the locktime for this grade.
+     *
+     * @param int $locktime timestamp for lock to activate
+     * @return boolean true if sucessful, false if can not set new lock state for grade
+     */
+    function set_locktime($locktime) {
+
+        if ($locktime) {
+            // if current locktime is before, no need to reset
+            
+            if ($this->locktime && $this->locktime <= $locktime) {
+                return true;  
+            }
+
+            /*
+            if ($this->grade_item->needsupdate) {
+                //can not lock grade if final not calculated!
+                return false;
+            }
+            */
+
+            $this->locktime = $locktime;
+            $this->update();
+
+            return true;
+
+        } else {
+
+            // remove the locktime timestamp
+            $this->locktime = 0;
+
+            $this->update();
+
+            return true;
+        }
+    }
+
     /**
      * Check grade lock status. Uses both grade item lock and grade lock.
      * Internally any date in hidden field (including future ones) means hidden,
