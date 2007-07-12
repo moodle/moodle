@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-require_once '../../../config.php';
+require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'edit_category_form.php';
 
@@ -17,7 +17,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-$returnurl = 'category.php?id='.$course->id;
+$returnurl = 'edit_tree.php?id='.$course->id;
 
 
 $mform = new edit_category_form();
@@ -50,7 +50,6 @@ $strgraderreport   = get_string('graderreport', 'grades');
 $strcategoriesedit = get_string('categoriesedit', 'grades');
 
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strgraderreport, 'link'=>$CFG->wwwroot.'/grade/report.php?id='.$courseid.'&amp;report=grader', 'type'=>'misc'),
              array('name'=>$strcategoriesedit, 'link'=>'', 'type'=>'misc'));
 
 $navigation = build_navigation($nav);

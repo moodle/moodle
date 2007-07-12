@@ -225,9 +225,9 @@ class grade_grades extends grade_object {
 
         if ($locktime) {
             // if current locktime is before, no need to reset
-            
+
             if ($this->locktime && $this->locktime <= $locktime) {
-                return true;  
+                return true;
             }
 
             /*

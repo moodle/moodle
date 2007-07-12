@@ -1499,11 +1499,11 @@ class grade_item extends grade_object {
 
         } else {
             $gis = implode(',', $useditems);
-    
+
             $sql = "SELECT gi.*
                       FROM {$CFG->prefix}grade_items gi
                      WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
-    
+
             if (!$grade_items = get_records_sql($sql)) {
                 $grade_items = array();
             }

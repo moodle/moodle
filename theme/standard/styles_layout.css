@@ -2125,7 +2125,7 @@ body#grade-index .grades .weighted {
 
 /* gradebook edit tree */
 
-#grade-report-grader-category .gradetreebox {
+#grade-edit-edit_tree .gradetreebox {
   width:70%;
   margin-left:auto;
   margin-right:auto;
@@ -2133,40 +2133,40 @@ body#grade-index .grades .weighted {
   padding-bottom:15px;
 }
 
-#grade-report-grader-category .buttons {
+#grade-edit-edit_tree .buttons {
   margin: 20px;
   text-align:center;
 }
 
-#grade-report-grader-category .buttons .singlebutton {
+#grade-edit-edit_tree .buttons .singlebutton {
   display: inline;
   padding: 5px;
 }
 
 
-#grade-report-grader-category .movetarget {
+#grade-edit-edit_tree .movetarget {
   position: relative;
   width: 80px;
   height: 16px;
 }
 
-#grade-report-grader-category ul#grade_tree {
+#grade-edit-edit_tree ul#grade_tree {
   width: auto;
 }
 
-#grade-report-grader-category ul#grade_tree li {
+#grade-edit-edit_tree ul#grade_tree li {
   list-style: none;
 }
 
-#grade-report-grader-category ul#grade_tree li.category {
+#grade-edit-edit_tree ul#grade_tree li.category {
   margin-bottom: 6px;
 }
 
-#grade-report-grader-category .moving {
+#grade-edit-edit_tree .moving {
   background-color: #E8EEF7;
 }
 
-#grade-report-grader-category .iconsmall {
+#grade-edit-edit_tree .iconsmall {
   margin-left: 4px;
 }
 

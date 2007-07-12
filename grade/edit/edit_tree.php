@@ -24,7 +24,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once '../../../config.php';
+require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 
 $courseid = required_param('id', PARAM_INT);
@@ -44,7 +44,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-$returnurl = 'category.php?id='.$course->id;
+$returnurl = 'edit_tree.php?id='.$course->id;
 
 // get the grading tree object
 // note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
@@ -67,7 +67,6 @@ $strgraderreport   = get_string('graderreport', 'grades');
 $strcategoriesedit = get_string('categoriesedit', 'grades');
 
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strgraderreport, 'link'=>$CFG->wwwroot.'/grade/report.php?id='.$courseid.'&amp;report=grader', 'type'=>'misc'),
              array('name'=>$strcategoriesedit, 'link'=>'', 'type'=>'misc'));
 
 $navigation = build_navigation($nav);
@@ -97,7 +96,7 @@ switch ($action) {
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);
-                notice_yesno($strdeletecheckfull, 'category.php', 'category.php', $optionsyes, $optionsno, 'post', 'get');
+                notice_yesno($strdeletecheckfull, 'edit_tree.php', 'edit_tree.php', $optionsyes, $optionsno, 'post', 'get');
                 print_footer($course);
                 die;
             }
@@ -173,8 +172,9 @@ print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriese
 print_heading(get_string('categoriesedit', 'grades'));
 
 // Add tabs
-$currenttab = 'editcategory';
-include('tabs.php');
+// TODO: implement return support - use tabs from the report plugin
+/*$currenttab = 'editcategory';
+include('tabs.php');*/
 
 print_box_start('gradetreebox generalbox');
 echo '<ul id="grade_tree">';
@@ -184,12 +184,12 @@ print_box_end();
 
 echo '<div class="buttons">';
 if ($moving) {
-    print_single_button('category.php', array('id'=>$course->id), get_string('cancel'), 'get');
+    print_single_button('edit_tree.php', array('id'=>$course->id), get_string('cancel'), 'get');
 } else {
     print_single_button('edit_category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
-    print_single_button('edit_item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get'); // TODO: localize
-    print_single_button('category.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get'); //TODO: localize
-    print_single_button('category.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get'); //TODO: localize
+    print_single_button('edit_item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
+    print_single_button('edit_tree.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
+    print_single_button('edit_tree.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
 }
 echo '</div>';
 print_footer($course);
@@ -215,25 +215,25 @@ function print_grade_tree($element, $moving) {
     $eid    = $element['eid'];
 
 /// prepare actions
-    $actions = '<a href="category.php?id='.$COURSE->id.'&amp;action=edit&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+    $actions = '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=edit&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
     }
 
     if ($object->is_locked()) {
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=unlock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=unlock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
     } else {
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=lock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=lock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
     }
 
     if ($object->is_hidden()) {
         $name = '<span class="dimmed_text">'.$object->get_name().'</span>';
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=show&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=show&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
     } else {
         $name = $object->get_name();
-        $actions .= '<a href="category.php?id='.$COURSE->id.'&amp;action=hide&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
+        $actions .= '<a href="edit_tree.php?id='.$COURSE->id.'&amp;action=hide&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
     }
 
 /// prepare icon
@@ -260,7 +260,7 @@ function print_grade_tree($element, $moving) {
     $moveto = '';
     if ($moving) {
         $actions = ''; // no action icons when moving
-        $moveto = '<li><a href="category.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='.$eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" /></a></li>';
+        $moveto = '<li><a href="edit_tree.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='.$eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" /></a></li>';
     }
 
 /// print the list items now

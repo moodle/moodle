@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-require_once '../../../config.php';
+require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'edit_grade_form.php';
 
@@ -18,6 +18,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/grader:manage', $context);
 
 // default return url
+//TODO: implement proper return support
 $returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
 
 $grade_grades = get_record('grade_grades', 'id', $id);
@@ -26,9 +27,9 @@ $gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
 $mform = new edit_grade_form(qualified_me(), array('gradeitem'=>$gradeitem));
 if ($grade_grades = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
-        $mform->set_data($grade_text); 
-    } 
-    
+        $mform->set_data($grade_text);
+    }
+
     $grade_grades->locked = $grade_grades->locked > 0 ? 1:0;
     $grade_grades->courseid = $courseid;
     $mform->set_data($grade_grades);
@@ -41,16 +42,16 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 // form processing
 } else if ($data = $mform->get_data()) {
- 
+
     $grade_grades = new grade_grades(array('id'=>$id));
     $grade_item = new grade_item(array('id'=>$grade_grades->itemid));
     $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback);
-    
+
     // set locked
     $grade_grades->set_locked($data->locked);
     // set hidden
     $grade_grades->set_hidden($data->hidden);
-    
+
     // set locktime
     $grade_grades->set_locktime($data->locktime);
 
@@ -95,7 +96,6 @@ if (!empty($action) && $action == 'view' && !empty($grade_text->feedback)) {
 }
 
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strgraderreport, 'link'=>$CFG->wwwroot.'/grade/report.php?id='.$courseid.'&amp;report=grader', 'type'=>'misc'),
              array('name'=>$heading, 'link'=>'', 'type'=>'misc'));
 
 $navigation = build_navigation($nav);

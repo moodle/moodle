@@ -163,11 +163,11 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             }
             $table->add_data($data);
         }
-        
+
         //echo "<div><table class='boxaligncenter'><tr><td>asdfas</td></tr></table></div>";
         $table->print_html();
     } else {
         notify(get_string('nogradeitem', 'grades'));
     }
-    
+
 ?>

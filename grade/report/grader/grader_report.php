@@ -390,8 +390,8 @@ class grade_report_grader {
                 } else { // Print confirmation dialog
                     $eid = $element['eid'];
                     $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
-                    $linkyes = "category.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
-                    $linkno = "category.php?$this->gtree->commonvars";
+                    $linkyes = "edit_tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
+                    $linkno = "edit_tree.php?$this->gtree->commonvars";
                     notice_yesno($strdeletecheckfull, $linkyes, $linkno);
                 }
                 break;
@@ -982,11 +982,11 @@ class grade_report_grader {
         }
 
         // Prepare image strings
-        $edit_category_icon = '<a href="report/grader/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+        $edit_category_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                             . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                             . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
 
-        $edit_item_icon = '<a href="report/grader/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+        $edit_item_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                         . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                         . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
         $overlib = '';
@@ -995,7 +995,7 @@ class grade_report_grader {
                          . $strfeedback.'\');" onmouseout="return nd();"';
         }
 
-        $edit_grade_icon = '<a href="report/grader/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+        $edit_grade_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                          . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
                          . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
 
@@ -1004,7 +1004,7 @@ class grade_report_grader {
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
             // show calculation icon only when calculation possible
             if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
-                $edit_calculation_icon = '<a href="report/grader/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_calculation_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                        . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
             }
