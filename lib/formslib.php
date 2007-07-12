@@ -1246,6 +1246,9 @@ function validate_' . $this->_formName . '(frm) {
 
     function _getElNamesRecursive($element, $group=null){
         if ($group==null){
+            if (!$this->elementExists($element)) {
+                return array();
+            }
             $el = $this->getElement($element);
         } else {
             $el = &$element;
