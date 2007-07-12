@@ -1483,20 +1483,30 @@ class grade_item extends grade_object {
             return true;
         }
 
+        if (strpos($formula, '=') !== 0) {
+            return get_string('errorcalculationnoequal', 'grades');
+        }
+
         // prepare formula and init maths library
         $formula = preg_replace('/\[#(gi[0-9]+)#\]/', '\1', $formula);
         $formula = new calc_formula($formula);
 
         // get used items
         $useditems = $this->depends_on();
-        $gis = implode(',', $useditems);
 
-        $sql = "SELECT gi.*
-                  FROM {$CFG->prefix}grade_items gi
-                 WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
-
-        if (!$grade_items = get_records_sql($sql)) {
+        if (empty($useditems)) {
             $grade_items = array();
+
+        } else {
+            $gis = implode(',', $useditems);
+    
+            $sql = "SELECT gi.*
+                      FROM {$CFG->prefix}grade_items gi
+                     WHERE gi.id IN ($gis) and gi.courseid={$this->courseid}"; // from the same course only!
+    
+            if (!$grade_items = get_records_sql($sql)) {
+                $grade_items = array();
+            }
         }
 
         $params = array();
@@ -1515,7 +1525,12 @@ class grade_item extends grade_object {
         $result = $formula->evaluate();
 
         // false as result indicates some problem
-        return ($result !== false);
+        if ($result === false) {
+            // TODO: add more error hints
+            return get_string('errorcalculationunknown', 'grades');
+        } else {
+            return true;
+        }
     }
 }
 ?>

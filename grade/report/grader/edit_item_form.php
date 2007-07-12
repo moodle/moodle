@@ -113,13 +113,10 @@ class edit_item_form extends moodleform {
         $errors= array();
 
         if ($data['calculation'] != '') {
-            if (strpos($data['calculation'], '=') !== 0) {
-                $errors['calculation'] = get_string('calculationerror', 'grades');
-            } else {
-                $grade_item = new grade_item(array('id'=>$data['id'], 'itemtype'=>$data['itemtype'], 'courseid'=>$data['courseid']));
-                if (!$grade_item->validate_formula($data['calculation'])) {
-                    $errors['calculation'] = get_string('calculationerror', 'grades');
-                }
+            $grade_item = new grade_item(array('id'=>$data['id'], 'itemtype'=>$data['itemtype'], 'courseid'=>$data['courseid']));
+            $result = $grade_item->validate_formula($data['calculation']);
+            if ($result !== true) {
+                $errors['calculation'] = $result;
             }
         }
 
