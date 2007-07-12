@@ -20,14 +20,19 @@ require_capability('gradereport/grader:manage', $context);
 // default return url
 $returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
 
-$mform = new edit_grade_form(qualified_me(), array('id'=>$id));
+$grade_grades = get_record('grade_grades', 'id', $id);
+$gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
+
+$mform = new edit_grade_form(qualified_me(), array('gradeitem'=>$gradeitem));
 if ($grade_grades = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
         $mform->set_data($grade_text); 
-    }  
+    } 
     
+    $grade_grades->locked = $grade_grades->locked > 0 ? 1:0;
     $grade_grades->courseid = $courseid;
     $mform->set_data($grade_grades);
+
 } else {
     $mform->set_data(array('courseid'=>$course->id, 'id' => $id));
 }

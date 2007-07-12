@@ -4,12 +4,11 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_grade_form extends moodleform {
     function definition() {
+
         global $CFG, $USER;
         $mform =& $this->_form;
   
-        $id = $this->_customdata['id'];
-        $grade_grades = get_record('grade_grades', 'id', $id);
-        $gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
+        $gradeitem = $this->_customdata['gradeitem'];        
         
          /// actual grade - numeric or scale
         if ($gradeitem->gradetype == 1) {
@@ -29,13 +28,12 @@ class edit_grade_form extends moodleform {
             
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
         }
-        /// hidden
         
         /// hidden
         $mform->addElement('advcheckbox', 'hidden', get_string('hidden', 'grades'));        
         
         /// locked
-        $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'),'','',$grade_grades->locked);
+        $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
 
         /// locktime
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
@@ -49,7 +47,7 @@ class edit_grade_form extends moodleform {
         // User preference determines the format
         if ($CFG->htmleditor && $USER->htmleditor && $feedbackformat == GRADER_REPORT_FEEDBACK_FORMAT_HTML) {
             $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
-                array('rows'=> '15', 'course' => optional_param('courseid', PARAM_INT), 'cols'=>'45'));
+                array('rows'=> '15', 'course' => $gradeitem->courseid, 'cols'=>'45'));
         } else {
             $mform->addElement('textarea', 'feedback', get_string('feedback', 'grades'));
         }
