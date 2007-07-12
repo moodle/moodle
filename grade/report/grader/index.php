@@ -752,6 +752,8 @@ if ($showscales) {
     $scalehtml .= '</tr>';
 }
 
+echo "<br/>";
+
 $reporthtml = "<table class=\"boxaligncenter\">$headerhtml";
 $reporthtml .= $scalehtml;
 $reporthtml .= $studentshtml;
