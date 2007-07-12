@@ -14,8 +14,9 @@
   class block_search extends block_base {
     
     function init() {
-      $this->title = "Global Search"; //get_string()
-      $this->version = 2006062500;
+      $this->title = get_string('blockname', 'block_search');
+      $this->cron = 1;
+      $this->version = 2007062900;
     } //init  
     
     // only one instance of this block is required
@@ -45,8 +46,8 @@
       //lazy check for the moment
       if (check_php_version("5.0.0")) {        
         //fetch values if defined in admin, otherwise use defaults
-        $label  = (isset($CFG->block_search_text)) ? $CFG->block_search_text : "Search Moodle";
-        $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : "Go";
+        $label  = (isset($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
+        $button = (isset($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
         
         //basic search form
         $this->content->text =
@@ -68,6 +69,16 @@
     function specialisation() {
       //empty!
     } //specialisation
+    
+    /**
+    * wraps up to search engine cron
+    *
+    */
+    function cron(){
+        global $CFG;
+        
+        include($CFG->dirroot.'/search/cron.php');
+    }
       
   } //block_search
 

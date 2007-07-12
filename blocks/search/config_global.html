@@ -1,19 +1,132 @@
 <div style="text-align:center;">
-  <label for="block_search_text">Search label</label>
-  <input id="block_search_text" type="text" name="block_search_text" value="<?php 
-    if(isset($CFG->block_search_text)) {
-        p($CFG->block_search_text);
-    } else {
-        p("Search Moodle");
-    } ?>"/><br/>
-  
-  <label for="block_search_button">Button label</label>
-  <input id="block_search_button" type="text" name="block_search_button" value="<?php 
-    if(isset($CFG->block_search_button)) {
-        p($CFG->block_search_button);
-    } else {
-        p("Go");
-    } ?>"/><br/><br/>
-  
-  <input type="submit" value="<?php print_string('savechanges'); ?>" />
+<table cellspacing="5">
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configsearchtext', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_search_text" type="text" name="block_search_text" value="<?php 
+            if(isset($CFG->block_search_text)) {
+                p($CFG->block_search_text);
+            } else {
+                p(get_string('searchmoodle', 'block_search'));
+            } ?>"/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configbuttonlabel', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+          <input id="block_search_button" type="text" name="block_search_button" value="<?php 
+            if(isset($CFG->block_search_button)) {
+                p($CFG->block_search_button);
+            } else {
+                p(get_string('go', 'block_search'));
+            } ?>"/><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configenablefileindexing', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_enable_file_indexing" type="radio" name="block_search_enable_file_indexing" value="1" <?php 
+            if(isset($CFG->block_search_enable_file_indexing) && $CFG->block_search_enable_file_indexing) {
+                echo " checked=\"checked\" ";
+            } ?> /> <?php print_string('yes') ?> - 
+            <input id="block_search_enable_file_indexing" type="radio" name="block_search_enable_file_indexing" value="0" <?php 
+            if(!isset($CFG->block_search_enable_file_indexing) || !$CFG->block_search_enable_file_indexing) {
+                echo " checked=\"checked\" ";
+            } ?> /> <?php print_string('no') ?>
+            <br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configfiletypes', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+          <input id="block_search_filetypes" type="text" name="block_search_filetypes" value="<?php 
+            if(isset($CFG->block_search_filetypes)) {
+                p($CFG->block_search_filetypes);
+            } else {
+                p("PDF,TXT,HTML,PPT,XML,DOC,HTM");
+            } ?>"/><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configpdftotextcmd', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_search_pdf_to_text_cmd" type="text" size="60" name="block_search_pdf_to_text_cmd" value="<?php 
+            if(isset($CFG->block_search_pdf_to_text_cmd)) {
+                p($CFG->block_search_pdf_to_text_cmd);
+            } else {
+                $encoding = ($CFG->unicodedb) ? "-enc UTF-8" : "-enc ISO-8859-1" ;
+                if ($CFG->ostype == 'WINDOWS'){
+                    p("lib/xpdf/win32/pdftotext.exe -eol dos $encoding -q");
+                }
+                else{
+                    p("lib/xpdf/linux/pdftotext $encoding -eol unix -q");
+                }
+            } ?>"/><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configwordtotextcmd', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_search_word_to_text_cmd" type="text" size="60" name="block_search_word_to_text_cmd" value="<?php 
+            if(isset($CFG->block_search_word_to_text_cmd)) {
+                p($CFG->block_search_word_to_text_cmd);
+            } else {
+                if ($CFG->ostype == 'WINDOWS'){
+                    p("lib/antiword/win32/antiword/antiword.exe ");
+                }
+                else{
+                    p("lib/antiword/linux/usr/bin/antiword");
+                }
+            } ?>"/><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configwordtotextenv', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_search_word_to_text_env" type="text" size="60" name="block_search_word_to_text_env" value="<?php 
+            if(isset($CFG->block_search_word_to_text_env)) {
+                echo stripslashes($CFG->block_search_word_to_text_env);
+            } else {
+                if ($CFG->ostype == 'WINDOWS'){
+                    p("HOME={$CFG->dirroot}\\lib\\antiword\\win32");
+                }
+                else{
+                    p("ANTIWORDHOME={$CFG->dirroot}/lib/antiword/linux/usr/share/antiword");
+                }
+            } ?>"/><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right">
+            <b><?php print_string('configlimitindexbody', 'block_search') ?>:</b>
+        </td>
+        <td valign="top" align="left">
+            <input id="block_search_limit_index_body" type="text" size="8" name="block_search_limit_index_body" value="<?php 
+            if(isset($CFG->block_search_limit_index_body)) {
+                p($CFG->block_search_limit_index_body);
+            } else {
+                p('');
+            } ?>"/> <?php print_string('bytes', 'block_search') ?><br/><br/>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="right" colspan="2">
+            <input type="submit" value="<?php print_string('savechanges'); ?>" />
+        </td>
+    </tr>
+</table>
 </div>

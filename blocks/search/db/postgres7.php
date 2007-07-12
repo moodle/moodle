@@ -13,7 +13,7 @@ function search_upgrade($oldversion=0) {
     
     $result = true;
 
-    if ($oldversion < 2006062500 and $result) {
+    if ($oldversion < 2007080100 and $result) {
         $result = true; //Nothing to do
     }
 
