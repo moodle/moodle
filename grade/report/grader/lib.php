@@ -350,7 +350,7 @@ class grade_report_grader extends grade_report {
     function load_final_grades() {
         global $CFG;
 
-        $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, g.overridden, gt.feedback
+        $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, g.overridden, gt.feedback, gt.feedbackformat
                 FROM  {$CFG->prefix}grade_items gi,
                       {$CFG->prefix}grade_grades g
                 LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.id = gt.gradeid
@@ -571,6 +571,7 @@ class grade_report_grader extends grade_report {
                     $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
                     $grade = new grade_grades($this->finalgrades[$userid][$item->id], false);
                     $grade->feedback = $this->finalgrades[$userid][$item->id]->feedback;
+                    $grade->feedbackformat = $this->finalgrades[$userid][$item->id]->feedbackformat;
 
                 } else {
                     $gradeval = null;
@@ -652,8 +653,13 @@ class grade_report_grader extends grade_report {
                 } else {
                     // If feedback present, surround grade with feedback tooltip
                     if (!empty($grade->feedback)) {
-                        $studentshtml .= '<span onmouseover="return overlib(\''.$grade->feedback.'\', CAPTION, \''
-                                . $strfeedback.'\');" onmouseout="return nd();">';
+                        if ($grade->feedbackformat == 1) {
+                            $overlib = "return overlib('$grade->feedback', CAPTION, '$strfeedback');";
+                        } else {
+                            $overlib = "return overlib('" . s(ltrim($grade->feedback)) . "', FULLHTML);";
+                        }
+
+                        $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
                     }
 
                     // finalgrades[$userid][$itemid] could be null because of the outer join
@@ -843,8 +849,12 @@ class grade_report_grader extends grade_report {
 
         $overlib = '';
         if (!empty($object->feedback)) {
-            $overlib = 'onmouseover="return overlib(\''.$object->feedback.'\', CAPTION, \''
-                         . $strfeedback.'\');" onmouseout="return nd();"';
+            if (empty($object->feedbackformat) || $object->feedbackformat != 1) {
+                $function = "return overlib('$object->feedback', CAPTION, '$strfeedback');";
+            } else {
+                $function = "return overlib('" . s(ltrim($object->feedback)) . "', FULLHTML);";
+            }
+            $overlib = 'onmouseover="' . $function . '" onmouseout="return nd();"';
         }
 
         // Prepare image strings
