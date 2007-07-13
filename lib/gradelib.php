@@ -66,7 +66,7 @@ define('GRADE_HISTORY_DELETE', 3);
 
 // Common directories
 define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
-define('GRADE_EDIT_DIR', $CFG->wwwroot . '/grade/edit');
+define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
