@@ -293,7 +293,7 @@ class course_edit_form extends moodleform {
         // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
         $enrol_object = $CFG;
         if (!empty($course)) {
-            $enrol_oject = $course;
+            $enrol_object = $course;
         }
         if (method_exists(enrolment_factory::factory($enrol_object->enrol), 'print_entry') && $enrol_object->enrol != 'manual'){
             $costgroup=array();
