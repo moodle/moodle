@@ -16,7 +16,7 @@
     function init() {
       $this->title = get_string('blockname', 'block_search');
       $this->cron = 1;
-      $this->version = 2007062900;
+      $this->version = 2007071302;
     } //init  
     
     // only one instance of this block is required
