@@ -2,7 +2,8 @@
 
 /// This creates and handles the whole grader report interface, sans header and footer
 
-require_once($CFG->dirroot.'/grade/report/grader/grader_report.php');
+require_once($CFG->dirroot.'/grade/report/grader/lib.php');
+
 $gradeserror = array();
 
 // get the params ($report, $courseid and $context are already set in grade/report.php)

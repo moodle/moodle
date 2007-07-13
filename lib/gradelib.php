@@ -68,6 +68,14 @@ define('GRADE_HISTORY_DELETE', 3);
 define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
 define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
 
+// Grader reports
+define('GRADER_REPORT_AGGREGATION_POSITION_LEFT', 0);
+define('GRADER_REPORT_AGGREGATION_POSITION_RIGHT', 1);
+define('GRADER_REPORT_AGGREGATION_VIEW_FULL', 0);
+define('GRADER_REPORT_AGGREGATION_VIEW_COMPACT', 1);
+define('GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
+define('GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
+
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grades.php');

@@ -114,7 +114,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
                 }
             } else {
                 // normal grade, or text, just display
-                $data[] = get_grade_clean($grade_grades->finalgrade);
+                $data[] = grade_report::get_grade_clean($grade_grades->finalgrade);
             }
 
             /// prints percentage
@@ -122,7 +122,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
             if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                 // processing numeric grade
                 if ($grade_grades->finalgrade) {
-                    $percentage = get_grade_clean(($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
+                    $percentage = grade_report::get_grade_clean(($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
                 } else {
                     $percentage = '-';
                 }
@@ -131,7 +131,7 @@ $numusers = count(get_role_users(@implode(',', $CFG->gradebookroles), $context))
                 // processing scale grade
                 $scale = get_record('scale', 'id', $grade_item->scaleid);
                 $scalevals = explode(",", $scale->scale);
-                $percentage = get_grade_clean(($grade_grades->finalgrade) / count($scalevals) * 100).'%';
+                $percentage = grade_report::get_grade_clean(($grade_grades->finalgrade) / count($scalevals) * 100).'%';
 
             } else {
                 // text grade

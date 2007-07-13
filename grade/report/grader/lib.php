@@ -4,40 +4,15 @@
  * @package gradebook
  */
 
-define('GRADER_REPORT_AGGREGATION_POSITION_LEFT', 0);
-define('GRADER_REPORT_AGGREGATION_POSITION_RIGHT', 1);
-define('GRADER_REPORT_AGGREGATION_VIEW_FULL', 0);
-define('GRADER_REPORT_AGGREGATION_VIEW_COMPACT', 1);
-define('GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
-define('GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
-
+require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->libdir.'/gradelib.php');
-require_once($CFG->dirroot.'/grade/report/lib.php');
 
 /**
  * Class providing an API for the grader report building and displaying.
+ * @uses grade_report
  * @package gradebook
  */
-class grade_report_grader {
-    /**
-     * The courseid.
-     * @var int $courseid
-     */
-    var $courseid;
-
-    /**
-     * The context.
-     * @var int $context
-     */
-    var $context;
-
-    /**
-     * The grade_tree object.
-     * @var object $gtree
-     */
-    var $gtree;
-
+class grade_report_grader extends grade_report {
     /**
      * The final grades.
      * @var array $finalgrades
@@ -56,37 +31,7 @@ class grade_report_grader {
      */
     var $gradeserror = array();
 
-    /**
-     * User preferences related to this report.
-     * @var array $user_prefs
-     */
-    var $user_prefs = array();
-
 //// SQL-RELATED
-
-    /**
-     * The roles for this report.
-     * @var string $gradebookroles
-     */
-    var $gradebookroles;
-
-    /**
-     * base url for sorting by first/last name.
-     * @var string $baseurl
-     */
-    var $baseurl;
-
-    /**
-     * base url for paging.
-     * @var string $pbarurl
-     */
-    var $pbarurl;
-
-    /**
-     * Current page (for paging).
-     * @var int $page
-     */
-    var $page;
 
     /**
      * The id of the grade_item by which this report will be sorted.
@@ -133,24 +78,18 @@ class grade_report_grader {
     var $groupwheresql;
 
 
-
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
+     * @param string $context
+     * @param int $page The current page being viewed (when report is paged)
+     * @param int $sortitemid The id of the grade_item by which to sort the table
      */
     function grade_report_grader($courseid, $context, $page=null, $sortitemid=null) {
         global $CFG;
+        parent::grade_report($courseid, $context, $page);
 
-        $this->courseid = $courseid;
-        $this->context = $context;
-        $this->page = $page;
         $this->sortitemid = $sortitemid;
-
-        // roles to be displayed in the gradebook
-        $this->gradebookroles = $CFG->gradebookroles;
-
-        // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, false, $this->get_pref('aggregationposition'));
 
         // base url for sorting by first/last name
         $this->baseurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
@@ -164,38 +103,6 @@ class grade_report_grader {
         }
 
         $this->setup_sortitemid();
-    }
-
-    /**
-     * Given the name of a user preference (without grade_report_ prefix), locally saves then returns
-     * the value of that preference. If the preference has already been fetched before,
-     * the saved value is returned. If the preference is not set at the User level, the $CFG equivalent
-     * is given (site default).
-     * @param string $pref The name of the preference (do not include the grade_report_ prefix)
-     * @return mixed The value of the preference
-     */
-    function get_pref($pref) {
-        global $CFG;
-
-        if (empty($this->user_prefs[$pref])) {
-            $fullprefname = 'grade_report_' . $pref;
-            $this->user_prefs[$pref] = get_preferences($fullprefname, $CFG->$fullprefname);
-        }
-        return $this->user_prefs[$pref];
-    }
-    /**
-     * Uses set_user_preferences() to update the value of a user preference.
-     * Also updates the object's corresponding variable.
-     * @param string $pref_name The name of the preference.
-     * @param mixed $pref_value The value of the preference.
-     * @return bool Success or failure.
-     * TODO print visual feedback
-     */
-    function set_user_pref($pref, $pref_value) {
-        if ($result = set_user_preferences(array($pref => $pref_value))) {
-            $this->$pref = $pref_value;
-        }
-        return $result;
     }
 
     /**
@@ -245,7 +152,7 @@ class grade_report_grader {
                     if ($postedvalue == '') { // empty string means no grade
                         $finalgrade = null;
                     } else {
-                        $finalgrade = format_grade($postedvalue);
+                        $finalgrade = $this->format_grade($postedvalue);
                     }
                 }
 
@@ -274,7 +181,7 @@ class grade_report_grader {
                         }
                     } else {
                         $feedback       = $postedvalue;
-                        $feedbackformat = MOODLE_FORMAT; // this is the default format option everywhere else
+                        $feedbackformat = FORMAT_MOODLE; // this is the default format option everywhere else
                         $needsupdate    = true;
                     }
 
@@ -374,62 +281,6 @@ class grade_report_grader {
                 $this->sortorder = 'ASC';
             }
         }
-    }
-
-    /**
-     * Processes a single action against a category, grade_item or grade.
-     * @param string $target Sortorder
-     * @param string $action Which action to take (edit, delete etc...)
-     * @return
-     * TODO Update this, it's quite old and needs a major makeover
-     */
-    function process_action($target, $action) {
-        $element = $this->gtree->locate_element($target);
-
-        switch ($action) {
-            case 'edit':
-                break;
-            case 'delete':
-                if ($confirm == 1) { // Perform the deletion
-                    //TODO: add proper delete support for grade items and categories
-                    //$element['object']->delete();
-                    // Print result message
-
-                } else { // Print confirmation dialog
-                    $eid = $element['eid'];
-                    $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
-                    $linkyes = GRADE_EDIT_URL . "/tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
-                    $linkno = GRADE_EDIT_URL . "/tree.php?$this->gtree->commonvars";
-                    notice_yesno($strdeletecheckfull, $linkyes, $linkno);
-                }
-                break;
-
-            case 'hide':
-            // TODO Implement calendar for selection of a date to hide element until
-                $element['object']->set_hidden(1);
-                $this->gtree = new grade_tree($this->courseid);
-                break;
-            case 'show':
-                $element['object']->set_hidden(0);
-                $this->gtree = new grade_tree($this->courseid);
-                break;
-            case 'lock':
-            // TODO Implement calendar for selection of a date to lock element after
-                if (!$element['object']->set_locked(1)) {
-                    debugging("Could not update the element's locked state!");
-                }
-                $this->gtree = new grade_tree($this->courseid);
-                break;
-            case 'unlock':
-                if (!$element['object']->set_locked(0)) {
-                    debugging("Could not update the element's locked state!");
-                }
-                $this->gtree = new grade_tree($this->courseid);
-                break;
-            default:
-                break;
-        }
-
     }
 
     /**
@@ -548,7 +399,7 @@ class grade_report_grader {
                        'grandtotals' => 'sigma');
 
         $pref_name = 'grade_report_show' . $type;
-        $show_pref = get_preferences($pref_name, $CFG->$pref_name);
+        $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
 
         $strshow = get_string('show' . $type, 'grades');
         $strhide = get_string('hide' . $type, 'grades');
@@ -782,9 +633,9 @@ class grade_report_grader {
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) {
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'
-                                          .$item->id.'" value="'.get_grade_clean($gradeval).'"/>';
+                                          .$item->id.'" value="'.$this->get_grade_clean($gradeval).'"/>';
                         } else {
-                            $studentshtml .= get_grade_clean($gradeval);
+                            $studentshtml .= $this->get_grade_clean($gradeval);
                         }
                     }
 
@@ -824,7 +675,7 @@ class grade_report_grader {
                         if (is_null($gradeval)) {
                             $studentshtml .= '-';
                         } else {
-                            $studentshtml .=  get_grade_clean($gradeval);
+                            $studentshtml .=  $this->get_grade_clean($gradeval);
                         }
                     }
                     if (!empty($grade->feedback)) {
@@ -879,7 +730,7 @@ class grade_report_grader {
                     $groupsumhtml .= '<td>-</td>';
                 } else {
                     $sum = $groupsum[$item->id];
-                    $groupsumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+                    $groupsumhtml .= '<td>'.$this->get_grade_clean($sum->sum).'</td>';
                 }
             }
             $groupsumhtml .= '</tr>';
@@ -921,7 +772,7 @@ class grade_report_grader {
                     $gradesumhtml .= '<td>-</td>';
                 } else {
                     $sum = $classsum[$item->id];
-                    $gradesumhtml .= '<td>'.get_grade_clean($sum->sum).'</td>';
+                    $gradesumhtml .= '<td>'.$this->get_grade_clean($sum->sum).'</td>';
                 }
             }
             $gradesumhtml .= '</tr>';
@@ -938,7 +789,7 @@ class grade_report_grader {
         if ($this->get_pref('showscales')) {
             $scalehtml = '<tr><td>'.get_string('range','grades').'</td>';
             foreach ($this->items as $item) {
-                $scalehtml .= '<td>'. get_grade_clean($item->grademin).'-'. get_grade_clean($item->grademax).'</td>';
+                $scalehtml .= '<td>'. $this->get_grade_clean($item->grademin).'-'. $this->get_grade_clean($item->grademax).'</td>';
             }
             $scalehtml .= '</tr>';
         }
@@ -1051,7 +902,7 @@ class grade_report_grader {
 
         // Prepare expand/contract string
         $expand_contract = 'switch_minus'; // Default: expanded
-        $state = get_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
+        $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
         if ($state == GRADE_CATEGORY_CONTRACTED) {
             $expand_contract = 'switch_plus';
         }
