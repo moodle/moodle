@@ -5,7 +5,7 @@
                            get_string('graderreport', 'grades'));
 
     $row[] = new tabobject('editcategory',
-                           $CFG->wwwroot.'/grade/edit/edit_tree.php?id='.$courseid,
+                           $CFG->wwwroot.'/grade/edit/tree.php?id='.$courseid,
                            get_string('categoriesedit', 'grades'));
 
     $row[] = new tabobject('preferences',

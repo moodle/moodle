@@ -398,8 +398,8 @@ class grade_report_grader {
                 } else { // Print confirmation dialog
                     $eid = $element['eid'];
                     $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
-                    $linkyes = GRADE_EDIT_URL . "/edit_tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
-                    $linkno = GRADE_EDIT_URL . "/edit_tree.php?$this->gtree->commonvars";
+                    $linkyes = GRADE_EDIT_URL . "/tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
+                    $linkno = GRADE_EDIT_URL . "/tree.php?$this->gtree->commonvars";
                     notice_yesno($strdeletecheckfull, $linkyes, $linkno);
                 }
                 break;
@@ -1000,16 +1000,16 @@ class grade_report_grader {
         $edit_icon = '';
         if ($object->is_editable()) {
             if ($type == 'category') {
-                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem'){
-                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'grade' and ($object->is_editable() or empty($object->id))) {
             // TODO: change link to use itemid and userid to allow creating of new grade objects
-                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                  . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
                                  . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             }
@@ -1019,7 +1019,7 @@ class grade_report_grader {
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
             // show calculation icon only when calculation possible
             if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
-                $edit_calculation_icon = '<a href="'. GRADE_EDIT_URL . '/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_calculation_icon = '<a href="'. GRADE_EDIT_URL . '/calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                        . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
             }
