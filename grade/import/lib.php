@@ -12,7 +12,7 @@ function grade_import_commit($courseid, $importcode) {
     global $CFG;
     
     include_once($CFG->libdir.'/gradelib.php');
-    
+    include_once($CFG->libdir.'/grade/grade_item.php');
     $commitstart = time(); // start time in case we need to roll back
     $newitemids = array(); // array to hold new grade_item ids from grade_import_newitem table, mapping array
     
@@ -28,20 +28,10 @@ function grade_import_commit($courseid, $importcode) {
         foreach ($newitems as $newitem) {
             // get all grades with this item
             
-            if ($grades = get_records('grade_import_values', 'newgradeitem', $newitem->id)) {
-                
-                $studentgrades = array();
+            if ($grades = get_records('grade_import_values', 'newgradeitem', $newitem->id)) {                
+
                 // make the grardes array for update_grade
-                foreach ($grades as $grade) {
-                    
-                    $g = new object();
-                    $g -> userid = $grade->userid;
-                    $g -> rawgrade = $grade->rawgrade;                    
-                    $studentgrades[] = $g ;  
-
-                }
-                $itemdetails -> itemname = $newitem->itemname; 
-
+                
                 // find the max instance number of 'manual' grade item
                 // and increment that number by 1 by hand
                 // I can not find other ways to make 'manual' type work,
@@ -60,18 +50,29 @@ function grade_import_commit($courseid, $importcode) {
                 
                 $instances[] = $instance;
                 // if fails, deletes all the created grade_items and grades
-                                
-                if (!grade_update('import', $courseid, 'manual', NULL, $instance, NULL, $studentgrades, $itemdetails) == GRADE_UPDATE_OK) {
-                    // undo existings ones
-                    include_once($CFG->libdir.'/grade/grade_item.php');
+
+                /// create a new grade item for this
+                $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'iteminstance'=>$instance, 'itemname'=>$newitem->itemname));
+                $gradeitem->insert();
+
+                // insert each individual grade to this new grade item
+                $failed = 0;
+                foreach ($grades as $grade) {                    
+                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
+                        $failed = 1;
+                        break;
+                    }
+                }
+                if ($failed) {
                     foreach ($instances as $instance) {
                         $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'iteminstance'=>$instance));                            
                         // this method does not seem to delete all the raw grades and the item itself
                         // which I think should be deleted in this case, can I use sql directly here?
                         $gradeitem->delete();
                     }
-                    import_cleanup($importcode);  
-                }          
+                    import_cleanup($importcode);
+                    return false;
+                }
             }
         } 
     }
@@ -80,36 +81,37 @@ function grade_import_commit($courseid, $importcode) {
 
     if ($gradeitems = get_records_sql("SELECT DISTINCT (itemid) 
                                        FROM {$CFG->prefix}grade_import_values
-                                       WHERE import_code = $importcode")) {
+                                       WHERE import_code = $importcode
+                                       AND itemid > 0")) {
+
         $modifieditems = array();
-        foreach ($gradeitems as $itemid) {
+        
+        foreach ($gradeitems as $itemid=>$iteminfo) {
             
-            if (!$gradeitem = get_record('grade_items', 'id', $itemid->itemid)) {
-                continue; // new items which are already processed  
+            if (!$gradeitem = new grade_item(array('id'=>$itemid))) {
+                // not supposed to happen, but just in case
+                import_cleanup($importcode);
+                return false;
             }
             // get all grades with this item
-            if ($grades = get_records('grade_import_values', 'itemid', $itemid->itemid)) {
+            if ($grades = get_records('grade_import_values', 'itemid', $itemid)) {
                 
-                $studentgrades = array();
                 // make the grardes array for update_grade
                 foreach ($grades as $grade) {
-                    
-                    $g = new object();
-                    $g -> userid = $grade->userid;
-                    $g -> rawgrade = $grade->rawgrade;                    
-                    $studentgrades[] = $g ;  
+                    if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
+                        $failed = 1;
+                        break 2; 
+                    }
+                }
+                //$itemdetails -> idnumber = $gradeitem->idnumber;                
+                $modifieditems[] = $itemid;                                      
 
-                }
-                //$itemdetails -> idnumber = $gradeitem->idnumber;
+            }                    
                 
-                $modifieditems[] = $itemid;                      
-                
-                if (!grade_update('import', $courseid, $gradeitem->itemtype, $gradeitem->itemmodule, $gradeitem->iteminstance, $gradeitem->itemnumber, $studentgrades) == GRADE_UPDATE_OK) {
-                    // here we could possibly roll back by using grade_history
-                    // to compare timestamps? 
-                    import_cleanup($importcode); 
-                }
-            }           
+            if (!empty($failed)) {
+                import_cleanup($importcode);
+                return false;        
+            }      
         }
     }
     

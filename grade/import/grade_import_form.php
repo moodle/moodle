@@ -45,14 +45,13 @@ class grade_import_mapping_form extends moodleform {
         // temporary filename
         $filename = $this->_customdata['filename'];
         // course id
-        $id = $this->_customdata['id'];
 
         $mform->addElement('header', 'general', get_string('identifier', 'grades'));
         $mapfromoptions = array();
         
         if ($header) {
-            foreach ($header as $h) {
-                $mapfromoptions[$h] = $h;
+            foreach ($header as $i=>$h) {
+                $mapfromoptions[$i] = $h;
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
@@ -64,34 +63,33 @@ class grade_import_mapping_form extends moodleform {
         
         $mform->addElement('header', 'general', get_string('mappings', 'grades'));
         
-        $gradeitems = array();
-    
-        include_once($CFG->libdir.'/gradelib.php');
-        
-        if ($id) {
-            if ($grade_items = grade_item::fetch_all(array('courseid'=>$id))) {
-                foreach ($grade_items as $grade_item) {
-                    $gradeitems[$grade_item->idnumber] = $grade_item->itemname;      
-                }
-            }
-        }    
+        $gradeitems = $this->_customdata['gradeitems'];
 
-        if ($header) {
+        include_once($CFG->libdir.'/gradelib.php');
+
+        if ($header) {          
+            $i = 0; // index
             foreach ($header as $h) {
-            
+ 
                 $h = trim($h);
                 // this is the order of the headers
-                $mform->addElement('hidden', 'maps[]', $h);
-                //echo '<input type="hidden" name="maps[]" value="'.$h.'"/>';
-                // this is what they map to
-        
-                $mapfromoptions = array_merge(array('0'=>'ignore', 'new'=>'new gradeitem'), $gradeitems);
-                $mform->addElement('select', 'mapping[]', $h, $mapfromoptions);
-                //choose_from_menu($mapfromoptions, 'mapping[]', $h);
+                // $mform->addElement('hidden', 'maps[]', $h);
+                
+                // this is what they map to        
+                $mapfromoptions = array('0'=>'ignore', 'new'=>'new gradeitem') + $gradeitems;
 
+                $mform->addElement('select', 'mapping_'.$i, s($h), $mapfromoptions);
+                $i++;
             }
         }
+        
+        // find a non-conflicting file name based on time stamp
         $newfilename = 'cvstemp_'.time();
+        while (file_exists($CFG->dataroot.'/temp/'.$newfilename)) {
+            $newfilename = 'cvstemp_'.time();
+        }
+        
+        // move the uploaded file
         move_uploaded_file($filename, $CFG->dataroot.'/temp/'.$newfilename);
         
         // course id needs to be passed for auth purposes
