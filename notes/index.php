@@ -51,23 +51,34 @@ print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_nav
 
 require_once($CFG->dirroot .'/user/tabs.php');
 
+$strsitenotes = get_string('sitenotes', 'notes');
+$strcoursenotes = get_string('coursenotes', 'notes');
+$strpersonalnotes = get_string('personalnotes', 'notes');
+$straddnewnote = get_string('addnewnote', 'notes');
+
 if($courseid != SITEID) {
+    echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a> | <a href="#personalnotes">' . $strpersonalnotes . '</a>';
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    if (has_capability('moodle/notes:manage', $context)) {
-        $addlink = $CFG->wwwroot .'/notes/add.php?course=' . $courseid . '&amp;user=' . $userid;
-        echo '<p><a href="'. $addlink . '">' . get_string('addnewnote', 'notes') . '</a></p>';
-    }
-    note_print_notes(get_string('sitenotes', 'notes'), $context, 0, $userid, NOTES_STATE_SITE, 0);
-    note_print_notes(get_string('coursenotes', 'notes'), $context, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
-    note_print_notes(get_string('personalnotes', 'notes'), $context, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
+    $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
+    $view = has_capability('moodle/notes:view', $context);
+    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
+    note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes, $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
+    note_print_notes('<a name="personalnotes"></a>' . $strpersonalnotes, $addid, $view, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
 } else {
-    $context = get_context_instance(CONTEXT_SYSTEM);
-    note_print_notes(get_string('sitenotes', 'notes'), $context, 0, $userid, NOTES_STATE_SITE, 0);
+    echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a>';
+    $view = has_capability('moodle/notes:view', get_context_instance(CONTEXT_SYSTEM));
+    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
+    echo '<a name="coursenotes"></a>';
     if($userid) {
         $courses = get_my_courses($userid);
         foreach($courses as $c) {
             $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $c->fullname . '</a>';
-            note_print_notes($header, $context, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
+            if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {
+                $addid = $c->id;
+            }else {
+                $addid = 0;
+            }
+            note_print_notes($header, $addid, $view, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
         }
     }
 }    

@@ -2377,10 +2377,9 @@ body#message-messages {
  ***/
 .notepost {
     margin-bottom: 1em;
-    background-color: #F0F0F0;
+    background-color: #EEE;
 }
 .sitenotepost {
-    background-color: #FFFFF0;
 }
 .coursenotepost {
 }
@@ -2393,6 +2392,8 @@ body#message-messages {
 }
 
 .notepost .header {
+    background: #DDD;
+    padding: 5px;
 }
 
 .notepost .user {
@@ -2401,22 +2402,19 @@ body#message-messages {
 
 .notepost .userpicture {
     float: left;
-    margin: 5px;
+    margin-right: 5px;
 }
-.notepost .rating5 {
-    color: red;
-}
-.notepost .rating1 {
-    color: orange;
-}
-.notepost .info, .notepost .rating {
+
+.notepost .info {
     font-size: smaller;
 }
 
 .notepost .content {
+    clear: both;
 }
 
 .notepost .footer {
+    clear: both;
 }
 
 /***

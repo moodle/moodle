@@ -15,6 +15,8 @@ if (!$note = note_load($noteid)) {
 if (!$course = get_record('course', 'id', $note->courseid)) {
     error('Incorrect course id found');
 }
+// require login to access notes
+require_login($course->id);
 
 // locate context information
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -38,7 +40,10 @@ if (data_submitted() && confirm_sesskey()) {
     $strnotes = get_string('notes', 'notes');
     $optionsyes = array('note'=>$noteid, 'sesskey'=>sesskey());
     $optionsno = array('course'=>$course->id, 'user'=>$note->userid);
-    print_header($course->shortname . ': ' . $strnotes, $course->fullname);
+
+// output HTML
+    $crumbs = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
+    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($crumbs));
     notice_yesno(get_string('deleteconfirm', 'notes'), 'delete.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
     echo '<br />';
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);

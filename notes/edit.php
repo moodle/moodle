@@ -15,6 +15,8 @@ if (!$note = note_load($noteid)) {
 if (!$course = get_record('course', 'id', $note->courseid)) {
     error('Incorrect course id found');
 }
+// require login to access notes
+require_login($course->id);
 
 // locate context information
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -54,7 +56,6 @@ if ($formdata = $noteform->get_data()){
     $note->userid = $formdata->user;
     $note->content = $formdata->content;
     $note->format = FORMAT_PLAIN;
-    $note->rating = $formdata->rating;
     $note->publishstate = $formdata->publishstate;
     if (note_save($note)) {
         add_to_log($note->courseid, 'notes', 'update', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id, 'update note');
@@ -74,9 +75,10 @@ if($noteform->is_submitted()) {
     $note->note = $note->id;
 }
 $noteform->set_data($note);
-$strnotes = get_string('notes', 'notes');
+$strnotes = get_string('editnote', 'notes');
 
 // output HTML
-print_header($course->shortname . ': ' . $strnotes, $course->fullname);
+$crumbs = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
+print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($crumbs));
 $noteform->display();
 print_footer();

@@ -5,7 +5,6 @@ require_once($CFG->dirroot .'/notes/lib.php');
 $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
-$ratings = optional_param('ratings', array(), PARAM_INT); // array of notes ratings
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
 if (! $course = get_record('course', 'id', $id)) {
     error("Course ID is incorrect");
@@ -18,7 +17,7 @@ require_login($course->id);
 require_capability('moodle/notes:manage', $context);
 
 if (!empty($users) && confirm_sesskey()) {
-    if (count($users) != count($contents) || count($users) != count($ratings) || count($users) != count($states)) {
+    if (count($users) != count($contents) || count($users) != count($states)) {
         error('Parameters malformation', $CFG->wwwroot.'/user/index.php?id='.$id);
     }
 
@@ -31,7 +30,6 @@ if (!empty($users) && confirm_sesskey()) {
         }
         $note->id = 0;
         $note->content = $contents[$k];
-        $note->rating = $ratings[$k];
         $note->publishstate = $states[$k];
         $note->userid = $v;
         if (note_save($note)) {
@@ -59,9 +57,11 @@ print_heading($straddnote);
 echo '<form method="post" action="addnote.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-$table->head  = array (get_string('fullname'), get_string('content', 'notes'), get_string('rating', 'notes'), get_string('publishstate', 'notes'), );
-$table->align = array ('left', 'center', 'center', 'center');
-$rating_names = note_get_rating_names();
+$table->head  = array (get_string('fullname'), 
+    get_string('content', 'notes') . helpbutton('writing', get_string('helpwriting'), 'moodle', true, false, '', true), 
+    get_string('publishstate', 'notes') . helpbutton('status', get_string('publishstate', 'notes'), 'notes', true, false, '', true), 
+    );
+$table->align = array ('left', 'center', 'center');
 $state_names = note_get_state_names();
 
 // the first time list hack
@@ -77,13 +77,11 @@ foreach ($users as $k => $v) {
     if(!$user = get_record('user', 'id', $v)) {
         continue;
     }
-    $checkbox = choose_from_menu($rating_names, 'ratings[' . $k . ']', empty($ratings[$k]) ? NOTES_RATING_NORMAL : $ratings[$k], '', '', '0', true);
-    $checkbox2 = choose_from_menu($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], '', '', '0', true);
+    $checkbox = choose_from_menu($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], '', '', '0', true);
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
-        '<textarea name="contents['. $k . ']" rows="2" cols="30">' . strip_tags(@$contents[$k]) . '</textarea>',
-        $checkbox,
-        $checkbox2,
+        '<textarea name="contents['. $k . ']" rows="2" cols="40">' . strip_tags(@$contents[$k]) . '</textarea>',
+        $checkbox
     );
 }
 print_table($table);
