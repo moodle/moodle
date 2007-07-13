@@ -248,8 +248,9 @@ class qformat_blackboard_6 extends qformat_default {
 // the object created is NOT a moodle question object
 function create_raw_question($quest) {
     
-    $question = $this->defaultquestion();
+    $question = new StdClass;
     $question->qtype = $quest['#']['itemmetadata'][0]['#']['bbmd_questiontype'][0]['#'];
+    $question->id = $quest['#']['itemmetadata'][0]['#']['bbmd_asi_object_id'][0]['#'];
     $presentation->blocks = $quest['#']['presentation'][0]['#']['flow'][0]['#']['flow'];
 
     foreach($presentation->blocks as $pblock) {
@@ -535,19 +536,25 @@ function process_feedback($feedbackset, &$feedbacks) {
     }
 }
 
+/**
+ * Create common parts of question
+ */
+function process_common( $quest ) {
+    $question = $this->defaultquestion();
+    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
+    $question->name = shorten_text( $quest->id, 250 );
+
+    return $question;
+}
+
 //----------------------------------------
 // Process True / False Questions
 //----------------------------------------
 function process_tf($quest, &$questions) {
-    $question = $this->defaultquestion();
+    $question = $this->process_common( $quest );
 
     $question->qtype = TRUEFALSE;
-    $question->defaultgrade = 1;
     $question->single = 1; // Only one answer is allowed
-    $question->image = ""; // No images with this format
-    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    // put name in question object
-    $question->name = shorten_text($question->questiontext, 250);
 
     // first choice is true, second is false.
     if ($quest->responses[0]->fraction == 1) {
@@ -579,14 +586,10 @@ function process_tf($quest, &$questions) {
 // Process Fill in the Blank
 //----------------------------------------
 function process_fblank($quest, &$questions) {
-    $question = $this->defaultquestion();
+    $question = $this->process_common( $quest );
     $question->qtype = SHORTANSWER;
-    $question->defaultgrade = 1;
     $question->single = 1;
-    $question->usecase = 0;
-    $question->image = '';
-    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = shorten_text($question->questiontext, 250);
+
     $answers = array();
     $fractions = array();
     $feedbacks = array();
@@ -645,13 +648,9 @@ function process_fblank($quest, &$questions) {
 // Process Multiple Choice Questions
 //----------------------------------------
 function process_mc($quest, &$questions) {
-    $question = $this->defaultquestion();
+    $question = $this->process_common( $quest );
     $question->qtype = MULTICHOICE;
-    $question->defaultgrade = 1;
     $question->single = 1;
-    $question->image = "";
-    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = shorten_text($question->questiontext, 250);
     
     $feedback = array();
     foreach($quest->feedback as $fback) {
@@ -718,13 +717,9 @@ function process_mc($quest, &$questions) {
 // Process Multiple Choice Questions With Multiple Answers
 //----------------------------------------
 function process_ma($quest, &$questions) {
-    $question = $this->defaultquestion(); // copied this from process_mc
-    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-    $question->name = shorten_text($question->questiontext, 250); 
+    $question = $this->process_common( $quest ); // copied this from process_mc
     $question->qtype = MULTICHOICE;
-    $question->defaultgrade = 1;
     $question->single = 0; // More than one answer allowed
-    $question->image = ""; // No images with this format
 
     $answers = $quest->responses;
     $correct_answers = array();
@@ -770,13 +765,8 @@ function process_essay($quest, &$questions) {
 
     if (defined("ESSAY")) {
         // treat as short answer
-        $question = $this->defaultquestion(); // copied this from process_mc
+        $question = $this->process_common( $quest ); // copied this from process_mc
         $question->qtype = ESSAY;
-        $question->defaultgrade = 1;
-        $question->usecase = 0; // Ignore case
-        $question->image = ""; // No images with this format
-        $question->questiontext = addslashes(trim($quest->QUESTION_BLOCK->text));
-        $question->name = shorten_text($question->questiontext, 250);
     
         $question->feedback = array();
         // not sure where to get the correct answer from
@@ -807,13 +797,10 @@ function process_matching($quest, &$questions) {
     global $QTYPES;
 
     // renderedmatch is an optional plugin, so we need to check if it is defined
-    if (!empty($QTYPES['renderedmatch'])) {
-        $question = $this->defaultquestion($this->defaultquestion());
+    if (array_key_exists('renderedmatch', $QTYPES)) {
+        $question = $this->process_common( $quest );
         $question->valid = true;
         $question->qtype = 'renderedmatch';
-        $question->defaultgrade = 1;
-        $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
-        $question->name = shorten_text($question->questiontext, 250);
     
         foreach($quest->RESPONSE_BLOCK->subquestions as $qid => $subq) {
             foreach($quest->responses as $rid => $resp) {
