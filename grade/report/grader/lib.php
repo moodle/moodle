@@ -560,6 +560,8 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
         $studentshtml = '';
         $strfeedback = get_string("feedback");
+        $gradetabindex = 1;
+        $feedbacktabindex = 16380; // The maximum number of tabindices on 1 page is 32767
 
         foreach ($this->users as $userid => $user) {
             // Student name and link
@@ -616,7 +618,7 @@ class grade_report_grader extends grade_report {
 
                             if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                                 $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                              $gradeval, get_string('nograde'), '', -1, true);
+                                                              $gradeval, get_string('nograde'), '', -1, true, false, $gradetabindex++);
                             } elseif ($scale = get_record('scale', 'id', $item->scaleid)) {
                                 $scales = explode(",", $scale->scale);
 
@@ -633,7 +635,7 @@ class grade_report_grader extends grade_report {
 
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) {
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
-                            $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'
+                            $studentshtml .= '<input size="6" tabindex="' . $gradetabindex++ . '" type="text" name="grade_'.$userid.'_'
                                           .$item->id.'" value="'.$this->get_grade_clean($gradeval).'"/>';
                         } else {
                             $studentshtml .= $this->get_grade_clean($gradeval);
@@ -646,8 +648,8 @@ class grade_report_grader extends grade_report {
                         if ($this->get_pref('quickgrading')) {
                             $studentshtml .= '<br />';
                         }
-                        $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'
-                                      . s($grade->feedback) . '"/>';
+                        $studentshtml .= '<input tabindex="' . $feedbacktabindex++ . '" size="6" type="text" name="feedback_'
+                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '"/>';
                     }
 
                 } else {
