@@ -91,17 +91,16 @@ $stronascaleof   = get_string('onascaleof', 'grades', $extra_info);
 $strgrades       = get_string('grades');
 $strgrade        = get_string('grade');
 $strgraderreport = get_string('graderreport', 'grades');
-$strfeedback     = get_string('feedback', 'grades');
-$strfeedbackedit = get_string('feedbackedit', 'grades');
-$strfeedbackview = get_string('feedbackview', 'grades');
-$strfeedbackadd  = get_string('feedbackadd', 'grades');
+$strgrade     = get_string('grade', 'grades');
+$strgradeedit = get_string('gradeedit', 'grades');
+$strgradeview = get_string('gradeview', 'grades');
 $strstudent      = get_string('student', 'grades');
 $strgradeitem    = get_string('gradeitem', 'grades');
 
 $feedback = null;
-$heading = ${"strfeedback$action"};
+$heading = ${"strgrade$action"};
 if (!empty($action) && $action == 'view' && !empty($grade_text->feedback)) {
-    $feedback = "<p><strong>$strfeedback</strong>:</p><p>$grade_text->feedback</p>";
+    $feedback = "<p><strong>$strgrade</strong>:</p><p>$grade_text->feedback</p>";
 }
 
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
