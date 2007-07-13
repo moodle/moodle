@@ -1427,8 +1427,24 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     }
+    
+    if ($result && $oldversion < 2007071300) {
+    /// Define field feedback to be added to grade_import_values
+        $table = new XMLDBTable('grade_import_values');
+        $field = new XMLDBField('feedback');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'rawgrade');
 
+    /// Launch add field feedback
+        $result = $result && add_field($table, $field);
+    
+    /// Rename field rawgrade on table grade_import_values to NEWNAMEGOESHERE
+        $table = new XMLDBTable('grade_import_values');
+        $field = new XMLDBField('rawgrade');
+        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0.0', 'userid');
+
+    /// Launch rename field rawgrade
+        $result = $result && rename_field($table, $field, 'finalgrade');
+    }
     return $result;
 }
-
 ?>
