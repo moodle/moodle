@@ -909,7 +909,17 @@ class grade_category extends grade_object {
      */
     function set_locked($lockedstate) {
         $this->load_grade_item();
-        return $this->grade_item->set_locked($lockedstate);
+        $this->grade_item->set_locked($lockedstate);
+        if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+            foreach($children as $child) {
+                $child->set_locked($lockedstate);
+            }
+        }
+        if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+            foreach($children as $child) {
+                $child->set_locked($lockedstate);
+            }
+        }
     }
 
     /**
