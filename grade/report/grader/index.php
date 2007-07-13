@@ -58,7 +58,7 @@ include('tabs.php');
 
 echo $report->group_selector;
 echo $report->get_toggles_html();
-print_paging_bar($numusers, $report->page, $report->get_user_pref('studentsperpage'), $report->pbarurl);
+print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 echo '<br />';
 
 $reporthtml = '<table class="boxaligncenter">';
@@ -80,13 +80,13 @@ if ($USER->gradeediting) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting && ($report->get_user_pref('quickfeedback') || $report->get_user_pref('quickgrading'))) {
+if ($USER->gradeediting && ($report->get_pref('quickfeedback') || $report->get_pref('quickgrading'))) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
 
 // prints paging bar at bottom for large pages
-if ($report->get_user_pref('studentsperpage') >= 20) {
-    print_paging_bar($numusers, $report->page, $report->get_user_pref('studentsperpage'), $report->pbarurl);
+if ($report->get_pref('studentsperpage') >= 20) {
+    print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 }
 ?>

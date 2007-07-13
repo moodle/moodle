@@ -150,16 +150,16 @@ class grade_report_grader {
         $this->gradebookroles = $CFG->gradebookroles;
 
         // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, false, $this->get_user_pref('aggregationposition'));
+        $this->gtree = new grade_tree($this->courseid, true, false, $this->get_pref('aggregationposition'));
 
         // base url for sorting by first/last name
-        $this->baseurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_user_pref('studentsperpage')
+        $this->baseurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
                         .'&amp;report=grader&amp;page='.$this->page;
         //
-        $this->pbarurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_user_pref('studentsperpage')
+        $this->pbarurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
                         .'&amp;report=grader&amp;';
 
-        if ($this->get_user_pref('showgroups')) {
+        if ($this->get_pref('showgroups')) {
             $this->setup_groups();
         }
 
@@ -174,12 +174,12 @@ class grade_report_grader {
      * @param string $pref The name of the preference (do not include the grade_report_ prefix)
      * @return mixed The value of the preference
      */
-    function get_user_pref($pref) {
+    function get_pref($pref) {
         global $CFG;
 
         if (empty($this->user_prefs[$pref])) {
             $fullprefname = 'grade_report_' . $pref;
-            $this->user_prefs[$pref] = get_user_preferences($fullprefname, $CFG->$fullprefname);
+            $this->user_prefs[$pref] = get_preferences($fullprefname, $CFG->$fullprefname);
         }
         return $this->user_prefs[$pref];
     }
@@ -398,8 +398,8 @@ class grade_report_grader {
                 } else { // Print confirmation dialog
                     $eid = $element['eid'];
                     $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
-                    $linkyes = "edit_tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
-                    $linkno = "edit_tree.php?$this->gtree->commonvars";
+                    $linkyes = GRADE_EDIT_URL . "/edit_tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
+                    $linkno = GRADE_EDIT_URL . "/edit_tree.php?$this->gtree->commonvars";
                     notice_yesno($strdeletecheckfull, $linkyes, $linkno);
                 }
                 break;
@@ -452,14 +452,14 @@ class grade_report_grader {
                          $this->groupwheresql
                     AND ra.contextid ".get_related_contexts_string($this->context)."
                     ORDER BY g.finalgrade $this->sortorder";
-            $this->users = get_records_sql($sql, $this->get_user_pref('studentsperpage') * $this->page,
-                                $this->get_user_pref('studentsperpage'));
+            $this->users = get_records_sql($sql, $this->get_pref('studentsperpage') * $this->page,
+                                $this->get_pref('studentsperpage'));
         } else {
             // default sort
             // get users sorted by lastname
             $this->users = get_role_users(@implode(',', $CFG->gradebookroles), $this->context, false,
                                 'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder,
-                                false, $this->page * $this->get_user_pref('studentsperpage'), $this->get_user_pref('studentsperpage'),
+                                false, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'),
                                 $this->currentgroup);
             // need to cut users down by groups
 
@@ -548,7 +548,7 @@ class grade_report_grader {
                        'grandtotals' => 'sigma');
 
         $pref_name = 'grade_report_show' . $type;
-        $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
+        $show_pref = get_preferences($pref_name, $CFG->$pref_name);
 
         $strshow = get_string('show' . $type, 'grades');
         $strhide = get_string('hide' . $type, 'grades');
@@ -762,7 +762,7 @@ class grade_report_grader {
                                 $scaleopt[$i] = $scaleoption;
                             }
 
-                            if ($this->get_user_pref('quickgrading') and $grade->is_editable()) {
+                            if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                                 $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
                                                               $gradeval, get_string('nograde'), '', -1, true);
                             } elseif ($scale = get_record('scale', 'id', $item->scaleid)) {
@@ -780,7 +780,7 @@ class grade_report_grader {
                         }
 
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) {
-                        if ($this->get_user_pref('quickgrading') and $grade->is_editable()) {
+                        if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $studentshtml .= '<input size="6" type="text" name="grade_'.$userid.'_'
                                           .$item->id.'" value="'.get_grade_clean($gradeval).'"/>';
                         } else {
@@ -790,8 +790,8 @@ class grade_report_grader {
 
 
                     // If quickfeedback is on, print an input element
-                    if ($this->get_user_pref('quickfeedback') and $grade->is_editable()) {
-                        if ($this->get_user_pref('quickgrading')) {
+                    if ($this->get_pref('quickfeedback') and $grade->is_editable()) {
+                        if ($this->get_pref('quickgrading')) {
                             $studentshtml .= '<br />';
                         }
                         $studentshtml .= '<input size="6" type="text" name="feedback_'.$userid.'_'.$item->id.'" value="'
@@ -852,7 +852,7 @@ class grade_report_grader {
 
         $groupsumhtml = '';
 
-        if ($this->currentgroup && $this->get_user_pref('showgroups')) {
+        if ($this->currentgroup && $this->get_pref('showgroups')) {
 
         /** SQL for finding group sum */
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
@@ -895,7 +895,7 @@ class grade_report_grader {
         global $CFG;
 
         $gradesumhtml = '';
-        if ($this->get_user_pref('showgrandtotals')) {
+        if ($this->get_pref('showgrandtotals')) {
 
         /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
 
@@ -935,7 +935,7 @@ class grade_report_grader {
      */
     function get_scalehtml() {
         $scalehtml = '';
-        if ($this->get_user_pref('showscales')) {
+        if ($this->get_pref('showscales')) {
             $scalehtml = '<tr><td>'.get_string('range','grades').'</td>';
             foreach ($this->items as $item) {
                 $scalehtml .= '<td>'. get_grade_clean($item->grademin).'-'. get_grade_clean($item->grademax).'</td>';
@@ -1000,16 +1000,16 @@ class grade_report_grader {
         $edit_icon = '';
         if ($object->is_editable()) {
             if ($type == 'category') {
-                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem'){
-                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'grade' and ($object->is_editable() or empty($object->id))) {
             // TODO: change link to use itemid and userid to allow creating of new grade objects
-                $edit_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_icon = '<a href="'. GRADE_EDIT_URL . '/edit_grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                  . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
                                  . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             }
@@ -1019,7 +1019,7 @@ class grade_report_grader {
         if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
             // show calculation icon only when calculation possible
             if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
-                $edit_calculation_icon = '<a href="'.$CFG->wwwroot.'/grade/edit/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
+                $edit_calculation_icon = '<a href="'. GRADE_EDIT_URL . '/edit_calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                        . '<img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
             }
@@ -1051,7 +1051,7 @@ class grade_report_grader {
 
         // Prepare expand/contract string
         $expand_contract = 'switch_minus'; // Default: expanded
-        $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
+        $state = get_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
         if ($state == GRADE_CATEGORY_CONTRACTED) {
             $expand_contract = 'switch_plus';
         }
@@ -1087,20 +1087,20 @@ class grade_report_grader {
             }
 
             // Calculation icon for items and categories
-            if ($this->get_user_pref('showcalculations')) {
+            if ($this->get_pref('showcalculations')) {
                 $html .= $edit_calculation_icon;
             }
 
-            if ($this->get_user_pref('showeyecons')) {
+            if ($this->get_pref('showeyecons')) {
                 $html .= $show_hide_icon;
             }
 
-            if ($this->get_user_pref('showlocks')) {
+            if ($this->get_pref('showlocks')) {
                 $html .= $lock_unlock_icon;
             }
 
             // If object is a category, display expand/contract icon
-            if (get_class($object) == 'grade_category' && $this->get_user_pref('aggregationview') == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
+            if (get_class($object) == 'grade_category' && $this->get_pref('aggregationview') == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
                 $html .= $contract_expand_icon;
             }
         } else { // Editing mode is off
