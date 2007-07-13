@@ -77,7 +77,7 @@ class grade_report {
         $this->gradebookroles = $CFG->gradebookroles;
 
         // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, false, $this->get_pref('aggregationposition'));
+        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
     }
 
     /**
@@ -153,24 +153,24 @@ class grade_report {
             case 'hide':
             // TODO Implement calendar for selection of a date to hide element until
                 $element['object']->set_hidden(1);
-                $this->gtree = new grade_tree($this->courseid);
+                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
                 break;
             case 'show':
                 $element['object']->set_hidden(0);
-                $this->gtree = new grade_tree($this->courseid);
+                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
                 break;
             case 'lock':
             // TODO Implement calendar for selection of a date to lock element after
                 if (!$element['object']->set_locked(1)) {
                     debugging("Could not update the element's locked state!");
                 }
-                $this->gtree = new grade_tree($this->courseid);
+                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
                 break;
             case 'unlock':
                 if (!$element['object']->set_locked(0)) {
                     debugging("Could not update the element's locked state!");
                 }
-                $this->gtree = new grade_tree($this->courseid);
+                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
                 break;
             default:
                 break;

@@ -48,7 +48,7 @@ $returnurl = 'tree.php?id='.$course->id;
 
 // get the grading tree object
 // note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
-$gtree = new grade_tree($courseid, false, false, false);
+$gtree = new grade_tree($courseid, false, false);
 
 if (empty($eid)) {
     $element = null;

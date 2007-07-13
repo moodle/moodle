@@ -547,17 +547,13 @@ class grade_category extends grade_object {
      * Returns tree with all grade_items and categories as elements
      * @static
      * @param int $courseid
-     * @param boolean $include_grades include final grades
      * @param boolean $include_category_items as category children
      * @return array
      */
-    function fetch_course_tree($courseid, $include_grades=false, $include_category_items=false) {
+    function fetch_course_tree($courseid, $include_category_items=false) {
         $course_category = grade_category::fetch_course_category($courseid);
         $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
-                                'children'=>$course_category->get_children($include_grades, $include_category_items));
-        if ($include_grades) {
-            $category_array['finalgrades'] = $course_category->get_final();
-        }
+                                'children'=>$course_category->get_children($include_category_items));
         $sortorder = 1;
         $course_category->set_sortorder($sortorder);
         $course_category->sortorder = $sortorder;
@@ -599,7 +595,7 @@ class grade_category extends grade_object {
      * as well as all levels (0). The elements are indexed by sort order.
      * @return array Array of child objects (grade_category and grade_item).
      */
-    function get_children($include_grades=false, $include_category_items=false) {
+    function get_children($include_category_items=false) {
 
         // This function must be as fast as possible ;-)
         // fetch all course grade items and categories into memory - we do not expect hundreds of these in course
@@ -659,7 +655,7 @@ class grade_category extends grade_object {
         unset($items); // not needed
         unset($cats); // not needed
 
-        $children_array = grade_category::_get_children_recursion($category, $include_grades);
+        $children_array = grade_category::_get_children_recursion($category);
 
         ksort($children_array);
 
@@ -667,7 +663,7 @@ class grade_category extends grade_object {
 
     }
 
-    function _get_children_recursion($category, $include_grades) {
+    function _get_children_recursion($category) {
 
         $children_array = array();
         foreach($category->children as $sortorder=>$child) {
@@ -683,16 +679,12 @@ class grade_category extends grade_object {
                 $children_array[$sortorder] = array('object'=>$grade_item, 'type'=>$type, 'depth'=>$depth);
 
             } else {
-                $children = grade_category::_get_children_recursion($child, $include_grades);
+                $children = grade_category::_get_children_recursion($child);
                 $grade_category = new grade_category($child, false);
                 if (empty($children)) {
                     $children = array();
                 }
                 $children_array[$sortorder] = array('object'=>$grade_category, 'type'=>'category', 'depth'=>$grade_category->depth, 'children'=>$children);
-            }
-
-            if ($include_grades) {
-                $children_array[$sortorder]['finalgrades'] = $grade_item->get_final();
             }
         }
 

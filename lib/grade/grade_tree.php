@@ -40,12 +40,6 @@ class grade_tree {
     var $top_element;
 
     /**
-     * Whether or not this grade_tree should load and store all the grades in addition to the categories and items.
-     * @var boolean $include_grades
-     */
-    var $include_grades;
-
-    /**
      * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
      * @var string $commonvars
      */
@@ -62,21 +56,19 @@ class grade_tree {
      * and renumbering.
      * @param int $courseid
      * @param boolean $fillers include fillers and colspans, make the levels var "rectangular"
-     * @param boolean $include_grades
      * @param boolean $category_grade_last category grade item is the last child
      * @param boolean $aggregation_view Either full view (0) or compact view (1)
      */
-    function grade_tree($courseid, $fillers=true, $include_grades=false, $category_grade_last=true,
+    function grade_tree($courseid, $fillers=true, $category_grade_last=false,
                         $aggregation_view=GRADER_REPORT_AGGREGATION_VIEW_FULL) {
         global $USER;
 
         $this->courseid = $courseid;
-        $this->include_grades = $include_grades;
         $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
         $this->levels = array();
 
         // get course grade tree
-        $this->top_element = grade_category::fetch_course_tree($courseid, $include_grades, true);
+        $this->top_element = grade_category::fetch_course_tree($courseid, true);
 
         if ($category_grade_last) {
             grade_tree::category_grade_last($this->top_element);
