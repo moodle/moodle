@@ -401,8 +401,8 @@ class grade_report_grader extends grade_report {
         $pref_name = 'grade_report_show' . $type;
         $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
 
-        $strshow = get_string('show' . $type, 'grades');
-        $strhide = get_string('hide' . $type, 'grades');
+        $strshow = $this->get_lang_string('show' . $type, 'grades');
+        $strhide = $this->get_lang_string('hide' . $type, 'grades');
 
         $show_hide = 'show';
         $toggle_action = 1;
@@ -440,8 +440,8 @@ class grade_report_grader extends grade_report {
     function get_headerhtml() {
         global $CFG, $USER;
 
-        $strsortasc  = get_string('sortasc', 'grades');
-        $strsortdesc = get_string('sortdesc', 'grades');
+        $strsortasc  = $this->get_lang_string('sortasc', 'grades');
+        $strsortdesc = $this->get_lang_string('sortdesc', 'grades');
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
                 $lastarrow = print_arrow('up', $strsortasc, true);
@@ -528,10 +528,10 @@ class grade_report_grader extends grade_report {
 
                     if ($object->itemtype == 'mod') {
                         $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
-                              .get_string('modulename', $object->itemmodule).'"/>';
+                              .$this->get_lang_string('modulename', $object->itemmodule).'"/>';
                     } else if ($object->itemtype == 'manual') {
                         //TODO: add manual grading icon
-                        $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades')
+                        $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.$this->get_lang_string('manualgrade', 'grades')
                               .'"/>';
                     }
 
@@ -559,9 +559,23 @@ class grade_report_grader extends grade_report {
     function get_studentshtml() {
         global $CFG, $USER;
         $studentshtml = '';
-        $strfeedback = get_string("feedback");
+        $strfeedback = $this->get_lang_string("feedback");
         $gradetabindex = 1;
         $feedbacktabindex = 16380; // The maximum number of tabindices on 1 page is 32767
+
+        // Preload scale objects for items with a scaleid
+        $scales_list = '';
+        foreach ($this->items as $item) {
+            if (!empty($item->scaleid)) {
+                $scales_list .= "$item->scaleid,";
+            }
+        }
+        $scales_array = array();
+
+        if (!empty($scales_list)) {
+            $scales_list = substr($scales_list, 0, -1);
+            $scales_array = get_records_list('scale', 'id', $scales_list);
+        }
 
         foreach ($this->users as $userid => $user) {
             // Student name and link
@@ -594,8 +608,8 @@ class grade_report_grader extends grade_report {
 
                 // Do not show any icons if no grade (no record in DB to match)
                 // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
-                if (!empty($grade->id)) {
-                    $studentshtml .= $this->get_icons($element);
+                if (!empty($grade->id) && $USER->gradeediting) {
+                    $studentshtml .= $this->get_icons($element, null, true, $item);
                 }
 
                 // if in editting mode, we need to print either a text box
@@ -606,31 +620,31 @@ class grade_report_grader extends grade_report {
                     // We need to retrieve each grade_grade object from DB in order to
                     // know if they are hidden/locked
 
-                    if ($item->scaleid) {
-                        if ($scale = get_record('scale', 'id', $item->scaleid)) {
+                    if ($item->scaleid && !empty($scales_array[$item->scaleid])) {
+                        $scale = $scales_array[$item->scaleid];
+
+                        $scales = explode(",", $scale->scale);
+                        // reindex because scale is off 1
+                        $i = 0;
+                        foreach ($scales as $scaleoption) {
+                            $i++;
+                            $scaleopt[$i] = $scaleoption;
+                        }
+
+                        if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                            $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
+                                                          $gradeval, $this->get_lang_string('nograde'), '', -1, true, false, $gradetabindex++);
+                        } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
-                            // reindex because scale is off 1
-                            $i = 0;
-                            foreach ($scales as $scaleoption) {
-                                $i++;
-                                $scaleopt[$i] = $scaleoption;
-                            }
 
-                            if ($this->get_pref('quickgrading') and $grade->is_editable()) {
-                                $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                              $gradeval, get_string('nograde'), '', -1, true, false, $gradetabindex++);
-                            } elseif ($scale = get_record('scale', 'id', $item->scaleid)) {
-                                $scales = explode(",", $scale->scale);
-
-                                // invalid grade if gradeval < 1
-                                if ((int) $gradeval < 1) {
-                                    $studentshtml .= '-';
-                                } else {
-                                    $studentshtml .= $scales[$gradeval-1];
-                                }
+                            // invalid grade if gradeval < 1
+                            if ((int) $gradeval < 1) {
+                                $studentshtml .= '-';
                             } else {
-                                // no such scale, throw error?
+                                $studentshtml .= $scales[$gradeval-1];
                             }
+                        } else {
+                            // no such scale, throw error?
                         }
 
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) {
@@ -666,18 +680,15 @@ class grade_report_grader extends grade_report {
 
                     // finalgrades[$userid][$itemid] could be null because of the outer join
                     // in this case it's different than a 0
-                    if ($item->scaleid) {
-                        if ($scale = get_record('scale', 'id', $item->scaleid)) {
-                            $scales = explode(",", $scale->scale);
+                    if ($item->scaleid && !empty($scales_array[$item->scaleid])) {
+                        $scale = $scales_array[$item->scaleid];
+                        $scales = explode(",", $scale->scale);
 
-                            // invalid grade if gradeval < 1
-                            if ((int) $gradeval < 1) {
-                                $studentshtml .= '-';
-                            } else {
-                                $studentshtml .= $scales[$gradeval-1];
-                            }
+                        // invalid grade if gradeval < 1
+                        if ((int) $gradeval < 1) {
+                            $studentshtml .= '-';
                         } else {
-                            // no such scale, throw error?
+                            $studentshtml .= $scales[$gradeval-1];
                         }
                     } else {
                         if (is_null($gradeval)) {
@@ -795,7 +806,7 @@ class grade_report_grader extends grade_report {
     function get_scalehtml() {
         $scalehtml = '';
         if ($this->get_pref('showscales')) {
-            $scalehtml = '<tr><td>'.get_string('range','grades').'</td>';
+            $scalehtml = '<tr><td>'.$this->get_lang_string('range','grades').'</td>';
             foreach ($this->items as $item) {
                 $scalehtml .= '<td>'. $this->get_grade_clean($item->grademin).'-'. $this->get_grade_clean($item->grademax).'</td>';
             }
@@ -812,29 +823,34 @@ class grade_report_grader extends grade_report {
      * @param object $object
      * @param array $icons An array of icon names that this function is explicitly requested to print, regardless of settings
      * @param bool $limit If true, use the $icons array as the only icons that will be printed. If false, use it to exclude these icons.
+     * @param object $parent_object An optional parent object (like grade_item if $element is grade_grades)
+     *                              that can be checked for hidden or locked status
      * @return string HTML
      */
-    function get_icons($element, $icons=null, $limit=true) {
+    function get_icons($element, $icons=null, $limit=true, $parent_object=null) {
         global $CFG;
         global $USER;
 
+        // If no parent object is given, we need to let the element load its parent object to get hidden, locked and editable status
+        $check_parent = empty($parent_object);
+
         // Load language strings
-        $stredit           = get_string("edit");
-        $streditcalculation= get_string("editcalculation", 'grades');
-        $strfeedback       = get_string("feedback");
-        $strmove           = get_string("move");
-        $strmoveup         = get_string("moveup");
-        $strmovedown       = get_string("movedown");
-        $strmovehere       = get_string("movehere");
-        $strcancel         = get_string("cancel");
-        $stredit           = get_string("edit");
-        $strdelete         = get_string("delete");
-        $strhide           = get_string("hide");
-        $strshow           = get_string("show");
-        $strlock           = get_string("lock", 'grades');
-        $strswitch_minus   = get_string("contract", 'grades');
-        $strswitch_plus    = get_string("expand", 'grades');
-        $strunlock         = get_string("unlock", 'grades');
+        $stredit           = $this->get_lang_string("edit");
+        $streditcalculation= $this->get_lang_string("editcalculation", 'grades');
+        $strfeedback       = $this->get_lang_string("feedback");
+        $strmove           = $this->get_lang_string("move");
+        $strmoveup         = $this->get_lang_string("moveup");
+        $strmovedown       = $this->get_lang_string("movedown");
+        $strmovehere       = $this->get_lang_string("movehere");
+        $strcancel         = $this->get_lang_string("cancel");
+        $stredit           = $this->get_lang_string("edit");
+        $strdelete         = $this->get_lang_string("delete");
+        $strhide           = $this->get_lang_string("hide");
+        $strshow           = $this->get_lang_string("show");
+        $strlock           = $this->get_lang_string("lock", 'grades');
+        $strswitch_minus   = $this->get_lang_string("contract", 'grades');
+        $strswitch_plus    = $this->get_lang_string("expand", 'grades');
+        $strunlock         = $this->get_lang_string("unlock", 'grades');
 
         // Prepare container div
         $html = '<div class="grade_icons">';
@@ -861,7 +877,7 @@ class grade_report_grader extends grade_report {
 
         // Prepare image strings
         $edit_icon = '';
-        if ($object->is_editable()) {
+        if ((!$check_parent && $parent_object->is_editable()) || $object->is_editable($parent_object)) {
             if ($type == 'category') {
                 $edit_icon = '<a href="'. GRADE_EDIT_URL . '/category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
@@ -890,7 +906,9 @@ class grade_report_grader extends grade_report {
 
         // Prepare Hide/Show icon state
         $hide_show = 'hide';
-        if ($object->is_hidden()) {
+        if (!$check_parent && $parent_object->is_hidden()) {
+            $hide_show = 'show';
+        } elseif ($object->is_hidden($parent_object)) {
             $hide_show = 'show';
         }
 
@@ -901,7 +919,7 @@ class grade_report_grader extends grade_report {
 
         // Prepare lock/unlock string
         $lock_unlock = 'lock';
-        if ($object->is_locked()) {
+        if ((!$check_parent && $parent_object->is_locked()) || $object->is_locked($parent_object)) {
             $lock_unlock = 'unlock';
         }
 

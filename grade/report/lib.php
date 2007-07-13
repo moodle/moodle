@@ -61,6 +61,12 @@ class grade_report {
     var $page;
 
     /**
+     * Array of cached language strings (using get_string() all the time takes a long time!).
+     * @var array $lang_strings
+     */
+    var $lang_strings = array();
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param string $context
@@ -143,7 +149,7 @@ class grade_report {
 
                 } else { // Print confirmation dialog
                     $eid = $element['eid'];
-                    $strdeletecheckfull = get_string('deletecheck', '', $element['object']->get_name());
+                    $strdeletecheckfull = $this->get_lang_string('deletecheck', '', $element['object']->get_name());
                     $linkyes = GRADE_EDIT_URL . "/tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
                     $linkno = GRADE_EDIT_URL . "/tree.php?$this->gtree->commonvars";
                     notice_yesno($strdeletecheckfull, $linkyes, $linkno);
@@ -192,7 +198,7 @@ class grade_report {
         } else {
             // decimal points as specified by user
             $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
-            $gradeval = number_format($gradeval, $decimals, get_string('decpoint', 'langconfig'), get_string('thousandsep', 'langconfig'));
+            $gradeval = number_format($gradeval, $decimals, $this->get_lang_string('decpoint', 'langconfig'), $this->get_lang_string('thousandsep', 'langconfig'));
         }
 
         return $gradeval;
@@ -217,8 +223,8 @@ class grade_report {
      */
     function format_grade($gradeval) {
 
-        $decimalpt = get_string('decpoint', 'langconfig');
-        $thousandsep = get_string('thousandsep', 'langconfig');
+        $decimalpt = $this->get_lang_string('decpoint', 'langconfig');
+        $thousandsep = $this->get_lang_string('thousandsep', 'langconfig');
         // replace decimal point with '.';
         $gradeval = str_replace($decimalpt, '.', $gradeval);
         // thousand separator is not useful
@@ -226,6 +232,21 @@ class grade_report {
 
         return clean_param($gradeval, PARAM_NUMBER);
     }
+
+    /**
+     * First checks the cached language strings, then returns match if found, or uses get_string()
+     * to get it from the DB, caches it then returns it.
+     * @param string $strcode
+     * @param string $section Optional language section
+     * @return string
+     */
+    function get_lang_string($strcode, $section=null) {
+        if (empty($this->lang_strings[$strcode])) {
+            $this->lang_strings[$strcode] = get_string($strcode, $section);
+        }
+        return $this->lang_strings[$strcode];
+    }
+
 
 }
 ?>
