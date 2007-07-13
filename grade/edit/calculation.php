@@ -1,7 +1,7 @@
 <?php  //$Id$
 require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once 'edit_calculation_form.php';
+require_once 'calculation_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = required_param('id', PARAM_INT);
@@ -26,7 +26,7 @@ if (!$grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$course->id)))
 // module items and items without grade can not have calculation
 if ($grade_item->is_normal_item() or ($grade_item->gradetype != GRADE_TYPE_VALUE and $grade_item->gradetype != GRADE_TYPE_SCALE)) {
     redirect($returnurl, get_string('erornocalculationallowed', 'grades')); //TODO: localize
-} 
+}
 
 $mform = new edit_calculation_form();
 

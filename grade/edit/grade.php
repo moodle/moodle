@@ -2,7 +2,7 @@
 
 require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once 'edit_grade_form.php';
+require_once 'grade_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT); // grade_grades id

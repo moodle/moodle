@@ -1,7 +1,7 @@
 <?php  //$Id$
 require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once 'edit_item_form.php';
+require_once 'item_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
@@ -16,7 +16,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-$returnurl = 'edit_tree.php?id='.$course->id;
+$returnurl = 'tree.php?id='.$course->id;
 
 $mform = new edit_item_form();
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {

@@ -2,7 +2,7 @@
 
 require_once '../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
-require_once 'edit_category_form.php';
+require_once 'category_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
@@ -17,7 +17,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-$returnurl = 'edit_tree.php?id='.$course->id;
+$returnurl = 'tree.php?id='.$course->id;
 
 
 $mform = new edit_category_form();
