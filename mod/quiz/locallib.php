@@ -88,7 +88,7 @@ function quiz_create_attempt($quiz, $attemptnumber) {
  * @return mixed the unfinished attempt if there is one, false if not.
  */
 function quiz_get_user_attempt_unfinished($quizid, $userid) {
-    $attempts = quiz_get_user_attempts($quizid, $userid, 'unfinished');
+    $attempts = quiz_get_user_attempts($quizid, $userid, 'unfinished', true);
     if ($attempts) {
         return array_shift($attempts);
     } else {
@@ -102,14 +102,18 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
  */
-function quiz_get_user_attempts($quizid, $userid, $status = 'finished') {
+function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
     $status_condition = array(
         'all' => '',
         'finished' => ' AND timefinish > 0',
         'unfinished' => ' AND timefinish = 0'
     );
+    $previewclause = '';
+    if (!$includepreviews) {
+        $previewclause = ' AND preview = 0';
+    }
     if ($attempts = get_records_select('quiz_attempts',
-            "quiz = '$quizid' AND userid = '$userid' AND preview = 0" . $status_condition[$status],
+            "quiz = '$quizid' AND userid = '$userid'" . $previewclause . $status_condition[$status],
             'attempt ASC')) {
         return $attempts;
     } else {
