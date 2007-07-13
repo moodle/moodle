@@ -142,6 +142,8 @@ class grade_report_grader extends grade_report {
 
             // Pre-process grade
             if ($data_type == 'grade') {
+                $feedback = false;
+                $feedbackformat = false;
                 if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
                     if ($postedvalue == -1) { // -1 means no grade
                         $finalgrade = null;
@@ -155,7 +157,6 @@ class grade_report_grader extends grade_report {
                         $finalgrade = $this->format_grade($postedvalue);
                     }
                 }
-
                 if (!is_null($finalgrade) and ($finalgrade < $grade_item->grademin or $finalgrade > $grade_item->grademax)) {
                     $this->gradeserror[$grade_item->id][$userid] = 'outofrange'; //TODO: localize
                     // another possiblity is to use bounded number instead
@@ -163,6 +164,7 @@ class grade_report_grader extends grade_report {
                 }
 
             } else if ($data_type == 'feedback') {
+                $finalgrade = false;
                 $trimmed = trim($postedvalue);
                 if (empty($trimmed)) {
                     $postedvalue = NULL;
@@ -172,7 +174,6 @@ class grade_report_grader extends grade_report {
             // Get the grade object to compare old value with new value
             if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
                 if ($data_type == 'feedback') {
-                    $finalgrade = false;
                     if ($text = $grade->load_text()) {
                         if ($text->feedback !== $postedvalue) {
                             $feedback       = $postedvalue;
@@ -186,8 +187,6 @@ class grade_report_grader extends grade_report {
                     }
 
                 } else if ($data_type == 'grade') {
-                    $feedback = false;
-                    $feedbackformat = false;
                     if (!is_null($grade->finalgrade)) {
                         $grade->finalgrade = (float)$grade->finalgrade;
                     }
@@ -195,7 +194,8 @@ class grade_report_grader extends grade_report {
                         $needsupdate = true;
                     }
                 }
-
+            } else { // The grade_grades record doesn't yet exist
+                $needsupdate = true;
             }
 
             // we must not update all grades, only changed ones - we do not want to mark everything as overriden
