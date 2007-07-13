@@ -340,7 +340,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     // this is slower, but 100% accurate - this function is called only when there is
     // a change in grading setup, update of individual grade does not trigger this function
     foreach ($grade_items as $gid=>$gitem) {
-        if (!empty($updated_item) and $updated_item->id = $gid) {
+        if (!empty($updated_item) and $updated_item->id == $gid) {
             $grade_items[$gid]->needsupdate = 1;
 
         } else if ($grade_items[$gid]->is_category_item() or $grade_items[$gid]->is_calculated()) {
