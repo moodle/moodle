@@ -318,11 +318,17 @@
             echo "<div class=\"quizattempt\">";
 
             if ($unfinished) {
-                $buttontext = get_string('continueattemptquiz', 'quiz');
+                if (has_capability('mod/quiz:preview', $context)) {
+                    $buttontext = get_string('continuepreview', 'quiz');
+                } else {
+                    $buttontext = get_string('continueattemptquiz', 'quiz');
+                }
             } else {
 
                 // Work out the appropriate button caption.
-                if ($numattempts == 0) {
+                if (has_capability('mod/quiz:preview', $context)) {
+                    $buttontext = get_string('previewquiznow', 'quiz');
+                } else if ($numattempts == 0) {
                     $buttontext = get_string('attemptquiznow', 'quiz');
                 } else {
                     $buttontext = get_string('reattemptquiz', 'quiz');

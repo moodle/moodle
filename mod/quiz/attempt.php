@@ -167,8 +167,7 @@
         set_field('quiz_attempts', 'timefinish', $timestamp, 'quiz', $quiz->id, 'userid', $USER->id);
     }
 
-    $attempt = get_record('quiz_attempts', 'quiz', $quiz->id,
-     'userid', $USER->id, 'timefinish', 0);
+    $attempt = quiz_get_user_attempt_unfinished($quiz->id, $USER->id);
 
     $newattempt = false;
     if (!$attempt) {
