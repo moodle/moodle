@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070714" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070715" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1065,7 +1065,7 @@
         <INDEX NAME="hostid_remoteid" UNIQUE="true" FIELDS="hostid, remoteid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="mnet_enrol_assignments" COMMENT="Information about enrolments on courses on remote hosts" PREVIOUS="mnet_enrol_course" NEXT="mnet_host">
+    <TABLE NAME="mnet_enrol_assignments" COMMENT="Information about enrolments on courses on remote hosts" PREVIOUS="mnet_enrol_course" NEXT="mnet_application">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique enrollment ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of user on *this* server" PREVIOUS="id" NEXT="hostid"/>
@@ -1083,7 +1083,19 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="hostid_courseid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="mnet_host" COMMENT="Information about the local and remote hosts for RPC" PREVIOUS="mnet_enrol_assignments" NEXT="mnet_host2service">
+    <TABLE NAME="mnet_application" COMMENT="Information about applications on remote hosts" PREVIOUS="mnet_enrol_assignments" NEXT="mnet_host">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="display_name"/>
+        <FIELD NAME="display_name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="xmlrpc_server_url"/>
+        <FIELD NAME="xmlrpc_server_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="display_name" NEXT="sso_land_url"/>
+        <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for mnet_application"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="mnet_host" COMMENT="Information about the local and remote hosts for RPC" PREVIOUS="mnet_application" NEXT="mnet_host2service">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique Host ID" NEXT="deleted"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="wwwroot"/>
@@ -1099,7 +1111,8 @@
         <FIELD NAME="applicationid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_log_id"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host table"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host table" NEXT="applicationid"/>
+        <KEY NAME="applicationid" TYPE="foreign" FIELDS="applicationid" REFTABLE="mnet_application" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="mnet_host2service" COMMENT="Information about the services for a given host" PREVIOUS="mnet_host" NEXT="mnet_log">
@@ -1202,7 +1215,7 @@
         <INDEX NAME="token" UNIQUE="true" FIELDS="token"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="mnet_sso_access_control" COMMENT="Users by host permitted (or not) to login from a remote provider" PREVIOUS="mnet_session" NEXT="mnet_application">
+    <TABLE NAME="mnet_sso_access_control" COMMENT="Users by host permitted (or not) to login from a remote provider" PREVIOUS="mnet_session" NEXT="events_queue">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="" SEQUENCE="false" ENUM="false" COMMENT="Username" PREVIOUS="id" NEXT="mnet_host_id"/>
@@ -1216,19 +1229,7 @@
         <INDEX NAME="mnethostid_username" UNIQUE="true" FIELDS="mnet_host_id, username"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="mnet_application" COMMENT="Information about applications on remote hosts" PREVIOUS="mnet_sso_access_control" NEXT="events_queue">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="display_name"/>
-        <FIELD NAME="display_name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="xmlrpc_server_url"/>
-        <FIELD NAME="xmlrpc_server_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="display_name" NEXT="sso_land_url"/>
-        <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for mnet_application"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="mnet_application" NEXT="events_handlers">
+    <TABLE NAME="events_queue" COMMENT="This table is for storing queued events. It stores only one copy of the eventdata here, and entries from this table are being references by the event_queue_handlers table." PREVIOUS="mnet_sso_access_control" NEXT="events_handlers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="eventdata"/>
         <FIELD NAME="eventdata" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="serialized version of the data object passed to the event handler." PREVIOUS="id" NEXT="stackdump"/>
