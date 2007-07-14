@@ -18,6 +18,7 @@ class mnet_peer {
     var $public_key_expires = 0;
     var $last_connect_time  = 0;
     var $last_log_id        = 0;
+    var $applicationid      = 1; // Default of 1 == Moodle
     var $keypair            = array();
     var $error              = array();
 
@@ -25,7 +26,7 @@ class mnet_peer {
         return true;
     }
 
-    function bootstrap($wwwroot, $pubkey = null) {
+    function bootstrap($wwwroot, $pubkey = null, $application) {
 
         if (substr($wwwroot, -1, 1) == '/') {
             $wwwroot = substr($wwwroot, 0, -1);
@@ -59,8 +60,16 @@ class mnet_peer {
             $this->wwwroot              = $wwwroot;
             $this->ip_address           = $ip_address;
             $this->deleted              = 0;
+
+            $this->application = get_record('mnet_application', 'name', $application);
+            if (empty($this->application)) {
+                $this->application = get_record('mnet_application', 'name', 'moodle');
+            }
+
+            $this->applicationid = $this->application->id;
+
             if(empty($pubkey)) {
-                $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot), PARAM_PEM);
+                $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot, $this->application), PARAM_PEM);
             } else {
                 $this->public_key           = clean_param($pubkey, PARAM_PEM);
             }
@@ -155,6 +164,7 @@ class mnet_peer {
         $obj->deleted               = $this->deleted;
         $obj->last_connect_time     = $this->last_connect_time;
         $obj->last_log_id           = $this->last_log_id;
+        $obj->applicationid         = $this->applicationid;
 
         if (isset($this->id) && $this->id > 0) {
             $obj->id = $this->id;
@@ -173,6 +183,14 @@ class mnet_peer {
     function set_name($newname) {
         if (is_string($newname) && strlen($newname <= 80)) {
             $this->name = $newname;
+            return true;
+        }
+        return false;
+    }
+
+    function set_applicationid($applicationid) {
+        if (is_numeric($applicationid) && $applicationid == intval($applicationid)) {
+            $this->applicationid = $applicationid;
             return true;
         }
         return false;
@@ -231,6 +249,8 @@ class mnet_peer {
         $this->public_key_expires   = $hostinfo->public_key_expires;
         $this->last_connect_time    = $hostinfo->last_connect_time;
         $this->last_log_id          = $hostinfo->last_log_id;
+        $this->applicationid        = $hostinfo->applicationid;
+        $this->application = get_record('mnet_application', 'id', $this->applicationid);
     }
 
     function get_public_key() {

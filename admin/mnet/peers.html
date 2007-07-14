@@ -78,7 +78,15 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
             <tr>
                 <td class="cell c0"></td>
                 <td class="cell c1"><input type="text" name="wwwroot" value="" /></td>
-                <td class="cell c2"></td>
+                <td class="cell c2">
+                    <select name="applicationid">
+<?php
+                foreach($applications as $application) {
+                    echo '                <option value="'.$application->id.'">'.$application->display_name."</option>\n";
+                }
+?>
+                    </select>
+                </td>
                 <td class="cell c3"></td>
             </tr>
             <tr>

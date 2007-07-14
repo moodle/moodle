@@ -80,9 +80,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 exit;
             }
             unset($temp_wwwroot);
-            $mnet_peer->bootstrap($form->wwwroot);
+            $mnet_peer->set_applicationid($form->applicationid);
+            $application = get_field('mnet_application', 'name', 'id', $form->applicationid);
+            $mnet_peer->bootstrap($form->wwwroot, null, $application);
         }
-    
+
         if (isset($form->name) && $form->name != $mnet_peer->name) {
             $form->name = clean_param($form->name, PARAM_NOTAGS);
             $mnet_peer->set_name($form->name);
@@ -134,7 +136,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 } elseif (is_int($hostid)) {
     $mnet_peer = new mnet_peer();
     $mnet_peer->set_id($hostid);
-    $currentkey = mnet_get_public_key($mnet_peer->wwwroot);
+    $currentkey = mnet_get_public_key($mnet_peer->wwwroot, $mnet_peer->application);
     if($currentkey == $mnet_peer->public_key) unset($currentkey);
     $form = new stdClass();
     if ($hostid != $CFG->mnet_all_hosts_id) {
@@ -143,8 +145,31 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         include('./mnet_review_allhosts.html');
     }
 } else {
-    $hosts = get_records_select('mnet_host', " id != '{$CFG->mnet_localhost_id}' AND deleted = '0' ",'wwwroot ASC' );
+    $hosts = get_records_sql('  SELECT 
+                                    h.id, 
+                                    h.wwwroot, 
+                                    h.ip_address, 
+                                    h.name, 
+                                    h.public_key, 
+                                    h.public_key_expires, 
+                                    h.transport, 
+                                    h.portno, 
+                                    h.last_connect_time, 
+                                    h.last_log_id, 
+                                    h.applicationid, 
+                                    a.name as app_name, 
+                                    a.display_name as app_display_name, 
+                                    a.xmlrpc_server_url
+                                FROM  
+                                    '.$CFG->prefix.'mnet_host h,  
+                                    '.$CFG->prefix.'mnet_application a  
+                                WHERE 
+                                    h.id != \''.$CFG->mnet_localhost_id.'\' AND  
+                                    h.deleted = \'0\' AND  
+                                    h.applicationid=a.id');
+
     if (empty($hosts)) $hosts = array();
+    $applications = get_records('mnet_application');
     include('./peers.html');
 }
 ?>

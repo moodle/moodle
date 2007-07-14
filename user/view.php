@@ -178,9 +178,30 @@
     include('tabs.php');
 
     if (is_mnet_remote_user($user)) {
-        echo "<p class=\"errorboxcontent\">This profile is for a remote user from another Moodle system. <br />\n";
-        $remotehost = get_record('mnet_host', 'id', $user->mnethostid);
-        echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
+        $sql = "
+             SELECT DISTINCT 
+                 h.id, 
+                 h.name,
+                 a.name as application,
+                 a.display_name
+             FROM 
+                 {$CFG->prefix}mnet_host h,
+                 {$CFG->prefix}mnet_application a
+             WHERE
+                 h.id = '{$user->mnethostid}' AND
+                 h.applicationid = a.id
+             ORDER BY
+                 a.display_name,
+                 h.name";
+
+        $remotehost = get_record_sql($sql);
+        
+        echo '<p class="errorboxcontent">'.get_string('remote'.$remotehost->application.'user')." <br />\n";
+        if ($remotehost->application =='moodle') {
+            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
+        } else {
+            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a> ".get_string('gotoyourserver')." </p>\n";
+        }
     }
 
     echo '<table width="80%" class="userinfobox" summary="">';

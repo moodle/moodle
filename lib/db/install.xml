@@ -1071,7 +1071,8 @@
         <FIELD NAME="transport" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="public_key_expires" NEXT="portno"/>
         <FIELD NAME="portno" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="transport" NEXT="last_connect_time"/>
         <FIELD NAME="last_connect_time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="portno" NEXT="last_log_id"/>
-        <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time"/>
+        <FIELD NAME="last_log_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_connect_time" NEXT="applicationid"/>
+        <FIELD NAME="applicationid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="last_log_id"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the mnet_host table"/>
@@ -1564,9 +1565,27 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="mnet_application" COMMENT="mnet_application table retrofitted from MySQL" PREVIOUS="grade_import_newitem">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="display_name"/>
+        <FIELD NAME="display_name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="xmlrpc_server_url"/>
+        <FIELD NAME="xmlrpc_server_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="display_name" NEXT="sso_land_url"/>
+        <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for mnet_application"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
   <STATEMENTS>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
+    <STATEMENT NAME="insert mnet_application" TYPE="insert" TABLE="mnet_application" COMMENT="Initial insert of records on table mnet_application" NEXT="insert log_display">
+      <SENTENCES>
+        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('moodle','Moodle','/mnet/xmlrpc/server.php', '/auth/mnet/land.php')" />
+        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php')" />
+      </SENTENCES>
+    </STATEMENT>
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application">
       <SENTENCES>
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />

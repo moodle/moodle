@@ -124,8 +124,7 @@ class mnet_xmlrpc_client {
     function send($mnet_peer) {
         global $CFG, $MNET;
 
-        $this->uri = $mnet_peer->wwwroot.
-               '/mnet/xmlrpc/server.php';
+        $this->uri = $mnet_peer->wwwroot.$mnet_peer->application->xmlrpc_server_url;
 
         // Initialize with the target URL
         $ch = curl_init($this->uri);

@@ -45,7 +45,7 @@ function mnet_get_hostname_from_uri($uri = null) {
  *                          its http:// or https:// prefix
  * @return string           A PEM formatted SSL Certificate.
  */
-function mnet_get_public_key($uri) {
+function mnet_get_public_key($uri, $application=null) {
     global $CFG, $MNET;
     // The key may be cached in the mnet_set_public_key function...
     // check this first
@@ -54,8 +54,12 @@ function mnet_get_public_key($uri) {
         return $key;
     }
 
-    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key), array("encoding" => "utf-8"));
-    $ch = curl_init($uri.'/mnet/xmlrpc/server.php');
+    if (empty($application)) {
+        $application = get_record('mnet_application', 'name', 'moodle');
+    }
+
+    $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key, $application->name), array("encoding" => "utf-8"));
+    $ch = curl_init($uri . $application->xmlrpc_server_url);
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

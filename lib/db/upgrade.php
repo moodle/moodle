@@ -1445,6 +1445,61 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch rename field rawgrade
         $result = $result && rename_field($table, $field, 'finalgrade');
     }
+
+    if ($result && $oldversion < 2007071400) {
+        $table = new XMLDBTable('mnet_host');
+        $field = new XMLDBField('applicationid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'last_log_id');
+
+        $result = $result && add_field($table, $field);
+
+        /**
+         ** mnet application table
+         **/
+        $table = new XMLDBTable('mnet_application');
+        $table->comment = 'Information about applications on remote hosts';
+        $f = $table->addFieldInfo('id',         XMLDB_TYPE_INTEGER,  '10', false,
+                                  XMLDB_NOTNULL,XMLDB_SEQUENCE, null, null, null);
+        $f = $table->addFieldInfo('name',  XMLDB_TYPE_CHAR,  '50', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('display_name',  XMLDB_TYPE_CHAR,  '50', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('xmlrpc_server_url',  XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+        $f = $table->addFieldInfo('sso_land_url',  XMLDB_TYPE_CHAR,  '255', null,
+                                  XMLDB_NOTNULL, NULL, null, null, null);
+
+        // PK and indexes
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        // Create the table
+        $result = $result && create_table($table);
+
+        $table = new XMLDBTable('mnet_host');
+        $field = new XMLDBField('applicationid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '255', null, XMLDB_NOTNULL, null, null, null, '', 'xmlrpc_server_url');
+        $result = $result && add_field($table, $field);
+
+        $application = new stdClass();
+        $application->name                = 'moodle';
+        $application->display_name        = 'Moodle';
+        $application->xmlrpc_server_url   = '/mnet/xmlrpc/server.php';
+        $application->sso_land_url        = '/auth/mnet/land.php';
+        if ($result) {
+            $newid  = insert_record('mnet_application', $application, false);
+            $result = set_field('mnet_host', 'applicationid', $newid);
+        }
+
+        $application = new stdClass();
+        $application->name                = 'mahara';
+        $application->display_name        = 'Mahara';
+        $application->xmlrpc_server_url   = '/api/xmlrpc/server.php';
+        $application->sso_land_url        = '/auth/xmlrpc/land.php';
+        $result = $result && insert_record('mnet_application', $application, false);
+        
+    }
+
+
+
     return $result;
 }
 ?>

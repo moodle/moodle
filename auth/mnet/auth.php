@@ -225,7 +225,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         // construct the redirection URL
         //$transport = mnet_get_protocol($mnet_peer->transport);
         $wantsurl = urlencode($wantsurl);
-        $url = "{$mnet_peer->wwwroot}/auth/mnet/land.php?token={$mnet_session->token}&idp={$MNET->wwwroot}&wantsurl={$wantsurl}";
+        $url = "{$mnet_peer->wwwroot}{$mnet_peer->application->sso_land_url}?token={$mnet_session->token}&idp={$MNET->wwwroot}&wantsurl={$wantsurl}";
 
         return $url;
     }
@@ -338,6 +338,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                         if (strlen($fetchrequest->response['f1']) > 0) {
                             $imagecontents = base64_decode($fetchrequest->response['f1']);
                             file_put_contents($filename, $imagecontents);
+                            $localuser->picture = 1;
                         }
                         if (strlen($fetchrequest->response['f2']) > 0) {
                             $imagecontents = base64_decode($fetchrequest->response['f2']);

@@ -21,6 +21,12 @@ require_once $CFG->dirroot.'/mnet/remote_client.php';
 // Content type for output is not html:
 header('Content-type: text/xml; charset=utf-8');
 
+// PHP 5.2.2: $HTTP_RAW_POST_DATA not populated bug:
+// http://bugs.php.net/bug.php?id=41293
+if (empty($HTTP_RAW_POST_DATA)) {
+    $HTTP_RAW_POST_DATA = file_get_contents('php://input');
+}
+
 if (!empty($CFG->mnet_rpcdebug)) {
     trigger_error("HTTP_RAW_POST_DATA");
     trigger_error($HTTP_RAW_POST_DATA);
@@ -205,7 +211,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
             $MNET_REMOTE_CLIENT->touch();
             // Parse the XML
         } elseif ($signature_verified == 0) {
-            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot);
+            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application->xmlrpc_server_url);
             if($currkey != $certificate) {
                 // Has the server updated its certificate since our last 
                 // handshake?
@@ -270,11 +276,11 @@ function mnet_server_fault_xml($code, $text) {
             <member>
                <name>faultString</name>
                <value><string>'.$text.'</string></value>
-               </member>
-            </struct>
-         </value>
-      </fault>
-   </methodResponse>');
+            </member>
+         </struct>
+      </value>
+   </fault>
+</methodResponse>');
 
     if (!empty($CFG->mnet_rpcdebug)) {
         trigger_error("XMLRPC Error Response");
@@ -727,7 +733,8 @@ function mnet_keyswap($function, $params) {
 
     if (!empty($CFG->mnet_register_allhosts)) {
         $mnet_peer = new mnet_peer();
-        $keyok = $mnet_peer->bootstrap($params[0], $params[1]);
+        @list($wwwroot, $pubkey, $application) = each($params);
+        $keyok = $mnet_peer->bootstrap($wwwroot, $pubkey, $application);
         if ($keyok) {
             $mnet_peer->commit();
         }

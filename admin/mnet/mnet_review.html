@@ -10,7 +10,9 @@ admin_externalpage_print_header();
 if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
     $tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
     $tabs[] = new tabobject('mnetservices', 'mnet_services.php?step=list&amp;hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
-    $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
+    if ($mnet_peer->application->name == 'moodle') {
+        $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
+    }
 } else {
     $tabs[] = new tabobject('mnetdetails', '#', $strmnetedithost, $strmnetedithost, false);
 }
@@ -24,6 +26,8 @@ print_simple_box_start("center", "");
 <input type="hidden" name="step" value="commit" />
 <input type="hidden" name="last_connect_time" value="<?php echo $mnet_peer->last_connect_time; ?>" />
 <input type="hidden" name="id" value="<?php echo isset($mnet_peer->id)?  $mnet_peer->id : '0' ; ?>" />
+<input type="hidden" name="applicationid" value="<?php echo isset($mnet_peer->applicationid)?  $mnet_peer->applicationid : '0' ; ?>" />
+<input type="hidden" name="applicationname" value="<?php echo isset($mnet_peer->application->name)?  $mnet_peer->application->name : '' ; ?>" />
 <table cellpadding="9" cellspacing="0" width="635">
 
 <tr>
@@ -48,7 +52,7 @@ if (empty($mnet_peer->public_key)) $mnet_peer->public_key = '';
 
 
 if (isset($mnet_peer->deleted) && $mnet_peer->deleted > 0) {
-    $key = mnet_get_public_key($mnet_peer->wwwroot);
+    $key = mnet_get_public_key($mnet_peer->wwwroot, $mnet_peer->application->xmlrpc_server_url);
     $mnet_peer->public_key = clean_param($key, PARAM_PEM);
 }
 ?>
