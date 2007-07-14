@@ -198,7 +198,8 @@ class grade_report {
         } else {
             // decimal points as specified by user
             $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
-            $gradeval = number_format($gradeval, $decimals, $this->get_lang_string('decpoint', 'langconfig'), $this->get_lang_string('thousandsep', 'langconfig'));
+            $gradeval = number_format($gradeval, $decimals, $this->get_lang_string('decpoint', 'langconfig'),
+                                      $this->get_lang_string('thousandsep', 'langconfig'));
         }
 
         return $gradeval;
