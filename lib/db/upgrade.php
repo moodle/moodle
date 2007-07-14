@@ -1447,12 +1447,6 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007071400) {
-        $table = new XMLDBTable('mnet_host');
-        $field = new XMLDBField('applicationid');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'last_log_id');
-
-        $result = $result && add_field($table, $field);
-
         /**
          ** mnet application table
          **/
@@ -1474,11 +1468,7 @@ function xmldb_main_upgrade($oldversion=0) {
         // Create the table
         $result = $result && create_table($table);
 
-        $table = new XMLDBTable('mnet_host');
-        $field = new XMLDBField('applicationid');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '255', null, XMLDB_NOTNULL, null, null, null, '', 'xmlrpc_server_url');
-        $result = $result && add_field($table, $field);
-
+        // Insert initial applications (moodle and mahara)
         $application = new stdClass();
         $application->name                = 'moodle';
         $application->display_name        = 'Moodle';
@@ -1486,7 +1476,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $application->sso_land_url        = '/auth/mnet/land.php';
         if ($result) {
             $newid  = insert_record('mnet_application', $application, false);
-            $result = set_field('mnet_host', 'applicationid', $newid);
         }
 
         $application = new stdClass();
@@ -1496,9 +1485,22 @@ function xmldb_main_upgrade($oldversion=0) {
         $application->sso_land_url        = '/auth/xmlrpc/land.php';
         $result = $result && insert_record('mnet_application', $application, false);
         
+        // New mnet_host->applicationid field
+        $table = new XMLDBTable('mnet_host');
+        $field = new XMLDBField('applicationid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, $newid , 'last_log_id');
+
+        $result = $result && add_field($table, $field);
+
+    /// Define key applicationid (foreign) to be added to mnet_host
+        $table = new XMLDBTable('mnet_host');
+        $key = new XMLDBKey('applicationid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('applicationid'), 'mnet_application', array('id'));
+
+    /// Launch add key applicationid
+        $result = $result && add_key($table, $key);
+
     }
-
-
 
     return $result;
 }
