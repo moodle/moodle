@@ -609,7 +609,10 @@ class grade_report_grader extends grade_report {
                 // Do not show any icons if no grade (no record in DB to match)
                 // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
                 if (!empty($grade->id) && $USER->gradeediting) {
-                    $studentshtml .= $this->get_icons($element, null, true, $item);
+                    $states = array('is_hidden' => $item->hidden,
+                                    'is_locked' => $item->locked,
+                                    'is_editable' => $item->gradetype != GRADE_TYPE_NONE && !$grade->locked && !$item->locked);
+                    $studentshtml .= $this->get_icons($element, null, true, $states);
                 }
 
                 // if in editting mode, we need to print either a text box
@@ -823,16 +826,12 @@ class grade_report_grader extends grade_report {
      * @param object $object
      * @param array $icons An array of icon names that this function is explicitly requested to print, regardless of settings
      * @param bool $limit If true, use the $icons array as the only icons that will be printed. If false, use it to exclude these icons.
-     * @param object $parent_object An optional parent object (like grade_item if $element is grade_grades)
-     *                              that can be checked for hidden or locked status
+     * @param object $states An optional array of states (hidden, locked, editable), shortcuts to increase performance.
      * @return string HTML
      */
-    function get_icons($element, $icons=null, $limit=true, $parent_object=null) {
+    function get_icons($element, $icons=null, $limit=true, $states=array()) {
         global $CFG;
         global $USER;
-
-        // If no parent object is given, we need to let the element load its parent object to get hidden, locked and editable status
-        $check_parent = empty($parent_object);
 
         // Load language strings
         $stredit           = $this->get_lang_string("edit");
@@ -860,6 +859,12 @@ class grade_report_grader extends grade_report {
         $object = $element['object'];
         $type   = $element['type'];
 
+        if (empty($states)) {
+            $states['is_hidden'] = $object->is_hidden();
+            $states['is_locked'] = $object->is_locked();
+            $states['is_editable'] = $object->is_editable();
+        }
+
         // Add mock attributes in case the object is not of the right type
         if ($type != 'grade') {
             $object->feedback = '';
@@ -877,7 +882,7 @@ class grade_report_grader extends grade_report {
 
         // Prepare image strings
         $edit_icon = '';
-        if ((!$check_parent && $parent_object->is_editable()) || $object->is_editable($parent_object)) {
+        if ($states['is_editable']) {
             if ($type == 'category') {
                 $edit_icon = '<a href="'. GRADE_EDIT_URL . '/category.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
@@ -886,7 +891,7 @@ class grade_report_grader extends grade_report {
                 $edit_icon = '<a href="'. GRADE_EDIT_URL . '/item.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                            . '<img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            } else if ($type == 'grade' and ($object->is_editable() or empty($object->id))) {
+            } else if ($type == 'grade' and ($states['is_editable'] or empty($object->id))) {
             // TODO: change link to use itemid and userid to allow creating of new grade objects
                 $edit_icon = '<a href="'. GRADE_EDIT_URL . '/grade.php?courseid='.$object->courseid.'&amp;id='.$object->id.'">'
                                  . '<img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
@@ -906,9 +911,7 @@ class grade_report_grader extends grade_report {
 
         // Prepare Hide/Show icon state
         $hide_show = 'hide';
-        if (!$check_parent && $parent_object->is_hidden()) {
-            $hide_show = 'show';
-        } elseif ($object->is_hidden($parent_object)) {
+        if ($states['is_hidden']) {
             $hide_show = 'show';
         }
 
@@ -919,7 +922,7 @@ class grade_report_grader extends grade_report {
 
         // Prepare lock/unlock string
         $lock_unlock = 'lock';
-        if ((!$check_parent && $parent_object->is_locked()) || $object->is_locked($parent_object)) {
+        if ($states['is_locked']) {
             $lock_unlock = 'unlock';
         }
 

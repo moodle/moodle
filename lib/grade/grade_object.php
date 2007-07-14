@@ -132,7 +132,7 @@ class grade_object {
 
         // remove incorrect params - warn developer if needed
         foreach ($params as $var=>$value) {
-            if (!array_key_exists($var, $classvars) or in_array($var, $instance->nonfields)) {
+            if (!in_array($var, array_keys($classvars)) or in_array($var, $instance->nonfields)) {
                 debugging("Incorrect property name $var for class $classname");
                 continue;
             }
@@ -312,7 +312,7 @@ class grade_object {
     function set_properties(&$instance, $params) {
         $classvars = (array)$instance;
         foreach ($params as $var => $value) {
-            if (array_key_exists($var, $classvars)) {
+            if (in_array($var, array_keys($classvars))) {
                 $instance->$var = $value;
             }
         }
