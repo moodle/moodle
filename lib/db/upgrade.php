@@ -908,50 +908,6 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key usermodified
         $result = $result && add_key($table, $key);
     }
-    
-/// merge raw and final grade tables
-    if ($result && $oldversion < 2007062007) {
-
-    /// Define table grade_import_values to be created
-        $table = new XMLDBTable('grade_import_values');
-        if (table_exists($table)) {
-            drop_table($table);
-        }
-
-    /// Adding fields to table grade_import_values
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('newgradeitem', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0.0');
-        $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table grade_import_values
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
-        $table->addKeyInfo('newgradeitem', XMLDB_KEY_FOREIGN, array('newgradeitem'), 'grade_import_newitem', array('id'));
-
-    /// Launch create table for grade_import_values
-        $result = $result && create_table($table);
-
-    /// Define table grade_import_newitem to be created
-        $table = new XMLDBTable('grade_import_newitem');
-        if (table_exists($table)) {
-            drop_table($table);
-        }
-
-    /// Adding fields to table grade_import_newitem
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table grade_import_newitem
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Launch create table for grade_import_newitem
-        $result = $result && create_table($table);
-
-    }
 
 /// clenaup and recreate tables for course grade
     if ($result && $oldversion < 2007063000) {
@@ -1427,24 +1383,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     }
-    
-    if ($result && $oldversion < 2007071300) {
-    /// Define field feedback to be added to grade_import_values
-        $table = new XMLDBTable('grade_import_values');
-        $field = new XMLDBField('feedback');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'rawgrade');
-
-    /// Launch add field feedback
-        $result = $result && add_field($table, $field);
-    
-    /// Rename field rawgrade on table grade_import_values to NEWNAMEGOESHERE
-        $table = new XMLDBTable('grade_import_values');
-        $field = new XMLDBField('rawgrade');
-        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0.0', 'userid');
-
-    /// Launch rename field rawgrade
-        $result = $result && rename_field($table, $field, 'finalgrade');
-    }
 
     if ($result && $oldversion < 2007071400) {
         /**
@@ -1500,6 +1438,53 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add key applicationid
         $result = $result && add_key($table, $key);
 
+    }
+    
+    if ($result && $oldversion < 2007071501) {
+    /// Drop old grade import tables - there are no data, it is for temporary storage only
+        $table = new XMLDBTable('grade_import_newitem');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+        $table = new XMLDBTable('grade_import_values');
+        if (table_exists($table)) {
+            drop_table($table);
+        }
+
+
+    /// Define table grade_import_newitem to be created
+        $table = new XMLDBTable('grade_import_newitem');
+
+    /// Adding fields to table grade_import_newitem
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('itemname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table grade_import_newitem
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Launch create table for grade_import_newitem
+        $result = $result && create_table($table);
+
+    /// Define table grade_import_values to be created
+        $table = new XMLDBTable('grade_import_values');
+
+    /// Adding fields to table grade_import_values
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('newgradeitem', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('finalgrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('feedback', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null);
+        $table->addFieldInfo('import_code', XMLDB_TYPE_INTEGER, '12', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table grade_import_values
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
+        $table->addKeyInfo('newgradeitem', XMLDB_KEY_FOREIGN, array('newgradeitem'), 'grade_import_newitem', array('id'));
+
+    /// Launch create table for grade_import_values
+        $result = $result && create_table($table);
     }
 
     return $result;
