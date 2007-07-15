@@ -47,7 +47,8 @@ function glossary_comment_add() {
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (!$glossary->allowcomments and !has_capability('mod/glossary:comment', $context)) {
+    /// Both the configuration and capability must allow comments
+    if (!$glossary->allowcomments or !has_capability('mod/glossary:comment', $context)) {
         error('You can\'t add comments to this glossary!');
     }
 

@@ -788,7 +788,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
 
-    if (has_capability('mod/glossary:comment', $context)) {
+    if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
         $output = true;
         $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?action=add&amp;eid='.$entry->id.'"><img src="comment.gif" class="iconsmall" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
