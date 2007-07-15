@@ -113,7 +113,7 @@
             print_simple_box_end();
         }
     } else {
-        if (!$glossary->allowcomments && !has_capability('mod/glossary:comment', $context)) {
+        if (!$glossary->allowcomments || !has_capability('mod/glossary:comment', $context)) {
             error('You can\'t add/edit comments to this glossary!');
         }
         if ( $action == 'edit' ) {
