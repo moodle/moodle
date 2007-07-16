@@ -2123,6 +2123,11 @@ body#grade-index .grades .weighted {
   margin-left: 20px;
 }
 
+#grade-report table.gradestable {
+  margin-left:auto;
+  margin-right:auto;
+}
+
 /* gradebook edit tree */
 
 #grade-edit-edit_tree .gradetreebox {

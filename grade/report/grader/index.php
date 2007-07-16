@@ -60,9 +60,8 @@ include('tabs.php');
 echo $report->group_selector;
 echo $report->get_toggles_html();
 print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
-echo '<br />';
 
-$reporthtml = '<table class="boxaligncenter">';
+$reporthtml = '<table class="gradestable">';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_scalehtml();
 $reporthtml .= $report->get_studentshtml();
