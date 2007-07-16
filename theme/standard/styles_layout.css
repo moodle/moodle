@@ -2129,40 +2129,40 @@ body#doc-contents ul {
   padding-bottom:15px;
 }
 
-#grade-edit-edit_tree .buttons {
+#grade-edit-tree .buttons {
   margin: 20px;
   text-align:center;
 }
 
-#grade-edit-edit_tree .buttons .singlebutton {
+#grade-edit-tree .buttons .singlebutton {
   display: inline;
   padding: 5px;
 }
 
 
-#grade-edit-edit_tree .movetarget {
+#grade-edit-tree .movetarget {
   position: relative;
   width: 80px;
   height: 16px;
 }
 
-#grade-edit-edit_tree ul#grade_tree {
+#grade-edit-tree ul#grade_tree {
   width: auto;
 }
 
-#grade-edit-edit_tree ul#grade_tree li {
+#grade-edit-tree ul#grade_tree li {
   list-style: none;
 }
 
-#grade-edit-edit_tree ul#grade_tree li.category {
+#grade-edit-tree ul#grade_tree li.category {
   margin-bottom: 6px;
 }
 
-#grade-edit-edit_tree .moving {
+#grade-edit-tree .moving {
   background-color: #E8EEF7;
 }
 
-#grade-edit-edit_tree .iconsmall {
+#grade-edit-tree .iconsmall {
   margin-left: 4px;
 }
 
