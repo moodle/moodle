@@ -65,8 +65,8 @@ $reporthtml = '<table class="gradestable">';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_scalehtml();
 $reporthtml .= $report->get_studentshtml();
-$reporthtml .= $report->get_groupsumhtml();
-$reporthtml .= $report->get_gradesumhtml();
+$reporthtml .= $report->get_groupavghtml();
+$reporthtml .= $report->get_gradeavghtml($numusers);
 $reporthtml .= "</table>";
 // print submit button
 if ($USER->gradeediting) {

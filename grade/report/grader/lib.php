@@ -333,15 +333,23 @@ class grade_report_grader extends grade_report {
      * Fetches and returns a count of all the users that will be shows on this page.
      * @return int Count of users
      */
-    function get_numusers() {
+    function get_numusers($group=true) {
         global $CFG;
+        
+        if ($group) {
+            $groupsql = $this->groupsql;
+            $groupsqlwhere = $this->groupwheresql;
+        } else {
+            $groupsql = '';
+            $groupsqlwhere = '';  
+        }
         $countsql = "SELECT COUNT(DISTINCT u.id)
                     FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                          {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
                          LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                         $this->groupsql
+                         $groupsql
                     WHERE ra.roleid in ($this->gradebookroles)
-                         $this->groupwheresql
+                         $groupsqlwhere                        
                     AND ra.contextid ".get_related_contexts_string($this->context);
         return count_records_sql($countsql);
     }
@@ -723,14 +731,15 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML rows of the table (grades headed by student).
      * @return string HTML
      */
-    function get_groupsumhtml() {
+    function get_groupavghtml() {
         global $CFG;
 
-        $groupsumhtml = '';
-
+        $groupavghtml = '';
+        $numusers = $this->get_numusers(true); // find number of users in this group
         if ($this->currentgroup && $this->get_pref('showgroups')) {
 
         /** SQL for finding group sum */
+        // do not sum -1 (no grade), treat as 0 for now
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
                 FROM {$CFG->prefix}grade_items gi LEFT JOIN
                      {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
@@ -741,6 +750,7 @@ class grade_report_grader extends grade_report {
                      $this->groupwheresql
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
+                AND g.finalgrade >= 0
                 GROUP BY g.itemid";
 
             $groupsum = array();
@@ -749,32 +759,50 @@ class grade_report_grader extends grade_report {
                 $groupsum[$itemid] = $csum;
             }
 
-            $groupsumhtml = '<tr><th>Group total</th>';
+            $groupavghtml = '<tr><th>'.get_string('groupavg', 'grades').'</th>';
             foreach ($this->items as $item) {
                 if (!isset($groupsum[$item->id])) {
-                    $groupsumhtml .= '<td>-</td>';
+                    $groupavghtml .= '<td>-</td>';
                 } else {
                     $sum = $groupsum[$item->id];
-                    $groupsumhtml .= '<td>'.$this->get_grade_clean($sum->sum).'</td>';
+                    
+                    if ($item->scaleid) {
+                        $scaleval = round($this->get_grade_clean($sum->sum/$numusers));
+                        $scales_array = get_records_list('scale', 'id', $item->scaleid);
+                        $scale = $scales_array[$item->scaleid];
+                        $scales = explode(",", $scale->scale);
+                        
+                        // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
+                        if ($scaleval < 1) {
+                            $scaleval = 1;  
+                        }
+                        
+                        $gradehtml = $scales[$scaleval-1];
+                    } else {
+                        $gradeval = $this->get_grade_clean($sum->sum/$numusers);
+                        $gradehtml = $gradeval;
+                    }
+                    $groupavghtml .= '<td>'.$gradehtml.'</td>';
                 }
             }
-            $groupsumhtml .= '</tr>';
+            $groupavghtml .= '</tr>';
         }
-        return $groupsumhtml;
+        return $groupavghtml;
     }
 
     /**
      * Builds and return the HTML row of column totals.
      * @return string HTML
      */
-    function get_gradesumhtml() {
+    function get_gradeavghtml() {
         global $CFG;
 
-        $gradesumhtml = '';
+        $gradeavghtml = '';
+        $numusers = $this->get_numusers(false); // find total number of users, without group constraint
         if ($this->get_pref('showgrandtotals')) {
 
         /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
-
+        // do not sum -1 (no grade), treat as 0 for now
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
                 FROM {$CFG->prefix}grade_items gi LEFT JOIN
                      {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
@@ -783,6 +811,7 @@ class grade_report_grader extends grade_report {
                 WHERE gi.courseid = $this->courseid
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
+                AND g.finalgrade >= 0
                 GROUP BY g.itemid";
 
             $classsum = array();
@@ -791,18 +820,35 @@ class grade_report_grader extends grade_report {
                 $classsum[$itemid] = $csum;
             }
 
-            $gradesumhtml = '<tr><th>Total</th>';
+            $gradeavghtml = '<tr><th>'.get_string('average').'</th>';
             foreach ($this->items as $item) {
                 if (!isset($classsum[$item->id])) {
-                    $gradesumhtml .= '<td>-</td>';
+                    $gradeavghtml .= '<td>-</td>';
                 } else {
                     $sum = $classsum[$item->id];
-                    $gradesumhtml .= '<td>'.$this->get_grade_clean($sum->sum).'</td>';
+
+                    if ($item->scaleid) {
+                        $scaleval = round($this->get_grade_clean($sum->sum/$numusers));
+                        $scales_array = get_records_list('scale', 'id', $item->scaleid);
+                        $scale = $scales_array[$item->scaleid];
+                        $scales = explode(",", $scale->scale);
+                        
+                        // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
+                        if ($scaleval < 1) {
+                            $scaleval = 1;  
+                        }
+                        
+                        $gradehtml = $scales[$scaleval-1];
+                    } else {                    
+                        $gradeval = $this->get_grade_clean($sum->sum/$numusers);
+                        $gradehtml = $gradeval;
+                    }                    
+                    $gradeavghtml .= '<td>'.$gradehtml.'</td>';
                 }
             }
-            $gradesumhtml .= '</tr>';
+            $gradeavghtml .= '</tr>';
         }
-        return $gradesumhtml;
+        return $gradeavghtml;
     }
 
     /**
