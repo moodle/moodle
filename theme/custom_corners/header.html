@@ -20,14 +20,15 @@
         // either no custom corners or too much
 
         // all admin pages are build with the layout-table: sideblocks and content
-        if (($PAGE->type == 'admin') && (strstr($bodytags, ' nocoursepage'))) {
+        if (!empty($PAGE) && ($PAGE->type == 'admin') && (strstr($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
 
         // list of pages using the layout-table to be able to view sideblocks
         $excludelist = array('mod-chat-view', 'mod-data-view', 'mod-quiz-view',
             'my-index');
-        if ((in_array($PAGE->type, $excludelist)) &&
+
+        if (!empty($PAGE) && (in_array($PAGE->type, $excludelist)) && 
             (strstr($bodytags, ' nocoursepage'))) {
             $bodytags = str_replace(' nocoursepage', '', $bodytags);
         }
