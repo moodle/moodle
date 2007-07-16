@@ -92,28 +92,37 @@ class grade_report {
      * the saved value is returned. If the preference is not set at the User level, the $CFG equivalent
      * is given (site default).
      * @param string $pref The name of the preference (do not include the grade_report_ prefix)
+     * @param int $itemid An optional itemid to check for a more fine-grained preference
      * @return mixed The value of the preference
      */
-    function get_pref($pref) {
+    function get_pref($pref, $itemid=null) {
         global $CFG;
 
-        if (empty($this->user_prefs[$pref])) {
+        if (empty($this->user_prefs[$pref.$itemid])) {
             $fullprefname = 'grade_report_' . $pref;
-            $this->user_prefs[$pref] = get_user_preferences($fullprefname, $CFG->$fullprefname);
+            if (!empty($itemid)) {
+                $value = get_user_preferences($fullprefname . $itemid, $this->get_pref($pref));
+            } else {
+                $value = get_user_preferences($fullprefname, $CFG->$fullprefname);
+            }
+            $this->user_prefs[$pref.$itemid] = $value;
         }
-        return $this->user_prefs[$pref];
+        return $this->user_prefs[$pref.$itemid];
     }
+
     /**
      * Uses set_user_preferences() to update the value of a user preference.
      * Also updates the object's corresponding variable.
      * @param string $pref_name The name of the preference.
      * @param mixed $pref_value The value of the preference.
+     * @param int $itemid An optional itemid to which the preference will be assigned
      * @return bool Success or failure.
      * TODO print visual feedback
      */
-    function set_user_pref($pref, $pref_value) {
-        if ($result = set_user_preferences(array($pref => $pref_value))) {
-            $this->$pref = $pref_value;
+    function set_pref($pref, $pref_value, $itemid=null) {
+        $fullprefname = 'grade_report_' . $pref;
+        if ($result = set_user_preferences(array($fullprefname.$itemid => $pref_value))) {
+            $this->user_prefs[$pref.$itemid] = $pref_value;
         }
         return $result;
     }
@@ -197,7 +206,7 @@ class grade_report {
             $gradeval = '';
         } else {
             // decimal points as specified by user
-            $decimals = get_user_preferences('grade_report_decimalpoints', $CFG->grade_report_decimalpoints);
+            $decimals = $this->get_pref('decimalpoints');
             $gradeval = number_format($gradeval, $decimals, $this->get_lang_string('decpoint', 'langconfig'),
                                       $this->get_lang_string('thousandsep', 'langconfig'));
         }
@@ -248,6 +257,22 @@ class grade_report {
         return $this->lang_strings[$strcode];
     }
 
-
+    /**
+     * Computes then returns the percentage value of the grade value within the given range.
+     * @param float $gradeval
+     * @param float $grademin
+     * @param float $grademx
+     * @return float $percentage
+     */
+    function grade_to_percentage($gradeval, $grademin, $grademax) {
+        if ($grademin >= $grademax) {
+            debugging("The minimum grade ($grademin) was higher than or equal to the maximum grade ($grademax)!!! Cannot proceed with computation.");
+        }
+        $offset_value = $gradeval - $grademin;
+        $offset_max = $grademax - $grademin;
+        $factor = 100 / $offset_max;
+        $percentage = $offset_value * $factor;
+        return $percentage;
+    }
 }
 ?>

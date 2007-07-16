@@ -354,7 +354,9 @@ class grade_report_grader extends grade_report {
     function load_final_grades() {
         global $CFG;
 
-        $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, g.overridden, gt.feedback, gt.feedbackformat
+        $sql = "SELECT g.id, g.itemid, g.userid, g.finalgrade, g.hidden, g.locked, g.locktime, g.overridden,
+                       gt.feedback, gt.feedbackformat,
+                       gi.grademin, gi.grademax
                 FROM  {$CFG->prefix}grade_items gi,
                       {$CFG->prefix}grade_grades g
                 LEFT JOIN {$CFG->prefix}grade_grades_text gt ON g.id = gt.gradeid
@@ -586,11 +588,27 @@ class grade_report_grader extends grade_report {
             $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id='
                           . $user->id . '">' . fullname($user) . '</a></th>';
             foreach ($this->items as $item) {
+                // Percentage format if specified by user (check each item for a set preference)
+                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                $percentsign = '';
+
+                if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                    $percentsign = '%';
+                }
 
                 if (isset($this->finalgrades[$userid][$item->id])) {
                     $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
+
+                    // Convert the grade to percentage if needed
+                    if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                        $gradeval = grade_grades::standardise_score($gradeval,
+                                                                    $this->finalgrades[$userid][$item->id]->grademin,
+                                                                    $this->finalgrades[$userid][$item->id]->grademax,
+                                                                    0, 100);
+                    }
+
                     $grade = new grade_grades($this->finalgrades[$userid][$item->id], false);
-                    $grade->feedback = $this->finalgrades[$userid][$item->id]->feedback;
+                    $grade->feedback = stripslashes_safe($this->finalgrades[$userid][$item->id]->feedback);
                     $grade->feedbackformat = $this->finalgrades[$userid][$item->id]->feedbackformat;
 
                 } else {
@@ -654,12 +672,12 @@ class grade_report_grader extends grade_report {
                             // no such scale, throw error?
                         }
 
-                    } else if ($item->gradetype != GRADE_TYPE_TEXT) {
+                    } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $studentshtml .= '<input size="6" tabindex="' . $gradetabindex++ . '" type="text" name="grade_'.$userid.'_'
-                                          .$item->id.'" value="'.$this->get_grade_clean($gradeval).'"/>';
+                                          .$item->id.'" value="'.$this->get_grade_clean($gradeval).'"/>' . $percentsign;
                         } else {
-                            $studentshtml .= $this->get_grade_clean($gradeval);
+                            $studentshtml .= $this->get_grade_clean($gradeval) . $percentsign;
                         }
                     }
 
@@ -677,9 +695,9 @@ class grade_report_grader extends grade_report {
                     // If feedback present, surround grade with feedback tooltip
                     if (!empty($grade->feedback)) {
                         if ($grade->feedbackformat == 1) {
-                            $overlib = "return overlib('$grade->feedback', CAPTION, '$strfeedback');";
-                        } else {
                             $overlib = "return overlib('" . s(ltrim($grade->feedback)) . "', FULLHTML);";
+                        } else {
+                            $overlib = "return overlib('" . ($grade->feedback) . "', CAPTION, '$strfeedback');";
                         }
 
                         $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
@@ -701,7 +719,7 @@ class grade_report_grader extends grade_report {
                         if (is_null($gradeval)) {
                             $studentshtml .= '-';
                         } else {
-                            $studentshtml .=  $this->get_grade_clean($gradeval);
+                            $studentshtml .=  $this->get_grade_clean($gradeval). $percentsign;
                         }
                     }
                     if (!empty($grade->feedback)) {
@@ -726,6 +744,8 @@ class grade_report_grader extends grade_report {
      */
     function get_groupavghtml($gpr) {
         global $CFG;
+
+        $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
 
         $groupavghtml = '';
         if ($this->currentgroup && $this->get_pref('showgroups')) {
@@ -755,6 +775,14 @@ class grade_report_grader extends grade_report {
 
             $groupavghtml = '<tr><th>'.get_string('groupavg', 'grades').'</th>';
             foreach ($this->items as $item) {
+                // Determine which display type to use for this average
+                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                if ($averagesdisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT) { // Inherit specific column or general preference
+                    $displaytype = $gradedisplaytype;
+                } else { // General preference overrides specific column display type
+                    $displaytype = $averagesdisplaytype;
+                }
+
                 if (empty($groupscount[$itemid]) || !isset($groupsum[$item->id])) {
                     $groupavghtml .= '<td>-</td>';
                 } else {
@@ -778,7 +806,15 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $scales[$scaleval-1];
                     } else {
                         $gradeval = $this->get_grade_clean($sum/$groupscount[$item->id]);
-                        $gradehtml = $gradeval;
+
+                        $percentsign = '';
+
+                        if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                            $percentsign = '%';
+                            $gradeval = grade_grades::standardise_score($gradeval, $item->grademin, $item->grademax, 0, 100);
+                        }
+
+                        $gradehtml = round($gradeval, $this->get_pref('decimalpoints', $item->id)) . $percentsign;
                     }
                     $groupavghtml .= '<td>'.$gradehtml.'</td>';
                 }
@@ -794,6 +830,8 @@ class grade_report_grader extends grade_report {
      */
     function get_gradeavghtml($gpr) {
         global $CFG;
+
+        $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
 
         $gradeavghtml = '';
         if ($this->get_pref('showaverages')) {
@@ -820,6 +858,14 @@ class grade_report_grader extends grade_report {
 
             $gradeavghtml = '<tr><th>'.get_string('average', 'grades').'</th>';
             foreach ($this->items as $item) {
+                // Determine which display type to use for this average
+                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                if ($averagesdisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT) { // Inherit specific column or general preference
+                    $displaytype = $gradedisplaytype;
+                } else { // General preference overrides specific column display type
+                    $displaytype = $averagesdisplaytype;
+                }
+
                 if (empty($classcount[$itemid]) || !isset($classsum[$item->id])) {
                     $gradeavghtml .= '<td>-</td>';
                 } else {
@@ -839,8 +885,16 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $scales[$scaleval-1];
                     } else {
                         $gradeval = $this->get_grade_clean($sum/$classcount[$itemid]);
-                        $gradehtml = $gradeval;
+                        $percentsign = '';
+
+                        if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                            $gradeval = grade_grades::standardise_score($gradeval, $item->grademin, $item->grademax, 0, 100);
+                            $percentsign = '%';
+                        }
+
+                        $gradehtml = round($gradeval, $this->get_pref('decimalpoints', $item->id)) . $percentsign;
                     }
+
                     $gradeavghtml .= '<td>'.$gradehtml.'</td>';
                 }
             }
@@ -920,9 +974,9 @@ class grade_report_grader extends grade_report {
         $overlib = '';
         if (!empty($object->feedback)) {
             if (empty($object->feedbackformat) || $object->feedbackformat != 1) {
-                $function = "return overlib('$object->feedback', CAPTION, '$strfeedback');";
+                $function = "return overlib('" . strip_tags($object->feedback) . "', CAPTION, '$strfeedback');";
             } else {
-                $function = "return overlib('" . s(ltrim($object->feedback)) . "', FULLHTML);";
+                $function = "return overlib('" . s(ltrim($object->feedback) . "', FULLHTML);");
             }
             $overlib = 'onmouseover="' . $function . '" onmouseout="return nd();"';
         }
@@ -1035,7 +1089,7 @@ class grade_report_grader extends grade_report {
             }
 
             // If object is a category, display expand/contract icon
-            if (get_class($object) == 'grade_category' && $this->get_pref('aggregationview') == GRADER_REPORT_AGGREGATION_VIEW_COMPACT) {
+            if (get_class($object) == 'grade_category' && $this->get_pref('aggregationview') == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
                 $html .= $contract_expand_icon;
             }
         } else { // Editing mode is off

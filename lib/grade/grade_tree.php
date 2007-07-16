@@ -60,7 +60,7 @@ class grade_tree {
      * @param boolean $aggregation_view Either full view (0) or compact view (1)
      */
     function grade_tree($courseid, $fillers=true, $category_grade_last=false,
-                        $aggregation_view=GRADER_REPORT_AGGREGATION_VIEW_FULL) {
+                        $aggregation_view=GRADE_REPORT_AGGREGATION_VIEW_FULL) {
         global $USER;
 
         $this->courseid = $courseid;

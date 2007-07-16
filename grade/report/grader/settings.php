@@ -4,13 +4,13 @@ require_once($CFG->libdir.'/gradelib.php');
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
                                           get_string('configaggregationposition', 'grades'), false,
-                                          array(GRADER_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
-                                                GRADER_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades'))));
+                                          array(GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
+                                                GRADE_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), false,
-                                          array(GRADER_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
-                                                GRADER_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades'))));
+                                          array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
+                                                GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_bulkcheckboxes', get_string('bulkcheckboxes', 'grades'),
                                             get_string('configbulkcheckboxes', 'grades'), 0));
@@ -20,13 +20,14 @@ $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_s
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,
-                                          array(GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
-                                                GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
-                                          array(GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
-                                                GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), false,
@@ -56,6 +57,9 @@ $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get
 
 $settings->add(new admin_setting_configcheckbox('grade_report_quickfeedback', get_string('quickfeedback', 'grades'),
                                             get_string('configquickfeedback', 'grades'), 1));
+
+$settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
+                                            get_string('configshowuserimage', 'grades'), 1));
 
 $settings->add(new admin_setting_configtext('grade_report_studentsperpage', get_string('studentsperpage', 'grades'),
                                         get_string('configstudentsperpage', 'grades'), 20));

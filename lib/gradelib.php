@@ -69,12 +69,13 @@ define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
 define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
 
 // Grader reports
-define('GRADER_REPORT_AGGREGATION_POSITION_LEFT', 0);
-define('GRADER_REPORT_AGGREGATION_POSITION_RIGHT', 1);
-define('GRADER_REPORT_AGGREGATION_VIEW_FULL', 0);
-define('GRADER_REPORT_AGGREGATION_VIEW_COMPACT', 1);
-define('GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
-define('GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
+define('GRADE_REPORT_AGGREGATION_POSITION_LEFT', 0);
+define('GRADE_REPORT_AGGREGATION_POSITION_RIGHT', 1);
+define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
+define('GRADE_REPORT_AGGREGATION_VIEW_COMPACT', 1);
+define('GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
+define('GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
+define('GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT', 2); // Inherit the value set for a particular grade_item (grade_report_gradedisplaytype{$itemid})
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
