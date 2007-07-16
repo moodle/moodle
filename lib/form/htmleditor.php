@@ -84,5 +84,16 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
         }
     } //end func toHtml
 
+    /**
+     * What to display when element is frozen.
+     *
+     * @access    public
+     * @return    string
+     */
+    function getFrozenHtml()
+    {
+        $html = format_text($this->getValue());
+        return $html . $this->_getPersistantData();
+    } //end func getFrozenHtml
 }
 ?>
