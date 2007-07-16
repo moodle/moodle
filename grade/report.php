@@ -26,8 +26,8 @@
     require_once("../config.php");
     require_once("../lib/gradelib.php");
 
-    $courseid = required_param('id');              // course id
-    $report   = optional_param('report', 'user', PARAM_FILE);              // course id
+    $courseid = required_param('id');                   // course id
+    $report   = optional_param('report', get_user_preferences('grade_defaultreport', 'user'), PARAM_FILE); 
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 /// Make sure they can even access this course
@@ -63,6 +63,10 @@
         list($key, $report) = each($reports);  // Just pick the first one
     }
 
+    if ($report != get_user_preferences('grade_defaultreport', 'user')) {
+        set_user_preference('grade_defaultreport', $report);
+    }
+
 
 /// Create menu of reports
 
@@ -77,7 +81,7 @@
     asort($reportnames);    // Alphabetical sort
 
 
-/// Print the header
+/// Build navigation
 
     $strgrades = get_string('grades');
     $navlinks = array();
@@ -86,8 +90,9 @@
 
     $navigation = build_navigation($navlinks);
 
-    // build buttons here
-    /// setting up editting mode
+
+/// Build editing on/off buttons
+
     if (!isset($USER->gradeediting)) {
         $USER->gradeediting = 0;
     }
@@ -114,8 +119,11 @@
     $options['sesskey'] = sesskey();
     $link = 'report.php';
 
-    // turn editting on and off buttons
+
     $buttons = print_single_button($link, $options, $string, 'get', '_self', true);
+
+
+/// Print header
 
     print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation,
                         '', '', true, $buttons, navmenu($course));
@@ -129,8 +137,6 @@
 
 
 /// Now simply include the report here and we're done
-
-    print_heading('(New interface under construction)');
 
     include_once($CFG->dirroot.'/grade/report/'.$report.'/index.php');
 
