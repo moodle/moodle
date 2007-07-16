@@ -231,7 +231,7 @@ class grade_report_grader extends grade_report {
         $course = get_record('course', 'id', $this->courseid);
         $groupmode = $course->groupmode;
         ob_start();
-        $this->currentgroup = setup_and_print_groups($course, $groupmode, $this->baseurl);
+        $this->currentgroup = setup_and_print_groups($course, $groupmode, $this->pbarurl);
         $this->group_selector = ob_get_clean();
 
         // update paging after group
