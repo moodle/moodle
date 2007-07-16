@@ -634,7 +634,6 @@
             fwrite ($bf,full_tag("STUDENTS",3,false,$course->students));
             fwrite ($bf,full_tag("GUEST",3,false,$course->guest));
             fwrite ($bf,full_tag("STARTDATE",3,false,$course->startdate));
-            fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
             fwrite ($bf,full_tag("NUMSECTIONS",3,false,$course->numsections));
             //fwrite ($bf,full_tag("SHOWRECENT",3,false,$course->showrecent));    INFO: This is out in 1.3
             fwrite ($bf,full_tag("MAXBYTES",3,false,$course->maxbytes));
@@ -657,6 +656,13 @@
             } else {
                 $status = fwrite ($bf,full_tag("METACOURSE",3,false,$course->metacourse));
             }
+            fwrite ($bf,full_tag("EXPIRENOTIFY",3,false,$course->expirynotify));
+            fwrite ($bf,full_tag("NOTIFYSTUDENTS",3,false,$course->notifystudents));
+            fwrite ($bf,full_tag("EXPIRYTHRESHOLD",3,false,$course->expirythreshold));
+            fwrite ($bf,full_tag("ENROLLABLE",3,false,$course->enrollable));
+            fwrite ($bf,full_tag("ENROLSTARTDATE",3,false,$course->enrolstartdate));
+            fwrite ($bf,full_tag("ENROLENDDATE",3,false,$course->enrolenddate));
+            fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
        
             /// write local course overrides here?
             write_role_overrides_xml($bf, $context, 3);
