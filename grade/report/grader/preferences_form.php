@@ -26,7 +26,7 @@ class grader_report_preferences_form extends moodleform {
                              'showgrandtotals'        => 'advcheckbox',
                              'showgroups'             => 'advcheckbox',
                              'showlocks'              => 'advcheckbox',
-                             'showscales'             => 'advcheckbox',
+                             'showranges'             => 'advcheckbox',
                              'quickgrading'           => 'advcheckbox',
                              'quickfeedback'          => 'advcheckbox',
                              'aggregationposition'    => array(get_string('left', 'grades'), get_string('right', 'grades')),

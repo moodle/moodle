@@ -390,7 +390,7 @@ class grade_report_grader extends grade_report {
 
         $html .= $this->print_toggle('grandtotals', true);
         $html .= $this->print_toggle('groups', true);
-        $html .= $this->print_toggle('scales', true);
+        $html .= $this->print_toggle('ranges', true);
         $html .= '</div>';
         return $html;
     }
@@ -857,8 +857,8 @@ class grade_report_grader extends grade_report {
      */
     function get_scalehtml() {
         $scalehtml = '';
-        if ($this->get_pref('showscales')) {
-            $scalehtml = '<tr><td>'.$this->get_lang_string('range','grades').'</td>';
+        if ($this->get_pref('showranges')) {
+            $scalehtml = '<tr><td>'.$this->get_lang_string('range','grade').'</td>';
             foreach ($this->items as $item) {
                 $scalehtml .= '<td>'. $this->get_grade_clean($item->grademin).'-'. $this->get_grade_clean($item->grademax).'</td>';
             }

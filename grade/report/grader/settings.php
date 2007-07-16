@@ -38,8 +38,8 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showgrandtotals', 
 $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
                                             get_string('configshowlocks', 'grades'), 0));
 
-$settings->add(new admin_setting_configcheckbox('grade_report_showscales', get_string('showscales', 'grades'),
-                                            get_string('configshowscales', 'grades'), 0));
+$settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_string('showranges', 'grades'),
+                                            get_string('configshowranges', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_quickgrading', get_string('quickgrading', 'grades'),
                                             get_string('configquickgrading', 'grades'), 1));
