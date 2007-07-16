@@ -858,9 +858,9 @@ class grade_report_grader extends grade_report {
     function get_scalehtml() {
         $scalehtml = '';
         if ($this->get_pref('showranges')) {
-            $scalehtml = '<tr><td>'.$this->get_lang_string('range','grade').'</td>';
+            $scalehtml = '<tr><th class="range">'.$this->get_lang_string('range','grades').'</th>';
             foreach ($this->items as $item) {
-                $scalehtml .= '<td>'. $this->get_grade_clean($item->grademin).'-'. $this->get_grade_clean($item->grademax).'</td>';
+                $scalehtml .= '<th class="range">'. $this->get_grade_clean($item->grademin).'-'. $this->get_grade_clean($item->grademax).'</th>';
             }
             $scalehtml .= '</tr>';
         }

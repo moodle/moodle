@@ -604,6 +604,14 @@ div.phpinfo .center th {
   text-align: center;
 }
 
+.backup-form-instances {
+   margin:0px 20px 0px 20px;
+}
+.restore-form-instances {
+   margin:0px 20px 0px 20px;
+}
+
+
 /***
  *** Header
  ***/
@@ -2028,37 +2036,6 @@ body#doc-contents ul {
  *** Grades
  ***/
 
-body#grade-index .grades {
-  border-width:1px;
-  border-style:solid;
-  border-collapse: separate;
-}
-
-body#grade-index .grades td {
-  border-width:0 1px 0 1px;
-  border-style:solid;
-  border-collapse: collapse;
-}
-
-body#grade-index .grades .header {
-  vertical-align: top;
-}
-
-body#grade-index .grades .points,
-body#grade-index .grades .percent,
-body#grade-index .grades .weighted {
-  text-align: right;
-}
-
-.backup-form-instances {
-   margin:0px 20px 0px 20px;
-}
-.restore-form-instances {
-   margin:0px 20px 0px 20px;
-}
-
-
-/* new grades CSS */
 
 #grade-report table {
   border-width:1px;
@@ -2127,6 +2104,20 @@ body#grade-index .grades .weighted {
   margin-left:auto;
   margin-right:auto;
 }
+
+#grade-report .gradestable th.user {
+  text-align:left;
+}
+
+#grade-report .gradestable td {
+  text-align:right;
+}
+
+#grade-report th.range {
+  border-width:1px 1px 1px 1px;
+  border-style:solid;
+}
+
 
 /* gradebook edit tree */
 
@@ -3670,4 +3661,5 @@ wikiadminactions {
 .workshopkey {
   text-align:center;
 }
+
 
