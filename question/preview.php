@@ -192,7 +192,7 @@
         echo "</p>\n";
     }
     $number = 1;
-    echo '<form method="post" action="preview.php" enctype="multipart/form-data">', "\n";
+    echo '<form method="post" action="preview.php" enctype="multipart/form-data" id="responseform">', "\n";
     print_question($questions[$id], $curstate, $number, $quiz, $options);
     echo '<br />';
 
