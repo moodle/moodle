@@ -1146,7 +1146,7 @@ class grade_item extends grade_object {
         }
 
         if ($finalgrade !== false) {
-            $grade->finalgrade = $finalgrade;
+            $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
             // if we can update the raw grade, do update it
             if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
              or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
