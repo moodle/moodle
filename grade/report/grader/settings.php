@@ -1,13 +1,16 @@
 <?php // $Id$
+require_once($CFG->libdir.'/gradelib.php');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
                                           get_string('configaggregationposition', 'grades'), false,
-                                          array(get_string('left', 'grades'), get_string('right', 'grades'))));
+                                          array(GRADER_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
+                                                GRADER_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), false,
-                                          array(get_string('full', 'grades'), get_string('compact', 'grades'))));
+                                          array(GRADER_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
+                                                GRADER_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_bulkcheckboxes', get_string('bulkcheckboxes', 'grades'),
                                             get_string('configbulkcheckboxes', 'grades'), 0));
@@ -17,11 +20,18 @@ $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_s
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,
-                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
+                                          array(GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                                                GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
-                                          array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
+                                          array(GRADER_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                                                GRADER_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+
+$settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
+                                          get_string('configmeanselection', 'grades'), false,
+                                          array(GRADE_AGGREGATE_MEAN_ALL => get_string('meanall', 'grades'),
+                                                GRADE_AGGREGATE_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
                                             get_string('configshowcalculations', 'grades'), 0));
