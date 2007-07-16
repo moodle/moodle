@@ -250,6 +250,9 @@ class grade_report_grader extends grade_report {
      * for displaying grades.
      */
     function setup_sortitemid() {
+
+        global $SESSION;
+
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
                 $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
@@ -500,16 +503,16 @@ class grade_report_grader extends grade_report {
 
 
                 if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
-                    $headerhtml .= '<td class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</td>';
+                    $headerhtml .= '<th class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</th>';
                 } else if ($type == 'category') {
-                    $headerhtml .= '<td class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
+                    $headerhtml .= '<th class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
 
                     // Print icons
                     if ($USER->gradeediting) {
                         $headerhtml .= $this->get_icons($element);
                     }
 
-                    $headerhtml .= '</td>';
+                    $headerhtml .= '</th>';
                 } else {
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
