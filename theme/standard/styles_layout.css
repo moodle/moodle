@@ -1078,6 +1078,10 @@ body#admin-modules table.generaltable td.c0
   display: block;
 }
 
+#admin-report-courseoverview-index .invisiblefieldset {
+  display: block;
+}
+
 /***
  *** Blocks
  ***/
