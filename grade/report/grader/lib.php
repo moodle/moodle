@@ -761,13 +761,17 @@ class grade_report_grader extends grade_report {
 
             $groupavghtml = '<tr><th>'.get_string('groupavg', 'grades').'</th>';
             foreach ($this->items as $item) {
-                if (!isset($groupsum[$item->id])) {
+                if ($numusers == 0 || !isset($groupsum[$item->id])) {
                     $groupavghtml .= '<td>-</td>';
                 } else {
                     $sum = $groupsum[$item->id];
                     
                     if ($item->scaleid) {
-                        $scaleval = round($this->get_grade_clean($sum->sum/$numusers));
+                        $gradeitemsum = $groupsum[$item->id]->sum;
+                        $gradeitemavg = $gradeitemsum/$numusers;
+
+                        $scaleval = round($this->get_grade_clean($gradeitemavg));
+
                         $scales_array = get_records_list('scale', 'id', $item->scaleid);
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
@@ -822,7 +826,7 @@ class grade_report_grader extends grade_report {
 
             $gradeavghtml = '<tr><th>'.get_string('average', 'grades').'</th>';
             foreach ($this->items as $item) {
-                if (!isset($classsum[$item->id])) {
+                if ($numusers == 0 || !isset($classsum[$item->id])) {
                     $gradeavghtml .= '<td>-</td>';
                 } else {
                     $sum = $classsum[$item->id];
