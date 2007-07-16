@@ -595,7 +595,6 @@
             $course->guest = addslashes($course_header->course_guest);
             $course->startdate = addslashes($course_header->course_startdate);
             $course->startdate += $restore->course_startdateoffset;
-            $course->enrolperiod = addslashes($course_header->course_enrolperiod);
             $course->numsections = addslashes($course_header->course_numsections);
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
@@ -616,6 +615,19 @@
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
             $course->metacourse = addslashes($course_header->course_metacourse);
+            $course->expirynotify = isset($course_header->course_expirynotify) ? addslashes($course_header->course_expirynotify):0;
+            $course->notifystudents = isset($course_header->course_notifystudents) ? addslashes($course_header->course_notifystudents) : 0;
+            $course->expirythreshold = isset($course_header->course_expirythreshold) ? addslashes($course_header->course_expirythreshold) : 0;
+            $course->enrollable = isset($course_header->course_enrollable) ? addslashes($course_header->course_enrollable) : 1;
+            $course->enrolstartdate = isset($course_header->course_enrolstartdate) ? addslashes($course_header->course_enrolstartdate) : 0;
+            if ($course->enrolstartdate)  { //Roll course dates
+                $course->enrolstartdate += $restore->course_startdateoffset;
+            }
+            $course->enrolenddate = isset($course_header->course_enrolenddate) ? addslashes($course_header->course_enrolenddate) : 0;
+            if ($course->enrolenddate) { //Roll course dates
+                $course->enrolenddate  += $restore->course_startdateoffset;
+            }
+            $course->enrolperiod = addslashes($course_header->course_enrolperiod);
             //Calculate sortorder field
             $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
                                        FROM ' . $CFG->prefix . 'course
@@ -3845,9 +3857,6 @@
                         case "STARTDATE":
                             $this->info->course_startdate = $this->getContents();
                             break;
-                        case "ENROLPERIOD":
-                            $this->info->course_enrolperiod = $this->getContents();
-                            break;
                         case "NUMSECTIONS":
                             $this->info->course_numsections = $this->getContents();
                             break;
@@ -3895,6 +3904,27 @@
                             break;
                         case "METACOURSE":
                             $this->info->course_metacourse = $this->getContents();
+                            break;
+                        case "EXPIRENOTIFY":
+                            $this->info->course_expirynotify = $this->getContents();
+                            break;
+                        case "NOTIFYSTUDENTS":
+                            $this->info->course_notifystudents = $this->getContents();
+                            break;
+                        case "EXPIRYTHRESHOLD":
+                            $this->info->course_expirythreshold = $this->getContents();
+                            break;
+                        case "ENROLLABLE":
+                            $this->info->course_enrollable = $this->getContents();
+                            break;
+                        case "ENROLSTARTDATE":
+                            $this->info->course_enrolstartdate = $this->getContents();
+                            break;
+                        case "ENROLENDDATE":
+                            $this->info->course_enrolenddate = $this->getContents();
+                            break;
+                        case "ENROLPERIOD":
+                            $this->info->course_enrolperiod = $this->getContents();
                             break;
                     }
                 }
