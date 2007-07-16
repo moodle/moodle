@@ -19,8 +19,8 @@ $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', g
                                           get_string('configgradedisplaytype', 'grades'), false,
                                           array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 
-$settings->add(new admin_setting_configselect('grade_report_grandtotalsdisplaytype', get_string('grandtotalsdisplaytype', 'grades'),
-                                          get_string('configgrandtotalsdisplaytype', 'grades'), false,
+$settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
+                                          get_string('configaveragesdisplaytype', 'grades'), false,
                                           array(get_string('raw', 'grades'), get_string('percentage', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showcalculations', get_string('showcalculations', 'grades'),
@@ -32,8 +32,8 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showeyecons', get_
 $settings->add(new admin_setting_configcheckbox('grade_report_showgroups', get_string('showgroups', 'grades'),
                                             get_string('configshowgroups', 'grades'), 0));
 
-$settings->add(new admin_setting_configcheckbox('grade_report_showgrandtotals', get_string('showgrandtotals', 'grades'),
-                                            get_string('configshowgrandtotals', 'grades'), 0));
+$settings->add(new admin_setting_configcheckbox('grade_report_showaverages', get_string('showaverages', 'grades'),
+                                            get_string('configshowaverages', 'grades'), 0));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_showlocks', get_string('showlocks', 'grades'),
                                             get_string('configshowlocks', 'grades'), 0));

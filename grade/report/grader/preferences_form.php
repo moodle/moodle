@@ -23,7 +23,7 @@ class grader_report_preferences_form extends moodleform {
                              'enableajax'             => 'advcheckbox',
                              'showcalculations'       => 'advcheckbox',
                              'showeyecons'            => 'advcheckbox',
-                             'showgrandtotals'        => 'advcheckbox',
+                             'showaverages'           => 'advcheckbox',
                              'showgroups'             => 'advcheckbox',
                              'showlocks'              => 'advcheckbox',
                              'showranges'             => 'advcheckbox',
@@ -32,7 +32,7 @@ class grader_report_preferences_form extends moodleform {
                              'aggregationposition'    => array(get_string('left', 'grades'), get_string('right', 'grades')),
                              'aggregationview'        => array(get_string('full', 'grades'), get_string('compact', 'grades')),
                              'gradedisplaytype'       => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
-                             'grandtotalsdisplaytype' => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
+                             'averagesdisplaytype'    => array(get_string('raw', 'grades'), get_string('percentage', 'grades')),
                              'decimalpoints'          => array(0, 1, 2, 3, 4, 5),
                              'studentsperpage'        => 'text');
 

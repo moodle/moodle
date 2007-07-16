@@ -388,7 +388,7 @@ class grade_report_grader extends grade_report {
             $html .= $this->print_toggle('calculations', true);
         }
 
-        $html .= $this->print_toggle('grandtotals', true);
+        $html .= $this->print_toggle('averages', true);
         $html .= $this->print_toggle('groups', true);
         $html .= $this->print_toggle('ranges', true);
         $html .= '</div>';
@@ -407,7 +407,7 @@ class grade_report_grader extends grade_report {
         $icons = array('eyecons' => 'hide',
                        'calculations' => 'calc',
                        'locks' => 'lock',
-                       'grandtotals' => 'sigma');
+                       'averages' => 'sigma');
 
         $pref_name = 'grade_report_show' . $type;
         $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
@@ -799,7 +799,7 @@ class grade_report_grader extends grade_report {
 
         $gradeavghtml = '';
         $numusers = $this->get_numusers(false); // find total number of users, without group constraint
-        if ($this->get_pref('showgrandtotals')) {
+        if ($this->get_pref('showaverages')) {
 
         /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
         // do not sum -1 (no grade), treat as 0 for now
@@ -820,7 +820,7 @@ class grade_report_grader extends grade_report {
                 $classsum[$itemid] = $csum;
             }
 
-            $gradeavghtml = '<tr><th>'.get_string('average').'</th>';
+            $gradeavghtml = '<tr><th>'.get_string('average', 'grades').'</th>';
             foreach ($this->items as $item) {
                 if (!isset($classsum[$item->id])) {
                     $gradeavghtml .= '<td>-</td>';
