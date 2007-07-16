@@ -1487,6 +1487,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
+    if ($result && $oldversion < 2007071607) {
+        require_once($CFG->dirroot . '/question/upgrade.php');
+        $result = $result && question_remove_rqp_qtype_config_string();
+    }
+
     return $result;
 }
 ?>

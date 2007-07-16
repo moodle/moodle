@@ -34,19 +34,39 @@ function question_check_no_rqp_questions($result) {
 }
 
 function question_remove_rqp_qtype() {
+    global $CFG;
+
     $result = true;
     
-    $table = new XMLDBTable('question_rqp_states');
-    $result = $result && drop_table($table);
-    
-    $table = new XMLDBTable('question_rqp');
-    $result = $result && drop_table($table);
-    
-    $table = new XMLDBTable('question_rqp_types');
-    $result = $result && drop_table($table);
-    
-    $table = new XMLDBTable('question_rqp_servers');
-    $result = $result && drop_table($table);
+    // Only remove the question type if the code is gone.
+    if (!is_dir($CFG->dirroot . '/question/type/rqp')) {
+        $table = new XMLDBTable('question_rqp_states');
+        $result = $result && drop_table($table);
+        
+        $table = new XMLDBTable('question_rqp');
+        $result = $result && drop_table($table);
+        
+        $table = new XMLDBTable('question_rqp_types');
+        $result = $result && drop_table($table);
+        
+        $table = new XMLDBTable('question_rqp_servers');
+        $result = $result && drop_table($table);
+        
+        $result = $result && unset_config('qtype_rqp_version');
+    }
+        
+    return $result;
+}
+
+function question_remove_rqp_qtype_config_string() {
+    global $CFG;
+
+    $result = true;
+
+    // An earlier, buggy version of the previous function missed out the unset_config call.
+    if (!empty($CFG->qtype_rqp_version) && !is_dir($CFG->dirroot . '/question/type/rqp')) {
+        $result = $result && unset_config('qtype_rqp_version');
+    }
     
     return $result;
 }
