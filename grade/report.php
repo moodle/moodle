@@ -23,11 +23,14 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-    require_once("../config.php");
-    require_once("../lib/gradelib.php");
+    require_once '../config.php';
+    require_once $CFG->libdir.'/gradelib.php';
+    require_once $CFG->dirroot.'/grade/lib.php';
 
     $courseid = required_param('id');                   // course id
-    $report   = optional_param('report', get_user_preferences('grade_defaultreport', 'user'), PARAM_FILE); 
+    $report   = optional_param('report', get_user_preferences('grade_defaultreport', 'user'), PARAM_SAFEDIR);
+    $userid   = optional_param('userid', 0, PARAM_INT); // user detail
+    $page     = optional_param('page', 0, PARAM_INT);   // active page
     $edit     = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 /// Make sure they can even access this course
@@ -67,26 +70,17 @@
         set_user_preference('grade_defaultreport', $report);
     }
 
-
-/// Create menu of reports
-
-    $reportnames = array();
-
-    if (count($reports) > 1) {
-        foreach ($reports as $plugin) {
-            $reportnames[$plugin] = get_string('modulename', 'gradereport_'.$plugin);
-        }
-    }
-
-    asort($reportnames);    // Alphabetical sort
-
+/// return tracking object
+    $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>$report, 'courseid'=>$courseid,
+                                         'userid'=>$userid, 'page'=>$page));
 
 /// Build navigation
 
     $strgrades = get_string('grades');
+    $reportname = get_string('modulename', 'gradereport_'.$report);
     $navlinks = array();
     $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
-    $navlinks[] = array('name' => $reportnames[$report], 'link' => '', 'type' => 'misc');
+    $navlinks[] = array('name' => $reportname, 'link' => '', 'type' => 'misc');
 
     $navigation = build_navigation($navlinks);
 
@@ -104,9 +98,7 @@
     }
 
     // params for the turn editting on
-    $options = array();
-    $options['id'] = $courseid;
-    $options['report'] = $report;
+    $options = $gpr->get_options();
 
     if ($USER->gradeediting) {
         $options['edit'] = 0;
@@ -125,15 +117,11 @@
 
 /// Print header
 
-    print_header_simple($strgrades.':'.$reportnames[$report], ':'.$strgrades, $navigation,
+    print_header_simple($strgrades.':'.$reportname, ':'.$strgrades, $navigation,
                         '', '', true, $buttons, navmenu($course));
 
-/// Print the report selector at the top if there is more than one report
-
-    if ($reportnames) {
-        popup_form($CFG->wwwroot.'/grade/report.php?id='.$course->id.'&amp;report=', $reportnames,
-                   'choosegradereport', $report, '', '', '', false, 'self', get_string('gradereports', 'grades').':');
-    }
+/// Print the plugin selector at the top
+    print_grade_plugin_selector($courseid, 'report', $report);
 
 
 /// Now simply include the report here and we're done

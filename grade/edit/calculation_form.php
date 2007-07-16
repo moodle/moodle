@@ -21,6 +21,10 @@ class edit_calculation_form extends moodleform {
         $mform->addElement('hidden', 'courseid', 0);
         $mform->setType('courseid', PARAM_INT);
 
+/// add return tracking info
+        $gpr = $this->_customdata['gpr'];
+        $gpr->add_mform_elements($mform);
+
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();

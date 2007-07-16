@@ -1,6 +1,7 @@
 <?php  //$Id$
 
 require_once '../../config.php';
+require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'grade_form.php';
 
@@ -18,15 +19,15 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/grader:manage', $context);
 
 // default return url
-//TODO: implement proper return support
-$returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
+$gpr = new grade_plugin_return();
+$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course->id);
 
 // TODO: add proper check that grade is editable
 
 $grade_grades = get_record('grade_grades', 'id', $id);
 $gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
 
-$mform = new edit_grade_form(qualified_me(), array('gradeitem'=>$gradeitem));
+$mform = new edit_grade_form(null, array('gradeitem'=>$gradeitem, 'gpr'=>$gpr));
 if ($grade_grades = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
         if (can_use_html_editor()) {
@@ -64,7 +65,7 @@ if ($mform->is_cancelled()) {
     // set locktime
     $grade_grades->set_locktime($data->locktime);
 
-    redirect($returnurl, get_string('feedbacksaved', 'grades'), 1);
+    redirect($returnurl);
 }
 
 // Get extra data related to this feedback

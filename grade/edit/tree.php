@@ -25,6 +25,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once '../../config.php';
+require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 
 $courseid = required_param('id', PARAM_INT);
@@ -169,12 +170,11 @@ switch ($action) {
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
 
+/// Print the plugin selector at the top
+print_grade_plugin_selector($courseid, 'edit', 'tree');
+
 print_heading(get_string('categoriesedit', 'grades'));
 
-// Add tabs
-// TODO: implement return support - use tabs from the report plugin
-/*$currenttab = 'editcategory';
-include('tabs.php');*/
 
 print_box_start('gradetreebox generalbox');
 echo '<ul id="grade_tree">';

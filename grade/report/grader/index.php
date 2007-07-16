@@ -7,7 +7,6 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
 $gradeserror = array();
 
 // get the params ($report, $courseid and $context are already set in grade/report.php)
-$page          = optional_param('page', 0, PARAM_INT);
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
 $action        = optional_param('action', 0, PARAM_ALPHA);
 $move          = optional_param('move', 0, PARAM_INT);
@@ -65,11 +64,11 @@ echo $report->get_toggles_html();
 print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 
 $reporthtml = '<table class="gradestable">';
-$reporthtml .= $report->get_headerhtml();
-$reporthtml .= $report->get_scalehtml();
-$reporthtml .= $report->get_studentshtml();
-$reporthtml .= $report->get_groupavghtml();
-$reporthtml .= $report->get_gradeavghtml($numusers);
+$reporthtml .= $report->get_headerhtml($gpr);
+$reporthtml .= $report->get_scalehtml($gpr);
+$reporthtml .= $report->get_studentshtml($gpr);
+$reporthtml .= $report->get_groupavghtml($gpr);
+$reporthtml .= $report->get_gradeavghtml($gpr, $numusers); //TODO: numusers not in function definition??
 $reporthtml .= "</table>";
 // print submit button
 if ($USER->gradeediting) {

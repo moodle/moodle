@@ -1,6 +1,7 @@
 <?php  //$Id$
 
 require_once '../../config.php';
+require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'category_form.php';
 
@@ -17,10 +18,11 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-$returnurl = 'tree.php?id='.$course->id;
+$gpr = new grade_plugin_return();
+$returnurl = $gpr->get_return_url('tree.php?id='.$course->id);
 
 
-$mform = new edit_category_form();
+$mform = new edit_category_form(null, array('gpr'=>$gpr));
 if ($category = get_record('grade_categories', 'id', $id, 'courseid', $course->id)) {
     $mform->set_data($category);
 } else {

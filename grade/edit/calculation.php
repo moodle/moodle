@@ -1,5 +1,6 @@
 <?php  //$Id$
 require_once '../../config.php';
+require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'calculation_form.php';
 
@@ -16,8 +17,8 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 //require_capability() here!!
 
 // default return url
-//TODO: add proper return support
-$returnurl = $CFG->wwwroot.'/grade/report.php?report=grader&amp;id='.$course->id;
+$gpr = new grade_plugin_return();
+$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course->id);
 
 if (!$grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$course->id))) {
     error('Incorect item id');
@@ -28,7 +29,7 @@ if ($grade_item->is_normal_item() or ($grade_item->gradetype != GRADE_TYPE_VALUE
     redirect($returnurl, get_string('erornocalculationallowed', 'grades')); //TODO: localize
 }
 
-$mform = new edit_calculation_form();
+$mform = new edit_calculation_form(null, array('gpr'=>$gpr));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);

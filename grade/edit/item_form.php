@@ -82,6 +82,10 @@ class edit_item_form extends moodleform {
         $mform->addElement('hidden', 'itemtype', 0);
         $mform->setType('itemtype', PARAM_ALPHA);
 
+/// add return tracking info
+        $gpr = $this->_customdata['gpr'];
+        $gpr->add_mform_elements($mform);
+
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
