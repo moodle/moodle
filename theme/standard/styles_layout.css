@@ -2063,7 +2063,7 @@ body#doc-contents ul {
   border-style:solid;
 }
 
-#grade-report td.category {
+#grade-report th.category {
   border-width:1px 1px 0px 1px;
   border-style:solid;
 }
