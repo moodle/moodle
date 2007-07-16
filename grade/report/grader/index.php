@@ -58,6 +58,9 @@ $currenttab = 'graderreport';
 include('tabs.php');
 
 echo $report->group_selector;
+
+echo '<div class="clearer"></div>';
+
 echo $report->get_toggles_html();
 print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 
