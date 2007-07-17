@@ -1,5 +1,14 @@
 <?php //$Id$
 
+/**
+ * Print grading plugin selection popup form.
+ *
+ * @param int $courseid id of course
+ * @param string $active_type type of plugin on current page - import, export, report or edit
+ * @param string $active_plugin active plugin type - grader, user, cvs, ...
+ * @param boolean $return return as string
+ * @return nothing or string if $return true
+ */
 function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $return=false) {
     global $CFG;
 
@@ -95,6 +104,9 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('selectplugin', 'grades'));
 }
 
+/**
+ * Utility class used for return tracking when using edit and other forms from grade plubins
+ */
 class grade_plugin_return {
     var $type;
     var $plugin;
@@ -102,6 +114,10 @@ class grade_plugin_return {
     var $userid;
     var $page;
 
+    /**
+     * Constructor
+     * @param array $params - associative array with return parameters, if null parameter are taken from _GET or _POST
+     */
     function grade_plugin_return ($params=null) {
         if (empty($params)) {
             $this->type     = optional_param('gpr_type', null, PARAM_SAFEDIR);
@@ -119,6 +135,10 @@ class grade_plugin_return {
         }
     }
 
+    /**
+     * Returns return parameters as options array suitable for buttons.
+     * @return array options
+     */
     function get_options() {
         if (empty($this->type) or empty($this->plugin)) {
             return array();
@@ -143,6 +163,11 @@ class grade_plugin_return {
         return $params;
     }
 
+    /**
+     * Returns return url
+     * @param string $default default url when params not set
+     * @return string url
+     */
     function get_return_url($default) {
         global $CFG;
 
@@ -176,6 +201,10 @@ class grade_plugin_return {
         return $url;
     }
 
+    /**
+     * Returns string with hidden return tracking form elements.
+     * @return string
+     */
     function get_form_fields() {
         if (empty($this->type) or empty($this->plugin)) {
             return '';
@@ -197,6 +226,11 @@ class grade_plugin_return {
         }
     }
 
+    /**
+     * Add hidden elements into mform
+     * @param object $mform moodle form object
+     * @return void
+     */
     function add_mform_elements(&$mform) {
         if (empty($this->type) or empty($this->plugin)) {
             return;
@@ -224,6 +258,11 @@ class grade_plugin_return {
         }
     }
 
+    /**
+     * Add return tracking params into url
+     * @param string $url
+     * @return string $url with erturn tracking params
+     */
     function add_url_params($url) {
         if (empty($this->type) or empty($this->plugin)) {
             return $url;
