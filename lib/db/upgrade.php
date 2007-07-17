@@ -954,6 +954,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('gradepass', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('multfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '1.0');
         $table->addFieldInfo('plusfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregationcoef', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
@@ -1133,6 +1134,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('gradepass', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('multfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '1.0');
         $table->addFieldInfo('plusfactor', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregationcoef', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('hidden', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('locked', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
@@ -1490,6 +1492,34 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007071607) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_remove_rqp_qtype_config_string();
+    }
+
+    if ($result && $oldversion < 2007071700) {
+
+    /// Define field aggregationcoef to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('aggregationcoef');
+        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0', 'plusfactor');
+
+    /// Launch add field aggregationcoef
+    
+    /// Launch add field overridden
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field aggregationcoef to be added to grade_items
+        $table = new XMLDBTable('grade_items_history');
+        $field = new XMLDBField('aggregationcoef');
+        $field->setAttributes(XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, '0', 'plusfactor');
+
+    /// Launch add field aggregationcoef
+    
+    /// Launch add field overridden
+        if (!field_exists($table, $field)) {
+            $result = $result && add_field($table, $field);
+        }
+
     }
 
     return $result;

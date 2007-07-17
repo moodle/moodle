@@ -187,6 +187,12 @@ class grade_item extends grade_object {
     var $plusfactor = 0;
 
     /**
+     * Aggregation coeficient used for weighted averages
+     * @var float $aggregationcoef
+     */
+    var $aggregationcoef = 0;
+
+    /**
      * Sorting order of the columns.
      * @var int $sortorder
      */

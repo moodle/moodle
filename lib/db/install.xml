@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070715" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070717" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1332,8 +1332,9 @@
         <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
         <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What grade is needed to pass? grademin &amp;lt; gradepass &amp;lt;= grademax" PREVIOUS="outcomeid" NEXT="multfactor"/>
         <FIELD NAME="multfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Multiply all grades by this" PREVIOUS="gradepass" NEXT="plusfactor"/>
-        <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="plusfactor" NEXT="hidden"/>
+        <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="aggregationcoef"/>
+        <FIELD NAME="aggregationcoef" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Aggregation coefficient used for category weights or other aggregation types" PREVIOUS="plusfactor" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="aggregationcoef" NEXT="hidden"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is hidden, &amp;gt; 1 is a date to hide until (prevents viewing)" PREVIOUS="sortorder" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is locked, &amp;gt; 1 is a date to lock until (prevents update)" PREVIOUS="hidden" NEXT="locktime"/>
         <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="needsupdate"/>
@@ -1471,8 +1472,9 @@
         <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
         <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What grade is needed to pass? grademin &amp;lt; gradepass &amp;lt;= grademax" PREVIOUS="outcomeid" NEXT="multfactor"/>
         <FIELD NAME="multfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Multiply all grades by this" PREVIOUS="gradepass" NEXT="plusfactor"/>
-        <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="plusfactor" NEXT="hidden"/>
+        <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="aggregationcoef"/>
+        <FIELD NAME="aggregationcoef" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Aggregation coefficient used for category weights or other aggregation types" PREVIOUS="plusfactor" NEXT="sortorder"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Sorting order of the columns" PREVIOUS="aggregationcoef" NEXT="hidden"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is hidden, &amp;gt; 1 is a date to hide until (prevents viewing)" PREVIOUS="sortorder" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 is locked, &amp;gt; 1 is a date to lock until (prevents update)" PREVIOUS="hidden" NEXT="locktime"/>
         <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="needsupdate"/>
