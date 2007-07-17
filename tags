@@ -6637,26 +6637,26 @@ get_fractional_grade	question/type/questiontype.php	/^    function get_fractiona
 get_grade_clean	grade/report/lib.php	/^    function get_grade_clean($gradeval) {$/;"	f
 get_grade_item	lib/grade/grade_category.php	/^    function get_grade_item() {$/;"	f
 get_grade_options	lib/questionlib.php	/^function get_grade_options() {$/;"	f
-get_gradeavghtml	grade/report/grader/lib.php	/^    function get_gradeavghtml($gpr) {$/;"	f
+get_gradeavghtml	grade/report/grader/lib.php	/^    function get_gradeavghtml() {$/;"	f
 get_graders	mod/assignment/lib.php	/^    function get_graders($user) {$/;"	f
 get_group_students	lib/deprecatedlib.php	/^function get_group_students($groupids, $sort='ul.timeaccess DESC') {$/;"	f
 get_group_teachers	lib/deprecatedlib.php	/^function get_group_teachers($courseid, $groupid) {$/;"	f
 get_group_users	group/lib/legacylib.php	/^function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $/;"	f
 get_group_users	lib/datalib.php	/^function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $fields='u.*') {$/;"	f
-get_groupavghtml	grade/report/grader/lib.php	/^    function get_groupavghtml($gpr) {$/;"	f
+get_groupavghtml	grade/report/grader/lib.php	/^    function get_groupavghtml() {$/;"	f
 get_groups	group/lib/legacylib.php	/^function get_groups($courseid, $userid=0) {$/;"	f
 get_groups	lib/datalib.php	/^function get_groups($courseid, $userid=0) {$/;"	f
 get_guest	lib/deprecatedlib.php	/^function get_guest() {$/;"	f
 get_guest_role	lib/accesslib.php	/^function get_guest_role() {$/;"	f
 get_halfway_color	mod/hotpot/template/default.php	/^    function get_halfway_color($x, $y) {$/;"	f
-get_headerhtml	grade/report/grader/lib.php	/^    function get_headerhtml($gpr) {$/;"	f
+get_headerhtml	grade/report/grader/lib.php	/^    function get_headerhtml() {$/;"	f
 get_heading	question/type/questiontype.php	/^    function get_heading(){$/;"	f
 get_hidden_cfg	admin/mysql/scripts/setup.php	/^function get_hidden_cfg() {$/;"	f
 get_html_head_contributions	lib/questionlib.php	/^function get_html_head_contributions(&$questionlist, &$questions, &$states) {$/;"	f
 get_html_head_contributions	question/type/questiontype.php	/^    function get_html_head_contributions(&$question, &$state) {$/;"	f
 get_html_head_contributions	question/type/random/questiontype.php	/^    function get_html_head_contributions(&$question, &$state) {$/;"	f
 get_html_lang	lib/weblib.php	/^function get_html_lang($dir = false) {$/;"	f
-get_icons	grade/report/grader/lib.php	/^    function get_icons($element, $gpr, $icons=null, $limit=true, $states=array()) {$/;"	f
+get_icons	grade/report/grader/lib.php	/^    function get_icons($element, $icons=null, $limit=true, $states=array()) {$/;"	f
 get_id	lib/pagelib.php	/^    function get_id() {$/;"	f
 get_image_size	lib/editor/htmlarea/coursefiles.php	/^function get_image_size($filepath) {$/;"	f
 get_import_export_formats	lib/questionlib.php	/^function get_import_export_formats( $type ) {$/;"	f
@@ -6814,7 +6814,7 @@ get_roles_with_capability	lib/accesslib.php	/^function get_roles_with_capability
 get_roles_with_override_on_context	lib/accesslib.php	/^function get_roles_with_override_on_context($context) {$/;"	f
 get_rss_by_id	blocks/rss_client/block_rss_client.php	/^    function get_rss_by_id($rssid, $display_description, $shownumentries, $showtitle=false) {$/;"	f
 get_sa_candidates	question/type/randomsamatch/questiontype.php	/^    function get_sa_candidates($categorylist, $questionsinuse=0) {$/;"	f
-get_scalehtml	grade/report/grader/lib.php	/^    function get_scalehtml($gpr) {$/;"	f
+get_scalehtml	grade/report/grader/lib.php	/^    function get_scalehtml() {$/;"	f
 get_scales_menu	lib/datalib.php	/^function get_scales_menu($courseid=0) {$/;"	f
 get_section_name	course/lib.php	/^function get_section_name($format) {$/;"	f
 get_section_names	lib/smarty/Config_File.class.php	/^    function get_section_names($file_name)$/;"	f
@@ -6841,7 +6841,7 @@ get_string	admin/report/simpletest/ex_reporter.php	/^    function get_string($id
 get_string	lib/moodlelib.php	/^function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {$/;"	f
 get_string_from_file	lib/moodlelib.php	/^function get_string_from_file($identifier, $langfile, $destination) {$/;"	f
 get_strings	lib/moodlelib.php	/^function get_strings($array, $module='') {$/;"	f
-get_studentshtml	grade/report/grader/lib.php	/^    function get_studentshtml($gpr) {$/;"	f
+get_studentshtml	grade/report/grader/lib.php	/^    function get_studentshtml() {$/;"	f
 get_subdirs	backup/bb/restore_bb.php	/^function get_subdirs($directory){$/;"	f
 get_submission	mod/assignment/lib.php	/^    function get_submission($userid=0, $createnew=false) {$/;"	f
 get_submissions	mod/assignment/lib.php	/^    function get_submissions($sort='', $dir='DESC') {$/;"	f
@@ -7070,9 +7070,9 @@ grade_object	lib/grade/grade_object.php	/^    function grade_object($params=NULL
 grade_oldgradebook_upgrade	lib/gradelib.php	/^function grade_oldgradebook_upgrade($courseid) {$/;"	f
 grade_plugin_return	grade/lib.php	/^    function grade_plugin_return ($params=null) {$/;"	f
 grade_regrade_final_grades	lib/gradelib.php	/^function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {$/;"	f
-grade_report	grade/report/lib.php	/^    function grade_report($courseid, $context, $page=null) {$/;"	f
-grade_report_grader	grade/report/grader/lib.php	/^    function grade_report_grader($courseid, $context, $page=null, $sortitemid=null) {$/;"	f
-grade_report_user	grade/report/user/lib.php	/^    function grade_report_user($courseid, $context, $userid) {$/;"	f
+grade_report	grade/report/lib.php	/^    function grade_report($courseid, $gpr, $context, $page=null) {$/;"	f
+grade_report_grader	grade/report/grader/lib.php	/^    function grade_report_grader($courseid, $gpr, $context, $page=null, $sortitemid=null) {$/;"	f
+grade_report_user	grade/report/user/lib.php	/^    function grade_report_user($courseid, $gpr, $context, $userid) {$/;"	f
 grade_responses	question/type/calculated/questiontype.php	/^    function grade_responses(&$question, &$state, $cmoptions) {$/;"	f
 grade_responses	question/type/description/questiontype.php	/^    function grade_responses(&$question, &$state, $cmoptions) {$/;"	f
 grade_responses	question/type/essay/questiontype.php	/^    function grade_responses(&$question, &$state, $cmoptions) {$/;"	f
