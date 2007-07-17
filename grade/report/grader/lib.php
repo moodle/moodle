@@ -81,13 +81,14 @@ class grade_report_grader extends grade_report {
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
+     * @param object $gpr grade plugin return tracking object
      * @param string $context
      * @param int $page The current page being viewed (when report is paged)
      * @param int $sortitemid The id of the grade_item by which to sort the table
      */
-    function grade_report_grader($courseid, $context, $page=null, $sortitemid=null) {
+    function grade_report_grader($courseid, $gpr, $context, $page=null, $sortitemid=null) {
         global $CFG;
-        parent::grade_report($courseid, $context, $page);
+        parent::grade_report($courseid, $gpr, $context, $page);
 
         $this->sortitemid = $sortitemid;
 
@@ -443,7 +444,7 @@ class grade_report_grader extends grade_report {
      * Builds and returns the HTML code for the headers.
      * @return string $headerhtml
      */
-    function get_headerhtml($gpr) {
+    function get_headerhtml() {
         global $CFG, $USER;
 
         $strsortasc  = $this->get_lang_string('sortasc', 'grades');
@@ -512,7 +513,7 @@ class grade_report_grader extends grade_report {
 
                     // Print icons
                     if ($USER->gradeediting) {
-                        $headerhtml .= $this->get_icons($element, $gpr);
+                        $headerhtml .= $this->get_icons($element);
                     }
 
                     $headerhtml .= '</th>';
@@ -546,7 +547,7 @@ class grade_report_grader extends grade_report {
                               . $element['object']->id .'">'. $element['object']->get_name()
                               . '</a>' . $arrow;
 
-                    $headerhtml .= $this->get_icons($element, $gpr) . '</th>';
+                    $headerhtml .= $this->get_icons($element) . '</th>';
 
                     $this->items[$element['object']->sortorder] =& $element['object'];
                 }
@@ -562,7 +563,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML rows of the table (grades headed by student).
      * @return string HTML
      */
-    function get_studentshtml($gpr) {
+    function get_studentshtml() {
         global $CFG, $USER;
         $studentshtml = '';
         $strfeedback = $this->get_lang_string("feedback");
@@ -634,7 +635,7 @@ class grade_report_grader extends grade_report {
                     $states = array('is_hidden' => $item->hidden,
                                     'is_locked' => $item->locked,
                                     'is_editable' => $item->gradetype != GRADE_TYPE_NONE && !$grade->locked && !$item->locked);
-                    $studentshtml .= $this->get_icons($element, $gpr, null, true, $states);
+                    $studentshtml .= $this->get_icons($element, null, true, $states);
                 }
 
                 // if in editting mode, we need to print either a text box
@@ -742,7 +743,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML rows of the table (grades headed by student).
      * @return string HTML
      */
-    function get_groupavghtml($gpr) {
+    function get_groupavghtml() {
         global $CFG;
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
@@ -828,7 +829,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML row of column totals.
      * @return string HTML
      */
-    function get_gradeavghtml($gpr) {
+    function get_gradeavghtml() {
         global $CFG;
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
@@ -907,7 +908,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML row of scales for each column (i.e. range).
      * @return string HTML
      */
-    function get_scalehtml($gpr) {
+    function get_scalehtml() {
         $scalehtml = '';
         if ($this->get_pref('showranges')) {
             $scalehtml = '<tr><th class="range">'.$this->get_lang_string('range','grades').'</th>';
@@ -930,7 +931,7 @@ class grade_report_grader extends grade_report {
      * @param object $states An optional array of states (hidden, locked, editable), shortcuts to increase performance.
      * @return string HTML
      */
-    function get_icons($element, $gpr, $icons=null, $limit=true, $states=array()) {
+    function get_icons($element, $icons=null, $limit=true, $states=array()) {
         global $CFG;
         global $USER;
 
@@ -986,18 +987,18 @@ class grade_report_grader extends grade_report {
         if ($states['is_editable']) {
             if ($type == 'category') {
                 $url = GRADE_EDIT_URL . '/category.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $gpr->add_url_params($url);
+                $url = $this->gpr->add_url_params($url);
                 $edit_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem'){
                 $url = GRADE_EDIT_URL . '/item.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $gpr->add_url_params($url);
+                $url = $this->gpr->add_url_params($url);
                 $edit_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
                            . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             } else if ($type == 'grade' and ($states['is_editable'] or empty($object->id))) {
             // TODO: change link to use itemid and userid to allow creating of new grade objects
                 $url = GRADE_EDIT_URL . '/grade.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $gpr->add_url_params($url);
+                $url = $this->gpr->add_url_params($url);
                 $edit_icon = '<a href="'.$url.'"><img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
                            . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
             }
@@ -1008,7 +1009,7 @@ class grade_report_grader extends grade_report {
             // show calculation icon only when calculation possible
             if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
                 $url = GRADE_EDIT_URL . '/calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $gpr->add_url_params($url);
+                $url = $this->gpr->add_url_params($url);
                 $edit_calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
             }

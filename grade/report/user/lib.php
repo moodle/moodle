@@ -29,12 +29,13 @@ class grade_report_user extends grade_report {
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
+     * @param object $gpr grade plugin return tracking object
      * @param string $context
      * @param int $userid The id of the user
      */
-    function grade_report_user($courseid, $context, $userid) {
+    function grade_report_user($courseid, $gpr, $context, $userid) {
         global $CFG;
-        parent::grade_report($courseid, $context);
+        parent::grade_report($courseid, $gpr, $context);
 
         // get the user (for full name)
         $this->user = get_record('user', 'id', $userid);

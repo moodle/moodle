@@ -11,7 +11,7 @@ if (!$userid = optional_param('user', 0, PARAM_INT)) {
 }
 
 // Create a report instance
-$report = new grade_report_user($courseid, $context, $userid);
+$report = new grade_report_user($courseid, $gpr, $context, $userid);
 
 // find total number of participants
 $numusers = $report->get_numusers();

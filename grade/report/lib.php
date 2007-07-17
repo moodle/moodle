@@ -18,6 +18,9 @@ class grade_report {
      */
     var $courseid;
 
+    /** Grade plugin return tracking object.
+    var $gpr;
+
     /**
      * The context.
      * @var int $context
@@ -69,15 +72,17 @@ class grade_report {
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
+     * @param object $gpr grade plugin return tracking object
      * @param string $context
      * @param int $page The current page being viewed (when report is paged)
      */
-    function grade_report($courseid, $context, $page=null) {
+    function grade_report($courseid, $gpr, $context, $page=null) {
         global $CFG;
 
         $this->courseid = $courseid;
-        $this->context = $context;
-        $this->page = $page;
+        $this->gpr      = $gpr;
+        $this->context  = $context;
+        $this->page     = $page;
 
         // roles to be displayed in the gradebook
         $this->gradebookroles = $CFG->gradebookroles;

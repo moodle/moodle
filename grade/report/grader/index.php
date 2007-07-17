@@ -21,7 +21,7 @@ if (!is_null($toggle) && !empty($toggle_type)) {
 }
 
 // Initialise the grader report object
-$report = new grade_report_grader($courseid, $context, $page, $sortitemid);
+$report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
 /// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey()) {
@@ -64,11 +64,11 @@ echo $report->get_toggles_html();
 print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 
 $reporthtml = '<table class="gradestable">';
-$reporthtml .= $report->get_headerhtml($gpr);
-$reporthtml .= $report->get_scalehtml($gpr);
-$reporthtml .= $report->get_studentshtml($gpr);
-$reporthtml .= $report->get_groupavghtml($gpr);
-$reporthtml .= $report->get_gradeavghtml($gpr, $numusers); //TODO: numusers not in function definition??
+$reporthtml .= $report->get_headerhtml();
+$reporthtml .= $report->get_scalehtml();
+$reporthtml .= $report->get_studentshtml();
+$reporthtml .= $report->get_groupavghtml();
+$reporthtml .= $report->get_gradeavghtml($numusers); //TODO: numusers not in function definition??
 $reporthtml .= "</table>";
 // print submit button
 if ($USER->gradeediting) {
