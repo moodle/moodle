@@ -92,6 +92,11 @@ class auth_plugin_cas extends auth_plugin_base {
       if (!empty($username)) {
           return;
         }
+	
+	  // Test si cas activé et paramêtres non remplis
+	  if (empty($this->config->hostname)) {
+		  return;
+		  }
 
 // Connection to CAS server
 	 $this->connectCAS();
@@ -103,7 +108,7 @@ class auth_plugin_cas extends auth_plugin_base {
 			$frm->username='erhar0062';
 		$frm->password="passwdCas";		  
 		return;
-	 }
+	 }	 	
 	 
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS");
