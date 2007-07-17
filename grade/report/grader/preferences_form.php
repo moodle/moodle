@@ -41,6 +41,9 @@ class grader_report_preferences_form extends moodleform {
                              'averagesdisplaytype'    => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')),
+                             'rangesdisplaytype'      => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                                                               GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                                                               GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')),
                              'decimalpoints'          => array(0, 1, 2, 3, 4, 5),
                              'studentsperpage'        => 'text');
 

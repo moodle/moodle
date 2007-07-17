@@ -65,7 +65,7 @@ print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'),
 
 $reporthtml = '<table class="gradestable">';
 $reporthtml .= $report->get_headerhtml();
-$reporthtml .= $report->get_scalehtml();
+$reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_studentshtml();
 $reporthtml .= $report->get_groupavghtml();
 $reporthtml .= $report->get_gradeavghtml($numusers); //TODO: numusers not in function definition??
