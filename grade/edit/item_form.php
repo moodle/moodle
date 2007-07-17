@@ -72,6 +72,20 @@ class edit_item_form extends moodleform {
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
+        $mform->addElement('select', 'gradedisplaytype', get_string('gradedisplaytype', 'grades'),
+                    array('default' => get_string('default', 'grades'),
+                          GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')));
+        $mform->setHelpButton('gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
+                              false, true, false, get_string("config_gradedisplaytype", 'grades')));
+        $mform->setDefault('gradedisplaytype', 'default');
+
+        $mform->addElement('select', 'decimalpoints', get_string('decimalpoints', 'grades'),
+                    array('default' => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5));
+        $mform->setHelpButton('decimalpoints', array(false, get_string('decimalpoints', 'grades'),
+                              false, true, false, get_string("config_decimalpoints", 'grades')));
+        $mform->setDefault('decimalpoints', 'default');
+
 /// hidden params
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);

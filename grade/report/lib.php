@@ -96,40 +96,53 @@ class grade_report {
      * the value of that preference. If the preference has already been fetched before,
      * the saved value is returned. If the preference is not set at the User level, the $CFG equivalent
      * is given (site default).
+     * @static (Can be called statically, but then doesn't benefit from caching)
      * @param string $pref The name of the preference (do not include the grade_report_ prefix)
      * @param int $itemid An optional itemid to check for a more fine-grained preference
      * @return mixed The value of the preference
      */
     function get_pref($pref, $itemid=null) {
         global $CFG;
+        $fullprefname = 'grade_report_' . $pref;
 
-        if (empty($this->user_prefs[$pref.$itemid])) {
-            $fullprefname = 'grade_report_' . $pref;
+        if (!isset($this)) {
             if (!empty($itemid)) {
-                $value = get_user_preferences($fullprefname . $itemid, $this->get_pref($pref));
+                $value = get_user_preferences($fullprefname . $itemid, grade_report::get_pref($pref));
             } else {
                 $value = get_user_preferences($fullprefname, $CFG->$fullprefname);
             }
-            $this->user_prefs[$pref.$itemid] = $value;
+            return $value;
+
+        } else {
+            if (empty($this->user_prefs[$pref.$itemid])) {
+                if (!empty($itemid)) {
+                    $value = get_user_preferences($fullprefname . $itemid, $this->get_pref($pref));
+                } else {
+                    $value = get_user_preferences($fullprefname, $CFG->$fullprefname);
+                }
+                $this->user_prefs[$pref.$itemid] = $value;
+            }
+            return $this->user_prefs[$pref.$itemid];
         }
-        return $this->user_prefs[$pref.$itemid];
     }
 
     /**
-     * Uses set_user_preferences() to update the value of a user preference.
-     * Also updates the object's corresponding variable.
+     * Uses set_user_preferences() to update the value of a user preference. If 'default' is given as the value,
+     * the preference will be removed in favour of a higher-level preference.
+     * @static
      * @param string $pref_name The name of the preference.
      * @param mixed $pref_value The value of the preference.
      * @param int $itemid An optional itemid to which the preference will be assigned
      * @return bool Success or failure.
      * TODO print visual feedback
      */
-    function set_pref($pref, $pref_value, $itemid=null) {
+    function set_pref($pref, $pref_value='default', $itemid=null) {
         $fullprefname = 'grade_report_' . $pref;
-        if ($result = set_user_preferences(array($fullprefname.$itemid => $pref_value))) {
-            $this->user_prefs[$pref.$itemid] = $pref_value;
+        if ($pref_value == 'default') {
+            return unset_user_preference($fullprefname.$itemid);
+        } else {
+            return set_user_preference($fullprefname.$itemid, $pref_value);
         }
-        return $result;
     }
 
     /**
