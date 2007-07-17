@@ -25,14 +25,16 @@ $mform = new edit_item_form(null, array('gpr'=>$gpr));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
+
 } else if (!$mform->is_submitted()) {
     if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
        // Get Item preferences
-       $item->gradedisplaytype = get_user_preferences('grade_report_gradedisplaytype' . $id, 'default');
-       $item->decimalpoints    = get_user_preferences('grade_report_decimalpoints' . $id, 'default');
+       $item->pref_gradedisplaytype = get_user_preferences('grade_report_gradedisplaytype' . $id, 'default');
+       $item->pref_decimalpoints    = get_user_preferences('grade_report_decimalpoints' . $id, 'default');
 
        $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
        $mform->set_data($item);
+
    } else {
        $mform->set_data(array('courseid'=>$course->id, 'itemtype'=>'manual'));
    }
@@ -56,25 +58,19 @@ if ($mform->is_cancelled()) {
     }
 
     // Handle user preferences
-    if (!empty($data->gradedisplaytype)) {
-        if (!grade_report::set_pref('gradedisplaytype', $data->gradedisplaytype, $id)) {
-            $errors[] = "Could not set preference gradedisplaytype to $value for this grade item";
+    if (!empty($data->pref_gradedisplaytype)) {
+        if (!grade_report::set_pref('gradedisplaytype', $data->pref_gradedisplaytype, $grade_item->id)) {
+            error("Could not set preference gradedisplaytype to $value for this grade item");
         }
     }
 
-    if (!empty($data->decimalpoints)) {
-        if (!grade_report::set_pref('decimalpoints', $data->decimalpoints, $id)) {
-            $errors[] = "Could not set preference decimalpoints to $value for this grade item";
+    if (!empty($data->pref_decimalpoints)) {
+        if (!grade_report::set_pref('decimalpoints', $data->pref_decimalpoints, $grade_item->id)) {
+            errors("Could not set preference decimalpoints to $value for this grade item");
         }
     }
 
-    if (empty($errors)) {
-    //    redirect($returnurl);
-    } else {
-        foreach ($errors as $error) {
-            error($error);
-        }
-    }
+    redirect($returnurl, 'temporary debug delay', 10);
 }
 
 $strgrades       = get_string('grades');
