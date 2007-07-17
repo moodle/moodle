@@ -10,12 +10,14 @@ $id = required_param('id', PARAM_INT); // course id
 $course = get_record('course', 'id', $id); // actual course
 
 // capability check
+require_login($id);
 require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id));
 
 require_once('../lib.php');
 require_once('../grade_import_form.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 
+// print header
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('importxml', 'grades');
 $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
@@ -87,6 +89,22 @@ if ( $formdata = $mform->get_data()) {
                 break;
             }
             
+            // grade item locked, abort
+            if ($gradeitem->locked) {
+                $status = false;
+                notify(get_string('gradeitemlocked', 'grades'));
+                break 3;  
+            }                    
+            
+            // check if grade_grades is locked and if so, abort
+            if ($grade_grades = new grade_grades(array('itemid'=>$gradeitem->id, 'userid'=>$result['#']['student'][0]['#']))) {
+                if ($grade_grades->locked) {
+                    // individual grade locked, abort
+                    $status = false;
+                    notify(get_string('gradegradeslocked', 'grades'));
+                    break 2;
+                }
+            }
             unset($newgrade);
 
             if (isset($result['#']['score'][0]['#'])) {
@@ -109,7 +127,7 @@ if ( $formdata = $mform->get_data()) {
                     notify(get_string('baduserid', 'grades'));
                     notify(get_string('importfailed', 'grades'));
                     break;
-                }
+                }           
           
                 // check grade value is a numeric grade
                 if (!is_numeric($newgrade->rawgrade)) {

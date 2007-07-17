@@ -2,7 +2,6 @@
 require_once('../../../config.php');
 include_once($CFG->libdir.'/gradelib.php');
 
-
 $id = required_param('id', PARAM_INT); // course id
 $course = get_record('course', 'id', $id); // actual course
 
@@ -64,6 +63,23 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
     // if mapping informatioin is supplied
     $map[clean_param($formdata->mapfrom, PARAM_RAW)] = clean_param($formdata->mapto, PARAM_RAW);
+
+    // check for mapto collisions
+    $maperrors = array();
+    foreach ($map as $i=>$j) {
+        if ($j == 0) {
+            // you can have multiple ignores
+            continue;  
+        } else {
+            if (!isset($maperrors[$j])) {
+                $maperrors[$j] = true;      
+            } else {
+                // collision  
+                unlink($filename); // needs to be uploaded again, sorry
+                error('mapping collision detected, 2 fields maps to the same grdae item '.$j);
+            }
+        }
+    }
 
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
@@ -184,12 +200,12 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         // if not, put it in                        
                         // else, insert grade into the table
                     break;
-                    case 'feeback':
+                    case 'feedback':
                         if ($t1) {
                             // t1 is the id of the grade item
                             $feedback -> itemid = $t1;
                             $feedback -> feedback = $value;
-                            $newfeedback[] = $feedback;
+                            $newfeedbacks[] = $feedback;
                         }
                     break;                  
                     default:
@@ -197,7 +213,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         if (!empty($map[$key]) && $value!=="") {
                             
                             // non numeric grade value supplied, possibly mapped wrong column
-                            if (!is_numeric($value)) {                                
+                            if (!is_numeric($value)) {
+                                echo "<br/>t0 is $t0";
+                                echo "<br/>grade is $value";
                                 $status = false;                                
                                 import_cleanup($importcode);
                                 notify(get_string('badgrade', 'grades'));
@@ -274,7 +292,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
             // updating/inserting all comments here
             if (!empty($newfeedbacks)) {
                 foreach ($newfeedbacks as $newfeedback) {
-                    if ($feedback = get_record('grade_import_values', 'importcode', $importcode, 'userid', $studentid, 'itemid', $newfeedback->itemid)) {
+                    if ($feedback = get_record('grade_import_values', 'import_code', $importcode, 'userid', $studentid, 'itemid', $newfeedback->itemid)) {
                         $newfeedback ->id = $feedback ->id;
                         update_record('grade_import_values', $newfeedback);
                     } else {

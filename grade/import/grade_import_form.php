@@ -37,7 +37,6 @@ class grade_import_mapping_form extends moodleform {
     
     function definition () {
         global $CFG;
-        
         $mform =& $this->_form;
 
         // this is an array of headers
@@ -48,7 +47,7 @@ class grade_import_mapping_form extends moodleform {
 
         $mform->addElement('header', 'general', get_string('identifier', 'grades'));
         $mapfromoptions = array();
-        
+
         if ($header) {
             foreach ($header as $i=>$h) {
                 $mapfromoptions[$i] = $h;
@@ -63,35 +62,41 @@ class grade_import_mapping_form extends moodleform {
         
         $mform->addElement('header', 'general', get_string('mappings', 'grades'));
         
-        $gradeitems = $this->_customdata['gradeitems'];
+        // add a comment option
+
+        if ($gradeitems = $this->_customdata['gradeitems']) {
+            $comments = array();            
+            foreach ($gradeitems as $itemid => $itemname) {
+                $comments['feedback_'.$itemid] = 'comments for '.$itemname;            
+            }  
+        }
 
         include_once($CFG->libdir.'/gradelib.php');
 
         if ($header) {          
             $i = 0; // index
             foreach ($header as $h) {
- 
-                $h = trim($h);
-                // this is the order of the headers
-                // $mform->addElement('hidden', 'maps[]', $h);
-                
-                // this is what they map to        
-                $mapfromoptions = array('0'=>'ignore', 'new'=>'new gradeitem') + $gradeitems;
 
-                $mform->addElement('select', 'mapping_'.$i, s($h), $mapfromoptions);
+                $h = trim($h);
+                // this is what each header maps to        
+                $mform->addElement('selectgroups', 
+                                   'mapping_'.$i, s($h), 
+                                   array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'), 
+                                         'gradeitems'=>$gradeitems, 
+                                         'comments'=>$comments));
                 $i++;
             }
         }
-        
+
         // find a non-conflicting file name based on time stamp
         $newfilename = 'cvstemp_'.time();
         while (file_exists($CFG->dataroot.'/temp/'.$newfilename)) {
             $newfilename = 'cvstemp_'.time();
         }
-        
+
         // move the uploaded file
         move_uploaded_file($filename, $CFG->dataroot.'/temp/'.$newfilename);
-        
+
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'map', 1);
         $mform->setType('map', PARAM_INT);
@@ -101,7 +106,7 @@ class grade_import_mapping_form extends moodleform {
         $mform->addElement('hidden', 'filename', $newfilename);
         $mform->setType('filename', PARAM_FILE);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));        
-        
+
     }
 }
 ?>
