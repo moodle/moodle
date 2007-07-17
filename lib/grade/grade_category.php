@@ -905,23 +905,19 @@ class grade_category extends grade_object {
      * Sets the grade_item's locked variable and updates the grade_item.
      * Method named after grade_item::set_locked().
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
-     * @return boolean success
+     * @return boolean success if categroy locked (not all children mayb be locked though)
      */
     function set_locked($lockedstate) {
         $this->load_grade_item();
         $result = $this->grade_item->set_locked($lockedstate);
         if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
             foreach($children as $child) {
-                if (!$child->set_locked($lockedstate)) {
-                    $result = false;
-                }
+                $child->set_locked($lockedstate);
             }
         }
         if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
             foreach($children as $child) {
-                if (!$child->set_locked($lockedstate)) {
-                    $result = false;
-                }
+                $child->set_locked($lockedstate);
             }
         }
         return $result;

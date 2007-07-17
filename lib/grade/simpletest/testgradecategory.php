@@ -289,8 +289,7 @@ class grade_category_test extends grade_test {
     function test_grade_category_set_locked() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_locked'));
-        $category->load_grade_item();
-        $this->assertEqual($category->set_locked(1), $category->grade_item->set_locked(1));
+        $this->assertTrue($category->set_locked(1));
     }
 
     function test_grade_category_is_hidden() {
@@ -303,8 +302,9 @@ class grade_category_test extends grade_test {
     function test_grade_category_set_hidden() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_hidden'));
+        $category->set_hidden(1);
         $category->load_grade_item();
-        $this->assertEqual($category->set_hidden(1), $category->grade_item->set_hidden(1));
+        $this->assertEqual(true, $category->grade_item->is_hidden());
     }
 
     function test_grade_category_has_children() {
