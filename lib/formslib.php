@@ -125,8 +125,10 @@ class moodleform {
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
 
-        // update form definition based on final data
-        $this->definition_after_data();
+        // update form definition based on final data if form submitted
+        if ($this->is_submitted()) {
+            $this->definition_after_data();
+        }
     }
 
     /**
