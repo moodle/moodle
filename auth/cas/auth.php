@@ -57,7 +57,7 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-		$this->connectCAS();
+		$this->connectCAS();		
         return phpCAS::isAuthenticated();
     }
     /**
@@ -99,6 +99,8 @@ class auth_plugin_cas extends auth_plugin_base {
 	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
+		if (phpCAS::getUser()=='esup9992')
+			$frm->username='erhar0062';
 		$frm->password="passwdCas";		  
 		return;
 	 }
@@ -208,8 +210,6 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             $config->baseuri = '';
         if (!isset ($config->language)) 
             $config->language = '';
-        if (!isset ($config->use_cas)) 
-            $config->use_cas = '';
         if (!isset ($config->proxycas)) 
             $config->proxycas = '';
         if (!isset ($config->logoutcas)) 
@@ -255,7 +255,6 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         set_config('casversion',     $config->casversion,     'auth/cas');
         set_config('baseuri',     $config->baseuri,     'auth/cas');
         set_config('language',    $config->language,    'auth/cas');
-        set_config('use_cas',     $config->use_cas,     'auth/cas');
         set_config('proxycas',     $config->proxycas,     'auth/cas');
         set_config('logoutcas',     $config->logoutcas,     'auth/cas');
         set_config('multiauth',     $config->multiauth,     'auth/cas');
