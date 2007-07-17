@@ -210,8 +210,9 @@ class XMLDBIndex extends XMLDBObject {
 
     /// Set the unique field
         $this->unique = false;
-    /// Set the fields
-        $this->fields = $adoindex['columns'];
+    /// Set the fields, converting all them to lowercase
+        $fields = array_flip(array_change_key_case(array_flip($adoindex['columns'])));
+        $this->fields = $fields;
     /// Some more fields
         $this->loaded = true;
         $this->changed = true;
