@@ -88,7 +88,7 @@ class new_table_from_mysql extends XMLDBAction {
             $dbtables = $db->MetaTables('TABLES');
             $selecttables = array();
             foreach ($dbtables as $dbtable) {
-                $dbtable = str_replace($CFG->prefix, '', $dbtable);
+                $dbtable = strtolower(str_replace($CFG->prefix, '', $dbtable));
                 $i = $structure->findTableInArray($dbtable);
                 if ($i === NULL) {
                     $selecttables[$dbtable] = $dbtable;
