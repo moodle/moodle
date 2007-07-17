@@ -34,6 +34,24 @@ function xmldb_glossary_upgrade($oldversion=0) {
     
     if ($result && $oldversion < 2006111400) {
 
+    /// MDL-10475, set override for legacy:student before dropping studentcanpost
+    /// if the glossary disables student postings
+    
+        if ($glossaries = get_records('glossary', 'studentcanpost', '0')) {
+            foreach ($glossaries as $glossary) {
+                if ($cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
+                    // add student override in this instance
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    // find all roles with legacy:student
+                    if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
+                        foreach ($studentroles as $studentrole) {
+                            assign_capability('mod/glossary:write', CAP_PREVENT, $studentrole->id, $context->id);
+                        }
+                    }
+                }
+            }
+        }
+
     /// Define field studentcanpost to be dropped from glossary
         $table = new XMLDBTable('glossary');
         $field = new XMLDBField('studentcanpost');
