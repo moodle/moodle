@@ -25,21 +25,22 @@ $mform = new edit_item_form(null, array('gpr'=>$gpr));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
+}
 
-} else if (!$mform->is_submitted()) {
-    if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
-       // Get Item preferences
-       $item->pref_gradedisplaytype = get_user_preferences('grade_report_gradedisplaytype' . $id, 'default');
-       $item->pref_decimalpoints    = get_user_preferences('grade_report_decimalpoints' . $id, 'default');
+if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
+    // Get Item preferences
+    $item->pref_gradedisplaytype = get_user_preferences('grade_report_gradedisplaytype' . $id, 'default');
+    $item->pref_decimalpoints    = get_user_preferences('grade_report_decimalpoints' . $id, 'default');
 
-       $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
-       $mform->set_data($item);
+    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
+    $mform->set_data($item);
 
-   } else {
-       $mform->set_data(array('courseid'=>$course->id, 'itemtype'=>'manual'));
-   }
+} else {
+    // defaults for new items
+    $mform->set_data(array('courseid'=>$course->id, 'itemtype'=>'manual'));
+}
 
-} else if ($data = $mform->get_data()) {
+if ($data = $mform->get_data()) {
     $errors = array();
 
     if (array_key_exists('calculation', $data)) {
