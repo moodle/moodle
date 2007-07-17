@@ -690,10 +690,9 @@ class grade_report_grader extends grade_report {
 
                     // Convert the grade to percentage if needed
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE && !is_null($gradeval)) {
-                        $gradeval = grade_grades::standardise_score($gradeval,
-                                                                    $this->finalgrades[$userid][$item->id]->grademin,
-                                                                    $this->finalgrades[$userid][$item->id]->grademax,
-                                                                    0, 100);
+                        $grademin = $this->finalgrades[$userid][$item->id]->grademin;
+                        $grademax = $this->finalgrades[$userid][$item->id]->grademax;
+                        $gradeval = grade_grades::standardise_score($gradeval, $grademin, $grademax, 0, 100);
                     }
 
                     // If feedback present, surround grade with feedback tooltip
