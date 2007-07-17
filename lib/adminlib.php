@@ -2510,7 +2510,7 @@ class admin_setting_special_coursemanager extends admin_setting {
             $currentsetting = $this->get_setting();
         }
         // from to process which roles to display
-        if ($roles = get_records('role')) {
+        if ($roles = get_records_select('role', '', 'sortorder')) {
             $return = '<div class="form-group">';
             $first = true;
             foreach ($roles as $roleid=>$role) {
