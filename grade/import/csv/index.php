@@ -28,8 +28,12 @@ if (isset($CFG->CSV_DELIMITER)) {
     $csv_delimiter2 = ",";
 }
 
-$action = 'importcsv';
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+$strgrades = get_string('grades', 'grades');
+$actionstr = get_string('importcsv', 'grades');
+$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
+$gradenav .= " -> $actionstr";
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
 
 $mform = new grade_import_form();
 //$mform2 = new grade_import_mapping_form();
@@ -52,8 +56,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
         error ('could not open file '.$filename);  
     }
     
+    $map = array();
     // loops mapping_0, mapping_1 .. mapping_n and construct $map array
-    foreach ($header as $i=>$head) {
+    foreach ($header as $i => $head) {
         $map[$i] = $formdata->{'mapping_'.$i};      
     }
 
@@ -208,7 +213,15 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                                 $status = false;
                                 import_cleanup($importcode);
                                 notify(get_string('importfailed', 'grades'));
-                                break 3;                             
+                                break 3;
+                            }
+                            
+                            // check if grade item is locked if so, abort
+                            if ($gradeitem->locked) {
+                                $status = false;
+                                import_cleanup($importcode);
+                                notify(get_string('gradeitemlocked', 'grades'));
+                                break 3;  
                             }
 
                             unset($newgrade);
@@ -217,7 +230,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                             $newgrades[] = $newgrade;
                         } // otherwise, we ignore this column altogether 
                           // because user has chosen to ignore them (e.g. institution, address etc)
-                    break;  
+                    break;
                 }
             }
 
@@ -227,21 +240,33 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 $status = false;
                 import_cleanup($importcode);
                 notify('user mapping error, could not find user!');
-                break; 
+                break;
             }
 
             // insert results of this students into buffer
             if (!empty($newgrades)) {
               
                 foreach ($newgrades as $newgrade) {
+                  
+                    // check if grade_grades is locked and if so, abort
+                    if ($grade_grades = new grade_grades(array('itemid'=>$newgrade->itemid, 'userid'=>$studentid))) {
+                        if ($grade_grades->locked) {
+                            // individual grade locked
+                            $status = false;
+                            import_cleanup($importcode);
+                            notify(get_string('gradegradeslocked', 'grades'));
+                            break 2;
+                        }
+                    }
+
                     $newgrade->import_code = $importcode;
                     $newgrade->userid = $studentid;
                     if (!insert_record('grade_import_values', $newgrade)) {
                         // could not insert into temporary table
                         $status = false;
                         import_cleanup($importcode);
-                        notify(get_string('importfailed', 'grades'));   
-                        break 2;                   
+                        notify(get_string('importfailed', 'grades'));
+                        break 2;
                     }
                 }
             }
@@ -256,11 +281,10 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                         // the grade item for this is not updated
                         $newfeedback->import_code = $importcode;
                         $newfeedback->userid = $studentid;
-                        insert_record('grade_import_values', $newfeedback);  
+                        insert_record('grade_import_values', $newfeedback);
                     }
                 }
             }
-            
         }
 
         /// at this stage if things are all ok, we commit the changes from temp table 

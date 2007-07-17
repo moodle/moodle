@@ -74,9 +74,9 @@ function grade_import_commit($courseid, $importcode) {
                     return false;
                 }
             }
-        } 
+        }
     }
-        
+
     /// then find all existing items
 
     if ($gradeitems = get_records_sql("SELECT DISTINCT (itemid) 
@@ -95,26 +95,26 @@ function grade_import_commit($courseid, $importcode) {
             }
             // get all grades with this item
             if ($grades = get_records('grade_import_values', 'itemid', $itemid)) {
-                
+
                 // make the grardes array for update_grade
                 foreach ($grades as $grade) {
                     if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
                         $failed = 1;
-                        break 2; 
+                        break 2;
                     }
                 }
-                //$itemdetails -> idnumber = $gradeitem->idnumber;                
-                $modifieditems[] = $itemid;                                      
+                //$itemdetails -> idnumber = $gradeitem->idnumber;
+                $modifieditems[] = $itemid;
 
-            }                    
+            }
                 
             if (!empty($failed)) {
                 import_cleanup($importcode);
-                return false;        
-            }      
+                return false;
+            }
         }
     }
-    
+
     notify(get_string('importsuccess', 'grades'));
     print_continue($CFG->wwwroot.'/course/view.php?id='.$courseid);
     // clean up
@@ -127,9 +127,9 @@ function grade_import_commit($courseid, $importcode) {
  * @param string importcode - import batch identifier
  */
 function import_cleanup($importcode) {
-    // remove entries from buffer table 
+    // remove entries from buffer table
     delete_records('grade_import_values', 'import_code', $importcode);
-    delete_records('grade_import_newitem', 'import_code', $importcode);  
+    delete_records('grade_import_newitem', 'import_code', $importcode);
 }
 
 /// Returns the file as one big long string

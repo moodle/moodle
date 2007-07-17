@@ -29,8 +29,12 @@ $id = required_param('id', PARAM_INT); // course id
 $course = get_record('course', 'id', $id);
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
     
-$action = 'exportxml';
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+$strgrades = get_string('grades', 'grades');
+$actionstr = get_string('exportxml', 'grades');
+$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
+$gradenav .= " -> $actionstr";
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
 
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {

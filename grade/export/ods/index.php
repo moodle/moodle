@@ -28,8 +28,12 @@ require_once('grade_export_ods.php');
 $id = required_param('id', PARAM_INT); // course id 
 $course = get_record('course', 'id', $id);
 $feedback = optional_param('feedback', '', PARAM_ALPHA);   
-$action = 'exportods';
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+$strgrades = get_string('grades', 'grades');
+$actionstr = get_string('exportods', 'grades');
+$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
+$gradenav .= " -> $actionstr";
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {
 

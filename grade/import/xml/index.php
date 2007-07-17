@@ -16,8 +16,12 @@ require_once('../lib.php');
 require_once('../grade_import_form.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 
-$action = 'importxml';
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, grade_nav($course, $action));
+$strgrades = get_string('grades', 'grades');
+$actionstr = get_string('importxml', 'grades');
+$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
+$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
+$gradenav .= " -> $actionstr";
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
 
 $mform = new grade_import_form();
 
