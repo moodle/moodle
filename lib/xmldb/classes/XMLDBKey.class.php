@@ -380,8 +380,9 @@ class XMLDBKey extends XMLDBObject {
             default:
                 $this->type = XMLDB_KEY_UNIQUE;
         }
-    /// Set the fields
-        $this->fields = $adokey['columns'];
+    /// Set the fields, converting all them to lowercase
+        $fields = array_flip(array_change_key_case(array_flip($adokey['columns'])));
+        $this->fields = $fields;
     /// Some more fields
         $this->loaded = true;
         $this->changed = true;
