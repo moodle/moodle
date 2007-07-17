@@ -1783,15 +1783,17 @@ function print_course($course) {
     /// first find all roles that are supposed to be displayed
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);
-        foreach ($coursemanagerroles as $roleid) {
-            $role = get_record('role','id',$roleid);
-            if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', true)) {
-                foreach ($users as $teacher) {
-                    $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
-                    $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+        $roles = get_records_select( 'role', '', 'sortorder' );
+        foreach ($roles as $role) {
+            if (in_array( $role->id, $coursemanagerroles )) {
+                if ($users = get_role_users($role->id, $context, true, '', 'u.lastname ASC', true)) {
+                    foreach ($users as $teacher) {
+                        $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
+                        $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
                                     $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-                }
-            }          
+                    }
+                }          
+            }
         }
         
         if (!empty($namesarray)) {
