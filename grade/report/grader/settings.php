@@ -25,13 +25,13 @@ $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', g
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
                                           get_string('configrangesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
                                                 GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                 GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
                                                 GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                 GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
 
@@ -78,5 +78,24 @@ $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_
                                                  '3' => '3',
                                                  '4' => '4',
                                                  '5' => '5')));
+$settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoints', get_string('averagesdecimalpoints', 'grades'),
+                                          get_string('configaveragesdecimalpoints', 'grades'), 2,
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                 '0' => '0',
+                                                 '1' => '1',
+                                                 '2' => '2',
+                                                 '3' => '3',
+                                                 '4' => '4',
+                                                 '5' => '5')));
+$settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints', get_string('rangesdecimalpoints', 'grades'),
+                                          get_string('configrangesdecimalpoints', 'grades'), 2,
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                 '0' => '0',
+                                                 '1' => '1',
+                                                 '2' => '2',
+                                                 '3' => '3',
+                                                 '4' => '4',
+                                                 '5' => '5')));
+
 
 ?>

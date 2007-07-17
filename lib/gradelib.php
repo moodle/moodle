@@ -75,7 +75,8 @@ define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
 define('GRADE_REPORT_AGGREGATION_VIEW_COMPACT', 1);
 define('GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW', 0);
 define('GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
-define('GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT', 2); // Inherit the value set for a particular grade_item (grade_report_gradedisplaytype{$itemid})
+define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default');
+define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit');
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');

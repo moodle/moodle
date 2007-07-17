@@ -76,18 +76,18 @@ class edit_item_form extends moodleform {
         $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
 
         $mform->addElement('select', 'pref_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
-                    array('default' => get_string('default', 'grades'),
+                    array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
                           GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                           GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')));
         $mform->setHelpButton('pref_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string("config_gradedisplaytype", 'grades')));
-        $mform->setDefault('pref_gradedisplaytype', 'default');
+        $mform->setDefault('pref_gradedisplaytype', GRADE_REPORT_PREFERENCE_DEFAULT);
 
         $mform->addElement('select', 'pref_decimalpoints', get_string('decimalpoints', 'grades'),
-                    array('default' => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5));
+                    array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5));
         $mform->setHelpButton('pref_decimalpoints', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string("config_decimalpoints", 'grades')));
-        $mform->setDefault('pref_decimalpoints', 'default');
+        $mform->setDefault('pref_decimalpoints', GRADE_REPORT_PREFERENCE_DEFAULT);
 
 /// hidden params
         $mform->addElement('hidden', 'id', 0);

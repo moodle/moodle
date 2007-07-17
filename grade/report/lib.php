@@ -35,9 +35,9 @@ class grade_report {
 
     /**
      * User preferences related to this report.
-     * @var array $user_prefs
+     * @var array $prefs
      */
-    var $user_prefs = array();
+    var $prefs = array();
 
     /**
      * The roles for this report.
@@ -105,25 +105,34 @@ class grade_report {
         global $CFG;
         $fullprefname = 'grade_report_' . $pref;
 
+        $retval = null;
+
         if (!isset($this)) {
             if (!empty($itemid)) {
-                $value = get_user_preferences($fullprefname . $itemid, grade_report::get_pref($pref));
+                $retval = get_user_preferences($fullprefname . $itemid, grade_report::get_pref($pref));
             } else {
-                $value = get_user_preferences($fullprefname, $CFG->$fullprefname);
+                $retval = get_user_preferences($fullprefname, $CFG->$fullprefname);
             }
-            return $value;
-
         } else {
-            if (empty($this->user_prefs[$pref.$itemid])) {
+            if (empty($this->prefs[$pref.$itemid])) {
+
                 if (!empty($itemid)) {
-                    $value = get_user_preferences($fullprefname . $itemid, $this->get_pref($pref));
+                    $retval = get_user_preferences($fullprefname . $itemid);
+                    if (empty($retval)) {
+                        // No item pref found, we are returning the global preference
+                        $retval = $this->get_pref($pref);
+                        $itemid = null;
+                    }
                 } else {
-                    $value = get_user_preferences($fullprefname, $CFG->$fullprefname);
+                    $retval = get_user_preferences($fullprefname, $CFG->$fullprefname);
                 }
-                $this->user_prefs[$pref.$itemid] = $value;
+                $this->prefs[$pref.$itemid] = $retval;
+            } else {
+                $retval = $this->prefs[$pref.$itemid];
             }
-            return $this->user_prefs[$pref.$itemid];
         }
+
+        return $retval;
     }
 
     /**
@@ -215,17 +224,20 @@ class grade_report {
      * the result is suitable for printing on html page
      * @static
      * @param float $gradeval raw grade value pulled from db
+     * @param int $decimalpoints Optional integers to override global decimalpoints preference
      * @return string $gradeval formatted grade value
      */
-    function get_grade_clean($gradeval) {
+    function get_grade_clean($gradeval, $decimalpoints=null) {
         global $CFG;
 
         if (is_null($gradeval)) {
             $gradeval = '';
         } else {
             // decimal points as specified by user
-            $decimals = $this->get_pref('decimalpoints');
-            $gradeval = number_format($gradeval, $decimals, $this->get_lang_string('decpoint', 'langconfig'),
+            if (empty($decimalpoints)) {
+                $decimalpoints = $this->get_pref('decimalpoints');
+            }
+            $gradeval = number_format($gradeval, $decimalpoints, $this->get_lang_string('decpoint', 'langconfig'),
                                       $this->get_lang_string('thousandsep', 'langconfig'));
         }
 

@@ -38,12 +38,16 @@ class grader_report_preferences_form extends moodleform {
                                                                GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades')),
                              'gradedisplaytype'       => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')),
-                             'averagesdisplaytype'    => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                             'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')),
-                             'rangesdisplaytype'      => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_INHERIT => get_string('inherit', 'grades'),
+                             'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
                                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')),
+                             'averagesdecimalpoints'  => array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                               0, 1, 2, 3, 4, 5),
+                             'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                                               0, 1, 2, 3, 4, 5),
                              'decimalpoints'          => array(0, 1, 2, 3, 4, 5),
                              'studentsperpage'        => 'text');
 
@@ -60,7 +64,7 @@ class grader_report_preferences_form extends moodleform {
             $mform->addElement($type, $full_pref, get_string($pref, 'grades'), $options);
             $mform->setHelpButton($full_pref, array(false, get_string($pref, 'grades'), false, true, false, get_string("config_$pref", 'grades')));
             $mform->setDefault($full_pref, $pref_value);
-            $mform->setType($full_pref, PARAM_INT);
+            $mform->setType($full_pref, PARAM_ALPHANUM);
         }
 
         $mform->addElement('hidden', 'id');
