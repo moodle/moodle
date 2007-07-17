@@ -709,7 +709,7 @@ class grade_report_grader extends grade_report {
 
                     // finalgrades[$userid][$itemid] could be null because of the outer join
                     // in this case it's different than a 0
-                    if ($item->scaleid && !empty($scales_array[$item->scaleid]) && $gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW) {
+                    if ($item->scaleid && !empty($scales_array[$item->scaleid]) && $gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
 
@@ -783,7 +783,7 @@ class grade_report_grader extends grade_report {
                 // Determine which display type to use for this average
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
                 if ($USER->gradeediting) {
-                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW;
+                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
                     $displaytype = $gradedisplaytype;
                 } else { // General preference overrides specific column display type
@@ -868,7 +868,7 @@ class grade_report_grader extends grade_report {
                 // Determine which display type to use for this average
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
                 if ($USER->gradeediting) {
-                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW;
+                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
                     $displaytype = $gradedisplaytype;
                 } else { // General preference overrides specific column display type
@@ -928,15 +928,16 @@ class grade_report_grader extends grade_report {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this range
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+
                 if ($USER->gradeediting) {
-                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW;
+                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
                     $displaytype = $gradedisplaytype;
                 } else { // General preference overrides specific column display type
                     $displaytype = $rangesdisplaytype;
                 }
 
-                if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW) {
+                if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
                     $grademin = $this->get_grade_clean($item->grademin, $decimalpoints);
                     $grademax = $this->get_grade_clean($item->grademax, $decimalpoints);
                 } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {

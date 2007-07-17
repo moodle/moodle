@@ -77,7 +77,7 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('select', 'pref_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                     array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
-                          GRADE_REPORT_GRADE_DISPLAY_TYPE_RAW => get_string('raw', 'grades'),
+                          GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                           GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')));
         $mform->setHelpButton('pref_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string("config_gradedisplaytype", 'grades')));
