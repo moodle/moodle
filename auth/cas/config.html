@@ -1,432 +1,828 @@
 <?php
 
+
+
     global $CFG;
+
     require_once 'languages.php';
 
+
+
     $createoptions[0] = get_string("no");
+
     $createoptions[1] = get_string("yes");
 
+
+
     // set to defaults if undefined (CAS)
+
     if (!isset ($config->hostname)) 
+
         $config->hostname = '';
+
     if (!isset ($config->port)) 
+
         $config->port = '';
+
     if (!isset ($config->casversion)) 
+
         $config->casversion = '';
+
     if (!isset ($config->baseuri)) 
+
         $config->baseuri = '';
+
     if (!isset ($config->language)) 
+
         $config->language = '';
-    if (!isset ($config->use_cas)) 
-        $config->use_cas = '';
+
     if (!isset ($config->proxycas)) 
+
         $config->proxycas = '';
+
     if (!isset ($config->logoutcas)) 
+
         $config->logoutcas = '';
+
     if (!isset ($config->multiauth))
+
         $config->multiauth = '';
+
   // set to defaults if undefined (LDAP)
+
     if (!isset($config->host_url))
+
         { $config->host_url = ''; }
+
     if (empty($config->ldapencoding))
+
         { $config->ldapencoding = 'utf-8'; }
+
     if (!isset($config->contexts))
+
         { $config->contexts = ''; }
+
     if (!isset($config->user_type))
+
         { $config->user_type = 'default'; }
+
     if (!isset($config->user_attribute))
+
         { $config->user_attribute = ''; }
+
     if (!isset($config->search_sub))
+
         { $config->search_sub = ''; }
+
     if (!isset($config->opt_deref))
+
         { $config->opt_deref = LDAP_DEREF_NEVER; }
+
     if (!isset($config->bind_dn))
+
         {$config->bind_dn = ''; }
+
     if (!isset($config->bind_pw))
+
         {$config->bind_pw = ''; }
+
     if (!isset($config->version))
+
         {$config->version = '2'; }
+
     if (!isset($config->objectclass))
+
         {$config->objectclass = ''; }
+
     if (!isset($config->memberattribute))
+
         {$config->memberattribute = ''; }
+
     if (!isset($config->memberattribute_isdn))
+
         {$config->memberattribute_isdn = ''; }
+
     if (!isset($config->groupecreators))
+
         {$config->groupecreators = ''; }
+
     if (!isset($config->attrcreators))
+
         {$config->attrcreators = ''; }
-    if (!isset($config->removeuser))
+
+     if (!isset($config->removeuser))
+
         {$config->removeuser = 0; }
+
+
 
     $yesno = array( get_string('no'), get_string('yes') );
 
+
+
 if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
+
     notify(get_string('auth_ldap_noextension','auth'));
+
 }
+
+
+
 
 
 ?>
 
+
+
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
+
+
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('auth_cas_server_settings', 'auth') ?> </h4>
+
    </td>
-</tr>
 
-<tr valign="top"  class="required">
-    <td align="right"><?php print_string('auth_cas_use_cas', 'auth') ?>:</td>
-    <td>
-        <?php
-
-        unset($options);
-        $options[1] = get_string('yes');
-        choose_from_menu ($options, 'use_cas', $config->use_cas, get_string('no'), '', '');
-
-        ?>
-    </td>
-    <td><?php print_string('auth_cas_enabled', 'auth') ?></td>
 </tr>
 
 <tr valign="top" class="required">
+
     <td align="right"><?php print_string('auth_cas_hostname_key', 'auth') ?>:</td>
+
     <td>
+
         <input name="hostname" type="text" size="30" value="<?php echo $config->hostname ?>" />
+
         <?php
+
+
 
         if (isset($err['hostname'])) {
+
             formerr($err['hostname']);
+
         }
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_hostname', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_baseuri_key', 'auth') ?>:</td>
+
     <td>
+
         <input name="baseuri" type="text" size="30" value="<?php echo $config->baseuri ?>" />
+
         <?php
+
+
 
         if (isset($err['baseuri'])) {
+
             formerr($err['baseuri']);
+
         }
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_baseuri', 'auth') ?></td>
+
 </tr>
+
+
 
 <tr valign="top" class="required">
+
     <td align="right"><?php print_string('auth_cas_port_key', 'auth') ?>:</td>
+
     <td>
+
         <input name="port" type="text" size="30" value="<?php echo $config->port ?>" />
+
         <?php
+
+
 
         if (isset($err['port'])) {
+
             formerr($err['port']);
+
         }
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_port', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_casversion', 'auth') ?>:</td>
+
     <td>
+
         <input name="casversion" type="text" size="30" value="<?php echo $config->casversion ?>" />
+
         <?php
+
+
 
         if (isset($err['casversion'])) {
+
             formerr($err['casversion']);
+
         }
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_version', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_language_key', 'auth') ?>:</td>
+
     <td>
+
         <?php
+
+
 
         choose_from_menu($CASLANGUAGES, 'language', $config->language, '');
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_language', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_proxycas_key', 'auth') ?>:</td>
+
     <td>
+
         <?php
+
         unset($options);
+
         $options[1] = get_string('yes');
+
         choose_from_menu ($options, 'proxycas', $config->proxycas, get_string('no'), '', '');
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_proxycas', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_logoutcas_key', 'auth') ?>:</td>
+
     <td>
+
         <?php
+
         unset($options);
+
         $options[1] = get_string('yes');
+
         choose_from_menu ($options, 'logoutcas', $config->logoutcas, get_string('no'), '', '');
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_logoutcas', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr valign="top"  class="required">
+
     <td align="right"><?php print_string('auth_cas_multiauth_key', 'auth') ?>:</td>
+
     <td>
+
         <?php
+
         unset($options);
+
         $options[1] = get_string('yes');
+
         choose_from_menu ($options, 'multiauth', $config->multiauth, get_string('no'), '', '');
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_cas_multiauth', 'auth') ?></td>
+
 </tr>
+
+
 
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('auth_ldap_server_settings', 'auth') ?> </h4>
+
    </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="host_url"><?php print_string('auth_ldap_host_url_key','auth') ?></label></td>
+
     <td>
+
         <input name="host_url" id="host_url" type="text" size="30" value="<?php echo $config->host_url?>" />
+
     <?php  if (isset($err['host_url'])) formerr($err['host_url']); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_host_url','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="menuversion"><?php print_string('auth_ldap_version_key','auth') ?></label></td>
+
     <td>
+
     <?php
+
        $versions = array();
+
        $versions[2] = '2';
+
        $versions[3] = '3';
+
        choose_from_menu($versions, 'version', $config->version, '');
+
        if (isset($err['version'])) formerr($err['version']);
+
     ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_version','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="ldapencoding"><?php print_string("auth_ldap_ldap_encoding_key", "auth") ?></label></td>
+
     <td>
+
         <input id="ldapencoding" name="ldapencoding" type="text" value="<?php echo $config->ldapencoding ?>" />
+
         <?php
+
+
 
         if (isset($err['ldapencoding'])) {
+
             formerr($err['ldapencoding']);
+
         }
 
+
+
         ?>
+
     </td>
+
     <td><?php print_string('auth_ldap_ldap_encoding', 'auth') ?></td>
+
 </tr>
 
+
+
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('auth_ldap_bind_settings', 'auth') ?> </h4>
+
    </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="bind_dn"><?php print_string('auth_ldap_bind_dn_key','auth') ?></label></td>
+
     <td>
+
     <input name="bind_dn" id="bind_dn" type="text" size="30" value="<?php echo $config->bind_dn?>" />
+
     <?php  if (isset($err['bind_dn'])) formerr($err['bind_dn']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_bind_dn','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="bind_pw"><?php print_string('auth_ldap_bind_pw_key','auth') ?></label></td>
+
     <td>
+
     <input name="bind_pw" id="bind_pw" type="password" size="30" value="<?php echo $config->bind_pw?>" />
+
     <?php  if (isset($err['bind_pw'])) formerr($err['bind_pw']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_bind_pw','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('auth_ldap_user_settings', 'auth') ?> </h4>
+
    </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="menuuser_type"><?php print_string('auth_ldap_user_type_key','auth') ?></label></td>
+
     <td>
+
     <?php choose_from_menu($this->ldap_suppported_usertypes(), 'user_type', $config->user_type, ''); ?>
+
     <?php  if (isset($err['user_type'])) formerr($err['user_type']); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_user_type', 'auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="contexts"><?php print_string('auth_ldap_contexts_key','auth') ?></label></td>
+
     <td>
+
     <input name="contexts" id="contexts"  type="text" size="30" value="<?php echo $config->contexts?>" />
+
     <?php  if (isset($err['contexts'])) formerr($err['contexts']); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_contexts', 'auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="menusearch_sub"><?php print_string('auth_ldap_search_sub_key','auth') ?></label></td>
+
     <td>
+
         <?php choose_from_menu($yesno, 'search_sub', $config->search_sub, ''); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_search_sub','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="menuopt_deref"><?php print_string('auth_ldap_opt_deref_key','auth') ?></label></td>
+
     <td>
+
     <?php
+
        $opt_deref = array();
+
        $opt_deref[LDAP_DEREF_NEVER] = get_string('no');
+
        $opt_deref[LDAP_DEREF_ALWAYS] = get_string('yes');
+
        choose_from_menu($opt_deref, 'opt_deref', $config->opt_deref, LDAP_DEREF_NEVER, '');
+
        if (isset($err['opt_deref'])) formerr($err['opt_deref']);
+
     ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_opt_deref','auth') ?>
+
     </td>
+
 </tr>
 
 
 
+
+
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="user_attribute"><?php print_string('auth_ldap_user_attribute_key','auth') ?></label></td>
+
     <td>
+
     <input name="user_attribute" id="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute?>" />
+
     <?php  if (isset($err['user_attribute'])) formerr($err['user_attribute']); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_user_attribute','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
         <td align="right"><label for="memberattribute"><?php print_string('auth_ldap_memberattribute_key','auth') ?></label></td>
+
         <td>
+
     <input name="memberattribute" id="memberattribute" type="text" size="30" value="<?php echo $config->memberattribute?>" />
+
     <?php  if (isset($err['memberattribute'])) formerr($err['memberattribute']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_memberattribute','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
         <td align="right"><label for="memberattribute_isdn"><?php print_string('auth_ldap_memberattribute_isdn_key','auth') ?></label></td>
+
         <td>
+
     <input name="memberattribute_isdn" id="memberattribute_isdn" type="text" size="30" value="<?php echo $config->memberattribute_isdn?>" />
+
     <?php  if (isset($err['memberattribute_isdn'])) formerr($err['memberattribute_isdn']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_memberattribute_isdn','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
     <td align="right"><label for="objectclass"><?php print_string('auth_ldap_objectclass_key','auth') ?></label></td>
+
     <td>
+
     <input name="objectclass" id="objectclass" type="text" size="30" value="<?php echo $config->objectclass?>" />
+
     <?php  if (isset($err['objectclass'])) formerr($err['objectclass']); ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_ldap_objectclass','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('coursecreators') ?> </h4>
+
    </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
         <td align="right"><label for="attrcreators_key"><?php print_string('auth_ldap_attrcreators_key','auth') ?></label></td>
+
         <td>
+
     <input name="attrcreators" id="attrcreators" type="text" size="30" value="<?php echo $config->attrcreators?>" />
+
     <?php  if (isset($err['attrcreators'])) formerr($err['attrcreators']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_attrcreators','auth') ?>
+
     </td>
+
 </tr>
 
+
+
 <tr valign="top" class="required">
+
         <td align="right"><label for="groupecreators_key"><?php print_string('auth_ldap_groupecreators_key','auth') ?></label></td>
+
         <td>
+
     <input name="groupecreators" id="groupecreators" type="text" size="30" value="<?php echo $config->groupecreators?>" />
+
     <?php  if (isset($err['groupecreators'])) formerr($err['groupecreators']); ?>
+
     </td><td>
+
     <?php print_string('auth_ldap_groupecreators','auth') ?>
+
     </td>
+
 </tr>
+
+
 
 <tr>
+
    <td colspan="2">
+
         <h4><?php print_string('auth_sync_script', 'auth') ?> </h4>
+
    </td>
+
 </tr>
+
+
 
 <tr valign="top">
+
     <td align="right"><label for="menuremoveuser"><?php print_string('auth_remove_user_key','auth') ?></label></td>
+
     <td>
+
     <?php
+
        $deleteopt = array();
+
        $deleteopt['0'] = get_string('auth_remove_keep','auth');
+
        $deleteopt['1'] = get_string('auth_remove_suspend','auth');
+
        $deleteopt['2'] = get_string('auth_remove_delete','auth');
+
        choose_from_menu($deleteopt, 'removeuser', $config->removeuser, '');
+
     ?>
+
     </td>
+
     <td>
+
     <?php print_string('auth_remove_user','auth') ?>
+
     </td>
+
 </tr>
+
 <?php
 
+
+
 $help  = get_string('auth_ldapextrafields','auth');
+
 $help .= get_string('auth_updatelocal_expl','auth');
+
 $help .= get_string('auth_fieldlock_expl','auth');
+
 $help .= get_string('auth_updateremote_expl','auth');
+
 $help .= '<hr />';
+
 $help .= get_string('auth_updateremote_ldap','auth');
 
+
+
 print_auth_lock_options('cas', $user_fields, $help, true, true);
+
+
 
 ?>
 </table>
