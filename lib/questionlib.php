@@ -1131,7 +1131,8 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
     // Check for unchanged responses (exactly unchanged, not equivalent).
     // We also have to catch questions that the student has not yet attempted
     $sameresponses = $QTYPES[$question->qtype]->compare_responses($question, $action, $state);
-    if ($state->last_graded->event == QUESTION_EVENTOPEN && question_isgradingevent($action->event)) {
+    if (!empty($state->last_graded) && $state->last_graded->event == QUESTION_EVENTOPEN &&
+            question_isgradingevent($action->event)) {
         $sameresponses = false;
     }
 
