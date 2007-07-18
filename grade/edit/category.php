@@ -2,6 +2,7 @@
 
 require_once '../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
+require_once $CFG->dirroot.'/grade/report/lib.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once 'category_form.php';
 
@@ -24,6 +25,9 @@ $returnurl = $gpr->get_return_url('tree.php?id='.$course->id);
 
 $mform = new edit_category_form(null, array('gpr'=>$gpr));
 if ($category = get_record('grade_categories', 'id', $id, 'courseid', $course->id)) {
+    // Get Category preferences
+    $category->pref_aggregationview = grade_report::get_pref('aggregationview', $id);
+
     $mform->set_data($category);
 } else {
     $mform->set_data(array('courseid'=>$course->id));
@@ -41,6 +45,13 @@ if ($mform->is_cancelled()) {
 
     } else {
         $grade_category->update();
+    }
+
+    // Handle user preferences
+    if (isset($data->pref_aggregationview)) {
+        if (!grade_report::set_pref('aggregationview', $data->pref_aggregationview, $grade_category->id)) {
+            error("Could not set preference aggregationview to $value for this grade category");
+        }
     }
 
     redirect($returnurl);

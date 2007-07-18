@@ -72,7 +72,7 @@ class edit_item_form extends moodleform {
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
-/// user preferences
+        // user preferences
         $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
         $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
                           GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
@@ -82,7 +82,7 @@ class edit_item_form extends moodleform {
                . ': ' . $options[$CFG->grade_report_gradedisplaytype] . ')';
         $mform->addElement('select', 'pref_gradedisplaytype', $label, $options);
         $mform->setHelpButton('pref_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
-                              false, true, false, get_string("config_gradedisplaytype", 'grades')));
+                              false, true, false, get_string("configgradedisplaytype", 'grades')));
         $mform->setDefault('pref_gradedisplaytype', GRADE_REPORT_PREFERENCE_DEFAULT);
 
         $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
@@ -90,7 +90,7 @@ class edit_item_form extends moodleform {
                . ': ' . $options[$CFG->grade_report_decimalpoints] . ')';
         $mform->addElement('select', 'pref_decimalpoints', $label, $options);
         $mform->setHelpButton('pref_decimalpoints', array(false, get_string('decimalpoints', 'grades'),
-                              false, true, false, get_string("config_decimalpoints", 'grades')));
+                              false, true, false, get_string("configdecimalpoints", 'grades')));
         $mform->setDefault('pref_decimalpoints', GRADE_REPORT_PREFERENCE_DEFAULT);
 
 /// hidden params

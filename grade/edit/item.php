@@ -29,8 +29,8 @@ if ($mform->is_cancelled()) {
 
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     // Get Item preferences
-    $item->pref_gradedisplaytype = get_user_preferences('grade_report_gradedisplaytype' . $id, 'default');
-    $item->pref_decimalpoints    = get_user_preferences('grade_report_decimalpoints' . $id, 'default');
+    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $id);
+    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $id);
 
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
     $mform->set_data($item);

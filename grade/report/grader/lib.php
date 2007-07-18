@@ -488,6 +488,25 @@ class grade_report_grader extends grade_report {
             }
 
             foreach ($row as $element) {
+                // Load user preferences for categories
+                if ($element['type'] == 'category') {
+                    $categoryid = $element['object']->id;
+                    $aggregationview = $this->get_pref('aggregationview', $categoryid);
+
+                    if ($aggregationview == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
+                        $categorystate = get_user_preferences('grade_report_categorystate' . $categoryid, GRADE_CATEGORY_EXPANDED);
+
+                        // Expand/Contract icon must be set appropriately
+                        if ($categorystate == GRADE_CATEGORY_CONTRACTED) {
+                            // The category is contracted: this means we only show 1 item for this category: the
+                            // category's aggregation item. The others must be removed from the grade_tree
+                        } elseif ($categorystate == GRADE_CATEGORY_EXPANDED) {
+                            // The category is expanded: we only show the non-aggregated items directly descending
+                            // from this category. The category's grade_item must be removed from the grade_tree
+                        }
+                    }
+                }
+
                 $eid    = $element['eid'];
                 $object = $element['object'];
                 $type   = $element['type'];
@@ -757,10 +776,10 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
-        $mean_pref = get_user_preferences('grade_report_meanselection', $CFG->grade_report_meanselection);
+        $mean_pref = $this->get_pref('meanselection');
         $groupavghtml = '';
 
-        if ($mean_pref == 2) {
+        if ($mean_pref == GRADE_AGGREGATE_MEAN_GRADED) {
             // non empty grades
             $meanstr = "AND NOT g.finalgrade IS NULL";
         } else {
@@ -781,8 +800,7 @@ class grade_report_grader extends grade_report {
                      $this->groupwheresql
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
-                AND NOT g.finalgradeIS NULL
-                $notnullstr
+                $meanstr
                 GROUP BY g.itemid";
 
             $groupsum = array();
@@ -861,7 +879,7 @@ class grade_report_grader extends grade_report {
         $meanselection = $this->get_pref('meanselection');
         $mean_pref = get_user_preferences('grade_report_meanselection', $CFG->grade_report_meanselection);
         $gradeavghtml = '';
-        
+
         if ($mean_pref == 2) {
             // non empty grades
             $meanstr = "AND NOT g.finalgrade IS NULL";

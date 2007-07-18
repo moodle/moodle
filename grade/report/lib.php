@@ -98,37 +98,37 @@ class grade_report {
      * is given (site default).
      * @static (Can be called statically, but then doesn't benefit from caching)
      * @param string $pref The name of the preference (do not include the grade_report_ prefix)
-     * @param int $itemid An optional itemid to check for a more fine-grained preference
+     * @param int $objectid An optional itemid or categoryid to check for a more fine-grained preference
      * @return mixed The value of the preference
      */
-    function get_pref($pref, $itemid=null) {
+    function get_pref($pref, $objectid=null) {
         global $CFG;
         $fullprefname = 'grade_report_' . $pref;
 
         $retval = null;
 
         if (!isset($this)) {
-            if (!empty($itemid)) {
-                $retval = get_user_preferences($fullprefname . $itemid, grade_report::get_pref($pref));
+            if (!empty($objectid)) {
+                $retval = get_user_preferences($fullprefname . $objectid, grade_report::get_pref($pref));
             } else {
                 $retval = get_user_preferences($fullprefname, $CFG->$fullprefname);
             }
         } else {
-            if (empty($this->prefs[$pref.$itemid])) {
+            if (empty($this->prefs[$pref.$objectid])) {
 
-                if (!empty($itemid)) {
-                    $retval = get_user_preferences($fullprefname . $itemid);
+                if (!empty($objectid)) {
+                    $retval = get_user_preferences($fullprefname . $objectid);
                     if (empty($retval)) {
                         // No item pref found, we are returning the global preference
                         $retval = $this->get_pref($pref);
-                        $itemid = null;
+                        $objectid = null;
                     }
                 } else {
                     $retval = get_user_preferences($fullprefname, $CFG->$fullprefname);
                 }
-                $this->prefs[$pref.$itemid] = $retval;
+                $this->prefs[$pref.$objectid] = $retval;
             } else {
-                $retval = $this->prefs[$pref.$itemid];
+                $retval = $this->prefs[$pref.$objectid];
             }
         }
 

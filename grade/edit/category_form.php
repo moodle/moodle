@@ -4,9 +4,11 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_category_form extends moodleform {
     function definition() {
+        global $CFG;
         $mform =& $this->_form;
 
         // visible elements
+        $mform->addElement('header', 'general', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
 
         $options = array(GRADE_AGGREGATE_MEAN_ALL   =>get_string('aggregatemeanall', 'grades'),
@@ -28,6 +30,18 @@ class edit_category_form extends moodleform {
 
         $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
+
+        // user preferences
+        $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
+        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
+                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
+                          GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades'));
+        $label = get_string('aggregationview', 'grades') . ' (' . get_string('default', 'grades')
+               . ': ' . $options[$CFG->grade_report_aggregationview] . ')';
+        $mform->addElement('select', 'pref_aggregationview', $label, $options);
+        $mform->setHelpButton('pref_aggregationview', array(false, get_string('aggregationview', 'grades'),
+                              false, true, false, get_string("configaggregationview", 'grades')));
+        $mform->setDefault('pref_aggregationview', GRADE_REPORT_PREFERENCE_DEFAULT);
 
         // hidden params
         $mform->addElement('hidden', 'id', 0);

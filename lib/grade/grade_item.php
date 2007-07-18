@@ -1154,7 +1154,6 @@ class grade_item extends grade_object {
             if (!is_null($finalgrade)) {
                 $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
             } else {
-                echo "Assigning null finalgrade";
                 $grade->finalgrade = $finalgrade;
             }
 
@@ -1341,8 +1340,8 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Calculates final grade values useing the formula in calculation property.
-     * The parameteres are taken from final grades of grade items in current course only.
+     * Calculates final grade values using the formula in calculation property.
+     * The parameters are taken from final grades of grade items in current course only.
      * @return boolean false if error
      */
     function compute($userid=null) {
