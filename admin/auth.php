@@ -246,7 +246,7 @@ $guestoptions[1] = get_string("show");
 echo '<hr />';
 
 echo '<form '.$CFG->frametarget.' id="adminsettings" method="post" action="auth.php">';
-echo '<div class="settingsform">';
+echo '<div class="settingsform clearfix">';
 print_heading(get_string('auth_common_settings', 'auth'));
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input type="hidden" name="action" value="save" />';

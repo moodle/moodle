@@ -103,7 +103,7 @@ if (empty($SITE->fullname)) {
     // ---------------------------------------------------------------------------------------------------------------
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
-    echo '<div class="settingsform">';
+    echo '<div class="settingsform clearfix">';
     echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
     echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
     echo '<input type="hidden" name="return" value="' . $return . '" />';
@@ -149,7 +149,7 @@ if (!empty($SITE->fullname)) {
     // ---------------------------------------------------------------------------------------------------------------
 
     echo '<form action="settings.php" method="post" id="adminsettings">';
-    echo '<div class="settingsform">';
+    echo '<div class="settingsform clearfix">';
     echo '<input type="hidden" name="section" value="' . $PAGE->section . '" />';
     echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
     echo '<input type="hidden" name="return" value="' . $return . '" />';
