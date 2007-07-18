@@ -26,6 +26,10 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 require_once('grade_export_txt.php');
 
 $id = required_param('id', PARAM_INT); // course id
+
+require_login($id);
+require_capability('moodle/course:downloadallgrades', get_context_instance(CONTEXT_COURSE, $id));
+
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
 $course = get_record('course', 'id', $id);
 $strgrades = get_string('grades', 'grades');

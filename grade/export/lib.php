@@ -76,8 +76,8 @@ class grade_export {
         if (! $course = get_record("course", "id", $id)) {
             error("Course ID was incorrect");
         }
-        
-        require_capability('moodle/course:viewcoursegrades', get_context_instance(CONTEXT_COURSE, $id));
+        $context = get_context_instance(CONTEXT_COURSE, $id);
+        require_capability('moodle/course:viewcoursegrades', $context);
         
         $this->id = $id;
         $this->course = $course;
@@ -104,7 +104,7 @@ class grade_export {
         if ($currentgroup) {
             $this->students = get_group_students($currentgroup, "u.lastname ASC");
         } else {
-            $this->students = grade_get_course_students($course->id);
+            $this->students = get_role_users(@implode(',', $CFG->gradebookroles), $context);
         }
 
         if (!empty($this->students)) {

@@ -50,7 +50,7 @@ class grade_import_mapping_form extends moodleform {
 
         if ($header) {
             foreach ($header as $i=>$h) {
-                $mapfromoptions[$i] = $h;
+                $mapfromoptions[$i] = s($h);
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
