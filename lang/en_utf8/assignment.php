@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // assignment.php - created with Moodle 1.7 beta + (2006101003)
 
-
+$string['addtest'] = 'Add new test';
 $string['allowdeleting'] = 'Allow deleting';
 $string['allowmaxfiles'] = 'Maximum number of uploaded files';
 $string['allownotes'] = 'Allow notes';
@@ -10,6 +10,7 @@ $string['assignment:grade'] = 'Grade assignment';
 $string['assignment:submit'] = 'Submit assignment';
 $string['assignment:view'] = 'View assignment';
 $string['assignmentdetails'] = 'Assignment details';
+$string['assignmentlangs'] = 'Programming language';
 $string['assignmentmail'] = '$a->teacher has posted some feedback on your
 assignment submission for \'$a->assignment\'
 
@@ -24,9 +25,13 @@ $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
+$string['compileerrors'] = 'Compile errors';
 $string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
+$string['configmaxcpu'] = 'Default maximum assignment cpu time for all assignments on the site (subject to other local settings)';
+$string['configmaxmem'] = 'Default maximum assignment memory usage for all assignments on the site (subject to other local settings)';
 $string['confirmdeletefile'] = 'Are you absolutely sure you want to delete this file?<br /><strong>$a</strong>';
+$string['crondate'] = 'Cron date';
 $string['deletefilefailed'] = 'Deleting of file failed.';
 $string['description'] = 'Description';
 $string['draft'] = 'Draft';
@@ -46,6 +51,7 @@ for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emptysubmission'] = 'You have not submitted anything yet';
+$string['exactouput'] = 'Exact output';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
@@ -73,9 +79,23 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    single file, of any type.</p> <p>This might be a Word processor document, an image, 
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
+$string['ignorespace'] = 'Ignore spaces';
+$string['ignorecase'] = 'Ignore Upcase / Lowcase';
+$string['input'] = 'Input';
+$string['langbash'] = 'Bash';
+$string['langc'] = 'C';
+$string['langcpp'] = 'C++';
+$string['langhaskell'] = 'Haskell';
+$string['langjava'] = 'Java';
+$string['langpascal'] = 'Pascal';
+$string['langperl'] = 'Perl';
 $string['late'] = '$a late';
+$string['loading'] = 'Grade process in progress... please wait';
+$string['maximumcpu'] = 'Maximum CPU time (seconds)';
 $string['maximumgrade'] = 'Maximum grade';
+$string['maximummem'] = 'Maximum memory usage';
 $string['maximumsize'] = 'Maximum size';
+$string['maximumfilesize'] = 'Maximum source file size';
 $string['modulename'] = 'Assignment';
 $string['modulenameplural'] = 'Assignments';
 $string['newsubmissions'] = 'Assignments submitted';
@@ -90,12 +110,15 @@ $string['notesupdateerror'] = 'Error when updating notes';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['onceassignmentsent'] = 'Once the assignment is sent for marking, you will no longer be able to delete or attach file(s). Do you want to continue?';
+$string['output'] = 'Output';
+$string['outputfilter'] = 'Output filter';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
 $string['pagesize'] = 'Submissions shown per page';
 $string['preventlate'] = 'Prevent late submissions';
 $string['quickgrade'] = 'Allow quick grading';
 $string['responsefiles'] = 'Response files';
 $string['reviewed'] = 'Reviewed';
+$string['runtimeerrors'] = 'Runtime errors';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['sendformarking'] = 'Send for marking';
 $string['submission'] = 'Submission';
@@ -109,8 +132,10 @@ $string['submitedformarking'] = 'Assignment was already submitted for marking an
 $string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
 $string['submittedfiles'] = 'Submitted files';
+$string['tests'] = 'Program tests';
 $string['typeoffline'] = 'Offline activity';
 $string['typeonline'] = 'Online text';
+$string['typeprogram'] = 'Epaile';
 $string['typeupload'] = 'Advanced uploading of files';
 $string['typeuploadsingle'] = 'Upload a single file';
 $string['unfinalize'] = 'Revert to draft';

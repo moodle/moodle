@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><?php echo $file ?></title>
+        
+    </head>
+    <body>
+        <pre name="code" class="<?php echo $lang ?>"><?php echo $code ?></pre>
+        <p align="center">
+            <?php
+                close_window_button();
+            ?>
+        </p>
+
+        <link type="text/css" rel="stylesheet" href="syntaxhighlighter/Styles/SyntaxHighlighter.css"></link>
+        <script class="javascript" src="syntaxhighlighter/Scripts/shCore.js"></script>
+        <script class="javascript" src="syntaxhighlighter/Scripts/shBrushJava.js"></script>
+        <script language="javascript">
+            dp.SyntaxHighlighter.ClipboardSwf = '/syntaxhighlighter/flash/clipboard.swf';
+            dp.SyntaxHighlighter.HighlightAll('code');
+        </script>
+    </body>
+</html>

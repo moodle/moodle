@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>dp.SyntaxHighlighter Tests</title>
+<link type="text/css" rel="stylesheet" href="../Styles/SyntaxHighlighter.css"></link>
+<link href="../Styles/TestPages.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h1>dp.SyntaxHighlighter 1.4.1 Tests and Samples (<a href="http://www.dreamprojections.com/syntaxhighlighter/">dreamprojections.com/syntaxhighlighter</a>)</h1>
+
+<h2><!-- TemplateBeginEditable name="Title" -->Title<!-- TemplateEndEditable --></h2>
+
+<div class="layout">
+
+<div class="column1">
+	<h3>Languages:</h3>
+	<ol>
+		<li><a href="../CSharp.html">C#</a></li>
+		<li><a href="../CSS.html">CSS</a></li>
+		<li><a href="../Cpp.html">C++</a></li>
+		<li><a href="../Delphi.html">Delphi</a></li>
+		<li><a href="../Java.html">Java</a></li>
+		<li><a href="../JavaScript.html">JavaScript</a></li>
+		<li><a href="../PHP.html">PHP</a></li>
+		<li><a href="../Python.html">Python</a></li>
+		<li><a href="../Ruby.html">Ruby</a></li>
+		<li><a href="../SQL.html">SQL</a></li>
+		<li><a href="../VB.html">Visual Basic</a></li>
+		<li><a href="../XML.html">XML / HTML</a></li>
+	</ol>
+	<h3>Features:</h3>
+	<ol>
+		<li><a href="../SmartTabs.html">Smart tabs</a></li>
+		<li><a href="../FirstLine.html">First line</a> </li>
+		<li><a href="../CollapseCode.html">Expand code</a></li>
+	    <li><a href="../ShowColumns.html">Show columns</a></li>
+	    <li><a href="../NoGutter.html">No gutter</a></li>
+	    <li><a href="../NoControls.html">No controls</a></li>
+	</ol>
+</div>
+
+<div class="column2">
+Text body before.
+<hr/>
+<!-- TemplateBeginEditable name="Code" -->
+<pre name="code" class="">
+</pre>
+<!-- TemplateEndEditable -->
+<hr/>
+Text body after.
+</div>
+</div>
+
+<div class="footer">
+Copyright 2004-2007 Alex Gorbatchev.<br/>
+</div>
+
+<script class="javascript" src="../Scripts/shCore.js"></script>
+<script class="javascript" src="../Scripts/shBrushCSharp.js"></script>
+<script class="javascript" src="../Scripts/shBrushPhp.js"></script>
+<script class="javascript" src="../Scripts/shBrushJScript.js"></script>
+<script class="javascript" src="../Scripts/shBrushJava.js"></script>
+<script class="javascript" src="../Scripts/shBrushVb.js"></script>
+<script class="javascript" src="../Scripts/shBrushSql.js"></script>
+<script class="javascript" src="../Scripts/shBrushXml.js"></script>
+<script class="javascript" src="../Scripts/shBrushDelphi.js"></script>
+<script class="javascript" src="../Scripts/shBrushPython.js"></script>
+<script class="javascript" src="../Scripts/shBrushRuby.js"></script>
+<script class="javascript" src="../Scripts/shBrushCss.js"></script>
+<script class="javascript" src="../Scripts/shBrushCpp.js"></script>
+<script class="javascript">
+dp.SyntaxHighlighter.ClipboardSwf = 'Scripts/clipboard.swf';
+dp.SyntaxHighlighter.HighlightAll('code');
+</script>
+
+</body>
+</html>

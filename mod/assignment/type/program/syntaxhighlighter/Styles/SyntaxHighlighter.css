@@ -1,0 +1,158 @@
+.dp-highlighter
+{
+	font-family: "Consolas", "Courier New", Courier, mono;
+	font-size: 12px;
+	background-color: #E7E5DC;
+	width: 99%;
+	overflow: auto;
+	margin: 18px 0px 18px 0px;
+	padding-top: 1px; /* adds a little border on top when controls are hidden */
+}
+
+.dp-highlighter .bar
+{
+	padding-left: 45px;
+}
+
+.dp-highlighter.collapsed .bar, 
+.dp-highlighter.nogutter .bar 
+{
+	padding-left: 0px;
+}
+
+.dp-highlighter ol 
+{
+	list-style: decimal; /* for ie */
+	list-style: decimal-leading-zero; /* better look for others */
+	background-color: #fff;
+	margin: 0px 0px 1px 45px; /* 1px bottom margin seems to fix occasional Firefox scrolling */
+	padding: 0px;
+	color: #5C5C5C;
+}
+
+.dp-highlighter.nogutter ol
+{
+	list-style-type: none !important; 
+	margin-left: 0px; 
+}
+
+.dp-highlighter ol li,
+.dp-highlighter .columns div
+{
+	border-left: 3px solid #6CE26C;
+	background-color: #f8f8f8;
+	padding-left: 10px;
+	line-height: 14px;
+}
+
+.dp-highlighter.nogutter ol li,
+.dp-highlighter.nogutter .columns div
+{
+	border: 0;
+}
+
+.dp-highlighter .columns 
+{
+	color: gray;
+	overflow: hidden;
+	width: 100%;
+}
+
+.dp-highlighter .columns div 
+{
+	padding-bottom: 5px;
+}
+
+.dp-highlighter ol li.alt 
+{
+	background-color: #fff; 
+}
+
+.dp-highlighter ol li span 
+{
+	color: Black;
+}
+
+/* Adjust some properties when collapsed */
+
+.dp-highlighter.collapsed ol 
+{
+	margin: 0px;
+}
+
+.dp-highlighter.collapsed ol li 
+{ 
+	display: none;
+}
+
+/* Additional modifications when in print-view */
+
+.dp-highlighter.printing 
+{
+	border: none;
+}
+
+.dp-highlighter.printing .tools 
+{
+	display: none !important;
+}
+
+.dp-highlighter.printing li 
+{
+	display: list-item !important;
+}
+
+/* Styles for the tools */
+
+.dp-highlighter .tools 
+{
+	padding: 3px 8px 3px 10px;
+	font: 9px Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: silver;
+	background-color: #f8f8f8;
+	text-align1: right;
+	padding-bottom: 10px;
+	border-left: 3px solid #6CE26C;
+}
+
+.dp-highlighter.nogutter .tools
+{
+	border-left: 0;
+}
+
+.dp-highlighter.collapsed .tools
+{
+	border-bottom: 0;
+}
+
+.dp-highlighter .tools a
+{
+	font-size: 9px;
+	color: #a0a0a0;
+	text-decoration: none;
+	margin-right: 10px;
+}
+
+.dp-highlighter .tools a:hover
+{
+	color: red;
+	text-decoration: underline;
+}
+
+/* About dialog styles */
+
+.dp-about { background-color: #fff; margin: 0px; padding: 0px; }
+.dp-about table { width: 100%; height: 100%; font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif !important; }
+.dp-about td { padding: 10px; vertical-align: top; }
+.dp-about .copy { border-bottom: 1px solid #ACA899; height: 95%; }
+.dp-about .title { color: red; font-weight: bold; }
+.dp-about .para { margin: 0 0 4px 0; }
+.dp-about .footer { background-color: #ECEADB; border-top: 1px solid #fff; text-align: right; }
+.dp-about .close { font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif !important; background-color: #ECEADB; width: 60px; height: 22px; }
+
+/* Language specific styles */
+
+.dp-highlighter .comment, .dp-highlighter .comments { color: #008200; }
+.dp-highlighter .string { color: blue; }
+.dp-highlighter .keyword { color: #069; font-weight: bold; }
+.dp-highlighter .preprocessor { color: gray; }
