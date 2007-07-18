@@ -569,6 +569,7 @@ class grade_report_grader extends grade_report {
         $strfeedback = $this->get_lang_string("feedback");
         $gradetabindex = 1;
         $feedbacktabindex = 16380; // The maximum number of tabindices on 1 page is 32767
+        $showuserimage = $this->get_pref('showuserimage');
 
         // Preload scale objects for items with a scaleid
         $scales_list = '';
@@ -586,8 +587,14 @@ class grade_report_grader extends grade_report {
 
         foreach ($this->users as $userid => $user) {
             // Student name and link
-            $studentshtml .= '<tr><th class="user"><a href="' . $CFG->wwwroot . '/user/view.php?id='
+            $user_pic = null;
+            if ($showuserimage) {
+                $user_pic = '<div class="userpic">' . print_user_picture($user->id, $this->courseid, true, 0, true) . '</div>';
+            }
+
+            $studentshtml .= '<tr><th class="user">' . $user_pic . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
                           . $user->id . '">' . fullname($user) . '</a></th>';
+
             foreach ($this->items as $item) {
                 // Get the decimal points preference for this item
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);

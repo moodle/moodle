@@ -2123,7 +2123,10 @@ body#doc-contents ul {
   border-style:solid;
 }
 
-
+#grade-report .userpic {
+  display: inline;
+  margin-right: 10px;
+}
 /* gradebook edit tree */
 
 #grade-edit-edit_tree .gradetreebox {
