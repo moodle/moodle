@@ -41,8 +41,6 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
 }
 
 if ($data = $mform->get_data()) {
-    $errors = array();
-
     if (array_key_exists('calculation', $data)) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
@@ -59,19 +57,19 @@ if ($data = $mform->get_data()) {
     }
 
     // Handle user preferences
-    if (!empty($data->pref_gradedisplaytype)) {
+    if (isset($data->pref_gradedisplaytype)) {
         if (!grade_report::set_pref('gradedisplaytype', $data->pref_gradedisplaytype, $grade_item->id)) {
             error("Could not set preference gradedisplaytype to $value for this grade item");
         }
     }
 
-    if (!empty($data->pref_decimalpoints)) {
+    if (isset($data->pref_decimalpoints)) {
         if (!grade_report::set_pref('decimalpoints', $data->pref_decimalpoints, $grade_item->id)) {
-            errors("Could not set preference decimalpoints to $value for this grade item");
+            error("Could not set preference decimalpoints to $value for this grade item");
         }
     }
 
-    redirect($returnurl, 'temporary debug delay', 10);
+    redirect($returnurl, 'temporary debug delay', 50);
 }
 
 $strgrades       = get_string('grades');
