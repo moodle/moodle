@@ -719,7 +719,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
     
     // Guest's do not have any courses
-    if (has_capability('moodle/legacy:guest',$sitecontext,$userid,true)) {
+    if (has_capability('moodle/legacy:guest',$sitecontext,$userid,false)) {
         return(array());
     }
 
@@ -860,7 +860,6 @@ ORDER BY $sort");
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         $USER->mycourses[$doanything] = $mycourses;
     }
-
     return $mycourses;
 }
 
