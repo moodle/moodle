@@ -5822,25 +5822,33 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
 
     echo '<div '.$attrtext.'>';
-
+    
+    if (!empty($THEME->customcorners)) {
+        echo '<div class="wrap">'."\n";
+    }
     if ($heading) {
         //Accessibility: replaced <div> with H2; no, H2 more appropriate in moodleblock.class.php: _title_html.
         // echo '<div class="header">'.$heading.'</div>';
         echo '<div class="header">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        if (!empty($THEME->customcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2">';
+            echo '<div class="i3">';
+        }
         echo $heading;
         if (!empty($THEME->customcorners)) {
-            echo '</div></div></div></div>';
+            echo '</div></div></div>';
         }
         echo '</div>';
     } else {
         if (!empty($THEME->customcorners)) {
-            echo '<div class="wrap"><div class="bt"><div></div></div>';
+            echo '<div class="bt"><div></div></div>';
         }
     }
 
     if (!empty($THEME->customcorners)) {
-        echo '<div class="i1"><div class="i2"><div class="i3">';
+        echo '<div class="i1"><div class="i2">';
+        echo '<div class="i3">';
     }
     echo '<div class="content">';
 
@@ -5858,9 +5866,9 @@ function print_side_block_end($attributes = array()) {
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
         print_custom_corners_end();
-    } else {
-        echo '</div>';
     }
+    
+    echo '</div>';
     
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
