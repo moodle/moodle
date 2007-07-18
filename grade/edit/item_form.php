@@ -46,26 +46,29 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setDefault('grademax', 100);
+        $mform->setDefault('grademax', 100.0);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
         $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setDefault('grademin', 0);
+        $mform->setDefault('grademin', 0.0);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('gradepass', 0);
+        $mform->setDefault('gradepass', 0.0);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('multfactor', 1);
+        $mform->setDefault('multfactor', 1.0);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('plusfactor', 0);
+        $mform->setDefault('plusfactor', 0.0);
+
+        $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
+        $mform->setDefault('aggregationcoef', 0.0);
 
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
 
@@ -97,10 +100,10 @@ class edit_item_form extends moodleform {
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'courseid', 0);
+        $mform->addElement('hidden', 'courseid', $COURSE->id);
         $mform->setType('courseid', PARAM_INT);
 
-        $mform->addElement('hidden', 'itemtype', 0);
+        $mform->addElement('hidden', 'itemtype', 'manual'); // all new items are manual only
         $mform->setType('itemtype', PARAM_ALPHA);
 
 /// add return tracking info
@@ -115,19 +118,51 @@ class edit_item_form extends moodleform {
 
 /// tweak the form - depending on existing data
     function definition_after_data() {
-        global $CFG;
+        global $CFG, $COURSE;
 
         $mform =& $this->_form;
 
         if ($id = $mform->getElementValue('id')) {
             $grade_item = grade_item::fetch(array('id'=>$id));
+
             if ($grade_item->is_normal_item()) {
                 // following items are set up from modules and should not be overrided by user
-                $mform->hardFreeze('itemname,idnumber,calculation,gradetype,grademax,grademin,scaleid');
-            }
-            if ($grade_item->is_manual_item()) {
+                $mform->hardFreeze('itemname,idnumber,gradetype,grademax,grademin,scaleid');
+                $mform->removeElement('calculation');
+
+            } else if ($grade_item->is_manual_item()) {
                 // manual grade item does not use these - uses only final grades
-                $mform->hardFreeze('plusfactor,multfactor');
+                $mform->removeElement('plusfactor');
+                $mform->removeElement('multfactor');
+
+            }
+
+            //remove the aggregation coef element if not needed
+            if ($grade_item->is_course_item()) {
+                $mform->removeElement('aggregationcoef');
+
+            } else if ($grade_item->is_category_item()) {
+                $category = $grade_item->get_item_category();
+                $parent_category = $category->get_parent_category();
+                if (!$parent_category->is_aggregationcoef_used()) {
+                    $mform->removeElement('aggregationcoef');
+                }
+
+            } else {
+                $parent_category = $grade_item->get_parent_category();
+                if (!$parent_category->is_aggregationcoef_used()) {
+                    $mform->removeElement('aggregationcoef');
+                }
+            }
+
+        } else {
+            // all new items are manual, children of course category
+            $mform->removeElement('plusfactor');
+            $mform->removeElement('multfactor');
+
+            $course_category = grade_category::fetch_course_category($COURSE->id);
+            if (!$course_category->is_aggregationcoef_used()) {
+                $mform->removeElement('aggregationcoef');
             }
         }
     }

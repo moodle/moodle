@@ -708,8 +708,8 @@ class grade_report_grader extends grade_report {
                     $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
 
                     $percentsign = '';
-                    $grademin = $this->finalgrades[$userid][$item->id]->grademin;
-                    $grademax = $this->finalgrades[$userid][$item->id]->grademax;
+                    $grademin = $item->grademin;
+                    $grademax = $item->grademax;
 
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         if (!is_null($gradeval)) {

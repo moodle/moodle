@@ -422,6 +422,10 @@ class grade_grades extends grade_object {
      * @return float Converted value
      */
     function standardise_score($rawgrade, $source_min, $source_max, $target_min, $target_max) {
+        if (is_null($rawgrade)) {
+          return null;  
+        }
+
         $factor = ($rawgrade - $source_min) / ($source_max - $source_min);
         $diff = $target_max - $target_min;
         $standardised_value = $factor * $diff + $target_min;

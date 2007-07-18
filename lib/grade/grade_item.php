@@ -261,13 +261,14 @@ class grade_item extends grade_object {
         $outcomeiddiff   = $db_item->outcomeid   != $this->outcomeid;
         $multfactordiff  = $db_item->multfactor  != $this->multfactor;
         $plusfactordiff  = $db_item->plusfactor  != $this->plusfactor;
+        $acoefdiff       = $db_item->aggregationcoef != $this->aggregationcoef;
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
         $lockeddiff      = !empty($db_item->locked) && empty($this->locked); // force regrading only when unlocking
 
         return ($calculationdiff || $categorydiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
              || $outcomeiddiff || $multfactordiff || $plusfactordiff || $needsupdatediff
-             || $lockeddiff);
+             || $lockeddiff || $acoefdiff);
     }
 
     /**

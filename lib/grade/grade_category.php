@@ -352,25 +352,25 @@ class grade_category extends grade_object {
                  WHERE gi.id = g.itemid AND gi.id IN ($gis) $usersql
               ORDER BY g.userid";
 
-        // group the results by userid and aggregate the grades in this group
+        // group the results by userid and aggregate the grades for this user
         if ($rs = get_recordset_sql($sql)) {
             if ($rs->RecordCount() > 0) {
                 $prevuser = 0;
-                $grade_records = array();
-                $oldgrade      = null;
+                $grade_values = array();
+                $oldgrade     = null;
                 while ($used = rs_fetch_next_record($rs)) {
                     if ($used->userid != $prevuser) {
-                        $this->aggregate_grades($prevuser, $items, $grade_records, $oldgrade);
+                        $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade);
                         $prevuser = $used->userid;
-                        $grade_records = array();
-                        $oldgrade      = null;
+                        $grade_values = array();
+                        $oldgrade     = null;
                     }
-                    $grade_records[$used->itemid] = $used->finalgrade;
+                    $grade_values[$used->itemid] = $used->finalgrade;
                     if ($this->grade_item->id == $used->itemid) {
                         $oldgrade = $used;
                     }
                 }
-                $this->aggregate_grades($prevuser, $items, $grade_records, $oldgrade);//the last one
+                $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade);//the last one
             }
         }
 
@@ -380,7 +380,7 @@ class grade_category extends grade_object {
     /**
      * internal function for category grades aggregation
      */
-    function aggregate_grades($userid, $items, $grade_records, $oldgrade) {
+    function aggregate_grades($userid, $items, $grade_values, $oldgrade) {
         if (empty($userid)) {
             //ignore first call
             return;
@@ -410,10 +410,10 @@ class grade_category extends grade_object {
         }
 
         // can not use own final category grade in calculation
-        unset($grade_records[$this->grade_item->id]);
+        unset($grade_values[$this->grade_item->id]);
 
         // if no grades calculation possible or grading not allowed clear both final and raw
-        if (empty($grade_records) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
+        if (empty($grade_values) or empty($items) or ($this->grade_item->gradetype != GRADE_TYPE_VALUE and $this->grade_item->gradetype != GRADE_TYPE_SCALE)) {
             $grade->finalgrade = null;
             $grade->rawgrade   = null;
             if ($grade->finalgrade !== $oldgrade->finalgrade or $grade->rawgrade !== $oldgrade->rawgrade) {
@@ -424,21 +424,21 @@ class grade_category extends grade_object {
 
     /// normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggreagation
-        foreach ($grade_records as $k=>$v) {
+        foreach ($grade_values as $k=>$v) {
             if (is_null($v)) {
                 // null means no grade
-                unset($grade_records[$k]);
+                unset($grade_values[$k]);
                 continue;
             }
-            $grade_records[$k] = grade_grades::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
+            $grade_values[$k] = grade_grades::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
         }
 
         //limit and sort
-        $this->apply_limit_rules($grade_records);
-        sort($grade_records, SORT_NUMERIC);
+        $this->apply_limit_rules($grade_values);
+        asort($grade_values, SORT_NUMERIC);
 
         // let's see we have still enough grades to do any statisctics
-        if (count($grade_records) == 0) {
+        if (count($grade_values) == 0) {
             // not enough attempts yet
             $grade->finalgrade = null;
             $grade->rawgrade   = null;
@@ -451,32 +451,26 @@ class grade_category extends grade_object {
     /// start the aggregation
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
-                $num = count($grade_records);
+                $num = count($grade_values);
                 $halfpoint = intval($num / 2);
 
                 if($num % 2 == 0) {
-                    $rawgrade = ($grade_records[ceil($halfpoint)] + $grade_records[floor($halfpoint)]) / 2;
+                    $rawgrade = ($grade_values[ceil($halfpoint)] + $grade_values[floor($halfpoint)]) / 2;
                 } else {
-                    $rawgrade = $grade_records[$halfpoint];
+                    $rawgrade = $grade_values[$halfpoint];
                 }
                 break;
 
             case GRADE_AGGREGATE_MIN:
-                $rawgrade = reset($grade_records);
+                $rawgrade = reset($grade_values);
                 break;
 
             case GRADE_AGGREGATE_MAX:
-                $rawgrade = array_pop($grade_records);
-                break;
-
-            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade caunted as minimum
-                $num = count($items);     // you can calculate sum from this one if you multiply it with count($this->depends_on() ;-)
-                $sum = array_sum($grade_records);
-                $rawgrade = $sum / $num;
+                $rawgrade = array_pop($grade_values);
                 break;
 
             case GRADE_AGGREGATE_MODE:       // the most common value, the highest one if multimode
-                $freq = array_count_values($grade_records);
+                $freq = array_count_values($grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
@@ -484,10 +478,88 @@ class grade_category extends grade_object {
                 $rawgrade = reset($modes);
                 break;
 
+            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL: // Weighted average of all possible final grades
+                $weightsum = 0;
+                $sum       = 0;
+                foreach($items as $key=>$value) {
+                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0; 
+                    if ($items[$key]->aggregationcoef <= 0) {
+                        continue;
+                    }
+                    $weightsum += $items[$key]->aggregationcoef;
+                    $sum       += $items[$key]->aggregationcoef * $grade_value;
+                }
+                if ($weightsum == 0) {
+                    $rawgrade = null;
+                } else {
+                    $rawgrade = $sum / $weightsum;
+                }
+                break;
+
+            case GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED: // Weighted average of all existing final grades
+                $weightsum = 0;
+                $sum       = 0;
+                foreach($grade_values as $key=>$grade_value) {
+                    if ($items[$key]->aggregationcoef <= 0) {
+                        continue;
+                    }
+                    $weightsum += $items[$key]->aggregationcoef;
+                    $sum       += $items[$key]->aggregationcoef * $grade_value;
+                }
+                if ($weightsum == 0) {
+                    $rawgrade = null;
+                } else {
+                    $rawgrade = $sum / $weightsum;
+                }
+                break;
+
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL: // special average 
+                $num = 0;
+                $sum = 0;
+                foreach($items as $key=>$value) {
+                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0; 
+                    if ($items[$key]->aggregationcoef == 0) {
+                        $num += 1;
+                        $sum += $grade_value;
+                    } else if ($items[$key]->aggregationcoef > 0) {
+                        $sum += $items[$key]->aggregationcoef * $grade_value;
+                    }
+                }
+                if ($num == 0) {
+                    $rawgrade = $sum; // only extra credits or wrong coefs
+                } else {
+                    $rawgrade = $sum / $num;
+                }
+                break;
+
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED: // special average 
+                $num = 0;
+                $sum = 0;
+                foreach($grade_values as $key=>$grade_value) {
+                    if ($items[$key]->aggregationcoef == 0) {
+                        $num += 1;
+                        $sum += $grade_value;
+                    } else if ($items[$key]->aggregationcoef > 0) {
+                        $sum += $items[$key]->aggregationcoef * $grade_value;
+                    }
+                }
+                if ($num == 0) {
+                    $rawgrade = $sum; // only extra credits or wrong coefs
+                } else {
+                    $rawgrade = $sum / $num;
+                }
+                break;
+
+            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade caunted as minimum
+                $num = count($items);     // you can calculate sum from this one if you multiply it with count($this->depends_on() ;-)
+                $sum = array_sum($grade_values);
+                $rawgrade = $sum / $num;
+                break;
+
             case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished are not calculated
             default:
-                $num = count($grade_records);
-                $sum = array_sum($grade_records);
+                $num = count($grade_values);
+                $sum = array_sum($grade_values);
                 $rawgrade = $sum / $num;
                 break;
         }
@@ -519,20 +591,33 @@ class grade_category extends grade_object {
     /**
      * Given an array of grade values (numerical indices), applies droplow or keephigh
      * rules to limit the final array.
-     * @param array $grades
+     * @param array $grade_values
      * @return array Limited grades.
      */
-    function apply_limit_rules(&$grades) {
-        rsort($grades, SORT_NUMERIC);
+    function apply_limit_rules(&$grade_values) {
+        arsort($grade_values, SORT_NUMERIC);
         if (!empty($this->droplow)) {
             for ($i = 0; $i < $this->droplow; $i++) {
-                array_pop($grades);
+                array_pop($grade_values);
             }
         } elseif (!empty($this->keephigh)) {
-            while (count($grades) > $this->keephigh) {
-                array_pop($grades);
+            while (count($grade_values) > $this->keephigh) {
+                array_pop($grade_values);
             }
         }
+    }
+
+
+    /**
+     * Returns true if category uses special aggregation coeficient
+     * @return boolean true if coeficient used
+     */
+    function is_aggregationcoef_used() {
+        return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN_ALL
+             or $this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED
+             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL
+             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED);
+             
     }
 
     /**
@@ -905,7 +990,7 @@ class grade_category extends grade_object {
      * Sets the grade_item's locked variable and updates the grade_item.
      * Method named after grade_item::set_locked().
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
-     * @return boolean success if categroy locked (not all children mayb be locked though)
+     * @return boolean success if category locked (not all children mayb be locked though)
      */
     function set_locked($lockedstate) {
         $this->load_grade_item();

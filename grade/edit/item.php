@@ -34,10 +34,6 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
 
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
     $mform->set_data($item);
-
-} else {
-    // defaults for new items
-    $mform->set_data(array('courseid'=>$course->id, 'itemtype'=>'manual'));
 }
 
 if ($data = $mform->get_data()) {
@@ -69,7 +65,7 @@ if ($data = $mform->get_data()) {
         }
     }
 
-    redirect($returnurl, 'temporary debug delay', 50);
+    redirect($returnurl, 'temporary debug delay', 5);
 }
 
 $strgrades       = get_string('grades');
