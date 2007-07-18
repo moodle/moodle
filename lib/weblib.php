@@ -5858,10 +5858,10 @@ function print_side_block_end($attributes = array()) {
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
         print_custom_corners_end();
+    } else {
+        echo '</div>';
     }
-
-    echo '</div>';
-
+    
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
         echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].'"); '.
