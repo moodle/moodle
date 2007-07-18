@@ -771,7 +771,7 @@ class grade_report_grader extends grade_report {
                      $this->groupwheresql
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
-                AND g.finalgrade >= 0
+                AND NOT g.finalgradeIS NULL
                 GROUP BY g.itemid";
 
             $groupsum = array();
@@ -858,7 +858,7 @@ class grade_report_grader extends grade_report {
                 WHERE gi.courseid = $this->courseid
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
-                AND g.finalgrade >= 0
+                AND NOT g.finalgrade IS NULL
                 GROUP BY g.itemid";
 
             $classsum = array();
