@@ -308,8 +308,7 @@ class question_multichoice_qtype extends default_questiontype {
             $a->feedbackimg = '';
 
             // Print the control
-            $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
-                 " alt=\"" . s($answer->answer) . '" />';
+            $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\" />";
 
             if ($options->correct_responses && $answer->fraction > 0) {
                 $a->class = question_get_feedback_class(1);
@@ -319,8 +318,8 @@ class question_multichoice_qtype extends default_questiontype {
             }
 
             // Print the answer text
-            $a->text = format_text($this->number_in_style($key, $question->options->answernumbering) . $answer->answer,
-                    FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+            $a->text = $this->number_in_style($key, $question->options->answernumbering) .
+                    format_text($answer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
             if (($options->feedback || $options->correct_responses) && $checked) {
@@ -602,6 +601,10 @@ class question_multichoice_qtype extends default_questiontype {
     function get_numbering_styles() {
         return array('abc', 'ABC', '123', 'none');
     }
+    
+    function number_html($qnum) {
+        return '<span class="anun">' . $qnum . '<span class="anumsep">.</span></span> ';
+    }
 
     /**
      * @param int $num The number, starting at 0.
@@ -611,11 +614,11 @@ class question_multichoice_qtype extends default_questiontype {
     function number_in_style($num, $style) {
         switch($style) {
             case 'abc':
-                return chr(ord('a') + $num) . '. ';
+                return $this->number_html(chr(ord('a') + $num));
             case 'ABC':
-                return chr(ord('A') + $num) . '. ';
+                return $this->number_html(chr(ord('A') + $num));
             case '123':
-                return ($num + 1) . '. ';
+                return $this->number_html(($num + 1));
             case 'none':
                 return '';
             default:
