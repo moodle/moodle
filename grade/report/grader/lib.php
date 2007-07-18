@@ -689,16 +689,14 @@ class grade_report_grader extends grade_report {
                     $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
 
                     $percentsign = '';
+                    $grademin = $this->finalgrades[$userid][$item->id]->grademin;
+                    $grademax = $this->finalgrades[$userid][$item->id]->grademax;
 
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                        if (!is_null($gradeval)) {
+                            $gradeval = grade_grades::standardise_score($gradeval, $grademin, $grademax, 0, 100);
+                        }
                         $percentsign = '%';
-                    }
-
-                    // Convert the grade to percentage if needed
-                    if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE && !is_null($gradeval)) {
-                        $grademin = $this->finalgrades[$userid][$item->id]->grademin;
-                        $grademax = $this->finalgrades[$userid][$item->id]->grademax;
-                        $gradeval = grade_grades::standardise_score($gradeval, $grademin, $grademax, 0, 100);
                     }
 
                     // If feedback present, surround grade with feedback tooltip
@@ -712,9 +710,13 @@ class grade_report_grader extends grade_report {
                         $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
                     }
 
-                    // finalgrades[$userid][$itemid] could be null because of the outer join
-                    // in this case it's different than a 0
-                    if ($item->scaleid && !empty($scales_array[$item->scaleid]) && $gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
+                    if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                        $letters = grade_report::get_grade_letters();
+                        if (!is_null($gradeval)) {
+                            $studentshtml .= grade_grades::get_letter($letters, $gradeval, $grademin, $grademax);
+                        }
+                    } else if ($item->scaleid && !empty($scales_array[$item->scaleid])
+                                && $gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
 
@@ -835,7 +837,11 @@ class grade_report_grader extends grade_report {
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         $gradeval = grade_grades::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
                         $gradehtml = round($gradeval, $decimalpoints) . '%';
+                    } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                        $letters = grade_report::get_grade_letters();
+                        $gradehtml = grade_grades::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
+
                     $groupavghtml .= '<td>'.$gradehtml.'</td>';
                 }
             }
@@ -927,6 +933,9 @@ class grade_report_grader extends grade_report {
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         $gradeval = grade_grades::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
                         $gradehtml = round($gradeval, $decimalpoints) . '%';
+                    } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                        $letters = grade_report::get_grade_letters();
+                        $gradehtml = grade_grades::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
                     $gradeavghtml .= '<td>'.$gradehtml.'</td>';
@@ -967,6 +976,10 @@ class grade_report_grader extends grade_report {
                 } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                     $grademin = 0;
                     $grademax = 100;
+                } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                    $letters = grade_report::get_grade_letters();
+                    $grademin = end($letters);
+                    $grademax = reset($letters);
                 }
 
                 $scalehtml .= '<th class="range">'. $grademin.'-'. $grademax.'</th>';

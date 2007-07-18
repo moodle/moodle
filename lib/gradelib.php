@@ -78,6 +78,7 @@ define('GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE', 1);
 define('GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER', 2);
 define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default');
 define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit');
+define('GRADE_REPORT_PREFERENCE_UNUSED', -1);
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
@@ -708,4 +709,14 @@ function grade_oldgradebook_upgrade($courseid) {
     }
 }
 
+/**
+ * Builds an array of percentages indexed by integers for the purpose of building a select drop-down element.
+ * @param int $steps The value between each level.
+ * @param string $order 'asc' for 0-100 and 'desc' for 100-0
+ * @param int $lowest The lowest value to include
+ * @param int $highest The highest value to include
+ */
+function build_percentages_array($steps=1, $order='desc', $lowest=0, $highest=100) {
+    // TODO reject or implement
+}
 ?>

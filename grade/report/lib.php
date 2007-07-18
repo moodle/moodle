@@ -304,5 +304,21 @@ class grade_report {
         $percentage = $offset_value * $factor;
         return $percentage;
     }
+
+    /**
+     * Fetches and returns an array of grade letters indexed by their grade boundaries, as stored in preferences.
+     * @return array
+     */
+    function get_grade_letters() {
+        $letters = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $boundary = grade_report::get_pref('gradeboundary' . $i);
+            $letter = grade_report::get_pref('gradeletter' . $i);
+            if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
+                $letters[$boundary] = $letter;
+            }
+        }
+        return $letters;
+    }
 }
 ?>

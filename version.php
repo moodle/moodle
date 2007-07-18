@@ -6,7 +6,7 @@
 // This is compared against the values stored in the database to determine
 // whether upgrades should be performed (see lib/db/*.php)
 
-    $version = 2007071703;  // YYYYMMDD = date
+    $version = 2007071801;  // YYYYMMDD = date
                             //       XY = increments within a single day
 
     $release = '1.9 dev';   // Human-friendly version name

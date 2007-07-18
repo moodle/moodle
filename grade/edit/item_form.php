@@ -4,7 +4,7 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_item_form extends moodleform {
     function definition() {
-        global $COURSE;
+        global $COURSE, $CFG;
 
         $mform =& $this->_form;
 
@@ -74,17 +74,21 @@ class edit_item_form extends moodleform {
 
 /// user preferences
         $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
-
-        $mform->addElement('select', 'pref_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
-                    array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
+        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
                           GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades')));
+                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                          GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
+        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades')
+               . ': ' . $options[$CFG->grade_report_gradedisplaytype] . ')';
+        $mform->addElement('select', 'pref_gradedisplaytype', $label, $options);
         $mform->setHelpButton('pref_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
                               false, true, false, get_string("config_gradedisplaytype", 'grades')));
         $mform->setDefault('pref_gradedisplaytype', GRADE_REPORT_PREFERENCE_DEFAULT);
 
-        $mform->addElement('select', 'pref_decimalpoints', get_string('decimalpoints', 'grades'),
-                    array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5));
+        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
+        $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades')
+               . ': ' . $options[$CFG->grade_report_decimalpoints] . ')';
+        $mform->addElement('select', 'pref_decimalpoints', $label, $options);
         $mform->setHelpButton('pref_decimalpoints', array(false, get_string('decimalpoints', 'grades'),
                               false, true, false, get_string("config_decimalpoints", 'grades')));
         $mform->setDefault('pref_decimalpoints', GRADE_REPORT_PREFERENCE_DEFAULT);

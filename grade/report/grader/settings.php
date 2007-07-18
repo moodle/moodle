@@ -1,5 +1,13 @@
 <?php // $Id$
 require_once($CFG->libdir.'/gradelib.php');
+$strgradeboundary       = get_string('gradeboundary', 'grades');
+$strconfiggradeboundary = get_string('configgradeboundary', 'grades');
+$strgradeletter         = get_string('gradeletter', 'grades');
+$strconfiggradeletter   = get_string('configgradeletter', 'grades');
+$strinherit             = get_string('inherit', 'grades');
+$strpercentage          = get_string('percentage', 'grades');
+$strreal                = get_string('real', 'grades');
+$strletter              = get_string('letter', 'grades');
 
 /// Add settings for this module to the $settings object (it's already defined)
 $settings->add(new admin_setting_configselect('grade_report_aggregationposition', get_string('aggregationposition', 'grades'),
@@ -20,20 +28,23 @@ $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_s
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+                                          array(GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_rangesdisplaytype', get_string('rangesdisplaytype', 'grades'),
                                           get_string('configrangesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'))));
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => $strreal,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => $strpercentage,
+                                                GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => $strletter)));
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), false,
@@ -80,7 +91,7 @@ $settings->add(new admin_setting_configselect('grade_report_decimalpoints', get_
                                                  '5' => '5')));
 $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoints', get_string('averagesdecimalpoints', 'grades'),
                                           get_string('configaveragesdecimalpoints', 'grades'), 2,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                  '0' => '0',
                                                  '1' => '1',
                                                  '2' => '2',
@@ -89,7 +100,7 @@ $settings->add(new admin_setting_configselect('grade_report_averagesdecimalpoint
                                                  '5' => '5')));
 $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints', get_string('rangesdecimalpoints', 'grades'),
                                           get_string('configrangesdecimalpoints', 'grades'), 2,
-                                          array(GRADE_REPORT_PREFERENCE_INHERIT => get_string('inherit', 'grades'),
+                                          array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                  '0' => '0',
                                                  '1' => '1',
                                                  '2' => '2',
@@ -97,5 +108,18 @@ $settings->add(new admin_setting_configselect('grade_report_rangesdecimalpoints'
                                                  '4' => '4',
                                                  '5' => '5')));
 
+$percentages = array(GRADE_REPORT_PREFERENCE_UNUSED => get_string('unused', 'grades'));
+for ($i=100; $i > -1; $i--) {
+    $percentages[$i] = "$i%";
+}
+
+for ($i = 1; $i <= 10; $i++) {
+    $default = abs(($i-10)*10);
+    $settings->add(new admin_setting_configselect('grade_report_gradeboundary'.$i, $strgradeboundary . " $i",
+                                              $strconfiggradeboundary, $default, $percentages));
+
+    $settings->add(new admin_setting_configtext('grade_report_gradeletter'.$i, $strgradeletter . " $i",
+                                            $strconfiggradeletter, ''));
+}
 
 ?>

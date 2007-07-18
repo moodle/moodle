@@ -427,6 +427,46 @@ class grade_grades extends grade_object {
         $standardised_value = $factor * $diff + $target_min;
         return $standardised_value;
     }
+
+    /**
+     * Returns the grade letter this grade falls under, as they are set up in the given array.
+     * @param array $letters An array of grade boundaries with associated letters
+     * @param float $gradevalue The value to convert. If not given, will use instantiated object
+     * @param float $grademin If not given, will look up the grade_item's grademin
+     * @param float $grademax If not given, will look up the grade_item's grademax
+     * @return string Grade letter
+     */
+    function get_letter($letters, $gradevalue=null, $grademin=null, $grademax=null) {
+        if (is_null($grademin) || is_null($grademax)) {
+            if (!isset($this)) {
+                debugging("Tried to call grade_grades::get_letter statically without giving an explicit grademin or grademax!");
+                return false;
+            }
+            $this->load_grade_item();
+            $grademin = $this->grade_item->grademin;
+            $grademax = $this->grade_item->grademax;
+        }
+
+        if (is_null($gradevalue)) {
+            if (!isset($this)) {
+                debugging("Tried to call grade_grades::get_letter statically without giving an explicit gradevalue!");
+                return false;
+            }
+            $gradevalue = $this->finalgrade;
+        }
+        // Standardise grade first
+        $grade = grade_grades::standardise_score($gradevalue, $grademin, $grademax, 0, 100);
+
+        // Sort the letters by descending boundaries (100-0)
+        krsort($letters);
+        foreach ($letters as $boundary => $letter) {
+            if ($grade >= $boundary) {
+                return $letter;
+            }
+        }
+        return '-';
+    }
+
 }
 
 ?>
