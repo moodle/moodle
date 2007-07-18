@@ -16,7 +16,8 @@
  * @param boolean $return, return as string or just print it
  */
 function print_custom_corners_start($clearfix=false, $return=false) {
-    $output = '<div class="wrap"><div class="bt"><div></div></div>';
+    $output = '<div class="wrap">'."\n";
+    $output .= '<div class="bt"><div></div></div>';
     $output .= "\n";
     $output .= '<div class="i1"><div class="i2">';
     $output .= (!empty($clearfix)) ? '<div class="i3 clearfix">' : '<div class="i3">';
@@ -37,7 +38,8 @@ function print_custom_corners_start($clearfix=false, $return=false) {
 function print_custom_corners_end($return=false) {
     $output = '</div></div></div>';
     $output .= "\n";
-    $output .= '<div class="bb"><div></div></div></div>';
+    $output .= '<div class="bb"><div></div></div>'."\n";
+    $output .= '</div>';
     
     if ($return) {
         return $output;
