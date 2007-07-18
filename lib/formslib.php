@@ -74,8 +74,11 @@ class moodleform {
      * @var upload_manager
      */
     var $_upload_manager; //
-
-
+    /**
+     * definition_after_data executed flag
+     * @var definition_finalized
+     */
+    var $_definition_finalized = false;
 
     /**
      * The constructor function calls the abstract function definition() and it will then
@@ -124,11 +127,6 @@ class moodleform {
 
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
-
-        // update form definition based on final data if form submitted
-        if ($this->is_submitted()) {
-            $this->definition_after_data();
-        }
     }
 
     /**
@@ -244,8 +242,6 @@ class moodleform {
         }
         $filter = $slashed ? 'stripslashes' : NULL;
         $this->_form->setDefaults($default_values, $filter);
-        //update form definition when data changed
-        $this->definition_after_data();
     }
 
     /**
@@ -300,6 +296,12 @@ class moodleform {
     function is_validated() {
         static $validated = null; // one validation is enough
         $mform =& $this->_form;
+
+        //finalize the form definition before any processing
+        if (!$this->_definition_finalized) {
+            $this->_definition_finalized = true;
+            $this->definition_after_data();
+        }
 
         if ($this->no_submit_button_pressed()){
             return false;
@@ -421,6 +423,11 @@ class moodleform {
      * Print html form.
      */
     function display() {
+        //finalize the form definition if not yet done
+        if (!$this->_definition_finalized) {
+            $this->_definition_finalized = true;
+            $this->definition_after_data();
+        }
         $this->_form->display();
     }
 
