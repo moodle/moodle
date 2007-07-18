@@ -804,7 +804,7 @@ class grade_report_grader extends grade_report {
                     $displaytype = $averagesdisplaytype;
                 }
 
-                if (empty($groupscount[$itemid]) || !isset($groupsum[$item->id])) {
+                if (empty($groupscount[$item->id]) || !isset($groupsum[$item->id])) {
                     $groupavghtml .= '<td>-</td>';
                 } else {
                     $sum = $groupsum[$item->id];
@@ -899,7 +899,7 @@ class grade_report_grader extends grade_report {
                     $displaytype = $averagesdisplaytype;
                 }
 
-                if (empty($classcount[$itemid]) || !isset($classsum[$item->id])) {
+                if (empty($classcount[$item->id]) || !isset($classsum[$item->id])) {
                     $gradeavghtml .= '<td>-</td>';
                 } else {
                     $sum = $classsum[$item->id];
