@@ -152,6 +152,25 @@ class course_edit_form extends moodleform {
             $mform->setHelpButton('nometacourse', array('metacourse', get_string('metacourse')), true);
         }
 
+//--------------------------------------------------------------------------------
+        $mform->addElement('header','enrolhdr', get_string('enrolments'));
+
+        $choices = array();
+        $modules = explode(',', $CFG->enrol_plugins_enabled);
+        foreach ($modules as $module) {
+            $name = get_string('enrolname', "enrol_$module");
+            $plugin = enrolment_factory::factory($module);
+            if (method_exists($plugin, 'print_entry')) {
+                $choices[$name] = $module;
+            }
+        }
+        asort($choices);
+        $choices = array_flip($choices);
+        $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
+        $mform->addElement('select', 'enrol', get_string('enrolmentplugins'), $choices);
+        $mform->setHelpButton('enrol', array('courseenrolmentplugins', get_string('enrolmentplugins')), true);
+
+
         $roles = get_assignable_roles($context);
         if (!empty($course)) {
             // add current default role, so that it is selectable even when user can not assign it
@@ -175,23 +194,6 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'defaultrole', get_string('defaultrole', 'role'), $choices);
         $mform->setDefault('defaultrole', 0);
 
-//--------------------------------------------------------------------------------
-        $mform->addElement('header','enrolhdr', get_string('enrolments'));
-
-        $choices = array();
-        $modules = explode(',', $CFG->enrol_plugins_enabled);
-        foreach ($modules as $module) {
-            $name = get_string('enrolname', "enrol_$module");
-            $plugin = enrolment_factory::factory($module);
-            if (method_exists($plugin, 'print_entry')) {
-                $choices[$name] = $module;
-            }
-        }
-        asort($choices);
-        $choices = array_flip($choices);
-        $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
-        $mform->addElement('select', 'enrol', get_string('enrolmentplugins'), $choices);
-        $mform->setHelpButton('enrol', array('courseenrolmentplugins', get_string('enrolmentplugins')), true);
 
         $radio = array();
         $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('no'), 0);
@@ -225,6 +227,7 @@ class course_edit_form extends moodleform {
         }
         $mform->addElement('select', 'enrolperiod', get_string('enrolperiod'), $periodmenu);
         $mform->setDefault('enrolperiod', 0);
+
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header','expirynotifyhdr', get_string('expirynotify'));
