@@ -30,47 +30,6 @@
 </tr>
 
 <tr>
-    <td align="right">assignment_maxcpu:</td>
-    <td>
-    <?php
-        /**
-         * TODO: create a function in moodlelib.php.
-         * Actually present in /mod/assignment/type/program/assignment.class.php -> assignment_program_get_max_cpu_times
-         */
-        require_once $CFG->dirroot.'/mod/assignment/type/program/assignment.class.php';
-        DEFINE('MAX_CPU',60);
-        
-        unset($choices);
-        $choices = assignment_program_get_max_cpu_times(MAX_CPU);
-        choose_from_menu($choices, "assignment_maxcpu", $CFG->assignment_maxcpu, "");
-    ?>
-    </td>
-    <td>
-        <?php print_string("configmaxcpu", "assignment") ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right">assignment_maxmem:</td>
-    <td>
-    <?php
-        /**
-         * TODO: create a function in moodlelib.php.
-         * Actually present in /mod/assignment/type/program/assignment.class.php -> assignment_program_get_max_mem_usages
-         */
-        DEFINE('MAX_MEM',10485760);
-         
-        unset($choices);
-        $choices = assignment_program_get_max_memory_usages(MAX_MEM);
-        choose_from_menu($choices, "assignment_maxmem", $CFG->assignment_maxmem, "");
-    ?>
-    </td>
-    <td>
-        <?php print_string("configmaxmem", "assignment") ?>
-    </td>
-</tr>
-
-<tr>
     <td colspan="3" align="center">
     <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
