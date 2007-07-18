@@ -17,7 +17,8 @@
 form.mform fieldset.hidden,
 form.mform fieldset.hidden fieldset.fgroup,
 ul.tabrow1 li a:link,
-ul.tabrow1 li a:visited {
+ul.tabrow1 li a:visited,
+div.sideblock table.minicalendar {
     border:none;
     background:none;
 }
