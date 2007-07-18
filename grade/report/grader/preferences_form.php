@@ -62,7 +62,7 @@ class grader_report_preferences_form extends moodleform {
             }
 
             $mform->addElement($type, $full_pref, get_string($pref, 'grades'), $options);
-            $mform->setHelpButton($full_pref, array(false, get_string($pref, 'grades'), false, true, false, get_string("config_$pref", 'grades')));
+            $mform->setHelpButton($full_pref, array(false, get_string($pref, 'grades'), false, true, false, get_string("config$pref", 'grades')));
             $mform->setDefault($full_pref, $pref_value);
             $mform->setType($full_pref, PARAM_ALPHANUM);
         }
