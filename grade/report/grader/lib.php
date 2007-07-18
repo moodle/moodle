@@ -171,31 +171,31 @@ class grade_report_grader extends grade_report {
                 }
             }
 
-            // Get the grade object to compare old value with new value
-            if ($grade = grade_grades::fetch(array('userid'=>$userid, 'itemid'=>$grade_item->id))) {
-                if ($data_type == 'feedback') {
-                    if ($text = $grade->load_text()) {
-                        if ($text->feedback !== $postedvalue) {
-                            $feedback       = $postedvalue;
-                            $feedbackformat = $text->feedbackformat; // keep original format or else we would have to do proper conversion (but it is not always possible)
-                            $needsupdate    = true;
-                        }
-                    } else {
+            // Get the grade object to compare old value with new value, the grade might not exist yet
+            $grade = new grade_grades(array('userid'=>$userid, 'itemid'=>$grade_item->id));
+
+            if ($data_type == 'feedback') {
+                if ($text = $grade->load_text()) {
+                    if ($text->feedback !== $postedvalue) {
                         $feedback       = $postedvalue;
-                        $feedbackformat = FORMAT_MOODLE; // this is the default format option everywhere else
+                        $feedbackformat = $text->feedbackformat; // keep original format or else we would have to do proper conversion (but it is not always possible)
                         $needsupdate    = true;
                     }
-
-                } else if ($data_type == 'grade') {
-                    if (!is_null($grade->finalgrade)) {
-                        $grade->finalgrade = (float)$grade->finalgrade;
-                    }
-                    if ($grade->finalgrade !== $finalgrade) {
-                        $needsupdate = true;
-                    }
+                } else if (is_null($postedvalue)) {
+                    //nothing to do - grade does not have text or does not exist yet
+                } else {
+                    $feedback       = $postedvalue;
+                    $feedbackformat = FORMAT_MOODLE; // this is the default format option everywhere else
+                    $needsupdate    = true;
                 }
-            } else { // The grade_grades record doesn't yet exist
-                $needsupdate = true;
+
+            } else if ($data_type == 'grade') {
+                if (!is_null($grade->finalgrade)) {
+                    $grade->finalgrade = (float)$grade->finalgrade;
+                }
+                if ($grade->finalgrade !== $finalgrade) {
+                    $needsupdate = true;
+                }
             }
 
             // we must not update all grades, only changed ones - we do not want to mark everything as overriden

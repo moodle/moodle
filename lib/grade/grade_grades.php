@@ -137,6 +137,10 @@ class grade_grades extends grade_object {
      * @return object
      */
     function load_text() {
+        if (empty($this->id)) {
+            return false; // text can not be attached to non existing grade
+        }
+
         if (empty($this->grade_grades_text->id)) {
             $this->grade_grades_text = grade_grades_text::fetch(array('gradeid'=>$this->id));
         }
