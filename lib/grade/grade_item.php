@@ -1117,7 +1117,6 @@ class grade_item extends grade_object {
      */
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
         global $USER;
-
         if (empty($usermodified)) {
             $usermodified = $USER->id;
         }
@@ -1152,7 +1151,13 @@ class grade_item extends grade_object {
         }
 
         if ($finalgrade !== false) {
-            $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
+            if (!is_null($finalgrade)) {
+                $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
+            } else {
+                echo "Assigning null finalgrade";
+                $grade->finalgrade = $finalgrade;
+            }
+
             // if we can update the raw grade, do update it
             if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
              or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {

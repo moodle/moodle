@@ -133,7 +133,6 @@ class grade_report_grader extends grade_report {
             }
 
             $gradeinfo = explode("_", $varname);
-
             $userid = clean_param($gradeinfo[1], PARAM_INT);
             $itemid = clean_param($gradeinfo[2], PARAM_INT);
 
@@ -652,7 +651,7 @@ class grade_report_grader extends grade_report {
 
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                          $gradeval, $this->get_lang_string('nograde'), '', -1, true, false, $gradetabindex++);
+                                                          $gradeval, $this->get_lang_string('nograde'), '', '-1', true, false, $gradetabindex++);
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
 
@@ -844,12 +843,13 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
+        $meanselection = $this->get_pref('meanselection');
 
         $gradeavghtml = '';
         if ($this->get_pref('showaverages')) {
 
-        /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
-        // do not sum -1 (no grade), treat as 0 for now
+            /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
+            // do not sum -1 (no grade), treat as 0 for now
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
                 FROM {$CFG->prefix}grade_items gi LEFT JOIN
                      {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
@@ -862,7 +862,9 @@ class grade_report_grader extends grade_report {
                 GROUP BY g.itemid";
 
             $classsum = array();
+
             $sums = get_records_sql($SQL);
+
             foreach ($sums as $itemid => $csum) {
                 $classsum[$itemid] = $csum->sum;
                 $classcount[$itemid] = $csum->count;
@@ -887,7 +889,7 @@ class grade_report_grader extends grade_report {
                     $sum = $classsum[$item->id];
 
                     if ($item->scaleid) {
-                        $scaleval = round($this->get_grade_clean($sum/$classcount[$itemid], $decimalpoints));
+                        $scaleval = round($this->get_grade_clean($sum/$classcount[$item->id], $decimalpoints));
                         $scales_array = get_records_list('scale', 'id', $item->scaleid);
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
@@ -900,7 +902,7 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $scales[$scaleval-1];
                         $rawvalue = $scaleval;
                     } else {
-                        $gradeval = $this->get_grade_clean($sum/$classcount[$itemid], $decimalpoints);
+                        $gradeval = $this->get_grade_clean($sum/$classcount[$item->id], $decimalpoints);
 
                         $gradehtml = round($gradeval, $decimalpoints);
                         $rawvalue = $gradeval;

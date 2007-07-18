@@ -122,7 +122,7 @@ define('PARAM_INT',      0x0002);
 define('PARAM_INTEGER',  0x0002);
 
 /**
- * PARAM_NUMBER - a real/floating point number. 
+ * PARAM_NUMBER - a real/floating point number.
  */
 define('PARAM_NUMBER',  0x000a);
 
@@ -681,7 +681,7 @@ function unset_config($name, $plugin=NULL) {
 
     if (empty($plugin)) {
         return delete_records('config', 'name', $name);
-    } else { 
+    } else {
         return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
     }
 }
@@ -1574,7 +1574,7 @@ function course_setup($courseorid=0) {
 /// Redefine global $COURSE if needed
     if (empty($courseorid)) {
         // no change in global $COURSE - for backwards compatibiltiy
-        // if require_rogin() used after require_login($courseid); 
+        // if require_rogin() used after require_login($courseid);
     } else if (is_object($courseorid)) {
         $COURSE = clone($courseorid);
     } else {
@@ -1655,7 +1655,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $COURSE->id) {
                 print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
-            } 
+            }
         }
     }
 
@@ -1717,13 +1717,13 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
     if ($COURSE->id == SITEID) {
 /// We can eliminate hidden site activities straight away
-        if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
+        if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities',
                                                       get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         return;
 
-    } else { 
+    } else {
 /// Check if the user can be in a particular course
         if (!$context = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
             print_error('nocontext');
@@ -1734,8 +1734,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $COURSE->id)) ){
             print_header_simple();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }    
-        
+        }
+
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
@@ -1752,13 +1752,13 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
-                case 1:    /// Guests always allowed 
+                case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
                         print_header_simple();
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
-                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, 
+                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course,
                                  get_string('activityiscurrentlyhidden'));
                     }
 
@@ -1766,7 +1766,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
                     break;
 
-                case 2:    /// Guests allowed with key 
+                case 2:    /// Guests allowed with key
                     if (!empty($USER->enrolkey[$COURSE->id])) {   // Set by enrol/manual/enrol.php
                         return true;
                     }
@@ -1798,7 +1798,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) { 
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // User is allowed to see this course
@@ -2028,7 +2028,7 @@ function sync_metacourses() {
 
 /**
  * Goes through all enrolment records for the courses inside the metacourse and sync with them.
- * 
+ *
  * @param mixed $course the metacourse to synch. Either the course object itself, or the courseid.
  */
 function sync_metacourse($course) {
@@ -2040,7 +2040,7 @@ function sync_metacourse($course) {
             return false; // invalid course id
         }
     }
-    
+
     // Check that we actually have a metacourse.
     if (empty($course->metacourse)) {
         return false;
@@ -2049,7 +2049,7 @@ function sync_metacourse($course) {
     // Get a list of roles that should not be synced.
     if (!empty($CFG->nonmetacoursesyncroleids)) {
         $roleexclusions = 'ra.roleid NOT IN (' . $CFG->nonmetacoursesyncroleids . ') AND';
-    } else { 
+    } else {
         $roleexclusions = '';
     }
 
@@ -2132,7 +2132,7 @@ function sync_metacourse($course) {
     }
 
     return $success;
-    
+
 // TODO: finish timeend and timestart
 // maybe we could rely on cron job to do the cleaning from time to time
 }
@@ -2226,15 +2226,15 @@ function isediting($courseid, $user=NULL) {
     if (empty($user->editing)) {
         return false;
     }
-    
+
     $capcheck = false;
     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-    
+
     if (has_capability('moodle/course:manageactivities', $coursecontext) ||
         has_capability('moodle/site:manageblocks', $coursecontext)) {
-        $capcheck = true;      
+        $capcheck = true;
     } else {
-        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks  
+        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks
         if ($children = get_child_contexts($coursecontext)) {
             foreach ($children as $child) {
                 $childcontext = get_record('context', 'id', $child);
@@ -2242,11 +2242,11 @@ function isediting($courseid, $user=NULL) {
                     has_capability('moodle/site:manageblocks', $childcontext)) {
                     $capcheck = true;
                     break;
-                }             
-            }          
+                }
+            }
         }
     }
-      
+
     return ($user->editing && $capcheck);
     //return ($user->editing and has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $courseid)));
 }
@@ -2371,7 +2371,7 @@ function get_moodle_cookie() {
  */
 function exists_auth_plugin($auth) {
     global $CFG;
-    
+
     if (file_exists("{$CFG->dirroot}/auth/$auth/auth.php")) {
         return is_readable("{$CFG->dirroot}/auth/$auth/auth.php");
     }
@@ -2380,7 +2380,7 @@ function exists_auth_plugin($auth) {
 
 /**
  * Checks if a given plugin is in the list of enabled authentication plugins.
- * 
+ *
  * @param string $auth Authentication plugin.
  * @return boolean Whether the plugin is enabled.
  */
@@ -2403,12 +2403,12 @@ function is_enabled_auth($auth) {
  */
 function get_auth_plugin($auth) {
     global $CFG;
-    
+
     // check the plugin exists first
     if (! exists_auth_plugin($auth)) {
         error("Authentication plugin '$auth' not found.");
     }
-    
+
     // return auth plugin instance
     require_once "{$CFG->dirroot}/auth/$auth/auth.php";
     $class = "auth_plugin_$auth";
@@ -2539,14 +2539,14 @@ function create_user_record($username, $password, $auth='manual') {
 
     $newuser->auth = $auth;
     $newuser->username = $username;
-    
+
     // fix for MDL-8480
     // user CFG lang for user if $newuser->lang is empty
     // or $user->lang is not an installed language
     $sitelangs = array_keys(get_list_of_languages());
     if (empty($newuser->lang) || !in_array($newuser->lang, $sitelangs)) {
         $newuser -> lang = $CFG->lang;
-    }    
+    }
     $newuser->confirmed = 1;
     $newuser->lastip = getremoteaddr();
     $newuser->timemodified = time();
@@ -2725,8 +2725,8 @@ function authenticate_user_login($username, $password) {
 
         return $user;
 
-    } 
-    
+    }
+
     // failed if all the plugins have failed
     add_to_log(0, 'login', 'error', 'index.php', $username);
     error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
@@ -2736,7 +2736,7 @@ function authenticate_user_login($username, $password) {
 /**
  * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @return bool is password valid?
@@ -2779,7 +2779,7 @@ function validate_internal_user_password(&$user, $password) {
 
 /**
  * Calculate hashed value from password using current hash mechanism.
- * 
+ *
  * @param string password
  * @return string password hash
  */
@@ -2795,7 +2795,7 @@ function hash_internal_user_password($password) {
 
 /**
  * Update pssword hash in user object.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @param bool store changes also in db, default true
@@ -2840,9 +2840,9 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
     if (is_null($mnethostid)) {
         // if null, we restrict to local users
         // ** testing for local user can be done with
-        //    mnethostid = $CFG->mnet_localhost_id 
+        //    mnethostid = $CFG->mnet_localhost_id
         //    or with
-        //    auth != 'mnet' 
+        //    auth != 'mnet'
         //    but the first one is FAST with our indexes
         $mnethostid = $CFG->mnet_localhost_id;
     }
@@ -3073,7 +3073,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete course blocks
 
-    if ($blocks = get_records_sql("SELECT * 
+    if ($blocks = get_records_sql("SELECT *
                                    FROM {$CFG->prefix}block_instance
                                    WHERE pagetype = '".PAGE_COURSE_VIEW."'
                                    AND pageid = $course->id")) {
@@ -3081,18 +3081,18 @@ function remove_course_contents($courseid, $showfeedback=true) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
             }
-            
+
             require_once($CFG->libdir.'/blocklib.php');
             foreach ($blocks as $block) {  /// Delete any associated contexts for this block
-                
+
                 // Block instances are rarely created. Since the block instance is gone from the above delete
                 // statement, calling delete_context() will generate a warning as get_context_instance could
-                // no longer create the context as the block is already gone. 
+                // no longer create the context as the block is already gone.
                 if (record_exists('context', 'contextlevel', CONTEXT_BLOCK, 'instanceid', $block->id)) {
                     delete_context(CONTEXT_BLOCK, $block->id);
                 }
-                 
-                // fix for MDL-7164                
+
+                // fix for MDL-7164
                 // Get the block object and call instance_delete()
                 if (!$record = blocks_get_record($block->blockid)) {
                     $result = false;
@@ -3125,7 +3125,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
             }
             /// Delete any associated context for this group ??
             delete_context(CONTEXT_GROUP, $groupid);
-            
+
             if (groups_delete_group($groupid)) {
                 if ($showfeedback) {
                     notify($strdeleted .' groups');
@@ -3196,7 +3196,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     if ($courseid != SITEID) {
         delete_context(CONTEXT_COURSE, $course->id);
     }
-    
+
     // fix for MDL-9016
     // clear the cache because the course context is deleted, and
     // we don't want to write assignment, overrides and context_rel table
@@ -4250,7 +4250,7 @@ function current_language() {
     } else if (!empty($SESSION->lang)) {    // Session language can override other settings
         $return = $SESSION->lang;
 
-    } else if (!empty($USER->lang)) { 
+    } else if (!empty($USER->lang)) {
         $return = $USER->lang;
 
     } else {
@@ -4316,9 +4316,9 @@ function clean_getstring_data( $a ) {
     }
 }
 
-/** 
- * @return array places to look for lang strings based on the prefix to the 
- * module name. For example qtype_ in question/type. Used by get_string and 
+/**
+ * @return array places to look for lang strings based on the prefix to the
+ * module name. For example qtype_ in question/type. Used by get_string and
  * help.php.
  */
 function places_to_search_for_lang_strings() {
@@ -4398,7 +4398,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     global $CFG;
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale',
                             'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
@@ -4448,7 +4448,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     $rules = places_to_search_for_lang_strings();
     $exceptions = $rules['__exceptions'];
     unset($rules['__exceptions']);
-    
+
     if (!in_array($module, $exceptions)) {
         $dividerpos = strpos($module, '_');
         if ($dividerpos === false) {
@@ -5374,14 +5374,14 @@ function check_php_version($version='4.1.0') {
           break;
 
       case 'Opera':  /// Opera
-      
+
           if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
               }
           }
           break;
-      
+
       case 'Safari':  /// Safari
           // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
@@ -5399,7 +5399,7 @@ function check_php_version($version='4.1.0') {
           }
 
           break;
-      
+
     }
 
     return false;
@@ -5703,7 +5703,7 @@ function moodle_setlocale($locale='') {
  * @deprecated Use textlib->strtolower($text) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
-    
+
     //If not specified use utf8
     if (empty($encoding)) {
         $encoding = 'UTF-8';
@@ -6609,7 +6609,7 @@ eval('
 }
 
 /**
- * This function will make a complete copy of anything it's given, 
+ * This function will make a complete copy of anything it's given,
  * regardless of whether it's an object or not.
  * @param mixed $thing
  * @return mixed
@@ -6623,19 +6623,19 @@ function fullclone($thing) {
  * This function expects to called during shutdown
  * should be set via register_shutdown_function()
  * in lib/setup.php .
- * 
+ *
  * Right now we do it only if we are under apache, to
  * make sure apache children that hog too much mem are
  * killed.
- * 
+ *
  */
 function moodle_request_shutdown() {
 
     global $CFG;
 
-    // initially, we are only ever called under apache 
-    // but check just in case 
-    if (function_exists('apache_child_terminate') 
+    // initially, we are only ever called under apache
+    // but check just in case
+    if (function_exists('apache_child_terminate')
         && function_exists('memory_get_usage')
         && ini_get_bool('child_terminate')) {
         if (empty($CFG->apachemaxmem)) {
@@ -6742,7 +6742,7 @@ function get_performance_info() {
         $info['html'] .= '<span class="logwrites">Log writes '.$info['logwrites'].'</span> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
-    
+
     if (!empty($PERF->profiling) && $PERF->profiling) {
         require_once($CFG->dirroot .'/lib/profilerlib.php');
         $info['html'] .= '<span class="profilinginfo">'.Profiler::get_profiling(array('-R')).'</span>';
@@ -6781,9 +6781,9 @@ function get_performance_info() {
     if (isset($rcache->hits) && isset($rcache->misses)) {
         $info['rcachehits'] = $rcache->hits;
         $info['rcachemisses'] = $rcache->misses;
-        $info['html'] .= '<span class="rcache">Record cache hit/miss ratio : '. 
+        $info['html'] .= '<span class="rcache">Record cache hit/miss ratio : '.
             "{$rcache->hits}/{$rcache->misses}</span> ";
-        $info['txt'] .= 'rcache: '. 
+        $info['txt'] .= 'rcache: '.
             "{$rcache->hits}/{$rcache->misses} ";
     }
     $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
@@ -6980,7 +6980,7 @@ function is_mnet_remote_user($user) {
 
 /**
  * Checks if a given plugin is in the list of enabled enrolment plugins.
- * 
+ *
  * @param string $auth Enrolment plugin.
  * @return boolean Whether the plugin is enabled.
  */
@@ -7039,7 +7039,7 @@ function setup_lang_from_browser() {
             continue; // language not allowed, try next one
         }
         if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
-            $SESSION->lang = $lang; /// Lang exists, set it in session 
+            $SESSION->lang = $lang; /// Lang exists, set it in session
             break; /// We have finished. Go out
         }
     }
@@ -7051,10 +7051,10 @@ function setup_lang_from_browser() {
 /**
  * This function will build the navigation string to be used by print_header
  * and others
- * @uses $CFG 
+ * @uses $CFG
  * @uses $THEME
  * @param $extranavlinks - array of associative arrays, keys: name, link, type
- * @return $navigation as an object so it can be differentiated from old style 
+ * @return $navigation as an object so it can be differentiated from old style
  * navigation strings.
  */
 function build_navigation($extranavlinks) {
@@ -7062,7 +7062,7 @@ function build_navigation($extranavlinks) {
 
     $navigation = '';
     $navlinks = array();
-    
+
     //Site name
     if ($site = get_site()) {
         $navlinks[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
@@ -7073,7 +7073,7 @@ function build_navigation($extranavlinks) {
         if ($COURSE->id != SITEID) {
             //Course
             $navlinks[] = array('name' => format_string($COURSE->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",'type' => 'course');
-        }       
+        }
     }
 
     //Merge in extra navigation links
