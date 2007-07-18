@@ -52,13 +52,16 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 // form processing
 } else if ($data = $mform->get_data()) {
-
     $grade_grades = new grade_grades(array('id'=>$id));
     $grade_item = new grade_item(array('id'=>$grade_grades->itemid));
     $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback, $data->feedbackformat);
 
+    // Assign finalgrade value
+    $grade_grades->finalgrade = $data->finalgrade;
+
     // set locked
     $grade_grades->set_locked($data->locked);
+
     // set hidden
     $grade_grades->set_hidden($data->hidden);
 
