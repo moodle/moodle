@@ -311,8 +311,7 @@ class question_multichoice_qtype extends default_questiontype {
             $a->feedbackimg = '';
 
             // Print the control
-            $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\"" .
-                 " alt=\"" . s($answer->answer) . '" />';
+            $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$aid\" />";
 
             if ($options->correct_responses && $answer->fraction > 0) {
                 $a->class = question_get_feedback_class(1);
@@ -322,7 +321,9 @@ class question_multichoice_qtype extends default_questiontype {
             }
 
             // Print the answer text
-            $a->text = format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+            $a->text = '<span class="anun">' . $qnumchar .
+                    '<span class="anumsep">.</span></span> ' . 
+                    format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
             if (($options->feedback || $options->correct_responses) && $checked) {
