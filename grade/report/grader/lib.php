@@ -755,8 +755,16 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
-
+        $mean_pref = get_user_preferences('grade_report_meanselection', $CFG->grade_report_meanselection);
         $groupavghtml = '';
+
+        if ($mean_pref == 2) {
+            // non empty grades
+            $meanstr = "AND NOT g.finalgrade IS NULL";
+        } else {
+            $meanstr = "";
+        }
+
         if ($this->currentgroup && $this->get_pref('showgroups')) {
 
         /** SQL for finding group sum */
@@ -772,6 +780,7 @@ class grade_report_grader extends grade_report {
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
                 AND NOT g.finalgradeIS NULL
+                $notnullstr
                 GROUP BY g.itemid";
 
             $groupsum = array();
@@ -844,8 +853,15 @@ class grade_report_grader extends grade_report {
 
         $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
         $meanselection = $this->get_pref('meanselection');
-
+        $mean_pref = get_user_preferences('grade_report_meanselection', $CFG->grade_report_meanselection);
         $gradeavghtml = '';
+        
+        if ($mean_pref == 2) {
+            // non empty grades
+            $meanstr = "AND NOT g.finalgrade IS NULL";
+        } else {
+            $meanstr = "";
+        }
         if ($this->get_pref('showaverages')) {
 
             /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
@@ -858,7 +874,7 @@ class grade_report_grader extends grade_report {
                 WHERE gi.courseid = $this->courseid
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
-                AND NOT g.finalgrade IS NULL
+                $meanstr
                 GROUP BY g.itemid";
 
             $classsum = array();
