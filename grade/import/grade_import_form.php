@@ -27,7 +27,7 @@ class grade_import_form extends moodleform {
         if ($this->is_submitted() and $this->is_validated()) {
             // return the temporary filename to process
             return $this->_upload_manager->files['userfile']['tmp_name'];
-        }else{
+        } else{
             return  NULL;
         }
     }
