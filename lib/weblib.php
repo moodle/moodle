@@ -5830,12 +5830,12 @@ function print_side_block_start($heading='', $attributes = array()) {
         if (!empty($THEME->customcorners)) print_custom_corners_start();
         echo $heading;
         if (!empty($THEME->customcorners)) {
-            echo '</div></div></div>';
+            echo '</div></div></div></div>';
         }
         echo '</div>';
     } else {
         if (!empty($THEME->customcorners)) {
-            echo '<div class="bt"><div></div></div>';
+            echo '<div class="wrap"><div class="bt"><div></div></div>';
         }
     }
 
