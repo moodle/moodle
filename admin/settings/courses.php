@@ -3,7 +3,7 @@
 // This file defines settingpages and externalpages under the "courses" category
 
 
-$ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on'));
+$ADMIN->add('courses', new admin_externalpage('coursemgmt', get_string('coursemgmt', 'admin'), $CFG->wwwroot . '/course/index.php?categoryedit=on','moodle/category:update'));
 
 $ADMIN->add('courses', new admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/'.$CFG->admin.'/enrol.php'));
 
@@ -17,7 +17,7 @@ $ADMIN->add('courses', $temp);
 
 
 // "backups" settingpage
-$temp = new admin_settingpage('backups', get_string('backups','admin'));
+$temp = new admin_settingpage('backups', get_string('backups','admin'),'moodle/site:backup');
 $temp->add(new admin_setting_backupcheckbox('backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_withuserdata', get_string('includemoduleuserdata'), get_string('backupincludemoduleuserdatahelp'), 0));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_metacourse', get_string('metacourse'), get_string('backupmetacoursehelp'), 0));
