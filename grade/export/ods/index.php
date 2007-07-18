@@ -25,13 +25,13 @@ require_once("../../../config.php");
 require_once($CFG->dirroot.'/grade/export/lib.php');
 require_once('grade_export_ods.php');
 
-$id = required_param('id', PARAM_INT); // course id 
+$id = required_param('id', PARAM_INT); // course id
 
 require_login($id);
 require_capability('moodle/course:downloadallgrades', get_context_instance(CONTEXT_COURSE, $id));
 
 $course = get_record('course', 'id', $id);
-$feedback = optional_param('feedback', '', PARAM_ALPHA);   
+$feedback = optional_param('feedback', '', PARAM_ALPHA);
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('exportods', 'grades');
 $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
@@ -46,15 +46,15 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     } else {
         $itemidsurl = implode(",",$data->itemids);
     }
-        
+
     // print the grades on screen for feedbacks
-    
+
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
 
     // this redirect should trigger a download prompt
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
-    exit; 
+    exit;
 }
 
 print_gradeitem_selections($id);

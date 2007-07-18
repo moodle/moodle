@@ -482,7 +482,7 @@ class grade_category extends grade_object {
                 $weightsum = 0;
                 $sum       = 0;
                 foreach($items as $key=>$value) {
-                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0; 
+                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0;
                     if ($items[$key]->aggregationcoef <= 0) {
                         continue;
                     }
@@ -513,11 +513,11 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL: // special average 
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL: // special average
                 $num = 0;
                 $sum = 0;
                 foreach($items as $key=>$value) {
-                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0; 
+                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0;
                     if ($items[$key]->aggregationcoef == 0) {
                         $num += 1;
                         $sum += $grade_value;
@@ -532,7 +532,7 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED: // special average 
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED: // special average
                 $num = 0;
                 $sum = 0;
                 foreach($grade_values as $key=>$grade_value) {
@@ -617,7 +617,7 @@ class grade_category extends grade_object {
              or $this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED
              or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL
              or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED);
-             
+
     }
 
     /**

@@ -25,14 +25,14 @@
 require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xml extends grade_export {
-    
+
     var $format = 'xml'; // export format
-    
+
     /**
      * To be implemented by child classes
      */
-    function print_grades($feedback = false) { 
-        
+    function print_grades($feedback = false) {
+
         global $CFG;
 
         /// Whether this plugin is entitled to update export time
@@ -40,60 +40,60 @@ class grade_export_xml extends grade_export {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
             } else {
-            $export = false;  
+            $export = false;
           }
         } else {
-            $export = false; 
+            $export = false;
         }
-               
+
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 
         /// Calculate file name
-        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");        
+        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");
 
-        header("Content-type: text/xml; charset=UTF-8"); 
+        header("Content-type: text/xml; charset=UTF-8");
         header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
-        
+
         /// time stamp to ensure uniqueness of batch export
         echo '<results batch="xml_export_'.time().'">';
-        
+
         foreach ($this->columnidnumbers as $index => $idnumber) {
-            
-            // studentgrades[] index should match with corresponding $index 
+
+            // studentgrades[] index should match with corresponding $index
             foreach ($this->grades as $studentid => $studentgrades) {
                 echo '<result>';
-                
+
                 // state can be new, or regrade
                 // require comparing of timestamps in db
-                
+
                 $params = new object();
                 $params->idnumber = $idnumber;
                 // get the grade item
                 $gradeitem = new grade_item($params);
-                
+
                 // we are trying to figure out if this is a new grade, or a regraded grade
                 // only relevant if this grade for this user is already exported
-                    
+
                 // get the grade_grades for this user
                 $params = new object();
                 $params->itemid = $gradeitem->id;
                 $params->userid = $studentid;
-                
+
                 $grade_grades = new grade_grades($params);
-                    
+
                 // if exported, check grade_history, if modified after export, set state to regrade
                 if (!empty($grade_grades->exported)) {
                     //TODO: use timemodified or something else instead
 /*                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades->exported)) {
-                        $status = 'regrade';  
+                        $status = 'regrade';
                     } else {
-                        $status = 'new';  
+                        $status = 'new';
                     }*/
-                } else { 
+                } else {
                     // never exported
-                    $status = 'new'; 
+                    $status = 'new';
                 }
-                
+
                 echo '<state>'.$status.'</state>';
                 // only need id number
                 echo '<assignment>'.$idnumber.'</assignment>';
@@ -101,7 +101,7 @@ class grade_export_xml extends grade_export {
                 echo '<student>'.$studentid.'</student>';
 		        echo '<score>'.$studentgrades[$index].'</score>';
 		        if ($feedback) {
-                    echo '<feedback>'.$this->comments[$studentid][$index].'</feedback>';  
+                    echo '<feedback>'.$this->comments[$studentid][$index].'</feedback>';
 		        }
                 echo '</result>';
 
@@ -114,7 +114,7 @@ class grade_export_xml extends grade_export {
             }
         }
         echo '</results>';
-        exit; 
+        exit;
     }
 }
 

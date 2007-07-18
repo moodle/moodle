@@ -25,29 +25,29 @@
 require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_ods extends grade_export {
-    
+
     var $format = 'ods'; // export format
-    
+
     /**
      * To be implemented by child classes
      */
-    function print_grades($feedback = false) { 
-        
-        global $CFG; 
+    function print_grades($feedback = false) {
+
+        global $CFG;
 
         require_once($CFG->dirroot.'/lib/odslib.class.php');
-        
+
         /// Whether this plugin is entitled to update export time
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
                 $export = true;
             } else {
-            $export = false;  
+            $export = false;
           }
         } else {
-            $export = false; 
+            $export = false;
         }
- 
+
     /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.ods");
     /// Creating a workbook
@@ -56,7 +56,7 @@ class grade_export_ods extends grade_export {
         $workbook->send($downloadfilename);
     /// Adding the worksheet
         $myxls =& $workbook->add_worksheet($this->strgrades);
-    
+
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("firstname"));
         $myxls->write_string(0,1,get_string("lastname"));
@@ -67,14 +67,14 @@ class grade_export_ods extends grade_export {
         $pos=6;
         foreach ($this->columns as $column) {
             $myxls->write_string(0,$pos++,strip_tags($column));
-            
-            /// add a column_feedback column            
+
+            /// add a column_feedback column
             if ($feedback) {
                 $myxls->write_string(0,$pos++,strip_tags($column."_feedback"));
             }
         }
         $myxls->write_string(0,$pos,get_string("total"));
-    
+
     /// Print all the lines of data.
         $i = 0;
         if (!empty($this->grades)) {
@@ -84,7 +84,7 @@ class grade_export_ods extends grade_export {
                 if (empty($this->totals[$student->id])) {
                     $this->totals[$student->id] = '';
                 }
-        
+
                 $myxls->write_string($i,0,$student->firstname);
                 $myxls->write_string($i,1,$student->lastname);
                 $myxls->write_string($i,2,$student->idnumber);
@@ -99,20 +99,20 @@ class grade_export_ods extends grade_export {
                     else {
                         $myxls->write_string($i,$j++,strip_tags($grade));
                     }
-                    
+
                     // writing comment if requested
                     if ($feedback) {
                         $myxls->write_string($i,$j++,array_shift($this->comments[$student->id]));
-                    }                                   
-                    
+                    }
+
                     /// if export flag needs to be set
                     /// construct the grade_grades object and update timestamp if CFG flag is set
-                
+
                     if ($export) {
                         $params= new object();
                         $params->itemid = $gradeitemid;
                         $params->userid = $studentid;
-                
+
                         $grade_grades = new grade_grades($params);
                         $grade_grades->exported = time();
                         // update the time stamp;
@@ -125,7 +125,7 @@ class grade_export_ods extends grade_export {
 
     /// Close the workbook
         $workbook->close();
-    
+
         exit;
     }
 }

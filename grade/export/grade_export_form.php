@@ -16,7 +16,7 @@ class grade_export_form extends moodleform {
                 $mform->addElement($element);
             }
         }
-        $this->add_action_buttons(false, get_string('submit'));    
+        $this->add_action_buttons(false, get_string('submit'));
     }
 }
 ?>

@@ -17,7 +17,7 @@ class grade_import_form extends moodleform {
         $encodings = $textlib->get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
 
-        $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000); 
+        $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
         $mform->setType('previewrows', PARAM_INT);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
@@ -34,7 +34,7 @@ class grade_import_form extends moodleform {
 }
 
 class grade_import_mapping_form extends moodleform {
-    
+
     function definition () {
         global $CFG;
         $mform =& $this->_form;
@@ -54,35 +54,35 @@ class grade_import_mapping_form extends moodleform {
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
-        //choose_from_menu($mapfromoptions, 'mapfrom');    
-        
+        //choose_from_menu($mapfromoptions, 'mapfrom');
+
         $maptooptions = array('userid'=>'userid', 'username'=>'username', 'useridnumber'=>'useridnumber', 'useremail'=>'useremail', '0'=>'ignore');
         //choose_from_menu($maptooptions, 'mapto');
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
-        
+
         $mform->addElement('header', 'general', get_string('mappings', 'grades'));
-        
+
         // add a comment option
 
         if ($gradeitems = $this->_customdata['gradeitems']) {
-            $comments = array();            
+            $comments = array();
             foreach ($gradeitems as $itemid => $itemname) {
-                $comments['feedback_'.$itemid] = 'comments for '.$itemname;            
-            }  
+                $comments['feedback_'.$itemid] = 'comments for '.$itemname;
+            }
         }
 
         include_once($CFG->libdir.'/gradelib.php');
 
-        if ($header) {          
+        if ($header) {
             $i = 0; // index
             foreach ($header as $h) {
 
                 $h = trim($h);
-                // this is what each header maps to        
-                $mform->addElement('selectgroups', 
-                                   'mapping_'.$i, s($h), 
-                                   array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'), 
-                                         'gradeitems'=>$gradeitems, 
+                // this is what each header maps to
+                $mform->addElement('selectgroups',
+                                   'mapping_'.$i, s($h),
+                                   array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'),
+                                         'gradeitems'=>$gradeitems,
                                          'comments'=>$comments));
                 $i++;
             }
@@ -105,7 +105,7 @@ class grade_import_mapping_form extends moodleform {
         //echo '<input name="filename" value='.$newfilename.' type="hidden" />';
         $mform->addElement('hidden', 'filename', $newfilename);
         $mform->setType('filename', PARAM_FILE);
-        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));        
+        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
 
     }
 }

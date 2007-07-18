@@ -48,13 +48,13 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     } else {
         $itemidsurl = implode(",",$data->itemids);
     }
-    
+
     $export = new grade_export($id, $data->itemids);
     $export->display_grades($feedback);
-    
+
     // this redirect should trigger a download prompt
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;separator='.$data->separator);
-    exit; 
+    exit;
 }
 
 // print the form to choose what grade_items to export

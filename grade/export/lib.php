@@ -42,7 +42,7 @@ function print_gradeitem_selections($id, $params = NULL) {
  * Base export class
  */
 class grade_export {
-    
+
     var $format = ''; // export format
     var $id; // course id
     var $itemids; // comma separated grade_item ids;
@@ -51,34 +51,34 @@ class grade_export {
     var $comments = array(); // Collect all comments for each grade
     var $totals = array();    // Collect all totals in this array
     var $columns = array();     // Accumulate column names in this array.
-    var $columnhtml = array();  // Accumulate column html in this array. 
+    var $columnhtml = array();  // Accumulate column html in this array.
     var $columnidnumbers = array(); // Collect all gradeitem id numbers
     var $students = array();
     var $course; // course
-    
+
     // common strings
-    var $strgrades; 
-    var $strgrade;    
-    
+    var $strgrades;
+    var $strgrade;
+
     /**
      * Constructor should set up all the private variables ready to be pulled
      * @input int id - course id
      * @input string itemids - comma separated value of itemids to process for this export
      */
     function grade_export($id, $itemids = '') {
-        
+
         $this->strgrades = get_string("grades");
         $this->strgrade = get_string("grade");
         $this->itemids = $itemids;
-        
-        $strmax = get_string("maximumshort");  
-        
+
+        $strmax = get_string("maximumshort");
+
         if (! $course = get_record("course", "id", $id)) {
             error("Course ID was incorrect");
         }
         $context = get_context_instance(CONTEXT_COURSE, $id);
         require_capability('moodle/course:viewcoursegrades', $context);
-        
+
         $this->id = $id;
         $this->course = $course;
 
@@ -88,7 +88,7 @@ class grade_export {
 
         /// Check to see if groups are being used in this course
         if ($groupmode = groupmode($course)) {   // Groups are being used
-            
+
             if (isset($_GET['group'])) {
                 $changegroup = $_GET['group'];  /// 0 or higher
             } else {
@@ -96,7 +96,7 @@ class grade_export {
             }
 
             $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-        
+
         } else {
             $currentgroup = false;
         }
@@ -119,44 +119,44 @@ class grade_export {
         // if grade_item ids are specified
         if ($itemids) {
             foreach ($itemids as $iid) {
-                
+
                 if ($iid) {
                     $params->id = clean_param($iid, PARAM_INT);
                     $gradeitems[] = new grade_item($params);
-                }              
-            }  
+                }
+            }
         } else {
             // else we get all items for this course
             $gradeitems = grade_grades::fetch_all(array('courseid'=>$this->id));
         }
-        
+
         if ($gradeitems) {
             foreach ($gradeitems as $gradeitem) {
-              
+
                 // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem -> get_final()) {                    
-                    
+                if ($itemgrades = $gradeitem -> get_final()) {
+
                     $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
-                
-                    $this->columnidnumbers[$gradeitem->id] = $gradeitem->idnumber; // this might be needed for some export plugins  
-            
+
+                    $this->columnidnumbers[$gradeitem->id] = $gradeitem->idnumber; // this might be needed for some export plugins
+
                     if (!empty($gradeitem->grademax)) {
                         $maxgrade = "$strmax: $gradeitem->grademax";
                     } else {
                         $maxgrade = "";
-                    }                    
-                    
-                    if (!empty($this->students)) {                    
+                    }
+
+                    if (!empty($this->students)) {
                         foreach ($this->students as $student) {
                             unset($studentgrade);
                             // add support for comment here MDL-9634
-                            
+
                             if (!empty($itemgrades[$student->id])) {
                                 $studentgrade = $itemgrades[$student->id];
                             }
-                            
+
                             if (!empty($studentgrade->finalgrade)) {
-                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->finalgrade;                                    
+                                $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = $studentgrade->finalgrade;
                             } else {
                                 $this->grades[$student->id][$gradeitem->id] = $currentstudentgrade = "";
                                 $this->gradeshtml[$student->id][$gradeitem->id] = "";
@@ -166,8 +166,8 @@ class grade_export {
                             } else {
                                 $this->totals[$student->id] = (float)($this->totals[$student->id]) + 0;
                             }
-                            
-                            if (!empty($comment)) {                            
+
+                            if (!empty($comment)) {
                                 // load comments here
                                 if ($studentgrade) {
                                     $studentgrade->load_text();
@@ -176,20 +176,20 @@ class grade_export {
                                     $this->comments[$student->id][$gradeitem->id] = $comment;
                                 }
                             } else {
-                                $this->comments[$student->id][$gradeitem->id] = '';  
+                                $this->comments[$student->id][$gradeitem->id] = '';
                             }
                         }
                     }
                 }
             }
-        }     
+        }
     }
-    
+
     /**
      * To be implemented by child classes
      */
     function print_grades() { }
-    
+
     /**
      * Displays all the grades on screen as a feedback mechanism
      */
@@ -205,34 +205,34 @@ class grade_export {
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
             echo "<th>$column</th>";
-        
-            /// add a column_feedback column            
+
+            /// add a column_feedback column
             if ($feedback) {
                 echo "<th>{$column}_feedback</th>";
-            }        
+            }
         }
         echo '<th>'.get_string("total")."</th>";
         echo '</tr>';
         /// Print all the lines of data.
-        
-        
-        foreach ($this->grades as $studentid => $studentgrades) {        
-        
+
+
+        foreach ($this->grades as $studentid => $studentgrades) {
+
             echo '<tr>';
             $student = $this->students[$studentid];
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
-            
-            
+
+
             echo "<td>$student->firstname</td><td>$student->lastname</td><td>$student->idnumber</td><td>$student->institution</td><td>$student->department</td><td>$student->email</td>";
             foreach ($studentgrades as $grade) {
                 $grade = strip_tags($grade);
-                echo "<td>$grade</td>";            
-                
+                echo "<td>$grade</td>";
+
                 if ($feedback) {
                     echo '<td>'.array_shift($this->comments[$student->id]).'</td>';
-                }       
+                }
             }
             echo '<td>'.$this->totals[$student->id].'</td>';
             echo "</tr>";

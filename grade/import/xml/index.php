@@ -47,7 +47,7 @@ if ( $formdata = $mform->get_data()) {
     // trim utf-8 bom
     $textlib = new textlib();
     // converts to propert unicode
-    $text = $textlib->convert($text, $formdata->encoding); 
+    $text = $textlib->convert($text, $formdata->encoding);
     $text = $textlib->trim_utf8_bom($text);
     // Fix mac/dos newlines
     $text = preg_replace('!\r\n?!',"\n",$text);
@@ -55,19 +55,19 @@ if ( $formdata = $mform->get_data()) {
     // text is the text, we should xmlize it
     include_once($CFG->dirroot.'/lib/xmlize.php');
     $content = xmlize($text);
-    
+
     if ($results = $content['results']['#']['result']) {
-      
+
         // import batch identifier timestamp
         $importcode = time();
         $status = true;
-        
+
         $numlines = 0;
-        
+
         // print some previews
         print_heading(get_string('importpreview', 'grades'));
-        
-        echo '<table cellpadding="5">'; 
+
+        echo '<table cellpadding="5">';
         foreach ($results as $i => $result) {
             if ($numlines < $formdata->previewrows && isset($results[$i+1])) {
                 echo '<tr>';
@@ -88,14 +88,14 @@ if ( $formdata = $mform->get_data()) {
                 $status = false;
                 break;
             }
-            
+
             // grade item locked, abort
             if ($gradeitem->locked) {
                 $status = false;
                 notify(get_string('gradeitemlocked', 'grades'));
-                break 3;  
-            }                    
-            
+                break 3;
+            }
+
             // check if grade_grades is locked and if so, abort
             if ($grade_grades = new grade_grades(array('itemid'=>$gradeitem->id, 'userid'=>$result['#']['student'][0]['#']))) {
                 if ($grade_grades->locked) {
@@ -114,11 +114,11 @@ if ( $formdata = $mform->get_data()) {
                 $newgrades[] = $newgrade;
             }
         }
-    
+
         // loop through info collected so far
         if ($status && !empty($newgrades)) {
             foreach ($newgrades as $newgrade) {
-          
+
                 // check if user exist
                 if (!$user = get_record('user', 'id', $newgrade->userid)) {
                     // no user found, abort
@@ -127,8 +127,8 @@ if ( $formdata = $mform->get_data()) {
                     notify(get_string('baduserid', 'grades'));
                     notify(get_string('importfailed', 'grades'));
                     break;
-                }           
-          
+                }
+
                 // check grade value is a numeric grade
                 if (!is_numeric($newgrade->rawgrade)) {
                     $status = false;
@@ -153,11 +153,11 @@ if ( $formdata = $mform->get_data()) {
         if ($status) {
             /// comit the code if we are up this far
             grade_import_commit($id, $importcode);
-        }   
+        }
     } else {
         // no results section found in xml,
         // assuming bad format, abort import
-        notify('badxmlformat', 'grade');  
+        notify('badxmlformat', 'grade');
     }
 } else {
     // display the standard upload file form
