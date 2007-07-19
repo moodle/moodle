@@ -28,6 +28,7 @@ $string['configfilenotwritten'] = 'The installer script was not able to automati
 $string['configfilewritten'] = 'config.php has been successfully created';
 $string['continue'] = 'Fortsett';
 $string['curlrecommended'] = 'Vi anbefaler sterkt at Curl-biblioteket legges til i php.ini for å aktivere Moodles Nettverksfunksjonalitet.';
+$string['customcheck'] = 'A';
 $string['database'] = 'Database';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
@@ -41,8 +42,10 @@ $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrec
 $string['download'] = 'Download';
 $string['downloadedfilecheckfailed'] = 'Sjekk av nedlastet fil feilet.';
 $string['environmenterrortodo'] = 'Du må løse alle de nevnte problem (feil) identifiserti omgivelsene før du fortsetter å installere denne Moodle versjonen!';
+$string['environmentrecommendcustomcheck'] = 'Hvis denne testen feiler, kan det bety et mulig problem.';
 $string['environmentrecommendinstall'] = 'er anbefalt at du installerer/tillater';
 $string['environmentrecommendversion'] = 'versjon $a->needed er anbefalt og du kjører $a->current';
+$string['environmentrequirecustomcheck'] = 'denne testen må godkjennes';
 $string['environmentrequireinstall'] = 'er påkrevd at du installerer/tillater';
 $string['environmentrequireversion'] = 'Du må ha versjon $a->needed. Du kjører $a->current';
 $string['environmentxmlerror'] = 'En feil oppsto under lesing av omgivelsesdata ($a->error_code)';
@@ -111,12 +114,15 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.1.0.
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['previous'] = 'Forrige';
+$string['qtyperqpwillberemoved'] = 'I oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har ikke brukt denne spørsmålstypen, så du skulle ikke ha noe problem med dette.';
+$string['qtyperqpwillberemovedanyway'] = 'Under oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har noen RQP spørsmål i databasen din, og disse vil slutte å virke om du ikke reinstallerer programmet fra http://moodle.org/mod/data/view.php?d=13&amp;rid=797 før du fortsetter oppgraderingen';
 $string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
 <a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
 $string['restricted'] = 'Begrenset';
 $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
+$string['serverchecks'] = 'Serveren sjekker';
 $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'This should be off';
 $string['status'] = 'Status';
