@@ -252,7 +252,7 @@ function blocks_have_content(&$pageblocks, $position) {
 // This function prints one group of blocks in a page
 // Parameters passed by reference for speed; they are not modified.
 function blocks_print_group(&$page, &$pageblocks, $position) {
-    global $COURSE;
+    global $COURSE, $CFG, $USER;
 
     if(empty($pageblocks[$position])) {
         $pageblocks[$position] = array();
@@ -335,7 +335,6 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
         }
     } // End foreach
 
-
     //  Check if
     //    we are on the default position/side AND
     //    we're editing the page AND
@@ -343,7 +342,20 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     //      we have the capability to manage blocks OR
     //      we are in myMoodle page AND have the capibility to manage myMoodle blocks
     //    )
-    if ($page->blocks_default_position() == $position && $page->user_is_editing() && (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_COURSE, $COURSE->id)) || ($page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', get_context_instance(CONTEXT_COURSE, $COURSE->id)))) ) {
+
+    // for constant PAGE_MY_MOODLE
+    include_once($CFG->dirroot.'/my/pagelib.php');
+    
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+    $myownblogpage = (isset($page->filtertype) && isset($page->filterselect) && $page->type=='blog-view' && $page->filtertype=='user' && $page->filterselect == $USER->id);
+    
+    $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
+    $editmymoodle = $page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
+ 
+    if ($page->blocks_default_position() == $position && 
+        $page->user_is_editing() && 
+        ($managecourseblocks || $editmymoodle || $myownblogpage)) {
+
         blocks_print_adminblock($page, $pageblocks);
     }
 }
