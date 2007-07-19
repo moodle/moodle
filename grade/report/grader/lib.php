@@ -114,11 +114,7 @@ class grade_report_grader extends grade_report {
     function process_data($data) {
         // always initialize all arrays
         $queue = array();
-
         foreach ($data as $varname => $postedvalue) {
-            // this is a bit tricky - we have to first load all grades into memory,
-            // check if changed and only then start updating the final grades because
-            // columns might depend one on another - the result would be overriden calculated and category grades
 
             $needsupdate = false;
             $note = false; // TODO implement note??
@@ -136,6 +132,13 @@ class grade_report_grader extends grade_report {
             $userid = clean_param($gradeinfo[1], PARAM_INT);
             $itemid = clean_param($gradeinfo[2], PARAM_INT);
 
+            $oldvalue = $data->{'old'.$varname};
+
+            // was change requested?
+            if ($oldvalue == $postedvalue) {
+                continue;
+            }
+
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$this->courseid))) { // we must verify course id here!
                 error('Incorrect grade item id');
             }
@@ -148,74 +151,28 @@ class grade_report_grader extends grade_report {
                     if ($postedvalue == -1) { // -1 means no grade
                         $finalgrade = null;
                     } else {
-                        $finalgrade = (float)$postedvalue;
+                        $finalgrade = $postedvalue;
                     }
                 } else {
-                    if ($postedvalue == '') { // empty string means no grade
+                    $trimmed = trim($postedvalue);
+                    if (empty($trimmed)) { // empty string means no grade
                         $finalgrade = null;
                     } else {
                         $finalgrade = $this->format_grade($postedvalue);
                     }
-                }
-                if (!is_null($finalgrade) and ($finalgrade < $grade_item->grademin or $finalgrade > $grade_item->grademax)) {
-                    $this->gradeserror[$grade_item->id][$userid] = 'outofrange'; //TODO: localize
-                    // another possiblity is to use bounded number instead
-                    continue;
                 }
 
             } else if ($data_type == 'feedback') {
                 $finalgrade = false;
                 $trimmed = trim($postedvalue);
                 if (empty($trimmed)) {
-                    $postedvalue = NULL;
-                }
-            }
-
-            // Get the grade object to compare old value with new value, the grade might not exist yet
-            $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$grade_item->id));
-
-            if ($data_type == 'feedback') {
-                if ($text = $grade->load_text()) {
-                    if ($text->feedback !== $postedvalue) {
-                        $feedback       = $postedvalue;
-                        $feedbackformat = $text->feedbackformat; // keep original format or else we would have to do proper conversion (but it is not always possible)
-                        $needsupdate    = true;
-                    }
-                } else if (is_null($postedvalue)) {
-                    //nothing to do - grade does not have text or does not exist yet
+                     $feedback = NULL;
                 } else {
-                    $feedback       = $postedvalue;
-                    $feedbackformat = FORMAT_MOODLE; // this is the default format option everywhere else
-                    $needsupdate    = true;
-                }
-
-            } else if ($data_type == 'grade') {
-                if (!is_null($grade->finalgrade)) {
-                    $grade->finalgrade = (float)$grade->finalgrade;
-                }
-                if ($grade->finalgrade !== $finalgrade) {
-                    $needsupdate = true;
+                     $feedback = stripslashes($postedvalue);
                 }
             }
 
-            // we must not update all grades, only changed ones - we do not want to mark everything as overriden
-            if ($needsupdate) {
-                $gradedata = new object();
-                $gradedata->grade_item     = $grade_item;
-                $gradedata->userid         = $userid;
-                $gradedata->note           = $note;
-                $gradedata->finalgrade     = $finalgrade;
-                $gradedata->feedback       = $feedback;
-                $gradedata->feedbackformat = $feedbackformat;
-
-                $queue[] = $gradedata;
-            }
-        }
-
-        // now we update the new final grade for each changed grade
-        foreach ($queue as $gradedata) {
-            $gradedata->grade_item->update_final_grade($gradedata->userid, $gradedata->finalgrade, 'gradebook',
-                                                       $gradedata->note, $gradedata->feedback, $gradedata->feedbackformat);
+            $grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $note, $feedback);
         }
 
         return true;
@@ -669,6 +626,8 @@ class grade_report_grader extends grade_report {
                         }
 
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                            $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'
+                                          .$item->id.'" value="'.$gradeval.'"/>';
                             $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
                                                           $gradeval, $this->get_lang_string('nograde'), '', '-1', true, false, $gradetabindex++);
                         } elseif(!empty($scale)) {
@@ -686,8 +645,10 @@ class grade_report_grader extends grade_report {
 
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                            $value = $this->get_grade_clean($gradeval, $decimalpoints);
+                            $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                             $studentshtml .= '<input size="6" tabindex="' . $gradetabindex++ . '" type="text" name="grade_'.$userid.'_'
-                                          .$item->id.'" value="'.$this->get_grade_clean($gradeval, $decimalpoints).'"/>';
+                                          .$item->id.'" value="'.$value.'" />';
                         } else {
                             $studentshtml .= $this->get_grade_clean($gradeval, $decimalpoints);
                         }
@@ -699,8 +660,10 @@ class grade_report_grader extends grade_report {
                         if ($this->get_pref('quickgrading')) {
                             $studentshtml .= '<br />';
                         }
+                        $studentshtml .= '<input type="hidden" name="oldfeedback_'
+                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                         $studentshtml .= '<input tabindex="' . $feedbacktabindex++ . '" size="6" type="text" name="feedback_'
-                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '"/>';
+                                      .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                     }
 
                 } else {
