@@ -1646,6 +1646,21 @@ class assignment_base {
         return '';
     }
 
+    /**
+     * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
+     * for the course (see resource).
+     *
+     * Given a course_module object, this function returns any "extra" information that may be needed 
+     * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+     * 
+     * @param $coursemodule object The coursemodule object (record).
+     * @return object An object on information that the coures will know about (most noticeably, an icon).
+     * 
+     */
+    function get_coursemodule_info($coursemodule) {
+        return false;
+    }
+
 } ////// End of the assignment_base class
 
 
@@ -2291,6 +2306,25 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
     */
 }
 
+/// Given a course_module object, this function returns any
+/// "extra" information that may be needed when printing
+/// this activity in a course listing.
+///
+/// See get_array_of_activities() in course/lib.php
+///
+function assignment_get_coursemodule_info($coursemodule) {
+    global $CFG;
+
+    if (! $assignment = get_record('assignment', 'id', $coursemodule->instance)) {
+        return false;
+    }
+
+    require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
+    $assignmentclass = "assignment_$assignment->assignmenttype";
+    $ass = new $assignmentclass($coursemodule->id, $assignment);
+
+    return $ass->get_coursemodule_info($coursemodule);
+}
 
 
 
