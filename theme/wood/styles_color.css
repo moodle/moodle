@@ -307,7 +307,7 @@ form.mform fieldset,
     background-repeat:repeat;
 }
 
-/** Places using the white wood texture with borders **/
+/** Places using the white wood texture without borders **/
 
 .nonefornow {
     background-image:url(gradient4.jpg);
