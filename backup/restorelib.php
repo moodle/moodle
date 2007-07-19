@@ -6868,7 +6868,7 @@
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
             $assignment->contextid = $newcontext->id; // new context id
             // might already have same assignment           
-            role_assign($assignment->roleid, $assignment->userid, 0, $assignment->contextid, $assignment->timestart, $assignment->timeend, $assignment->hidden, $assignment->enrol);
+            role_assign($assignment->roleid, $assignment->userid, 0, $assignment->contextid, $assignment->timestart, $assignment->timeend, $assignment->hidden, $assignment->enrol, $assignment->timemodified);
             
         }  
     }
