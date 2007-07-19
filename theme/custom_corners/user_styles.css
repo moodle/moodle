@@ -442,7 +442,25 @@ div.homelink {
 div.logininfo {
   white-space: nowrap;
 }
-div.sideblock div.header div.bt  div {
+div.sideblock div.bt div {
+  background-image: url(pix/box.png);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-color: transparent;
+  height: 12px;
+  left: -13px;
+  position: relative;
+  width: 13px;
+}
+div.sideblock div.bt {
+  background-image: url(pix/box.png);
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  margin: 0 0 0 13px;
+  height: 12px;
+  background-color: transparent;
+}
+div.sideblock div.header div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -505,7 +523,7 @@ div.sideblock div.i3 {
   padding: 0;
   border-style: none;
 }
-div.sideblock div.bb  div {
+div.sideblock div.bb div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -529,7 +547,7 @@ td#left-column div.hidden div.header {
 td#right-column div.hidden div.header {
   border-bottom-style: none;
 }
-td#middle-column div.bt  div {
+td#middle-column div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -569,7 +587,7 @@ td#middle-column div.i3 {
   border-style: solid;
   border-color: #FFFFFF;
 }
-td#middle-column div.bb  div {
+td#middle-column div.bb div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -590,7 +608,7 @@ td#middle-column div.bb {
 td#middle-column div.bt div {
   z-index: 10;
 }
-div#footer div.bt  div {
+div#footer div.bt div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -631,7 +649,7 @@ div#footer div.i3 {
   border-style: solid;
   border-color: #f1ece6;
 }
-div#footer div.bb  div {
+div#footer div.bb div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -692,7 +710,7 @@ div#header div.i3 {
   border-top-color: #F1ECE6;
   border-bottom-color: #F1ECE6;
 }
-div#header div.bb  div {
+div#header div.bb div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -710,7 +728,7 @@ div#header div.bb {
   height: 12px;
   background-color: transparent;
 }
-div#header-home div.bt  div {
+div#header-home div.bt div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -752,7 +770,7 @@ div#header-home div.i3 {
   border-top-color: #F1ECE6;
   border-bottom-color: #F1ECE6;
 }
-div#header-home div.bb  div {
+div#header-home div.bb div {
   background-image: url(pix/beige_box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
@@ -770,7 +788,7 @@ div#header-home div.bb {
   height: 12px;
   background-color: transparent;
 }
-body.nocoursepage div#content div.bt  div {
+body.nocoursepage div#content div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -810,7 +828,7 @@ body.nocoursepage div#content div.i3 {
   border-style: solid;
   border-color: #FFFFFF;
 }
-body.nocoursepage div#content div.bb  div {
+body.nocoursepage div#content div.bb div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
   background-position: 0 100%;
