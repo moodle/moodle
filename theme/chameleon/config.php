@@ -132,7 +132,7 @@ $THEME->chameleonenabled = false;
 /// viewed by a user who can edit pages. it is recommended to 
 /// set this to false once you're satisfied with your theme.
 
-$THEME->chameleonteachereditenabled = false;
+$THEME->chameleonteachereditenabled = true;
 
 /// If you use chameleon as a course theme setting this to true 
 /// will allow teachers on that course to edit the theme. 
