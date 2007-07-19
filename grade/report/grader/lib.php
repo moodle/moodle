@@ -600,7 +600,7 @@ class grade_report_grader extends grade_report {
 
                 // Do not show any icons if no grade (no record in DB to match)
                 // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
-                if (!empty($grade->id) && $USER->gradeediting) {
+                if (!$item->needsupdate and !empty($grade->id) and $USER->gradeediting) {
                     $states = array('is_hidden' => $item->hidden,
                                     'is_locked' => $item->locked,
                                     'is_editable' => $item->gradetype != GRADE_TYPE_NONE && !$grade->locked && !$item->locked);
@@ -610,7 +610,10 @@ class grade_report_grader extends grade_report {
                 // if in editting mode, we need to print either a text box
                 // or a drop down (for scales)
                 // grades in item of type grade category or course are not directly editable
-                if ($USER->gradeediting) {
+                if ($item->needsupdate) {
+                    $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
+
+                } else if ($USER->gradeediting) {
                     // We need to retrieve each grade_grade object from DB in order to
                     // know if they are hidden/locked
 
@@ -692,7 +695,10 @@ class grade_report_grader extends grade_report {
                         $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
                     }
 
-                    if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                    if ($item->needsupdate) {
+                        $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
+
+                    } else if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
                         if (!is_null($gradeval)) {
                             $studentshtml .= grade_grade::get_letter($letters, $gradeval, $grademin, $grademax);

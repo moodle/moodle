@@ -1194,7 +1194,12 @@ class grade_item extends grade_object {
             $result = $grade->update_feedback($feedback, $feedbackformat, $usermodified);
         }
 
-        if (!$this->needsupdate) {
+        if ($this->is_course_item() and !$this->needsupdate) {
+            if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {
+                $this->force_regrading();
+            }
+
+        } else if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (!grade_regrade_final_grades($this->courseid, $userid, $this)) {

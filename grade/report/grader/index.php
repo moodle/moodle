@@ -20,6 +20,9 @@ if (!is_null($toggle) && !empty($toggle_type)) {
     set_user_preferences(array('grade_report_show' . $toggle_type => $toggle));
 }
 
+//first make sure we have proper final grades - this must be done before constructing of the grade tree
+grade_regrade_final_grades($courseid);
+
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
@@ -37,10 +40,6 @@ if ($perpageurl = optional_param('perpage', 0, PARAM_INT)) {
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
     $report->process_action($target, $action);
 }
-
-// first make sure we have all final grades
-// TODO: check that no grade_item has needsupdate set
-grade_regrade_final_grades($courseid);
 
 $report->load_users();
 $numusers = $report->get_numusers();

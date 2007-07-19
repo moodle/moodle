@@ -351,25 +351,27 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         if (!empty($updated_item) and $updated_item->id == $gid) {
             $grade_items[$gid]->needsupdate = 1;
 
-        } else if ($grade_items[$gid]->is_category_item() or $grade_items[$gid]->is_calculated()) {
+        } else if ($grade_items[$gid]->is_course_item() or $grade_items[$gid]->is_category_item() or $grade_items[$gid]->is_calculated()) {
             $grade_items[$gid]->needsupdate = 1;
         }
 
         // construct depends_on lookup array
         $depends_on[$gid] = $grade_items[$gid]->depends_on();
     }
-    $errors = array();
 
-    $finalitems = array();
+    $errors = array();
     $finalids = array();
-    while (count($grade_items) > 0) {
-        $count = 0; // count how many items were updated in this cycle
-        foreach ($grade_items as $gid=>$gitem) {
-            $grade_item =& $grade_items[$gid];
-            if (!$grade_item->needsupdate) {
-                $finalitems[$gid] = $grade_item;
-                $finalids[] = $gid;
-                unset($grade_items[$gid]);
+    $gids     = array_keys($grade_items);
+
+    while (count($finalids) < count($gids)) { // work until all grades are final or error found
+        $count = 0;
+        foreach ($gids as $gid) {
+            if (in_array($gid, $finalids)) {
+                continue; // already final
+            }
+
+            if (!$grade_items[$gid]->needsupdate) {
+                $finalids[] = $gid; // we can make it final - does not need update
                 continue;
             }
 
@@ -377,33 +379,34 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
             foreach ($depends_on[$gid] as $did) {
                 if (!in_array($did, $finalids)) {
                     $doupdate = false;
-                    break;
+                    continue; // this item depends on something that is not yet in finals array
                 }
             }
 
             //oki - let's update, calculate or aggregate :-)
             if ($doupdate) {
-                $result = $grade_item->regrade_final_grades($userid);
+                $result = $grade_items[$gid]->regrade_final_grades($userid);
 
                 if ($result === true) {
-                    $grade_item->regrading_finished();
+                    $grade_items[$gid]->regrading_finished();
                     $count++;
-                    $finalitems[$gid] = $grade_item;
                     $finalids[] = $gid;
-                    unset($grade_items[$gid]);
                 } else {
-                    $grade_item->force_regrading();
+                    $grade_items[$gid]->force_regrading();
                     $errors[$gid] = $result;
                 }
             }
         }
 
         if ($count == 0) {
-            foreach($grade_items as $grade_item) {
-                $grade_item->force_regrading();
-                $errors[$grade_item->id] = 'Probably circular reference or broken calculation formula'; // TODO: localize
+            foreach($gids as $gid) {
+                if (in_array($gid, $finalids)) {
+                    continue; // this one is ok
+                }
+                $grade_items[$gid]->force_regrading();
+                $errors[$grade_items[$gid]->id] = 'Probably circular reference or broken calculation formula'; // TODO: localize
             }
-            break;
+            break; // oki, found error
         }
     }
 
