@@ -62,7 +62,7 @@
 
     print_heading(format_string(get_string('commentson','glossary')." <b>\"$entry->concept\"</b>"));
 
-    if ($glossary->allowcomments || has_capability('mod/glossary:managecomments', $context)) {
+    if (has_capability('mod/glossary:comment', $context) and $glossary->allowcomments) {
         print_heading("<a href=\"comment.php?action=add&amp;eid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" class=\"iconsmall\" alt=\"$straddcomment\" /></a>");
     }
 
