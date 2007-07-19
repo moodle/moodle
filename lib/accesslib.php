@@ -2096,7 +2096,7 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
  * @uses $USER
  * @return id - new id of the assigment
  */
-function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual') {
+function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual',$timemodified='') {
     global $USER, $CFG;
 
     debugging("Assign roleid $roleid userid $userid contextid $contextid", DEBUG_DEVELOPER);
@@ -2133,6 +2133,9 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         return false;
     }
 
+    if (!$timemodified) {
+        $timemodified = time();  
+    }
 
 /// Check for existing entry
     if ($userid) {
@@ -2154,7 +2157,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     /// by repeating queries with the same exact parameters in a 100 secs time window
         $newra->timestart = round($timestart, -2);
         $newra->timeend = $timeend;
-        $newra->timemodified = time();
+        $newra->timemodified = $timemodified;
         $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
         $success = insert_record('role_assignments', $newra);
@@ -2168,7 +2171,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
     /// by repeating queries with the same exact parameters in a 100 secs time window
         $newra->timestart = round($timestart, -2);
         $newra->timeend = $timeend;
-        $newra->timemodified = time();
+        $newra->timemodified = $timemodified;
         $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
         $success = update_record('role_assignments', $newra);
