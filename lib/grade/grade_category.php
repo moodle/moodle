@@ -387,12 +387,12 @@ class grade_category extends grade_object {
         }
 
         if ($oldgrade) {
-            $grade = new grade_grades($oldgrade, false);
+            $grade = new grade_grade($oldgrade, false);
             $grade->grade_item =& $this->grade_item;
 
         } else {
             // insert final grade - it will be needed later anyway
-            $grade = new grade_grades(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
+            $grade = new grade_grade(array('itemid'=>$this->grade_item->id, 'userid'=>$userid), false);
             $grade->insert('system');
             $grade->grade_item =& $this->grade_item;
 
@@ -430,7 +430,7 @@ class grade_category extends grade_object {
                 unset($grade_values[$k]);
                 continue;
             }
-            $grade_values[$k] = grade_grades::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
+            $grade_values[$k] = grade_grade::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
         }
 
         //limit and sort
@@ -570,7 +570,7 @@ class grade_category extends grade_object {
         $grade->rawscaleid  = $this->grade_item->scaleid;
 
         // recalculate the rawgrade back to requested range
-        $grade->rawgrade = grade_grades::standardise_score($rawgrade, 0, 1, $grade->rawgrademin, $grade->rawgrademax);
+        $grade->rawgrade = grade_grade::standardise_score($rawgrade, 0, 1, $grade->rawgrademin, $grade->rawgrademax);
 
         // calculate final grade
         $grade->finalgrade = $this->grade_item->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);

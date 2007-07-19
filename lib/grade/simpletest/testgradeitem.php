@@ -364,18 +364,18 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'set_locked'));
 
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked));
 
         $this->assertTrue($grade_item->set_locked(true));
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertFalse(empty($grade_item->locked));
         $this->assertFalse(empty($grade->locked)); // individual grades should be locked too
 
         $this->assertTrue($grade_item->set_locked(false));
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertTrue(empty($grade_item->locked));
         $this->assertTrue(empty($grade->locked)); // individual grades should be unlocked too
@@ -399,12 +399,12 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[0]);
         $this->assertTrue(method_exists($grade_item, 'set_hidden'));
 
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertEqual(0, $grade_item->hidden);
         $this->assertEqual(0, $grade->hidden);
 
         $grade_item->set_hidden(666);
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertEqual(666, $grade_item->hidden);
         $this->assertEqual(666, $grade->hidden);
@@ -508,21 +508,21 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'compute'));
 
-        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[3]->id));
-        $grade_grades->delete();
-        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[4]->id));
-        $grade_grades->delete();
-        $grade_grades = grade_grades::fetch(array('id'=>$this->grade_grades[5]->id));
-        $grade_grades->delete();
+        $grade_grade = grade_grade::fetch(array('id'=>$this->grade_grades[3]->id));
+        $grade_grade->delete();
+        $grade_grade = grade_grade::fetch(array('id'=>$this->grade_grades[4]->id));
+        $grade_grade->delete();
+        $grade_grade = grade_grade::fetch(array('id'=>$this->grade_grades[5]->id));
+        $grade_grade->delete();
 
         $grade_item->compute();
 
-        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[3]->userid, 'itemid'=>$this->grade_grades[3]->itemid));
-        $this->assertEqual($this->grade_grades[3]->finalgrade, $grade_grades->finalgrade);
-        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[4]->userid, 'itemid'=>$this->grade_grades[4]->itemid));
-        $this->assertEqual($this->grade_grades[4]->finalgrade, $grade_grades->finalgrade);
-        $grade_grades = grade_grades::fetch(array('userid'=>$this->grade_grades[5]->userid, 'itemid'=>$this->grade_grades[5]->itemid));
-        $this->assertEqual($this->grade_grades[5]->finalgrade, $grade_grades->finalgrade);
+        $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[3]->userid, 'itemid'=>$this->grade_grades[3]->itemid));
+        $this->assertEqual($this->grade_grades[3]->finalgrade, $grade_grade->finalgrade);
+        $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[4]->userid, 'itemid'=>$this->grade_grades[4]->itemid));
+        $this->assertEqual($this->grade_grades[4]->finalgrade, $grade_grade->finalgrade);
+        $grade_grade = grade_grade::fetch(array('userid'=>$this->grade_grades[5]->userid, 'itemid'=>$this->grade_grades[5]->itemid));
+        $this->assertEqual($this->grade_grades[5]->finalgrade, $grade_grade->finalgrade);
     }
 
 }

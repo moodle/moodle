@@ -6,7 +6,7 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once 'grade_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
-$id       = optional_param('id', 0, PARAM_INT); // grade_grades id
+$id       = optional_param('id', 0, PARAM_INT); // grade_grade id
 $action   = optional_param('action', 'view', PARAM_ALPHA);
 
 if (!$course = get_record('course', 'id', $courseid)) {
@@ -24,11 +24,11 @@ $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course-
 
 // TODO: add proper check that grade is editable
 
-$grade_grades = get_record('grade_grades', 'id', $id);
-$gradeitem = get_record('grade_items', 'id', $grade_grades->itemid);
+$grade_grade = get_record('grade_grades', 'id', $id);
+$gradeitem = get_record('grade_items', 'id', $grade_grade->itemid);
 
 $mform = new edit_grade_form(null, array('gradeitem'=>$gradeitem, 'gpr'=>$gpr));
-if ($grade_grades = get_record('grade_grades', 'id', $id)) {
+if ($grade_grade = get_record('grade_grades', 'id', $id)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
         if (can_use_html_editor()) {
             $options = new object();
@@ -40,9 +40,9 @@ if ($grade_grades = get_record('grade_grades', 'id', $id)) {
         $mform->set_data($grade_text);
     }
 
-    $grade_grades->locked = $grade_grades->locked > 0 ? 1:0;
-    $grade_grades->courseid = $courseid;
-    $mform->set_data($grade_grades);
+    $grade_grade->locked = $grade_grade->locked > 0 ? 1:0;
+    $grade_grade->courseid = $courseid;
+    $mform->set_data($grade_grade);
 
 } else {
     $mform->set_data(array('courseid'=>$course->id, 'id' => $id));
@@ -52,21 +52,21 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 // form processing
 } else if ($data = $mform->get_data()) {
-    $grade_grades = new grade_grades(array('id'=>$id));
-    $grade_item = new grade_item(array('id'=>$grade_grades->itemid));
-    $grade_item->update_final_grade($grade_grades->userid, $data->finalgrade, NULL, NULL, $data->feedback, $data->feedbackformat);
+    $grade_grade = new grade_grade(array('id'=>$id));
+    $grade_item = new grade_item(array('id'=>$grade_grade->itemid));
+    $grade_item->update_final_grade($grade_grade->userid, $data->finalgrade, NULL, NULL, $data->feedback, $data->feedbackformat);
 
     // Assign finalgrade value
-    $grade_grades->finalgrade = $data->finalgrade;
+    $grade_grade->finalgrade = $data->finalgrade;
 
     // set locked
-    $grade_grades->set_locked($data->locked);
+    $grade_grade->set_locked($data->locked);
 
     // set hidden
-    $grade_grades->set_hidden($data->hidden);
+    $grade_grade->set_hidden($data->hidden);
 
     // set locktime
-    $grade_grades->set_locktime($data->locktime);
+    $grade_grade->set_locktime($data->locktime);
 
     redirect($returnurl);
 }

@@ -106,8 +106,8 @@ class grade_report_user extends grade_report {
 
                 $params->itemid = $grade_item->id;
                 $params->userid = $this->user->id;
-                $grade_grades = new grade_grades($params);
-                $grade_text = $grade_grades->load_text();
+                $grade_grade = new grade_grade($params);
+                $grade_text = $grade_grade->load_text();
 
                 /// prints mod icon if available
                 if ($grade_item->itemtype == 'mod') {
@@ -137,23 +137,23 @@ class grade_report_user extends grade_report {
                         $scales = explode(",", $scale->scale);
                         // reindex because scale is off 1
                         // invalid grade if gradeval < 1
-                        if ((int) $grade_grades->finalgrade < 1) {
+                        if ((int) $grade_grade->finalgrade < 1) {
                             $data[] = '-';
                         } else {
-                            $data[] = $scales[$grade_grades->finalgrade-1];
+                            $data[] = $scales[$grade_grade->finalgrade-1];
                         }
                     }
                 } else {
                     // normal grade, or text, just display
-                    $data[] = $this->get_grade_clean($grade_grades->finalgrade);
+                    $data[] = $this->get_grade_clean($grade_grade->finalgrade);
                 }
 
                 /// prints percentage
 
                 if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                     // processing numeric grade
-                    if ($grade_grades->finalgrade) {
-                        $percentage = $this->get_grade_clean(($grade_grades->finalgrade / $grade_item->grademax) * 100).'%';
+                    if ($grade_grade->finalgrade) {
+                        $percentage = $this->get_grade_clean(($grade_grade->finalgrade / $grade_item->grademax) * 100).'%';
                     } else {
                         $percentage = '-';
                     }
@@ -162,7 +162,7 @@ class grade_report_user extends grade_report {
                     // processing scale grade
                     $scale = get_record('scale', 'id', $grade_item->scaleid);
                     $scalevals = explode(",", $scale->scale);
-                    $percentage = $this->get_grade_clean(($grade_grades->finalgrade) / count($scalevals) * 100).'%';
+                    $percentage = $this->get_grade_clean(($grade_grade->finalgrade) / count($scalevals) * 100).'%';
 
                 } else {
                     // text grade
@@ -172,11 +172,11 @@ class grade_report_user extends grade_report {
                 $data[] = $percentage;
 
                 /// prints rank
-                if ($grade_grades->finalgrade) {
+                if ($grade_grade->finalgrade) {
                     /// find the number of users with a higher grade
                     $sql = "SELECT COUNT(DISTINCT(userid))
                             FROM {$CFG->prefix}grade_grades
-                            WHERE finalgrade > $grade_grades->finalgrade
+                            WHERE finalgrade > $grade_grade->finalgrade
                             AND itemid = $grade_item->id";
                     $rank = count_records_sql($sql) + 1;
 

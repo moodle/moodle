@@ -86,10 +86,10 @@ define('GRADE_REPORT_PREFERENCE_UNUSED', -1);
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
-require_once($CFG->libdir . '/grade/grade_grades.php');
+require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
-require_once($CFG->libdir . '/grade/grade_grades_text.php');
+require_once($CFG->libdir . '/grade/grade_grade_text.php');
 require_once($CFG->libdir . '/grade/grade_tree.php');
 
 /***** PUBLIC GRADE API *****/
@@ -598,7 +598,7 @@ function grade_update_mod_grades($modinstance) {
 function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
     // does it already exist?
-    if ($grade_items = grade_grades::fetch_all(array('courseid'=>$modinstance->course, 'itemtype'=>'mod', 'itemmodule'=>$modinstance->modname, 'iteminstance'=>$modinstance->id, 'itemnumber'=>0))) {
+    if ($grade_items = grade_grade::fetch_all(array('courseid'=>$modinstance->course, 'itemtype'=>'mod', 'itemmodule'=>$modinstance->modname, 'iteminstance'=>$modinstance->id, 'itemnumber'=>0))) {
         if (count($grade_items) > 1) {
             debugging('Multiple legacy grade_items found.');
             return false;

@@ -209,14 +209,14 @@ class grade_tree {
         if (strpos($eid, 'g') === 0) {
             // it is a grade  construct a new object
             $id = (int)substr($eid, 1);
-            if (!$grade = grade_grades::fetch(array('id'=>$id))) {
+            if (!$grade = grade_grade::fetch(array('id'=>$id))) {
                 return null;
             }
             //extra security check - the grade item must be in this tree
             if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
                 return null;
             }
-            $grade->grade_item =& $item_el['object']; // this may speedup grade_grades methods!
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
             return array('eid'=>'g'.$id,'object'=>$grade, 'type'=>'grade');
         }
 

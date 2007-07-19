@@ -97,17 +97,17 @@ class grade_export_txt extends grade_export {
                 }
 
                 /// if export flag needs to be set
-                /// construct the grade_grades object and update timestamp if CFG flag is set
+                /// construct the grade_grade object and update timestamp if CFG flag is set
 
                 if ($export) {
                     $params = new object();
                     $params->itemid = $gradeitemid;
                     $params->userid = $studentid;
 
-                    $grade_grades = new grade_grades($params);
-                    $grade_grades->exported = time();
+                    $grade_grade = new grade_grade($params);
+                    $grade_grade->exported = time();
                     // update the time stamp;
-                    $grade_grades->update();
+                    $grade_grade->update();
                 }
             }
             echo "{$this->separator}".$this->totals[$student->id];

@@ -25,7 +25,7 @@
 
 require_once('grade_object.php');
 
-class grade_grades extends grade_object {
+class grade_grade extends grade_object {
 
     /**
      * The DB table.
@@ -37,7 +37,7 @@ class grade_grades extends grade_object {
      * Array of class variables that are not part of the DB table fields
      * @var array $nonfields
      */
-    var $nonfields = array('table', 'nonfields', 'required_fields', 'grade_grades_text', 'grade_item');
+    var $nonfields = array('table', 'nonfields', 'required_fields', 'grade_grade_text', 'grade_item');
 
     /**
      * The id of the grade_item this grade belongs to.
@@ -91,9 +91,9 @@ class grade_grades extends grade_object {
      * Additional textual information about this grade. It can be automatically generated
      * from the module or entered manually by the teacher. This is kept in its own table
      * for efficiency reasons, so it is encapsulated in its own object, and included in this grade object.
-     * @var object $grade_grades_text
+     * @var object $grade_grade_text
      */
-    var $grade_grades_text;
+    var $grade_grade_text;
 
     /**
      * The final value of this grade.
@@ -132,7 +132,7 @@ class grade_grades extends grade_object {
     var $overridden = 0;
 
     /**
-     * Loads the grade_grades_text object linked to this grade (through the intersection of itemid and userid), and
+     * Loads the grade_grade_text object linked to this grade (through the intersection of itemid and userid), and
      * saves it as a class variable for this final object.
      * @return object
      */
@@ -141,11 +141,11 @@ class grade_grades extends grade_object {
             return false; // text can not be attached to non existing grade
         }
 
-        if (empty($this->grade_grades_text->id)) {
-            $this->grade_grades_text = grade_grades_text::fetch(array('gradeid'=>$this->id));
+        if (empty($this->grade_grade_text->id)) {
+            $this->grade_grade_text = grade_grade_text::fetch(array('gradeid'=>$this->id));
         }
 
-        return $this->grade_grades_text;
+        return $this->grade_grade_text;
     }
 
     /**
@@ -304,25 +304,25 @@ class grade_grades extends grade_object {
     }
 
     /**
-     * Finds and returns a grade_grades instance based on params.
+     * Finds and returns a grade_grade instance based on params.
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return object grade_grades instance or false if none found.
+     * @return object grade_grade instance or false if none found.
      */
     function fetch($params) {
-        return grade_object::fetch_helper('grade_grades', 'grade_grades', $params);
+        return grade_object::fetch_helper('grade_grades', 'grade_grade', $params);
     }
 
     /**
-     * Finds and returns all grade_grades instances based on params.
+     * Finds and returns all grade_grade instances based on params.
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_grades insatnces or false if none found.
+     * @return array array of grade_grade insatnces or false if none found.
      */
     function fetch_all($params) {
-        return grade_object::fetch_all_helper('grade_grades', 'grade_grades', $params);
+        return grade_object::fetch_all_helper('grade_grades', 'grade_grade', $params);
     }
 
 
@@ -339,7 +339,7 @@ class grade_grades extends grade_object {
     }
 
     /**
-     * Updates this grade with the given textual information. This will create a new grade_grades_text entry
+     * Updates this grade with the given textual information. This will create a new grade_grade_text entry
      * if none was previously in DB for this raw grade, or will update the existing one.
      * @param string $information Manual information from the teacher. Could be a code like 'mi'
      * @param int $informationformat Text format for the information
@@ -348,23 +348,23 @@ class grade_grades extends grade_object {
     function update_information($information, $informationformat) {
         $this->load_text();
 
-        if (empty($this->grade_grades_text->id)) {
-            $this->grade_grades_text = new grade_grades_text();
+        if (empty($this->grade_grade_text->id)) {
+            $this->grade_grade_text = new grade_grade_text();
 
-            $this->grade_grades_text->gradeid           = $this->id;
-            $this->grade_grades_text->userid            = $this->userid;
-            $this->grade_grades_text->information       = $information;
-            $this->grade_grades_text->informationformat = $informationformat;
+            $this->grade_grade_text->gradeid           = $this->id;
+            $this->grade_grade_text->userid            = $this->userid;
+            $this->grade_grade_text->information       = $information;
+            $this->grade_grade_text->informationformat = $informationformat;
 
-            return $this->grade_grades_text->insert();
+            return $this->grade_grade_text->insert();
 
         } else {
-            if ($this->grade_grades_text->information != $information
-              or $this->grade_grades_text->informationformat != $informationformat) {
+            if ($this->grade_grade_text->information != $information
+              or $this->grade_grade_text->informationformat != $informationformat) {
 
-                $this->grade_grades_text->information       = $information;
-                $this->grade_grades_text->informationformat = $informationformat;
-                return  $this->grade_grades_text->update();
+                $this->grade_grade_text->information       = $information;
+                $this->grade_grade_text->informationformat = $informationformat;
+                return  $this->grade_grade_text->update();
             } else {
                 return true;
             }
@@ -372,7 +372,7 @@ class grade_grades extends grade_object {
     }
 
     /**
-     * Updates this grade with the given textual information. This will create a new grade_grades_text entry
+     * Updates this grade with the given textual information. This will create a new grade_grade_text entry
      * if none was previously in DB for this raw grade, or will update the existing one.
      * @param string $feedback Manual feedback from the teacher. Could be a code like 'mi'
      * @param int $feedbackformat Text format for the feedback
@@ -387,25 +387,25 @@ class grade_grades extends grade_object {
             $usermodified = $USER->id;
         }
 
-        if (empty($this->grade_grades_text->id)) {
-            $this->grade_grades_text = new grade_grades_text();
+        if (empty($this->grade_grade_text->id)) {
+            $this->grade_grade_text = new grade_grade_text();
 
-            $this->grade_grades_text->gradeid        = $this->id;
-            $this->grade_grades_text->feedback       = $feedback;
-            $this->grade_grades_text->feedbackformat = $feedbackformat;
-            $this->grade_grades_text->usermodified   = $usermodified;
+            $this->grade_grade_text->gradeid        = $this->id;
+            $this->grade_grade_text->feedback       = $feedback;
+            $this->grade_grade_text->feedbackformat = $feedbackformat;
+            $this->grade_grade_text->usermodified   = $usermodified;
 
-            return $this->grade_grades_text->insert();
+            return $this->grade_grade_text->insert();
 
         } else {
-            if ($this->grade_grades_text->feedback != $feedback
-              or $this->grade_grades_text->feedbackformat != $feedbackformat) {
+            if ($this->grade_grade_text->feedback != $feedback
+              or $this->grade_grade_text->feedbackformat != $feedbackformat) {
 
-                $this->grade_grades_text->feedback       = $feedback;
-                $this->grade_grades_text->feedbackformat = $feedbackformat;
-                $this->grade_grades_text->usermodified   = $usermodified;
+                $this->grade_grade_text->feedback       = $feedback;
+                $this->grade_grade_text->feedbackformat = $feedbackformat;
+                $this->grade_grade_text->usermodified   = $usermodified;
 
-                return  $this->grade_grades_text->update();
+                return  $this->grade_grade_text->update();
             } else {
                 return true;
             }
@@ -447,7 +447,7 @@ class grade_grades extends grade_object {
     function get_letter($letters, $gradevalue=null, $grademin=null, $grademax=null) {
         if (is_null($grademin) || is_null($grademax)) {
             if (!isset($this)) {
-                debugging("Tried to call grade_grades::get_letter statically without giving an explicit grademin or grademax!");
+                debugging("Tried to call grade_grade::get_letter statically without giving an explicit grademin or grademax!");
                 return false;
             }
             $this->load_grade_item();
@@ -457,13 +457,13 @@ class grade_grades extends grade_object {
 
         if (is_null($gradevalue)) {
             if (!isset($this)) {
-                debugging("Tried to call grade_grades::get_letter statically without giving an explicit gradevalue!");
+                debugging("Tried to call grade_grade::get_letter statically without giving an explicit gradevalue!");
                 return false;
             }
             $gradevalue = $this->finalgrade;
         }
         // Standardise grade first
-        $grade = grade_grades::standardise_score($gradevalue, $grademin, $grademax, 0, 100);
+        $grade = grade_grade::standardise_score($gradevalue, $grademin, $grademax, 0, 100);
 
         // Sort the letters by descending boundaries (100-0)
         krsort($letters);

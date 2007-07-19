@@ -344,7 +344,7 @@ class grade_category_test extends grade_test {
     }
 
     function generate_random_raw_grade($item, $userid) {
-        $grade = new grade_grades();
+        $grade = new grade_grade();
         $grade->itemid = $item->id;
         $grade->userid = $userid;
         $grade->grademin = 0;
@@ -370,7 +370,9 @@ class grade_category_test extends grade_test {
         $category->keephigh = 1;
         $category->droplow = 0;
         $category->apply_limit_rules($grades);
-        $this->assertEqual(array(9.4743), $grades);
+        $this->assertEqual(count($grades), 1);
+        $grade = reset($grades);
+        $this->assertEqual(9.4743, $grade);
     }
 
     function test_grade_category_set_parent() {

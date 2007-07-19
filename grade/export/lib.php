@@ -127,7 +127,7 @@ class grade_export {
             }
         } else {
             // else we get all items for this course
-            $gradeitems = grade_grades::fetch_all(array('courseid'=>$this->id));
+            $gradeitems = grade_grade::fetch_all(array('courseid'=>$this->id));
         }
 
         if ($gradeitems) {
@@ -172,7 +172,7 @@ class grade_export {
                                 if ($studentgrade) {
                                     $studentgrade->load_text();
                                     // get the actual comment
-                                    $comment = $studentgrade->grade_grades_text->feedback;
+                                    $comment = $studentgrade->grade_grade_text->feedback;
                                     $this->comments[$student->id][$gradeitem->id] = $comment;
                                 }
                             } else {

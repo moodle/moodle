@@ -172,7 +172,7 @@ class grade_report_grader extends grade_report {
             }
 
             // Get the grade object to compare old value with new value, the grade might not exist yet
-            $grade = new grade_grades(array('userid'=>$userid, 'itemid'=>$grade_item->id));
+            $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$grade_item->id));
 
             if ($data_type == 'feedback') {
                 if ($text = $grade->load_text()) {
@@ -620,13 +620,13 @@ class grade_report_grader extends grade_report {
                 if (isset($this->finalgrades[$userid][$item->id])) {
                     $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
 
-                    $grade = new grade_grades($this->finalgrades[$userid][$item->id], false);
+                    $grade = new grade_grade($this->finalgrades[$userid][$item->id], false);
                     $grade->feedback = stripslashes_safe($this->finalgrades[$userid][$item->id]->feedback);
                     $grade->feedbackformat = $this->finalgrades[$userid][$item->id]->feedbackformat;
 
                 } else {
                     $gradeval = null;
-                    $grade = new grade_grades(array('userid' => $userid, 'itemid' => $item->id), false);
+                    $grade = new grade_grade(array('userid' => $userid, 'itemid' => $item->id), false);
                     $grade->feedback = '';
                 }
 
@@ -638,7 +638,7 @@ class grade_report_grader extends grade_report {
 
                 // emulate grade element
                 $grade->courseid = $this->courseid;
-                $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grades methods
+                $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grade methods
                 $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
 
                 // Do not show any icons if no grade (no record in DB to match)
@@ -713,7 +713,7 @@ class grade_report_grader extends grade_report {
 
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         if (!is_null($gradeval)) {
-                            $gradeval = grade_grades::standardise_score($gradeval, $grademin, $grademax, 0, 100);
+                            $gradeval = grade_grade::standardise_score($gradeval, $grademin, $grademax, 0, 100);
                         }
                         $percentsign = '%';
                     }
@@ -732,7 +732,7 @@ class grade_report_grader extends grade_report {
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
                         if (!is_null($gradeval)) {
-                            $studentshtml .= grade_grades::get_letter($letters, $gradeval, $grademin, $grademax);
+                            $studentshtml .= grade_grade::get_letter($letters, $gradeval, $grademin, $grademax);
                         }
                     } else if ($item->scaleid && !empty($scales_array[$item->scaleid])
                                 && $gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
@@ -853,11 +853,11 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_grades::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
+                        $gradeval = grade_grade::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
                         $gradehtml = round($gradeval, $decimalpoints) . '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
-                        $gradehtml = grade_grades::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
+                        $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
                     $groupavghtml .= '<td>'.$gradehtml.'</td>';
@@ -949,11 +949,11 @@ class grade_report_grader extends grade_report {
                     }
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_grades::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
+                        $gradeval = grade_grade::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
                         $gradehtml = round($gradeval, $decimalpoints) . '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
-                        $gradehtml = grade_grades::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
+                        $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
                     $gradeavghtml .= '<td>'.$gradehtml.'</td>';
@@ -1158,7 +1158,7 @@ class grade_report_grader extends grade_report {
 
         // Icons shown when edit mode is on
         if ($USER->gradeediting) {
-            // Edit icon (except for grade_grades)
+            // Edit icon (except for grade_grade)
             if ($edit_icon) {
                 $html .= $edit_icon;
             }

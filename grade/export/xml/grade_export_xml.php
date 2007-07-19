@@ -74,17 +74,17 @@ class grade_export_xml extends grade_export {
                 // we are trying to figure out if this is a new grade, or a regraded grade
                 // only relevant if this grade for this user is already exported
 
-                // get the grade_grades for this user
+                // get the grade_grade for this user
                 $params = new object();
                 $params->itemid = $gradeitem->id;
                 $params->userid = $studentid;
 
-                $grade_grades = new grade_grades($params);
+                $grade_grade = new grade_grade($params);
 
                 // if exported, check grade_history, if modified after export, set state to regrade
-                if (!empty($grade_grades->exported)) {
+                if (!empty($grade_grade->exported)) {
                     //TODO: use timemodified or something else instead
-/*                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grades->exported)) {
+/*                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$studentid.' AND timemodified > '.$grade_grade->exported)) {
                         $status = 'regrade';
                     } else {
                         $status = 'new';
@@ -107,9 +107,9 @@ class grade_export_xml extends grade_export {
 
                 // timestamp this if needed
                 if ($export) {
-                    $grade_grades->exported = time();
+                    $grade_grade->exported = time();
                     // update the time stamp;
-                    $grade_grades->update();
+                    $grade_grade->update();
                 }
             }
         }

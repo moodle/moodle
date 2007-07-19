@@ -37,9 +37,9 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
-class grade_grades_test extends grade_test {
+class grade_grade_test extends grade_test {
 
-    function test_grade_grades_construct() {
+    function test_grade_grade_construct() {
         $params = new stdClass();
 
         $params->itemid = $this->grade_items[0]->id;
@@ -48,53 +48,53 @@ class grade_grades_test extends grade_test {
         $params->rawgrademax = 110;
         $params->rawgrademin = 18;
 
-        $grade_grades = new grade_grades($params, false);
-        $this->assertEqual($params->itemid, $grade_grades->itemid);
-        $this->assertEqual($params->rawgrade, $grade_grades->rawgrade);
+        $grade_grade = new grade_grade($params, false);
+        $this->assertEqual($params->itemid, $grade_grade->itemid);
+        $this->assertEqual($params->rawgrade, $grade_grade->rawgrade);
     }
 
-    function test_grade_grades_insert() {
-        $grade_grades = new grade_grades();
-        $this->assertTrue(method_exists($grade_grades, 'insert'));
+    function test_grade_grade_insert() {
+        $grade_grade = new grade_grade();
+        $this->assertTrue(method_exists($grade_grade, 'insert'));
 
-        $grade_grades->itemid = $this->grade_items[0]->id;
-        $grade_grades->userid = 1;
-        $grade_grades->rawgrade = 88;
-        $grade_grades->rawgrademax = 110;
-        $grade_grades->rawgrademin = 18;
+        $grade_grade->itemid = $this->grade_items[0]->id;
+        $grade_grade->userid = 1;
+        $grade_grade->rawgrade = 88;
+        $grade_grade->rawgrademax = 110;
+        $grade_grade->rawgrademin = 18;
 
         // Check the grade_item's needsupdate variable first
-        $grade_grades->load_grade_item();
-        $this->assertFalse($grade_grades->grade_item->needsupdate);
+        $grade_grade->load_grade_item();
+        $this->assertFalse($grade_grade->grade_item->needsupdate);
 
-        $grade_grades->insert();
+        $grade_grade->insert();
 
-        $last_grade_grades = end($this->grade_grades);
+        $last_grade_grade = end($this->grade_grades);
 
-        $this->assertEqual($grade_grades->id, $last_grade_grades->id + 1);
-        $this->assertFalse(empty($grade_grades->timecreated));
-        $this->assertFalse(empty($grade_grades->timemodified));
+        $this->assertEqual($grade_grade->id, $last_grade_grade->id + 1);
+        $this->assertFalse(empty($grade_grade->timecreated));
+        $this->assertFalse(empty($grade_grade->timemodified));
     }
 
-    function test_grade_grades_update() {
-        $grade_grades = new grade_grades($this->grade_grades[0]);
-        $this->assertTrue(method_exists($grade_grades, 'update'));
+    function test_grade_grade_update() {
+        $grade_grade = new grade_grade($this->grade_grades[0]);
+        $this->assertTrue(method_exists($grade_grade, 'update'));
     }
 
-    function test_grade_grades_fetch() {
-        $grade_grades = new grade_grades();
-        $this->assertTrue(method_exists($grade_grades, 'fetch'));
+    function test_grade_grade_fetch() {
+        $grade_grade = new grade_grade();
+        $this->assertTrue(method_exists($grade_grade, 'fetch'));
 
-        $grades = grade_grades::fetch(array('id'=>$this->grade_grades[0]->id));
+        $grades = grade_grade::fetch(array('id'=>$this->grade_grades[0]->id));
         $this->assertEqual($this->grade_grades[0]->id, $grades->id);
         $this->assertEqual($this->grade_grades[0]->rawgrade, $grades->rawgrade);
     }
 
-    function test_grade_grades_fetch_all() {
-        $grade_grades = new grade_grades();
-        $this->assertTrue(method_exists($grade_grades, 'fetch_all'));
+    function test_grade_grade_fetch_all() {
+        $grade_grade = new grade_grade();
+        $this->assertTrue(method_exists($grade_grade, 'fetch_all'));
 
-        $grades = grade_grades::fetch_all(array());
+        $grades = grade_grade::fetch_all(array());
         $this->assertEqual(count($this->grade_grades), count($grades));
     }
 
@@ -107,34 +107,34 @@ class grade_grades_test extends grade_test {
     }
 
     function test_grade_load_text() {
-        $grade_grades = new grade_grades($this->grade_grades[0]);
-        $this->assertTrue(method_exists($grade_grades, 'load_text'));
-        $this->assertNull($grade_grades->grade_grades_text);
-        $this->assertNotNull($grade_grades->load_text());
-        $this->assertNotNull($grade_grades->grade_grades_text);
-        $this->assertEqual($this->grade_grades_text[0]->id, $grade_grades->grade_grades_text->id);
+        $grade_grade = new grade_grade($this->grade_grades[0]);
+        $this->assertTrue(method_exists($grade_grade, 'load_text'));
+        $this->assertNull($grade_grade->grade_grade_text);
+        $this->assertNotNull($grade_grade->load_text());
+        $this->assertNotNull($grade_grade->grade_grade_text);
+        $this->assertEqual($this->grade_grades_text[0]->id, $grade_grade->grade_grade_text->id);
     }
 
-    function test_grade_grades_load_grade_item() {
-        $grade_grades = new grade_grades($this->grade_grades[0]);
-        $this->assertTrue(method_exists($grade_grades, 'load_grade_item'));
-        $this->assertNull($grade_grades->grade_item);
-        $this->assertTrue($grade_grades->itemid);
-        $this->assertNotNull($grade_grades->load_grade_item());
-        $this->assertNotNull($grade_grades->grade_item);
-        $this->assertEqual($this->grade_items[0]->id, $grade_grades->grade_item->id);
-    }
-
-
-    function test_grade_grades_standardise_score() {
-        $this->assertEqual(4, round(grade_grades::standardise_score(6, 0, 7, 0, 5)));
-        $this->assertEqual(40, grade_grades::standardise_score(50, 30, 80, 0, 100));
+    function test_grade_grade_load_grade_item() {
+        $grade_grade = new grade_grade($this->grade_grades[0]);
+        $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
+        $this->assertNull($grade_grade->grade_item);
+        $this->assertTrue($grade_grade->itemid);
+        $this->assertNotNull($grade_grade->load_grade_item());
+        $this->assertNotNull($grade_grade->grade_item);
+        $this->assertEqual($this->grade_items[0]->id, $grade_grade->grade_item->id);
     }
 
 
-    function test_grade_grades_set_locked() {
+    function test_grade_grade_standardise_score() {
+        $this->assertEqual(4, round(grade_grade::standardise_score(6, 0, 7, 0, 5)));
+        $this->assertEqual(40, grade_grade::standardise_score(50, 30, 80, 0, 100));
+    }
+
+
+    function test_grade_grade_set_locked() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_locked'));
 
         $this->assertTrue(empty($grade_item->locked));
@@ -146,19 +146,19 @@ class grade_grades_test extends grade_test {
         $this->assertTrue(empty($grade->locked));
 
         $this->assertTrue($grade_item->set_locked(true));
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertFalse(empty($grade->locked));
         $this->assertFalse($grade->set_locked(false));
 
         $this->assertTrue($grade_item->set_locked(false));
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
 
         $this->assertTrue($grade->set_locked(false));
     }
 
-    function test_grade_grades_is_locked() {
-        $grade = new grade_grades($this->grade_grades[0]);
+    function test_grade_grade_is_locked() {
+        $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_locked'));
 
         $this->assertFalse($grade->is_locked());
@@ -166,9 +166,9 @@ class grade_grades_test extends grade_test {
         $this->assertTrue($grade->is_locked());
     }
 
-    function test_grade_grades_set_hidden() {
+    function test_grade_grade_set_hidden() {
         $grade_item = new grade_item($this->grade_items[0]);
-        $grade = new grade_grades($grade_item->get_final(1));
+        $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_hidden'));
 
         $this->assertEqual(0, $grade_item->hidden);
@@ -181,8 +181,8 @@ class grade_grades_test extends grade_test {
         $this->assertEqual(1, $grade->hidden);
     }
 
-    function test_grade_grades_is_hidden() {
-        $grade = new grade_grades($this->grade_grades[0]);
+    function test_grade_grade_is_hidden() {
+        $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_hidden'));
 
         $this->assertFalse($grade->is_hidden());

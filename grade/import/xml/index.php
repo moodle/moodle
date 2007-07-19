@@ -96,9 +96,9 @@ if ( $formdata = $mform->get_data()) {
                 break 3;
             }
 
-            // check if grade_grades is locked and if so, abort
-            if ($grade_grades = new grade_grades(array('itemid'=>$gradeitem->id, 'userid'=>$result['#']['student'][0]['#']))) {
-                if ($grade_grades->locked) {
+            // check if grade_grade is locked and if so, abort
+            if ($grade_grade = new grade_grade(array('itemid'=>$gradeitem->id, 'userid'=>$result['#']['student'][0]['#']))) {
+                if ($grade_grade->locked) {
                     // individual grade locked, abort
                     $status = false;
                     notify(get_string('gradegradeslocked', 'grades'));

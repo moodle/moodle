@@ -29,7 +29,7 @@ require_once('grade_object.php');
  * A text string used to compute the value displayed by a grade_item.
  * There can be only one grade_text per grade_item (one-to-one).
  */
-class grade_grades_text extends grade_object {
+class grade_grade_text extends grade_object {
     /**
      * DB Table (used by grade_object).
      * @var string $table
@@ -43,7 +43,7 @@ class grade_grades_text extends grade_object {
     var $nonfields = array('table', 'required_fields', 'nonfields');
 
     /**
-     * The grade_grades.id this text refers to.
+     * The grade_grade.id this text refers to.
      * @var int $itemid
      */
     var $gradeid;
@@ -79,25 +79,25 @@ class grade_grades_text extends grade_object {
     var $usermodified;
 
     /**
-     * Finds and returns a grade_grades_text instance based on params.
+     * Finds and returns a grade_grade_text instance based on params.
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return object grade_grades_text instance or false if none found.
+     * @return object grade_grade_text instance or false if none found.
      */
     function fetch($params) {
-        return grade_object::fetch_helper('grade_grades_text', 'grade_grades_text', $params);
+        return grade_object::fetch_helper('grade_grades_text', 'grade_grade_text', $params);
     }
 
     /**
-     * Finds and returns all grade_grades_text instances based on params.
+     * Finds and returns all grade_grade_text instances based on params.
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of grade_grades_text insatnces or false if none found.
+     * @return array array of grade_grade_text insatnces or false if none found.
      */
     function fetch_all($params) {
-        return grade_object::fetch_all_helper('grade_grades_text', 'grade_grades_text', $params);
+        return grade_object::fetch_all_helper('grade_grades_text', 'grade_grade_text', $params);
     }
 
 }

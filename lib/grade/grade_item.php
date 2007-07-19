@@ -306,7 +306,7 @@ class grade_item extends grade_object {
 
         $this->force_regrading();
 
-        if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+        if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
             foreach ($grades as $grade) {
                 $grade->delete($source);
             }
@@ -389,7 +389,7 @@ class grade_item extends grade_object {
         }
 
         if (!empty($userid)) {
-            if ($grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+            if ($grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
                 $grade->grade_item =& $this; // prevent db fetching of cached grade_item
                 return $grade->is_locked();
             }
@@ -422,7 +422,7 @@ class grade_item extends grade_object {
             $result = true;
             $grades = $this->get_final();
             foreach($grades as $g) {
-                $grade = new grade_grades($g, false);
+                $grade = new grade_grade($g, false);
                 $grade->grade_item =& $this;
                 if (!$grade->set_locked(true)) {
                     $result = false;
@@ -446,7 +446,7 @@ class grade_item extends grade_object {
 
             // this could be improved with direct SQL update
             $result = true;
-            if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+            if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
                 foreach($grades as $grade) {
                     $grade->grade_item =& $this;
 
@@ -517,7 +517,7 @@ class grade_item extends grade_object {
         }
 
         if (!empty($userid)) {
-            if ($grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+            if ($grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
                 $grade->grade_item =& $this; // prevent db fetching of cached grade_item
                 return $grade->is_hidden();
             }
@@ -535,7 +535,7 @@ class grade_item extends grade_object {
         $this->hidden = $hidden;
         $this->update();
 
-        if ($grades = grade_grades::fetch_all(array('itemid'=>$this->id))) {
+        if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
             foreach($grades as $grade) {
                 $grade->grade_item =& $this;
                 $grade->set_hidden($hidden);
@@ -612,7 +612,7 @@ class grade_item extends grade_object {
                         continue;
                     }
 
-                    $grade = new grade_grades($grade_record, false);
+                    $grade = new grade_grade($grade_record, false);
                     $grade->finalgrade = $this->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
                     if ($grade_record->finalgrade !== $grade->finalgrade) {
@@ -658,7 +658,7 @@ class grade_item extends grade_object {
             // Standardise score to the new grade range
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $rawgrade = grade_grades::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
+                $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
             // Apply other grade_item factors
@@ -683,7 +683,7 @@ class grade_item extends grade_object {
             // Convert scale if needed
             // NOTE: this is not compatible with current assignment grading
             if ($rawmin != $this->grademin or $rawmax != $this->grademax) {
-                $rawgrade = grade_grades::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
+                $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
             return (int)bounded_number(0, round($rawgrade+0.00001), $this->grademax);
@@ -1127,8 +1127,8 @@ class grade_item extends grade_object {
             return false;
         }
 
-        if (!$grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
-            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
+        if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
         }
 
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
@@ -1238,8 +1238,8 @@ class grade_item extends grade_object {
             return false;
         }
 
-        if (!$grade = grade_grades::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
-            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
+        if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
+            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
         }
 
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
@@ -1434,11 +1434,11 @@ class grade_item extends grade_object {
 
         // insert final grade - will be needed later anyway
         if ($oldgrade) {
-            $grade = new grade_grades($oldgrade, false); // fetching from db is not needed
+            $grade = new grade_grade($oldgrade, false); // fetching from db is not needed
             $grade->grade_item =& $this;
 
         } else {
-            $grade = new grade_grades(array('itemid'=>$this->id, 'userid'=>$userid), false);
+            $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
             $grade->insert('system');
             $grade->grade_item =& $this;
 

@@ -266,9 +266,9 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
                 foreach ($newgrades as $newgrade) {
 
-                    // check if grade_grades is locked and if so, abort
-                    if ($grade_grades = new grade_grades(array('itemid'=>$newgrade->itemid, 'userid'=>$studentid))) {
-                        if ($grade_grades->locked) {
+                    // check if grade_grade is locked and if so, abort
+                    if ($grade_grade = new grade_grade(array('itemid'=>$newgrade->itemid, 'userid'=>$studentid))) {
+                        if ($grade_grade->locked) {
                             // individual grade locked
                             $status = false;
                             import_cleanup($importcode);
