@@ -1683,6 +1683,33 @@ function create_role($name, $shortname, $description, $legacy='') {
 function delete_role($roleid) {
     $success = true;
 
+// mdl 10149, check if this is the last active admin role
+// if we make the admin role not deletable then this part can go
+    
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    
+    if ($role = get_record('role', 'id', $roleid)) {
+        if (record_exists('role_capabilities', 'contextid', $systemcontext->id, 'roleid', $roleid, 'capability', 'moodle/site:doanything')) {
+            // deleting an admin role
+            $status = false;
+            if ($adminroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $systemcontext)) {
+                foreach ($adminroles as $adminrole) {
+                    if ($adminrole->id != $roleid) {
+                        // some other admin role
+                        if (record_exists('role_assignments', 'roleid', $adminrole->id, 'contextid', $systemcontext->id)) {
+                            // found another admin role with at least 1 user assigned  
+                            $status = true;
+                            break;
+                        }
+                    }
+                }        
+            } 
+            if ($status !== true) {
+                error ('You can not delete this role because there is no other admin roles with users assigned');  
+            }
+        }  
+    }
+
 // first unssign all users
     if (!role_unassign($roleid)) {
         debugging("Error while unassigning all users from role with ID $roleid!");
