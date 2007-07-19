@@ -1522,6 +1522,25 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007071900) {
+
+    /// Define table grade_outcomes_courses to be created
+        $table = new XMLDBTable('grade_outcomes_courses');
+
+    /// Adding fields to table grade_outcomes_courses
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('outcomesid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table grade_outcomes_courses
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->addKeyInfo('outcomesid', XMLDB_KEY_FOREIGN, array('outcomesid'), 'grade_outcomes', array('id'));
+
+    /// Launch create table for grade_outcomes_courses
+        $result = $result && create_table($table);
+    }
+
     return $result;
 }
 ?>
