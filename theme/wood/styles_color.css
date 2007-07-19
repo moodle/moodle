@@ -18,6 +18,8 @@ form.mform fieldset.hidden,
 form.mform fieldset.hidden fieldset.fgroup,
 ul.tabrow1 li a:link,
 ul.tabrow1 li a:visited,
+.sideblock .r0,
+.sideblock .r1,
 div.sideblock table.minicalendar {
     border:none;
     background:none;
@@ -223,10 +225,9 @@ legend,
     border:none;
 }
 
-/** Places using the vertical white wood texture with borders **/
+/** Places using the vertical ultra-white wood texture with borders **/
 
 .results,
-.sideblock .content,
 .loginbox,
 .generalboxcontent,
 .informationboxcontent,
@@ -275,7 +276,7 @@ form.mform fieldset,
       border-top:1px solid #FFCC99;
 }
 
-/** Places using the vertical white wood texture without borders **/
+/** Places using the vertical ultra-white wood texture without borders **/
 
 #mod-chat-gui_header_js-users,
 #admin-index .c1,
@@ -287,9 +288,29 @@ form.mform fieldset,
 #admin-index table.environmenttable td,
 .generaltable .cell,
 .forumpost .left,
-.sideblock .r1,
 .r0 {
     background-image:url(gradient2.jpg);
+    background-position:bottom;
+    background-repeat:repeat;
+    border:none;
+}
+
+/** Places using the white wood texture with borders **/
+
+.sideblock .content {
+    border-top:1px solid #FFCC99;
+    border-left:1px solid #FFCC99;
+    border-bottom:1px solid #330000;
+    border-right:1px solid #330000;
+    background-image:url(gradient4.jpg);     
+    background-position:bottom;
+    background-repeat:repeat;
+}
+
+/** Places using the white wood texture with borders **/
+
+.nonefornow {
+    background-image:url(gradient4.jpg);
     background-position:bottom;
     background-repeat:repeat;
     border:none;
