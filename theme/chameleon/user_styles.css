@@ -24,9 +24,11 @@ a:visited {
 a:hover {
   color: #779911;
 }
-a.dimmed:link,
+a.dimmed:link {
+  color: #AAAAAA;
+}
 a.dimmed:visited {
-  color:#AAAAAA;
+  color: #AAAAAA;
 }
 table.generaltable {
   background-color: #EEEEEE;
@@ -44,17 +46,14 @@ h1.headermain {
 h2.headingblock {
   border-style: none;
 }
-table.loginbox {
+.loginbox {
   background-color: #EEEEEE;
   border-width: 1px;
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
-table.loginbox td.content {
-  background-color: #EEEEEE;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+.loginbox.twocolumns .loginpanel {
+  border-right-color: #DDDDDD;
 }
 div.noticebox {
   background-color: #EEEEEE;
@@ -68,9 +67,16 @@ table.generaltable td {
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
 div.generalbox {
-  border-top-width: 1px;
-  border-style: solid none none;
-  border-top-color: #DDDDDD;
+  border: 1px solid #ffffff;
+  border-right-color: #ddd;
+  border-bottom-color: #ddd;
+  background-color: #eee;
+}
+div.coursebox {
+  border: 1px solid #ffffff;
+  border-right-color: #ddd;
+  border-bottom-color: #ddd;
+  background-color: #eee;
 }
 table.generalbox {
   border-top-width: 1px;
@@ -82,6 +88,23 @@ table.generaltable th.header {
   border-width: 1px;
   border-style: solid;
   border-color: #EEEEEE #CCCCCC #CCCCCC #EEEEEE;
+}
+table.forumheaderlist th.header {
+  background-color: #DDDDDD;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #EEEEEE #CCCCCC #CCCCCC #EEEEEE;
+}
+.forumheaderlist,
+.forumpost {
+  background-color: #EEEEEE;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+.forumheaderlist td {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+.forumpost .topic {
+  border-bottom-color: #FFFFFF;
 }
 div.informationbox {
   background-color: #EEEEEE;
@@ -95,6 +118,11 @@ table.userinfobox {
 p.copyright {
   text-align: center;
 }
+.errorbox {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  background-color: #e15215;
+  color: #fff;
+}
 div.headermenu {
   font-size: 0.75em;
 }
@@ -104,11 +132,6 @@ div.headermenu div.logininfo {
 div.breadcrumb {
   font-size: 0.8em;
   padding-left: 0.3em;
-}
-table.tabs td.side {
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #88DD55;
 }
 div.navbar div.navbutton form {
   float: left;
@@ -148,6 +171,9 @@ ul.section li {
 }
 div.sideblock div.content * {
   text-align: left;
+}
+div.sideblock div.calendar-controls a.next {
+  text-align: right;
 }
 div.sideblock ul.list span.c1 {
   padding-left: 0;
@@ -207,18 +233,6 @@ td.courseboxcontent {
   border-width: 1px;
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
-}
-.tabrow td {
-  border: 1px solid #88DD55;
-}
-.tabrow td.selected {
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-left-width: 1px;
-  border-style: solid solid none;
-  border-top-color: #88DD55;
-  border-right-color: #88DD55;
-  border-left-color: #88DD55;
 }
 .sideblock .content .message {
   text-align: left;
@@ -289,6 +303,22 @@ table.cal_popup_bg {
 div.sideblock div.calendar-controls span.current {
   text-align: center;
 }
+div.sideblock div.commands a.roles img {
+  width: 11px;
+  height: 11px;
+}
+div.sideblock span.icon {
+  display: block;
+  float: left;
+  margin-right: 0.3em;
+}
+div.sideblock ul.list li {
+  clear: left;
+}
+div.sideblock div.header div.commands {
+  height: 16px;
+  background-color: #ffffff;
+}
 table.generaltable td.cell {
   white-space: normal;
 }
@@ -301,6 +331,10 @@ body#course-view tr.section td.side {
 body#course-view tr.section td.content {
   border-style: none;
 }
+body#course-user .section {
+  background-color: #EEEEEE;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
 div.que {
   border-style: none;
 }
@@ -310,19 +344,12 @@ td.sitetopiccontent {
 body#site-index td.categoryboxcontent {
   border-style: none;
 }
-div.sideblock span.icon {
-  display: block;
-  float: left;
-  margin-right: 0.3em;
-}
-div.sideblock ul.list li {
-  clear: left;
-}
-td.categoryboxcontent {
+.categorylist {
   background-color: #EEEEEE;
   border-width: 1px;
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  padding: 4px;
 }
 body#admin-roles-manage td.generalboxcontent table td {
   padding-left: 0.5em;
@@ -339,9 +366,31 @@ div.calendar-controls span.next {
   font-family: verdana, arial, helvetica, sans-serif;
   text-align: right;
 }
-div.sideblock div.header div.commands {
-  height: 16px;
-  background-color: #ffffff;
+table#calendar td.maincalendar {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+table#calendar td.sidecalendar {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  background-color: #efd;
+}
+#calendar .event_global,
+#calendar .event_course,
+#calendar .event_group,
+#calendar .event_user,
+.minicalendar .event_global,
+.minicalendar .event_course,
+.minicalendar .event_group,
+.minicalendar .event_user {
+  border: 1px solid !important;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
+table.minicalendar {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  background-color: #f8f8f8;
+}
+table#calendar td.today,
+div.minicalendar td.today {
+  border-color: #8d5;
 }
 #adminsettings fieldset span.form-shortname {
   color: #cccccc;
@@ -353,10 +402,89 @@ div.sideblock div.header div.commands {
   border-style: solid;
   border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
 }
+form.mform fieldset {
+  background-color: #EEEEEE;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+}
 form.mform div.textarea textarea {
   width: 35em;
 }
-div.sideblock div.commands a.roles img {
-  width: 11px;
-  height: 11px;
+body#grade-index table.grades {
+  background-color: #EEEEEE;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;  
 }
+body#grade-index .grades td {
+  border-color: #FFFFFF;
+}
+table.glossarypost {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  background-color: #f8f8f8;
+}
+div.entrybox {
+  border-color: #FFFFFF #DDDDDD #DDDDDD #FFFFFF;
+  background-color: #eee;
+}
+/* @group tabs */
+.tabrow0 {
+  font-size: 100%;
+  padding: 0;
+}
+.tabtree {
+  margin-bottom: 3%;
+}
+.tabrow0 li {
+  border: 1px solid #88DD55;
+  margin: 0;
+  padding: 4px;
+}
+.tabrow0 li.first {
+  margin-right: 0;
+}
+.tabrow0 li.selected,
+.tabrow0 li.here {
+  background-color: #efd;
+}
+.tabrow0 a span {
+  background-image: none;
+  padding: 0;
+}
+.tabrow0 a {
+  background-image: none;
+  padding: 5px;
+}
+.tabrow0 a:hover {
+  background-image: none;
+}
+.tabrow0 .here a:hover {
+  background-image: none;
+}
+.tabrow0 a:hover span {
+  background-image: none;
+}
+.tabrow0 .here a:hover span {
+  background-image: none;
+}
+.tabrow0 div,
+.tabrow0 ul {
+  background-image: none;
+  top: 100%;
+  padding: 0 0 0.25em;
+  line-height: 200%;
+  border-top-color: #5c0;
+}
+.tabrow0 ul {
+  background-color: #efd;
+  padding: 0;
+}
+.tabrow0 ul li.selected,
+.tabrow0 ul li.here {
+  background-color: #efd;
+}
+.tabrow0 ul li {
+  background-color: #f8f8f8;
+}
+/* @end */
