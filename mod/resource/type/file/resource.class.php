@@ -223,6 +223,10 @@ function display() {
         } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
             $resourcetype = "mp3";
             $embedded = true;
+           
+        } else if ($mimetype == "video/x-flv") {    // It's a Flash video file
+            $resourcetype = "flv";
+            $embedded = true;
 
         } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
             $resourcetype = "mediaplayer";
@@ -453,6 +457,38 @@ function display() {
             echo '<param name="autoplay" value="true" />';
             echo '<param name="autostart" value="true" />';
             echo '</object>';
+            echo '<p><a href="' . $fullurl . '">' . $fullurl . '</a></p>';
+
+            echo '</noscript>';
+            echo '</div>';
+
+        } else if ($resourcetype == "flv") {
+            $id = 'filter_flv_'.time(); //we need something unique because it might be stored in text cache
+            $cleanurl = addslashes_js($fullurl);
+
+
+            // If we have Javascript, use UFO to embed the FLV player, otherwise depend on plugins
+
+            echo '<div class="resourcecontent resourceflv">';
+
+            echo '<span class="mediaplugin mediaplugin_flv" id="'.$id.'"></span>'.
+                 '<script type="text/javascript">'."\n".
+                 '//<![CDATA['."\n".
+                   'var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$cleanurl.'",'."\n".
+                     'width:"600", height:"400", majorversion:"6", build:"40", allowscriptaccess:"never", quality: "high" };'."\n".
+                   'UFO.create(FO, "'.$id.'");'."\n".
+                 '//]]>'."\n".
+                 '</script>'."\n";
+
+            echo '<noscript>';
+
+            echo "<object type=\"video/x-flv\" data=\"$fullurl\" width=\"600\" height=\"400\">";
+            echo "<param name=\"src\" value=\"$fullurl\" />";
+            echo '<param name="quality" value="high" />';
+            echo '<param name="autoplay" value="true" />';
+            echo '<param name="autostart" value="true" />';
+            echo '</object>';
+            echo '<p><a href="' . $fullurl . '">' . $fullurl . '</a></p>';
 
             echo '</noscript>';
             echo '</div>';
