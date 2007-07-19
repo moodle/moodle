@@ -6,6 +6,9 @@
 
 $temp = new admin_settingpage('gradessettings', get_string('gradessettings'));
 $temp->add(new admin_setting_special_gradeexport());
+
+$temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'admin'), get_string('configenableoutcomes', 'admin'), 0, PARAM_INT));
+
 $ADMIN->add('grades', $temp);
 
 
@@ -69,5 +72,4 @@ foreach (get_list_of_plugins('grade/export') as $plugin) {
         $ADMIN->add('gradeexports', $settings);
     }
 }
-
 ?>
