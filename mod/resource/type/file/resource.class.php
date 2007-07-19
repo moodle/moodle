@@ -428,31 +428,34 @@ function display() {
             }
             $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
             $c = htmlentities($c);
+            $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
+            $cleanurl = addslashes_js($fullurl);
+
+
+            // If we have Javascript, use UFO to embed the MP3 player, otherwise depend on plugins
+
             echo '<div class="resourcecontent resourcemp3">';
-            echo '<div class="mp3player">';
-            echo '<object classid="clsid:D27CDb6E-AE6D-11cf-96b8-444553540000" ';
-            echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" ';
-            echo '        width="600" height="70" id="mp3player">';
-            echo '<param name="movie" value="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'">';
-            echo '<param name="quality" value="high">';
-            echo '<param name="bgcolor" value="#333333">'; 
-            echo '<param name="flashvars" value="'.$c.'&amp;" />';
-            echo '<!--[if !IE]>-->';
+
+            echo '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'"></span>'.
+                 '<script type="text/javascript">'."\n".
+                 '//<![CDATA['."\n".
+                   'var FO = { movie:"'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$cleanurl.'",'."\n".
+                     'width:"600", height:"70", majorversion:"6", build:"40", flashvars:"'.$c.'", quality: "high" };'."\n".
+                   'UFO.create(FO, "'.$id.'");'."\n".
+                 '//]]>'."\n".
+                 '</script>'."\n";
+
+            echo '<noscript>';
+
             echo "<object type=\"audio/mpeg\" data=\"$fullurl\" width=\"600\" height=\"70\">";
             echo "<param name=\"src\" value=\"$fullurl\" />";
             echo '<param name="quality" value="high" />';
-            echo '<param name="bgcolor" value="#333333" />';
-            echo '<param name="flashvars" value="'.$c.'&amp;" />';
             echo '<param name="autoplay" value="true" />';
-            echo '<param name="autoStart" value="0" />';
-            echo '<!--<![endif]-->';
-            echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
-            echo '<!--[if !IE]>-->';
+            echo '<param name="autostart" value="true" />';
             echo '</object>';
-            echo '<!--<![endif]-->';
-            echo '</object>';
+
+            echo '</noscript>';
             echo '</div>';
-            echo '</div>'; 
 
         } else if ($resourcetype == "mediaplayer") {
             echo '<div class="resourcecontent resourcewmv">';
