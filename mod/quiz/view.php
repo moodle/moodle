@@ -219,7 +219,11 @@
                 $row = array();
 
                 // Add the attempt number, making it a link, if appropriate.
-                $row[] = make_review_link($attempt->attempt, $quiz, $attempt);
+                if ($attempt->preview) {
+                    $row[] = make_review_link(get_string('preview', 'quiz'), $quiz, $attempt);
+                } else {
+                    $row[] = make_review_link($attempt->attempt, $quiz, $attempt);
+                }
 
                 // prepare strings for time taken and date completed
                 $timetaken = '';
