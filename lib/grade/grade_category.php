@@ -423,7 +423,7 @@ class grade_category extends grade_object {
         }
 
     /// normalize the grades first - all will have value 0...1
-        // ungraded items are not used in aggreagation
+        // ungraded items are not used in aggregation
         foreach ($grade_values as $k=>$v) {
             if (is_null($v)) {
                 // null means no grade
@@ -437,7 +437,7 @@ class grade_category extends grade_object {
         $this->apply_limit_rules($grade_values);
         asort($grade_values, SORT_NUMERIC);
 
-        // let's see we have still enough grades to do any statisctics
+        // let's see we have still enough grades to do any statistics
         if (count($grade_values) == 0) {
             // not enough attempts yet
             $grade->finalgrade = null;
@@ -452,12 +452,18 @@ class grade_category extends grade_object {
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
                 $num = count($grade_values);
+                // re-index grade_values array
+                $sorted_values = $grade_values;
+                sort($sorted_values);
                 $halfpoint = intval($num / 2);
-
-                if($num % 2 == 0) {
-                    $rawgrade = ($grade_values[ceil($halfpoint)] + $grade_values[floor($halfpoint)]) / 2;
+                if ($num == 0) {
+                    $rawgrade = null;
+                } elseif ($num == 1) {
+                    $rawgrade = reset($sorted_values);
+                } else if($num % 2 == 0) {
+                    $rawgrade = ($sorted_values[ceil($halfpoint)] + $sorted_values[floor($halfpoint)]) / 2;
                 } else {
-                    $rawgrade = $grade_values[$halfpoint];
+                    $rawgrade = $sorted_values[$halfpoint];
                 }
                 break;
 
@@ -550,7 +556,7 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade caunted as minimum
+            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade counted as minimum
                 $num = count($items);     // you can calculate sum from this one if you multiply it with count($this->depends_on() ;-)
                 $sum = array_sum($grade_values);
                 $rawgrade = $sum / $num;

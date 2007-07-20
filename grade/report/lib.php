@@ -234,7 +234,7 @@ class grade_report {
             $gradeval = '';
         } else {
             // decimal points as specified by user
-            if (empty($decimalpoints)) {
+            if (is_null($decimalpoints)) {
                 $decimalpoints = $this->get_pref('decimalpoints');
             }
             $gradeval = number_format($gradeval, $decimalpoints, $this->get_lang_string('decpoint', 'langconfig'),

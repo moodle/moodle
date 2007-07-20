@@ -11,14 +11,14 @@ class edit_category_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
 
-        $options = array(GRADE_AGGREGATE_MEAN_ALL   =>get_string('aggregatemeanall', 'grades'),
-                         GRADE_AGGREGATE_MEAN_GRADED=>get_string('aggregatemeangraded', 'grades'),
-                         GRADE_AGGREGATE_MEDIAN     =>get_string('aggregatemedian', 'grades'),
-                         GRADE_AGGREGATE_MIN        =>get_string('aggregatemin', 'grades'),
-                         GRADE_AGGREGATE_MAX        =>get_string('aggregatemax', 'grades'),
-                         GRADE_AGGREGATE_MODE       =>get_string('aggregatemode', 'grades'),
+        $options = array(GRADE_AGGREGATE_MEAN_ALL               =>get_string('aggregatemeanall', 'grades'),
+                         GRADE_AGGREGATE_MEAN_GRADED            =>get_string('aggregatemeangraded', 'grades'),
+                         GRADE_AGGREGATE_MEDIAN                 =>get_string('aggregatemedian', 'grades'),
+                         GRADE_AGGREGATE_MIN                    =>get_string('aggregatemin', 'grades'),
+                         GRADE_AGGREGATE_MAX                    =>get_string('aggregatemax', 'grades'),
+                         GRADE_AGGREGATE_MODE                   =>get_string('aggregatemode', 'grades'),
                          GRADE_AGGREGATE_WEIGHTED_MEAN_ALL      =>get_string('aggregateweightedmeanall', 'grades'),
-                         GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED   =>get_string('aggregateweightedgraded', 'grades'),
+                         GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED   =>get_string('aggregateweightedmeangraded', 'grades'),
                          GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL   =>get_string('aggregateextracreditmeanall', 'grades'),
                          GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED=>get_string('aggregateextracreditmeangraded', 'grades'));
 
