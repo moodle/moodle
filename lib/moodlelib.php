@@ -4258,7 +4258,8 @@ function places_to_search_for_lang_strings() {
         'enrol_' => array('enrol'),
         'format_' => array('course/format'),
         'qtype_' => array('question/type'),
-        'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
+        'quiz_' => array('mod/quiz/report'),
+        'report_' => array($CFG->admin.'/report', 'course/report'),
         'resource_' => array('mod/resource/type'),
         '' => array('mod')
     );
