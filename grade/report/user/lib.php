@@ -42,9 +42,14 @@ class grade_report_user extends grade_report {
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
+        $this->pbarurl = $this->baseurl;
+
+        // Setup groups if requested
+        if ($this->get_pref('showgroups')) {
+            $this->setup_groups();
+        }
 
         $this->setup_table();
-
     }
 
     /**
@@ -87,6 +92,7 @@ class grade_report_user extends grade_report {
 
     function fill_table() {
         global $CFG;
+        $numusers = $this->get_numusers();
 
         if ($all_grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
             $grade_items = array();
@@ -224,15 +230,6 @@ class grade_report_user extends grade_report {
      * @return bool Success or Failure (array of errors).
      */
     function process_data($data) {
-    }
-
-    /**
-     * Fetches and returns a count of all the users that will be shows on this page.
-     * @return int Count of users
-     */
-    function get_numusers() {
-        global $CFG;
-        return count(get_role_users(@implode(',', $CFG->gradebookroles), $this->context));
     }
 
 }

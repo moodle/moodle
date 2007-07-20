@@ -51,33 +51,6 @@ class grade_report_grader extends grade_report {
      */
     var $userselect;
 
-//// GROUP VARIABLES (including SQL)
-
-    /**
-     * The current group being displayed.
-     * @var int $currentgroup
-     */
-    var $currentgroup;
-
-    /**
-     * A HTML select element used to select the current group.
-     * @var string $group_selector
-     */
-    var $group_selector;
-
-    /**
-     * An SQL fragment used to add linking information to the group tables.
-     * @var string $groupsql
-     */
-    var $groupsql;
-
-    /**
-     * An SQL constraint to append to the queries used by this object to build the report.
-     * @var string $groupwheresql
-     */
-    var $groupwheresql;
-
-
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
@@ -99,6 +72,7 @@ class grade_report_grader extends grade_report {
         $this->pbarurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
                         .'&amp;report=grader&amp;';
 
+        // Setup groups if requested
         if ($this->get_pref('showgroups')) {
             $this->setup_groups();
         }
@@ -178,28 +152,6 @@ class grade_report_grader extends grade_report {
         return true;
     }
 
-    /**
-     * Sets up this object's group variables, mainly to restrict the selection of users to display.
-     */
-    function setup_groups() {
-        global $CFG;
-
-        /// find out current groups mode
-        $course = get_record('course', 'id', $this->courseid);
-        $groupmode = $course->groupmode;
-        ob_start();
-        $this->currentgroup = setup_and_print_groups($course, $groupmode, $this->pbarurl);
-        $this->group_selector = ob_get_clean();
-
-        // update paging after group
-        $this->baseurl .= 'group='.$this->currentgroup.'&amp;';
-        $this->pbarurl .= 'group='.$this->currentgroup.'&amp;';
-
-        if ($this->currentgroup) {
-            $this->groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
-            $this->groupwheresql = " AND gm.groupid = $this->currentgroup ";
-        }
-    }
 
     /**
      * Setting the sort order, this depends on last state
@@ -287,7 +239,7 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Fetches and returns a count of all the users that will be shows on this page.
+     * Fetches and returns a count of all the users that will be shown on this page.
      * @return int Count of users
      */
     function get_numusers() {
