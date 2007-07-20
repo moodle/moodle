@@ -701,6 +701,10 @@ table.navbar {
   text-align:right;
 }
 
+.navigation {
+  margin-bottom: 4px;
+}
+
 .navigation ul {
   margin:0px;
   padding:0px;
@@ -713,6 +717,11 @@ table.navbar {
   margin:0px;
   padding:0px;
   margin-left:2px;
+}
+
+.navigation ul li form fieldset,
+.navigation ul li form div select {
+    vertical-align: middle;
 }
 
 .navigation optgroup {
