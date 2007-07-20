@@ -543,15 +543,19 @@ class grade_report_grader extends grade_report {
         $studentshtml = '';
         $strfeedback = $this->get_lang_string("feedback");
         $gradetabindex = 1;
-        $feedbacktabindex = 16380; // The maximum number of tabindices on 1 page is 32767
         $showuserimage = $this->get_pref('showuserimage');
+        $numusers = count($this->users);
 
         // Preload scale objects for items with a scaleid
         $scales_list = '';
+        $tabindices = array();
         foreach ($this->items as $item) {
             if (!empty($item->scaleid)) {
                 $scales_list .= "$item->scaleid,";
             }
+            $tabindices[$item->id]['grade'] = $gradetabindex;
+            $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
+            $gradetabindex += $numusers * 2;
         }
         $scales_array = array();
 
@@ -632,7 +636,8 @@ class grade_report_grader extends grade_report {
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'
                                           .$item->id.'" value="'.$gradeval.'"/>';
                             $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                          $gradeval, $this->get_lang_string('nograde'), '', '-1', true, false, $gradetabindex++);
+                                                              $gradeval, $this->get_lang_string('nograde'), '', '-1',
+                                                              true, false, $tabindices[$item->id]['grade']);
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);
 
@@ -650,8 +655,8 @@ class grade_report_grader extends grade_report {
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $value = $this->get_grade_clean($gradeval, $decimalpoints);
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
-                            $studentshtml .= '<input size="6" tabindex="' . $gradetabindex++ . '" type="text" name="grade_'.$userid.'_'
-                                          .$item->id.'" value="'.$value.'" />';
+                            $studentshtml .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade'] . '" type="text" name="grade_'
+                                          .$userid.'_' .$item->id.'" value="'.$value.'" />';
                         } else {
                             $studentshtml .= $this->get_grade_clean($gradeval, $decimalpoints);
                         }
@@ -665,7 +670,7 @@ class grade_report_grader extends grade_report {
                         }
                         $studentshtml .= '<input type="hidden" name="oldfeedback_'
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
-                        $studentshtml .= '<input tabindex="' . $feedbacktabindex++ . '" size="6" type="text" name="feedback_'
+                        $studentshtml .= '<input tabindex="' . $tabindices[$item->id]['feedback'] . '" size="6" type="text" name="feedback_'
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                     }
 
