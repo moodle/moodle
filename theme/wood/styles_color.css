@@ -12,6 +12,7 @@
 #grade-exceptions table .generaltableheader,
 #grade-exceptions table .generalboxcontent,
 #mod-forum-view table.forumheaderlist td,
+#mod-glossary-report .generalbox .teacher,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
 form.mform fieldset.hidden,
@@ -20,6 +21,7 @@ ul.tabrow1 li a:link,
 ul.tabrow1 li a:visited,
 .sideblock .r0,
 .sideblock .r1,
+.generaltable .cell,
 div.sideblock table.minicalendar {
     border:none;
     background:none;
@@ -40,6 +42,7 @@ div {
     color:#330000;
 }
 
+.tabledivider,
 hr {
     border-top:solid 1px #FFCC99;
     border-left:solid 1px #FFCC99;
@@ -195,7 +198,6 @@ h2.main,
 .forumpost,
 .navbar,
 table.files th,
-#admin-index table.environmenttable th.header,
 .tabrow0 ul,
 legend,
 #footer-bar {
@@ -279,13 +281,11 @@ form.mform fieldset,
 /** Places using the vertical ultra-white wood texture without borders **/
 
 #mod-chat-gui_header_js-users,
-#admin-index .c1,
-#admin-config .c1,
 #grade-index .generaltableheader,
 #grade-index .generalboxcontent,
 #grade-exceptions .generaltableheader,
 #grade-exceptions .generalboxcontent,
-#admin-index table.environmenttable td,
+.generaltable td,
 .generaltable .cell,
 .forumpost .left,
 .r0 {
@@ -355,8 +355,6 @@ form.mform fieldset,
 
 /** Places using the horizontal dark wood texture without borders **/
 
-#admin-index .c0,
-#admin-config .c0,
 .glossarycategoryheader {
     background-image:url(background.jpg);
     background-position:bottom;
@@ -366,8 +364,8 @@ form.mform fieldset,
 
 /** Places using a white background **/
 
+table .flexible .r1,
 #mod-survey-view table tr.r1,
-.r1,
 #calendar .maincalendar .eventlist .event .description,
 .glossarypost .entry,
 .glossarycomment .entry,
