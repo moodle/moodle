@@ -886,17 +886,16 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
               SELECT rc.capability, c1.id as id1, c2.id as id2, (c1.contextlevel * 100 + c2.contextlevel) AS aggrlevel,                    
                      SUM(rc.permission) AS sum
                      FROM
-                     {$CFG->prefix}role_assignments ra LEFT JOIN
-                     {$CFG->prefix}role_capabilities rc on ra.roleid = rc.roleid LEFT JOIN
-                     {$CFG->prefix}context c1 on ra.contextid = c1.id LEFT JOIN
-                     {$CFG->prefix}context c2 on rc.contextid = c2.id LEFT JOIN
-                     {$CFG->prefix}context_rel cr on cr.c1 = c2.id
+                     {$CFG->prefix}role_assignments ra INNER JOIN
+                     {$CFG->prefix}role_capabilities rc on ra.roleid = rc.roleid INNER JOIN
+                     {$CFG->prefix}context c1 on ra.contextid = c1.id INNER JOIN
+                     {$CFG->prefix}context c2 on rc.contextid = c2.id INNER JOIN
+                     {$CFG->prefix}context_rel cr on cr.c1 = c2.id AND cr.c2 = c1.id
                      WHERE
                      ra.userid=$userid AND
                      $searchcontexts1
                      rc.contextid != $siteinstance->id
                      $capsearch
-                     AND cr.c2 = c1.id
               GROUP BY
                      rc.capability, c1.id, c2.id, c1.contextlevel * 100 + c2.contextlevel
                      HAVING
