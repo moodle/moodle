@@ -92,22 +92,20 @@ function setup_enrolments(&$user) {
                     $course = get_record('course', $CFG->enrol_localcoursefield, $coursefield);
                     if (!is_object($course)) {
                         if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
-                            print "Course $coursefield does not exist, skipping\n";
+                            if (debugging('',DEBUG_ALL)) {
+                                error_log( "Course $coursefield does not exist, skipping") ;
+                            }
                             continue; // next foreach course
                         }
                         // ok, now then let's create it!
-                        print "Creating Course $coursefield...";
                         // prepare any course properties we actually have
                         $course = new StdClass;
                         $course->{$CFG->enrol_localcoursefield} = $coursefield;
                         $course->fullname  = $coursefield;
                         $course->shortname = $coursefield;
-                        if ($newcourseid = $this->create_course($course, true)
-                            and $course = get_record( 'course', 'id', $newcourseid)) {
-                            // we are skipping fix_course_sortorder()
-                            print "created\n";
-                        } else {
-                            print "failed\n";
+                        if (!($newcourseid = $this->create_course($course, true)
+                            and $course = get_record( 'course', 'id', $newcourseid))) {
+                            error_log( "Creating course $coursefield failed");
                             continue; // nothing left to do...
                         }
                     }
@@ -215,8 +213,6 @@ function sync_enrolments($role = null) {
         $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
         array_push($extcourses, $extcourse);
 
-        print "course $extcourse\n";
-
         // does the course exist in moodle already? 
         $course = false;
         $course = get_record( 'course',
@@ -225,22 +221,20 @@ function sync_enrolments($role = null) {
 
         if (!is_object($course)) {
             if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
-                print "Course $extcourse does not exist, skipping\n";
+                if (debugging('', DEBUG_ALL)) {
+                    error_log( "Course $extcourse does not exist, skipping");
+                }
                 continue; // next foreach course
             }
             // ok, now then let's create it!
-            print "Creating Course $extcourse...";
             // prepare any course properties we actually have
             $course = new StdClass;
             $course->{$CFG->enrol_localcoursefield} = $extcourse;
             $course->fullname  = $extcourse;
             $course->shortname = $extcourse;
-            if ($newcourseid = $this->create_course($course, true)
-             and $course = get_record( 'course', 'id', $newcourseid)) {
-                // we are skipping fix_course_sortorder()
-                print "created\n";
-            } else {
-                print "failed\n";
+            if (!($newcourseid = $this->create_course($course, true)
+             and $course = get_record( 'course', 'id', $newcourseid))) {
+                error_log( "Creating course $extcourse failed");
                 continue; // nothing left to do...
             }
 
@@ -302,9 +296,9 @@ function sync_enrolments($role = null) {
         if ($to_prune) {
             foreach ($to_prune as $role_assignment) {
                 if (role_unassign($role->id, $role_assignment->userid, 0, $role_assignment->contextid)){
-                    print "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}\n";
+                    error_log( "Unassigned {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
                 } else {
-                    print "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}\n";
+                    error_log( "Failed to unassign {$role->shortname} assignment #{$role_assignment->id} for course {$course->id} (" . format_string($course->shortname) . "); user {$role_assignment->userid}");
                 }
             }
         }
@@ -344,9 +338,9 @@ function sync_enrolments($role = null) {
             }
             
             if (role_assign($role->id, $userid, 0, $context->id, 0, 0, 0, 'database')){
-                print "Assigned role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")\n";
+                error_log( "Assigned role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")");
             } else {
-                print "Failed to assign role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")\n";
+                error_log( "Failed to assign role {$role->shortname} to user {$userid} in course {$course->id} (" . format_string($course->shortname) . ")");
             }
 
         } // end foreach member
@@ -387,9 +381,9 @@ function sync_enrolments($role = null) {
             $user       = $user_obj->userid;
             $contextid  = $user_obj->contextid;
             if (role_unassign($roleid, $user, 0, $contextid)){
-                print "Unassigned role {$roleid} from user $user in context $contextid\n";
+                error_log( "Unassigned role {$roleid} from user $user in context $contextid");
             } else {
-                print "Failed unassign role {$roleid} from user $user in context $contextid\n";
+                error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
             }
         }
         rs_close($ers); // release the handle
