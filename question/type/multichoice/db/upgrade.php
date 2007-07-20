@@ -34,6 +34,17 @@ function xmldb_qtype_multichoice_upgrade($oldversion=0) {
                 'qtype', DESCRIPTION, 'defaultgrade', 1);
     }
 
+    // This upgrade actually belongs to the description question type,
+    // but that does not have a DB upgrade script. Therefore, multichoice
+    // is doing it.
+    // The need for this is that for a while, descriptions were being created
+    // with a defaultgrade of 1, when it shoud be 0. We need to reset them all to 0.
+    // This is re-occurrence of MDL-7925, so we need to do it again. 
+    if ($result && $oldversion < 2006121501) {
+        $result = set_field('question', 'defaultgrade', 0,
+                'qtype', DESCRIPTION, 'defaultgrade', 1);
+    }
+
     return $result;
 }
 
