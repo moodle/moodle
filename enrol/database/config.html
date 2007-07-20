@@ -1,3 +1,7 @@
+<?php
+    $yesno = array('0'=>get_string('no'), '1'=>get_string('yes'));
+?>
+
 <table cellspacing="0" cellpadding="5" border="0" class="boxaligncenter">
 <tr>
 <th colspan="2" scope="col">
@@ -174,7 +178,7 @@
     <td align="right">enrol_db_autocreate:</td>
     <td>
     <?php
-       choose_from_menu(array('0'=>'no','1'=>'yes'), "enrol_db_autocreate", $frm->enrol_db_autocreate, "");
+       choose_from_menu($yesno, "enrol_db_autocreate", $frm->enrol_db_autocreate, "");
            if (isset($err["enrol_db_autocreate"])) formerr($err["enrol_db_autocreate"]); 
     ?>
     </td>
@@ -182,6 +186,7 @@
     <?php  print_string("autocreate","enrol_database") ?>
     </td>
 </tr>
+
 <tr>
         <td align="right">enrol_db_category:</td>
         <td>
@@ -205,6 +210,27 @@
     <?php  if (isset($err["enrol_db_template"])) formerr($err["enrol_db_template"]); ?>
     </td><td>
     <?php  print_string("template","enrol_database") ?>
+    </td>
+</tr>
+
+<tr>
+   <th colspan="2" scope="col">
+        <?php print_string("general_options", "enrol_database") ?>
+   </th>
+</tr>
+
+<tr>
+    <td align="right">enrol_db_ignorehiddencourse:</td>
+    <td>
+    <?php
+        choose_from_menu($yesno, "enrol_db_ignorehiddencourse", $frm->enrol_db_ignorehiddencourse, "");
+        if (isset($err['enrol_db_ignorehiddencourse'])) {
+            formerr($err['enrol_db_ignorehiddencourse']);
+        }
+    ?>
+    </td>
+    <td>
+        <?php print_string('ignorehiddencourse', 'enrol_database' ); ?>
     </td>
 </tr>
 

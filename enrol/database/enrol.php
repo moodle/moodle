@@ -110,6 +110,12 @@ function setup_enrolments(&$user) {
                         }
                     }
 
+                    // if the course is hidden and we don't want to enrol in hidden courses
+                    // then just skip it
+                    if (!$course->visible and $CFG->enrol_db_ignorehiddencourse) {
+                        continue;
+                    }
+
                     /// If there's no role specified, we get the default course role (usually student)
                     if ($use_default_role) {
                         $role = get_default_course_role($course);
@@ -412,7 +418,8 @@ function config_form($frm) {
                   'enrol_remotecoursefield', 'enrol_remoteuserfield',
                   'enrol_db_autocreate', 'enrol_db_category', 'enrol_db_template', 
                   'enrol_db_localrolefield', 'enrol_db_remoterolefield',
-                  'enrol_remotecoursefield', 'enrol_remoteuserfield');
+                  'enrol_remotecoursefield', 'enrol_remoteuserfield',
+                  'enrol_db_ignorehiddencourse');
 
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
@@ -504,6 +511,11 @@ function process_config($config) {
         $config->enrol_db_remoterolefield = '';
     }
     set_config('enrol_db_remoterolefield', $config->enrol_db_remoterolefield);
+
+    if (!isset($config->enrol_db_ignorehiddencourse)) {
+        $config->enrol_db_ignorehiddencourse = '';
+    }
+    set_config('enrol_db_ignorehiddencourse', $config->enrol_db_ignorehiddencourse );
 
     return true;
 }
