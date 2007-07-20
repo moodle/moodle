@@ -743,148 +743,63 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * Builds and return the HTML rows of the table (grades headed by student).
-     * @return string HTML
-     */
-    function get_groupavghtml() {
-        global $CFG, $USER;
-
-        $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
-        $mean_pref = $this->get_pref('meanselection');
-        $groupavghtml = '';
-
-        if ($mean_pref == GRADE_AGGREGATE_MEAN_GRADED) {
-            // non empty grades
-            $meanstr = "AND NOT g.finalgrade IS NULL";
-        } else {
-            $meanstr = "";
-        }
-
-        if ($this->currentgroup && $this->get_pref('showgroups')) {
-
-        /** SQL for finding group sum */
-        // do not sum -1 (no grade), treat as 0 for now
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
-                FROM {$CFG->prefix}grade_items gi LEFT JOIN
-                     {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
-                     {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
-                     {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                     $this->groupsql
-                WHERE gi.courseid = $this->courseid
-                     $this->groupwheresql
-                AND ra.roleid in ($this->gradebookroles)
-                AND ra.contextid ".get_related_contexts_string($this->context)."
-                $meanstr
-                GROUP BY g.itemid";
-
-            $groupsum = array();
-            $groupscount = array();
-            $sums = get_records_sql($SQL);
-            foreach ($sums as $itemid => $csum) {
-                $groupsum[$itemid] = $csum->sum;
-                $groupscount[$itemid] = $csum->count;
-            }
-
-            $groupavghtml = '<tr><th>'.get_string('groupavg', 'grades').'</th>';
-            foreach ($this->items as $item) {
-                $decimalpoints = $this->get_pref('decimalpoints', $item->id);
-                // Determine which display type to use for this average
-                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
-                if ($USER->gradeediting) {
-                    $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
-                } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
-                    $displaytype = $gradedisplaytype;
-                } else { // General preference overrides specific column display type
-                    $displaytype = $averagesdisplaytype;
-                }
-
-                if (empty($groupscount[$item->id]) || !isset($groupsum[$item->id])) {
-                    $groupavghtml .= '<td>-</td>';
-                } else {
-                    $sum = $groupsum[$item->id];
-
-                    if ($item->scaleid) {
-                        $gradeitemsum = $groupsum[$item->id];
-                        $gradeitemavg = $gradeitemsum/$groupscount[$item->id];
-
-                        $scaleval = round($this->get_grade_clean($gradeitemavg, $decimalpoints));
-
-                        $scales_array = get_records_list('scale', 'id', $item->scaleid);
-                        $scale = $scales_array[$item->scaleid];
-                        $scales = explode(",", $scale->scale);
-
-                        // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
-                        if ($scaleval < 1) {
-                            $scaleval = 1;
-                        }
-
-                        $gradehtml = $scales[$scaleval-1];
-                        $rawvalue = $scaleval;
-                    } else {
-                        $gradeval = $this->get_grade_clean($sum/$groupscount[$item->id], $decimalpoints);
-                        $gradehtml = round($gradeval, $decimalpoints);
-                        $rawvalue = $gradeval;
-                    }
-
-                    if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_grade::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
-                        $gradehtml = round($gradeval, $decimalpoints) . '%';
-                    } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
-                        $letters = grade_report::get_grade_letters();
-                        $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
-                    }
-
-                    $groupavghtml .= '<td>'.$gradehtml.'</td>';
-                }
-            }
-            $groupavghtml .= '</tr>';
-        }
-        return $groupavghtml;
-    }
-
-    /**
      * Builds and return the HTML row of column totals.
+     * @param  bool $grouponly Whether to return only group averages or all averages.
      * @return string HTML
      */
-    function get_gradeavghtml() {
+    function get_avghtml($grouponly=false) {
         global $CFG, $USER;
 
-        $averagesdisplaytype = $this->get_pref('averagesdisplaytype');
+        $averagesdisplaytype   = $this->get_pref('averagesdisplaytype');
+        $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection = $this->get_pref('meanselection');
-        $mean_pref = get_user_preferences('grade_report_meanselection', $CFG->grade_report_meanselection);
-        $gradeavghtml = '';
+        $avghtml = '';
 
-        if ($mean_pref == 2) {
+        if ($grouponly) {
+            $straverage = get_string('groupavg', 'grades');
+            $showaverages = $this->currentgroup && $this->get_pref('showgroups');
+            $groupsql = $this->groupsql;
+            $groupwheresql = $this->groupwheresql;
+        } else {
+            $straverage = get_string('average', 'grades');
+            $showaverages = $this->get_pref('showaverages');
+            $groupsql = null;
+            $groupwheresql = null;
+        }
+
+        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
             // non empty grades
             $meanstr = "AND NOT g.finalgrade IS NULL";
         } else {
             $meanstr = "";
         }
-        if ($this->get_pref('showaverages')) {
+        if ($showaverages) {
 
-            /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) */
+            /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) or group sum*/
             // do not sum -1 (no grade), treat as 0 for now
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
                 FROM {$CFG->prefix}grade_items gi LEFT JOIN
                      {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
                      {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
                      {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                     $groupsql
                 WHERE gi.courseid = $this->courseid
+                     $groupwheresql
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
                 $meanstr
                 GROUP BY g.itemid";
 
-            $classsum = array();
-
+            $sum_array = array();
+            $count_array = array();
             $sums = get_records_sql($SQL);
 
             foreach ($sums as $itemid => $csum) {
-                $classsum[$itemid] = $csum->sum;
-                $classcount[$itemid] = $csum->count;
+                $sum_array[$itemid] = $csum->sum;
+                $count_array[$itemid] = $csum->count;
             }
 
-            $gradeavghtml = '<tr><th>'.get_string('average', 'grades').'</th>';
+            $avghtml = '<tr><th>'.$straverage.'</th>';
             foreach ($this->items as $item) {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this average
@@ -897,13 +812,24 @@ class grade_report_grader extends grade_report {
                     $displaytype = $averagesdisplaytype;
                 }
 
-                if (empty($classcount[$item->id]) || !isset($classsum[$item->id])) {
-                    $gradeavghtml .= '<td>-</td>';
+                if ($averagesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $decimalpoints = $averagesdecimalpoints;
+                }
+
+                if (empty($count_array[$item->id]) || !isset($sum_array[$item->id])) {
+                    $avghtml .= '<td>-</td>';
                 } else {
-                    $sum = $classsum[$item->id];
+                    $sum = $sum_array[$item->id];
 
                     if ($item->scaleid) {
-                        $scaleval = round($this->get_grade_clean($sum/$classcount[$item->id], $decimalpoints));
+                        if ($grouponly) {
+                            $finalsum = $sum_array[$item->id];
+                            $finalavg = $finalsum/$count_array[$item->id];
+                        } else {
+                            $finalavg = $sum/$count_array[$item->id];
+                        }
+
+                        $scaleval = round($this->get_grade_clean($finalavg, $decimalpoints));
                         $scales_array = get_records_list('scale', 'id', $item->scaleid);
                         $scale = $scales_array[$item->scaleid];
                         $scales = explode(",", $scale->scale);
@@ -916,7 +842,7 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $scales[$scaleval-1];
                         $rawvalue = $scaleval;
                     } else {
-                        $gradeval = $this->get_grade_clean($sum/$classcount[$item->id], $decimalpoints);
+                        $gradeval = $this->get_grade_clean($sum/$count_array[$item->id], $decimalpoints);
 
                         $gradehtml = round($gradeval, $decimalpoints);
                         $rawvalue = $gradeval;
@@ -930,12 +856,12 @@ class grade_report_grader extends grade_report {
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
-                    $gradeavghtml .= '<td>'.$gradehtml.'</td>';
+                    $avghtml .= '<td>'.$gradehtml.'</td>';
                 }
             }
-            $gradeavghtml .= '</tr>';
+            $avghtml .= '</tr>';
         }
-        return $gradeavghtml;
+        return $avghtml;
     }
 
     /**
@@ -948,7 +874,9 @@ class grade_report_grader extends grade_report {
         $scalehtml = '';
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype = $this->get_pref('rangesdisplaytype');
+            $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
             $scalehtml = '<tr><th class="range">'.$this->get_lang_string('range','grades').'</th>';
+
             foreach ($this->items as $item) {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this range
@@ -960,6 +888,10 @@ class grade_report_grader extends grade_report {
                     $displaytype = $gradedisplaytype;
                 } else { // General preference overrides specific column display type
                     $displaytype = $rangesdisplaytype;
+                }
+
+                if ($rangesdecimalpoints != GRADE_REPORT_PREFERENCE_INHERIT) {
+                    $decimalpoints = $rangesdecimalpoints;
                 }
 
                 if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {

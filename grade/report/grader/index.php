@@ -66,9 +66,10 @@ $reporthtml = '<table class="gradestable">';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_studentshtml();
-$reporthtml .= $report->get_groupavghtml();
-$reporthtml .= $report->get_gradeavghtml($numusers); //TODO: numusers not in function definition??
+$reporthtml .= $report->get_avghtml(true);
+$reporthtml .= $report->get_avghtml();
 $reporthtml .= "</table>";
+
 // print submit button
 if ($USER->gradeediting) {
     echo '<form action="report.php" method="post">';
