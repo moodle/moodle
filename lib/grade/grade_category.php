@@ -452,18 +452,11 @@ class grade_category extends grade_object {
         switch ($this->aggregation) {
             case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
                 $num = count($grade_values);
-                // re-index grade_values array
-                $sorted_values = $grade_values;
-                sort($sorted_values);
-                $halfpoint = intval($num / 2);
-                if ($num == 0) {
-                    $rawgrade = null;
-                } elseif ($num == 1) {
-                    $rawgrade = reset($sorted_values);
-                } else if($num % 2 == 0) {
-                    $rawgrade = ($sorted_values[ceil($halfpoint)] + $sorted_values[floor($halfpoint)]) / 2;
+                $grades = array_values($grade_values);
+                if ($num % 2 == 0) {
+                    $rawgrade = ($grades[intval($num/2)-1] + $grades[intval($num/2)]) / 2;
                 } else {
-                    $rawgrade = $sorted_values[$halfpoint];
+                    $rawgrade = $grades[intval(($num/2)-0.5)];
                 }
                 break;
 
