@@ -168,25 +168,30 @@ class qformat_gift extends qformat_default {
 
 
         // FIND ANSWER section
+        // no answer means its a description
         $answerstart = strpos($text, "{");
-        if ($answerstart === false) {
-            $giftleftbraceerror = get_string( 'giftleftbraceerror', 'quiz' );
-            $this->error( $giftleftbraceerror, $text );
-            return false;
-        }
-
         $answerfinish = strpos($text, "}");
-        if ($answerfinish === false) {
-            $giftrightbraceerror = get_string( 'giftrightbraceerror', 'quiz' );
-            $this->error( $giftrightbraceerror, $text );
+
+        $description = false;
+        if (($answerstart === false) and ($answerfinish === false)) {
+            $description = true;
+            $answertext = '';
+            $answerlength = 0;
+        }
+        elseif (!(($answerstart !== false) and ($answerfinish !== false))) {
+            $this->error( get_string( 'braceerror', 'quiz' ), $text );
             return false;
         }
-
-        $answerlength = $answerfinish - $answerstart;
-        $answertext = trim(substr($text, $answerstart + 1, $answerlength - 1));
+        else {
+            $answerlength = $answerfinish - $answerstart;
+            $answertext = trim(substr($text, $answerstart + 1, $answerlength - 1));
+        }
 
         // Format QUESTION TEXT without answer, inserting "_____" as necessary
-        if (substr($text, -1) == "}") {
+        if ($description) {
+            $questiontext = $text;
+        }
+        elseif (substr($text, -1) == "}") {
             // no blank line if answers follow question, outside of closing punctuation
             $questiontext = substr_replace($text, "", $answerstart, $answerlength+1);
         } else {
@@ -220,7 +225,13 @@ class qformat_gift extends qformat_default {
         // determine QUESTION TYPE
         $question->qtype = NULL;
 
-        if ($answertext{0} == "#"){
+        if ($description) {
+            $question->qtype = DESCRIPTION;
+        }
+        elseif ($answertext == '') {
+            $question->qtype = ESSAY;
+        }
+        elseif ($answertext{0} == "#"){
             $question->qtype = NUMERICAL;
 
         } elseif (strpos($answertext, "~") !== false)  {
@@ -257,6 +268,14 @@ class qformat_gift extends qformat_default {
         }
 
         switch ($question->qtype) {
+            case DESCRIPTION:
+                return $question;
+                break;
+            case ESSAY:
+                $question->feedback = '';
+                $question->fraction = 0;
+                return $question;
+                break;
             case MULTICHOICE:
                 if (strpos($answertext,"=") === false) {
                     $question->single = 0;   // multiple answers are enabled if no single answer is 100% correct                        
@@ -520,6 +539,17 @@ function writequestion( $question ) {
     case 'category':
         // not a real question, used to insert category switch
         $expout .= "\$CATEGORY: $question->category\n";    
+        break;
+    case DESCRIPTION:
+        $expout .= '::'.$this->repchar($question->name).'::';
+        $expout .= $tfname;
+        $expout .= $this->repchar( $question->questiontext, $textformat);
+        break;
+    case ESSAY:
+        $expout .= '::'.$this->repchar($question->name).'::';
+        $expout .= $tfname;
+        $expout .= $this->repchar( $question->questiontext, $textformat);
+        $expout .= "{}\n";
         break;
     case TRUEFALSE:
         $trueanswer = $question->options->answers[$question->options->trueanswer];
