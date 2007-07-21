@@ -54,6 +54,7 @@ $string['backtoquiz'] = 'Back to quiz editing';
 $string['bestgrade'] = 'Best grade';
 $string['blackboard'] = 'Blackboard';
 $string['blackboard_6'] = 'Blackboard V6+';
+$string['braceerror'] = 'Could not find {...} around answers';
 $string['bothattempts'] = 'Show students with and without attempts';
 $string['calculated'] = 'Calculated';
 $string['calculatedquestion'] = 'Calculated Question not supported at line $a. The question will be ignored';
