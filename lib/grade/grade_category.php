@@ -357,20 +357,25 @@ class grade_category extends grade_object {
             if ($rs->RecordCount() > 0) {
                 $prevuser = 0;
                 $grade_values = array();
+                $excluded     = array();
                 $oldgrade     = null;
                 while ($used = rs_fetch_next_record($rs)) {
                     if ($used->userid != $prevuser) {
-                        $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade);
+                        $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);
                         $prevuser = $used->userid;
                         $grade_values = array();
+                        $excluded     = array();
                         $oldgrade     = null;
                     }
                     $grade_values[$used->itemid] = $used->finalgrade;
+                    if ($used->excluded) {
+                        $excluded[] = $used->itemid;
+                    }
                     if ($this->grade_item->id == $used->itemid) {
                         $oldgrade = $used;
                     }
                 }
-                $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade);//the last one
+                $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
             }
         }
 
@@ -380,7 +385,7 @@ class grade_category extends grade_object {
     /**
      * internal function for category grades aggregation
      */
-    function aggregate_grades($userid, $items, $grade_values, $oldgrade) {
+    function aggregate_grades($userid, $items, $grade_values, $oldgrade, $excluded) {
         if (empty($userid)) {
             //ignore first call
             return;
@@ -424,13 +429,17 @@ class grade_category extends grade_object {
 
     /// normalize the grades first - all will have value 0...1
         // ungraded items are not used in aggregation
-        foreach ($grade_values as $k=>$v) {
+        foreach ($grade_values as $itemid=>$v) {
             if (is_null($v)) {
                 // null means no grade
-                unset($grade_values[$k]);
+                unset($grade_values[$itemid]);
+                continue;
+            } else if (in_array($itemid, $excluded)) {
+                unset($grade_values[$itemid]);
                 continue;
             }
-            $grade_values[$k] = grade_grade::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
+
+            $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
         }
 
         // use min grade if grade missing for these types
@@ -443,7 +452,7 @@ class grade_category extends grade_object {
             case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL:
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL:
                 foreach($items as $itemid=>$value) {
-                    if (!isset($grade_values[$itemid])) {
+                    if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
                         $grade_values[$itemid] = 0;
                     }
                 }

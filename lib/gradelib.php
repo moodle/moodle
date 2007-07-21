@@ -668,7 +668,7 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 }
 
 /**
- * This function is used to migrade old date and settings from old gradebook into new grading system.
+ * This function is used to migrade old data and settings from old gradebook into new grading system.
  * @param int $courseid
  */
 function grade_upgrade_oldgradebook($courseid) {
@@ -719,6 +719,8 @@ function grade_upgrade_oldgradebook($courseid) {
         $course_category->update('upgrade');
     }
 
+
+    $newitems = array();
     // get all grade items with mod details
     $sql = "SELECT gi.*, cm.idnumber as cmidnumber, m.name as modname
               FROM {$CFG->prefix}grade_item gi, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
@@ -745,10 +747,22 @@ function grade_upgrade_oldgradebook($courseid) {
             if (!empty($olditem->category)) {
                 $newitem->set_parent($categories[$olditem->category]->id);
             }
+            $newitems[$olditem->id] = $newitem;
         }
     }
 
-    // setup up exception handling
+    // setup up exception handling - override grade with NULL
+    if ($exceptions = get_records('grade_exceptions', 'courseid', $courseid)) {
+        foreach ($exceptions as $exception) {
+            if (!array_key_exists($exception->grade_itemid, $newitems)) {
+                continue; // broken record
+            }
+            $grade_item = grade_item::fetch(array('id'=>$newitems[$exception->grade_itemid]));
+            $grade = $grade_item->get_grade($exception->userid);
+            $grade->excluded = time();
+            $grade->update();
+        }
+    }
 }
 
 /**

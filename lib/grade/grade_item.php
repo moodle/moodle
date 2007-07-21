@@ -983,6 +983,25 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Get (or create if not exist yet) grade for this user
+     * @param int $userid
+     * @return object grade_grade object instance
+     */
+    function get_grade($userid) {
+        if (empty($this->id)) {
+            debugging('Can not use before insert');
+            return false;
+        }
+
+        $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$this->id));
+        if (empty($grade->id)) {
+            $grade->insert();
+        }
+
+        return $grade;
+    }
+
+    /**
      * Returns the sortorder of this grade_item. This method is also available in
      * grade_category, for cases where the object type is not know.
      * @return int Sort order

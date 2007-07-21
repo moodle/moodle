@@ -132,6 +132,12 @@ class grade_grade extends grade_object {
     var $overridden = 0;
 
     /**
+     * Grade excluded from aggregation functions
+     * @var boolean $excluded
+     */
+    var $excluded = 0;
+
+    /**
      * Loads the grade_grade_text object linked to this grade (through the intersection of itemid and userid), and
      * saves it as a class variable for this final object.
      * @return object
@@ -195,8 +201,58 @@ class grade_grade extends grade_object {
         return !empty($this->locked) or $this->grade_item->is_locked();
     }
 
+    /**
+     * Checks if grade overridden
+     * @return boolean
+     */
     function is_overridden() {
         return !empty($this->overridden);
+    }
+
+    /**
+     * Set the overridden status of grade
+     * @param boolean $state requested overridden state
+     * @return boolean true is db state changed
+     */
+    function set_overridden($state) {
+        if (empty($this->overridden) and $state) {
+            $this->overridden = time();
+            $this->update();
+            return true;
+
+        } else if (!empty($this->overridden) and !$state) {
+            $this->overridden = 0;
+            $this->update();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if grade excluded from aggregation functions
+     * @return boolean
+     */
+    function is_excluded() {
+        return !empty($this->excluded);
+    }
+
+    /**
+     * Set the excluded status of grade
+     * @param boolean $state requested excluded state
+     * @return boolean true is db state changed
+     */
+    function set_excluded($state) {
+        if (empty($this->excluded) and $state) {
+            $this->excluded = time();
+            $this->update();
+            return true;
+
+        } else if (!empty($this->excluded) and !$state) {
+            $this->excluded = 0;
+            $this->update();
+            return true;
+        }
+        return false;
     }
 
     /**

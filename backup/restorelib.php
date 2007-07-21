@@ -1540,6 +1540,7 @@
                                     $grade->locktime = backup_todb($ite_info['#']['LOCKTIME']['0']['#']);
                                     $grade->exported = backup_todb($ite_info['#']['EXPORTED']['0']['#']);
                                     $grade->overridden = backup_todb($ite_info['#']['OVERRIDDEN']['0']['#']);
+                                    $grade->excluded = backup_todb($ite_info['#']['EXCLUDED']['0']['#']);
                                 
                                     insert_record('grade_grades', $grade);
                                     

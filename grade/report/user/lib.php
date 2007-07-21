@@ -110,9 +110,7 @@ class grade_report_user extends grade_report {
 
                 $data = array();
 
-                $params->itemid = $grade_item->id;
-                $params->userid = $this->user->id;
-                $grade_grade = new grade_grade($params);
+                $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
                 $grade_text = $grade_grade->load_text();
 
                 /// prints mod icon if available
@@ -137,6 +135,12 @@ class grade_report_user extends grade_report {
 
                 /// prints the grade
 
+                if ($grade_grade->is_excluded()) {
+                    $excluded = get_tring('excluded', 'grades').' ';
+                } else {
+                    $excluded = '';
+                }
+
                 if ($grade_item->scaleid) {
                     // using scales
                     if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
@@ -144,14 +148,14 @@ class grade_report_user extends grade_report {
                         // reindex because scale is off 1
                         // invalid grade if gradeval < 1
                         if ((int) $grade_grade->finalgrade < 1) {
-                            $data[] = '-';
+                            $data[] = $excluded.'-';
                         } else {
-                            $data[] = $scales[$grade_grade->finalgrade-1];
+                            $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
                         }
                     }
                 } else {
                     // normal grade, or text, just display
-                    $data[] = $this->get_grade_clean($grade_grade->finalgrade);
+                    $data[] = $excluded.$this->get_grade_clean($grade_grade->finalgrade);
                 }
 
                 /// prints percentage

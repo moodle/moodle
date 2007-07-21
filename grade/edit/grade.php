@@ -6,14 +6,16 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once 'grade_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
-$id       = optional_param('id', 0, PARAM_INT); // grade_grade id
-$action   = optional_param('action', 'view', PARAM_ALPHA);
+$id       = optional_param('id', 0, PARAM_INT);
+$itemid   = optional_param('itemid', 0, PARAM_INT);
+$userid   = optional_param('userid', 0, PARAM_INT);
 
 if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
 }
 
-// capabilities check
+// TODO: fix capabilities check
+// TODO: add proper check that grade is editable
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/grader:manage', $context);
@@ -22,114 +24,110 @@ require_capability('gradereport/grader:manage', $context);
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course->id);
 
-// TODO: add proper check that grade is editable
-
-$grade_grade = get_record('grade_grades', 'id', $id);
-$gradeitem = get_record('grade_items', 'id', $grade_grade->itemid);
-
-$mform = new edit_grade_form(null, array('gradeitem'=>$gradeitem, 'gpr'=>$gpr));
-if ($grade_grade = get_record('grade_grades', 'id', $id)) {
-    if ($grade_text = get_record('grade_grades_text', 'gradeid', $id)) {
-        if (can_use_html_editor()) {
-            $options = new object();
-            $options->smiley = false;
-            $options->filter = false;
-            $grade_text->feedback = format_text($grade_text->feedback, $grade_text->feedbackformat, $options);
-            $grade_text->feedbackformat = FORMAT_HTML;
-        }
-        $mform->set_data($grade_text);
+// security checks!
+if (!empty($id)) {
+    if (!$grade = get_record('grade_grades', 'id', $id)) {
+        error('Incorrect grade id');
     }
 
-    $grade_grade->locked = $grade_grade->locked > 0 ? 1:0;
-    $grade_grade->courseid = $courseid;
-    $mform->set_data($grade_grade);
+    if (!empty($itemid) and $itemid != $grade->itemid) {
+        error('Incorrect itemid');
+    }
+    $itemid = $grade->itemid;
+
+    if (!empty($userid) and $userid != $grade->userid) {
+        error('Incorrect userid');
+    }
+    $userid = $grade->userid;
+
+    unset($grade);
+
+} else if (empty($userid) or empty($itemid)) {
+    error('Missing userid and itemid');
+}
+
+if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) {
+    error('Can not find grade_item');
+}
+
+
+$mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr));
+
+if ($grade = get_record('grade_grades', 'itemid', $id, 'userid', $userid)) {
+    if ($grade_text = get_record('grade_grades_text', 'gradeid', $grade->id)) {
+        // always clean existing feedback - grading should not have XSS risk
+        if (can_use_html_editor()) {
+            $options = new object();
+            $options->smiley  = false;
+            $options->filter  = false;
+            $options->noclean = false;
+            $grade->feedback       = format_text($grade_text->feedback, $grade_text->feedbackformat, $options);
+            $grade->feedbackformat = FORMAT_HTML;
+        } else {
+            $grade->feedback       = clean_text($grade_text->feedback, $grade_text->feedbackformat);
+            $grade->feedbackformat = $grade_text->feedbackformat;
+        }
+    }
+
+    $grade->locked     = $grade->locked     > 0 ? 1:0;
+    $grade->overridden = $grade->overridden > 0 ? 1:0;
+    $grade->excluded   = $grade->excluded   > 0 ? 1:0;
+
+    $mform->set_data($grade);
 
 } else {
-    $mform->set_data(array('courseid'=>$course->id, 'id' => $id));
+    $mform->set_data(array('itemid'=>$itemid, 'userid'=>$userid));
 }
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
+
 // form processing
 } else if ($data = $mform->get_data()) {
-    $grade_grade = new grade_grade(array('id'=>$id));
-    $grade_item = new grade_item(array('id'=>$grade_grade->itemid));
-    $grade_item->update_final_grade($grade_grade->userid, $data->finalgrade, NULL, NULL, $data->feedback, $data->feedbackformat);
+    $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
-    // Assign finalgrade value
-    $grade_grade->finalgrade = $data->finalgrade;
+    // update final grade or feedback
+    $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);
 
-    // set locked
+    $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
+
+    $grade_grade->set_hidden($data->hidden); // TODO: this is wrong!
+
+    // ignore overridden flag when changing final grade
+    if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
+        if ($grade_grade->set_overridden($data->overridden) and empty($data->overridden)) {
+            $grade_item->force_regrading(); // force regrading only when clearing the flag
+        }
+    }
+
+    if ($grade_grade->set_excluded($data->excluded)) {
+        $grade_item->force_regrading();
+    }
+
     $grade_grade->set_locked($data->locked);
-
-    // set hidden
-    $grade_grade->set_hidden($data->hidden);
-
-    // set locktime
     $grade_grade->set_locktime($data->locktime);
 
     redirect($returnurl);
 }
 
-// Get extra data related to this feedback
-$query = "SELECT a.id AS userid, a.firstname, a.lastname,
-                 b.id AS itemid, b.itemname, b.grademin, b.grademax, b.iteminstance, b.itemmodule, b.scaleid,
-                 c.finalgrade
-            FROM {$CFG->prefix}user a,
-                 {$CFG->prefix}grade_items b,
-                 {$CFG->prefix}grade_grades c
-           WHERE c.id = $id
-             AND b.id = c.itemid
-             AND a.id = c.userid";
-
-$extra_info = get_record_sql($query) ;
-$extra_info->grademin = round($extra_info->grademin);
-$extra_info->grademax = round($extra_info->grademax);
-$extra_info->finalgrade = round($extra_info->finalgrade);
-
-if (!empty($extra_info->itemmodule) && !empty($extra_info->iteminstance)) {
-    $extra_info->course_module = get_coursemodule_from_instance($extra_info->itemmodule, $extra_info->iteminstance, $courseid);
-}
-
-$stronascaleof   = get_string('onascaleof', 'grades', $extra_info);
 $strgrades       = get_string('grades');
-$strgrade        = get_string('grade');
 $strgraderreport = get_string('graderreport', 'grades');
-$strgrade     = get_string('grade', 'grades');
-$strgradeedit = get_string('gradeedit', 'grades');
-$strgradeview = get_string('gradeview', 'grades');
-$strstudent      = get_string('student', 'grades');
-$strgradeitem    = get_string('gradeitem', 'grades');
-
-$feedback = null;
-$heading = ${"strgrade$action"};
-if (!empty($action) && $action == 'view' && !empty($grade_text->feedback)) {
-    $feedback = "<p><strong>$strgrade</strong>:</p><p>$grade_text->feedback</p>";
-}
+$strgradeedit    = get_string('editgrade', 'grades');
+$struser         = get_string('user');
 
 $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$heading, 'link'=>'', 'type'=>'misc'));
+             array('name'=>$strgradeedit, 'link'=>'', 'type'=>'misc'));
 
 $navigation = build_navigation($nav);
 
 /*********** BEGIN OUTPUT *************/
 
-print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $heading,
-    ': ' . $heading , $navigation, '', '', true, '', navmenu($course));
+print_header_simple($strgrades . ': ' . $strgraderreport . ': ' . $strgradeedit,
+    ': ' . $strgradeedit , $navigation, '', '', true, '', navmenu($course));
 
-print_heading($heading);
+print_heading($strgradeedit);
 
 print_simple_box_start("center");
-
-// Student name and link
-echo "<p><strong>$strstudent:</strong> <a href=\"" . $CFG->wwwroot . '/user/view.php?id='
-     . $extra_info->userid . '">' . fullname($extra_info) . "</a></p>";
-
-// Grade item name and link
-if (!empty($extra_info->course_module) && !empty($extra_info->itemmodule)) {
-    echo "<p><strong>$strgradeitem:</strong> <a href=\"" . $CFG->wwwroot . '/mod/' . $extra_info->itemmodule
-         . '/view.php?id=' . $extra_info->course_module->id . "&amp;courseid=$courseid\">$extra_info->itemname</a></p>";
-}
 
 // Form if in edit or add modes
 $mform->display();
