@@ -32,31 +32,29 @@
  * @package moodlecore
  */
 
+// category aggregation types
 define('GRADE_AGGREGATE_MEAN_ALL', 0);
 define('GRADE_AGGREGATE_MEAN_GRADED', 1);
-define('GRADE_AGGREGATE_MEDIAN', 2);
-define('GRADE_AGGREGATE_MIN', 3);
-define('GRADE_AGGREGATE_MAX', 4);
-define('GRADE_AGGREGATE_MODE', 5);
-define('GRADE_AGGREGATE_WEIGHTED_MEAN_ALL', 6);
-define('GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED', 7);
-define('GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL', 8);
-define('GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED', 9);
+define('GRADE_AGGREGATE_MEDIAN_ALL', 2);
+define('GRADE_AGGREGATE_MEDIAN_GRADED', 3);
+define('GRADE_AGGREGATE_MIN_ALL', 4);
+define('GRADE_AGGREGATE_MIN_GRADED', 5);
+define('GRADE_AGGREGATE_MAX_ALL', 6);
+define('GRADE_AGGREGATE_MAX_GRADED', 7);
+define('GRADE_AGGREGATE_MODE_ALL', 8);
+define('GRADE_AGGREGATE_MODE_GRADED', 9);
+define('GRADE_AGGREGATE_WEIGHTED_MEAN_ALL', 10);
+define('GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED', 11);
+define('GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL', 12);
+define('GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED', 13);
 
-define('GRADE_CHILDTYPE_ITEM', 0);
-define('GRADE_CHILDTYPE_CAT', 1);
-
-define('GRADE_ITEM', 0); // Used to compare class names with CHILDTYPE values
-define('GRADE_CATEGORY', 1); // Used to compare class names with CHILDTYPE values
-
-define('GRADE_CATEGORY_CONTRACTED', 0); // The state of a category header in the grader report
-define('GRADE_CATEGORY_EXPANDED', 1); // The state of a category header in the grader report
-
+// grade types
 define('GRADE_TYPE_NONE', 0);
 define('GRADE_TYPE_VALUE', 1);
 define('GRADE_TYPE_SCALE', 2);
 define('GRADE_TYPE_TEXT', 3);
 
+// grade_update() return status
 define('GRADE_UPDATE_OK', 0);
 define('GRADE_UPDATE_FAILED', 1);
 define('GRADE_UPDATE_MULTIPLE', 2);
@@ -68,11 +66,10 @@ define('GRADE_HISTORY_INSERT', 1);
 define('GRADE_HISTORY_UPDATE', 2);
 define('GRADE_HISTORY_DELETE', 3);
 
-// Common directories
-define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
-define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
-
 // Grader reports
+define('GRADE_CATEGORY_CONTRACTED', 0); // The state of a category header in the grader report
+define('GRADE_CATEGORY_EXPANDED', 1); // The state of a category header in the grader report
+
 define('GRADE_REPORT_AGGREGATION_POSITION_LEFT', 0);
 define('GRADE_REPORT_AGGREGATION_POSITION_RIGHT', 1);
 define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);
@@ -83,6 +80,10 @@ define('GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER', 2);
 define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default');
 define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit');
 define('GRADE_REPORT_PREFERENCE_UNUSED', -1);
+
+// Common directories
+define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
+define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
 
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
@@ -351,7 +352,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         if (!empty($updated_item) and $updated_item->id == $gid) {
             $grade_items[$gid]->needsupdate = 1;
 
-        } else if ($grade_items[$gid]->is_course_item() or $grade_items[$gid]->is_category_item() or $grade_items[$gid]->is_calculated()) {
+        } else if ($gitem->is_course_item() or $gitem->is_category_item() or $gitem->is_calculated()) {
             $grade_items[$gid]->needsupdate = 1;
         }
 
@@ -362,6 +363,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     $errors = array();
     $finalids = array();
     $gids     = array_keys($grade_items);
+    $failed = 0;
 
     while (count($finalids) < count($gids)) { // work until all grades are final or error found
         $count = 0;
@@ -399,6 +401,12 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         }
 
         if ($count == 0) {
+            $failed++;
+        } else {
+            $failed = 0;
+        }
+
+        if ($failed > 1) {
             foreach($gids as $gid) {
                 if (in_array($gid, $finalids)) {
                     continue; // this one is ok
@@ -661,35 +669,54 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
 /**
  * This function is used to migrade old date and settings from old gradebook into new grading system.
- *
- * TODO:
- *   - category weight not used - we would have to create extra top course grade calculated category
- *   - exta_credit item flag not used - does not fit all our aggregation types, could be used in SUM only
+ * @param int $courseid
  */
-function grade_oldgradebook_upgrade($courseid) {
+function grade_upgrade_oldgradebook($courseid) {
     global $CFG;
 
+    // regrade everything
+    grade_force_full_regrading($courseid);
+
+    // course grade data
+    $course_category = grade_category::fetch_course_category($courseid);
+    $course_item     = $course_category->get_grade_item();
+
+    // first create all categories if needed
     $categories = array();
-    if ($oldcats = get_records('grade_category', 'courseid', $courseid)) {
+    $oldcats = get_records('grade_category', 'courseid', $courseid, 'id');
+
+    if (empty($oldcats) or count($oldcats) == 1) {
+        $course_category->aggregation = GRADE_AGGREGATE_MEAN_ALL;
+        $course_category->update('upgrade');
+        if ($oldcats) {
+            $oldcat = reset($oldcats);
+            $categories[$oldcat->id] =& $course_category;
+        }
+
+    } else {
         foreach ($oldcats as $oldcat) {
             $newcat = new grade_category(array('courseid'=>$courseid, 'fullname'=>$oldcat->name));
             $newcat->droplow     = $oldcat->drop_x_lowest;
-            $newcat->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+            $newcat->aggregation = GRADE_AGGREGATE_MEAN_ALL;
 
             if (empty($newcat->id)) {
-                $newcat->insert();
+                $newcat->insert('upgrade');
             } else {
-                $newcat->update();
+                $newcat->update('upgrade');
             }
 
-            $categories[$oldcat->id] = $newcat;
+            $categories[$oldcat->id] =& $newcat;
 
             $catitem = $newcat->get_grade_item();
-            $catitem->gradetype  = GRADE_TYPE_VALUE;
-            $catitem->plusfactor = $oldcat->bonus_points;
-            $catitem->hidden     = $oldcat->hidden;
-            $catitem->update();
+            $catitem->gradetype       = GRADE_TYPE_VALUE;
+            $catitem->plusfactor      = $oldcat->bonus_points;
+            $catitem->hidden          = $oldcat->hidden;
+            $catitem->aggregationcoef = $oldcat->weight;
+            $catitem->update('upgrade');
         }
+
+        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN_ALL;
+        $course_category->update('upgrade');
     }
 
     // get all grade items with mod details
@@ -701,19 +728,27 @@ function grade_oldgradebook_upgrade($courseid) {
     if ($olditems = get_records_sql($sql)) {
         foreach ($olditems as $olditem) {
             $newitem = new grade_item(array('courseid'=>$olditem->courseid, 'itemtype'=>'mod', 'itemmodule'=>$olditem->modname, 'iteminstance'=>$olditem->cminstance, 'itemnumber'=>0));
-            if (!empty($olditem->category)) {
-                // we do this low level stuff to get some speedup during upgrade
-                $newitem->set_parent($categories[$olditem->category]->id);
+            $newitem->multfactor      = $olditem->scale_grade;
+            $newitem->aggregationcoef = $olditem->extra_credit;
+            if ($olditem->extra_credit and $categories[$olditem->category]->aggregation != GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL) {
+                $categories[$olditem->category]->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL;
+                $categories[$olditem->category]->update('upgrade');
             }
-            $newitem->gradetype = GRADE_TYPE_NONE;
-            $newitem->multfactor = $olditem->scale_grade;
+
             if (empty($newitem->id)) {
-                $newitem->insert();
+                $newitem->gradetype = GRADE_TYPE_NONE; // type not known yet
+                $newitem->insert('upgrade');
             } else {
-                $newitem->update();
+                $newitem->update('upgrade');
+            }
+
+            if (!empty($olditem->category)) {
+                $newitem->set_parent($categories[$olditem->category]->id);
             }
         }
     }
+
+    // setup up exception handling
 }
 
 /**

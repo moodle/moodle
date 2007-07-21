@@ -433,7 +433,24 @@ class grade_category extends grade_object {
             $grade_values[$k] = grade_grade::standardise_score($v, $items[$k]->grademin, $items[$k]->grademax, 0, 1);
         }
 
-        //limit and sort
+        // use min grade if grade missing for these types
+        switch ($this->aggregation) {
+            case GRADE_AGGREGATE_MEAN_ALL:
+            case GRADE_AGGREGATE_MEDIAN_ALL:
+            case GRADE_AGGREGATE_MIN_ALL:
+            case GRADE_AGGREGATE_MAX_ALL:
+            case GRADE_AGGREGATE_MODE_ALL:
+            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL:
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL:
+                foreach($items as $itemid=>$value) {
+                    if (!isset($grade_values[$itemid])) {
+                        $grade_values[$itemid] = 0;
+                    }
+                }
+                break;
+        }
+
+        // limit and sort
         $this->apply_limit_rules($grade_values);
         asort($grade_values, SORT_NUMERIC);
 
@@ -450,7 +467,8 @@ class grade_category extends grade_object {
 
     /// start the aggregation
         switch ($this->aggregation) {
-            case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
+            case GRADE_AGGREGATE_MEDIAN_ALL: // Middle point value in the set: ignores frequencies
+            case GRADE_AGGREGATE_MEDIAN_GRADED:
                 $num = count($grade_values);
                 $grades = array_values($grade_values);
                 if ($num % 2 == 0) {
@@ -460,15 +478,18 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_MIN:
+            case GRADE_AGGREGATE_MIN_ALL:
+            case GRADE_AGGREGATE_MIN_GRADED:
                 $rawgrade = reset($grade_values);
                 break;
 
-            case GRADE_AGGREGATE_MAX:
+            case GRADE_AGGREGATE_MAX_ALL:
+            case GRADE_AGGREGATE_MAX_GRADED:
                 $rawgrade = array_pop($grade_values);
                 break;
 
-            case GRADE_AGGREGATE_MODE:       // the most common value, the highest one if multimode
+            case GRADE_AGGREGATE_MODE_ALL:       // the most common value, average used if multimode
+            case GRADE_AGGREGATE_MODE_GRADED:
                 $freq = array_count_values($grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
@@ -477,33 +498,16 @@ class grade_category extends grade_object {
                 $rawgrade = reset($modes);
                 break;
 
-            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL: // Weighted average of all possible final grades
-                $weightsum = 0;
-                $sum       = 0;
-                foreach($items as $key=>$value) {
-                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0;
-                    if ($items[$key]->aggregationcoef <= 0) {
-                        continue;
-                    }
-                    $weightsum += $items[$key]->aggregationcoef;
-                    $sum       += $items[$key]->aggregationcoef * $grade_value;
-                }
-                if ($weightsum == 0) {
-                    $rawgrade = null;
-                } else {
-                    $rawgrade = $sum / $weightsum;
-                }
-                break;
-
             case GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED: // Weighted average of all existing final grades
+            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL:
                 $weightsum = 0;
                 $sum       = 0;
-                foreach($grade_values as $key=>$grade_value) {
-                    if ($items[$key]->aggregationcoef <= 0) {
+                foreach($grade_values as $itemid=>$grade_value) {
+                    if ($items[$itemid]->aggregationcoef <= 0) {
                         continue;
                     }
-                    $weightsum += $items[$key]->aggregationcoef;
-                    $sum       += $items[$key]->aggregationcoef * $grade_value;
+                    $weightsum += $items[$itemid]->aggregationcoef;
+                    $sum       += $items[$itemid]->aggregationcoef * $grade_value;
                 }
                 if ($weightsum == 0) {
                     $rawgrade = null;
@@ -513,33 +517,15 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL: // special average
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED:
                 $num = 0;
                 $sum = 0;
-                foreach($items as $key=>$value) {
-                    $grade_value = isset($grade_values[$key]) ? $grade_values[$key] : 0;
-                    if ($items[$key]->aggregationcoef == 0) {
+                foreach($grade_values as $itemid=>$grade_value) {
+                    if ($items[$itemid]->aggregationcoef == 0) {
                         $num += 1;
                         $sum += $grade_value;
-                    } else if ($items[$key]->aggregationcoef > 0) {
-                        $sum += $items[$key]->aggregationcoef * $grade_value;
-                    }
-                }
-                if ($num == 0) {
-                    $rawgrade = $sum; // only extra credits or wrong coefs
-                } else {
-                    $rawgrade = $sum / $num;
-                }
-                break;
-
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED: // special average
-                $num = 0;
-                $sum = 0;
-                foreach($grade_values as $key=>$grade_value) {
-                    if ($items[$key]->aggregationcoef == 0) {
-                        $num += 1;
-                        $sum += $grade_value;
-                    } else if ($items[$key]->aggregationcoef > 0) {
-                        $sum += $items[$key]->aggregationcoef * $grade_value;
+                    } else if ($items[$itemid]->aggregationcoef > 0) {
+                        $sum += $items[$itemid]->aggregationcoef * $grade_value;
                     }
                 }
                 if ($num == 0) {
@@ -550,11 +536,6 @@ class grade_category extends grade_object {
                 break;
 
             case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade counted as minimum
-                $num = count($items);     // you can calculate sum from this one if you multiply it with count($this->depends_on() ;-)
-                $sum = array_sum($grade_values);
-                $rawgrade = $sum / $num;
-                break;
-
             case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished are not calculated
             default:
                 $num = count($grade_values);
