@@ -754,7 +754,7 @@ class grade_test extends UnitTestCase {
         $grade_item->itemname = 'unittestgradeitem2';
         $grade_item->itemtype = 'import';
         $grade_item->itemmodule = 'assignment';
-        $grade_item->calculation = '= [#gi'.$this->grade_items[0]->id.'#] + 30 + [item id 0] - [item id 0]';
+        $grade_item->calculation = '= ##gi'.$this->grade_items[0]->id.'## + 30 + [[item id 0]] - [[item id 0]]';
         $grade_item->gradetype = GRADE_TYPE_VALUE;
         $grade_item->iteminstance = 2;
         $grade_item->itemnumber = null;

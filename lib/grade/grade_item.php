@@ -868,13 +868,13 @@ class grade_item extends grade_object {
         }
 
         /*
-         * The main reason why we use the [#gixxx#] instead of [idnumber] is speed of depends_on(),
+         * The main reason why we use the ##gixxx## instead of [[idnumber]] is speed of depends_on(),
          * we would have to fetch all course grade items to find out the ids.
          * Also if user changes the idnumber the formula does not need to be updated.
          */
 
-        // first detect if we need to change calculation formula from [idnumber] to [#giXXX#] (after backup, etc.)
-        if (!$this->calculation_normalized and preg_match('/\[(?!#gi)(.*?)\]/', $this->calculation)) {
+        // first detect if we need to change calculation formula from [[idnumber]] to ##giXXX## (after backup, etc.)
+        if (!$this->calculation_normalized and preg_match('/##gi\d+##/', $this->calculation)) {
             $this->set_calculation($this->calculation);
         }
 
@@ -918,12 +918,12 @@ class grade_item extends grade_object {
             return '';
         }
 
-        // denormalize formula - convert [#giXX#] to [idnumber]
-        if (preg_match_all('/\[#gi([0-9]+)#\]/', $formula, $matches)) {
+        // denormalize formula - convert ##giXX## to [[idnumber]]
+        if (preg_match_all('/##gi(\d+)##/', $formula, $matches)) {
             foreach ($matches[1] as $id) {
                 if ($grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$courseid))) {
                     if (!empty($grade_item->idnumber)) {
-                        $formula = str_replace('[#gi'.$grade_item->id.'#]', '['.$grade_item->idnumber.']', $formula);
+                        $formula = str_replace('##gi'.$grade_item->id.'##', '[['.$grade_item->idnumber.']]', $formula);
                     }
                 }
             }
@@ -947,10 +947,10 @@ class grade_item extends grade_object {
 
         }
 
-        // normalize formula - we want grade item ids [#giXXX#] instead of [idnumber]
+        // normalize formula - we want grade item ids ##giXXX## instead of [[idnumber]]
         if ($grade_items = grade_item::fetch_all(array('courseid'=>$courseid))) {
             foreach ($grade_items as $grade_item) {
-                $formula = str_replace('['.$grade_item->idnumber.']', '[#gi'.$grade_item->id.'#]', $formula);
+                $formula = str_replace('[['.$grade_item->idnumber.']]', '##gi'.$grade_item->id.'##', $formula);
             }
         }
 
@@ -1072,7 +1072,7 @@ class grade_item extends grade_object {
         }
 
         if ($this->is_calculated()) {
-            if (preg_match_all('/\[#gi([0-9]+)#\]/', $this->calculation, $matches)) {
+            if (preg_match_all('/##gi(\d+)##/', $this->calculation, $matches)) {
                 return array_unique($matches[1]); // remove duplicates
             } else {
                 return array();
@@ -1367,7 +1367,7 @@ class grade_item extends grade_object {
         $useditems = $this->depends_on();
 
         // prepare formula and init maths library
-        $formula = preg_replace('/\[#(gi[0-9]+)#\]/', '\1', $this->calculation);
+        $formula = preg_replace('/##(gi\d+)##/', '\1', $this->calculation);
         $this->formula = new calc_formula($formula);
 
         // where to look for final grades?
@@ -1512,7 +1512,7 @@ class grade_item extends grade_object {
         }
 
         // prepare formula and init maths library
-        $formula = preg_replace('/\[#(gi[0-9]+)#\]/', '\1', $formula);
+        $formula = preg_replace('/##(gi\d+)##/', '\1', $formula);
         $formula = new calc_formula($formula);
 
         // get used items

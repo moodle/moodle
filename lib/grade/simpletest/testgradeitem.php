@@ -475,7 +475,7 @@ class grade_item_test extends grade_test {
         $grade_item = new grade_item($this->grade_items[1]);
         $this->assertTrue(method_exists($grade_item, 'is_calculated'));
         $grade_itemsource = new grade_item($this->grade_items[0]);
-        $normalizedformula = str_replace('['.$grade_itemsource->idnumber.']', '[#gi'.$grade_itemsource->id.'#]', $this->grade_items[1]->calculation);
+        $normalizedformula = str_replace('[['.$grade_itemsource->idnumber.']]', '##gi'.$grade_itemsource->id.'##', $this->grade_items[1]->calculation);
 
         $this->assertTrue($grade_item->is_calculated());
         $this->assertEqual($normalizedformula, $grade_item->calculation);
@@ -486,10 +486,10 @@ class grade_item_test extends grade_test {
         $this->assertTrue(method_exists($grade_item, 'set_calculation'));
         $grade_itemsource = new grade_item($this->grade_items[0]);
 
-        $grade_item->set_calculation('=['.$grade_itemsource->idnumber.']');
+        $grade_item->set_calculation('=[['.$grade_itemsource->idnumber.']]');
 
         $this->assertTrue(!empty($grade_item->needsupdate));
-        $this->assertEqual('=[#gi'.$grade_itemsource->id.'#]', $grade_item->calculation);
+        $this->assertEqual('=##gi'.$grade_itemsource->id.'##', $grade_item->calculation);
     }
 
     function test_grade_item_get_calculation() {
@@ -497,7 +497,7 @@ class grade_item_test extends grade_test {
         $this->assertTrue(method_exists($grade_item, 'get_calculation'));
         $grade_itemsource = new grade_item($this->grade_items[0]);
 
-        $denormalizedformula = str_replace('[#gi'.$grade_itemsource->id.'#]', '['.$grade_itemsource->idnumber.']', $this->grade_items[1]->calculation);
+        $denormalizedformula = str_replace('##gi'.$grade_itemsource->id.'##', '[['.$grade_itemsource->idnumber.']]', $this->grade_items[1]->calculation);
 
         $formula = $grade_item->get_calculation();
         $this->assertTrue(!empty($grade_item->needsupdate));
