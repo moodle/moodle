@@ -629,6 +629,7 @@ class grade_item extends grade_object {
                     }
                 }
             }
+            rs_close($rs);
         }
 
         return $result;
@@ -1430,6 +1431,7 @@ class grade_item extends grade_object {
                     $return = false;
                 }
             }
+            rs_close($rs);
         }
 
         return $return;

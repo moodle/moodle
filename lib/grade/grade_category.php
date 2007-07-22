@@ -377,6 +377,7 @@ class grade_category extends grade_object {
                 }
                 $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
             }
+            rs_close($rs);
         }
 
         return true;
