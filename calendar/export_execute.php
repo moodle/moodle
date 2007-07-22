@@ -29,7 +29,7 @@ $allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupc
 
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
-        $courses = get_my_courses($user->id);
+        $courses = get_my_courses($user->id, NULL, 'id, visible, shortname');
         
         $include_user = ($what == 'all');
         if ($include_user) {
@@ -99,7 +99,6 @@ if(!empty($what) && !empty($time)) {
         die();
     }
 }
-
 $whereclause = calendar_sql_where($timestart, $timeend, $include_user ? array($user->id) : false, false, array_keys($courses), false);
 if($whereclause === false) {
     $events = array();
