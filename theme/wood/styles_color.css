@@ -11,7 +11,6 @@
 #grade-index table .generalboxcontent,
 #grade-exceptions table .generaltableheader,
 #grade-exceptions table .generalboxcontent,
-#mod-forum-view table.forumheaderlist td,
 #mod-glossary-report .generalbox .teacher,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
@@ -195,7 +194,6 @@ div.header,
 h2.header,
 h2.main,
 .sideblock .header,
-.forumpost,
 .navbar,
 table.files th,
 .tabrow0 ul,
@@ -214,7 +212,7 @@ legend,
 
 #mod-chat-gui_header_js-chatinput,
 .forumpost .header,
-#mod-forum-view table.forumheaderlist th,
+.forumpost .header .starter,
 .glossarypost .entryheader,
 .glossarycomment .entryheader,
 .glossarypost .entryattachment,
@@ -238,6 +236,8 @@ legend,
 .entrybox,
 .userinfobox,
 .generaltable,
+.forumheaderlist,
+.forumpost,
 #course-user .section, 
 #site-index .sitetopic .sitetopiccontent,
 #calendar .maincalendar .filters table,
@@ -287,6 +287,7 @@ form.mform fieldset,
 #grade-exceptions .generalboxcontent,
 .generaltable td,
 .generaltable .cell,
+.forumheaderlist td,
 .forumpost .left,
 .r0 {
     background-image:url(gradient2.jpg);
@@ -387,11 +388,9 @@ table .flexible .r1,
 /** Places using just standard borders **/
 
 .read,
-.forumheaderlist,
 .glossarypost,
 .glossarycomment,
-#mod-assignment-submissions .submissions,
-#mod-forum-view .forumheaderlist {
+#mod-assignment-submissions .submissions {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
     border-bottom:1px solid #330000;
