@@ -55,7 +55,7 @@ function xmldb_data_upgrade($oldversion=0) {
     }
 
 
-    if ($result && $oldversion < 2007060600) {
+    if ($result && $oldversion < 2007072200) {
         require_once($CFG->dirroot.'/mod/data/lib.php');
         // too much debug output
         $db->debug = false;

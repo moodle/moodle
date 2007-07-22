@@ -47,14 +47,6 @@ function xmldb_quiz_upgrade($oldversion=0) {
         $result = $result && add_index($table, $index);
     }
 
-    if ($result && $oldversion < 2007061100) {
-        require_once $CFG->dirroot.'/mod/quiz/lib.php';
-        // too much debug output
-        $db->debug = false;
-        quiz_update_grades();
-        $db->debug = true;
-    }
-
     if ($result && $oldversion < 2007070200) {
 
     /// Changing precision of field timelimit on table quiz to (10)
@@ -64,6 +56,14 @@ function xmldb_quiz_upgrade($oldversion=0) {
 
     /// Launch change of precision for field timelimit
         $result = $result && change_field_precision($table, $field);
+    }
+
+    if ($result && $oldversion < 2007072200) {
+        require_once $CFG->dirroot.'/mod/quiz/lib.php';
+        // too much debug output
+        $db->debug = false;
+        quiz_update_grades();
+        $db->debug = true;
     }
 
     return $result;

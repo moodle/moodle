@@ -609,7 +609,7 @@ function grade_update_mod_grades($modinstance) {
 function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
 
     // does it already exist?
-    if ($grade_items = grade_grade::fetch_all(array('courseid'=>$modinstance->course, 'itemtype'=>'mod', 'itemmodule'=>$modinstance->modname, 'iteminstance'=>$modinstance->id, 'itemnumber'=>0))) {
+    if ($grade_items = grade_item::fetch_all(array('courseid'=>$modinstance->course, 'itemtype'=>'mod', 'itemmodule'=>$modinstance->modname, 'iteminstance'=>$modinstance->id, 'itemnumber'=>0))) {
         if (count($grade_items) > 1) {
             debugging('Multiple legacy grade_items found.');
             return false;
@@ -667,103 +667,6 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     return $grade_item;
 }
 
-/**
- * This function is used to migrade old data and settings from old gradebook into new grading system.
- * @param int $courseid
- */
-function grade_upgrade_oldgradebook($courseid) {
-    global $CFG;
-
-    // regrade everything
-    grade_force_full_regrading($courseid);
-
-    // course grade data
-    $course_category = grade_category::fetch_course_category($courseid);
-    $course_item     = $course_category->get_grade_item();
-
-    // first create all categories if needed
-    $categories = array();
-    $oldcats = get_records('grade_category', 'courseid', $courseid, 'id');
-
-    if (empty($oldcats) or count($oldcats) == 1) {
-        $course_category->aggregation = GRADE_AGGREGATE_MEAN_ALL;
-        $course_category->update('upgrade');
-        if ($oldcats) {
-            $oldcat = reset($oldcats);
-            $categories[$oldcat->id] =& $course_category;
-        }
-
-    } else {
-        foreach ($oldcats as $oldcat) {
-            $newcat = new grade_category(array('courseid'=>$courseid, 'fullname'=>$oldcat->name));
-            $newcat->droplow     = $oldcat->drop_x_lowest;
-            $newcat->aggregation = GRADE_AGGREGATE_MEAN_ALL;
-
-            if (empty($newcat->id)) {
-                $newcat->insert('upgrade');
-            } else {
-                $newcat->update('upgrade');
-            }
-
-            $categories[$oldcat->id] =& $newcat;
-
-            $catitem = $newcat->get_grade_item();
-            $catitem->gradetype       = GRADE_TYPE_VALUE;
-            $catitem->plusfactor      = $oldcat->bonus_points;
-            $catitem->hidden          = $oldcat->hidden;
-            $catitem->aggregationcoef = $oldcat->weight;
-            $catitem->update('upgrade');
-        }
-
-        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN_ALL;
-        $course_category->update('upgrade');
-    }
-
-
-    $newitems = array();
-    // get all grade items with mod details
-    $sql = "SELECT gi.*, cm.idnumber as cmidnumber, m.name as modname
-              FROM {$CFG->prefix}grade_item gi, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-             WHERE gi.courseid=$courseid AND m.id=gi.modid AND cm.instance=gi.cminstance
-          ORDER BY gi.sortorder ASC";
-
-    if ($olditems = get_records_sql($sql)) {
-        foreach ($olditems as $olditem) {
-            $newitem = new grade_item(array('courseid'=>$olditem->courseid, 'itemtype'=>'mod', 'itemmodule'=>$olditem->modname, 'iteminstance'=>$olditem->cminstance, 'itemnumber'=>0));
-            $newitem->multfactor      = $olditem->scale_grade;
-            $newitem->aggregationcoef = $olditem->extra_credit;
-            if ($olditem->extra_credit and $categories[$olditem->category]->aggregation != GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL) {
-                $categories[$olditem->category]->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL;
-                $categories[$olditem->category]->update('upgrade');
-            }
-
-            if (empty($newitem->id)) {
-                $newitem->gradetype = GRADE_TYPE_NONE; // type not known yet
-                $newitem->insert('upgrade');
-            } else {
-                $newitem->update('upgrade');
-            }
-
-            if (!empty($olditem->category)) {
-                $newitem->set_parent($categories[$olditem->category]->id);
-            }
-            $newitems[$olditem->id] = $newitem;
-        }
-    }
-
-    // setup up exception handling - override grade with NULL
-    if ($exceptions = get_records('grade_exceptions', 'courseid', $courseid)) {
-        foreach ($exceptions as $exception) {
-            if (!array_key_exists($exception->grade_itemid, $newitems)) {
-                continue; // broken record
-            }
-            $grade_item = grade_item::fetch(array('id'=>$newitems[$exception->grade_itemid]));
-            $grade = $grade_item->get_grade($exception->userid);
-            $grade->excluded = time();
-            $grade->update();
-        }
-    }
-}
 
 /**
  * Builds an array of percentages indexed by integers for the purpose of building a select drop-down element.
@@ -775,4 +678,5 @@ function grade_upgrade_oldgradebook($courseid) {
 function build_percentages_array($steps=1, $order='desc', $lowest=0, $highest=100) {
     // TODO reject or implement
 }
+
 ?>

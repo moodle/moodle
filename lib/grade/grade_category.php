@@ -254,10 +254,11 @@ class grade_category extends grade_object {
     }
 
     function insert_course_category($courseid) {
-        $this->courseid = $courseid;
-        $this->fullname = 'course grade category';
-        $this->path     = null;
-        $this->parent   = null;
+        $this->courseid  = $courseid;
+        $this->fullname  = 'course grade category';
+        $this->path      = null;
+        $this->parent    = null;
+        $this->aggregate = GRADE_AGGREGATE_MEAN_ALL;
 
         if (!parent::insert('system')) {
             debugging("Could not insert this category: " . print_r($this, true));

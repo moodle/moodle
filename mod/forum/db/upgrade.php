@@ -32,7 +32,7 @@ function xmldb_forum_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
-    if ($result && $oldversion < 2007060600) {
+    if ($result && $oldversion < 2007072200) {
         require_once($CFG->dirroot.'/mod/forum/lib.php');
         // too much debug output
         $db->debug = false;
