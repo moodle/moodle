@@ -478,42 +478,41 @@ class auth_plugin_ldap extends auth_plugin_base {
         $droptablesql = array(); /// sql commands to drop the table (because session scope could be a problem for
                                  /// some persistent drivers like ODBTP (mssql) or if this function is invoked
                                  /// from within a PHP application using persistent connections
+        $temptable = $CFG->prefix . 'extuser';
+        $createtemptablesql = '';
 
         // configure a temp table
         print "Configuring temp table\n";
         switch (strtolower($CFG->dbfamily)) {
             case 'mysql':
-                $temptable = $CFG->prefix . 'extuser';
                 $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
-                execute_sql('CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) TYPE=MyISAM', false);
+                $createtemptablesql = 'CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) TYPE=MyISAM';
                 break;
             case 'postgres':
-                $temptable = $CFG->prefix . 'extuser';
                 $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
                 $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE TEMPORARY TABLE '. $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', false);
+                $createtemptablesql = 'CREATE TEMPORARY TABLE '. $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))';
                 break;
             case 'mssql':
-                $temptable = '#'.$CFG->prefix . 'extuser'; /// MSSQL temp tables begin with #
+                $temptable = '#'. $temptable; /// MSSQL temp tables begin with #
                 $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
                 $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', false);
+                $createtemptablesql = 'CREATE TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))';
                 break;
             case 'oracle':
-                $temptable = $CFG->prefix . 'extuser';
                 $droptablesql[] = 'TRUNCATE TABLE ' . $temptable; // oracle requires truncate before being able to drop a temp table
                 $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
                 $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE GLOBAL TEMPORARY TABLE '.$temptable.' (username VARCHAR(64), PRIMARY KEY (username)) ON COMMIT PRESERVE ROWS', false);
+                $createtemptablesql = 'CREATE GLOBAL TEMPORARY TABLE '.$temptable.' (username VARCHAR(64), PRIMARY KEY (username)) ON COMMIT PRESERVE ROWS';
                 break;
+        }
+
+
+        execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
+        echo "Creating temp table $temptable\n";
+        if(! execute_sql($createtemptablesql, false) ){
+            print  "Failed to create temporary users table - aborting\n";
+            exit;
         }
 
         print "Connecting to ldap...\n";
