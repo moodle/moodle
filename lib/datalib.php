@@ -682,7 +682,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$limit=0) {
 
-    global $USER;
+    global $CFG, $USER;
 
     // Default parameters
     $d_sort   = 'visible DESC,sortorder ASC';
@@ -744,37 +744,45 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
         // However for a typical student on a large system this can reduce the
         // number of courses considered from around 2,000 to around 2, with corresponding
         // reduction in the number of queries needed.
-        global $CFG;
-        $rs=get_recordset_sql(" 
-SELECT 
-    $fields 
-FROM 
-    {$CFG->prefix}role_assignments ra
-    INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
-    INNER JOIN {$CFG->prefix}course c ON x.instanceid=c.id AND x.contextlevel=50
-WHERE 
-    ra.userid=$userid
-UNION
-SELECT
-    $fields
-FROM
-    {$CFG->prefix}role_assignments ra
-    INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
-    INNER JOIN {$CFG->prefix}course_categories a ON (a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR a.id=x.instanceid) AND x.contextlevel=40
-    INNER JOIN {$CFG->prefix}course c ON c.category=a.id
-WHERE
-    ra.userid=$userid
-UNION
-SELECT 
-    $fields 
-FROM 
-    {$CFG->prefix}role_capabilities ca
-    INNER JOIN {$CFG->prefix}context x ON x.id=ca.contextid AND x.contextlevel=50
-    INNER JOIN {$CFG->prefix}course c ON c.id=x.instanceid
-WHERE 
-    ca.contextid <> {$sitecontext->id} AND ca.capability='moodle/course:view'
-ORDER BY $sort");           
-    } 
+        $rs=get_recordset_sql("
+            SELECT $fields
+            FROM {$CFG->prefix}course c, (
+                SELECT 
+                    c.id
+                FROM 
+                    {$CFG->prefix}role_assignments ra
+                    INNER JOIN {$CFG->prefix}context x ON x.id         = ra.contextid
+                    INNER JOIN {$CFG->prefix}course c  ON x.instanceid = c.id
+                WHERE 
+                    ra.userid      = $userid AND
+                    x.contextlevel = 50
+                UNION
+                SELECT 
+                    c.id
+                FROM 
+                    {$CFG->prefix}role_assignments ra
+                    INNER JOIN {$CFG->prefix}context x           ON x.id         = ra.contextid
+                    INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR x.instanceid = a.id
+                    INNER JOIN {$CFG->prefix}course c            ON c.category   = a.id
+                WHERE 
+                    ra.userid      = $userid AND
+                    x.contextlevel = 40
+                UNION
+                SELECT
+                    c.id
+                FROM
+                    {$CFG->prefix}role_capabilities ca
+                    INNER JOIN {$CFG->prefix}context x ON x.id = ca.contextid
+                    INNER JOIN {$CFG->prefix}course c  ON c.id = x.instanceid
+                WHERE 
+                    ca.capability  = 'moodle/course:view' AND
+                    ca.contextid  != {$sitecontext->id} AND
+                    x.contextlevel = 50
+            ) cids
+            WHERE c.id = cids.id
+            ORDER BY $sort"
+        );
+    }
 
     if ($rs && $rs->RecordCount() > 0) {
         while ($course = rs_fetch_next_record($rs)) {
