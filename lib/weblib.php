@@ -5437,8 +5437,9 @@ function redirect($url, $message='', $delay=-1) {
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
 /// Currenly only works in PHP 5.2+; we do not want strict PHP5 errors
-    $error = error_get_last();
-    $errorprinted = debugging('', DEBUG_DEVELOPER) && $CFG->debugdisplay && !empty($error) && ($error['type'] & DEBUG_DEVELOPER);
+    $lasterror = error_get_last();
+    $error = defined('DEBUGGING_PRINTED') or (!empty($lasterror) && ($lasterror['type'] & DEBUG_DEVELOPER));
+    $errorprinted = debugging('', DEBUG_ALL) && $CFG->debugdisplay && $error;
     if ($errorprinted) {
         $message = "<strong>Error output, so disabling automatic redirect.</strong></p><p>" . $message;
     }
@@ -6248,6 +6249,9 @@ function debugging($message='', $level=DEBUG_NORMAL) {
                 $CFG->debugdisplay = ini_get('display_errors');
             }
             if ($CFG->debugdisplay) {
+                if (!defined('DEBUGGING_PRINTED')) {
+                    define('DEBUGGING_PRINTED', 1); // indicates we have printed something
+                }
                 notify($message . $from, 'notifytiny');
             } else {
                 trigger_error($message . $from, E_USER_NOTICE);
