@@ -120,7 +120,8 @@ if ( $formdata = $mform->get_data() ) {
             "role4" => 1,
             "role5" => 1,
             "password" => $createpassword,
-            "oldusername" => $allowrenames);
+            "oldusername" => $allowrenames,
+            "emailstop" => 1);
 
             // --- get header (field names) ---
             $header = split($csv_delimiter, fgets($fp,1024));
