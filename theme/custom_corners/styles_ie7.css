@@ -14,8 +14,3 @@ div.i1 {
 div#header div.i3 {
     min-width: 0;
 }
-div.headermenu {
-    float: none;
-    top: expression(this.parentNode.top + 12 + 'px');
-    right: expression(this.parentNode.right + 12 + 'px');
-}

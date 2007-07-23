@@ -14,9 +14,3 @@ div.i1 {
 div#header div.i3 {
     min-width: 0;
 }
-div.headermenu {
-    float: none;
-    position: relative;
-    top: 0;
-    right: 0;
-}

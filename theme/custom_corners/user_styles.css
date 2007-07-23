@@ -127,13 +127,9 @@ p.copyright {
   text-align: center;
 }
 div.headermenu {
-  font-size: 0.75em;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  /*  background-color: #cccccc;
-  */
+  margin: 0;
   padding: 3px;
+  font-size: 0.75em;
 }
 div.headermenu div.logininfo {
   margin-bottom: 0.2em;
