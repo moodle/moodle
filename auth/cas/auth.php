@@ -57,7 +57,7 @@ class auth_plugin_cas extends auth_plugin_base {
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
-		$this->connectCAS();		
+		$this->connectCAS();	
         return phpCAS::isAuthenticated();
     }
     /**
@@ -84,16 +84,20 @@ class auth_plugin_cas extends auth_plugin_base {
      */
     function loginpage_hook() {
       global $frm;
-      global $test;
       global $CFG;
+	  global $SESSION;
+
       $site = get_site();
       $CASform = get_string("CASform","auth");
       $username = optional_param("username");
+
       if (!empty($username)) {
-          return;
+		  if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
+			  unset($SESSION->wantsurl);
+          return;		  
         }
-	
-	  // Test si cas activé et paramêtres non remplis
+
+		// Test si cas activé et paramêtres non remplis
 	  if (empty($this->config->hostname)) {
 		  return;
 		  }
@@ -104,8 +108,8 @@ class auth_plugin_cas extends auth_plugin_base {
 	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
-		if (phpCAS::getUser()=='esup9992')
-			$frm->username='erhar0062';
+//		if (phpCAS::getUser()=='esup9992')
+//			$frm->username='erhar0062';
 		$frm->password="passwdCas";		  
 		return;
 	 }	 	
