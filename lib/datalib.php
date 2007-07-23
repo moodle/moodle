@@ -703,7 +703,11 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     // If using default params, we may have it cached...
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         if (!empty($USER->mycourses[$doanything])) {
-            return $USER->mycourses[$doanything];
+            if ($limit && $limit < count($USER->mycourses[$doanything])) {
+                return array_slice($USER->mycourses[$doanything], 0, $limit, true);
+            } else {
+                return $USER->mycourses[$doanything];
+            }
         }
     }
 
@@ -761,11 +765,11 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                     c.id
                 FROM 
                     {$CFG->prefix}role_assignments ra
-                    INNER JOIN {$CFG->prefix}context x           ON x.id         = ra.contextid
+                    INNER JOIN {$CFG->prefix}context x ON x.id = ra.contextid
                     INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR x.instanceid = a.id
-                    INNER JOIN {$CFG->prefix}course c            ON c.category   = a.id
+                    INNER JOIN {$CFG->prefix}course c ON c.category = a.id
                 WHERE 
-                    ra.userid      = $userid AND
+                    ra.userid = $userid AND
                     x.contextlevel = 40
                 UNION
                 SELECT
@@ -816,7 +820,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     }
 
     // Cache if using default params...
-    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
+    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults && $limit == 0) {
         $USER->mycourses[$doanything] = $mycourses;
     }
     return $mycourses;
