@@ -2136,7 +2136,7 @@ function convert_urls_into_links(&$text) {
  *
  * @param string $needle The string to search for
  * @param string $haystack The string to search for $needle in
- * @param int $case ?
+ * @param int $case whether to do case-sensitive or insensitive matching. 
  * @return string
  * @todo Finish documenting this function
  */
