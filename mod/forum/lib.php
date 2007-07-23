@@ -2086,14 +2086,29 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     return $output;
 }
 
-
 /**
- * TODO document
+ * Print a forum post
+ * 
+ * @param object $post The post to print.
+ * @param integer $courseid The course this post belongs to.
+ * @param boolean $ownpost Whether this post belongs to the current user.
+ * @param boolean $reply Whether to print a 'reply' link at the bottom of the message. 
+ * @param boolean $link Just print a shortened version of the post as a link to the full post.
+ * @param object $ratings -- I don't really know -- 
+ * @param string $footer Extra stuff to print after the message.
+ * @param string $highlight Space-separated list of terms to highlight.
+ * @param int $post_read true, false or -99. If we already know whether this user
+ *          has read this post, pass that in, otherwise, pass in -99, and this
+ *          function will work it out.
+ * @param boolean $dummyifcantsee When forum_user_can_see_post says that
+ *          the current user can't see this post, if this argument is true 
+ *          (the default) then print a dummy 'you can't see this post' post.
+ *          If false, don't output anything at all.
  */
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false,
-                          $ratings=NULL, $footer="", $highlight="", $post_read=-99) {
+                          $ratings=NULL, $footer="", $highlight="", $post_read=-99, $dummyifcantsee=true) {
 
-    global $USER, $CFG, $SESSION;
+    global $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune;
     static $strpruneheading, $threadedmode;
@@ -2108,8 +2123,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
 
     if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
-        if (empty($SESSION->forum_search)) {
-            // just viewing, return
+        if (!$dummyifcantsee) {
             return;
         }
         echo '<a id="p'.$post->id.'"></a>';

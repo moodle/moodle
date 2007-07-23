@@ -247,8 +247,6 @@
         }
 
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
-        //search terms already highlighted - fiedorow - 9/2/2005
-        $SESSION->forum_search = true;
 
         // reconstruct the TRUSTTEXT properly after processing
         if ($ttpresent) {
@@ -256,8 +254,7 @@
         } else {
             $post->message = trusttext_strip($post->message); //make 100% sure TRUSTTEXT marker was not created during processing
         }
-        forum_print_post($post, $course->id, false, false, false, false, $fulllink);
-        unset($SESSION->forum_search);
+        forum_print_post($post, $course->id, false, false, false, false, $fulllink, '', -99, false);
 
         echo "<br />";
     }
