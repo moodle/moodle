@@ -375,7 +375,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                   var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
                   
                   var mid=w3c?").style":".style";
-				  which = which.substring(0,(which.length));
+                  which = which.substring(0,(which.length));
 
                   if (eval(beg+list+mid+".display") != "none") {
                       document.getElementById(which).src = "'.$scormpixdir.'/plus.gif";

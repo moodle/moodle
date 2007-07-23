@@ -99,10 +99,10 @@ class grade_export_xml extends grade_export {
                 echo '<assignment>'.$idnumber.'</assignment>';
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
                 echo '<student>'.$studentid.'</student>';
-		        echo '<score>'.$studentgrades[$index].'</score>';
-		        if ($feedback) {
+                echo '<score>'.$studentgrades[$index].'</score>';
+                if ($feedback) {
                     echo '<feedback>'.$this->comments[$studentid][$index].'</feedback>';
-		        }
+                }
                 echo '</result>';
 
                 // timestamp this if needed

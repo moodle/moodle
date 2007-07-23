@@ -87,11 +87,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         $search_attribs = array();
 
         foreach ($attrmap as $key=>$value) {
-          // Check if attribute is present  
-	  if (!isset($_SERVER[$value])){
-	   	$result[$key] = '';
-		continue;
-	   }
+            // Check if attribute is present  
+            if (!isset($_SERVER[$value])){
+                $result[$key] = '';
+                continue;
+            }
 
             // Make usename lowercase
             if ($key == 'username'){
@@ -185,7 +185,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * @param object $config Configuration object
      */
     function process_config($config) {
-	global $CFG;
+        global $CFG;
 
         // set to defaults if undefined
         if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
@@ -208,8 +208,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         set_config('changepasswordurl', $config->changepasswordurl, 'auth/shibboleth');
 
         // Check values and return false if something is wrong
-	// Patch Anyware Technologies (14/05/07)
-	if (($config->convert_data != '')&&(!file_exists($config->convert_data) || !is_readable($config->convert_data))){
+        // Patch Anyware Technologies (14/05/07)
+        if (($config->convert_data != '')&&(!file_exists($config->convert_data) || !is_readable($config->convert_data))){
             return false;
         }
 

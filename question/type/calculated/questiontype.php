@@ -577,9 +577,9 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
     function save_dataset_items($question, $fromform){
         // max datasets = 100 items
-		$max100 = 100 ;
-		$regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
-	//	echo "<pre>"; print_r($fromform);
+        $max100 = 100 ;
+        $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
+        // echo "<pre>"; print_r($fromform);
         if (empty($question->options)) {
             $this->get_question_options($question);
         }
@@ -642,10 +642,10 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         // adding supplementary items
         $numbertoadd =0;
         if (isset($fromform->addbutton) && $fromform->selectadd > 1 && $maxnumber < $max100 ) {
-	    $numbertoadd =$fromform->selectadd-1 ;
-	    if ( $max100 - $maxnumber < $numbertoadd ) {
-	        $numbertoadd = $max100 - $maxnumber ;
-	    }
+            $numbertoadd =$fromform->selectadd-1 ;
+            if ( $max100 - $maxnumber < $numbertoadd ) {
+                $numbertoadd = $max100 - $maxnumber ;
+            }
             //add the other items.
             // Generate a new dataset item (or reuse an old one)
             foreach ($datasetdefs as $defid => $datasetdef) {
@@ -656,9 +656,9 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                             WHERE definition = $datasetdef->id ORDER BY itemnumber");
                 }
                 // echo "<pre>"; print_r($datasetdefs[$defid]->items);
-    	        for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
+                for ($numberadded =$maxnumber+1 ; $numberadded <= $maxnumber+$numbertoadd ; $numberadded++){
                     if (isset($datasetdefs[$defid]->items[$numberadded]) && ! $regenerate ){
-                    //  echo "<p>Reuse an previously used record".$numberadded."id".$datasetdef->id."</p>";
+                        //  echo "<p>Reuse an previously used record".$numberadded."id".$datasetdef->id."</p>";
                     } else {
                         $datasetitem = new stdClass;
                         $datasetitem->definition = $datasetdef->id ;
@@ -672,11 +672,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         if (!insert_record('question_dataset_items', $datasetitem)) {
                             error("Error: Unable to insert new dataset item");
                         }                        
-                     }
-     		  }//for number added   	
-    	    }// datasetsdefs end										        
-	    $maxnumber += $numbertoadd ;
-           foreach ($datasetdefs as $key => $newdef) {
+                    }
+                }//for number added
+            }// datasetsdefs end
+            $maxnumber += $numbertoadd ;
+            foreach ($datasetdefs as $key => $newdef) {
                 if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
                     $newdef->itemcount = $maxnumber;
                     // Save the new value for options

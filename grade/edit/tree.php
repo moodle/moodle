@@ -36,7 +36,7 @@ $eid      = optional_param('eid', 0, PARAM_ALPHANUM);
 /// Make sure they can even access this course
 
 if (!$course = get_record('course', 'id', $courseid)) {
-	print_error('nocourseid');
+    print_error('nocourseid');
 }
 
 require_login($course);

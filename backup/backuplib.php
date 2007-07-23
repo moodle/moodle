@@ -1488,7 +1488,7 @@
 
                 //Begin grade_item
                 fwrite ($bf,start_tag("GRADE_ITEM",4,true)); 
-                //Output individual fields	
+                //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_item->id));
                 fwrite ($bf,full_tag("ITEMNAME",5,false,$grade_item->itemname));
@@ -1542,7 +1542,7 @@
             foreach ($grade_outcomes as $grade_outcome) {
                 //Begin grade_item
                 fwrite ($bf,start_tag("GRADE_OUTCOME",4,true)); 
-                //Output individual fields	
+                //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_outcome->id));                
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
