@@ -703,7 +703,11 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     // If using default params, we may have it cached...
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         if (!empty($USER->mycourses[$doanything])) {
-            return $USER->mycourses[$doanything];
+            if ($limit && $limit < count($USER->mycourses[$doanything])) {
+                return array_slice($USER->mycourses[$doanything], 0, $limit, true);
+            } else {
+                return $USER->mycourses[$doanything];
+            }
         }
     }
 
@@ -738,6 +742,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
         // is category. So we consider:
         // 1. All courses in which the user is assigned a role
         // 2. All courses in categories in which the user is assigned a role
+        // 2BIS. All courses in subcategories in which the user gets assignment because he is assigned in one of its ascendant categories
         // 3. All courses which have overrides for moodle/course:view
         // Remember that this is just a filter. We check each individual course later. 
         // However for a typical student on a large system this can reduce the
@@ -760,11 +765,11 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                     c.id
                 FROM 
                     {$CFG->prefix}role_assignments ra
-                    INNER JOIN {$CFG->prefix}context x           ON x.id         = ra.contextid
-                    INNER JOIN {$CFG->prefix}course_categories a ON x.instanceid = a.id
-                    INNER JOIN {$CFG->prefix}course c            ON c.category   = a.id
+                    INNER JOIN {$CFG->prefix}context x ON x.id = ra.contextid
+                    INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR x.instanceid = a.id
+                    INNER JOIN {$CFG->prefix}course c ON c.category = a.id
                 WHERE 
-                    ra.userid      = $userid AND
+                    ra.userid = $userid AND
                     x.contextlevel = 40
                 UNION
                 SELECT
@@ -814,58 +819,8 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
         }
     }
 
-    /// MDL-9238, course in sub categories are not shown
-    // if the user has course:view at system level, then he can view all course
-    // skip this part
-    if (!$candoanything && !has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
-        
-        // get all course categories with an assignment
-        $SQL = "SELECT a.id, a.id FROM {$CFG->prefix}role_assignments ra
-                INNER JOIN {$CFG->prefix}context x ON x.id=ra.contextid
-                INNER JOIN {$CFG->prefix}course_categories a ON x.instanceid=a.id AND x.contextlevel=40
-                WHERE ra.userid=$userid";
-        
-        if ($mcoursecats = get_records_sql($SQL)) {          
-            foreach ($mcoursecats as $mcoursecat) {
-                
-                // run the sql to get the path, find all courses in each sub (sub) categories
-                $pathsql = "SELECT $fields 
-                            FROM {$CFG->prefix}course_categories cc,
-                                 {$CFG->prefix}course c
-                            WHERE cc.path LIKE '%".$mcoursecat->id."/%'
-                            AND c.category = cc.id";
-
-                if ($scourses = get_records_sql($pathsql)) {                   
-                    
-                    // add each course in sub category, if correct permissions are set
-                    // and if the course is not added to my courses list yet
-                    foreach ($scourses as $scourse) {
-                        $context = get_context_instance(CONTEXT_COURSE, $scourse->id);                        
-                        if (!isset($mycourses[$scourse->id]) &&
-                            has_capability('moodle/course:view', $context, $userid, $doanything) && 
-                            !has_capability('moodle/legacy:guest', $context, $userid, false) &&
-                            ($scourse->visible || 
-                             has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
-                                // add it to my course array
-                            $mycourses[$scourse->id] = $scourse;
-                        }
-                        
-                        // Only return a limited number of courses if limit is set
-                        if($limit>0) {
-                            $limit--;
-                            if($limit==0) {
-                                // breaks the 2 foreach loops
-                                break 2;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // Cache if using default params...
-    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
+    if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults && $limit == 0) {
         $USER->mycourses[$doanything] = $mycourses;
     }
     return $mycourses;
