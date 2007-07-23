@@ -238,6 +238,28 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/site:langeditmaster' => array(
+
+        'riskbitmask' => RISK_CONFIG | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_PREVENT
+        )
+    ),
+
+    'moodle/site:langeditlocal' => array(
+
+        'riskbitmask' => RISK_CONFIG | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'admin' => CAP_ALLOW
+        )
+    ),
+
 
     'moodle/user:create' => array(
 
