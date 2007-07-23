@@ -25,6 +25,7 @@
 set_time_limit(0);
 require_once '../../../config.php';
 require_once $CFG->libdir . '/gradelib.php';
+require_once '../../lib.php';
 
 $courseid      = required_param('id', PARAM_INT);
 
@@ -61,7 +62,7 @@ if ($form = data_submitted()) {
 }
 
 $strgrades = get_string('grades');
-$strgraderreport = get_string('graderreport', 'grades');
+$strgraderreport = get_string('modulename', 'gradereport_grader');
 $strgradepreferences = get_string('gradepreferences', 'grades');
 
 $navlinks = array();
@@ -74,7 +75,10 @@ $navigation = build_navigation($navlinks);
 
 print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferences,': '.$strgradepreferences, $navigation,
                     '', '', true, '', navmenu($course));
-print_heading(get_string('preferences'));
+
+/// Print the plugin selector at the top
+print_grade_plugin_selector($course->id, 'report', 'grader');
+
 // Add tabs
 $currenttab = 'preferences';
 include('tabs.php');

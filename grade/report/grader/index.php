@@ -49,8 +49,6 @@ if (!$context = get_context_instance(CONTEXT_COURSE, $report->gtree->courseid)) 
     return false;
 }
 
-print_heading('Grader Report');
-
 // Add tabs
 $currenttab = 'graderreport';
 include('tabs.php');

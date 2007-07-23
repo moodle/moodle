@@ -33,7 +33,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'report' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin);
+            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'lang/');
         }
         asort($reportnames);
     }
@@ -43,7 +43,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// standard import plugins
-    if ($imports = get_list_of_plugins('grade/import', 'CVS')) {         // Get all installed reports
+    if ($imports = get_list_of_plugins('grade/import', 'CVS')) {         // Get all installed import plugins
         foreach ($imports as $key => $plugin) {                      // Remove ones we can't see
             if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
                 unset($imports[$key]);
@@ -57,7 +57,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'impot' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin);
+            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin, NULL, $CFG->dirroot.'/grade/import/'.$plugin.'lang/');
         }
         asort($importnames);
     }
@@ -67,7 +67,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// standard export plugins
-    if ($exports = get_list_of_plugins('grade/export', 'CVS')) {         // Get all installed reports
+    if ($exports = get_list_of_plugins('grade/export', 'CVS')) {         // Get all installed export plugins
         foreach ($exports as $key => $plugin) {                      // Remove ones we can't see
             if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
                 unset($exports[$key]);
@@ -81,7 +81,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'impot' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin);
+            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin, NULL, $CFG->dirroot.'/grade/export/'.$plugin.'lang/');
         }
         asort($exportnames);
     }

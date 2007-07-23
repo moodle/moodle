@@ -1,6 +1,6 @@
 <?PHP // $Id$ 
 
-$string['modulename'] = 'User';
+$string['modulename'] = 'User report';
 $string['user:view'] = 'View your own grade report';
 
 ?>

@@ -33,7 +33,7 @@ require_capability('moodle/course:downloadallgrades', get_context_instance(CONTE
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
 $course = get_record('course', 'id', $id);
 $strgrades = get_string('grades', 'grades');
-$actionstr = get_string('exporttxt', 'grades');
+$actionstr = get_string('modulename', 'gradeexport_txt');
 $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
 $gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
 $gradenav .= " -> $actionstr";

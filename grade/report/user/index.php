@@ -20,7 +20,7 @@ $gradetotal = 0;
 $gradesum = 0;
 
 // print the page
-print_heading(get_string('userreport', 'grades'). " - ".fullname($report->user));
+print_heading(get_string('modulename', 'gradereport_user'). " - ".fullname($report->user));
 
 if ($report->fill_table()) {
     echo $report->print_table(true);
