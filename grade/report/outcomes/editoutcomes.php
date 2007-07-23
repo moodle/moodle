@@ -9,19 +9,19 @@ class edit_outcomes_form extends moodleform {
 
         $mform =& $this->_form;
         $mform->addElement('header', 'general', get_string('outcomes'));
-        
+
         $mform->addElement('text', 'shortname', get_string('shortname'));
         $mform->addRule('shortname', get_string('required'), 'required');
         $mform->setType('id', PARAM_TEXT);
-        
+
         $mform->addElement('text', 'fullname', get_string('fullname'));
         $mform->addRule('fullname', get_string('required'), 'required');
         $mform->setType('id', PARAM_TEXT);
-        
+
         $scalearr = array();
         if ($scales = get_records('scale')) {
             foreach ($scales as $scale) {
-                $scalearr[$scale->id] = $scale->name;      
+                $scalearr[$scale->id] = $scale->name;
             }
         }
 
@@ -37,7 +37,7 @@ class edit_outcomes_form extends moodleform {
 }
 
 $id = optional_param('id', 0, PARAM_INT); // id of the outcome
-if ($courseid = optional_param('courseid', 0, PARAM_INT)) { 
+if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     // optional course id, if set, editting from course
 } else {
     // admin editting site level outcomes
@@ -47,12 +47,12 @@ if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
 
 $mform = new edit_outcomes_form();
 if ($id) {
-    // form set data  
-    $mform->set_data(get_record('grade_outcomes', 'id', $id));    
+    // form set data
+    $mform->set_data(get_record('grade_outcomes', 'id', $id));
 }
 
 if ($mform->is_cancelled()) {
-    redirect($returnurl); 
+    redirect($returnurl);
 }
 if ($data = $mform->get_data()) {
     if ($data->id) {
@@ -62,6 +62,10 @@ if ($data = $mform->get_data()) {
     }
     redirect($returnurl);
 }
+
+// Add tabs
+$currenttab = 'editoutcomes';
+include('tabs.php');
 
 print_header();
 $mform->display();

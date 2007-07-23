@@ -128,5 +128,73 @@ class grade_outcome extends grade_object {
     function get_name() {
         return $this->shortname;
     }
+
+    /**
+     * Computes then returns extra information about this outcome and other objects that are linked to it.
+     * The average of all grades that use this outcome, for all courses (or 1 course if courseid is given) can
+     * be requested, and is returned as a float if requested alone. If the list of items that use this outcome
+     * is also requested, then a single array is returned, which contains the grade_items AND the average grade
+     * if such is still requested (array('items' => array(...), 'avg' => 2.30)). This combining of two
+     * methods into one is to save on DB queries, since both queries are similar and can be performed together.
+     * @param int $courseid An optional courseid to narrow down the average to 1 course only
+     * @param bool $average Whether or not to return the average grade for this outcome
+     * @param bool $items Whether or not to return the list of items using this outcome
+     * @return float
+     */
+    function get_grade_info($courseid=null, $average=true, $items=false) {
+        if (!isset($this->id)) {
+            debugging("You must setup the outcome's id before calling its get_grade_info() method!");
+            return false; // id must be defined for this to work
+        }
+
+        if ($average === false && $items === false) {
+            debugging('Either the 1st or 2nd param of grade_outcome::get_grade_info() must be true, or both, but not both false!');
+            return false;
+        }
+
+        $wheresql = '';
+        if (!is_null($courseid)) {
+            $wheresql = " AND mdl_grade_items.courseid = $courseid ";
+        }
+
+        $selectadd = '';
+        if ($items !== false) {
+            $selectadd = ', mdl_grade_items.* ';
+        }
+
+        $sql = "SELECT finalgrade $selectadd
+                  FROM mdl_grade_grades, mdl_grade_items, mdl_grade_outcomes
+                 WHERE mdl_grade_outcomes.id = mdl_grade_items.outcomeid
+                   AND mdl_grade_items.id = mdl_grade_grades.itemid
+                   AND mdl_grade_outcomes.id = $this->id
+                   $wheresql";
+
+        $grades = get_records_sql($sql);
+        $retval = array();
+
+        if ($average !== false && count($grades) > 0) {
+            $count = 0;
+            $total = 0;
+
+            foreach ($grades as $k => $grade) {
+                // Skip null finalgrades
+                if (!is_null($grade->finalgrade)) {
+                    $total += $grade->finalgrade;
+                    $count++;
+                }
+                unset($grades[$k]->finalgrade);
+            }
+
+            $retval['avg'] = $total / $count;
+        }
+
+        if ($items !== false) {
+            foreach ($grades as $grade) {
+                $retval['items'][$grade->id] = new grade_item($grade);
+            }
+        }
+
+        return $retval;
+    }
 }
 ?>

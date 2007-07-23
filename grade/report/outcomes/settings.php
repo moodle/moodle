@@ -27,45 +27,48 @@ admin_externalpage_setup('gradereportoutcomes');
 admin_externalpage_print_header();
 
 /******************* ADD TABS HERE LATER ****************************/
+// Add tabs
+$currenttab = 'outcomesettings';
+include('tabs.php');
 
 $totalcount = count_records('grade_outcomes');
 $baseurl = "settings.php";
 print_paging_bar($totalcount, $page, $perpage, $baseurl);
 
 if ($outcomes = get_recordset('grade_outcomes', '', '', '', '*', $page * $perpage, $perpage)) {
-        
+
     $tablecolumns = array('outcome', 'edit', 'usedgradeitems', 'usedcourses');
     $tableheaders = array(get_string('outcomes'), get_string('operations'), get_string('usedgradeitem'), get_string('usedcourses'));
-    
+
     $table = new flexible_table('outcomes');
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl);
     $table->set_attribute('cellspacing', '0');
     $table->set_attribute('id', 'user-grade');
-    $table->set_attribute('class', 'boxaligncenter generaltable');  
-    
+    $table->set_attribute('class', 'boxaligncenter generaltable');
+
     $table->setup();
-    
+
     foreach ($outcomes as $outcome) {
         $data = array();
         $data[] = $outcome['fullname'];
-        
+
         // add operations
         $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="settings.php?deleteid='.$outcome['id'].'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
-        
+
         // num of gradeitems using this
         $num = count_records('grade_outcomes_courses', 'outcomeid' ,$outcome['id']);
         $data[] = (int) $num;
-        
+
         // num of courses using this outcome
         $num = count_records('grade_items', 'outcomeid', $outcome['id']);
         $data[] = (int) $num;
 
         $table->add_data($data);
     }
-    
+
     $table->print_html();
 }
 
