@@ -1438,6 +1438,19 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007072400) {
+    /// Dropping one DEFAULT in a TEXT column. It's was only one remaining
+    /// since Moodle 1.7, so new servers won't have those anymore.
+
+    /// Changing the default of field sessdata on table sessions2 to drop it
+        $table = new XMLDBTable('sessions2');
+        $field = new XMLDBField('sessdata');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'modified');
+
+    /// Launch change of default for field sessdata
+        $result = $result && change_field_default($table, $field);
+    }
+
 
 /*
     /// drop old gradebook tables
