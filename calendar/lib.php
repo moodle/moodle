@@ -1396,10 +1396,10 @@ function calendar_get_default_courses($ignoreref = false) {
     }
     
     if (isset($CFG->adminseesall)) {
-        $courses = get_my_courses($USER->id, 'visible DESC', null, $CFG->adminseesall);
+        $courses = get_my_courses($USER->id, null, null, $CFG->adminseesall);
     }
     else {
-        $courses = get_my_courses($USER->id, 'visible DESC', null, false);
+        $courses = get_my_courses($USER->id, null, null, false);
     }
 
     return $courses;
