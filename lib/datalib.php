@@ -700,6 +700,8 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
         $usingdefaults = false;
     }
 
+    $reallimit = 0; // this is only set if we are using a limit on the first call
+
     // If using default params, we may have it cached...
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         if (!empty($USER->mycourses[$doanything])) {
@@ -708,6 +710,14 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
             } else {
                 return $USER->mycourses[$doanything];
             }
+        } else {            
+            // now, this is the first call, i.e. no cache, and we are using defaults, with a limit supplied,
+            // we need to store the limit somewhere, retrieve all, cache properly and then slice the array
+            // to return the proper number of entries. This is so that we don't keep missing calls like limit 20,20,20 
+            if ($limit) {
+                $reallimit = $limit;
+                $limit = 0;
+            }          
         }
     }
 
@@ -796,8 +806,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                     $mycourses[$course->id] = $course;
                     continue;
                 }
-                
-                
+
                 // users with moodle/course:view are considered course participants
                 // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
                 // capability set to view hidden courses  
@@ -823,7 +832,12 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults && $limit == 0) {
         $USER->mycourses[$doanything] = $mycourses;
     }
-    return $mycourses;
+    
+    if ($reallimit) {
+        return array_slice($mycourses, 0, $reallimit, true);
+    } else {
+        return $mycourses;
+    }
 }
 
 
