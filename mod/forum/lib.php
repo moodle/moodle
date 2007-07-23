@@ -1291,7 +1291,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
         // If no course is specified, then the user can see SITE + his courses. 
         // And admins can see all courses, so pass the $doanything flag enabled
         $courses1 = get_records('course', 'id', SITEID);
-        $courses2 = get_my_courses($userid, 'visible DESC,sortorder ASC', null, true);
+        $courses2 = get_my_courses($userid, null, null, true);
         $courses = array_merge($courses1, $courses2);
     }
     if (!$courses) {

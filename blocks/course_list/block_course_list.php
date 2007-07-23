@@ -38,7 +38,7 @@ class block_course_list extends block_list {
             !empty($USER->id) and 
             !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) and $adminseesall) and
             !isguest()) {    // Just print My Courses
-            if ($courses = get_my_courses($USER->id, NULL, 'id, visible, shortname, fullname')) {
+            if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
                     if ($course->id == SITEID) {
                         continue;
