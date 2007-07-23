@@ -8,6 +8,8 @@
 
     admin_externalpage_setup('langedit');    
 
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
     define('LANG_SUBMIT_REPEAT', 1);            // repeat displaying submit button?
     define('LANG_SUBMIT_REPEAT_EVERY', 20);     // if so, after how many lines?
     define('LANG_DISPLAY_MISSING_LINKS', 1);    // display "go to first/next missing string" links?
@@ -30,7 +32,20 @@
     } else {
         $SESSION->langtranslateintolocal = $uselocal;
     }
-
+    
+    if (!has_capability('moodle/site:langeditmaster', $context, $USER->id, false)) {
+        // Force using _local
+        $uselocal = 1;
+    }
+        
+    if (!has_capability('moodle/site:langeditmaster', $context, $USER->id, false) && (!$uselocal)) {
+        print_error('cannoteditmasterlang');
+    } 
+    
+    if ((!has_capability('moodle/site:langeditlocal', $context, $USER->id, false)) && ($uselocal)) {
+        print_error('cannotcustomizelocallang');
+    }
+ 
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
@@ -49,37 +64,37 @@
     $strlocalstringcustomization = 'Local string customization';            // TODO / FIXME
     $strlangpackmaintaining = 'Language pack maintaining';                  // TODO / FIXME
     $strnomissingstrings = 'No missing strings';                            // TODO / FIXME
+
+    // TODO / FIXME add into en_utf8/error.php
+    $string['cannoteditmasterlang'] = 'You do not have permission to edit master language package. This
+        permission is controlled by the capability "moodle/site:langeditmaster". Set this capability
+        to allow you to edit master language packages in case you are the maintainer of a package.';
+    $string['cannotcustomizelocallang'] = 'You do not have permission to customize the strings translation.
+        This permission is controlled by the capability "moodle/site:langeditlocal". Set this capability
+        to allow you to edit local language packages in case you want to modify translations for your site.';
+
     // TODO/FIXME add into en_utf8/admin.php:
     // $string['numberofmissingstrings'] = 'Number of missing strings: $a';
-    
+
     $currentlang = current_language();
 
     switch ($mode) {
         case "missing":
             // Missing array keys are not bugs here but missing strings
             error_reporting(E_ALL ^ E_NOTICE);
-            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
             $title = $strmissingstrings;
-            $button = '<form '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-                      '<div>'.
-                      '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$streditstrings.'" /></div></form>';
             break;
         case "compare":
-            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
             $title = $streditstrings;
-            $button = '<form  '.$CFG->frametarget.' method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
-                      '<div>'.
-                      '<input type="hidden" name="mode" value="missing" />'.
-                      '<input type="submit" value="'.$strmissingstrings.'" /></div></form>';
             break;
         default:
             $title = $strlanguage;
-            $navigation = $strlanguage;
-            $button = '';
             break;
     }
+    $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $title";
 
+    $crumbs[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/admin/lang.php");
+    $navigation = build_navigation($crumbs);
 
     admin_externalpage_print_header();
 
@@ -96,12 +111,16 @@
         $inactive = array('usemaster');
         $activated = array('usemaster');
     }
-    $firstrow[] = new tabobject('uselocal', 
-        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1", 
-        $strlocalstringcustomization );
-    $firstrow[] = new tabobject('usemaster',
-        $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0", 
-        $strlangpackmaintaining );
+    if (has_capability('moodle/site:langeditlocal', $context, $USER->id, false)) {
+        $firstrow[] = new tabobject('uselocal', 
+            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1", 
+            $strlocalstringcustomization );
+    }
+    if (has_capability('moodle/site:langeditmaster', $context, $USER->id, false)) {
+        $firstrow[] = new tabobject('usemaster',
+            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0", 
+            $strlangpackmaintaining );
+    }
     $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
     $secondrow[] = new tabobject('compare', $CFG->wwwroot.'/admin/lang.php?mode=compare', $streditstrings );
     // TODO
@@ -728,45 +747,6 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
         //negative $length. Omit $length characters from end
         return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start);
     }
-}
-
-/**
-* Find all language location.
-*
-* Taken from lib/moodlelib.php::get_strig()
-*
-* @todo This is here just because I started to work on MDL-9361. It is not used yet. And maybe will not.
-*/
-function lang_locations($module = '') {
-    global $CFG;
-
-    // Default language packs locations
-    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
-
-    // Extra places to look for strings
-    $rules = places_to_search_for_lang_strings();
-    $exceptions = $rules['__exceptions'];
-    unset($rules['__exceptions']);
-
-    // Add all other possible locations
-    if (!in_array($module, $exceptions)) {
-        $dividerpos = strpos($module, '_');
-        if ($dividerpos === false) {
-            $type = '';
-            $plugin = $module;
-        } else {
-            $type = substr($module, 0, $dividerpos + 1);
-            $plugin = substr($module, $dividerpos + 1);
-        }
-        if (!empty($rules[$type])) {
-            foreach ($rules[$type] as $location) {
-                $locations[] = $CFG->dirroot . "/$location/$plugin/lang/";
-            }
-        }
-    }
-
-    return $locations;
-
 }
 
 
