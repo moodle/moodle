@@ -2602,6 +2602,9 @@
                         $eve->userid = backup_todb($info['EVENT']['#']['USERID']['0']['#']);
                         $eve->repeatid = backup_todb($info['EVENT']['#']['REPEATID']['0']['#']);
                         $eve->modulename = "";
+                        if (!empty($info['EVENT']['#']['MODULENAME'])) {
+                            $eve->modulename = backup_todb($info['EVENT']['#']['MODULENAME']['0']['#']);
+                        }  
                         $eve->instance = 0;
                         $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);  
                         $eve->timestart = backup_todb($info['EVENT']['#']['TIMESTART']['0']['#']);
