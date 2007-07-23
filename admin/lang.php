@@ -749,5 +749,78 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
     }
 }
 
+/**
+* Finds all English string files in the standard lang/en_utf8 location.
+*
+* The English version of the file may be found in 
+*  $CFG->dirroot/lang/en_utf8/filename
+* The localised version of the found file should be saved into 
+*  $CFG->dataroot/lang/current_lang[_local]/filename 
+* where "filename" is returned as a part of the file record.
+*
+* @return array Array of a file information. Compatible format with {@link lang_extra_locations()}
+*/
+function lang_standard_locations() {
+    global $CFG;
+    $files = array();
+    // Standard location of master English string files.
+    $places = array($CFG->dirroot.'/lang/en_utf8');
+        foreach ($places as $place) {
+            foreach (get_directory_list($place, '', false) as $file) {
+                if ((substr($file, -4) == ".php") && ($file != "langconfig.php")) {
+                    $fullpath = $place.'/'.$file;
+                    $files[$fullpath] = array(
+                        'filename' => $file,
+                        'location' => '',
+                        'plugin' => '',
+                        'prefix' => '',
+                    );
+                }
+            }
+        }
+    return $files;
+}
+
+/**
+* Finds all English string files in non-standard location.
+*
+* Searches for lang/en_utf8/*.php in various types of plugins (blocks, database presets, question types, 
+* 3rd party modules etc.) and returns an array of found files details.
+*
+* The English version of the file may be found in 
+*  $CFG->dirroot/location/plugin/lang/en_utf8/filename
+* The localised version of the found file should be saved into 
+*  $CFG->dataroot/lang/current_lang[_local]/prefix_plugin.php 
+* where "location", "plugin", "prefix" and "filename" are returned as a part of the file record.
+*
+* @return array Array of a file information. Compatible format with {@link lang_standard_locations()}
+*/
+function lang_extra_locations() {
+    global $CFG;
+    $files = array();
+    $places = places_to_search_for_lang_strings();
+    foreach ($places as $prefix => $directories) {
+        if ($prefix != '__exceptions') {
+            foreach ($directories as $directory) {
+                foreach (get_list_of_plugins($directory) as $plugin) {
+                    $enlangdirlocation = $CFG->dirroot.'/'.$directory.'/'.$plugin.'/lang/en_utf8';
+                    foreach (get_directory_list($enlangdirlocation, '', false) as $file) {
+                        if ((substr($file, -4) == ".php") && ($file != "langconfig.php")) {
+                            $fullpath = $enlangdirlocation.'/'.$file;
+                            $files[$fullpath] = array(
+                                'filename' => $file,
+                                'location' => $directory,
+                                'plugin' => $plugin,
+                                'prefix' => $prefix,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return $files;
+}
+
 
 ?>
