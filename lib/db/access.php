@@ -298,18 +298,6 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/user:viewusergrades' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'moodle/user:loginas' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG,
@@ -896,31 +884,6 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/course:viewcoursegrades' => array(
-
-        'riskbitmask' => RISK_PERSONAL,
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/course:managegrades' => array(
-
-        'riskbitmask' => RISK_PERSONAL,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
     'moodle/site:mnetlogintoremote' => array(
         'riskbitmask' => RISK_PERSONAL | RISK_XSS,
         'captype' => 'read',
@@ -929,20 +892,8 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
-    'moodle/course:viewowngrades' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-    
-    'moodle/course:viewallgrades' => array(
+
+    'moodle/grade:viewall' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -950,10 +901,39 @@ $moodle_capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:viewcoursegrades'
+    ),
+
+    'moodle/grade:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE, // and CONTEXT_PERSONAL too
+        'legacy' => array(
+            'student' => CAP_ALLOW
         )
     ),
-    
-    'moodle/course:downloadallgrades' => array(
+
+    'moodle/grade:viewhidden' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE, // and CONTEXT_PERSONAL too
+        'legacy' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/course:viewcoursegrades'
+    ),
+
+    'moodle/grade:import' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
+    'moodle/grade:export' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -961,18 +941,21 @@ $moodle_capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
     ),
-    
-    'moodle/user:viewusergrades' => array(
+
+    'moodle/grade:manage' => array(
         'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
     ),
-    
+
     'moodle/grade:hide' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -981,7 +964,7 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/grade:lock' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -990,17 +973,8 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
-    'moodle/grade:viewhidden' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-    
-    'moodle/grade:editlocked' => array(
+
+    'moodle/grade:unlock' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -1008,15 +982,24 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
-    
-        'moodle/my:manageblocks' => array(
+
+    'moodle/grade:override' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/my:manageblocks' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'user' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/notes:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -1035,7 +1018,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    ),    
+    ),
 );
 
 ?>

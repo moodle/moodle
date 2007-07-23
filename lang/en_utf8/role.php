@@ -24,11 +24,9 @@ $string['category:visibility'] = 'See hidden categories';
 $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
-$string['course:downloadallgrades'] = 'Download all grades';
 $string['course:delete'] = 'Delete courses';
 $string['course:manageactivities'] = 'Manage activities';
 $string['course:managefiles'] = 'Manage files';
-$string['course:managegrades'] = 'Manage grades';
 $string['course:managegroups'] = 'Manage groups';
 $string['course:managemetacourse'] = 'Manage metacourse';
 $string['course:managescales'] = 'Manage scales';
@@ -38,20 +36,23 @@ $string['course:setcurrentsection'] = 'Set current section';
 $string['course:update'] = 'Update course settings';
 $string['course:useremail'] = 'Enable/disable email address';
 $string['course:view'] = 'View courses';
-$string['course:viewallgrades'] = 'View all grades';
-$string['course:viewcoursegrades'] = 'View course grades';
 $string['course:viewhiddenactivities'] = 'View hidden activities';
 $string['course:viewhiddencourses'] = 'View hidden courses';
 $string['course:viewhiddensections'] = 'View hidden sections';
 $string['course:viewhiddenuserfields'] = 'View hidden user fields';
-$string['course:viewowngrades'] = 'View own grades';
 $string['course:viewparticipants'] = 'View participants';
 $string['course:viewscales'] = 'View scales';
 $string['course:visibility'] = 'Hide/show courses';
-$string['grade:editlocked'] = 'Edit locked grades';
-$string['grade:hide'] = 'Hide grade';
-$string['grade:lock'] = 'Lock grade';
-$string['grade:viewhidden'] = 'View hidden grade';
+$string['grade:export'] = 'Export grades';
+$string['grade:hide'] = 'Hide/unhide grades or items';
+$string['grade:import'] = 'Import grades';
+$string['grade:lock'] = 'Lock grades or items';
+$string['grade:manage'] = 'Manage grade items';
+$string['grade:override'] = 'Override grades';
+$string['grade:unlock'] = 'Unlock grades or items';
+$string['grade:view'] = 'View own grades (or other user)';
+$string['grade:viewall'] = 'View all grades of all users';
+$string['grade:viewhidden'] = 'View own hidden grades (or other user)';
 $string['currentcontext'] = 'Current context';
 $string['currentrole'] = 'Current role';
 $string['defaultrole'] = 'Default role';
@@ -137,7 +138,6 @@ $string['user:update'] = 'Update user profiles';
 $string['user:viewdetails'] = 'View user profiles';
 $string['user:viewhiddendetails'] = 'View hidden details of users';
 $string['user:viewuseractivitiesreport'] = 'See user activity reports';
-$string['user:viewusergrades'] = 'View user grades';
 $string['viewrole'] = 'View role details';
 $string['xuserswiththerole'] = 'Users with the role \"$a->role\": $a->number';
 
@@ -148,5 +148,10 @@ $string['site:mnetloginfromremote'] = 'Login from a remote Moodle';
 // Notes
 $string['notes:view'] = 'View notes';
 $string['notes:manage'] = 'Manage notes';
+
+//OBSOLETED in 1.9!
+$string['course:viewcoursegrades'] = 'View course grades';
+$string['user:viewusergrades'] = 'View user grades';
+$string['course:managegrades'] = 'Manage grades';
 
 ?>

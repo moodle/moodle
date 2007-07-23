@@ -28,7 +28,7 @@ require_once('grade_export_xml.php');
 $id = required_param('id', PARAM_INT); // course id
 
 require_login($id);
-require_capability('moodle/course:downloadallgrades', get_context_instance(CONTEXT_COURSE, $id));
+require_capability('moodle/grade:export', get_context_instance(CONTEXT_COURSE, $id));
 
 $course = get_record('course', 'id', $id);
 $feedback = optional_param('feedback', '', PARAM_ALPHA);

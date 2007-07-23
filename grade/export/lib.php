@@ -77,7 +77,7 @@ class grade_export {
             error("Course ID was incorrect");
         }
         $context = get_context_instance(CONTEXT_COURSE, $id);
-        require_capability('moodle/course:viewcoursegrades', $context);
+        require_capability('moodle/grade:view', $context);
 
         $this->id = $id;
         $this->course = $course;

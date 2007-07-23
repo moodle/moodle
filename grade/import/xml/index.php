@@ -11,7 +11,7 @@ $course = get_record('course', 'id', $id); // actual course
 
 // capability check
 require_login($id);
-require_capability('moodle/course:managegrades', get_context_instance(CONTEXT_COURSE, $course->id));
+require_capability('moodle/grade:import', get_context_instance(CONTEXT_COURSE, $course->id));
 
 require_once('../lib.php');
 require_once('../grade_import_form.php');
