@@ -133,6 +133,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 }
                 if (!is_array($value)) {
                     $currentdate = usergetdate($value);
+                    // Round minutes to the previous multiple of step.
+                    $currentdate['minutes'] -= $currentdate['minutes'] % $this->_options['step'];
                     $value = array(
                         'minute' => $currentdate['minutes'],
                         'hour' => $currentdate['hours'],
@@ -140,12 +142,12 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                         'month' => $currentdate['mon'],
                         'year' => $currentdate['year']);
                     // If optional, default to off, unless a date was provided
-                     if($this->_options['optional']) {
+                    if($this->_options['optional']) {
                         $value['off'] = ($requestvalue == 0) ? true : false;
                     }
-               } else {
-                   $value['off'] = (isset($value['off'])) ? true : false;
-               }
+                } else {
+                    $value['off'] = (isset($value['off'])) ? true : false;
+                }
                 if (null !== $value){
                     $this->setValue($value);
                 }
