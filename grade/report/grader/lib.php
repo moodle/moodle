@@ -66,11 +66,10 @@ class grade_report_grader extends grade_report {
         $this->sortitemid = $sortitemid;
 
         // base url for sorting by first/last name
-        $this->baseurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
-                        .'&amp;report=grader&amp;page='.$this->page;
+        $this->baseurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
+                        .'&amp;page='.$this->page;
         //
-        $this->pbarurl = 'report.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
-                        .'&amp;report=grader&amp;';
+        $this->pbarurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage');
 
         // Setup groups if requested
         if ($this->get_pref('showgroups')) {
@@ -968,7 +967,7 @@ class grade_report_grader extends grade_report {
             $hide_show = 'show';
         }
 
-        $show_hide_icon = '<a href="report.php?report=grader&amp;target='.$eid
+        $show_hide_icon = '<a href="index.php?target='.$eid
                         . "&amp;action=$hide_show" . $this->gtree->commonvars . "\">\n"
                         . '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
                         . ${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
@@ -981,7 +980,7 @@ class grade_report_grader extends grade_report {
 
         // Print lock/unlock icon
 
-        $lock_unlock_icon = '<a href="report.php?report=grader&amp;target='.$eid
+        $lock_unlock_icon = '<a href="index.php?target='.$eid
                           . "&amp;action=$lock_unlock" . $this->gtree->commonvars . "\">\n"
                           . '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
                           . ${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
@@ -993,7 +992,7 @@ class grade_report_grader extends grade_report {
             $expand_contract = 'switch_plus';
         }
 
-        $contract_expand_icon = '<a href="report.php?report=grader&amp;target=' . $eid
+        $contract_expand_icon = '<a href="index.php?target=' . $eid
                               . "&amp;action=$expand_contract" . $this->gtree->commonvars . "\">\n"
                               . '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
                               . ${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";

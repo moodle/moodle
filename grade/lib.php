@@ -29,7 +29,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     $reportnames = array();
     if (!empty($reports)) {
         foreach ($reports as $plugin) {
-            $url = 'report.php?id='.$courseid.'&amp;report='.$plugin;
+            $url = 'report/'.$plugin.'/index.php?id='.$courseid;
             if ($active_type == 'report' and $active_plugin == $plugin ) {
                 $active = $url;
             }
@@ -54,7 +54,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     if (!empty($imports)) {
         foreach ($imports as $plugin) {
             $url = 'import/'.$plugin.'/index.php?id='.$courseid;
-            if ($active_type == 'impot' and $active_plugin == $plugin ) {
+            if ($active_type == 'import' and $active_plugin == $plugin ) {
                 $active = $url;
             }
             $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin, NULL, $CFG->dirroot.'/grade/import/'.$plugin.'lang/');
@@ -78,7 +78,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     if (!empty($exports)) {
         foreach ($exports as $plugin) {
             $url = 'export/'.$plugin.'/index.php?id='.$courseid;
-            if ($active_type == 'impot' and $active_plugin == $plugin ) {
+            if ($active_type == 'export' and $active_plugin == $plugin ) {
                 $active = $url;
             }
             $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin, NULL, $CFG->dirroot.'/grade/export/'.$plugin.'lang/');
@@ -168,21 +168,15 @@ class grade_plugin_return {
      * @param string $default default url when params not set
      * @return string url
      */
-    function get_return_url($default) {
+    function get_return_url($default, $extras=null) {
         global $CFG;
 
         if (empty($this->type) or empty($this->plugin)) {
             return $default;
         }
 
-        if ($this->type == 'report') {
-            $url = $CFG->wwwroot.'/grade/report.php?report='.$this->plugin;
-            $glue = '&amp;';
-
-        } else {
-            $url = $CFG->wwwroot.'/grade/'.$this->type.'/'.$this->plugin.'/index.php';
-            $glue = '?';
-        }
+        $url = $CFG->wwwroot.'/grade/'.$this->type.'/'.$this->plugin.'/index.php';
+        $glue = '?';
 
         if (!empty($this->courseid)) {
             $url .= $glue.'id='.$this->courseid;
@@ -196,6 +190,14 @@ class grade_plugin_return {
 
         if (!empty($this->page)) {
             $url .= $glue.'page='.$this->page;
+            $glue = '&amp;';
+        }
+
+        if (!empty($extras)) {
+            foreach($extras as $key=>$value) {
+                $url .= $glue.$key.'='.$value;
+                $glue = '&amp;';
+            }            
         }
 
         return $url;

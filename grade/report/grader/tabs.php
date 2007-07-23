@@ -1,7 +1,7 @@
 <?php  // $Id$
     $row = $tabs = array();
     $row[] = new tabobject('graderreport',
-                           $CFG->wwwroot.'/grade/report.php?id='.$courseid.'&amp;report=grader',
+                           $CFG->wwwroot.'/grade/report/grader/index.php?id='.$courseid,
                            get_string('modulename', 'gradereport_grader'));
 
     $row[] = new tabobject('preferences',

@@ -702,17 +702,17 @@ body#grade-index .grades .r1 {
 
 /* new grades css*/
 
-#grade-report .catlevel1 {
+.grade-report-grader .catlevel1 {
   background-color: #ffffff;
 }
-#grade-report .catlevel2 {
+.grade-report-grader .catlevel2 {
   background-color: #eeeeee;
 }
-#grade-report .catlevel3 {
+.grade-report-grader .catlevel3 {
   background-color: #dddddd;
 }
 
-#grade-report td.overridden {
+.grade-report-grader td.overridden {
   background-color: #dddddd;
 }
 

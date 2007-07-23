@@ -57,7 +57,7 @@ if ($form = data_submitted()) {
         }
     }
 
-    redirect($CFG->wwwroot . '/grade/report.php?report=grader&amp;id='.$courseid, get_string('changessaved'), 1);
+    redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid, get_string('changessaved'), 1);
     exit;
 }
 
@@ -68,7 +68,7 @@ $strgradepreferences = get_string('gradepreferences', 'grades');
 $navlinks = array();
 $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
 $navlinks[] = array('name' => $strgraderreport,
-    'link' => $CFG->wwwroot . '/grade/report.php?id=' . $courseid . '&amp;report=grader', 'type' => 'misc');
+    'link' => $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $courseid, 'type' => 'misc');
 $navlinks[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc');
 
 $navigation = build_navigation($navlinks);

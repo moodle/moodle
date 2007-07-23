@@ -2051,88 +2051,88 @@ body#doc-contents ul {
  ***/
 
 
-#grade-report table {
+.grade-report-grader table {
   border-width:1px;
   border-style:solid;
   margin-top: 20px;
 }
 
-#grade-report div.submit {
+.grade-report-grader div.submit {
   margin-top: 20px;
   text-align: center;
 }
 
-#grade-report table td {
+.grade-report-grader table td {
   border-width:1px;
   border-style:solid;
 }
 
-#grade-report tr.heading {
+.grade-report-grader tr.heading {
   border-width:0px 0px 0px 0px;
   border-style:solid;
 }
 
-#grade-report .heading td {
+.grade-report-grader .heading td {
   border-width:0px 0px 0px 0px;
   border-style:solid;
 }
 
-#grade-report th.category {
+.grade-report-grader th.category {
   border-width:1px 1px 0px 1px;
   border-style:solid;
 }
 
-#grade-report th.user {
+.grade-report-grader th.user {
   border-width:0px 0px 1px 0px;
   border-style:solid;
 }
 
-#grade-report th.categoryitem,
-#grade-report th.courseitem,
-#grade-report td.topleft {
+.grade-report-grader th.categoryitem,
+.grade-report-grader th.courseitem,
+.grade-report-grader td.topleft {
   border-width:0px 1px 0px 1px;
   border-style:solid;
 }
 
-#grade-report td.fillerfirst {
+.grade-report-grader td.fillerfirst {
   border-width:0px 0px 0px 1px;
   border-style:solid;
 }
 
-#grade-report td.fillerlast {
+.grade-report-grader td.fillerlast {
   border-width:0px 1px 0px 0px;
   border-style:solid;
 }
 
-#grade-report th.item {
+.grade-report-grader th.item {
   border-width:1px 1px 1px 1px;
   border-style:solid;
 }
 
-#grade-report div.gradertoggle {
+.grade-report-grader div.gradertoggle {
   display: inline;
   margin-left: 20px;
 }
 
-#grade-report table.gradestable {
+.grade-report-grader table.gradestable {
   margin-left:auto;
   margin-right:auto;
 }
 
-#grade-report .gradestable th.user {
+.grade-report-grader .gradestable th.user {
   text-align:left;
 }
 
-#grade-report .gradestable td {
+.grade-report-grader .gradestable td {
   text-align:right;
 }
 
-#grade-report th.range {
+.grade-report-grader th.range {
   border-width:1px 1px 1px 1px;
   border-style:solid;
 }
 
-#grade-report .userpic {
+.grade-report-grader .userpic {
   display: inline;
   margin-right: 10px;
 }

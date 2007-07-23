@@ -156,9 +156,9 @@ class block_admin extends block_list {
         }
 
     /// View course grades (or just your own grades, same link)
-        if ((has_capability('moodle/grade:view', $context) or 
-            (has_capability('moodle/grade:viewown', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
+        if ((has_capability('moodle/grade:viewall', $context) or 
+            (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
         }
 
