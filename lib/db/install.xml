@@ -470,7 +470,7 @@
         <FIELD NAME="expireref" TYPE="char" LENGTH="250" NOTNULL="false" DEFAULT="" SEQUENCE="false" ENUM="false" PREVIOUS="expiry" NEXT="created"/>
         <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="expireref" NEXT="modified"/>
         <FIELD NAME="modified" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="created" NEXT="sessdata"/>
-        <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" DEFAULT="" SEQUENCE="false" ENUM="false" PREVIOUS="modified"/>
+        <FIELD NAME="sessdata" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="modified"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="sesskey" COMMENT="Primary key for sessions"/>
