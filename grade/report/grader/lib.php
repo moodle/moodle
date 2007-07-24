@@ -783,16 +783,8 @@ class grade_report_grader extends grade_report {
                         }
 
                         $scaleval = round($this->get_grade_clean($finalavg, $decimalpoints));
-                        $scales_array = get_records_list('scale', 'id', $item->scaleid);
-                        $scale = $scales_array[$item->scaleid];
-                        $scales = explode(",", $scale->scale);
-
-                        // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
-                        if ($scaleval < 1) {
-                            $scaleval = 1;
-                        }
-
-                        $gradehtml = $scales[$scaleval-1];
+                        $scale_object = new grade_scale(array('id' => $item->scaleid), false);
+                        $gradehtml = $scale_object->get_nearest_item($scaleval);
                         $rawvalue = $scaleval;
                     } else {
                         $gradeval = $this->get_grade_clean($sum/$count_array[$item->id], $decimalpoints);

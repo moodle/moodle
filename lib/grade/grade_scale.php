@@ -147,5 +147,27 @@ class grade_scale extends grade_object {
 
         return $this->scale;
     }
+
+    /**
+     * When called on a loaded scale object (with a valid id) and given a float grade between
+     * the grademin and grademax, this method returns the scale item that falls closest to the
+     * float given (which is usually an average of several grades on a scale). If the float falls
+     * below 1 but above 0, it will be rounded up to 1.
+     * @param float $grade
+     * @return string
+     */
+    function get_nearest_item($grade) {
+        // Obtain nearest scale item from average
+        $scales_array = get_records_list('scale', 'id', $this->id);
+        $scale = $scales_array[$this->id];
+        $scales = explode(",", $scale->scale);
+
+        // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
+        if ($grade < 1) {
+            $grade = 1;
+        }
+
+        return $scales[$grade-1];
+    }
 }
 ?>

@@ -103,10 +103,23 @@ class grade_outcome extends grade_object {
      * @static
      *
      * @param array $params associative arrays varname=>value
+     * @param bool $fetch_sitewide_outcomes Whether or not to also fetch all sitewide outcomes (with no courseid)
      * @return array array of grade_outcome insatnces or false if none found.
      */
-    function fetch_all($params) {
+    function fetch_all($params, $fetch_sitewide_outcomes=false) {
+        global $CFG;
+
         if ($outcomes = grade_object::fetch_all_helper('grade_outcomes', 'grade_outcome', $params)) {
+            // Fetch sitewide outcomes if requested
+            if ($fetch_sitewide_outcomes) {
+                $sitewide_outcomes = array();
+                $records = get_records_sql("SELECT * FROM {$CFG->prefix}grade_outcomes WHERE courseid IS NULL");
+                foreach ($records as $outcomeid => $outcome) {
+                    $sitewide_outcomes[$outcomeid] = new grade_outcome($outcome, false);
+                }
+                $outcomes = array_merge($sitewide_outcomes, $outcomes);
+            }
+
             foreach ($outcomes as $key=>$value) {
                 if (!empty($outcomes[$key]->scaleid)) {
                     $outcomes[$key]->scale = new grade_scale(array('id'=>$outcomes[$key]->scaleid));

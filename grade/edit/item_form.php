@@ -17,17 +17,20 @@ class edit_item_form extends moodleform {
 
         // allow setting of outcomes on module items too
         $options = array(0=>get_string('usenooutcome', 'grades'));
-        if ($outcomes = grade_outcome::fetch_all(array('courseid'=>$COURSE->id))) {
+
+        if ($outcomes = grade_outcome::fetch_all(array('courseid'=>$COURSE->id), true)) {
             foreach ($outcomes as $outcome) {
-                $options[$scale->id] = $outcome->get_name();
+                $options[$outcome->id] = $outcome->get_name();
             }
         }
+
         $mform->addElement('select', 'outcomeid', get_string('outcome', 'grades'), $options);
 
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
-                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
-                          GRADE_TYPE_SCALE=>get_string('typescale', 'grades'),
-                          GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
+                         GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
+                         GRADE_TYPE_SCALE=>get_string('typescale', 'grades'),
+                         GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
+
         $mform->addElement('select', 'gradetype', get_string('gradetype', 'grades'), $options);
         $mform->setDefault('gradetype', GRADE_TYPE_VALUE);
 
