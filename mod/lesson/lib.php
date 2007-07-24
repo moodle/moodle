@@ -386,6 +386,70 @@ function lesson_print_recent_activity($course, $isteacher, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
+/**
+ * Prints lesson summaries on MyMoodle Page
+ *
+ * Prints lesson name, due date and attempt information on
+ * lessons that have a deadline that has not already passed
+ * and it is available for taking.
+ *
+ * @param array $courses An array of course objects to get lesson instances from
+ * @param array $htmlarray Store overview output array( course ID => 'lesson' => HTML output )
+ */
+function lesson_print_overview($courses, &$htmlarray) {
+    global $USER, $CFG;
+
+    if (!$lessons = get_all_instances_in_courses('lesson', $courses)) {
+        return;
+    }
+
+/// Get Necessary Strings
+    $strlesson       = get_string('modulename', 'lesson');
+    $strnotattempted = get_string('nolessonattempts', 'lesson');
+    $strattempted    = get_string('lessonattempted', 'lesson');
+
+    $now = time();
+    foreach ($lessons as $lesson) {
+        if ($lesson->deadline != 0                                         // The lesson has a deadline
+            and $lesson->deadline >= $now                                  // And it is before the deadline has been met
+            and ($lesson->available == 0 or $lesson->available <= $now)) { // And the lesson is available
+
+            // Lesson name
+            if (!$lesson->visible) {
+                $class = ' class="dimmed"';
+            } else {
+                $class = '';
+            }
+            $str = print_box("$strlesson: <a$class href=\"$CFG->wwwroot/mod/lesson/view.php?id=$lesson->coursemodule\">".
+                             format_string($lesson->name).'</a>', 'name', '', true);
+
+            // Deadline
+            $str .= print_box(get_string('lessoncloseson', 'lesson', userdate($lesson->deadline)), 'info', '', true);
+
+            // Attempt information
+            if (has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $lesson->coursemodule))) {
+                // Number of user attempts
+                $attempts = count_records('lesson_attempts', 'lessonid', $lesson->id);
+                $str     .= print_box(get_string('xattempts', 'lesson', $attempts), 'info', '', true);
+            } else {
+                // Determine if the user has attempted the lesson or not
+                if (count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id)) {
+                    $str .= print_box($strattempted, 'info', '', true);
+                } else {
+                    $str .= print_box($strnotattempted, 'info', '', true);
+                }
+            }
+            $str = print_box($str, 'lesson overview', '', true);
+
+            if (empty($htmlarray[$lesson->course]['lesson'])) {
+                $htmlarray[$lesson->course]['lesson'] = $str;
+            } else {
+                $htmlarray[$lesson->course]['lesson'] .= $str;
+            }
+        }
+    }
+}
+
 /*******************************************************************/
 function lesson_cron () {
 /// Function to be run periodically according to the moodle cron
