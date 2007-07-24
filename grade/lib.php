@@ -93,7 +93,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// editing scripts - not real plugins
-    if (has_capability('moodle/grade:manage', $context)) { //TODO: add proper capability here
+    if (has_capability('moodle/grade:manage', $context)) {
         $menu['edit']='--'.get_string('edit');
         $url = 'edit/tree.php?id='.$courseid;
         if ($active_type == 'edit' and $active_plugin == 'tree' ) {
