@@ -91,7 +91,6 @@ require_once($CFG->libdir . '/grade/grade_grade.php');
 require_once($CFG->libdir . '/grade/grade_scale.php');
 require_once($CFG->libdir . '/grade/grade_outcome.php');
 require_once($CFG->libdir . '/grade/grade_grade_text.php');
-require_once($CFG->libdir . '/grade/grade_tree.php');
 
 /***** PUBLIC GRADE API *****/
 

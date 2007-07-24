@@ -3,7 +3,6 @@
 require_once '../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php';
-require_once $CFG->libdir.'/gradelib.php';
 require_once 'category_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);

@@ -66,7 +66,7 @@ if (empty($last)) {
 
     } else if (in_array('user', $reports)) {
         $last = 'user';
-        
+
     } else {
         $last = reset($reports);
     }

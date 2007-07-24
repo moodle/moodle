@@ -1,5 +1,7 @@
 <?php //$Id$
 
+require_once $CFG->libdir.'/gradelib.php';
+
 /**
  * Print grading plugin selection popup form.
  *
@@ -91,7 +93,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// editing scripts - not real plugins
-    if (true) { //TODO: add proper capability here
+    if (has_capability('moodle/grade:manage', $context)) { //TODO: add proper capability here
         $menu['edit']='--'.get_string('edit');
         $url = 'edit/tree.php?id='.$courseid;
         if ($active_type == 'edit' and $active_plugin == 'tree' ) {
@@ -105,7 +107,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
 }
 
 /**
- * Utility class used for return tracking when using edit and other forms from grade plubins
+ * Utility class used for return tracking when using edit and other forms in grade plugins
  */
 class grade_plugin_return {
     var $type;
@@ -140,13 +142,15 @@ class grade_plugin_return {
      * @return array options
      */
     function get_options() {
-        if (empty($this->type) or empty($this->plugin)) {
+        if (empty($this->type)) {
             return array();
         }
 
         $params = array();
 
-        $params['plugin'] = $this->plugin;
+        if (!empty($this->plugin)) {
+            $params['plugin'] = $this->plugin;
+        }
 
         if (!empty($this->courseid)) {
             $params['id'] = $this->courseid;
@@ -170,6 +174,10 @@ class grade_plugin_return {
      */
     function get_return_url($default, $extras=null) {
         global $CFG;
+
+        if ($this->type == 'edit') {
+            return $CFG->wwwroot.'/grade/edit/tree.php?id='.$this->courseid;
+        }
 
         if (empty($this->type) or empty($this->plugin)) {
             return $default;
@@ -197,7 +205,7 @@ class grade_plugin_return {
             foreach($extras as $key=>$value) {
                 $url .= $glue.$key.'='.$value;
                 $glue = '&amp;';
-            }            
+            }
         }
 
         return $url;
@@ -208,12 +216,15 @@ class grade_plugin_return {
      * @return string
      */
     function get_form_fields() {
-        if (empty($this->type) or empty($this->plugin)) {
+        if (empty($this->type)) {
             return '';
         }
 
         $result  = '<input type="hidden" name="gpr_type" value="'.$this->type.'" />';
-        $result .= '<input type="hidden" name="gpr_plugin" value="'.$this->plugin.'" />';
+
+        if (!empty($this->plugin)) {
+            $result .= '<input type="hidden" name="gpr_plugin" value="'.$this->plugin.'" />';
+        }
 
         if (!empty($this->courseid)) {
             $result .= '<input type="hidden" name="gpr_courseid" value="'.$this->courseid.'" />';
@@ -234,15 +245,17 @@ class grade_plugin_return {
      * @return void
      */
     function add_mform_elements(&$mform) {
-        if (empty($this->type) or empty($this->plugin)) {
+        if (empty($this->type)) {
             return;
         }
 
         $mform->addElement('hidden', 'gpr_type', $this->type);
         $mform->setType('gpr_type', PARAM_SAFEDIR);
 
-        $mform->addElement('hidden', 'gpr_plugin', $this->plugin);
-        $mform->setType('gpr_plugin', PARAM_SAFEDIR);
+        if (!empty($this->plugin)) {
+            $mform->addElement('hidden', 'gpr_plugin', $this->plugin);
+            $mform->setType('gpr_plugin', PARAM_SAFEDIR);
+        }
 
         if (!empty($this->courseid)) {
             $mform->addElement('hidden', 'gpr_courseid', $this->courseid);
@@ -266,7 +279,7 @@ class grade_plugin_return {
      * @return string $url with erturn tracking params
      */
     function add_url_params($url) {
-        if (empty($this->type) or empty($this->plugin)) {
+        if (empty($this->type)) {
             return $url;
         }
 
@@ -276,7 +289,9 @@ class grade_plugin_return {
             $url .= '&amp;gpr_type='.$this->type;
         }
 
-        $url .= '&amp;gpr_plugin='.$this->plugin;
+        if (!empty($this->plugin)) {
+            $url .= '&amp;gpr_plugin='.$this->plugin;
+        }
 
         if (!empty($this->courseid)) {
             $url .= '&amp;gpr_courseid='.$this->courseid;
@@ -293,4 +308,324 @@ class grade_plugin_return {
         return $url;
     }
 }
+
+
+/**
+ * This class represents a complete tree of categories, grade_items and final grades,
+ * organises as an array primarily, but which can also be converted to other formats.
+ * It has simple method calls with complex implementations, allowing for easy insertion,
+ * deletion and moving of items and categories within the tree.
+ */
+class grade_tree {
+
+    /**
+     * The basic representation of the tree as a hierarchical, 3-tiered array.
+     * @var object $top_element
+     */
+    var $top_element;
+
+    /**
+     * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
+     * @var string $commonvars
+     */
+    var $commonvars;
+
+    /**
+     * 2D array of grade items and categories
+     */
+    var $levels;
+
+    /**
+     * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
+     * objects for the given courseid. Full objects are instantiated.
+     * and renumbering.
+     * @param int $courseid
+     * @param boolean $fillers include fillers and colspans, make the levels var "rectangular"
+     * @param boolean $category_grade_last category grade item is the last child
+     * @param boolean $aggregation_view Either full view (0) or compact view (1)
+     */
+    function grade_tree($courseid, $fillers=true, $category_grade_last=false,
+                        $aggregation_view=GRADE_REPORT_AGGREGATION_VIEW_FULL) {
+        global $USER, $CFG;
+
+        $this->courseid   = $courseid;
+        $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
+        $this->levels     = array();
+
+        // get course grade tree
+        $this->top_element = grade_category::fetch_course_tree($courseid, true);
+
+        if ($category_grade_last) {
+            grade_tree::category_grade_last($this->top_element);
+        }
+
+        if ($fillers) {
+            // inject fake categories == fillers
+            grade_tree::inject_fillers($this->top_element, 0);
+            // add colspans to categories and fillers
+            grade_tree::inject_colspans($this->top_element);
+        }
+
+        grade_tree::fill_levels($this->levels, $this->top_element, 0);
+    }
+
+
+    /**
+     * Static recursive helper - makes the grade_item for category the last children
+     * @static
+     * @param array $element The seed of the recursion
+     * @return void
+     */
+    function category_grade_last(&$element) {
+        if (empty($element['children'])) {
+            return;
+        }
+        if (count($element['children']) < 2) {
+            return;
+        }
+        $category_item = reset($element['children']);
+        $order = key($element['children']);
+        unset($element['children'][$order]);
+        $element['children'][$order] =& $category_item;
+        foreach ($element['children'] as $sortorder=>$child) {
+            grade_tree::category_grade_last($element['children'][$sortorder]);
+        }
+    }
+
+    /**
+     * Static recursive helper - fills the levels array, useful when accessing tree elements of one level
+     * @static
+     * @param int $levels
+     * @param array $element The seed of the recursion
+     * @param int $depth
+     * @return void
+     */
+    function fill_levels(&$levels, &$element, $depth) {
+        if (!array_key_exists($depth, $levels)) {
+            $levels[$depth] = array();
+        }
+
+        // prepare unique identifier
+        if ($element['type'] == 'category') {
+            $element['eid'] = 'c'.$element['object']->id;
+        } else if (in_array($element['type'], array('item', 'courseitem', 'categoryitem'))) {
+            $element['eid'] = 'i'.$element['object']->id;
+        }
+
+        $levels[$depth][] =& $element;
+        $depth++;
+        if (empty($element['children'])) {
+            return;
+        }
+        $prev = 0;
+        foreach ($element['children'] as $sortorder=>$child) {
+            grade_tree::fill_levels($levels, $element['children'][$sortorder], $depth);
+            $element['children'][$sortorder]['prev'] = $prev;
+            $element['children'][$sortorder]['next'] = 0;
+            if ($prev) {
+                $element['children'][$prev]['next'] = $sortorder;
+            }
+            $prev = $sortorder;
+        }
+    }
+
+    /**
+     * Static recursive helper - makes full tree (all leafes are at the same level)
+     */
+    function inject_fillers(&$element, $depth) {
+        $depth++;
+
+        if (empty($element['children'])) {
+            return $depth;
+        }
+        $chdepths = array();
+        $chids = array_keys($element['children']);
+        $last_child  = end($chids);
+        $first_child = reset($chids);
+
+        foreach ($chids as $chid) {
+            $chdepths[$chid] = grade_tree::inject_fillers($element['children'][$chid], $depth);
+        }
+        arsort($chdepths);
+
+        $maxdepth = reset($chdepths);
+        foreach ($chdepths as $chid=>$chd) {
+            if ($chd == $maxdepth) {
+                continue;
+            }
+            for ($i=0; $i < $maxdepth-$chd; $i++) {
+                if ($chid == $first_child) {
+                    $type = 'fillerfirst';
+                } else if ($chid == $last_child) {
+                    $type = 'fillerlast';
+                } else {
+                    $type = 'filler';
+                }
+                $oldchild =& $element['children'][$chid];
+                $element['children'][$chid] = array('object'=>'filler', 'type'=>$type, 'eid'=>'', 'depth'=>$element['object']->depth,'children'=>array($oldchild));
+            }
+        }
+
+        return $maxdepth;
+    }
+
+    /**
+     * Static recursive helper - add colspan information into categories
+     */
+    function inject_colspans(&$element) {
+        if (empty($element['children'])) {
+            return 1;
+        }
+        $count = 0;
+        foreach ($element['children'] as $key=>$child) {
+            $count += grade_tree::inject_colspans($element['children'][$key]);
+        }
+        $element['colspan'] = $count;
+        return $count;
+    }
+
+    /**
+     * Parses the array in search of a given eid and returns a element object with
+     * information about the element it has found.
+     * @param int $eid
+     * @return object element
+     */
+    function locate_element($eid) {
+        if (strpos($eid, 'g') === 0) {
+            // it is a grade  construct a new object
+            $id = (int)substr($eid, 1);
+            if (!$grade = grade_grade::fetch(array('id'=>$id))) {
+                return null;
+            }
+            //extra security check - the grade item must be in this tree
+            if (!$item_el = $this->locate_element('i'.$grade->itemid)) {
+                return null;
+            }
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
+            return array('eid'=>'g'.$id,'object'=>$grade, 'type'=>'grade');
+        }
+
+        // it is a category or item
+        foreach ($this->levels as $row) {
+            foreach ($row as $element) {
+                if ($element['type'] == 'filler') {
+                    continue;
+                }
+                if ($element['eid'] == $eid) {
+                    return $element;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return edit icon for give element
+     * @param object $element
+     * @return string
+     */
+    function get_edit_icon($element, $gpr) {
+        global $CFG;
+
+        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        if (!has_capability('moodle/grade:manage', $context)) {
+            return '';
+        }
+
+        $object = $element['object'];
+
+        switch ($element['type']) {
+            case 'item':
+            case 'categoryitem':
+            case 'courseitem':
+                $url = $CFG->wwwroot.'/grade/edit/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $gpr->add_url_params($url);
+                break;
+
+            case 'category':
+                $url = $CFG->wwwroot.'/grade/edit/category.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $gpr->add_url_params($url);
+                break;
+
+            case 'grade':
+                //TODO: improve dealing with new grades
+                $url = $CFG->wwwroot.'/grade/edit/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $gpr->add_url_params($url);
+                break;
+
+            default:
+                $url = null;
+        }
+
+        if ($url) {
+            $stredit = get_string('edit');
+            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Return hiding icon for give element
+     * @param object $element
+     * @return string
+     */
+    function get_hiding_icon($element, $gpr) {
+        global $CFG;
+
+        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
+            return '';
+        }
+
+        if ($element['object']->is_hidden()) {
+            $strshow = get_string('show');
+            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $gpr->add_url_params($url);
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
+
+        } else {
+            $strhide = get_string('hide');
+            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $gpr->add_url_params($url);
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
+        }
+        return $action;
+    }
+
+    /**
+     * Return locking icon for give element
+     * @param object $element
+     * @return string
+     */
+    function get_locking_icon($element, $gpr) {
+        global $CFG;
+
+        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+
+        if ($element['object']->is_locked()) {
+            if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context)) {
+                return '';
+            }
+            $strunlock = get_string('unlock', 'grades');
+            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $gpr->add_url_params($url);
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
+
+        } else {
+            if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context)) {
+                return '';
+            }
+            $strlock = get_string('lock', 'grades');
+            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $gpr->add_url_params($url);
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
+        }
+        return $action;
+    }
+
+}
+
 ?>

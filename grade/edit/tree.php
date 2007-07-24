@@ -1,5 +1,4 @@
-<?php
-// $Id$
+<?php  // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -26,7 +25,6 @@
 
 require_once '../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
-require_once $CFG->libdir.'/gradelib.php';
 
 $courseid = required_param('id', PARAM_INT);
 $action   = optional_param('action', 0, PARAM_ALPHA);
@@ -40,12 +38,15 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 
 require_login($course);
-
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-//require_capability() here!!
+require_capability('moodle/grade:manage', $context);
 
-// default return url
-$returnurl = 'tree.php?id='.$course->id;
+/// return tracking object
+$gpr = new grade_plugin_return(array('type'=>'edit', 'courseid'=>$courseid));
+$returnurl = $gpr->get_return_url(null);
+
+//first make sure we have proper final grades - we need it for locking changes
+grade_regrade_final_grades($courseid);
 
 // get the grading tree object
 // note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
@@ -59,7 +60,7 @@ if (empty($eid)) {
     if (!$element = $gtree->locate_element($eid)) {
         error('Incorrect element id!', $returnurl);
     }
-    $object  = $element['object'];
+    $object = $element['object'];
 }
 
 
@@ -74,16 +75,6 @@ $navigation = build_navigation($nav);
 $moving = false;
 
 switch ($action) {
-    case 'edit':
-        if ($eid and confirm_sesskey()) {
-            if ($element['type'] == 'category') {
-                redirect('category.php?courseid='.$course->id.'&amp;id='.$object->id);
-            } else {
-                redirect('item.php?courseid='.$course->id.'&amp;id='.$object->id);
-            }
-        }
-        break;
-
     case 'delete':
         if ($eid) {
             $confirm = optional_param('confirm', 0, PARAM_BOOL);
@@ -135,35 +126,6 @@ switch ($action) {
         }
         break;
 
-    case 'hide':
-        if ($eid and confirm_sesskey()) {
-            $object->set_hidden(1);
-            redirect($returnurl);
-        }
-        break;
-
-    case 'show':
-        if ($eid and confirm_sesskey()) {
-            $object->set_hidden(0);
-            redirect($returnurl);
-        }
-        break;
-
-    case 'lock':
-        if ($eid and confirm_sesskey()) {
-            //TODO: add error handling in redirect
-            $object->set_locked(1);
-            redirect($returnurl);
-        }
-        break;
-
-    case 'unlock':
-        if ($eid and confirm_sesskey()) {
-            $object->set_locked(0);
-            redirect($returnurl);
-        }
-        break;
-
     default:
         break;
 }
@@ -178,7 +140,7 @@ print_heading(get_string('categoriesedit', 'grades'));
 
 print_box_start('gradetreebox generalbox');
 echo '<ul id="grade_tree">';
-print_grade_tree($gtree->top_element, $moving);
+print_grade_tree($gtree, $gtree->top_element, $moving, $gpr);
 echo '</ul>';
 print_box_end();
 
@@ -198,43 +160,32 @@ die;
 
 
 
-function print_grade_tree($element, $moving) {
+function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
     global $CFG, $COURSE;
 
 /// fetch needed strings
     $strmove     = get_string('move');
     $strmovehere = get_string('movehere');
-    $stredit     = get_string('edit');
     $strdelete   = get_string('delete');
-    $strhide     = get_string('hide');
-    $strshow     = get_string('show');
-    $strlock     = get_string('lock', 'grades');
-    $strunlock   = get_string('unlock', 'grades');
 
     $object = $element['object'];
     $eid    = $element['eid'];
 
 /// prepare actions
-    $actions = '<a href="tree.php?id='.$COURSE->id.'&amp;action=edit&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+    $actions = $gtree->get_edit_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
         $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
         $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
     }
 
-    if ($object->is_locked()) {
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=unlock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
-    } else {
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=lock&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
-    }
+    $actions .= $gtree->get_locking_icon($element, $gpr);
 
+    $name = $object->get_name();
     if ($object->is_hidden()) {
-        $name = '<span class="dimmed_text">'.$object->get_name().'</span>';
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=show&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
-    } else {
-        $name = $object->get_name();
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=hide&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
+        $name = '<span class="dimmed_text">'.$name.'</span>';
     }
+    $actions .= $gtree->get_hiding_icon($element, $gpr);
 
 /// prepare icon
     $icon = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="icon" alt=""/>';
@@ -275,7 +226,7 @@ function print_grade_tree($element, $moving) {
         echo '<li class="'.$element['type'].'">'.$icon.$name.$actions;
         echo '<ul class="catlevel'.$element['depth'].'">';
         foreach($element['children'] as $child_el) {
-            print_grade_tree($child_el, $moving);
+            print_grade_tree($gtree, $child_el, $moving, $gpr);
         }
         echo '</ul></li>';
         if ($element['depth'] > 1) {

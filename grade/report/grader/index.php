@@ -127,7 +127,7 @@ $numusers = $report->get_numusers();
 $report->load_final_grades();
 
 /// Print header
-print_header_simple($strgrades.':'.$reportname, ':'.$strgrades, $navigation,
+print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
                         '', '', true, $buttons, navmenu($course));
 
 /// Print the plugin selector at the top

@@ -53,7 +53,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 
 } else if (has_capability('moodle/grade:view', $usercontext) and $course->showgrades) {
     // ok - can view grades of this user- parent most probably
-    
+
 } else {
     $acces = false;
 }
@@ -77,7 +77,7 @@ $navigation = build_navigation($navlinks);
 
 
 /// Print header
-print_header_simple($strgrades.':'.$reportname, ':'.$strgrades, $navigation,
+print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
                     '', '', true, '', navmenu($course));
 
 /// Print the plugin selector at the top
@@ -90,13 +90,13 @@ if ($access) {
 
     // Create a report instance
     $report = new grade_report_user($courseid, $gpr, $context, $userid);
-    
+
     $gradetotal = 0;
     $gradesum = 0;
-    
+
     // print the page
     print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
-    
+
     if ($report->fill_table()) {
         echo $report->print_table(true);
     }
