@@ -2,29 +2,29 @@
     <tr>
         <td>
             <select id="addoutcomes" size="20" name="addoutcomes[]" multiple="multiple">
-                
-            <?php    
+
+            <?php
             foreach ($outcomes as $outcome) {
-                echo '<option value="'.$outcome->id.'">'.$outcome->shortname.'</option>';       
+                echo '<option value="'.$outcome->id.'">'.$outcome->shortname.'</option>';
             }
             ?>
-            </select>       
-        </td>        
+            </select>
+        </td>
         <td>
             <p class="arrow_button">
                 <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
                 <br />
                 <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
             </p>
-        </td>        
+        </td>
         <td>
             <select id="removeoutcomes" size="20" name="removeoutcomes[]" multiple="multiple">
-            <?php    
+            <?php
             foreach ($courseoutcomes as $courseoutcome) {
-                echo '<option value="'.$courseoutcome->id.'">'.$courseoutcome->shortname.'</option>';       
+                echo '<option value="'.$courseoutcome->id.'">'.$courseoutcome->shortname.'</option>';
             }
             ?>
-            </select>  
+            </select>
         </td>
     </tr>
 </table>

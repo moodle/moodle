@@ -11,7 +11,7 @@
     } else {
         $row[] = new tabobject('outcomesettings',
                                $CFG->wwwroot.'/grade/report/outcomes/site.php?id='.$courseid,
-                               get_string('settings'));      
+                               get_string('settings'));
     }
 
     $row[] = new tabobject('editoutcomes',

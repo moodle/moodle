@@ -81,10 +81,6 @@ define('GRADE_REPORT_PREFERENCE_DEFAULT', 'default');
 define('GRADE_REPORT_PREFERENCE_INHERIT', 'inherit');
 define('GRADE_REPORT_PREFERENCE_UNUSED', -1);
 
-// Common directories
-define('GRADE_EDIT_DIR', $CFG->dirroot . '/grade/edit');
-define('GRADE_EDIT_URL', $CFG->wwwroot . '/grade/edit');
-
 require_once($CFG->libdir . '/grade/grade_category.php');
 require_once($CFG->libdir . '/grade/grade_item.php');
 require_once($CFG->libdir . '/grade/grade_grade.php');

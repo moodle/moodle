@@ -85,6 +85,11 @@ class grade_report_grader extends grade_report {
      * @return bool Success or Failure (array of errors).
      */
     function process_data($data) {
+
+        if (!has_capability('moodle/grade:override', $this->context)) {
+            return false;
+        }
+
         // always initialize all arrays
         $queue = array();
         foreach ($data as $varname => $postedvalue) {
@@ -283,10 +288,18 @@ class grade_report_grader extends grade_report {
     function get_toggles_html() {
         global $USER;
         $html = '<div id="grade-report-toggles">';
-        if ($USER->gradeediting) {
-            $html .= $this->print_toggle('eyecons', true);
-            $html .= $this->print_toggle('locks', true);
-            $html .= $this->print_toggle('calculations', true);
+        if ($USER->gradeediting[$this->courseid]) {
+            if (has_capability('moodle/grade:manage', $this->context) or has_capability('moodle/grade:hide', $this->context)) {
+                $html .= $this->print_toggle('eyecons', true);
+            }
+            if (has_capability('moodle/grade:manage', $this->context)
+             or has_capability('moodle/grade:lock', $this->context)
+             or has_capability('moodle/grade:unlock', $this->context)) {
+                $html .= $this->print_toggle('locks', true);
+            }
+            if (has_capability('moodle/grade:manage', $this->context)) {
+                $html .= $this->print_toggle('calculations', true);
+            }
         }
 
         $html .= $this->print_toggle('averages', true);
@@ -453,7 +466,7 @@ class grade_report_grader extends grade_report {
                     $headerhtml .= '<th class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
 
                     // Print icons
-                    if ($USER->gradeediting) {
+                    if ($USER->gradeediting[$this->courseid]) {
                         $headerhtml .= $this->get_icons($element);
                     }
 
@@ -542,7 +555,7 @@ class grade_report_grader extends grade_report {
             $studentshtml .= '<tr><th class="user">' . $user_pic . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
                           . $user->id . '">' . fullname($user) . '</a></th>';
 
-            foreach ($this->items as $item) {
+            foreach ($this->items as $itemid=>$item) {
                 // Get the decimal points preference for this item
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
 
@@ -555,9 +568,15 @@ class grade_report_grader extends grade_report {
 
                 } else {
                     $gradeval = null;
-                    $grade = new grade_grade(array('userid' => $userid, 'itemid' => $item->id), false);
+                    $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$item->id), false);
                     $grade->feedback = '';
                 }
+
+                $grade->courseid = $this->courseid;
+                $grade->grade_item =& $this->items[$itemid]; // this speedsup is_hidden() and other grade_grade methods
+
+                // emulate grade element
+                $element = array('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
 
                 if ($grade->is_overridden()) {
                     $studentshtml .= '<td class="overridden">';
@@ -569,18 +588,10 @@ class grade_report_grader extends grade_report {
                     $studentshtml .= get_string('excluded', 'grades'); // TODO: improve visual representation of excluded grades
                 }
 
-                // emulate grade element
-                $grade->courseid = $this->courseid;
-                $grade->grade_item = $item; // this may speedup is_hidden() and other grade_grade methods
-                $element = array ('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
-
                 // Do not show any icons if no grade (no record in DB to match)
                 // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
-                if (!$item->needsupdate and !empty($grade->id) and $USER->gradeediting) {
-                    $states = array('is_hidden' => $item->hidden,
-                                    'is_locked' => $item->locked,
-                                    'is_editable' => $item->gradetype != GRADE_TYPE_NONE && !$grade->locked && !$item->locked);
-                    $studentshtml .= $this->get_icons($element, null, true, $states);
+                if (!$item->needsupdate and !empty($grade->id) and $USER->gradeediting[$this->courseid]) {
+                    $studentshtml .= $this->get_icons($element);
                 }
 
                 // if in editting mode, we need to print either a text box
@@ -589,7 +600,7 @@ class grade_report_grader extends grade_report {
                 if ($item->needsupdate) {
                     $studentshtml .= '<span class="gradingerror">'.get_string('error').'</span>';
 
-                } else if ($USER->gradeediting) {
+                } else if ($USER->gradeediting[$this->courseid]) {
                     // We need to retrieve each grade_grade object from DB in order to
                     // know if they are hidden/locked
 
@@ -776,7 +787,7 @@ class grade_report_grader extends grade_report {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this average
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
-                if ($USER->gradeediting) {
+                if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
                     $displaytype = $gradedisplaytype;
@@ -846,7 +857,7 @@ class grade_report_grader extends grade_report {
                 // Determine which display type to use for this range
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
 
-                if ($USER->gradeediting) {
+                if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($rangesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
                     $displaytype = $gradedisplaytype;
@@ -883,177 +894,51 @@ class grade_report_grader extends grade_report {
      * with the icons needed for the grader report.
      *
      * @param object $object
-     * @param array $icons An array of icon names that this function is explicitly requested to print, regardless of settings
-     * @param bool $limit If true, use the $icons array as the only icons that will be printed. If false, use it to exclude these icons.
-     * @param object $states An optional array of states (hidden, locked, editable), shortcuts to increase performance.
      * @return string HTML
      */
-    function get_icons($element, $icons=null, $limit=true, $states=array()) {
-        global $CFG;
-        global $USER;
+    function get_icons($element) {
+        global $CFG, $USER;
 
-        // Load language strings
-        $stredit           = $this->get_lang_string("edit");
-        $streditcalculation= $this->get_lang_string("editcalculation", 'grades');
-        $strfeedback       = $this->get_lang_string("feedback");
-        $strmove           = $this->get_lang_string("move");
-        $strmoveup         = $this->get_lang_string("moveup");
-        $strmovedown       = $this->get_lang_string("movedown");
-        $strmovehere       = $this->get_lang_string("movehere");
-        $strcancel         = $this->get_lang_string("cancel");
-        $stredit           = $this->get_lang_string("edit");
-        $strdelete         = $this->get_lang_string("delete");
-        $strhide           = $this->get_lang_string("hide");
-        $strshow           = $this->get_lang_string("show");
-        $strlock           = $this->get_lang_string("lock", 'grades');
-        $strswitch_minus   = $this->get_lang_string("contract", 'grades');
-        $strswitch_plus    = $this->get_lang_string("expand", 'grades');
-        $strunlock         = $this->get_lang_string("unlock", 'grades');
-
-        // Prepare container div
-        $html = '<div class="grade_icons">';
-
-        // Prepare reference variables
-        $eid    = $element['eid'];
-        $object = $element['object'];
-        $type   = $element['type'];
-
-        if (empty($states)) {
-            $states['is_hidden'] = $object->is_hidden();
-            $states['is_locked'] = $object->is_locked();
-            $states['is_editable'] = $object->is_editable();
+        if (!$USER->gradeediting[$this->courseid]) {
+            return '<div class="grade_icons" />';
         }
 
-        // Add mock attributes in case the object is not of the right type
-        if ($type != 'grade') {
-            $object->feedback = '';
-        }
-
-        $overlib = '';
-        if (!empty($object->feedback)) {
-            if (empty($object->feedbackformat) || $object->feedbackformat != 1) {
-                $function = "return overlib('" . strip_tags($object->feedback) . "', CAPTION, '$strfeedback');";
-            } else {
-                $function = "return overlib('" . s(ltrim($object->feedback) . "', FULLHTML);");
-            }
-            $overlib = 'onmouseover="' . $function . '" onmouseout="return nd();"';
-        }
-
-        // Prepare image strings
-        $edit_icon = '';
-        if ($states['is_editable']) {
-            if ($type == 'category') {
-                $url = GRADE_EDIT_URL . '/category.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $this->gpr->add_url_params($url);
-                $edit_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                           . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            } else if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem'){
-                $url = GRADE_EDIT_URL . '/item.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $this->gpr->add_url_params($url);
-                $edit_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'
-                           . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            } else if ($type == 'grade' and ($states['is_editable'] or empty($object->id))) {
-            // TODO: change link to use itemid and userid to allow creating of new grade objects
-                $url = GRADE_EDIT_URL . '/grade.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $this->gpr->add_url_params($url);
-                $edit_icon = '<a href="'.$url.'"><img ' . $overlib . ' src="'.$CFG->pixpath.'/t/edit.gif"'
-                           . 'class="iconsmall" alt="' . $stredit.'" title="'.$stredit.'" /></a>'. "\n";
-            }
-        }
-
+        // Init all icons
+        $edit_icon             = $this->gtree->get_edit_icon($element, $this->gpr);
         $edit_calculation_icon = '';
-        if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
-            // show calculation icon only when calculation possible
-            if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
-                $url = GRADE_EDIT_URL . '/calculation.php?courseid='.$object->courseid.'&amp;id='.$object->id;
-                $url = $this->gpr->add_url_params($url);
-                $edit_calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
-                                       . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+        $show_hide_icon        = '';
+        $contract_expand_icon  = '';
+        $lock_unlock_icon      = '';
+
+        if ($this->get_pref('showcalculations')) {
+            $edit_calculation_icon = $this->gtree->get_calculation_icon($element, $this->gpr);
+        }
+
+        if ($this->get_pref('showeyecons')) {
+           $show_hide_icon = $this->gtree->get_hiding_icon($element, $this->gpr);
+        }
+
+        if ($this->get_pref('showlocks')) {
+            $lock_unlock_icon = $this->gtree->get_locking_icon($element, $this->gpr);
+        }
+
+        // If object is a category, display expand/contract icon
+        if ($element['type'] == 'category' && $this->get_pref('aggregationview') == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
+            // Load language strings
+            $strswitch_minus = $this->get_lang_string('contract', 'grades');
+            $strswitch_plus  = $this->get_lang_string('expand', 'grades');
+            $expand_contract = 'switch_minus'; // Default: expanded
+            $state = get_user_preferences('grade_category_'.$element['object']->id, GRADE_CATEGORY_EXPANDED);
+            if ($state == GRADE_CATEGORY_CONTRACTED) {
+                $expand_contract = 'switch_plus';
             }
-        }
-
-        // Prepare Hide/Show icon state
-        $hide_show = 'hide';
-        if ($states['is_hidden']) {
-            $hide_show = 'show';
-        }
-
-        $show_hide_icon = '<a href="index.php?target='.$eid
-                        . "&amp;action=$hide_show" . $this->gtree->commonvars . "\">\n"
-                        . '<img src="'.$CFG->pixpath.'/t/'.$hide_show.'.gif" class="iconsmall" alt="'
-                        . ${'str' . $hide_show}.'" title="'.${'str' . $hide_show}.'" /></a>'. "\n";
-
-        // Prepare lock/unlock string
-        $lock_unlock = 'lock';
-        if ($states['is_locked']) {
-            $lock_unlock = 'unlock';
-        }
-
-        // Print lock/unlock icon
-
-        $lock_unlock_icon = '<a href="index.php?target='.$eid
-                          . "&amp;action=$lock_unlock" . $this->gtree->commonvars . "\">\n"
-                          . '<img src="'.$CFG->pixpath.'/t/'.$lock_unlock.'.gif" class="iconsmall" alt="'
-                          . ${'str' . $lock_unlock}.'" title="'.${'str' . $lock_unlock}.'" /></a>'. "\n";
-
-        // Prepare expand/contract string
-        $expand_contract = 'switch_minus'; // Default: expanded
-        $state = get_user_preferences('grade_category_' . $object->id, GRADE_CATEGORY_EXPANDED);
-        if ($state == GRADE_CATEGORY_CONTRACTED) {
-            $expand_contract = 'switch_plus';
-        }
-
-        $contract_expand_icon = '<a href="index.php?target=' . $eid
+            $contract_expand_icon = '<a href="index.php?target=' . $element['eid']
                               . "&amp;action=$expand_contract" . $this->gtree->commonvars . "\">\n"
                               . '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
                               . ${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
-
-        // If an array of icon names is given, return only these in the order they are given
-        if (!empty($icons) && is_array($icons)) {
-            $new_html = '';
-
-            foreach ($icons as $icon_name) {
-                if ($limit) {
-                    $new_html .= ${$icon_name . '_icon'};
-                } else {
-                    ${'show_' . $icon_name} = false;
-                }
-            }
-            if ($limit) {
-                return $new_html;
-            } else {
-                $html .= $new_html;
-            }
         }
 
-        // Icons shown when edit mode is on
-        if ($USER->gradeediting) {
-            // Edit icon (except for grade_grade)
-            if ($edit_icon) {
-                $html .= $edit_icon;
-            }
-
-            // Calculation icon for items and categories
-            if ($this->get_pref('showcalculations')) {
-                $html .= $edit_calculation_icon;
-            }
-
-            if ($this->get_pref('showeyecons')) {
-                $html .= $show_hide_icon;
-            }
-
-            if ($this->get_pref('showlocks')) {
-                $html .= $lock_unlock_icon;
-            }
-
-            // If object is a category, display expand/contract icon
-            if (get_class($object) == 'grade_category' && $this->get_pref('aggregationview') == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
-                $html .= $contract_expand_icon;
-            }
-        } else { // Editing mode is off
-        }
-
-        return $html . '</div>';
+        return '<div class="grade_icons">'.$edit_icon.$edit_calculation_icon.$show_hide_icon.$lock_unlock_icon.$contract_expand_icon.'</div>';
     }
 }
 ?>

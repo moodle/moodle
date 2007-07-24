@@ -17,7 +17,7 @@ $search = optional_param('search', 0, PARAM_TEXT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT); // which outcome to delete
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $perpage = 30;
-  
+
     // form processing
     if ($deleteid && confirm_sesskey()) {
         if ($confirm) {
@@ -41,7 +41,7 @@ $perpage = 30;
             exit;
         }
     }
-  
+
    /// display information
     admin_externalpage_setup('gradereportoutcomes');
     admin_externalpage_print_header();
@@ -76,22 +76,22 @@ $perpage = 30;
 
         foreach ($outcomes as $outcome) {
             $data = array();
-        
+
             // full name of the outcome
             $data[] = $outcome['fullname'];
-        
+
             // full name of the scale used by this outcomes
             $scale= get_record('scale', 'id', $outcome['scaleid']);
             $data[] = $scale->name;
-        
+
             // get course
             if ($outcome['courseid']) {
                 $course = get_record('course', 'id', $outcome['courseid']);
                 $data[] = $course->shortname;
             } else {
-                $data[] = get_string('site');  
-            }  
-        
+                $data[] = get_string('site');
+            }
+
             // add operations
             $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="settings.php?deleteid='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links

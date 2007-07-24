@@ -336,6 +336,11 @@ class grade_tree {
     var $levels;
 
     /**
+     * Course context
+     */
+    var $context;
+
+    /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
      * objects for the given courseid. Full objects are instantiated.
      * and renumbering.
@@ -351,6 +356,7 @@ class grade_tree {
         $this->courseid   = $courseid;
         $this->commonvars = "&amp;sesskey=$USER->sesskey&amp;id=$this->courseid";
         $this->levels     = array();
+        $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
 
         // get course grade tree
         $this->top_element = grade_category::fetch_course_tree($courseid, true);
@@ -528,12 +534,17 @@ class grade_tree {
     function get_edit_icon($element, $gpr) {
         global $CFG;
 
-        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
-        if (!has_capability('moodle/grade:manage', $context)) {
+        if (!has_capability('moodle/grade:manage', $this->context)) {
             return '';
         }
 
+        static $stredit = null;
+        if (is_null($stredit)) {
+            $stredit = get_string('edit');
+        }
+
         $object = $element['object'];
+        $overlib = '';
 
         switch ($element['type']) {
             case 'item':
@@ -552,6 +563,11 @@ class grade_tree {
                 //TODO: improve dealing with new grades
                 $url = $CFG->wwwroot.'/grade/edit/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
+                if (!empty($object->feedback)) {
+                    $feedback = format_text($object->feedback, $object->feedbackformat);
+                    $function = "return overlib('".s(ltrim($object->feedback)."', FULLHTML);");
+                    $overlib = 'onmouseover="'.$function.'" onmouseout="return nd();"';
+                }
                 break;
 
             default:
@@ -559,8 +575,7 @@ class grade_tree {
         }
 
         if ($url) {
-            $stredit = get_string('edit');
-            return '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
+            return '<a href="'.$url.'"><img '.$overlib.' src="'.$CFG->pixpath.'/t/edit.gif" class="iconsmall" alt="'.$stredit.'" title="'.$stredit.'"/></a>';
 
         } else {
             return '';
@@ -575,19 +590,23 @@ class grade_tree {
     function get_hiding_icon($element, $gpr) {
         global $CFG;
 
-        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
-        if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
+        if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:hide', $this->context)) {
             return '';
         }
 
-        if ($element['object']->is_hidden()) {
+        static $strshow = null;
+        static $strhide   = null;
+        if (is_null($strshow)) {
             $strshow = get_string('show');
+            $strhide = get_string('hide');
+        }
+
+        if ($element['object']->is_hidden()) {
             $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
 
         } else {
-            $strhide = get_string('hide');
             $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
@@ -603,22 +622,25 @@ class grade_tree {
     function get_locking_icon($element, $gpr) {
         global $CFG;
 
-        $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
+        static $strunlock = null;
+        static $strlock   = null;
+        if (is_null($strunlock)) {
+            $strunlock = get_string('unlock', 'grades');
+            $strlock   = get_string('lock', 'grades');
+        }
 
         if ($element['object']->is_locked()) {
-            if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context)) {
+            if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {
                 return '';
             }
-            $strunlock = get_string('unlock', 'grades');
             $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
 
         } else {
-            if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context)) {
+            if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
                 return '';
             }
-            $strlock = get_string('lock', 'grades');
             $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
@@ -626,6 +648,36 @@ class grade_tree {
         return $action;
     }
 
+    /**
+     * Return calculation icon for given element
+     * @param object $element
+     * @return string
+     */
+    function get_calculation_icon($element, $gpr) {
+        global $CFG;
+        if (!has_capability('moodle/grade:manage', $this->context)) {
+            return '';
+        }
+
+        $calculation_icon = '';
+
+        $type   = $element['type'];
+        $object = $element['object'];
+
+        if ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') {
+            $streditcalculation = get_string('editcalculation', 'grades');
+
+            // show calculation icon only when calculation possible
+            if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
+                $url = $CFG->wwwroot.'/grade/edit/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $gpr->add_url_params($url);
+                $calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
+                                       . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";
+            }
+        }
+
+        return $calculation_icon;
+    }
 }
 
 ?>

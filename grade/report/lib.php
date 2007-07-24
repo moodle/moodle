@@ -197,54 +197,9 @@ class grade_report {
      * @param string $target Sortorder
      * @param string $action Which action to take (edit, delete etc...)
      * @return
-     * TODO Update this, it's quite old and needs a major makeover
      */
     function process_action($target, $action) {
-        $element = $this->gtree->locate_element($target);
-
-        switch ($action) {
-            case 'edit':
-                break;
-            case 'delete':
-                if ($confirm == 1) { // Perform the deletion
-                    //TODO: add proper delete support for grade items and categories
-                    //$element['object']->delete();
-                    // Print result message
-
-                } else { // Print confirmation dialog
-                    $eid = $element['eid'];
-                    $strdeletecheckfull = $this->get_lang_string('deletecheck', '', $element['object']->get_name());
-                    $linkyes = GRADE_EDIT_URL . "/tree.php?target=$eid&amp;action=delete&amp;confirm=1$this->gtree->commonvars";
-                    $linkno = GRADE_EDIT_URL . "/tree.php?$this->gtree->commonvars";
-                    notice_yesno($strdeletecheckfull, $linkyes, $linkno);
-                }
-                break;
-
-            case 'hide':
-            // TODO Implement calendar for selection of a date to hide element until
-                $element['object']->set_hidden(1);
-                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
-                break;
-            case 'show':
-                $element['object']->set_hidden(0);
-                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
-                break;
-            case 'lock':
-            // TODO Implement calendar for selection of a date to lock element after
-                if (!$element['object']->set_locked(1)) {
-                    debugging("Could not update the element's locked state!");
-                }
-                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
-                break;
-            case 'unlock':
-                if (!$element['object']->set_locked(0)) {
-                    debugging("Could not update the element's locked state!");
-                }
-                $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
-                break;
-            default:
-                break;
-        }
+        //implement if needed
     }
 
     /**

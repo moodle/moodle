@@ -47,7 +47,9 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
 require_capability('gradereport/grader:view', $context);
+require_capability('moodle/grade:viewall', $context);
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'grader', 'courseid'=>$courseid, 'page'=>$page));
@@ -71,28 +73,38 @@ $navigation = build_navigation($navlinks);
 /// Build editing on/off buttons
 
 if (!isset($USER->gradeediting)) {
-    $USER->gradeediting = 0;
+    $USER->gradeediting = array();
 }
 
-if (($edit == 1) and confirm_sesskey()) {
-    $USER->gradeediting = 1;
-} else if (($edit == 0) and confirm_sesskey()) {
-    $USER->gradeediting = 0;
-}
+if (has_capability('moodle/grade:override', $context)) {
+    if (!isset($USER->gradeediting[$course->id])) {
+        $USER->gradeediting[$course->id] = 0;
+    }
 
-// page params for the turn editting on
-$options = $gpr->get_options();
-$options['sesskey'] = sesskey();
+    if (($edit == 1) and confirm_sesskey()) {
+        $USER->gradeediting[$course->id] = 1;
+    } else if (($edit == 0) and confirm_sesskey()) {
+        $USER->gradeediting[$course->id] = 0;
+    }
 
-if ($USER->gradeediting) {
-    $options['edit'] = 0;
-    $string = get_string('turneditingoff');
+    // page params for the turn editting on
+    $options = $gpr->get_options();
+    $options['sesskey'] = sesskey();
+
+    if ($USER->gradeediting[$course->id]) {
+        $options['edit'] = 0;
+        $string = get_string('turneditingoff');
+    } else {
+        $options['edit'] = 1;
+        $string = get_string('turneditingon');
+    }
+
+    $buttons = print_single_button('index.php', $options, $string, 'get', '_self', true);
+
 } else {
-    $options['edit'] = 1;
-    $string = get_string('turneditingon');
+    $USER->gradeediting[$course->id] = 0;
+    $buttons = '';
 }
-
-$buttons = print_single_button('index.php', $options, $string, 'get', '_self', true);
 
 $gradeserror = array();
 
@@ -117,7 +129,7 @@ if ($perpageurl) {
     $report->user_prefs['studentsperpage'] = $perpageurl;
 }
 
-// Perform actions on categories, items and grades
+// Perform actions
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
     $report->process_action($target, $action);
 }
@@ -153,7 +165,7 @@ $reporthtml .= $report->get_avghtml();
 $reporthtml .= "</table>";
 
 // print submit button
-if ($USER->gradeediting) {
+if ($USER->gradeediting[$course->id]) {
     echo '<form action="index.php" method="post">';
     echo '<div>';
     echo '<input type="hidden" value="'.$courseid.'" name="id" />';
@@ -164,7 +176,7 @@ if ($USER->gradeediting) {
 echo $reporthtml;
 
 // print submit button
-if ($USER->gradeediting && ($report->get_pref('quickfeedback') || $report->get_pref('quickgrading'))) {
+if ($USER->gradeediting[$course->id] && ($report->get_pref('quickfeedback') || $report->get_pref('quickgrading'))) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';
 }
