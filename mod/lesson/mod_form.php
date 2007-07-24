@@ -25,15 +25,23 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $mform->addElement('selectyesno', 'timed', get_string('timed', 'lesson'));
-        $mform->setDefault('timed', 0);
-        $mform->setHelpButton('timed', array('timed', get_string('timed', 'lesson'), 'lesson'));
+        // Create a text box that can be enabled/disabled for lesson time limit
+        $timedgrp = array();
+        $timedgrp[] = &$mform->createElement('text', 'maxtime');
+        $timedgrp[] = &$mform->createElement('checkbox', 'timed', '', get_string('enable'));
+        $mform->addGroup($timedgrp, 'timedgrp', get_string('maxtime', 'lesson'), array(' '), false);
+        $mform->disabledIf('timedgrp', 'timed');
 
-        $mform->addElement('text', 'maxtime', get_string('maxtime', 'lesson'));
+        // Add numeric rule to text field
+        $timedgrprules = array();
+        $timedgrprules['maxtime'][] = array(null, 'numeric', null, 'client');
+        $mform->addGroupRule('timedgrp', $timedgrprules);
+
+        // Rest of group setup
+        $mform->setDefault('timed', 0);
         $mform->setDefault('maxtime', 20);
-        $mform->addRule('maxtime', null, 'required', null, 'client');
-        $mform->addRule('maxtime', null, 'numeric', null, 'client');
         $mform->setType('maxtime', PARAM_INT);
+        $mform->setHelpButton('timedgrp', array('timed', get_string('timed', 'lesson'), 'lesson'));
 
         $numbers = array();
         for ($i=20; $i>1; $i--) {
@@ -307,6 +315,22 @@ class mod_lesson_mod_form extends moodleform_mod {
                 }
             }
         }
+    }
+
+    /**
+     * Enforce validation rules here
+     *
+     * @param object $data Post data to validate
+     * @return array
+     **/
+    function validation($data) {
+        $errors = array();
+
+        if (empty($data['maxtime']) and !empty($data['timed'])) {
+            $errors['timedgrp'] = get_string('err_numeric', 'form');
+        }
+
+        return $errors;
     }
 }
 ?>
