@@ -2,6 +2,8 @@
 
 include_once('../../../config.php');
 require_once $CFG->libdir.'/formslib.php';
+
+// courseid needs to be passed in to know whether this should be tied to a course
 class edit_outcomes_form extends moodleform {
 
     function definition() {
@@ -30,6 +32,8 @@ class edit_outcomes_form extends moodleform {
         $mform->setType('scaleid', PARAM_INT);
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
@@ -39,9 +43,10 @@ class edit_outcomes_form extends moodleform {
 $id = optional_param('id', 0, PARAM_INT); // id of the outcome
 if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     // optional course id, if set, editting from course
+    $returnurl = $CFG->wwwroot."/grade/report/outcomes/course.php";
 } else {
     // admin editting site level outcomes
-    $returnurl = $CFG->wwwroot."/grade/report/outcomes/settings.php";
+    $returnurl = $CFG->wwwroot."/grade/report/outcomes/site.php";
 }
 // form processing
 
@@ -49,6 +54,11 @@ $mform = new edit_outcomes_form();
 if ($id) {
     // form set data
     $mform->set_data(get_record('grade_outcomes', 'id', $id));
+}
+// if courseid is provided, set it in the form
+if ($courseid) {
+    $data->courseid = $courseid;
+    $mform->set_data($data);
 }
 
 if ($mform->is_cancelled()) {

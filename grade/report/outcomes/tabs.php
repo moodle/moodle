@@ -4,9 +4,15 @@
                            $CFG->wwwroot.'/grade/report/outcomes/index.php?id='.$courseid,
                            get_string('outcomereport', 'grades'));
 
-    $row[] = new tabobject('outcomesettings',
-                           $CFG->wwwroot.'/grade/report/outcomes/settings.php?id='.$courseid,
-                           get_string('settings'));
+    if ($courseid != SITEID) {
+        $row[] = new tabobject('outcomesettings',
+                               $CFG->wwwroot.'/grade/report/outcomes/course.php?id='.$courseid,
+                               get_string('settings'));
+    } else {
+        $row[] = new tabobject('outcomesettings',
+                               $CFG->wwwroot.'/grade/report/outcomes/site.php?id='.$courseid,
+                               get_string('settings'));      
+    }
 
     $row[] = new tabobject('editoutcomes',
                            $CFG->wwwroot.'/grade/report/outcomes/editoutcomes.php?courseid='.$courseid,
