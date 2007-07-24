@@ -1,5 +1,4 @@
-<?PHP // $Id$
-
+<?php   // $Id$
 ////////////////////////////////////////////////////////////////////////////////
 /// This file contains a few configuration variables that control 
 /// how Moodle uses this theme.
@@ -153,7 +152,7 @@ $THEME->makenavmenulist = false;
 
 $THEME->customcorners = true;
 
-/// By setting this to true, Moodel will generate extra divs in
+/// By setting this to true, Moodle will generate extra divs in
 /// all pages to enable graphical rich custom corners and borders.
 /// Please have a look at the README with more details.
 
@@ -198,5 +197,4 @@ $THEME->custompix = false;
 /// "pix/mod" directory containing all the icons 
 /// for all the activity modules.
 ////////////////////////////////////////////////////////////////////////////////
-
 ?>
