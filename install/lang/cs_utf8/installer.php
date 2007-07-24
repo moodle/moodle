@@ -199,7 +199,7 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Předchozí';
 $string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
-$string['report'] = 'Protokol';
+$string['report'] = 'Sestava';
 $string['restricted'] = 'Nedostupné';
 $string['safemode'] = 'Bezpečný režim (Safe Mode)';
 $string['safemodeerror'] = 'Se zapnutým bezpečným režimem (Safe Mode) může mít Moodle problémy.';
