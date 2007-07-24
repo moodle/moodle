@@ -180,6 +180,8 @@
 
     foreach ($posts as $post) {
 
+        // Replace the simple subject with the three items forum name -> thread name -> subject
+        // (if all three are appropriate) each as a link. 
         if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
             error('Discussion ID was incorrect');
         }
@@ -200,29 +202,13 @@
 
         $post->subject = $fullsubject;
 
-        //Indicate search terms only found in HTML markup
-        //Use highlight() with nonsense tags to spot search terms in the
-        //actual text content first.          fiedorow - 9/2/2005
+        // Identify search terms only found in HTML markup, and add a warning about them to
+        // the start of the message text. However, do not do the highlighting here. forum_print_post
+        // will do it for us later.
         $missing_terms = "";
-
-        // Hack for posts of format FORMAT_PLAIN. Otherwise html tags added by
-        // the highlight() call bellow get stripped out by forum_print_post().
-        if ($post->format == FORMAT_PLAIN) {
-            $post->message = stripslashes_safe($post->message); 
-            $post->message = rebuildnolinktag($post->message); 
-            $post->message = str_replace(' ', '&nbsp; ', $post->message); 
-            $post->message = nl2br($post->message); 
-            $post->format = FORMAT_HTML;
-        }
 
         $options = new object();
         $options->trusttext = true;
-        // detect TRUSTTEXT marker before first call to format_text
-        if (trusttext_present($post->message)) {
-            $ttpresent = true;
-        } else {
-            $ttpresent = false;
-        }
         $message = highlight($strippedsearch,
                         format_text($post->message, $post->format, $options, $course->id),
                         0, '<fgw9sdpq4>', '</fgw9sdpq4>');
@@ -232,31 +218,18 @@
                 $missing_terms .= " $searchterm";
             }
         }
-        // now is the right time to strip the TRUSTTEXT marker, we will add it later if needed
-        $post->message = trusttext_strip($post->message);
-
-        $message = str_replace('<fgw9sdpq4>','<span class="highlight">',$message);
-        $message = str_replace('</fgw9sdpq4>','</span>',$message);
 
         if ($missing_terms) {
             $strmissingsearchterms = get_string('missingsearchterms','forum');
-            $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$message;
-            $ttpresent = false;
-        } else {
-            $post->message = $message;
+            $post->message = '<p class="highlight2">'.$strmissingsearchterms.' '.$missing_terms.'</p>'.$post->message;
         }
 
+        // Prepare a link to the post in context, to be displayed after the forum post.
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".get_string("postincontext", "forum")."</a>";
 
-        // reconstruct the TRUSTTEXT properly after processing
-        if ($ttpresent) {
-            $post->message = trusttext_mark($post->message);
-        } else {
-            $post->message = trusttext_strip($post->message); //make 100% sure TRUSTTEXT marker was not created during processing
-        }
-        forum_print_post($post, $course->id, false, false, false, false, $fulllink, '', -99, false);
-
-        echo "<br />";
+        // Now pring the post.
+        forum_print_post($post, $course->id, false, false, false, false,
+                $fulllink, $strippedsearch, -99, false);
     }
 
     print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode(stripslashes($search))."&amp;id=$course->id&amp;perpage=$perpage&amp;");
