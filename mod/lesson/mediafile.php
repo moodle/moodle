@@ -30,7 +30,12 @@
         error('Course module is incorrect');
     }
 
-    if (!is_url($lesson->mediafile)) {
+    require_login($course->id, false, $cm);
+
+    // Get the mimetype
+    $mimetype = mimeinfo("type", $lesson->mediafile);
+
+    if (!is_url($lesson->mediafile) and !in_array($mimetype, array('text/plain', 'text/html'))) {
         print_header($course->shortname);
     }
 
@@ -49,8 +54,6 @@
         exit();
     }
 
-    require_login($course->id, false, $cm);
-
     if (is_url($lesson->mediafile)) {
         $fullurl = $lesson->mediafile;        
     } else {
@@ -62,9 +65,6 @@
         }
         $fullurl = "$CFG->wwwroot$relativeurl";
     }
-    
-    // Get the mimetype
-    $mimetype = mimeinfo("type", $lesson->mediafile);    
 
     // find the correct type and print it out
     if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
