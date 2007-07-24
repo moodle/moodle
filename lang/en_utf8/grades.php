@@ -2,6 +2,7 @@
       // grades.php - created with Moodle 1.7 beta + (2006101003)
 
 
+$string['activities'] = 'Activities';
 $string['addcategory'] = 'Add Category';
 $string['addcategoryerror'] = 'Could not add category.';
 $string['addexceptionerror'] = 'Error occurred while adding exception for userid:gradeitem';
@@ -212,9 +213,11 @@ $string['nonweightedpct'] = 'non-weighted %%';
 $string['noselectedcategories'] = 'no categories were selected.';
 $string['noselecteditems'] = 'no items were selected.';
 $string['notteachererror'] = 'You must be a teacher to use this feature.';
+$string['numberofgrades'] = 'Number of grades';
 $string['onascaleof'] = ' on a scale of $a->grademin to $a->grademax';
 $string['operations'] = 'Operations';
 $string['outcome'] = 'Outcome';
+$string['outcomename'] = 'Outcome name';
 $string['outcomereport'] = 'Outcome report';
 $string['outcomes'] = 'Outcomes';
 $string['overridden'] = 'Overridden';
@@ -265,6 +268,7 @@ $string['showhiddenitems'] = 'Show Hidden Items';
 $string['showlocks'] = 'Show locks';
 $string['showranges'] = 'Show ranges';
 $string['showuserimage'] = 'Show user profile images';
+$string['sitewide'] = 'Site-wide';
 $string['sort'] = 'sort';
 $string['sortasc'] = 'Sort in ascending order';
 $string['sortdesc'] = 'Sort in descending order';
