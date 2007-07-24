@@ -378,9 +378,11 @@ class grade_report_grader extends grade_report {
 
         $numrows = count($this->gtree->levels);
 
+        $columns_to_unset = array();
+
         foreach ($this->gtree->levels as $key=>$row) {
             if ($key == 0) {
-                // do not diplay course grade category
+                // do not display course grade category
                 // continue;
             }
 
@@ -393,9 +395,13 @@ class grade_report_grader extends grade_report {
                 $headerhtml .= '<td class="topleft">&nbsp;</td>';
             }
 
-            foreach ($row as $element) {
+            foreach ($row as $columnkey => $element) {
+                $eid    = $element['eid'];
+                $object = $element['object'];
+                $type   = $element['type'];
+
                 // Load user preferences for categories
-                if ($element['type'] == 'category') {
+                if ($type == 'category') {
                     $categoryid = $element['object']->id;
                     $aggregationview = $this->get_pref('aggregationview', $categoryid);
 
@@ -406,16 +412,25 @@ class grade_report_grader extends grade_report {
                         if ($categorystate == GRADE_CATEGORY_CONTRACTED) {
                             // The category is contracted: this means we only show 1 item for this category: the
                             // category's aggregation item. The others must be removed from the grade_tree
+                            $element['colspan'] = 1;
+                            foreach ($element['children'] as $index => $child) {
+                                if ($child['type'] != 'categoryitem') {
+                                    $columns_to_unset[] = $child['eid'];
+                                }
+                            }
+
                         } elseif ($categorystate == GRADE_CATEGORY_EXPANDED) {
                             // The category is expanded: we only show the non-aggregated items directly descending
                             // from this category. The category's grade_item must be removed from the grade_tree
+                            $element['colspan']--;
+                            foreach ($element['children'] as $index => $child) {
+                                if ($child['type'] == 'categoryitem') {
+                                    $columns_to_unset[] = $child['eid'];
+                                }
+                            }
                         }
                     }
                 }
-
-                $eid    = $element['eid'];
-                $object = $element['object'];
-                $type   = $element['type'];
 
                 if (!empty($element['colspan'])) {
                     $colspan = 'colspan="'.$element['colspan'].'"';
@@ -429,10 +444,12 @@ class grade_report_grader extends grade_report {
                     $catlevel = '';
                 }
 
-
+// Element is a filler
                 if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
                     $headerhtml .= '<th class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</th>';
-                } else if ($type == 'category') {
+                }
+// Element is a category
+                else if ($type == 'category' && !in_array($eid, $columns_to_unset)) {
                     $headerhtml .= '<th class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
 
                     // Print icons
@@ -441,7 +458,9 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerhtml .= '</th>';
-                } else {
+                }
+// Element is a grade_item
+                elseif (!in_array($eid, $columns_to_unset)) {
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
                             $arrow = print_arrow('up', $strsortasc, true);
