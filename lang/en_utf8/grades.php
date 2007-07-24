@@ -249,7 +249,6 @@ $string['savechanges'] = 'Save Changes';
 $string['savepreferences'] = 'Save Preferences';
 $string['scaledpct'] = 'Scaled %%';
 $string['selectdestination'] = 'Select destination of $a';
-$string['selectplugin'] = 'Select a plugin';
 $string['septab'] = 'Tab';
 $string['sepcomma'] = 'Comma';
 $string['separator'] = 'Separator';

@@ -103,7 +103,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// finally print/return the popup form
-    return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('selectplugin', 'grades'));
+    return popup_form($CFG->wwwroot.'/grade/', $menu, 'choosepluginreport', $active, 'choose', '', '', $return, 'self', get_string('view'));
 }
 
 /**
