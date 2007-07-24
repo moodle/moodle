@@ -510,6 +510,16 @@
 
     /// Print the page header, heading and tabs
         $PAGE->print_header();
+
+        if ($attemptflag) {
+            print_heading(get_string('attempt', 'lesson', $retries + 1));
+        }
+
+        /// This calculates and prints the ongoing score
+        if ($lesson->ongoing and !empty($pageid)) {
+            lesson_print_ongoing_score($lesson);
+        }
+
         require($CFG->dirroot.'/mod/lesson/viewstart.html');
 
         // now starting to print the page's contents   

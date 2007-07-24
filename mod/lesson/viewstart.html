@@ -26,27 +26,16 @@
         <?php } ?>
         <!-- Start main column -->
         <td id="middle-column" align="center">
-            
+
             <?php if ($lesson->displayleft) { ?>
-            
+
             <a name="maincontent" id="maincontent" title="<?php print_string('anchortitle', 'lesson') ?>"></a>
-            
+
             <?php } ?>
 
-<?php if($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { // Starts the slideshow div ?>
-    
+<?php if ($lesson->slideshow && $page->qtype == LESSON_BRANCHTABLE) { // Starts the slideshow div ?>
+
             <div class="slideshow" style="background-color: <?php echo $lesson->bgcolor?>; height: <?php echo $lesson->height ?>px; width: <?php echo $lesson->width?>px;">
-                
+
 <?php } ?>
-
-<?php 
-    if ($attemptflag) {
-        print_heading(get_string('attempt', 'lesson', $retries + 1));
-    }
-
-    /// This calculates and prints the ongoing score
-    if ($lesson->ongoing and !empty($pageid)) {
-        lesson_print_ongoing_score($lesson);
-    }
-?>
 <!-- End view start -->
