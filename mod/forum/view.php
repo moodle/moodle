@@ -154,15 +154,8 @@
                 echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
             }
 
-            if (forum_is_subscribed($USER->id, $forum->id)) {
-                $subtexttitle = get_string("subscribestop", "forum");
-                $subtext = get_string("unsubscribe", "forum");
-            } else {
-                $subtexttitle = get_string("subscribestart", "forum");
-                $subtext = get_string("subscribe", "forum");
-            }
-            echo "<br />";
-            echo "<span class=\"helplink\"><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></span>";
+            echo '<br /><span class="helplink">', forum_get_subscribe_link($forum, $context, 
+                    array('forcesubscribed' => '', 'cantsubscribe' => '')), '</span>';
         }
 
         if (forum_tp_can_track_forums($forum) && ($forum->trackingtype == FORUM_TRACKING_OPTIONAL)) {

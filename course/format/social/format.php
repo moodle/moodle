@@ -43,14 +43,8 @@
     echo '<a name="startofcontent"></a>';
     if ($forum = forum_get_course_forum($course->id, 'social')) {
         print_heading_block(get_string('socialheadline'));
-        if (forum_is_forcesubscribed($forum->id)) {
-            echo '<div class="subscribelink">'.get_string('everyoneissubscribed', 'forum').'</div>';
-        } else if (forum_is_subscribed($USER->id, $forum->id)) {
-            echo '<div class="subscribelink"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('unsubscribe', 'forum').'</a></div>';
-        } else {
-            echo '<div class="subscribelink"><a href="../mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('subscribe', 'forum').'</a></div>';
-        }
-
+        $context = get_context_instance(CONTEXT_MODULE, get_coursemodule_from_instance('forum', $forum->id));
+        echo '<div class="subscribelink">', forum_get_subscribe_link($forum, $context), '</div>';
         forum_print_latest_discussions($course, $forum, 10, 'plain', '', false);
 
     } else {

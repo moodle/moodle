@@ -170,6 +170,7 @@
                 $groupmode = NOGROUPS;
             }
 
+            $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
 
             // this is potentially wrong logic. could possibly check for if user has the right to hmmm
             if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
@@ -208,12 +209,18 @@
             $introoptions->para=false;
             $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
 
-            if ($forum->visible) {
-                $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-                $discussionlink = "<a href=\"view.php?f=$forum->id\">".$count."</a>";
+            $forumname = format_string($forum->name,true);;
+            if ($cantaccessagroup) {
+                $forumlink = $forumname;
+                $discussionlink = $count;
             } else {
-                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-                $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
+                if ($forum->visible) {
+                    $style = '';
+                } else {
+                    $style = 'class="dimmed"';
+                }
+                $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
+                $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
             }
 
             $row = array ($forumlink, $forum->intro, $discussionlink);
@@ -223,29 +230,9 @@
             }
 
             if ($can_subscribe) {
-                if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = $stryes;
-                } else {
-                    if ($groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id)) {
-                        $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
-                        $forumlink = format_string($forum->name,true);
-                    } else {
-                        if (forum_is_subscribed($USER->id, $forum->id)) {
-                            $subscribed = $stryes;
-                            $subtitle = get_string("unsubscribe", "forum");
-                        } else {
-                            $subscribed = $strno;
-                            $subtitle = get_string("subscribe", "forum");
-                        }
-                        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE
-                                    && !has_capability('mod/forum:managesubscriptions', $context)) {
-                            $sublink = '-';
-                        } else {
-                            $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
-                        }
-                    }
-                }
-                $row[] = $sublink;
+                $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                        'cantsubscribe' => '-'), $cantaccessagroup);
             }
 
             //If this forum has RSS activated, calculate it
@@ -316,6 +303,8 @@
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
  
+                $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
+
                 if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
@@ -359,12 +348,18 @@
                     $printsection = "";
                 }
 
-                if ($forum->visible) {
-                    $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-                    $discussionlink = "<a href=\"view.php?f=$forum->id\">".$count."</a>";
+                $forumname = format_string($forum->name,true);;
+                if ($cantaccessagroup && $groupmode == SEPARATEGROUPS) {
+                    $forumlink = $forumname;
+                    $discussionlink = $count;
                 } else {
-                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-                    $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
+                    if ($forum->visible) {
+                        $style = '';
+                    } else {
+                        $style = 'class="dimmed"';
+                    }
+                    $forumlink = "<a href=\"view.php?f=$forum->id\" $style>".format_string($forum->name,true)."</a>";
+                    $discussionlink = "<a href=\"view.php?f=$forum->id\" $style>".$count."</a>";
                 }
 
                 $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
@@ -374,27 +369,9 @@
                 }
 
                 if ($can_subscribe) {
-                    if (forum_is_forcesubscribed($forum->id)) {
-                        $sublink = $stryes;
-                    } else {
-                        if ($groupmode and !has_capability('moodle/site:accessallgroups', $context)
-                                    and !mygroupid($course->id)) {
-                            $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
-                            if ($groupmode == SEPARATEGROUPS) {
-                                $forumlink = format_string($forum->name,true);
-                            }
-                        } else {
-                            if (forum_is_subscribed($USER->id, $forum->id)) {
-                                $subscribed = $stryes;
-                                $subtitle = $strunsubscribe;
-                            } else {
-                                $subscribed = $strno;
-                                $subtitle = $strsubscribe;
-                            }
-                            $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
-                        }
-                    }
-                    $row[] = $sublink;
+                    $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                        'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                        'cantsubscribe' => '-'), $cantaccessagroup);
                 }
                 
                 //If this forum has RSS activated, calculate it

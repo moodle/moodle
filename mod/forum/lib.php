@@ -3214,6 +3214,45 @@ function forum_post_subscription($post) {
     return "<p>".get_string("nownotsubscribed", "forum", $info)."</p>";
 }
 
+/**
+ * Generate and return the subscribe or unsubscribe link for a forum.
+ * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
+ * @param object $context the context object for this forum.
+ * @param array $messages text used for the link in its various states 
+ *      (subscribed, unsubscribed, forcesubscribed or cantsubscribe).
+ *      Any strings not passed in are taken from the $defaultmessages array
+ *      at the top of the function.
+ * @param 
+ */
+function forum_get_subscribe_link($forum, $context, $messages = array(), $cantaccessagroup = false) {
+    global $CFG, $USER;
+    $defaultmessages = array(
+        'subscribed' => get_string('unsubscribe', 'forum'),
+        'unsubscribed' => get_string('subscribe', 'forum'),
+        'cantaccessgroup' => get_string('no'),
+        'forcesubscribed' => get_string('everyoneissubscribed', 'forum'),
+        'cantsubscribe' => get_string('disallowsubscribe','forum')
+    );
+    $messages = $messages + $defaultmessages;
+
+    if (forum_is_forcesubscribed($forum->id)) {
+        return $messages['forcesubscribed'];
+    } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !has_capability('mod/forum:managesubscriptions', $context)) {
+        return $messages['cantsubscribe'];
+    } else if ($cantaccessagroup) {
+        return $messages['cantaccessgroup'];
+    } else {
+        if (forum_is_subscribed($USER->id, $forum->id)) {
+            $linktext = $messages['subscribed'];
+            $linktitle = get_string('subscribestopt', 'forum');
+        } else {
+            $linktext = $messages['unsubscribed'];
+            $linktitle = get_string('subscribestart', 'forum');
+        }
+        return '<a title="' . $linktitle . '" href="' . $CFG->wwwroot .
+                '/mod/forum/subscribe.php?id=' . $forum->id . '">' . $linktext . '</a>';
+    }    
+}
 
 /**
  * 
