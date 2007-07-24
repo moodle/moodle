@@ -216,24 +216,10 @@
                 $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
             }
 
-            //If this forum has RSS activated, calculate it
-            $rsslink = '';
-            if ($show_rss) {
-                if ($forum->rsstype and $forum->rssarticles) {
-                    //Calculate the tolltip text
-                    if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-                    } else {
-                        $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                    }
-                    if (empty($USER->id)) {
-                        $userid = 0;
-                    } else {
-                        $userid = $USER->id;
-                    }
-                    //Get html code for RSS link
-                    $rsslink = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-                }
+            $row = array ($forumlink, $forum->intro, $discussionlink);
+            if ($usetracking) {
+                $row[] = $unreadlink;
+                $row[] = $trackedlink;    // Tracking.
             }
 
             if ($can_subscribe) {
@@ -259,27 +245,27 @@
                         }
                     }
                 }
-                $row = array ($forumlink, $forum->intro, $discussionlink);
-                if ($usetracking) {
-                    $row[] = $unreadlink;
-                    $row[] = $trackedlink;    // Tracking.
-                }
                 $row[] = $sublink;
-                if ($show_rss) {
-                    $row[] = $rsslink;
-                }
-                $generaltable->data[] = $row;
-            } else {
-                $row = array ($forumlink, $forum->intro, $discussionlink);
-                if ($usetracking) {
-                    $row[] = $unreadlink;
-                    $row[] = $trackedlink;    // Tracking.
-                }
-                if ($show_rss) {
-                    $row[] = $rsslink;
-                }
-                $generaltable->data[] = $row;
             }
+
+            //If this forum has RSS activated, calculate it
+            if ($show_rss and $forum->rsstype and $forum->rssarticles) {
+                //Calculate the tolltip text
+                if ($forum->rsstype == 1) {
+                    $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
+                } else {
+                    $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
+                }
+                if (empty($USER->id)) {
+                    $userid = 0;
+                } else {
+                    $userid = $USER->id;
+                }
+                //Get html code for RSS link
+                $row[] = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
+            }
+
+            $generaltable->data[] = $row;
         }
     }
 
@@ -381,24 +367,10 @@
                     $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
                 }
 
-                //If this forum has RSS activated, calculate it
-                $rsslink = '';
-                if ($show_rss) {
-                    if ($forum->rsstype and $forum->rssarticles) {
-                        //Calculate the tolltip text
-                        if ($forum->rsstype == 1) {
-                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-                        } else {
-                            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                        }
-                        if (empty($USER->id)) {
-                            $userid = 0;
-                        } else {
-                            $userid = $USER->id;
-                        }
-                        //Get html code for RSS link
-                        $rsslink = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-                    }
+                $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
+                if ($usetracking) {
+                    $row[] = $unreadlink;
+                    $row[] = $trackedlink;    // Tracking.
                 }
 
                 if ($can_subscribe) {
@@ -422,29 +394,26 @@
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
                     }
-
-                    $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
-                    if ($usetracking) {
-                        $row[] = $unreadlink;
-                        $row[] = $trackedlink;    // Tracking.
-                    }
-                    $row[] = $sublink;
-                    if ($show_rss) {
-                        $row[] = $rsslink;
-                    }
-                    $learningtable->data[] = $row;
-
-                } else {
-                    $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
-                    if ($usetracking) {
-                        $row[] = $unreadlink;
-                        $row[] = $trackedlink;    // Tracking.
-                    }
-                    if ($show_rss) {
-                        $row[] = $rsslink;
-                    }
-                    $learningtable->data[] = $row;
                 }
+                
+                //If this forum has RSS activated, calculate it
+                if ($show_rss and $forum->rsstype and $forum->rssarticles) {
+                    //Calculate the tolltip text
+                    if ($forum->rsstype == 1) {
+                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
+                    } else {
+                        $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
+                    }
+                    if (empty($USER->id)) {
+                        $userid = 0;
+                    } else {
+                        $userid = $USER->id;
+                    }
+                    //Get html code for RSS link
+                    $row[] = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
+                }
+                
+                $learningtable->data[] = $row;
             }
         }
     }
