@@ -3487,7 +3487,7 @@ function print_box_end($return=false) {
  * @param string $method ?
  * @todo Finish documenting this function
  */
-function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false) {
+function print_single_button($link, $options, $label='OK', $method='get', $target='_self', $return=false, $tooltip='') {
     $output = '';
     $link = str_replace('"', '&quot;', $link); //basic XSS protection
     $output .= '<div class="singlebutton">';
@@ -3499,7 +3499,12 @@ function print_single_button($link, $options, $label='OK', $method='get', $targe
             $output .= '<input type="hidden" name="'. $name .'" value="'. s($value) .'" />';
         }
     }
-    $output .= '<input type="submit" value="'. s($label) .'" /></div></form></div>';
+    if ($tooltip) {
+        $tooltip = 'title="' . s($tooltip) . '"';
+    } else {
+        $tooltip = '';
+    }
+    $output .= '<input type="submit" value="'. s($label) .'" ' . $tooltip . ' /></div></form></div>';
 
     if ($return) {
         return $output;

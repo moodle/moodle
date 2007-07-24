@@ -3249,8 +3249,8 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $linktext = $messages['unsubscribed'];
             $linktitle = get_string('subscribestart', 'forum');
         }
-        return '<a title="' . $linktitle . '" href="' . $CFG->wwwroot .
-                '/mod/forum/subscribe.php?id=' . $forum->id . '">' . $linktext . '</a>';
+        return print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id,
+                '', $linktext, 'post', '_self', true, $linktitle);
     }    
 }
 
