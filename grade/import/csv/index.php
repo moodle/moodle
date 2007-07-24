@@ -1,17 +1,20 @@
-<?php
-require_once('../../../config.php');
-include_once($CFG->libdir.'/gradelib.php');
+<?php  //$Id$
+require_once '../../../config.php';
+require_once $CFG->dirroot.'/grade/lib.php';
+require_once '../grade_import_form.php';
+require_once '../lib.php';
 
 $id = required_param('id', PARAM_INT); // course id
-$course = get_record('course', 'id', $id); // actual course
 
-// capability check
-require_login($id);
-require_capability('moodle/grade:import', get_context_instance(CONTEXT_COURSE, $course->id));
+if (!$course = get_record('course', 'id', $id)) {
+    print_error('nocourseid');
+}
 
-require_once('../grade_import_form.php');
-require_once($CFG->dirroot.'/grade/lib.php');
-require_once('../lib.php');
+require_login($course);
+$context = get_context_instance(CONTEXT_COURSE, $id);
+require_capability('moodle/grade:import', $context);
+require_capability('gradeimport/csv:view', $context);
+
 
 // sort out delimiter
 $csv_encode = '/\&\#44/';

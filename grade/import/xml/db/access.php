@@ -1,8 +1,8 @@
 <?php  // $Id$
 
-$gradeimport_csv_capabilities = array(
+$gradeimport_xml_capabilities = array(
 
-    'gradeimport/csv:view' => array(
+    'gradeimport/xml:view' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
