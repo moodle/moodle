@@ -23,7 +23,7 @@ foreach (get_list_of_plugins('grade/report') as $plugin) {
     }
 
     if ($plugin == 'outcomes') {
-        $settings = new admin_externalpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin), $CFG->wwwroot.'/grade/report/outcomes/settings.php');
+        $settings = new admin_externalpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin), $CFG->wwwroot.'/grade/report/outcomes/site.php');
         $ADMIN->add('gradereports', $settings);
     } else if (file_exists($CFG->dirroot.'/grade/report/'.$plugin.'/settings.php')) {
 
