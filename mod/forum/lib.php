@@ -91,7 +91,7 @@ if (!isset($CFG->forum_enabletimedposts)) {   // Newish feature that is not quit
  * (defined by the form in mod.html) this function
  * will create a new instance and return the id number
  * of the new instance.
-*/
+ */
 function forum_add_instance($forum) {
     global $CFG;
 
@@ -890,7 +890,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_user_complete($course, $user, $mod, $forum) {
     global $CFG;
@@ -908,7 +908,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG;
@@ -1257,7 +1257,7 @@ function forum_get_participants($forumid) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_scale_used ($forumid,$scaleid) {
 //This function returns if a scale is being used by one forum
@@ -2709,7 +2709,7 @@ function forum_print_mode_form($id, $mode, $forumtype='') {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_search_form($course, $search='') {
     global $CFG;
@@ -2730,7 +2730,7 @@ function forum_search_form($course, $search='') {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_set_return() {
     global $CFG, $SESSION;
@@ -2750,7 +2750,7 @@ function forum_set_return() {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_go_back_to($default) {
     global $SESSION;
@@ -2774,14 +2774,14 @@ function forum_file_area_name($post) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_file_area($post) {
     return make_upload_directory( forum_file_area_name($post) );
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_delete_old_attachments($post, $exception="") {
 
@@ -2904,7 +2904,7 @@ function forum_print_attachments($post, $return=NULL) {
  */
 
 /**
- * TODO document
+ * 
  */
 function forum_add_attachment($post, $inputname,&$message) {
 
@@ -2930,7 +2930,7 @@ function forum_add_attachment($post, $inputname,&$message) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_add_new_post($post,&$message) {
 
@@ -2961,7 +2961,7 @@ function forum_add_new_post($post,&$message) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_update_post($post,&$message) {
 
@@ -3054,7 +3054,7 @@ function forum_add_discussion($discussion,&$message) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_delete_discussion($discussion, $fulldelete=false) {
 // $discussion is a discussion record object
@@ -3085,7 +3085,7 @@ function forum_delete_discussion($discussion, $fulldelete=false) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_delete_post($post, $children=false) {
    if ($childposts = get_records('forum_posts', 'parent', $post->id)) {
@@ -3118,7 +3118,7 @@ function forum_delete_post($post, $children=false) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_count_replies($post, $children=true) {
     $count = 0;
@@ -3139,21 +3139,21 @@ function forum_count_replies($post, $children=true) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_forcesubscribe($forumid, $value=1) {
     return set_field("forum", "forcesubscribe", $value, "id", $forumid);
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_is_forcesubscribed($forumid) {
     return (get_field("forum", "forcesubscribe", "id", $forumid) == 1);
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_is_subscribed($userid, $forumid) {
     if (forum_is_forcesubscribed($forumid)) {
@@ -3216,7 +3216,7 @@ function forum_post_subscription($post) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_user_has_posted_discussion($forumid, $userid) {
     if ($discussions = forum_get_discussions($forumid, '', $userid)) {
@@ -3227,7 +3227,7 @@ function forum_user_has_posted_discussion($forumid, $userid) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_discussions_user_has_posted_in($forumid, $userid) {
     global $CFG;
@@ -3244,14 +3244,14 @@ function forum_discussions_user_has_posted_in($forumid, $userid) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_user_has_posted($forumid, $did, $userid) {
     return record_exists('forum_posts','discussion',$did,'userid',$userid);
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1, $cm=NULL, $context=NULL) {
 // $forum is an object
@@ -3371,7 +3371,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 
 /**
- * TODO document
+ * 
  */
 function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL) {
     global $USER;
@@ -3406,7 +3406,7 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
 
 
 /**
- * TODO document
+ * 
  */
 function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
     global $USER;
@@ -3693,7 +3693,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
 
 /**
- * TODO document
+ * 
  */
 function forum_print_discussion($course, $forum, $discussion, $post, $mode, $canreply=NULL, $canrate=false) {
 
@@ -3793,7 +3793,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
 
 /**
- * TODO document
+ * 
  */
 function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
@@ -3888,7 +3888,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
@@ -4000,7 +4000,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
@@ -4243,7 +4243,7 @@ function forum_remove_user_subscriptions($userid, $context) {
 
 // Functions to do with read tracking.
 /**
- * TODO document
+ * 
  */
 function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-1) {
     if (($readrecord = forum_tp_get_read_records($userid, $postid)) === false) {
@@ -4381,7 +4381,7 @@ function forum_tp_mark_discussion_read($userid, $discussionid, $forumid) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_tp_is_post_read($userid, &$post) {
     return (forum_tp_is_post_old($post) ||
@@ -4389,7 +4389,7 @@ function forum_tp_is_post_read($userid, &$post) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_tp_is_post_old(&$post, $time=null) {
     global $CFG;
@@ -4645,7 +4645,7 @@ function forum_tp_is_tracked($forum, $userid=false) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_tp_start_tracking($forumid, $userid=false) {
     global $USER;
@@ -4658,7 +4658,7 @@ function forum_tp_start_tracking($forumid, $userid=false) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_tp_stop_tracking($forumid, $userid=false) {
     global $USER;
@@ -4731,14 +4731,14 @@ function forum_discussion_update_last_post($discussionid) {
 
 
 /**
- * TODO document
+ * 
  */
 function forum_get_view_actions() {
     return array('view discussion','search','forum','forums','subscribers');
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_get_post_actions() {
     return array('add discussion','add post','delete discussion','delete post','move discussion','prune post','update post');
@@ -4763,7 +4763,7 @@ function forum_get_separate_modules($courseid) {
 }
 
 /**
- * TODO document
+ * 
  */
 function forum_check_throttling($forum) {
     global $USER, $CFG;
