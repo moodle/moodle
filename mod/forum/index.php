@@ -394,6 +394,7 @@
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
                     }
+                    $row[] = $sublink;
                 }
                 
                 //If this forum has RSS activated, calculate it
