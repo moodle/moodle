@@ -4,10 +4,10 @@
 
 // General settings
 
-$temp = new admin_settingpage('gradessettings', get_string('gradessettings'));
+$temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'grades'));
 $temp->add(new admin_setting_special_gradeexport());
 // enable outcomes checkbox
-$temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'admin'), get_string('configenableoutcomes', 'admin'), 0, PARAM_INT));
+$temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
 $ADMIN->add('grades', $temp);
 
 // The plugins must implement a settings.php file that adds their admin settings to the $settings object
@@ -20,8 +20,8 @@ foreach (get_list_of_plugins('grade/report') as $plugin) {
     if ($first) {
         $ADMIN->add('grades', new admin_category('gradereports', get_string('reports')));
         $first = false;
-    }    
-    
+    }
+
     if ($plugin == 'outcomes') {
         $settings = new admin_externalpage('gradereport'.$plugin, get_string('modulename', 'gradereport_'.$plugin), $CFG->wwwroot.'/grade/report/outcomes/settings.php');
         $ADMIN->add('gradereports', $settings);

@@ -38,7 +38,10 @@ print_paging_bar($totalcount, $page, $perpage, $baseurl);
 if ($outcomes = get_recordset('grade_outcomes', '', '', '', '*', $page * $perpage, $perpage)) {
 
     $tablecolumns = array('outcome', 'edit', 'usedgradeitems', 'usedcourses');
-    $tableheaders = array(get_string('outcomes'), get_string('operations'), get_string('usedgradeitem'), get_string('usedcourses'));
+    $tableheaders = array(get_string('outcomes', 'grades'),
+                          get_string('operations', 'grades'),
+                          get_string('usedgradeitem', 'grades'),
+                          get_string('usedcourses', 'grades'));
 
     $table = new flexible_table('outcomes');
     $table->define_columns($tablecolumns);
