@@ -176,10 +176,10 @@ class mod_lesson_mod_form extends moodleform_mod {
         //never displayed converted to md5
         $mform->setType('password', PARAM_RAW);
 
-        $mform->addElement('date_time_selector', 'available', get_string('available', 'lesson'));
+        $mform->addElement('date_time_selector', 'available', get_string('available', 'lesson'), array('optional'=>true));
         $mform->setDefault('available', 0);
 
-        $mform->addElement('date_time_selector', 'deadline', get_string('deadline', 'lesson'));
+        $mform->addElement('date_time_selector', 'deadline', get_string('deadline', 'lesson'), array('optional'=>true));
         $mform->setDefault('deadline', 0);
 
 //-------------------------------------------------------------------------------

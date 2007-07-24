@@ -30,8 +30,9 @@
 ///     Check for high scores
     if (!has_capability('mod/lesson:manage', $context)) {
 
-        if (time() < $lesson->available or time() > $lesson->deadline) {  // Deadline restrictions
-            if (time() > $lesson->deadline) {
+        if (($lesson->available != 0 and time() < $lesson->available) or
+            ($lesson->deadline != 0 and time() > $lesson->deadline)) {  // Deadline restrictions
+            if ($lesson->deadline != 0 and time() > $lesson->deadline) {
                 $message = get_string('lessonclosed', 'lesson', userdate($lesson->deadline));
             } else {
                 $message = get_string('lessonopen', 'lesson', userdate($lesson->available));
