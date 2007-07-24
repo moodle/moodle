@@ -1,4 +1,5 @@
-<?php
+<?php  //$Id$
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -21,22 +22,32 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-require_once("../../../config.php");
-require_once($CFG->dirroot.'/grade/export/lib.php');
-require_once('grade_export_ods.php');
 
-$id = required_param('id', PARAM_INT); // course id
+require_once '../../../config.php';
+require_once $CFG->dirroot.'/grade/export/lib.php';
+require_once 'grade_export_ods.php';
 
-require_login($id);
-require_capability('moodle/grade:export', get_context_instance(CONTEXT_COURSE, $id));
-
-$course = get_record('course', 'id', $id);
+$id       = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
+
+if (!$course = get_record('course', 'id', $id)) {
+    print_error('nocourseid');
+}
+
+require_login($course);
+$context = get_context_instance(CONTEXT_COURSE, $id);
+
+require_capability('moodle/grade:export', $context);
+require_capability('gradeexport/ods:view', $context);
+
+
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('modulename', 'gradeexport_ods');
+
 $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
 $gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
 $gradenav .= " -> $actionstr";
+
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {

@@ -1,4 +1,5 @@
-<?php
+<?php  //$Id$
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -21,17 +22,24 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-require_once("../../../config.php");
-require_once($CFG->dirroot.'/grade/export/lib.php');
-require_once('grade_export_xml.php');
 
-$id = required_param('id', PARAM_INT); // course id
+require_once '../../../config.php';
+require_once $CFG->dirroot.'/grade/export/lib.php';
+require_once 'grade_export_xml.php';
 
-require_login($id);
-require_capability('moodle/grade:export', get_context_instance(CONTEXT_COURSE, $id));
-
-$course = get_record('course', 'id', $id);
+$id       = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
+
+if (!$course = get_record('course', 'id', $id)) {
+    print_error('nocourseid');
+}
+
+require_login($course);
+$context = get_context_instance(CONTEXT_COURSE, $id);
+
+require_capability('moodle/grade:export', $context);
+require_capability('gradeexport/xml:view', $context);
+
 
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('modulename', 'gradeexport_xml');

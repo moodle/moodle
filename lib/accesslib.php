@@ -2438,20 +2438,25 @@ function load_capability_def($component) {
             $defpath = $CFG->dirroot.'/'.$compparts[0].
                                 's/'.$compparts[1].'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else if ($compparts[0] == 'format') {
             // Similar to the above, course formats are 'format' while they
             // are stored in 'course/format'.
             $defpath = $CFG->dirroot.'/course/'.$component.'/db/access.php';
             $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else if ($compparts[0] == 'gradeimport') {
-            $defpath = $CFG->dirroot.'/grade/import/'.$component.'/db/access.php';
-            $varprefix = $component;
+            $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else if ($compparts[0] == 'gradeexport') {
-            $defpath = $CFG->dirroot.'/grade/export/'.$component.'/db/access.php';
-            $varprefix = $component;
+            $defpath = $CFG->dirroot.'/grade/export/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else if ($compparts[0] == 'gradereport') {
-            $defpath = $CFG->dirroot.'/grade/report/'.$component.'/db/access.php';
-            $varprefix = $component;
+            $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/access.php';
+            $varprefix = $compparts[0].'_'.$compparts[1];
+
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/access.php';
             $varprefix = str_replace('/', '_', $component);

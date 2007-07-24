@@ -23,8 +23,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-include_once($CFG->dirroot.'/lib/gradelib.php');
-include_once($CFG->dirroot.'/grade/lib.php');
+require_once($CFG->dirroot.'/lib/gradelib.php');
+require_once($CFG->dirroot.'/grade/lib.php');
 /**
  * Prints all grade items for selection
  * @input int id - course id

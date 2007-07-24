@@ -1,8 +1,8 @@
 <?php  // $Id$
 
-$gradeexport_csv_capabilities = array(
+$gradeexport_xml_capabilities = array(
 
-    'gradeexport/csv:view' => array(
+    'gradeexport/xml:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
