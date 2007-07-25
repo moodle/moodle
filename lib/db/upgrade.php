@@ -1451,7 +1451,16 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_default($table, $field);
     }
 
+    if ($result && $oldversion < 2007072500) {
 
+    /// Define key courseid-outcomeid (unique) to be added to grade_outcomes_courses
+        $table = new XMLDBTable('grade_outcomes_courses');
+        $key = new XMLDBKey('courseid-outcomeid');
+        $key->setAttributes(XMLDB_KEY_UNIQUE, array('courseid', 'outcomeid'));
+
+    /// Launch add key courseid-outcomeid
+        $result = $result && add_key($table, $key);
+    }
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
