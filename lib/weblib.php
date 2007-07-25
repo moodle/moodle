@@ -2606,7 +2606,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $course = get_site();
             $homelink  = '<div class="sitelink">'.
                '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/">'.
-               '<br /><img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
+               '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
             $home  = true;
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.
@@ -2790,7 +2790,7 @@ function current_category_theme($categoryid=0) {
  * @param int $lifetime ?
  * @param string $thename ?
  */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='', $langdir='') {
 
     global $CFG, $THEME;
 
@@ -2898,13 +2898,15 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         }
     }
 
-
+    $oppositlangdir = ($langdir == 'rtl') ? '_ltr' : '_rtl';
+    
     if ($files) {
     /// Produce a list of all the files first
         echo '/**************************************'."\n";
         echo ' * THEME NAME: '.$themename."\n *\n";
         echo ' * Files included in this sheet:'."\n *\n";
         foreach ($files as $file) {
+            if (strstr($file[1], $oppositlangdir)) continue;
             echo ' *   '.$file[1]."\n";
         }
         echo ' **************************************/'."\n\n";
@@ -2916,6 +2918,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             /// Actually collect all the files in order.
             $css = '';
             foreach ($files as $file) {
+                if (strstr($file[1], $oppositlangdir)) continue;
                 $css .= '/***** '.$file[1].' start *****/'."\n\n";
                 $css .= file_get_contents($file[0].'/'.$file[1]);
                 $ccs .= '/***** '.$file[1].' end *****/'."\n\n";
@@ -2926,12 +2929,14 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         /// Actually output all the files in order.
             if (empty($CFG->CSSEdit) && empty($THEME->CSSEdit)) {
                 foreach ($files as $file) {
+                    if (strstr($file[1], $oppositlangdir)) continue;
                     echo '/***** '.$file[1].' start *****/'."\n\n";
                     @include_once($file[0].'/'.$file[1]);
                     echo '/***** '.$file[1].' end *****/'."\n\n";
                 }
             } else {
                 foreach ($files as $file) {
+                    if (strstr($file[1], $oppositlangdir)) continue;
                     echo '/* @group '.$file[1].' */'."\n\n";
                     if (strstr($file[1], '.css') !== FALSE) {
                         echo '@import url("'.$CFG->themewww.'/'.$file[1].'");'."\n\n";
@@ -2970,6 +2975,10 @@ function theme_setup($theme = '', $params=NULL) {
     if (!$params) {
         $params = array();
     }
+
+/// Add parameter for the language direction
+    $params[] = 'langdir='.get_string('thisdirection');
+    
     if ($theme != $CFG->theme) {
         $params[] = 'forceconfig='.$theme;
     }
@@ -2978,6 +2987,7 @@ function theme_setup($theme = '', $params=NULL) {
     if (!empty($THEME->langsheets)) {
         $params[] = 'lang='.current_language();
     }
+
 
 /// Convert params to string
     if ($params) {
