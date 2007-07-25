@@ -36,6 +36,7 @@ $string['addnousersrecip'] = 'Add users who haven\'t accessed this $a to recipie
 $string['addresource'] = 'Add a resource...';
 $string['address'] = 'Address';
 $string['addstudent'] = 'Add student';
+$string['addsubcategory'] = 'Add a sub-category';
 $string['addteacher'] = 'Add teacher';
 $string['admin'] = 'Admin';
 $string['adminbookmarks'] = 'Admin bookmarks';
