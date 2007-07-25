@@ -139,6 +139,7 @@ $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br 
 $string['grademax'] = 'Maximum grade';
 $string['grademin'] = 'Minimum grade';
 $string['gradepass'] = 'Grade to pass';
+$string['graderreport'] = 'Grader report';
 $string['gradessettings'] = 'Grade settings';
 $string['groupavg'] = 'Group average';
 $string['hidden'] = 'Hidden';

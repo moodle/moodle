@@ -34,7 +34,7 @@ $perpageurl    = optional_param('perpage', 0, PARAM_INT);
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUM); // sort by which grade item
-$action        = optional_param('action', 0, PARAM_ALPHA);
+$action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);

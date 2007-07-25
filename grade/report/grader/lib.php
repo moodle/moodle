@@ -365,8 +365,11 @@ class grade_report_grader extends grade_report {
     function get_headerhtml() {
         global $CFG, $USER;
 
-        $strsortasc  = $this->get_lang_string('sortasc', 'grades');
-        $strsortdesc = $this->get_lang_string('sortdesc', 'grades');
+        $strsortasc   = $this->get_lang_string('sortasc', 'grades');
+        $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
+        $strfirstname = $this->get_lang_string('firstname');
+        $strlastname  = $this->get_lang_string('lastname');
+
         if ($this->sortitemid === 'lastname') {
             if ($this->sortorder == 'ASC') {
                 $lastarrow = print_arrow('up', $strsortasc, true);
@@ -402,8 +405,8 @@ class grade_report_grader extends grade_report {
             $headerhtml .= '<tr class="heading">';
 
             if ($key == $numrows - 1) {
-                $headerhtml .= '<th class="user"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">Firstname</a> ' //TODO: localize
-                            . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">Lastname </a>'. $lastarrow .'</th>';
+                $headerhtml .= '<th class="user"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">' . $strfirstname . '</a> ' //TODO: localize
+                            . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
             } else {
                 $headerhtml .= '<td class="topleft">&nbsp;</td>';
             }
@@ -418,8 +421,15 @@ class grade_report_grader extends grade_report {
                     $categoryid = $element['object']->id;
                     $aggregationview = $this->get_pref('aggregationview', $categoryid);
 
+
                     if ($aggregationview == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
                         $categorystate = get_user_preferences('grade_report_categorystate' . $categoryid, GRADE_CATEGORY_EXPANDED);
+
+                        $hideall = false;
+                        if (in_array($eid, $columns_to_unset)) {
+                            $categorystate = GRADE_CATEGORY_CONTRACTED;
+                            $hideall = true;
+                        }
 
                         // Expand/Contract icon must be set appropriately
                         if ($categorystate == GRADE_CATEGORY_CONTRACTED) {
@@ -427,7 +437,7 @@ class grade_report_grader extends grade_report {
                             // category's aggregation item. The others must be removed from the grade_tree
                             $element['colspan'] = 1;
                             foreach ($element['children'] as $index => $child) {
-                                if ($child['type'] != 'categoryitem') {
+                                if ($child['type'] != 'categoryitem' OR $hideall) {
                                     $columns_to_unset[] = $child['eid'];
                                 }
                             }
@@ -441,9 +451,12 @@ class grade_report_grader extends grade_report {
                                     $columns_to_unset[] = $child['eid'];
                                 }
                             }
+                        } else {
+                            debugging("The category state ($categorystate) was not amongst the allowed values (0 or 1)");
+                            var_dump($element);
                         }
                     }
-                }
+                } // End of category handling
 
                 if (!empty($element['colspan'])) {
                     $colspan = 'colspan="'.$element['colspan'].'"';
@@ -928,7 +941,9 @@ class grade_report_grader extends grade_report {
             $strswitch_minus = $this->get_lang_string('contract', 'grades');
             $strswitch_plus  = $this->get_lang_string('expand', 'grades');
             $expand_contract = 'switch_minus'; // Default: expanded
-            $state = get_user_preferences('grade_category_'.$element['object']->id, GRADE_CATEGORY_EXPANDED);
+
+            $state = get_user_preferences('grade_report_categorystate' . $element['object']->id, GRADE_CATEGORY_EXPANDED);
+
             if ($state == GRADE_CATEGORY_CONTRACTED) {
                 $expand_contract = 'switch_plus';
             }
@@ -939,6 +954,29 @@ class grade_report_grader extends grade_report {
         }
 
         return '<div class="grade_icons">'.$edit_icon.$edit_calculation_icon.$show_hide_icon.$lock_unlock_icon.$contract_expand_icon.'</div>';
+    }
+
+    /**
+     * Processes a single action against a category, grade_item or grade.
+     * @param string $target eid ({type}{id}, e.g. c4 for category4)
+     * @param string $action Which action to take (edit, delete etc...)
+     * @return
+     */
+    function process_action($target, $action) {
+        $targettype = substr($target, 0, 1);
+        $targetid = substr($target, 1);
+        switch ($action) {
+            case 'switch_minus':
+                set_user_preference('grade_report_categorystate' . $targetid, GRADE_CATEGORY_CONTRACTED);
+                break;
+            case 'switch_plus':
+                set_user_preference('grade_report_categorystate' . $targetid, GRADE_CATEGORY_EXPANDED);
+                break;
+            default:
+                break;
+        }
+
+        return true;
     }
 }
 ?>
