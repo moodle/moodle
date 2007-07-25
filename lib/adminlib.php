@@ -91,7 +91,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
             $updated_plugins = true;
             upgrade_log_start();
-            print_heading($plugin->name .' plugin needs upgrading');
+            print_heading($dir.'/'. $plugin->name .' plugin needs upgrading');
             $db->debug = true;
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
