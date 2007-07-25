@@ -116,6 +116,11 @@ if (!is_null($toggle) && !empty($toggle_type)) {
 //first make sure we have proper final grades - this must be done before constructing of the grade tree
 grade_regrade_final_grades($courseid);
 
+// Perform actions
+if (!empty($target) && !empty($action) && confirm_sesskey()) {
+    grade_report_grader::process_action($target, $action);
+}
+
 // Initialise the grader report object
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
@@ -127,11 +132,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
 // Override perpage if set in URL
 if ($perpageurl) {
     $report->user_prefs['studentsperpage'] = $perpageurl;
-}
-
-// Perform actions
-if (!empty($target) && !empty($action) && confirm_sesskey()) {
-    $report->process_action($target, $action);
 }
 
 $report->load_users();

@@ -135,7 +135,7 @@ class grade_report {
 
         $retval = null;
 
-        if (!isset($this)) {
+        if (!isset($this) OR get_class($this) != 'grade_report') {
             if (!empty($objectid)) {
                 $retval = get_user_preferences($fullprefname . $objectid, grade_report::get_pref($pref));
             } else {

@@ -415,48 +415,7 @@ class grade_report_grader extends grade_report {
                 $eid    = $element['eid'];
                 $object = $element['object'];
                 $type   = $element['type'];
-
-                // Load user preferences for categories
-                if ($type == 'category') {
-                    $categoryid = $element['object']->id;
-                    $aggregationview = $this->get_pref('aggregationview', $categoryid);
-
-
-                    if ($aggregationview == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
-                        $categorystate = get_user_preferences('grade_report_categorystate' . $categoryid, GRADE_CATEGORY_EXPANDED);
-
-                        $hideall = false;
-                        if (in_array($eid, $columns_to_unset)) {
-                            $categorystate = GRADE_CATEGORY_CONTRACTED;
-                            $hideall = true;
-                        }
-
-                        // Expand/Contract icon must be set appropriately
-                        if ($categorystate == GRADE_CATEGORY_CONTRACTED) {
-                            // The category is contracted: this means we only show 1 item for this category: the
-                            // category's aggregation item. The others must be removed from the grade_tree
-                            $element['colspan'] = 1;
-                            foreach ($element['children'] as $index => $child) {
-                                if ($child['type'] != 'categoryitem' OR $hideall) {
-                                    $columns_to_unset[] = $child['eid'];
-                                }
-                            }
-
-                        } elseif ($categorystate == GRADE_CATEGORY_EXPANDED) {
-                            // The category is expanded: we only show the non-aggregated items directly descending
-                            // from this category. The category's grade_item must be removed from the grade_tree
-                            $element['colspan']--;
-                            foreach ($element['children'] as $index => $child) {
-                                if ($child['type'] == 'categoryitem') {
-                                    $columns_to_unset[] = $child['eid'];
-                                }
-                            }
-                        } else {
-                            debugging("The category state ($categorystate) was not amongst the allowed values (0 or 1)");
-                            var_dump($element);
-                        }
-                    }
-                } // End of category handling
+                $categorystate = @$element['categorystate'];
 
                 if (!empty($element['colspan'])) {
                     $colspan = 'colspan="'.$element['colspan'].'"';
@@ -936,7 +895,7 @@ class grade_report_grader extends grade_report {
         }
 
         // If object is a category, display expand/contract icon
-        if ($element['type'] == 'category' && $this->get_pref('aggregationview') == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
+        if ($element['type'] == 'category' && $this->get_pref('aggregationview', $element['object']->id) == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
             // Load language strings
             $strswitch_minus = $this->get_lang_string('contract', 'grades');
             $strswitch_plus  = $this->get_lang_string('expand', 'grades');
