@@ -1,3 +1,4 @@
+/* @override http://moodle18.userver.lan/theme/standard/styles_layout.css */
 /*******************************************************************
  styles_layout.css
 
@@ -1118,7 +1119,6 @@ body#admin-modules table.generaltable td.c0
   display: block;
 }
 
-
 /***
  *** Blocks
  ***/
@@ -1858,6 +1858,11 @@ body#course-index .courseboxes {
 body#course-category .rolelink {
   text-align:right;
   padding:10px;
+}
+
+body#course-category .addcategory {
+  text-align: center;
+  padding: 10px;
 }
 
 body#course-index #middle-column .editcourse {
