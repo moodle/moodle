@@ -79,19 +79,19 @@ $perpage = 30;
 
         $table->setup();
 
-        foreach ($outcomes as $outcome) {
+        while ($outcome = rs_fetch_next_record($outcomes)) {
             $data = array();
 
             // full name of the outcome
-            $data[] = $outcome['fullname'];
+            $data[] = $outcome->fullname;
 
             // full name of the scale used by this outcomes
-            $scale= get_record('scale', 'id', $outcome['scaleid']);
+            $scale= get_record('scale', 'id', $outcome->scaleid);
             $data[] = $scale->name;
 
             // get course
-            if ($outcome['courseid']) {
-                $course = get_record('course', 'id', $outcome['courseid']);
+            if ($outcome->courseid) {
+                $course = get_record('course', 'id', $outcome->courseid);
                 $data[] = $course->shortname;
             } else {
                 $data[] = get_string('site');
@@ -100,18 +100,18 @@ $perpage = 30;
             // add operations
             if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM))) {
             
-                $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
-                   <a href="site.php?deleteid='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
+                $data[] = '<a href="editoutcomes.php?id='.$outcome->id.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
+                   <a href="site.php?deleteid='.$outcome->id.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
             
             } else {
                 $data[] = '';  
             }
             // num of gradeitems using this
-            $num = count_records('grade_items', 'outcomeid' ,$outcome['id']);
+            $num = count_records('grade_items', 'outcomeid' ,$outcome->id);
             $data[] = (int) $num;
 
             // num of courses using this outcome
-            $num = count_records('grade_outcomes_courses', 'outcomeid', $outcome['id']);
+            $num = count_records('grade_outcomes_courses', 'outcomeid', $outcome->id);
             $data[] = (int) $num;
 
             $table->add_data($data);

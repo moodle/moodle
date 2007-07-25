@@ -85,9 +85,9 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
 
     /// listing of all site outcomes + this course specific outcomes
     $outcomes = get_records_sql('SELECT * FROM '.$CFG->prefix.'grade_outcomes
-                                 WHERE courseid < 1');
-    
+                                 WHERE ISNULL(courseid)');
 
+    // outcomes used in this course
     $courseoutcomes = get_records_sql('SELECT go.id, go.fullname
                                        FROM '.$CFG->prefix.'grade_outcomes_courses goc,
                                             '.$CFG->prefix.'grade_outcomes go
@@ -99,7 +99,7 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
     } elseif ($mcourseoutcomes = get_records('grade_outcomes', 'courseid', $courseid)) {
         $courseoutcomes += $mcourseoutcomes;
     }
-   
+
     check_theme_arrows();
     include_once('course.html');
     
@@ -129,25 +129,25 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
 
         $table->setup();
 
-        foreach ($outcomes as $outcome) {
+        while ($outcome = rs_fetch_next_record($outcomes)) {
             $data = array();
 
             // full name of the outcome
-            $data[] = $outcome['fullname'];
+            $data[] = $outcome->fullname;
 
             // full name of the scale used by this outcomes
-            $scale= get_record('scale', 'id', $outcome['scaleid']);
+            $scale= get_record('scale', 'id', $outcome->scaleid);
             $data[] = $scale->name;
             
             if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
             // add operations
-                $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;courseid='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
-                   <a href="course.php?deleteid='.$outcome['id'].'&amp;id='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
+                $data[] = '<a href="editoutcomes.php?id='.$outcome->id.'&amp;courseid='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
+                   <a href="course.php?deleteid='.$outcome->id.'&amp;id='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
             } else {
                 $data[] = '';  
             }
             // num of gradeitems using this
-            $num = count_records('grade_items', 'outcomeid' ,$outcome['id']);
+            $num = count_records('grade_items', 'outcomeid' ,$outcome->id);
             $data[] = (int) $num;
 
             // num of courses using this outcome
