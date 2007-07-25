@@ -1782,6 +1782,11 @@ body#course-category .rolelink {
   padding:10px;
 }
 
+body#course-category .addcategory {
+  text-align: center;
+  padding: 10px;
+}
+
 body#course-index #middle-column .editcourse {
   margin-left:auto;
   margin-right:auto;
