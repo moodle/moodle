@@ -85,7 +85,7 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
 
     /// listing of all site outcomes + this course specific outcomes
     $outcomes = get_records_sql('SELECT * FROM '.$CFG->prefix.'grade_outcomes
-                                 WHERE ISNULL(courseid)');
+                                 WHERE courseid IS NULL');
 
     // outcomes used in this course
     $courseoutcomes = get_records_sql('SELECT go.id, go.fullname
