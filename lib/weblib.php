@@ -2407,7 +2407,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
             $course = get_site();
             $homelink  = '<div class="sitelink">'.
                '<a title="moodle '. $CFG->release .' ('. $CFG->version .')" href="http://moodle.org/">'.
-               '<br /><img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
+               '<img style="width:100px;height:30px" src="pix/moodlelogo.gif" alt="moodlelogo" /></a></div>';
             $home  = true;
         } else {
             $homelink = '<div class="homelink"><a '.$CFG->frametarget.' href="'.$CFG->wwwroot.
