@@ -1077,7 +1077,7 @@
                     if (!$preferencescount) {
                         $continue = false;
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('backupwithoutgradebook','grade').'</li>';
+                            echo '<li>'.get_string('backupwithoutgradebook','grades').'</li>';
                         }
                     }
 
@@ -1088,7 +1088,7 @@
                             if ($pref_rec->value == 0) {
                                 $continue = false;
                                 if (!defined('RESTORE_SILENTLY')) {
-                                    echo '<li>'.get_string('respectingcurrentdata','grade').'</li>';
+                                    echo '<li>'.get_string('respectingcurrentdata','grades').'</li>';
                                 }
                             }
                         }
