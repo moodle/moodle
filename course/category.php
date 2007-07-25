@@ -416,7 +416,8 @@
                 }
             }
             
-            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
+            // choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: getElementById('movecourses').submit()");
+            choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript: submitFormById('movecourses')");
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
             echo '</td></tr>';
         }
