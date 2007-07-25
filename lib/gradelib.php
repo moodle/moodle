@@ -66,10 +66,6 @@ define('GRADE_HISTORY_INSERT', 1);
 define('GRADE_HISTORY_UPDATE', 2);
 define('GRADE_HISTORY_DELETE', 3);
 
-// Grader reports
-define('GRADE_CATEGORY_CONTRACTED', 0); // The state of a category header in the grader report
-define('GRADE_CATEGORY_EXPANDED', 1); // The state of a category header in the grader report
-
 define('GRADE_REPORT_AGGREGATION_POSITION_LEFT', 0);
 define('GRADE_REPORT_AGGREGATION_POSITION_RIGHT', 1);
 define('GRADE_REPORT_AGGREGATION_VIEW_FULL', 0);

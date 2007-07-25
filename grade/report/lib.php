@@ -106,17 +106,15 @@ class grade_report {
     function grade_report($courseid, $gpr, $context, $page=null) {
         global $CFG;
 
-        $this->courseid = $courseid;
-        $this->gpr      = $gpr;
-        $this->context  = $context;
-        $this->page     = $page;
+        $this->courseid  = $courseid;
+        $this->gpr       = $gpr;
+        $this->context   = $context;
+        $this->page      = $page;
 
         // roles to be displayed in the gradebook
         $this->gradebookroles = $CFG->gradebookroles;
 
-        // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
-
+        // init gtree in child class
     }
 
     /**

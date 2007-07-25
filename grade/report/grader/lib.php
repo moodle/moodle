@@ -52,6 +52,12 @@ class grade_report_grader extends grade_report {
     var $userselect;
 
     /**
+     * List of collapsed captegories from user perference
+     * @var array $collapsed
+     */
+    var $collapsed;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -62,6 +68,20 @@ class grade_report_grader extends grade_report {
     function grade_report_grader($courseid, $gpr, $context, $page=null, $sortitemid=null) {
         global $CFG;
         parent::grade_report($courseid, $gpr, $context, $page);
+
+        // load collapsed settings for this report
+        if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
+            $this->collapsed = unserialize($collapsed);
+            foreach ($this->collapsed as $key=>$id) {
+                if ($this->get_pref('aggregationview', $id) == GRADE_REPORT_AGGREGATION_VIEW_FULL) {
+                    unset($this->collapsed[$key]); // full view categories can not be collapsed
+                }
+            }
+        } else {
+            $this->collapsed = array();
+        }
+        // Grab the grade_tree for this course
+        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'), $this->collapsed);
 
         $this->sortitemid = $sortitemid;
 
@@ -434,8 +454,9 @@ class grade_report_grader extends grade_report {
                     $headerhtml .= '<th class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</th>';
                 }
 // Element is a category
-                else if ($type == 'category' && !in_array($eid, $columns_to_unset)) {
+                else if ($type == 'category') {
                     $headerhtml .= '<th class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
+                    $headerhtml .= $this->get_collapsing_icon($element);
 
                     // Print icons
                     if ($USER->gradeediting[$this->courseid]) {
@@ -445,7 +466,7 @@ class grade_report_grader extends grade_report {
                     $headerhtml .= '</th>';
                 }
 // Element is a grade_item
-                elseif (!in_array($eid, $columns_to_unset)) {
+                else {
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
                             $arrow = print_arrow('up', $strsortasc, true);
@@ -879,7 +900,6 @@ class grade_report_grader extends grade_report {
         $edit_icon             = $this->gtree->get_edit_icon($element, $this->gpr);
         $edit_calculation_icon = '';
         $show_hide_icon        = '';
-        $contract_expand_icon  = '';
         $lock_unlock_icon      = '';
 
         if ($this->get_pref('showcalculations')) {
@@ -894,6 +914,18 @@ class grade_report_grader extends grade_report {
             $lock_unlock_icon = $this->gtree->get_locking_icon($element, $this->gpr);
         }
 
+        return '<div class="grade_icons">'.$edit_icon.$edit_calculation_icon.$show_hide_icon.$lock_unlock_icon.'</div>';
+    }
+
+    /**
+     * Given a category element returns collapsing +/- icon if available
+     * @param object $object
+     * @return string HTML
+     */
+    function get_collapsing_icon($element) {
+        global $CFG;
+
+        $contract_expand_icon = '';
         // If object is a category, display expand/contract icon
         if ($element['type'] == 'category' && $this->get_pref('aggregationview', $element['object']->id) == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
             // Load language strings
@@ -901,18 +933,14 @@ class grade_report_grader extends grade_report {
             $strswitch_plus  = $this->get_lang_string('expand', 'grades');
             $expand_contract = 'switch_minus'; // Default: expanded
 
-            $state = get_user_preferences('grade_report_categorystate' . $element['object']->id, GRADE_CATEGORY_EXPANDED);
-
-            if ($state == GRADE_CATEGORY_CONTRACTED) {
+            if (in_array($element['object']->id, $this->collapsed)) {
                 $expand_contract = 'switch_plus';
             }
-            $contract_expand_icon = '<a href="index.php?target=' . $element['eid']
-                              . "&amp;action=$expand_contract" . $this->gtree->commonvars . "\">\n"
-                              . '<img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
-                              . ${'str' . $expand_contract}.'" title="'.${'str' . $expand_contract}.'" /></a>'. "\n";
+            $url = $this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>$expand_contract, 'sesskey'=>sesskey()));
+            $contract_expand_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
+                                    .${'str'.$expand_contract}.'" title="'.${'str'.$expand_contract}.'" /></a>';
         }
-
-        return '<div class="grade_icons">'.$edit_icon.$edit_calculation_icon.$show_hide_icon.$lock_unlock_icon.$contract_expand_icon.'</div>';
+        return $contract_expand_icon;
     }
 
     /**
@@ -922,15 +950,33 @@ class grade_report_grader extends grade_report {
      * @return
      */
     function process_action($target, $action) {
+        // TODO: this code should be in some grade_tree static method
         $targettype = substr($target, 0, 1);
         $targetid = substr($target, 1);
+        // TODO: end
+
+        if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
+            $collapsed = unserialize($collapsed);
+        } else {
+            $collapsed = array();
+        }
+
         switch ($action) {
             case 'switch_minus':
-                set_user_preference('grade_report_categorystate' . $targetid, GRADE_CATEGORY_CONTRACTED);
+                if (!in_array($targetid, $collapsed)) {
+                    $collapsed[] = $targetid;
+                    set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                }
                 break;
+
             case 'switch_plus':
-                set_user_preference('grade_report_categorystate' . $targetid, GRADE_CATEGORY_EXPANDED);
+                $key = array_search($targetid, $collapsed);
+                if ($key !== false) {
+                    unset($collapsed[$key]);
+                    set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                }
                 break;
+
             default:
                 break;
         }

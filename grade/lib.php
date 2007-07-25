@@ -347,10 +347,9 @@ class grade_tree {
      * @param int $courseid
      * @param boolean $fillers include fillers and colspans, make the levels var "rectangular"
      * @param boolean $category_grade_last category grade item is the last child
-     * @param boolean $aggregation_view Either full view (0) or compact view (1)
+     * @param array $collapsed array of collapsed categories
      */
-    function grade_tree($courseid, $fillers=true, $category_grade_last=false,
-                        $aggregation_view=GRADE_REPORT_AGGREGATION_VIEW_FULL) {
+    function grade_tree($courseid, $fillers=true, $category_grade_last=false, $collapsed=null) {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
@@ -361,6 +360,12 @@ class grade_tree {
         // get course grade tree
         $this->top_element = grade_category::fetch_course_tree($courseid, true);
 
+        // collapse the categories if requested
+        if (!empty($collapsed)) {
+            grade_tree::category_collapse($this->top_element, $collapsed);
+        }
+
+        // move category item to last position in category
         if ($category_grade_last) {
             grade_tree::category_grade_last($this->top_element);
         }
@@ -375,6 +380,31 @@ class grade_tree {
         grade_tree::fill_levels($this->levels, $this->top_element, 0);
     }
 
+    /**
+     * Static recursive helper - removes items from collapsed categories
+     * @static
+     * @param array $element The seed of the recursion
+     * @param array $collapsed array of collapsed categories
+     * @return void
+     */
+    function category_collapse(&$element, $collapsed) {
+        if ($element['type'] != 'category') {
+            return;
+        }
+        if (empty($element['children']) or count($element['children']) < 2) {
+            return;
+        }
+
+        if (in_array($element['object']->id, $collapsed)) {
+            $category_item = reset($element['children']); //keep only category item
+            $element['children'] = array(key($element['children'])=>$category_item);
+
+        } else {
+            foreach ($element['children'] as $sortorder=>$child) {
+                grade_tree::category_collapse($element['children'][$sortorder], $collapsed);
+            }
+        }
+    }
 
     /**
      * Static recursive helper - makes the grade_item for category the last children

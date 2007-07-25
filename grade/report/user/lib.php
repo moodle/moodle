@@ -37,6 +37,9 @@ class grade_report_user extends grade_report {
         global $CFG;
         parent::grade_report($courseid, $gpr, $context);
 
+        // Grab the grade_tree for this course
+        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'));
+
         // get the user (for full name)
         $this->user = get_record('user', 'id', $userid);
 

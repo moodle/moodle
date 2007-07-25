@@ -628,39 +628,12 @@ class grade_category extends grade_object {
      */
     function fetch_course_tree($courseid, $include_category_items=false) {
         $course_category = grade_category::fetch_course_category($courseid);
-        $categorystate = grade_category::get_categorystate($course_category);
-        if ($categorystate == GRADE_CATEGORY_EXPANDED) {
-            $include_category_items = false;
-        }
-
-        $category_array = array('object'=>$course_category,
-                                'type'=>'category',
-                                'depth'=>1,
-                                'categorystate' => $categorystate,
+        $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
                                 'children'=>$course_category->get_children($include_category_items));
-
         $sortorder = 1;
         $course_category->set_sortorder($sortorder);
         $course_category->sortorder = $sortorder;
         return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
-    }
-
-    /**
-     * Checks the user preferences and returns the state of the category, for display purposes. This only
-     * applies when aggregationview is set to COMPACT.
-     * @param object $category_element
-     * @return int null, GRADE_CATEGORY_EXPANDED or GRADE_CATEGORY_CONTRACTED
-     */
-    function get_categorystate($category_element) {
-        global $CFG;
-        require_once($CFG->dirroot . '/grade/report/lib.php');
-        $aggregationview = grade_report::get_pref('aggregationview', $category_element->id);
-
-        $categorystate = null;
-        if ($aggregationview == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
-            $categorystate = get_user_preferences('grade_report_categorystate' . $category_element->id, GRADE_CATEGORY_EXPANDED);
-        }
-        return $categorystate;
     }
 
     function _fetch_course_tree_recursion($category_array, &$sortorder) {
@@ -769,28 +742,17 @@ class grade_category extends grade_object {
     function _get_children_recursion($category) {
 
         $children_array = array();
-        $categorystate = grade_category::get_categorystate($category);
-
         foreach($category->children as $sortorder=>$child) {
             if (array_key_exists('itemtype', $child)) {
                 $grade_item = new grade_item($child, false);
-                if (in_array($grade_item->itemtype, array('course', 'category'))) { // Child is a course or categoryitem
-                    if ($categorystate == GRADE_CATEGORY_EXPANDED) {
-                        continue;
-                    } else {
-                        $type  = $grade_item->itemtype.'item';
-                        $depth = $category->depth;
-                    }
+                if (in_array($grade_item->itemtype, array('course', 'category'))) {
+                    $type  = $grade_item->itemtype.'item';
+                    $depth = $category->depth;
                 } else {
-                    if ($categorystate == GRADE_CATEGORY_CONTRACTED) {
-                        continue;
-                    }
                     $type  = 'item';
                     $depth = $category->depth; // we use this to set the same colour
                 }
-                $children_array[$sortorder] = array('object'=>$grade_item,
-                                                    'type'=>$type,
-                                                    'depth'=>$depth);
+                $children_array[$sortorder] = array('object'=>$grade_item, 'type'=>$type, 'depth'=>$depth);
 
             } else {
                 $children = grade_category::_get_children_recursion($child);
@@ -798,11 +760,7 @@ class grade_category extends grade_object {
                 if (empty($children)) {
                     $children = array();
                 }
-                $children_array[$sortorder] = array('object'=>$grade_category,
-                                                    'type'=>'category',
-                                                    'depth'=>$grade_category->depth,
-                                                    'categorystate' => $categorystate,
-                                                    'children'=>$children);
+                $children_array[$sortorder] = array('object'=>$grade_category, 'type'=>'category', 'depth'=>$grade_category->depth, 'children'=>$children);
             }
         }
 
