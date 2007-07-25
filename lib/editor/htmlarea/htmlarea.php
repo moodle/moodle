@@ -1,6 +1,6 @@
 <?php
     include("../../../config.php");
-	require_once($CFG->dirroot.'/lib/languages.php');
+    require_once($CFG->dirroot.'/lib/languages.php');
 
     $id            = optional_param('id', SITEID, PARAM_INT);
     $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL); //flag indicating editor on page with required https
@@ -41,8 +41,8 @@
     $strnormal = get_string("normal", "editor");
     $straddress = get_string("address", "editor");
     $strpreformatted = get_string("preformatted", "editor");
-	$strlang = get_string('lang', 'editor');
-	$strmulti = get_string('multi', 'editor');
+    $strlang = get_string('lang', 'editor');
+    $strmulti = get_string('multi', 'editor');
 ?>
 
 // htmlArea v3.0 - Copyright (c) 2002, 2003 interactivetools.com, inc.
@@ -93,7 +93,7 @@ function HTMLArea(textarea, config) {
         this._customUndo = true;
         this._mdoc = document; // cache the document, we need it in plugins
         this.doctype = '';
-		this.dropdowns = [];   // Array of select elements in the toolbar
+        this.dropdowns = [];   // Array of select elements in the toolbar
     }
 };
 
@@ -159,7 +159,7 @@ HTMLArea.Config = function () {
         [ "fontname", "space",
           "fontsize", "space",
           "formatblock", "space",
-		  "language", "space",
+          "language", "space",
           "bold", "italic", "underline", "strikethrough", "separator",
           "subscript", "superscript", "separator",
           "clean", "separator", "undo", "redo" ],
@@ -211,29 +211,29 @@ HTMLArea.Config = function () {
         "<?php echo $strpreformatted ?>": "pre"
     };
 
-	this.language = {
-		"<?php echo $strlang; ?>":"",
-		<?php
-		$strlangarray = '';
-		foreach ($LANGUAGES as $key => $name) {
-			$key = str_replace('_', '-', $key);
-			$strlangarray .= '"'.$key.'": "'.$key.'",';
-		}
-		$strlangarray .= '"'.$strmulti.'": "multi",';
+    this.language = {
+        "<?php echo $strlang; ?>":"",
+        <?php
+        $strlangarray = '';
+        foreach ($LANGUAGES as $key => $name) {
+            $key = str_replace('_', '-', $key);
+            $strlangarray .= '"'.$key.'": "'.$key.'",';
+        }
+        $strlangarray .= '"'.$strmulti.'": "multi",';
 
-		foreach ($LANGUAGES as $key => $name) {
-			$key = str_replace('_', '-', $key);
-			$strlangarray .= '"'.$key.' ": "'.$key.'_ML",';
-		}
-		$strlangarray = substr($strlangarray, 0, -1); 
-		echo $strlangarray;
-		?>
-	};
+        foreach ($LANGUAGES as $key => $name) {
+            $key = str_replace('_', '-', $key);
+            $strlangarray .= '"'.$key.' ": "'.$key.'_ML",';
+        }
+        $strlangarray = substr($strlangarray, 0, -1); 
+        echo $strlangarray;
+        ?>
+    };
 
     this.customSelects = {};
 
     function cut_copy_paste(e, cmd, obj) {
-    	e.execCommand(cmd);
+        e.execCommand(cmd);
     };
 
     this.btnList = {
@@ -414,7 +414,7 @@ HTMLArea.prototype._createToolbar = function () {
             case "fontsize":
             case "fontname":
             case "formatblock":
-			case "language":
+            case "language":
             options = editor.config[txt];
             cmd = txt;
             break;
@@ -452,8 +452,8 @@ HTMLArea.prototype._createToolbar = function () {
                 editor._comboSelected(el, txt);
             });
         }
-		editor.dropdowns[txt] = el;  // Keep track of the element for keyboard
-									 // access later.
+        editor.dropdowns[txt] = el;  // Keep track of the element for keyboard
+                                     // access later.
         return el;
     }; // END of function: createSelect
 
@@ -844,7 +844,7 @@ HTMLArea.prototype.generate = function () {
         var plugin = editor.plugins[i].instance;
         if (typeof plugin.onGenerate == "function") {
             plugin.onGenerate();
-		}
+        }
         if (typeof plugin.onGenerateOnce == "function") {
             plugin.onGenerateOnce();
             plugin.onGenerateOnce = null;
@@ -859,7 +859,7 @@ HTMLArea.prototype.generate = function () {
 
     if (typeof editor.onGenerate == "function") {
         editor.onGenerate();
-	}
+    }
 };
 
 
@@ -1241,84 +1241,84 @@ HTMLArea.prototype.updateToolbar = function(noStatus) {
             case "fontname":
             case "fontsize":
             case "formatblock":
-            	if (!text) try {
-	                var value = ("" + doc.queryCommandValue(cmd)).toLowerCase();
-	                if (!value) {
-	                    // FIXME: what do we do here?
-	                    break;
-	                }
-	                var options = this.config[cmd];
-	                var k = 0;
-	                // btn.element.selectedIndex = 0;
-	                for (var j in options) {
-	                    // FIXME: the following line is scary.
-	                    if ((j.toLowerCase() == value) ||
-	                        (options[j].substr(0, value.length).toLowerCase() == value)) {
-	                        btn.element.selectedIndex = k;
-	                        break;
-	                    }
-	                    ++k;
-	                }
-	            } catch(e) {};
-	            break;
-			case "language":
-				if (!text) try {
-	                var value;
-					parentEl = this.getParentElement();
-					if (parentEl.getAttribute('lang')) {
-						// A language was previously defined for the block.
-						if (parentEl.getAttribute('class') == 'multilang') {
-							value = parentEl.getAttribute('lang')+'_ML';
-						} else {
-							value = parentEl.getAttribute('lang');
-						}
-					} else {
-						value = '';
-					}
-	                var options = this.config[cmd];
-	                var k = 0;
-	                for (var j in options) {
-	                    // FIXME: the following line is scary.
-	                    if ((j.toLowerCase() == value) ||
-	                        (options[j].substr(0, value.length).toLowerCase() == value)) {
-	                        btn.element.selectedIndex = k;
-	                        break;
-	                    }
-	                    ++k;
-	                }
-	            } catch(e) {};
-				break;
+                if (!text) try {
+                    var value = ("" + doc.queryCommandValue(cmd)).toLowerCase();
+                    if (!value) {
+                        // FIXME: what do we do here?
+                        break;
+                    }
+                    var options = this.config[cmd];
+                    var k = 0;
+                    // btn.element.selectedIndex = 0;
+                    for (var j in options) {
+                        // FIXME: the following line is scary.
+                        if ((j.toLowerCase() == value) ||
+                            (options[j].substr(0, value.length).toLowerCase() == value)) {
+                            btn.element.selectedIndex = k;
+                            break;
+                        }
+                        ++k;
+                    }
+                } catch(e) {};
+                break;
+            case "language":
+                if (!text) try {
+                    var value;
+                    parentEl = this.getParentElement();
+                    if (parentEl.getAttribute('lang')) {
+                        // A language was previously defined for the block.
+                        if (parentEl.getAttribute('class') == 'multilang') {
+                            value = parentEl.getAttribute('lang')+'_ML';
+                        } else {
+                            value = parentEl.getAttribute('lang');
+                        }
+                    } else {
+                        value = '';
+                    }
+                    var options = this.config[cmd];
+                    var k = 0;
+                    for (var j in options) {
+                        // FIXME: the following line is scary.
+                        if ((j.toLowerCase() == value) ||
+                            (options[j].substr(0, value.length).toLowerCase() == value)) {
+                            btn.element.selectedIndex = k;
+                            break;
+                        }
+                        ++k;
+                    }
+                } catch(e) {};
+                break;
             case "textindicator":
-            	if (!text) {
-	                try {with (btn.element.style) {
-	                    backgroundColor = HTMLArea._makeColor(
-	                        doc.queryCommandValue(HTMLArea.is_ie ? "backcolor" : "hilitecolor"));
-	                    if (/transparent/i.test(backgroundColor)) {
-	                        // Mozilla
-	                        backgroundColor = HTMLArea._makeColor(doc.queryCommandValue("backcolor"));
-	                    }
-	                    color = HTMLArea._makeColor(doc.queryCommandValue("forecolor"));
-	                    fontFamily = doc.queryCommandValue("fontname");
-	                    fontWeight = doc.queryCommandState("bold") ? "bold" : "normal";
-	                    fontStyle = doc.queryCommandState("italic") ? "italic" : "normal";
-	                }} catch (e) {
-	                    // alert(e + "\n\n" + cmd);
-	                }
-	            }
-	            break;
+                if (!text) {
+                    try {with (btn.element.style) {
+                        backgroundColor = HTMLArea._makeColor(
+                            doc.queryCommandValue(HTMLArea.is_ie ? "backcolor" : "hilitecolor"));
+                        if (/transparent/i.test(backgroundColor)) {
+                            // Mozilla
+                            backgroundColor = HTMLArea._makeColor(doc.queryCommandValue("backcolor"));
+                        }
+                        color = HTMLArea._makeColor(doc.queryCommandValue("forecolor"));
+                        fontFamily = doc.queryCommandValue("fontname");
+                        fontWeight = doc.queryCommandState("bold") ? "bold" : "normal";
+                        fontStyle = doc.queryCommandState("italic") ? "italic" : "normal";
+                    }} catch (e) {
+                        // alert(e + "\n\n" + cmd);
+                    }
+                }
+                break;
             case "htmlmode": btn.state("active", text); break;
             case "lefttoright":
             case "righttoleft":
-            	var el = this.getParentElement();
-	            while (el && !HTMLArea.isBlockElement(el))
-	                el = el.parentNode;
-	            if (el)
-	                btn.state("active", (el.style.direction == ((cmd == "righttoleft") ? "rtl" : "ltr")));
-	            break;
+                var el = this.getParentElement();
+                while (el && !HTMLArea.isBlockElement(el))
+                    el = el.parentNode;
+                if (el)
+                    btn.state("active", (el.style.direction == ((cmd == "righttoleft") ? "rtl" : "ltr")));
+                break;
             default:
-            	try {
-	                btn.state("active", (!text && doc.queryCommandState(cmd)));
-	            } catch (e) {}
+                try {
+                    btn.state("active", (!text && doc.queryCommandState(cmd)));
+                } catch (e) {}
         }
     }
     // take undo snapshots
@@ -1899,13 +1899,13 @@ HTMLArea.prototype._comboSelected = function(el, txt) {
     switch (txt) {
         case "fontname":
         case "fontsize": this.execCommand(txt, false, value); break;
-		case "language":
-	        this.setLang(value);
-	        break;
+        case "language":
+            this.setLang(value);
+            break;
         case "formatblock":
-        	(HTMLArea.is_ie) && (value = "<" + value + ">");
-	        this.execCommand(txt, false, value);
-	        break;
+            (HTMLArea.is_ie) && (value = "<" + value + ">");
+            this.execCommand(txt, false, value);
+            break;
         default:
         // try to look it up in the registered dropdowns
         var dropdown = this.config.customSelects[txt];
@@ -1927,80 +1927,80 @@ HTMLArea.prototype._comboSelected = function(el, txt) {
  */
 HTMLArea.prototype.setLang = function(lang) {
 
-	if (lang == 'multi') {
-		// This is just the separator in the dropdown. Does nothing.
-		return;
-	}
+    if (lang == 'multi') {
+        // This is just the separator in the dropdown. Does nothing.
+        return;
+    }
 
-	var editor = this;
-	var selectedHTML = editor.getSelectedHTML();
-	var multiLang = false;
+    var editor = this;
+    var selectedHTML = editor.getSelectedHTML();
+    var multiLang = false;
 
-	var re = new RegExp('_ML', 'g');
-	if (lang.match(re)) {
-		multiLang = true;
-		lang = lang.replace(re, '');
-	}
-		
-	// Remove all lang attributes from span tags in selected html.
-	selectedHTML = selectedHTML.replace(/(<span[^>]*)lang="[^"]*"([^>]*>)/, "$1$2");
-	selectedHTML = selectedHTML.replace(/(<span[^>]*)class="multilang"([^>]*>)/, "$1$2");
+    var re = new RegExp('_ML', 'g');
+    if (lang.match(re)) {
+        multiLang = true;
+        lang = lang.replace(re, '');
+    }
+        
+    // Remove all lang attributes from span tags in selected html.
+    selectedHTML = selectedHTML.replace(/(<span[^>]*)lang="[^"]*"([^>]*>)/, "$1$2");
+    selectedHTML = selectedHTML.replace(/(<span[^>]*)class="multilang"([^>]*>)/, "$1$2");
 
-	// If a span tag is now empty, delete it.
-	selectedHTML = selectedHTML.replace(/<span\s*>(.*?)<\/span>/, "$1");
+    // If a span tag is now empty, delete it.
+    selectedHTML = selectedHTML.replace(/<span\s*>(.*?)<\/span>/, "$1");
 
 
-	var parentEl = this.getParentElement();
-	var insertNewSpan = false;
-	
-	if (parentEl.nodeName == 'SPAN' && parentEl.getAttribute('lang')) {
-		// A language was previously defined for the current block.
-		// Check whether the selected text makes up the whole of the block
-		// contents.
-		var re = new RegExp(parentEl.innerHTML);
+    var parentEl = this.getParentElement();
+    var insertNewSpan = false;
+    
+    if (parentEl.nodeName == 'SPAN' && parentEl.getAttribute('lang')) {
+        // A language was previously defined for the current block.
+        // Check whether the selected text makes up the whole of the block
+        // contents.
+        var re = new RegExp(parentEl.innerHTML);
 
-		if (selectedHTML.match(re)) {
-			// The selected text makes up the whole of the span block.
-			if (lang != '') {
-				parentEl.setAttribute('lang', lang);
-				if (multiLang) {
-					parentEl.setAttribute('class', 'multilang');
-				}
-			} else {
-				parentEl.removeAttribute('lang');
-				
-				var classAttr = parentEl.getAttribute('class');
-				if (classAttr) {
-					classAttr = classAttr.replace(/multilang/, '').trim();
-				}
-				if (classAttr == '') {
-					parentEl.removeAttribute('class');
-				}
-				if (parentEl.attributes.length == 0) {
-					// The span is no longer needed.
-					for (i=0; i<parentEl.childNodes.length; i++) {
-						parentEl.parentNode.insertBefore(parentEl.childNodes[i], parentEl);
-					}
-					parentEl.parentNode.removeChild(parentEl);
-				}
-			}
-		} else {
-			insertNewSpan = true;
-		}
-	} else {
-		insertNewSpan = true;
-	}
+        if (selectedHTML.match(re)) {
+            // The selected text makes up the whole of the span block.
+            if (lang != '') {
+                parentEl.setAttribute('lang', lang);
+                if (multiLang) {
+                    parentEl.setAttribute('class', 'multilang');
+                }
+            } else {
+                parentEl.removeAttribute('lang');
+                
+                var classAttr = parentEl.getAttribute('class');
+                if (classAttr) {
+                    classAttr = classAttr.replace(/multilang/, '').trim();
+                }
+                if (classAttr == '') {
+                    parentEl.removeAttribute('class');
+                }
+                if (parentEl.attributes.length == 0) {
+                    // The span is no longer needed.
+                    for (i=0; i<parentEl.childNodes.length; i++) {
+                        parentEl.parentNode.insertBefore(parentEl.childNodes[i], parentEl);
+                    }
+                    parentEl.parentNode.removeChild(parentEl);
+                }
+            }
+        } else {
+            insertNewSpan = true;
+        }
+    } else {
+        insertNewSpan = true;
+    }
 
-	if (insertNewSpan && lang != '') {
-		var str  = '<span lang="'+lang.trim()+'"';
-		if (multiLang) {
-			str += ' class="multilang"';
-		}
-		str += '>';
-	    str += selectedHTML;
-	    str += '</span>';
-	    editor.insertHTML(str);
-	}
+    if (insertNewSpan && lang != '') {
+        var str  = '<span lang="'+lang.trim()+'"';
+        if (multiLang) {
+            str += ' class="multilang"';
+        }
+        str += '>';
+        str += selectedHTML;
+        str += '</span>';
+        editor.insertHTML(str);
+    }
 }
 
 
@@ -2015,12 +2015,12 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "hilitecolor":
         (HTMLArea.is_ie) && (cmdID = "backcolor");
         case "forecolor":
-        	this._popupDialog("select_color.php?id=<?php echo $id; ?>", function(color) {
-	            if (color) { // selection not canceled
-	                editor._doc.execCommand(cmdID, false, "#" + color);
-	            }
-	        }, HTMLArea._colorToRgb(this._doc.queryCommandValue(cmdID)));
-	        break;
+            this._popupDialog("select_color.php?id=<?php echo $id; ?>", function(color) {
+                if (color) { // selection not canceled
+                    editor._doc.execCommand(cmdID, false, "#" + color);
+                }
+            }, HTMLArea._colorToRgb(this._doc.queryCommandValue(cmdID)));
+            break;
         case "createanchor": this._createanchor(); break;
         case "createlink":
         this._createLink();
@@ -2111,136 +2111,136 @@ HTMLArea.prototype._editorEvent = function(ev) {
     var editor = this;
     var keyEvent = (HTMLArea.is_ie && ev.type == "keydown") || (ev.type == "keypress");
 
-	if (keyEvent) {
+    if (keyEvent) {
 
-		for (var i in editor.plugins) {
+        for (var i in editor.plugins) {
             var plugin = editor.plugins[i].instance;
             if (typeof plugin.onKeyPress == "function") plugin.onKeyPress(ev);
         }
 
-		var sel = null;
+        var sel = null;
         var range = null;
         var key = String.fromCharCode(HTMLArea.is_ie ? ev.keyCode : ev.charCode).toLowerCase();
         var cmd = null;
         var value = null;
 
-		if (ev.ctrlKey && !ev.altKey) {
-			/**
-			 * Ctrl modifier only.
-			 * We use these for shortcuts that change existing content,
-			 * e.g. make text bold.
-			 */
-			switch (key) {
+        if (ev.ctrlKey && !ev.altKey) {
+            /**
+             * Ctrl modifier only.
+             * We use these for shortcuts that change existing content,
+             * e.g. make text bold.
+             */
+            switch (key) {
 
-				case 'a':
-					// Select all.
-	                if (!HTMLArea.is_ie) {
-	                    // KEY select all
-	                    sel = this._getSelection();
-	                    sel.removeAllRanges();
-	                    range = this._createRange();
-	                    range.selectNodeContents(this._doc.body);
-	                    sel.addRange(range);
-	                    HTMLArea._stopEvent(ev);
-	                }
-	                break;
+                case 'a':
+                    // Select all.
+                    if (!HTMLArea.is_ie) {
+                        // KEY select all
+                        sel = this._getSelection();
+                        sel.removeAllRanges();
+                        range = this._createRange();
+                        range.selectNodeContents(this._doc.body);
+                        sel.addRange(range);
+                        HTMLArea._stopEvent(ev);
+                    }
+                    break;
 
-				// For the dropdowns, we assign focus to them so that they are
-				// keyboard accessible.
-				case 'o':
-					editor.dropdowns['fontname'].focus();
-					break;
-				case 'p':
-					editor.dropdowns['fontsize'].focus();
-					break;
-				case 'h':
-					editor.dropdowns['formatblock'].focus();
-					break;
-				case '=':
-					editor.dropdowns['language'].focus();
-					break;
+                // For the dropdowns, we assign focus to them so that they are
+                // keyboard accessible.
+                case 'o':
+                    editor.dropdowns['fontname'].focus();
+                    break;
+                case 'p':
+                    editor.dropdowns['fontsize'].focus();
+                    break;
+                case 'h':
+                    editor.dropdowns['formatblock'].focus();
+                    break;
+                case '=':
+                    editor.dropdowns['language'].focus();
+                    break;
 
-	            case 'b': cmd = "bold"; break;
-	            case 'i': cmd = "italic"; break;
-	            case 'u': cmd = "underline"; break;
-	            case 's': cmd = "strikethrough"; break;
-				case ',': cmd = "subscript"; break;
-				case '.': cmd = "superscript"; break;
-				
-				case 'v': 
-					if (! HTMLArea.is_gecko ) {
-						cmd = "paste";
-					}
-					break;
-				
-				case '0': cmd = "killword"; break;
-				case 'z': cmd = "undo"; break;
-	            case 'y': cmd = "redo"; break;
-	            case 'l': cmd = "justifyleft"; break;
-	            case 'e': cmd = "justifycenter"; break;
-	            case 'r': cmd = "justifyright"; break;
-	            case 'j': cmd = "justifyfull"; break;
-				case '/': cmd = "lefttoright"; break;
-				case '|': cmd = "righttoleft"; break;
-				case ';': cmd = "outdent"; break;
-				case "'": cmd = "indent"; break;
-				case 'g': cmd = "forecolor"; break;
-				case 'k': cmd = "hilitecolor"; break;
-				case 'f': cmd = "searchandreplace"; break;
-				case '`': cmd = "htmlmode"; break;  // FIXME: can't toggle from source code to wysiwyg
+                case 'b': cmd = "bold"; break;
+                case 'i': cmd = "italic"; break;
+                case 'u': cmd = "underline"; break;
+                case 's': cmd = "strikethrough"; break;
+                case ',': cmd = "subscript"; break;
+                case '.': cmd = "superscript"; break;
+                
+                case 'v': 
+                    if (! HTMLArea.is_gecko ) {
+                        cmd = "paste";
+                    }
+                    break;
+                
+                case '0': cmd = "killword"; break;
+                case 'z': cmd = "undo"; break;
+                case 'y': cmd = "redo"; break;
+                case 'l': cmd = "justifyleft"; break;
+                case 'e': cmd = "justifycenter"; break;
+                case 'r': cmd = "justifyright"; break;
+                case 'j': cmd = "justifyfull"; break;
+                case '/': cmd = "lefttoright"; break;
+                case '|': cmd = "righttoleft"; break;
+                case ';': cmd = "outdent"; break;
+                case "'": cmd = "indent"; break;
+                case 'g': cmd = "forecolor"; break;
+                case 'k': cmd = "hilitecolor"; break;
+                case 'f': cmd = "searchandreplace"; break;
+                case '`': cmd = "htmlmode"; break;  // FIXME: can't toggle from source code to wysiwyg
 
-				case 'm':
-	                // Toggle fullscreen on or off.
-	                if (this.config.btnList['popupeditor'][0] == 'Enlarge Editor') {
-	                    cmd = 'popupeditor';
-	                } else {
-	                    window.close();
-	                }
-	                break;
+                case 'm':
+                    // Toggle fullscreen on or off.
+                    if (this.config.btnList['popupeditor'][0] == 'Enlarge Editor') {
+                        cmd = 'popupeditor';
+                    } else {
+                        window.close();
+                    }
+                    break;
 
-				// Headings.
-	            case '1':
-	            case '2':
-	            case '3':
-	            case '4':
-	            case '5':
-	            case '6':
-	            cmd = "formatblock";
-	            value = "h" + key;
-	            if (HTMLArea.is_ie) {
-	                value = "<" + value + ">";
-	            }
-	            break;
+                // Headings.
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                cmd = "formatblock";
+                value = "h" + key;
+                if (HTMLArea.is_ie) {
+                    value = "<" + value + ">";
+                }
+                break;
 
-			} // End switch (key)
-			
-			
-		} else if (ev.ctrlKey && ev.altKey) {
-			/**
-			 * Ctrl + Alt modifiers.
-			 * We use these for shortcuts that insert stuff, e.g. images.
-			 */
-			switch (key) {
-				case 'o': cmd = "insertorderedlist"; break;
-				case 'u': cmd = "insertunorderedlist"; break;
-				case 'r': cmd = "inserthorizontalrule"; break;
-				case 'a': cmd = "createanchor"; break;
-				case 'l': cmd = "createlink"; break;
-				case 'd': cmd = "unlink"; break;
-				case 'n': cmd = "nolink"; break;
-				case 'i': cmd = 'insertimage'; break;
-				case 't': cmd = 'inserttable'; break;
-				case 's': cmd = 'insertsmile'; break;
-				case 'c': cmd = 'insertchar'; break;
-			}	
-		}
-		
-		if (cmd) {
+            } // End switch (key)
+            
+            
+        } else if (ev.ctrlKey && ev.altKey) {
+            /**
+             * Ctrl + Alt modifiers.
+             * We use these for shortcuts that insert stuff, e.g. images.
+             */
+            switch (key) {
+                case 'o': cmd = "insertorderedlist"; break;
+                case 'u': cmd = "insertunorderedlist"; break;
+                case 'r': cmd = "inserthorizontalrule"; break;
+                case 'a': cmd = "createanchor"; break;
+                case 'l': cmd = "createlink"; break;
+                case 'd': cmd = "unlink"; break;
+                case 'n': cmd = "nolink"; break;
+                case 'i': cmd = 'insertimage'; break;
+                case 't': cmd = 'inserttable'; break;
+                case 's': cmd = 'insertsmile'; break;
+                case 'c': cmd = 'insertchar'; break;
+            }    
+        }
+
+        if (cmd) {
             // execute simple command
             this.execCommand(cmd, false, value);
             HTMLArea._stopEvent(ev);
         }
-	} // End if (keyEvent)
+    } // End if (keyEvent)
 
     /*
     else if (keyEvent) {
@@ -2390,8 +2390,8 @@ HTMLArea.prototype._createRange = function(sel) {
     if (HTMLArea.is_ie) {
         return sel.createRange();
     } else {
-		// Commented out because we need the dropdowns to be able to keep
-		// focus for keyboard accessibility. Comment by Vy-Shane Sin Fat.
+        // Commented out because we need the dropdowns to be able to keep
+        // focus for keyboard accessibility. Comment by Vy-Shane Sin Fat.
         //this.focusEditor();
         if (typeof sel != "undefined") {
             try {

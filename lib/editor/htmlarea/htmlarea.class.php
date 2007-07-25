@@ -363,7 +363,7 @@ class htmlarea extends editorObject {
         }
         echo '//]]>'."\n";
         echo '</script>'."\n";
-        
+
     }
 
 }
