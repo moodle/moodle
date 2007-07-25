@@ -78,7 +78,7 @@ $navigation = build_navigation($navlinks);
 print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
 
     // Add tabs
-    $currenttab = 'outcomesettings';
+    $currenttab = 'courseoutcomes';
     include('tabs.php');
 
     /// listing of all site outcomes + this course specific outcomes

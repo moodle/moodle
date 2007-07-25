@@ -52,7 +52,7 @@ $perpage = 30;
     admin_externalpage_print_header();
 
     // Add tabs
-    $currenttab = 'outcomesettings';
+    $currenttab = 'siteoutcomes';
     include('tabs.php');
 
     $totalcount = count_records('grade_outcomes');
