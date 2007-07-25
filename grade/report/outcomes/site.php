@@ -9,7 +9,7 @@ require_once($CFG->libdir.'/tablelib.php');
 
 // setting up params
 $courseid = optional_param('id', SITEID, PARAM_INT); // course id
-
+require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYSTEM)); 
 /// check capability
 
 $page = optional_param('page', 0, PARAM_INT); // current page
@@ -20,13 +20,13 @@ $perpage = 30;
 
     // form processing
     if ($deleteid && confirm_sesskey()) {
+        require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM));
         if ($confirm) {
             // delete all outcomes used in courses
             // delete all outcomes used in grade items
             delete_records('grade_outcomes_courses', 'outcomeid', $deleteid);
             delete_records('grade_outcomes', 'id', $deleteid);
-        } else {
-          
+        } else {          
             $strgrades = get_string('grades');
             $stroutcomes = get_string('outcomes', 'grades');
             $navlinks = array();
@@ -98,9 +98,14 @@ $perpage = 30;
             }
 
             // add operations
-            $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
+            if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM))) {
+            
+                $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="site.php?deleteid='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
-
+            
+            } else {
+                $data[] = '';  
+            }
             // num of gradeitems using this
             $num = count_records('grade_items', 'outcomeid' ,$outcome['id']);
             $data[] = (int) $num;
@@ -114,9 +119,9 @@ $perpage = 30;
 
         $table->print_html();
     }
-
-    echo '<a href="editoutcomes.php">Add a new outcome</a>';
-
+    if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM))) {
+        echo '<a href="editoutcomes.php">Add a new outcome</a>';
+    }
     // print the footer, end of page
     admin_externalpage_print_footer();
 ?>

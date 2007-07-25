@@ -14,11 +14,11 @@ class edit_outcomes_form extends moodleform {
 
         $mform->addElement('text', 'shortname', get_string('shortname'));
         $mform->addRule('shortname', get_string('required'), 'required');
-        $mform->setType('id', PARAM_TEXT);
+        $mform->setType('shortname', PARAM_TEXT);
 
         $mform->addElement('text', 'fullname', get_string('fullname'));
         $mform->addRule('fullname', get_string('required'), 'required');
-        $mform->setType('id', PARAM_TEXT);
+        $mform->setType('fullname', PARAM_TEXT);
 
         $scalearr = array();
         if ($scales = get_records('scale')) {
@@ -44,9 +44,11 @@ $id = optional_param('id', 0, PARAM_INT); // id of the outcome
 if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     // optional course id, if set, editting from course
     require_login($courseid);
+    require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid));
     $returnurl = $CFG->wwwroot."/grade/report/outcomes/course.php?id=$courseid";
 } else {
     // admin editting site level outcomes
+    require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM));    
     $returnurl = $CFG->wwwroot."/grade/report/outcomes/site.php";
 }
 // form processing
@@ -66,6 +68,10 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 if ($data = $mform->get_data()) {
+    if ($data->courseid == 0) {
+        $data->courseid = NULL;  
+    }
+  
     if ($data->id) {
         update_record('grade_outcomes', $data);
     } else {

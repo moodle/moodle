@@ -18,9 +18,11 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 
 require_login($courseid);
+require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYSTEM));
 
     /// form processing
     if ($deleteid && confirm_sesskey()) {
+        require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid));
         if ($confirm) {
             // delete all outcomes used in courses
             // delete all outcomes used in grade items
@@ -49,7 +51,7 @@ require_login($courseid);
     }
 
     if ($data = data_submitted()) {
-
+        require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid));
         if (!empty($data->add) && !empty($data->addoutcomes)) {
         /// add all selected to course list  
             foreach ($data->addoutcomes as $add) {
@@ -136,11 +138,14 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
             // full name of the scale used by this outcomes
             $scale= get_record('scale', 'id', $outcome['scaleid']);
             $data[] = $scale->name;
-
+            
+            if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
             // add operations
-            $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;courseid='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
+                $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;courseid='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="course.php?deleteid='.$outcome['id'].'&amp;id='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
-
+            } else {
+                $data[] = '';  
+            }
             // num of gradeitems using this
             $num = count_records('grade_items', 'outcomeid' ,$outcome['id']);
             $data[] = (int) $num;
@@ -151,9 +156,9 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
 
         $table->print_html();
     }
-
-    echo '<a href="editoutcomes.php?courseid='.$courseid.'">Add a new outcome</a>';    
-
+    if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
+        echo '<a href="editoutcomes.php?courseid='.$courseid.'">Add a new outcome</a>';    
+    }
     print_footer();
     
 /** 
