@@ -43,7 +43,8 @@ class edit_outcomes_form extends moodleform {
 $id = optional_param('id', 0, PARAM_INT); // id of the outcome
 if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     // optional course id, if set, editting from course
-    $returnurl = $CFG->wwwroot."/grade/report/outcomes/course.php";
+    require_login($courseid);
+    $returnurl = $CFG->wwwroot."/grade/report/outcomes/course.php?id=$courseid";
 } else {
     // admin editting site level outcomes
     $returnurl = $CFG->wwwroot."/grade/report/outcomes/site.php";
@@ -73,11 +74,19 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 }
 
+// Build navigation
+$strgrades = get_string('grades');
+$stroutcomes = get_string('outcomes', 'grades');
+$navlinks = array();
+$navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+$navlinks[] = array('name' => $stroutcomes, 'link' => '', 'type' => 'misc');
+
+$navigation = build_navigation($navlinks);
+/// Print header
+print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
 // Add tabs
 $currenttab = 'editoutcomes';
 include('tabs.php');
-
-print_header();
 $mform->display();
 print_footer();
 ?>

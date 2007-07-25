@@ -26,17 +26,22 @@ $perpage = 30;
             delete_records('grade_outcomes_courses', 'outcomeid', $deleteid);
             delete_records('grade_outcomes', 'id', $deleteid);
         } else {
+          
+            $strgrades = get_string('grades');
+            $stroutcomes = get_string('outcomes', 'grades');
+            $navlinks = array();
+            $navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
+            $navlinks[] = array('name' => $stroutcomes, 'link' => '', 'type' => 'misc');
+
+            $navigation = build_navigation($navlinks);
+
+/// Print header
+            print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);  
             // prints confirmation
-            print_header('');
-            echo '<form action="settings.php">';
-            echo '<div>';
-            echo '<input type="hidden" name="confirm" value="1" />';
-            echo '<input type="hidden" name="deleteid" value="'.$deleteid.'" />';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo 'Are you sure you want to delete this outcome?';
-            echo '<input type="submit" value="yes" />';
-            echo '</div>';
-            echo '</form>';
+            $strdeleteoutcomecheck = get_string('deleteoutcomecheck', 'grades');
+            notice_yesno($strdeleteoutcomecheck,
+                         'site.php?deleteid='.$deleteid.'&amp;confirm=1&amp;sesskey='.sesskey(),
+                         'site.php');
             print_footer();
             exit;
         }
@@ -51,7 +56,7 @@ $perpage = 30;
     include('tabs.php');
 
     $totalcount = count_records('grade_outcomes');
-    $baseurl = "settings.php";
+    $baseurl = "site.php";
     print_paging_bar($totalcount, $page, $perpage, $baseurl);
 
     if ($outcomes = get_recordset('grade_outcomes', '', '', '', '*', $page * $perpage, $perpage)) {
@@ -94,14 +99,14 @@ $perpage = 30;
 
             // add operations
             $data[] = '<a href="editoutcomes.php?id='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
-                   <a href="settings.php?deleteid='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
+                   <a href="site.php?deleteid='.$outcome['id'].'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
 
             // num of gradeitems using this
-            $num = count_records('grade_outcomes_courses', 'outcomeid' ,$outcome['id']);
+            $num = count_records('grade_items', 'outcomeid' ,$outcome['id']);
             $data[] = (int) $num;
 
             // num of courses using this outcome
-            $num = count_records('grade_items', 'outcomeid', $outcome['id']);
+            $num = count_records('grade_outcomes_courses', 'outcomeid', $outcome['id']);
             $data[] = (int) $num;
 
             $table->add_data($data);

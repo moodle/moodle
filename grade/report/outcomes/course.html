@@ -1,3 +1,5 @@
+<form action="course.php" method="post">
+<div>
 <table style="margin-left:auto;margin-right:auto">
     <tr>
         <td>
@@ -5,26 +7,36 @@
 
             <?php
             foreach ($outcomes as $outcome) {
-                echo '<option value="'.$outcome->id.'">'.$outcome->shortname.'</option>';
+              
+                // do not include items already used in course
+                if (in_array($outcome->id, array_keys($courseoutcomes))) {
+                    continue;  
+                }
+              
+                echo '<option value="'.$outcome->id.'">'.truncate($outcome->fullname, 150).'</option>';
             }
             ?>
             </select>
         </td>
         <td>
             <p class="arrow_button">
-                <input name="add" id="add" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+                <input name="add" id="add" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
                 <br />
-                <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+                <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
             </p>
         </td>
         <td>
             <select id="removeoutcomes" size="20" name="removeoutcomes[]" multiple="multiple">
             <?php
             foreach ($courseoutcomes as $courseoutcome) {
-                echo '<option value="'.$courseoutcome->id.'">'.$courseoutcome->shortname.'</option>';
+                echo '<option value="'.$courseoutcome->id.'">'.truncate($courseoutcome->fullname, 150).'</option>';
             }
             ?>
             </select>
         </td>
     </tr>
 </table>
+
+<input name="id" type="hidden" value="<?php echo $courseid?>"/>
+</div>
+</form>
