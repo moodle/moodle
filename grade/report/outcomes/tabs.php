@@ -1,24 +1,24 @@
 <?php  // $Id$
     $row = $tabs = array();
+
     $row[] = new tabobject('outcomereport',
                            $CFG->wwwroot.'/grade/report/outcomes/index.php?id='.$courseid,
                            get_string('outcomereport', 'grades'));
 
+    // Needs capability here
     if ($courseid != SITEID) {
-        $row[] = new tabobject('outcomesettings',
+        $row[] = new tabobject('courseoutcomes',
                                $CFG->wwwroot.'/grade/report/outcomes/course.php?id='.$courseid,
-                               get_string('settings'));
-    } else {
-        $row[] = new tabobject('outcomesettings',
-                               $CFG->wwwroot.'/grade/report/outcomes/site.php?id='.$courseid,
-                               get_string('settings'));
+                               get_string('courseoutcomes', 'gradereport_outcomes'));
     }
 
-    $row[] = new tabobject('editoutcomes',
-                           $CFG->wwwroot.'/grade/report/outcomes/editoutcomes.php?courseid='.$courseid,
-                           get_string('editoutcomes', 'grades'));
+    // Needs capability here
+    $row[] = new tabobject('siteoutcomes',
+                           $CFG->wwwroot.'/grade/report/outcomes/site.php?id='.$courseid,
+                           get_string('siteoutcomes', 'gradereport_outcomes'));
 
     $tabs[] = $row;
+
     echo '<div class="outcomedisplay">';
     print_tabs($tabs, $currenttab);
     echo '</div>';
