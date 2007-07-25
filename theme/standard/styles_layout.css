@@ -738,6 +738,10 @@ table.navbar {
   padding-right:1em;
 }
 
+.sitelink {
+  padding-top:1em;
+}
+
 .performanceinfo {
   margin: 2em;
 }
