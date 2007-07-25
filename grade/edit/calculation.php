@@ -12,9 +12,8 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 
 require_login($course);
-
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-//require_capability() here!!
+require_capability('moodle/grade:manage', $context);
 
 // default return url
 $gpr = new grade_plugin_return();

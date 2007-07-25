@@ -48,7 +48,7 @@ if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
     $returnurl = $CFG->wwwroot."/grade/report/outcomes/course.php?id=$courseid";
 } else {
     // admin editting site level outcomes
-    require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM));    
+    require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM));
     $returnurl = $CFG->wwwroot."/grade/report/outcomes/site.php";
 }
 // form processing
@@ -69,9 +69,9 @@ if ($mform->is_cancelled()) {
 }
 if ($data = $mform->get_data()) {
     if ($data->courseid == 0) {
-        $data->courseid = NULL;  
+        $data->courseid = NULL;
     }
-  
+
     if ($data->id) {
         update_record('grade_outcomes', $data);
     } else {

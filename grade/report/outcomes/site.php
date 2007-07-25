@@ -9,7 +9,7 @@ require_once($CFG->libdir.'/tablelib.php');
 
 // setting up params
 $courseid = optional_param('id', SITEID, PARAM_INT); // course id
-require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYSTEM)); 
+require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYSTEM));
 /// check capability
 
 $page = optional_param('page', 0, PARAM_INT); // current page
@@ -26,7 +26,7 @@ $perpage = 30;
             // delete all outcomes used in grade items
             delete_records('grade_outcomes_courses', 'outcomeid', $deleteid);
             delete_records('grade_outcomes', 'id', $deleteid);
-        } else {          
+        } else {
             $strgrades = get_string('grades');
             $stroutcomes = get_string('outcomes', 'grades');
             $navlinks = array();
@@ -36,7 +36,7 @@ $perpage = 30;
             $navigation = build_navigation($navlinks);
 
 /// Print header
-            print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);  
+            print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
             // prints confirmation
             $strdeleteoutcomecheck = get_string('deleteoutcomecheck', 'grades');
             notice_yesno($strdeleteoutcomecheck,
@@ -99,12 +99,12 @@ $perpage = 30;
 
             // add operations
             if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM))) {
-            
+
                 $data[] = '<a href="editoutcomes.php?id='.$outcome->id.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="site.php?deleteid='.$outcome->id.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
-            
+
             } else {
-                $data[] = '';  
+                $data[] = '';
             }
             // num of gradeitems using this
             $num = count_records('grade_items', 'outcomeid' ,$outcome->id);

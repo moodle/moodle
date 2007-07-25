@@ -580,7 +580,11 @@ class grade_tree {
             case 'item':
             case 'categoryitem':
             case 'courseitem':
-                $url = $CFG->wwwroot.'/grade/edit/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                if (empty($object->outcomeid)) {
+                    $url = $CFG->wwwroot.'/grade/edit/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                } else {
+                    $url = $CFG->wwwroot.'/grade/edit/outcomeitem.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                }
                 $url = $gpr->add_url_params($url);
                 break;
 

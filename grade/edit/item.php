@@ -13,9 +13,8 @@ if (!$course = get_record('course', 'id', $courseid)) {
 }
 
 require_login($course);
-
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-//require_capability() here!!
+require_capability('moodle/grade:manage', $context);
 
 // default return url
 $gpr = new grade_plugin_return();
@@ -28,6 +27,12 @@ if ($mform->is_cancelled()) {
 }
 
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
+    // redirect if outcomeid present
+    if (!empty($item->outcomeid)) {
+        $url = $CFG->wwwroot.'/grade/edit/outcome.php?id='.$id.'&amp;courseid='.$courseid;
+        redirect($gpr->add_url_params($url));
+    }
+
     // Get Item preferences
     $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $id);
     $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $id);
@@ -41,7 +46,7 @@ if ($data = $mform->get_data()) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
 
-    $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$course->id));
+    $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);
 
     if (empty($grade_item->id)) {

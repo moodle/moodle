@@ -7,21 +7,21 @@
 
             <?php
             foreach ($outcomes as $outcome) {
-              
+
                 // do not include items already used in course
                 if (in_array($outcome->id, array_keys($courseoutcomes))) {
-                    continue;  
+                    continue;
                 }
-              
+
                 echo '<option value="'.$outcome->id.'">'.truncate($outcome->fullname, 150).'</option>';
             }
             ?>
             </select>
         </td>
         <td>
-            <?php 
+            <?php
                 // only show arrows if user has privilages to manage
-               if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) { 
+               if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
             ?>
             <p class="arrow_button">
                 <input name="add" id="add" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />

@@ -150,6 +150,7 @@ if ($moving) {
 } else {
     print_single_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
     print_single_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
+    print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
     print_single_button('tree.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
     print_single_button('tree.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
 }
@@ -182,6 +183,12 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
     $actions .= $gtree->get_locking_icon($element, $gpr);
 
     $name = $object->get_name();
+
+    //TODO: improve outcome visulisation
+    if ($element['type'] == 'item' and !empty($object->outcomeid)) {
+        $name = $name.' ('.get_string('outcome', 'grades').')';
+    }
+
     if ($object->is_hidden()) {
         $name = '<span class="dimmed_text">'.$name.'</span>';
     }

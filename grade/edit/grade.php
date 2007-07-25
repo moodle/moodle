@@ -17,7 +17,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 // TODO: add proper check that grade is editable
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-require_capability('gradereport/grader:manage', $context);
+require_capability('moodle/grade:override', $context);
 
 // default return url
 $gpr = new grade_plugin_return();

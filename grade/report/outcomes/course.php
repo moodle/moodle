@@ -39,8 +39,8 @@ require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYS
             $navigation = build_navigation($navlinks);
 
 /// Print header
-            print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);      
-            
+            print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
+
             $strdeleteoutcomecheck = get_string('deleteoutcomecheck', 'grades');
             notice_yesno($strdeleteoutcomecheck,
                          'course.php?id='.$courseid.'&amp;deleteid='.$deleteid.'&amp;confirm=1&amp;sesskey='.sesskey(),
@@ -53,17 +53,17 @@ require_capability('gradereport/outcomes:view', get_context_instance(CONTEXT_SYS
     if ($data = data_submitted()) {
         require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid));
         if (!empty($data->add) && !empty($data->addoutcomes)) {
-        /// add all selected to course list  
+        /// add all selected to course list
             foreach ($data->addoutcomes as $add) {
                 $goc -> courseid = $courseid;
                 $goc -> outcomeid = $add;
                 insert_record('grade_outcomes_courses', $goc);
             }
         } else if (!empty($data->remove) && !empty($data->removeoutcomes)) {
-        /// remove all selected from course outcomes list    
+        /// remove all selected from course outcomes list
             foreach ($data->removeoutcomes as $remove) {
                 delete_records('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $remove);
-            }        
+            }
         }
     }
 
@@ -92,17 +92,17 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
                                        FROM '.$CFG->prefix.'grade_outcomes_courses goc,
                                             '.$CFG->prefix.'grade_outcomes go
                                        WHERE goc.courseid = '.$courseid.'
-                                       AND goc.outcomeid = go.id');    
-    
+                                       AND goc.outcomeid = go.id');
+
     if (empty($courseoutcomes)) {
-        $courseoutcomes = get_records('grade_outcomes', 'courseid', $courseid);    
+        $courseoutcomes = get_records('grade_outcomes', 'courseid', $courseid);
     } elseif ($mcourseoutcomes = get_records('grade_outcomes', 'courseid', $courseid)) {
         $courseoutcomes += $mcourseoutcomes;
     }
 
     check_theme_arrows();
     include_once('course.html');
-    
+
     /// interface to add/edit/delete course specific outcomes
     echo '<p/>';
     print_string('coursespecoutcome', 'grades'); // course sepcific outcomes
@@ -110,7 +110,7 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
     $totalcount = count_records('grade_outcomes_courses', 'courseid', $courseid);
     $baseurl = "course.php";
     print_paging_bar($totalcount, $page, $perpage, $baseurl);
-    
+
     if ($outcomes = get_recordset('grade_outcomes', 'courseid', $courseid, '', '*', $page * $perpage, $perpage)) {
 
         $tablecolumns = array('outcome', 'scale', 'edit', 'usedgradeitems');
@@ -138,13 +138,13 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
             // full name of the scale used by this outcomes
             $scale= get_record('scale', 'id', $outcome->scaleid);
             $data[] = $scale->name;
-            
+
             if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
             // add operations
                 $data[] = '<a href="editoutcomes.php?id='.$outcome->id.'&amp;courseid='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Update" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>
                    <a href="course.php?deleteid='.$outcome->id.'&amp;id='.$courseid.'&amp;sesskey='.sesskey().'"><img alt="Delete" class="iconsmall" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/></a>'; // icons and links
             } else {
-                $data[] = '';  
+                $data[] = '';
             }
             // num of gradeitems using this
             $num = count_records('grade_items', 'outcomeid' ,$outcome->id);
@@ -157,11 +157,11 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
         $table->print_html();
     }
     if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
-        echo '<a href="editoutcomes.php?courseid='.$courseid.'">Add a new outcome</a>';    
+        echo '<a href="editoutcomes.php?courseid='.$courseid.'">Add a new outcome</a>';
     }
     print_footer();
-    
-/** 
+
+/**
  * truncates a string to a length of num
  * @param string string
  * @param int num
