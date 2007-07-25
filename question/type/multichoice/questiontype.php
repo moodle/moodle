@@ -323,7 +323,7 @@ class question_multichoice_qtype extends default_questiontype {
             // Print the answer text
             $a->text = '<span class="anun">' . $qnumchar .
                     '<span class="anumsep">.</span></span> ' . 
-                    format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+                    format_text($answer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
             if (($options->feedback || $options->correct_responses) && $checked) {
