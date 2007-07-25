@@ -27,7 +27,7 @@
         }
         if (set_config("theme", $choose)) {
             theme_setup($choose);
-              admin_externalpage_print_header();
+            admin_externalpage_print_header();
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
 
@@ -42,7 +42,7 @@
                 echo format_text(implode('', $file), FORMAT_MOODLE);
                 print_simple_box_end();
             }
-              admin_externalpage_print_footer();
+            admin_externalpage_print_footer();
             exit;
         } else {
             error("Could not set the theme!");
@@ -58,7 +58,7 @@
     $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
     echo "<table style=\"margin-left:auto;margin-right:auto;\" cellpadding=\"7\" cellspacing=\"5\">";
-    
+
     if (!$USER->screenreader) {
         echo "<tr class=\"generaltableheader\"><th scope=\"col\">$strtheme</th>";
         echo "<th scope=\"col\">$strinfo</th></tr>";
@@ -91,7 +91,7 @@
         }
 
         echo "<tr>";
-             
+
         // no point showing this if user is using screen reader
         if (!$USER->screenreader) {
             echo "<td align=\"center\">";
@@ -114,9 +114,9 @@
         } else {
             echo '<p style="font-size:1.5em;font-style:bold;color:red;">'.$theme.' (Moodle 1.4)</p>';
         }
-          
+
         if ($screenshot or $readme) {
-            echo '<ul>';      
+            echo '<ul>';
             if (!$USER->screenreader) {
                 echo "<li><a href=\"preview.php?preview=$theme\">$strpreview</a></li>";
             }
@@ -133,8 +133,5 @@
     }
     echo "</table>";
 
-
     admin_externalpage_print_footer();
-
-
 ?>
