@@ -18,6 +18,7 @@
     $rename       = optional_param('rename', '', PARAM_NOTAGS);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
+    $addsubcategory=optional_param('addsubcategory', '', PARAM_NOTAGS);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -50,6 +51,18 @@
         $creatorediting = false;
     }
 
+
+    if (has_capability('moodle/category:create', $context)) {
+        if (!empty($addsubcategory) and confirm_sesskey()) {
+            $subcategory = new stdClass;
+            $subcategory->name = $addsubcategory;
+            $subcategory->sortorder = 999;
+            $subcategory->parent = $id;
+            if (!insert_record('course_categories', $subcategory )) {
+                notify( "Could not insert the new subcategory '$addsubcategory' " );
+            }
+        }
+    }
 
     if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
@@ -250,6 +263,21 @@
         }
     }
 
+/// print option to add a subcategory
+    if (has_capability('moodle/category:create', $context)) {
+        $straddsubcategory = get_string('addsubcategory');
+        echo '<div class="addcategory">';
+        echo '<form id="addform" action="category.php" method="post">';
+        echo '<fieldset class="invisiblefieldset">';
+        echo '<input type="text" size="30" alt="'.$straddsubcategory.'" name="addsubcategory" />';
+        echo '<input type="submit" value="'.$straddsubcategory.'" />';
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        echo '<input type="hidden" name="id" value="'.$id.'" />';
+        // echo '<input type="hidden" name="categoryedit" value="'.$categoryedit.'" />';
+        echo '</fieldset>';
+        echo '</form>';
+        echo '</div>';
+    }
 
 /// Print out all the courses
     unset($course);    // To avoid unwanted language effects later
