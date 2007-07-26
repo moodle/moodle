@@ -15,15 +15,15 @@
     require_once($CFG->libdir . '/questionlib.php');
 
     list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup(false, false);
-    
+
     // get parameters
     $params = new stdClass;
     $params->choosefile = optional_param('choosefile','',PARAM_PATH);
     $catfromfile = optional_param('catfromfile', 0, PARAM_BOOL );
-    $courseid = optional_param('courseid', 0, PARAM_INT);
     $format = optional_param('format','',PARAM_FILE);
     $params->matchgrades = optional_param('matchgrades','',PARAM_ALPHA);
     $params->stoponerror = optional_param('stoponerror', 0, PARAM_BOOL);
+    $params->category = optional_param( 'category', 0, PARAM_INT );
 
     // get display strings
     $txt = new stdClass();
@@ -56,20 +56,24 @@
     $matchgrades['error'] = $txt->matchgradeserror;
     $matchgrades['nearest'] = $txt->matchgradesnearest;
 
+    // not sure where $pagevars['cat'] comes from, but it doesn't respect
+    // the user's choice on the form - so this bodge
+    if (empty($params->category)) {
+        $params->category = $pagevars['cat'];
+    }
 
-
-    if (!$category = get_record("question_categories", "id", $pagevars['cat'])) {
+    if (!$category = get_record("question_categories", "id", $params->category)) {
         // if no valid category was given, use the default category
         print_error('nocategory','quiz');
     }
 
     // check category is valid (against THIS courseid, before we change it)
-    $validcats = question_category_options( $courseid, false, true );
-    if (!array_key_exists( $categoryid, $validcats )) {
+    $validcats = question_category_options( $cmid, false, true );
+    if (!array_key_exists( $params->category, $validcats )) {
         print_error( 'invalidcategory', 'quiz' );
     }
 
-    $localcourseid = $courseid;
+    $localcourseid = $cmid;
     $courseid = $category->course;
 
     if (!$course = get_record("course", "id", $courseid)) {
