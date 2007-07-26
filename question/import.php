@@ -73,9 +73,13 @@
         }
     }
 
-    if (!$courseid) { // need to get the course from the chosen category
-        $courseid = $category->course;
+    // check category is valid (against THIS courseid, before we change it)
+    $validcats = question_category_options( $courseid, true, true );
+    if (!array_key_exists( $categoryid, $validcats )) {
+        print_error( 'invalidcategory', 'quiz' );
     }
+
+    $courseid = $category->course;
 
     if (!$course = get_record("course", "id", $courseid)) {
         error("Invalid course!");
