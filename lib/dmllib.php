@@ -1809,6 +1809,86 @@ function sql_order_by_text($fieldname, $numchars=32) {
     }
 }
 
+/**
+ * Returns the SQL text to be used in order to perform one bitwise AND operation
+ * between 2 integers.
+ * @param integer int1 first integer in the operation
+ * @param integer int2 second integer in the operation
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_bitand($int1, $int2) {
+
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'oracle':
+            return 'bitand(' . $int1 . ', ' . $int2 . ')';
+            break;
+        default:
+            return $int1 . ' & ' . $int2;
+    }
+}
+
+/**
+ * Returns the SQL text to be used in order to perform one bitwise OR operation
+ * between 2 integers.
+ * @param integer int1 first integer in the operation
+ * @param integer int2 second integer in the operation
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_bitor($int1, $int2) {
+
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'oracle':
+            return '(' . $int1 . ' + ' . $int2 . ' - ' . sql_bitand($int1, $int2) . ')';
+            break;
+        default:
+            return $int1 . ' | ' . $int2;
+    }
+}
+
+/**
+ * Returns the SQL text to be used in order to perform one bitwise XOR operation
+ * between 2 integers.
+ * @param integer int1 first integer in the operation
+ * @param integer int2 second integer in the operation
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_bitxor($int1, $int2) {
+
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'oracle':
+            return '(' . sql_bitor($int1, $int2) . ' - ' . sql_bitand($int1, $int2) . ')';
+            break;
+        case 'postgres':
+            return $int1 . ' # ' . $int2;
+        default:
+            return $int1 . ' ^ ' . $int2;
+    }
+}
+
+/**
+ * Returns the SQL text to be used in order to perform one bitwise NOT operation
+ * with 1 integer.
+ * @param integer int1 integer in the operation
+ * @return string the piece of SQL code to be used in your statement.
+ */
+function sql_bitnot($int1) {
+
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'oracle':
+            return '(' . '(0 - ' . $int1 . ') - 1' . ')';
+            break;
+        default:
+            return ' ~' . $int1;
+    }
+}
 
 /**
  * Returns SQL to be used as a subselect to find the primary role of users.  
