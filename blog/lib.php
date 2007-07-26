@@ -433,7 +433,7 @@
             break;
 
             case BLOG_COURSE_LEVEL:
-                $mycourses = array_keys(get_my_courses($targetuserid));
+                $mycourses = array_keys(get_my_courses($USER->id));
                 $usercourses = array_keys(get_my_courses($targetuserid));
                 $shared = array_intersect($mycourses, $usercourses);
                 if (!empty($shared)) {
@@ -443,7 +443,7 @@
             break;
 
             case BLOG_GROUP_LEVEL:
-                $mycourses = array_keys(get_my_courses($targetuserid));
+                $mycourses = array_keys(get_my_courses($USER->id));
                 $usercourses = array_keys(get_my_courses($targetuserid));
                 $shared = array_intersect($mycourses, $usercourses);
                 foreach ($shared as $courseid) {
