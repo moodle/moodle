@@ -63,7 +63,7 @@
     }
 
     // check category is valid (against THIS courseid, before we change it)
-    $validcats = question_category_options( $courseid, true, true );
+    $validcats = question_category_options( $courseid, false, true );
     if (!array_key_exists( $categoryid, $validcats )) {
         print_error( 'invalidcategory', 'quiz' );
     }
