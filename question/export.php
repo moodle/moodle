@@ -18,7 +18,7 @@
     
     $exportfilename = optional_param('exportfilename','',PARAM_FILE );
     $format = optional_param('format','', PARAM_FILE );
-
+    $categoryid = optional_param('category',0,PARAM_INT);
 
     // get display strings
     $txt = new object;
@@ -39,8 +39,12 @@
         error("Course does not exist!");
     }
 
+    // make sure we are using the user's most recent category choice
+    if (empty($categoryid)) {
+        $categoryid = $pagevars['cat'];
+    }
 
-    if (!$category = get_record("question_categories", "id", $pagevars['cat'])) {   
+    if (!$category = get_record("question_categories", "id", $categoryid)) {   
         $category = get_default_question_category($courseid); 
     }
     
@@ -57,11 +61,9 @@
     make_upload_directory( "$course->id" );
 
     // check category is valid
-    if (!empty($pagevars['cat'])) {
-        $validcats = question_category_options( $course->id, true, false );
-        if (!array_key_exists( $pagevars['cat'], $validcats)) {
-            print_error( 'invalidcategory','quiz' );
-        }
+    $validcats = question_category_options( $course->id, true, false );
+    if (!array_key_exists( $categoryid, $validcats)) {
+        print_error( 'invalidcategory','quiz' );
     }
 
     /// Header
