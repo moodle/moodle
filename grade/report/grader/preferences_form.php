@@ -96,7 +96,7 @@ class grader_report_preferences_form extends moodleform {
 
             $full_pref  = 'grade_report_' . $pref;
 
-            $pref_value = get_user_preferences($full_pref, $CFG->$full_pref);
+            $pref_value = get_user_preferences($full_pref);
 
             $options = null;
             if (is_array($type)) {
