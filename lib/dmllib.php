@@ -1866,6 +1866,7 @@ function sql_bitxor($int1, $int2) {
             break;
         case 'postgres':
             return $int1 . ' # ' . $int2;
+            break;
         default:
             return $int1 . ' ^ ' . $int2;
     }
