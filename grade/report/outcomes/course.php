@@ -105,7 +105,7 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
 
     /// interface to add/edit/delete course specific outcomes
     echo '<p/>';
-    print_string('coursespecoutcome', 'grades'); // course sepcific outcomes
+    print_heading(get_string('coursespecoutcome', 'gradereport_outcomes')); // course sepcific outcomes
 
     $totalcount = count_records('grade_outcomes_courses', 'courseid', $courseid);
     $baseurl = "course.php";
@@ -114,10 +114,10 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
     if ($outcomes = get_recordset('grade_outcomes', 'courseid', $courseid, '', '*', $page * $perpage, $perpage)) {
 
         $tablecolumns = array('outcome', 'scale', 'edit', 'usedgradeitems');
-        $tableheaders = array(get_string('outcomes'),
+        $tableheaders = array(get_string('outcomes', 'grades'),
                               get_string('scale'),
-                              get_string('operations'),
-                              get_string('usedgradeitem'));
+                              '',
+                              get_string('activities'));
 
         $table = new flexible_table('outcomes');
         $table->define_columns($tablecolumns);
@@ -157,7 +157,7 @@ print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, ''
         $table->print_html();
     }
     if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid))) {
-        echo '<a href="editoutcomes.php?courseid='.$courseid.'">Add a new outcome</a>';
+        echo '<a href="editoutcomes.php?courseid='.$courseid.'">'.get_string('addoutcome', 'gradereport_outcomes').'</a>';
     }
     print_footer();
 

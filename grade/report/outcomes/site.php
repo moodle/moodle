@@ -62,12 +62,12 @@ $perpage = 30;
     if ($outcomes = get_recordset('grade_outcomes', '', '', '', '*', $page * $perpage, $perpage)) {
 
         $tablecolumns = array('outcome', 'scale', 'course', 'edit', 'usedgradeitems', 'usedcourses');
-        $tableheaders = array(get_string('outcomes'),
+        $tableheaders = array(get_string('outcomes', 'grades'),
                               get_string('scale'),
                               get_string('course'),
-                              get_string('operations'),
-                              get_string('usedgradeitem'),
-                              get_string('usedcourses'));
+                              '',
+                              get_string('activities'),
+                              get_string('courses'));
 
         $table = new flexible_table('outcomes');
         $table->define_columns($tablecolumns);
@@ -120,7 +120,7 @@ $perpage = 30;
         $table->print_html();
     }
     if (has_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_SYSTEM))) {
-        echo '<a href="editoutcomes.php">Add a new outcome</a>';
+        echo '<a href="editoutcomes.php">'.get_string('addoutcome', 'gradereport_outcomes').'</a>';
     }
     // print the footer, end of page
     admin_externalpage_print_footer();
