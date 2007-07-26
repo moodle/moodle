@@ -505,7 +505,6 @@
         echo "<input type=\"submit\" name=\"markall\" value=\"".get_string("markall", "quiz")."\" />\n";
     }
     echo "<input type=\"submit\" name=\"finishattempt\" value=\"".get_string("finishattempt", "quiz")."\" onclick=\"$onclick\" />\n";
-    echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
 
     echo "</div>";
 
@@ -516,6 +515,7 @@
 
     // Finish the form
     echo '</div>';
+    echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
     echo "</form>\n";
 
     $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
