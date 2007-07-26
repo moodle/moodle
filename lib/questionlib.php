@@ -566,7 +566,7 @@ function questionbank_navigation_tabs(&$row, $context, $courseid) {
     }
     
     if (has_capability('moodle/question:import', $context)) {
-        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?course=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
+        $row[] = new tabobject('import', "$CFG->wwwroot/question/import.php?courseid=$courseid", get_string('import', 'quiz'), get_string('importquestions', 'quiz'));
     }
     
     if (has_capability('moodle/question:export', $context)) {
