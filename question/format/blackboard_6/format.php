@@ -555,9 +555,10 @@ function process_tf($quest, &$questions) {
 
     $question->qtype = TRUEFALSE;
     $question->single = 1; // Only one answer is allowed
-
-    // first choice is true, second is false.
-    if ($quest->responses[0]->fraction == 1) {
+    // 0th [response] is the correct answer.
+    $responses = $quest->responses;
+    $correctresponse = $responses[0]->ident[0]['varequal'][0]['#'];
+    if ($correctresponse != 'false') {
         $correct = true;    
     }
     else {
