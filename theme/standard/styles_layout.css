@@ -3399,6 +3399,14 @@ body#mod-forum-search .introcontent {
   text-align: center;
 }
 
+.generalbox#passwordbox { /* Should probably match .generalbox#intro above */
+  width:70%;
+  margin-left:auto;
+  margin-right:auto;
+}
+#passwordform {
+  margin: 1em 0;
+}
 #mod-quiz-attempt #page {
   text-align: center;
 }

@@ -101,38 +101,50 @@
     }
 
     // Check password access
-    if ($quiz->password and empty($_POST['q'])) {
-        if (empty($_POST['quizpassword'])) {
+    if ($ispreviewing && $forcenew) {
+        unset($SESSION->passwordcheckedquizzes[$quiz->id]);
+    }
+
+    if ($quiz->password and empty($SESSION->passwordcheckedquizzes[$quiz->id])) {
+        $enteredpassword = optional_param('quizpassword', '', PARAM_RAW);
+        if (optional_param('cancelpassword', false)) {
+            // User clicked cancel in the password form.
+            redirect($CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
+        } else if (strcmp($quiz->password, $enteredpassword) === 0) {
+            // User entered the correct password.
+            $SESSION->passwordcheckedquizzes[$quiz->id] = true;
+        } else {
+            // User entered the wrong password, or has not entered one yet.
+            $url = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id;
+
+            if (empty($popup)) {
+                print_header('', '', '', 'quizpassword');
+            }
 
             if (trim(strip_tags($quiz->intro))) {
-                print_simple_box(format_text($quiz->intro), "center");
+                $formatoptions->noclean = true;
+                print_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), 'generalbox', 'intro');
             }
-            echo "<br />\n";
-
-            echo "<form id=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" onclick=\"this.autocomplete='off'\">\n";
-            echo '<fieldset class="invisiblefieldset" style="display: block">';
-            print_simple_box_start("center");
-
-            echo "<div class=\"boxaligncenter\">\n";
-            print_string("requirepasswordmessage", "quiz");
-            echo "<br /><br />\n";
-            echo " <input name=\"quizpassword\" type=\"password\" value=\"\" alt=\"password\" />";
-            echo " <input type=\"submit\" value=\"".get_string("ok")."\" />\n";
-            echo "</div>\n";
-
-            print_simple_box_end();
-            echo '</fieldset>';
-            echo "</form>\n";
-
+            print_box_start('generalbox', 'passwordbox');
+            if (!empty($enteredpassword)) {
+                echo '<p class="notifyproblem">', get_string('passworderror', 'quiz'), '</p>';
+            }
+?>
+<p><?php print_string('requirepasswordmessage', 'quiz'); ?></p>
+<form id="passwordform" method="post" action="<?php echo $url; ?>" onclick="this.autocomplete='off'">
+    <div>
+         <label for="quizpassword"><?php print_string('password'); ?></label>
+         <input name="quizpassword" id="quizpassword" type="password" value=""/>
+         <input type="submit" value="<?php print_string('ok'); ?>" />
+         <input type="submit" name="cancelpassword" value="<?php print_string('cancel'); ?>" />
+    </div>
+</form>
+<?php
+            print_box_end();
             if (empty($popup)) {
                 print_footer();
             }
             exit;
-
-        } else {
-            if (strcmp($quiz->password, $_POST['quizpassword']) !== 0) {
-                error(get_string("passworderror", "quiz"), "view.php?id=$cm->id");
-            }
         }
     }
 
@@ -379,6 +391,7 @@
     }
 
     if ($finishattempt) {
+        unset($SESSION->passwordcheckedquizzes[$quiz->id]);
         redirect('review.php?attempt='.$attempt->id, 0);
     }
 
