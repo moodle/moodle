@@ -65,9 +65,18 @@ foreach ($outcomes as $outcomeid => $outcome) {
                      WHERE itemid = $itemid
                   GROUP BY itemid";
             $info = get_records_sql($sql);
-            $info = reset($info);
-            $report_info[$outcomeid]['items'][$itemid]->avg = round($info->avg, 2);
-            $report_info[$outcomeid]['items'][$itemid]->count = $info->count;
+
+            if (!$info) {
+                unset($report_info[$outcomeid]['items'][$itemid]);
+                continue;
+            } else {
+                $info = reset($info);
+                $avg = round($info->avg, 2);
+                $count = $info->count;
+            }
+
+            $report_info[$outcomeid]['items'][$itemid]->avg = $avg;
+            $report_info[$outcomeid]['items'][$itemid]->count = $count;
         }
     }
 }
