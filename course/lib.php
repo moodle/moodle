@@ -1764,7 +1764,7 @@ function delete_course_module($id) {
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
-            delete_event($event);
+            delete_event($event->id);
         }
     }
     return delete_records('course_modules', 'id', $cm->id);
