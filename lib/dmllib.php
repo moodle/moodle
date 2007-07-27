@@ -1822,10 +1822,10 @@ function sql_bitand($int1, $int2) {
 
     switch ($CFG->dbfamily) {
         case 'oracle':
-            return 'bitand(' . $int1 . ', ' . $int2 . ')';
+            return 'bitand((' . $int1 . '), (' . $int2 . '))';
             break;
         default:
-            return $int1 . ' & ' . $int2;
+            return '((' . $int1 . ') & (' . $int2 . '))';
     }
 }
 
@@ -1842,10 +1842,10 @@ function sql_bitor($int1, $int2) {
 
     switch ($CFG->dbfamily) {
         case 'oracle':
-            return '(' . $int1 . ' + ' . $int2 . ' - ' . sql_bitand($int1, $int2) . ')';
+            return '((' . $int1 . ') + (' . $int2 . ') - ' . sql_bitand($int1, $int2) . ')';
             break;
         default:
-            return $int1 . ' | ' . $int2;
+            return '((' . $int1 . ') | (' . $int2 . '))';
     }
 }
 
@@ -1865,10 +1865,10 @@ function sql_bitxor($int1, $int2) {
             return '(' . sql_bitor($int1, $int2) . ' - ' . sql_bitand($int1, $int2) . ')';
             break;
         case 'postgres':
-            return $int1 . ' # ' . $int2;
+            return '((' . $int1 . ') # (' . $int2 . '))';
             break;
         default:
-            return $int1 . ' ^ ' . $int2;
+            return '((' . $int1 . ') ^ (' . $int2 . '))';
     }
 }
 
@@ -1884,10 +1884,10 @@ function sql_bitnot($int1) {
 
     switch ($CFG->dbfamily) {
         case 'oracle':
-            return '(' . '(0 - ' . $int1 . ') - 1' . ')';
+            return '((0 - (' . $int1 . ')) - 1)';
             break;
         default:
-            return ' ~' . $int1;
+            return '(~(' . $int1 . '))';
     }
 }
 
