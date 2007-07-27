@@ -21,11 +21,7 @@
 function upgrade_plugins($type, $dir, $return) {
     global $CFG, $db;
 
-    if (!$plugs = get_list_of_plugins($dir) ) {
-        debugging('No '.$type.' plugins installed!');
-        return false;
-    }
-
+    $plugs = get_list_of_plugins($dir);
     $updated_plugins = false;
     $strpluginsetup  = get_string('pluginsetup');
 
