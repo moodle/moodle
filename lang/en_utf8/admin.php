@@ -1,5 +1,4 @@
-﻿<?PHP // $Id$
-      // admin.php - created with Moodle 1.7 beta + (2006101003)
+<?php
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
 $string['adminseesall'] = 'Admins See All';
@@ -609,6 +608,5 @@ $string['userscreated'] = 'Users created';
 $string['usersrenamed'] = 'Users renamed';
 $string['usersupdated'] = 'Users updated';
 $string['validateerror'] = 'This value was not valid:';
-
 
 ?>
