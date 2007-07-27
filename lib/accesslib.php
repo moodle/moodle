@@ -2292,9 +2292,9 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
 
                 /// now handle metacourse role unassigment and removing from goups if in course context
                 if (!empty($context) and $context->contextlevel == CONTEXT_COURSE) {
-                    //remove from groups when user has no role
-                    $roles = get_user_roles($context, $ra->userid, true);
-                    if (empty($roles)) {
+                    // remove from groups when user has no capability to view course
+                    // this may be slow, but this is the proper way of doing it
+                    if (!has_capability('moodle/course:view', $context, $ra->userid)) {
                         if ($groups = get_groups($context->instanceid, $ra->userid)) {
                             foreach ($groups as $group) {
                                 delete_records('groups_members', 'groupid', $group->id, 'userid', $ra->userid);
