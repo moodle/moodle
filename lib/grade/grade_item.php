@@ -1041,7 +1041,8 @@ class grade_item extends grade_object {
      */
     function get_name() {
         if (!empty($this->itemname)) {
-            return $this->itemname;
+            // MDL-10557
+            return format_string($this->itemname);
 
         } else if ($this->is_course_item()) {
             return get_string('total');
