@@ -311,11 +311,11 @@ table.flexible .r1 {
   color: white;
 }
 
-#admin-report-simpletest-index .unittestsummary.fail {
+#admin-report-simpletest-index .unittestsummary.failed {
   background-color: red;
 }
 
-#admin-report-simpletest-index .unittestsummary.pass {
+#admin-report-simpletest-index .unittestsummary.passed {
   background-color: green;
 }
 

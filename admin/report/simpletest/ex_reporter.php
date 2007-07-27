@@ -147,9 +147,9 @@ class ExHtmlReporter extends HtmlReporter {
         $summarydata->exceptions = $this->getExceptionCount();
 
         if ($summarydata->fails == 0 && $summarydata->exceptions == 0) {
-            $status = "pass";
+            $status = "passed";
         } else {
-            $status = "fail";
+            $status = "failed";
         }
         echo '<div class="unittestsummary ', $status, '">';
         echo $this->get_string('summary', $summarydata);
