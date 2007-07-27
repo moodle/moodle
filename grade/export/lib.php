@@ -136,7 +136,7 @@ class grade_export {
                 // load as an array of grade_final objects
                 if ($itemgrades = $gradeitem -> get_final()) {
 
-                    $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".format_string($gradeitem->itemname,true)." - $gradeitem->grademax";
+                    $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".$gradeitem->get_name()." - $gradeitem->grademax";
 
                     $this->columnidnumbers[$gradeitem->id] = $gradeitem->idnumber; // this might be needed for some export plugins
 

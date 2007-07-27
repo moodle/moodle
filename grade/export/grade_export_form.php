@@ -11,7 +11,7 @@ class grade_export_form extends moodleform {
         $mform->addElement('hidden', 'id', $id);
         if ($grade_items = grade_item::fetch_all(array('courseid'=>$id))) {
             foreach ($grade_items as $grade_item) {
-                $element = new HTML_QuickForm_advcheckbox('itemids[]', null, $grade_item->itemname, array('selected'=>'selected'), array(0, $grade_item->id));
+                $element = new HTML_QuickForm_advcheckbox('itemids[]', null, $grade_item->get_name(), array('selected'=>'selected'), array(0, $grade_item->id));
                 $element->setChecked(1);
                 $mform->addElement($element);
             }

@@ -383,7 +383,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
                 }
 
                 // this was idnumber
-                $gradeitems[$grade_item->id] = $grade_item->itemname;
+                $gradeitems[$grade_item->id] = $grade_item->get_name();
             }
         }
     }
