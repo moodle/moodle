@@ -99,6 +99,10 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
         }
         return true;
     } // end func onQuickFormEvent
+    function toHtml()
+    {
+        return '<span>' . parent::toHtml() . '</span>';
+    }
     /**
      * Slightly different container template when frozen. Don't want to use a label tag
      * with a for attribute in that case for the element label but instead use a div.

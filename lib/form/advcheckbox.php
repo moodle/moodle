@@ -102,5 +102,9 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
             return 'default';
         }
     }
+    function toHtml()
+    {
+        return '<span>' . parent::toHtml() . '</span>';
+    }
 }
 ?>

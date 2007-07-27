@@ -74,5 +74,9 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio{
             return 'default';
         }
     }
+    function toHtml()
+    {
+        return '<span>' . parent::toHtml() . '</span>';
+    }
 }
 ?>
