@@ -2,7 +2,7 @@
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
- 
+
     //Calculate the number of users to backup and put their ids in backup_ids
     //Return an array of info (name,value)
     function user_check_backup($course,$backup_unique_code,$backup_users,$backup_messages) {
@@ -18,7 +18,7 @@
 
         //If we've selected none, simply return 0
         if ($backup_users == 0 or $backup_users == 1) {
-        
+
             //Calculate needed users (calling every xxxx_get_participants function + scales users)
             $needed_users = backup_get_needed_users($course, $backup_messages);
 
@@ -31,14 +31,14 @@
             //Calculate course users (needed + enrolled)
             //First, needed
             $course_users = $needed_users;
-        
+
             //Now, enrolled
             if ($enrolled_users) {
                 foreach ($enrolled_users as $enrolled_user) {
-                    $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+                    $course_users[$enrolled_user->id]->id = $enrolled_user->id;
                 }
             }
-       
+
             //Now, depending of parameters, create $backupable_users
             if ($backup_users == 0) {
                 $backupable_users = $all_users;
@@ -51,27 +51,27 @@
                 //Iterate over users putting their roles
                 foreach ($backupable_users as $backupable_user) {
                     $backupable_user->info = "";
-                                     
-                    //Is needed user (exists in needed_users) 
+
+                    //Is needed user (exists in needed_users)
                     if (isset($needed_users[$backupable_user->id])) {
                         $backupable_user->info .= "needed";
                     } else if (isset($course_users[$backupable_user->id])) {
-                        $backupable_user->info .= "needed"; 
+                        $backupable_user->info .= "needed";
                     }   // Yu: also needed because they can view course
                         // might need another variable
-                                        
+
                     //Now create the backup_id record
                     $backupids_rec->backup_code = $backup_unique_code;
                     $backupids_rec->table_name = "user";
                     $backupids_rec->old_id = $backupable_user->id;
                     $backupids_rec->info = $backupable_user->info;
-        
+
                     //Insert the record id. backup_users decide it.
                     //When all users
                     $status = insert_record('backup_ids', $backupids_rec, false);
                     $count_users++;
                 }
-                //Do some output     
+                //Do some output
                 backup_flush(30);
             }
         }
@@ -87,12 +87,12 @@
     //Returns every needed user (participant) in a course
     //It uses the xxxx_get_participants() function
     //plus users needed to backup scales.
-    //WARNING: It returns only NEEDED users, not every 
+    //WARNING: It returns only NEEDED users, not every
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
 
     function backup_get_needed_users ($courseid, $includemessages=false) {
-        
+
         global $CFG;
 
         $result = false;
@@ -115,11 +115,11 @@
                         //Add them to result
                         if ($module_participants) {
                             foreach ($module_participants as $module_participant) {
-                                $result[$module_participant->id]->id = $module_participant->id; 
+                                $result[$module_participant->id]->id = $module_participant->id;
                             }
                         }
                     }
-                 }            
+                 }
             }
         }
 
@@ -153,7 +153,7 @@
                 }
             }
         }
-    
+
         return $result;
 
     }
@@ -163,7 +163,7 @@
     function backup_get_enrolled_users ($courseid) {
 
         global $CFG;
-              
+
         // get all users with moodle/course:view capability, this will include people
         // assigned at cat level, or site level
         // but it should be ok if they have no direct assignment at course, mod, block level
@@ -173,7 +173,7 @@
     //Returns all users ids (every record in users table)
     function backup_get_all_users() {
 
-        return get_records('user', '', '', '', 'id, id'); 
+        return get_records('user', '', '', '', 'id, id');
     }
 
     //Calculate the number of log entries to backup
@@ -247,7 +247,7 @@
             $info[0][1] = 0;
         }
 
-        return $info;  
+        return $info;
     }
 
     //Calculate the number of course files to backup
@@ -291,15 +291,15 @@
             $info[0][1] = 0;
         }
 
-        return $info; 
+        return $info;
     }
-   
+
     //Function to check and create the needed moddata dir to
     //save all the mod backup files. We always name it moddata
     //to be able to restore it, but in restore we check for
     //$CFG->moddata !!
     function check_and_create_moddata_dir($backup_unique_code) {
-  
+
         global $CFG;
 
             $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/moddata",true);
@@ -310,7 +310,7 @@
     //Function to check and create the "user_files" dir to
     //save all the user files we need from "users" dir
     function check_and_create_user_files_dir($backup_unique_code) {
- 
+
         global $CFG;
 
             $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
@@ -321,7 +321,7 @@
     //Function to check and create the "group_files" dir to
     //save all the user files we need from "groups" dir
     function check_and_create_group_files_dir($backup_unique_code) {
- 
+
         global $CFG;
 
             $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
@@ -344,7 +344,7 @@
     function backup_open_xml($backup_unique_code) {
 
         global $CFG;
-        
+
         $status = true;
 
         //Open for writing
@@ -369,7 +369,7 @@
         return fclose($backup_file);
     }
 
-    //Return the xml start tag 
+    //Return the xml start tag
     function start_tag($tag,$level=0,$endline=false,$attributes=null) {
         if ($endline) {
            $endchar = "\n";
@@ -385,8 +385,8 @@
         }
         return str_repeat(" ",$level*2)."<".strtoupper($tag).$attrstring.">".$endchar;
     }
-    
-    //Return the xml end tag 
+
+    //Return the xml end tag
     function end_tag($tag,$level=0,$endline=true) {
         if ($endline) {
            $endchar = "\n";
@@ -395,7 +395,7 @@
         }
         return str_repeat(" ",$level*2)."</".strtoupper($tag).">".$endchar;
     }
-    
+
     //Return the start tag, the contents and the end tag
     function full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
 
@@ -416,21 +416,21 @@
 
     function xml_tag_safe_content($content) {
         global $CFG;
-        //If enabled, we strip all the control chars (\x0-\x1f) from the text but tabs (\x9), 
+        //If enabled, we strip all the control chars (\x0-\x1f) from the text but tabs (\x9),
         //newlines (\xa) and returns (\xd). The delete control char (\x7f) is also included.
         //because they are forbiden in XML 1.0 specs. The expression below seems to be
         //UTF-8 safe too because it simply ignores the rest of characters.
         $content = preg_replace("/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is","",$content);
         $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
-        return $content; 
+        return $content;
     }
 
     //Prints General info about the course
     //name, moodle_version (internal and release), backup_version, date, info in file...
     function backup_general_info ($bf,$preferences) {
-    
+
         global $CFG;
-        
+
         fwrite ($bf,start_tag("INFO",1,true));
 
         //The name of the backup
@@ -455,7 +455,7 @@
         $sql = "SELECT b.old_id
                    FROM   {$CFG->prefix}backup_ids b
                      JOIN {$CFG->prefix}user       u ON b.old_id=u.id
-                   WHERE b.backup_code = '$preferences->backup_unique_code' 
+                   WHERE b.backup_code = '$preferences->backup_unique_code'
                          AND b.table_name = 'user' AND u.mnethostid != '{$CFG->mnet_localhost_id}'";
         if (record_exists_sql($sql)) {
             fwrite ($bf,full_tag("MNET_REMOTEUSERS",2,false,'true'));
@@ -472,7 +472,7 @@
                 $included = "true";
                 if ($element->userinfo) {
                     $userinfo = "true";
-                } 
+                }
             }
             //Prints the mod start
             fwrite ($bf,start_tag("MOD",3,true));
@@ -505,8 +505,8 @@
                 }
                 fwrite ($bf, end_tag("INSTANCES",4,true));
             }
-                
-                 
+
+
             //Print the end
             fwrite ($bf,end_tag("MOD",3,true));
         }
@@ -551,18 +551,18 @@
         //The mode of writing the block data
         fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
         fwrite ($bf,end_tag("DETAILS",2,true));
-        
-        $status = fwrite ($bf,end_tag("INFO",1,true)); 
-        
+
+        $status = fwrite ($bf,end_tag("INFO",1,true));
+
         ///Roles stuff goes in here
-        
+
         fwrite ($bf, start_tag('ROLES', 1, true));
         $roles = backup_fetch_roles($preferences);
-        
+
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-        
+
         foreach ($roles as $role) {
-            fwrite ($bf,start_tag('ROLE',2,true));                    
+            fwrite ($bf,start_tag('ROLE',2,true));
             fwrite ($bf,full_tag('ID', 3, false, $role->id));
             fwrite ($bf,full_tag('NAME',3,false,$role->name));
             fwrite ($bf,full_tag('SHORTNAME',3,false,$role->shortname));
@@ -575,15 +575,15 @@
                     fwrite ($bf,full_tag('NAME', 5, false, $capability));
                     fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
                     // use this to pull out the other info (timemodified and modifierid)
-                    $cap = get_record_sql("SELECT * 
+                    $cap = get_record_sql("SELECT *
                                            FROM {$CFG->prefix}role_capabilities
                                            WHERE capability = '$capability'
                                                  AND contextid = $sitecontext->id
                                                  AND roleid = $role->id");
                     fwrite ($bf, full_tag("TIMEMODIFIED", 5, false, $cap->timemodified));
                     fwrite ($bf, full_tag("MODIFIERID", 5, false, $cap->modifierid));
-                    fwrite ($bf,end_tag('CAPABILITY',4,true));  
-                }                                  
+                    fwrite ($bf,end_tag('CAPABILITY',4,true));
+                }
             }
             fwrite ($bf,end_tag('CAPABILITIES',3,true));
             fwrite ($bf,end_tag('ROLE',2,true));
@@ -591,14 +591,14 @@
         fwrite ($bf,end_tag('ROLES', 1, true));
         return $status;
     }
-    
+
     //Prints course's general info (table course)
     function backup_course_start ($bf,$preferences) {
 
         global $CFG;
 
         $status = true;
-        
+
         //Course open tag
         fwrite ($bf,start_tag("COURSE",1,true));
         //Header open tag
@@ -663,16 +663,16 @@
             fwrite ($bf,full_tag("ENROLSTARTDATE",3,false,$course->enrolstartdate));
             fwrite ($bf,full_tag("ENROLENDDATE",3,false,$course->enrolenddate));
             fwrite ($bf,full_tag("ENROLPERIOD",3,false,$course->enrolperiod));
-       
+
             /// write local course overrides here?
             write_role_overrides_xml($bf, $context, 3);
             /// write role_assign code here
             write_role_assignments_xml($bf, $context, 3);
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
-        } else { 
+        } else {
            $status = false;
-        } 
+        }
 
        return $status;
     }
@@ -681,8 +681,8 @@
     function backup_course_end ($bf,$preferences) {
 
         //Course end tag
-        $status = fwrite ($bf,end_tag("COURSE",1,true)); 
-    
+        $status = fwrite ($bf,end_tag("COURSE",1,true));
+
         return $status;
 
     }
@@ -711,7 +711,7 @@
             fwrite ($bf,start_tag("METACOURSE",2,true));
             if ($parents) {
                 fwrite($bf, start_tag("PARENTS",3,true));
-                //Iterate over every parent    
+                //Iterate over every parent
                 foreach ($parents as $parent) {
                     //Begin parent
                     fwrite ($bf,start_tag("PARENT",4,true));
@@ -725,7 +725,7 @@
             }
             if ($childs) {
                 fwrite($bf, start_tag("CHILDS",3,true));
-                //Iterate over every child    
+                //Iterate over every child
                 foreach ($childs as $child) {
                     //Begin parent
                     fwrite ($bf,start_tag("CHILD",4,true));
@@ -762,7 +762,7 @@
             //message open tag
             fwrite ($bf,start_tag("MESSAGES",2,true));
             if ($unreads) {
-                //Iterate over every unread    
+                //Iterate over every unread
                 foreach ($unreads as $unread) {
                     //start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
@@ -780,7 +780,7 @@
                     //Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
-                        echo ".";   
+                        echo ".";
                         if ($counter % 400 == 0) {
                             echo "<br />";
                         }
@@ -790,7 +790,7 @@
             }
 
             if ($reads) {
-                //Iterate over every read    
+                //Iterate over every read
                 foreach ($reads as $read) {
                     //start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
@@ -810,7 +810,7 @@
                     //Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
-                        echo ".";   
+                        echo ".";
                         if ($counter % 400 == 0) {
                             echo "<br />";
                         }
@@ -821,7 +821,7 @@
 
             if ($contacts) {
                 fwrite($bf, start_tag("CONTACTS",3,true));
-                //Iterate over every contact    
+                //Iterate over every contact
                 foreach ($contacts as $contact) {
                     //start contact
                     fwrite($bf, start_tag("CONTACT",4,true));
@@ -835,7 +835,7 @@
                     //Do some output
                     $counter++;
                     if ($counter % 20 == 0) {
-                        echo ".";   
+                        echo ".";
                         if ($counter % 400 == 0) {
                             echo "<br />";
                         }
@@ -851,7 +851,7 @@
         return $status;
 
     }
-    
+
     //Prints course's blocks info (table block_instance)
     function backup_course_blocks ($bf,$preferences) {
 
@@ -867,7 +867,7 @@
 
         // Let's see if we have to backup blocks from modules
         $modulerecords = get_records_sql('SELECT name, id FROM '.$CFG->prefix.'modules');
-        
+
         foreach($preferences->mods as $module) {
             if(!$module->backup) {
                 continue;
@@ -898,13 +898,13 @@
                 //Iterate over every block
                 foreach ($instances as $position) {
                     foreach ($position as $instance) {
-                      
+
                         //If we somehow have a block with an invalid id, skip it
                         if(empty($blocks[$instance->blockid]->name)) {
                             continue;
                         }
                         //Begin Block
-                        
+
                         fwrite ($bf,start_tag('BLOCK',3,true));
                         fwrite ($bf,full_tag('ID', 4, false,$instance->id));
                         fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
@@ -914,7 +914,7 @@
                         fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
                         fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
                         fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
-                                             
+
                         $context = get_context_instance(CONTEXT_BLOCK, $instance->id);
                         write_role_overrides_xml($bf, $context, 4);
                         /// write role_assign code here
@@ -946,7 +946,7 @@
         if ($sections = get_records("course_sections","course",$preferences->backup_course,"section")) {
             //Section open tag
             fwrite ($bf,start_tag("SECTIONS",2,true));
-            //Iterate over every section (ordered by section)     
+            //Iterate over every section (ordered by section)
             foreach ($sections as $section) {
                 //Begin Section
                 fwrite ($bf,start_tag("SECTION",3,true));
@@ -954,7 +954,7 @@
                 fwrite ($bf,full_tag("NUMBER",4,false,$section->section));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$section->summary));
                 fwrite ($bf,full_tag("VISIBLE",4,false,$section->visible));
-                //Now print the mods in section 
+                //Now print the mods in section
                 backup_course_modules ($bf,$preferences,$section);
                 //End section
                 fwrite ($bf,end_tag("SECTION",3,true));
@@ -971,17 +971,17 @@
     function backup_format_data ($bf,$preferences) {
         global $CFG;
 
-        // Check course format        
+        // Check course format
         if(!($format=get_field('course','format','id',$preferences->backup_course))) {
                 return false;
         }
         // Write appropriate tag. Note that we always put this tag there even if
         // blank, it makes parsing easier
         fwrite ($bf,start_tag("FORMATDATA",2,true));
-        
+
         $file=$CFG->dirroot."/course/format/$format/backuplib.php";
         if(file_exists($file)) {
-            // If the file is there, the function must be or it's an error. 
+            // If the file is there, the function must be or it's an error.
             require_once($file);
             $function=$format.'_backup_format_data';
             if(!function_exists($function)) {
@@ -992,7 +992,7 @@
             }
         }
 
-        // This last return just checks the file writing has been ok (ish)        
+        // This last return just checks the file writing has been ok (ish)
         return fwrite ($bf,end_tag("FORMATDATA",2,true));
     }
 
@@ -1029,17 +1029,17 @@
                    $first_record = false;
                }
                // if we're doing selected instances, check that too.
-               if (is_array($preferences->mods[$moduletype]->instances) 
+               if (is_array($preferences->mods[$moduletype]->instances)
                    && count($preferences->mods[$moduletype]->instances)
                    && (!array_key_exists($course_module[$tok]->instance,$preferences->mods[$moduletype]->instances)
                        || empty($preferences->mods[$moduletype]->instances[$course_module[$tok]->instance]->backup))) {
                    $tok = strtok(",");
                    continue;
                }
-               
+
                // find all role values that has an override in this context
                $roles = get_records('role_capabilities', 'contextid', $context->id);
-                
+
                //Print mod info from course_modules
                fwrite ($bf,start_tag("MOD",5,true));
                //Save neccesary info to backup_ids
@@ -1054,9 +1054,9 @@
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                 /// write role_assign code here
-               write_role_assignments_xml($bf, $context, 6);         
+               write_role_assignments_xml($bf, $context, 6);
                 /// write role_assign code here
-               
+
                fwrite ($bf,end_tag("MOD",5,true));
            }
            //check for next
@@ -1075,7 +1075,7 @@
     //Only users previously calculated in backup_ids will output
     //
     function backup_user_info ($bf,$preferences) {
-    
+
         global $CFG;
 
         $status = true;
@@ -1151,24 +1151,24 @@
                 /// write assign/override code for context_userid
 
                 $user->isneeded = strpos($user->info,"needed");
-                //Output every user role (with its associated info) 
+                //Output every user role (with its associated info)
                 /*
                 $user->isadmin = strpos($user->info,"admin");
                 $user->iscoursecreator = strpos($user->info,"coursecreator");
                 $user->isteacher = strpos($user->info,"teacher");
                 $user->isstudent = strpos($user->info,"student");
-                
-                
-                if ($user->isadmin!==false or 
-                    $user->iscoursecreator!==false or 
-                    $user->isteacher!==false or 
+
+
+                if ($user->isadmin!==false or
+                    $user->iscoursecreator!==false or
+                    $user->isteacher!==false or
                     $user->isstudent!==false or
                     $user->isneeded!==false) {
                 */
                 fwrite ($bf,start_tag("ROLES",4,true));
                 if ($user->info != "needed" && $user->info!="") {
                     //Begin ROLES tag
-                    
+
                     //PRINT ROLE INFO
                     //Admins
                     $roles = explode(",", $user->info);
@@ -1178,8 +1178,8 @@
                             //Print Role info
                             fwrite ($bf,full_tag("TYPE",6,false,$role));
                             //Print ROLE end
-                            fwrite ($bf,end_tag("ROLE",5,true)); 
-                        }  
+                            fwrite ($bf,end_tag("ROLE",5,true));
+                        }
                     }
                 }
                     /*
@@ -1193,18 +1193,18 @@
                     }
                     //CourseCreator
                     if ($user->iscoursecreator!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
+                        //Print ROLE start
+                        fwrite ($bf,start_tag("ROLE",5,true));
+                        //Print Role info
                         fwrite ($bf,full_tag("TYPE",6,false,"coursecreator"));
                         //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
+                        fwrite ($bf,end_tag("ROLE",5,true));
                     }
                     //Teacher
                     if ($user->isteacher!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
+                        //Print ROLE start
+                        fwrite ($bf,start_tag("ROLE",5,true));
+                        //Print Role info
                         fwrite ($bf,full_tag("TYPE",6,false,"teacher"));
                         //Get specific info for teachers
                         $tea = get_record("user_teachers","userid",$user->old_id,"course",$preferences->backup_course);
@@ -1217,13 +1217,13 @@
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
                         fwrite ($bf,full_tag("ENROL",6,false,$tea->enrol));
                         //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
+                        fwrite ($bf,end_tag("ROLE",5,true));
                     }
                     //Student
                     if ($user->isstudent!==false) {
-                        //Print ROLE start 
-                        fwrite ($bf,start_tag("ROLE",5,true)); 
-                        //Print Role info 
+                        //Print ROLE start
+                        fwrite ($bf,start_tag("ROLE",5,true));
+                        //Print Role info
                         fwrite ($bf,full_tag("TYPE",6,false,"student"));
                         //Get specific info for students
                         $stu = get_record("user_students","userid",$user->old_id,"course",$preferences->backup_course);
@@ -1233,11 +1233,11 @@
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$stu->timeaccess));
                         fwrite ($bf,full_tag("ENROL",6,false,$stu->enrol));
                         //Print ROLE end
-                        fwrite ($bf,end_tag("ROLE",5,true));   
+                        fwrite ($bf,end_tag("ROLE",5,true));
                     }*/
-                    
-                    
-                    
+
+
+
                     //Needed
                 if ($user->isneeded!==false) {
                     //Print ROLE start
@@ -1250,7 +1250,7 @@
 
                     //End ROLES tag
                 fwrite ($bf,end_tag("ROLES",4,true));
- 
+
                 //Check if we have user_preferences to backup
                 if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
                     //Start USER_PREFERENCES tag
@@ -1265,9 +1265,9 @@
                         //End USER_PREFERENCES tag
                     fwrite ($bf,end_tag("USER_PREFERENCES",4,true));
                 }
-                    
+
                 $context = get_context_instance(CONTEXT_USER, $user->old_id);
-                    
+
                 write_role_overrides_xml($bf, $context, 4);
                 /// write role_assign code here
                 write_role_assignments_xml($bf, $context, 4);
@@ -1276,7 +1276,7 @@
                 //Do some output
                 $counter++;
                 if ($counter % 10 == 0) {
-                    echo ".";   
+                    echo ".";
                     if ($counter % 200 == 0) {
                         echo "<br />";
                     }
@@ -1300,9 +1300,9 @@
 
         //Number of records to get in every chunk
         $recordset_size = 1000;
-  
+
         $status = true;
- 
+
         //Counter, points to current record
         $counter = 0;
 
@@ -1319,16 +1319,16 @@
 
             //We have logs
             if ($logs) {
-                //Iterate 
+                //Iterate
                 foreach ($logs as $log) {
                     //See if it is a valid module to backup
-                    if ($log->module == "course" or 
+                    if ($log->module == "course" or
                         $log->module == "user" or
                         (array_key_exists($log->module, $preferences->mods) and $preferences->mods[$log->module]->backup == 1)) {
-                        // logs with 'upload' in module field are ignored, there is no restore code anyway 
+                        // logs with 'upload' in module field are ignored, there is no restore code anyway
                         //Begin log tag
                          fwrite ($bf,start_tag("LOG",3,true));
-    
+
                         //Output log tag
                         fwrite ($bf,full_tag("ID",4,false,$log->id));
                         fwrite ($bf,full_tag("TIME",4,false,$log->time));
@@ -1339,7 +1339,7 @@
                         fwrite ($bf,full_tag("ACTION",4,false,$log->action));
                         fwrite ($bf,full_tag("URL",4,false,$log->url));
                         fwrite ($bf,full_tag("INFO",4,false,$log->info));
-    
+
                         //End log tag
                          fwrite ($bf,end_tag("LOG",3,true));
                     }
@@ -1371,14 +1371,14 @@
 
         // see if ALL grade items of type mod of this course are being backed up
         // if not, we do not need to backup grade category and associated grade items/grades
-        $backupall = true;        
-        
-        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items 
+        $backupall = true;
+
+        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items
                                             WHERE courseid = $preferences->backup_course
-                                            ORDER BY sortorder ASC")) { 
+                                            ORDER BY sortorder ASC")) {
             foreach ($grade_items as $grade_item) {
 
-                // do not restore if this grade_item is a mod, and 
+                // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
 
                     // get module information
@@ -1391,10 +1391,10 @@
                 }
             }
         }
-        
+
         //Gradebook header
         fwrite ($bf,start_tag("GRADEBOOK",2,true));
-        
+
         // Now backup grade_item (inside grade_category)
         if ($backupall) {
             $status = backup_gradebook_category_info($bf,$preferences);
@@ -1411,11 +1411,11 @@
 
     function backup_gradebook_category_info($bf,$preferences) {
         global $CFG;
-        
+
         $status = true;
-        
+
         //Output grade_category
-        
+
         // getting grade categories, but make sure parents come before children
         // because when we do restore, we need to recover the parents first
         // we do this by getting the lowest depth first
@@ -1424,31 +1424,31 @@
                                                       ORDER BY depth ASC");
         if ($grade_categories) {
             //Begin grade_categories tag
-            fwrite ($bf,start_tag("GRADE_CATEGORIES",3,true)); 
+            fwrite ($bf,start_tag("GRADE_CATEGORIES",3,true));
             //Iterate for each category
             foreach ($grade_categories as $grade_category) {
                 //Begin grade_category
-                fwrite ($bf,start_tag("GRADE_CATEGORY",4,true)); 
+                fwrite ($bf,start_tag("GRADE_CATEGORY",4,true));
                 //Output individual fields
                 fwrite ($bf,full_tag("ID",5,false,$grade_category->id));
-                
+
                 // not keeping path and depth because they can be derived
                 fwrite ($bf,full_tag("PARENT",5,false,$grade_category->parent));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_category->fullname));
                 fwrite ($bf,full_tag("AGGREGATION",5,false,$grade_category->aggregation));
                 fwrite ($bf,full_tag("KEEPHIGH",5,false,$grade_category->keephigh));
                 fwrite ($bf,full_tag("DROPLOW",5,false,$grade_category->droplow));
-                fwrite ($bf,full_tag("HIDDEN",5,false,$grade_category->hidden));                
+                fwrite ($bf,full_tag("HIDDEN",5,false,$grade_category->hidden));
 
                 //End grade_category
-                fwrite ($bf,end_tag("GRADE_CATEGORY",4,true)); 
+                fwrite ($bf,end_tag("GRADE_CATEGORY",4,true));
             }
             //End grade_categories tag
             $status = fwrite ($bf,end_tag("GRADE_CATEGORIES",3,true));
         }
-        
+
         return $status;
-      
+
     }
 
 
@@ -1456,22 +1456,25 @@
     function backup_gradebook_item_info($bf,$preferences, $backupall) {
 
         global $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
 
         $status = true;
 
         // get all the grade_items, ordered by sort order since upon restoring, it is not always
         // possible to use the same sort order. We could at least preserve the sortorder by restoring
         // grade_items in the original sortorder
-        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items 
+        if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items
                                             WHERE courseid = $preferences->backup_course
                                             ORDER BY sortorder ASC")) {
 
             //Begin grade_items tag
-            fwrite ($bf,start_tag("GRADE_ITEMS",3,true)); 
+            fwrite ($bf,start_tag("GRADE_ITEMS",3,true));
             //Iterate for each item
             foreach ($grade_items as $grade_item) {
+                // Instantiate a grade_item object, to access its methods
+                $grade_item = grade_object::fetch_helper('grade_items', 'grade_item', $grade_item);
 
-                // do not restore if this grade_item is a mod, and 
+                // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
 
                     // if no user data selected, we skip this grade_item
@@ -1482,12 +1485,12 @@
                     // if not all grade items are being backed up
                     // we ignore this type of grade_item and grades associated
                     if (!$backupall) {
-                        continue;      
-                    }            
+                        continue;
+                    }
                 }
 
                 //Begin grade_item
-                fwrite ($bf,start_tag("GRADE_ITEM",4,true)); 
+                fwrite ($bf,start_tag("GRADE_ITEM",4,true));
                 //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_item->id));
@@ -1499,7 +1502,7 @@
                 fwrite ($bf,full_tag("ITEMINFO",5,false,$grade_item->iteminfo));
                 fwrite ($bf,full_tag("IDNUMBER",5,false,$grade_item->idnumber));
                 // use [idnumber] in calculation instead of [#giXXX#]
-                fwrite ($bf,full_tag("CALCULATION",5,false,$grade_item->get_caclulation()));
+                fwrite ($bf,full_tag("CALCULATION",5,false,$grade_item->get_calculation()));
                 fwrite ($bf,full_tag("GRADEMAX",5,false,$grade_item->grademax));
                 fwrite ($bf,full_tag("GRADEMIN",5,false,$grade_item->grademin));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_item->scaleid));
@@ -1511,12 +1514,12 @@
                 fwrite ($bf,full_tag("LOCKED",5,false,$grade_item->locked));
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
 
-                // back up the other stuff here                
+                // back up the other stuff here
                 $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
                 $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
 
                 //End grade_item
-                fwrite ($bf,end_tag("GRADE_ITEM",4,true)); 
+                fwrite ($bf,end_tag("GRADE_ITEM",4,true));
             }
             //End grade_items tag
             $status = fwrite ($bf,end_tag("GRADE_ITEMS",3,true));
@@ -1525,7 +1528,7 @@
         return $status;
     }
     //Backup gradebook_item (called from backup_gradebook_info
-    
+
     function backup_gradebook_outcomes_info($bf,$preferences) {
 
         global $CFG;
@@ -1537,21 +1540,21 @@
         if ($grade_outcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course)) {
 
             //Begin grade_items tag
-            fwrite ($bf,start_tag("GRADE_OUTCOMES",3,true)); 
+            fwrite ($bf,start_tag("GRADE_OUTCOMES",3,true));
             //Iterate for each item
             foreach ($grade_outcomes as $grade_outcome) {
                 //Begin grade_item
-                fwrite ($bf,start_tag("GRADE_OUTCOME",4,true)); 
+                fwrite ($bf,start_tag("GRADE_OUTCOME",4,true));
                 //Output individual fields
 
-                fwrite ($bf,full_tag("ID",5,false,$grade_outcome->id));                
+                fwrite ($bf,full_tag("ID",5,false,$grade_outcome->id));
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_outcome->fullname));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_outcome->scaleid));
                 fwrite ($bf,full_tag("USERMODIFIED",5,false,$grade_outcome->usermodified));
 
                 //End grade_item
-                fwrite ($bf,end_tag("GRADE_OUTCOME",4,true)); 
+                fwrite ($bf,end_tag("GRADE_OUTCOME",4,true));
             }
             //End grade_items tag
             $status = fwrite ($bf,end_tag("GRADE_OUTCOMES",3,true));
@@ -1565,7 +1568,7 @@
         global $CFG;
 
         $status = true;
-        
+
         // find all grades belonging to this item
         if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
             fwrite ($bf,start_tag("GRADE_GRADES",5,true));
@@ -1579,15 +1582,15 @@
                 fwrite ($bf,full_tag("RAWSCALEID",7,false,$grade->rawscaleid));
                 fwrite ($bf,full_tag("USERMODIFIED",7,false,$grade->usermodified));
                 fwrite ($bf,full_tag("FINALGRADE",7,false,$grade->finalgrade));
-                fwrite ($bf,full_tag("HIDDEN",7,false,$final->hidden));
-                fwrite ($bf,full_tag("LOCKED",7,false,$final->locked));
-                fwrite ($bf,full_tag("LOCKTIME",7,false,$final->locktime));
-                fwrite ($bf,full_tag("EXPORTED",7,false,$final->exported));
-                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$final->overridden));
-                fwrite ($bf,full_tag("EXCLUDED",7,false,$final->excluded));
+                fwrite ($bf,full_tag("HIDDEN",7,false,$grade->hidden));
+                fwrite ($bf,full_tag("LOCKED",7,false,$grade->locked));
+                fwrite ($bf,full_tag("LOCKTIME",7,false,$grade->locktime));
+                fwrite ($bf,full_tag("EXPORTED",7,false,$grade->exported));
+                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$grade->overridden));
+                fwrite ($bf,full_tag("EXCLUDED",7,false,$grade->excluded));
                 fwrite ($bf,end_tag("GRADE",6,true));
-            }  
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
+            }
+            $status = fwrite ($bf,end_tag("GRADE_GRADES",5,true));
         }
         return $status;
     }
@@ -1597,21 +1600,25 @@
         global $CFG;
 
         $status = true;
-        
+
         // find all grade texts belonging to this item
-        if ($texts = get_records('grade_grades_text', 'itemid', $itemid)) {
-            fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
-            foreach ($texts as $text) {
-                fwrite ($bf,start_tag("GRADE_TEXT",6,true));
-                fwrite ($bf,full_tag("ID",7,false,$text->id));
-                fwrite ($bf,full_tag("GRADEID",7,false,$text->gradeid));
-                fwrite ($bf,full_tag("INFORMATION",7,false,$text->information));                
-                fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$text->informationformat));
-                fwrite ($bf,full_tag("FEEDBACK",7,false,$text->feedback));
-                fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$text->feedbackformat));
-                fwrite ($bf,end_tag("GRADE_TEXT",6,true));
-            }  
-            $stauts = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
+        if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
+            foreach ($grades as $grade) {
+                if ($texts = get_records('grade_grades_text', 'gradeid', $grade->id)) {
+                    fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
+                    foreach ($texts as $text) {
+                        fwrite ($bf,start_tag("GRADE_TEXT",6,true));
+                        fwrite ($bf,full_tag("ID",7,false,$text->id));
+                        fwrite ($bf,full_tag("GRADEID",7,false,$text->gradeid));
+                        fwrite ($bf,full_tag("INFORMATION",7,false,$text->information));
+                        fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$text->informationformat));
+                        fwrite ($bf,full_tag("FEEDBACK",7,false,$text->feedback));
+                        fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$text->feedbackformat));
+                        fwrite ($bf,end_tag("GRADE_TEXT",6,true));
+                    }
+                    $status = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
+                }
+            }
         }
         return $status;
     }
@@ -1718,7 +1725,7 @@
         $status = true;
         $status2 = true;
 
-        //Get groups 
+        //Get groups
         $groups = get_groups($preferences->backup_course); //TODO:check.
 
         //Pring groups header
@@ -1741,7 +1748,7 @@
                 fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$group->timemodified));
-                
+
                 //Now, backup groups_members, only if users are included
                 if ($preferences->backup_users != 2) {
                     $status2 = backup_groups_members_info($bf,$preferences,$group->id);
@@ -1760,17 +1767,17 @@
         }
         return ($status && $status2);
     }
-    
+
     //Backup groups_members info
     function backup_groups_members_info($bf,$preferences,$groupid) {
-  
+
         global $CFG;
-        
+
         $status = true;
 
         //Get groups_members
         $groups_members = groups_get_member_records($groupid);
-        
+
         //Pring groups_members header
         if ($groups_members) {
             //Pring groups_members header
@@ -1793,13 +1800,13 @@
 
     //Backup groupings info
     function backup_groupings_info($bf,$preferences) {
-    
+
         global $CFG;
 
         $status = true;
         $status2 = true;
 
-        //Get groups 
+        //Get groups
         $groupings = groups_get_grouping_records($preferences->backup_course);
 
         //Pring groups header
@@ -1831,14 +1838,14 @@
 
     //Backup groupings-groups info
     function backup_groupids_info($bf,$preferences,$groupingid) {
-  
+
         global $CFG;
-        
+
         $status = true;
 
         //Get groups_members
         $grouping_groups = groups_get_groups_in_grouping_records($groupingid) ;
-        
+
         //Pring groups_members header
         if ($grouping_groups) {
             //Pring groups_members header
@@ -1861,7 +1868,7 @@
 
     //Start the modules tag
     function backup_modules_start ($bf,$preferences) {
-      
+
         return fwrite ($bf,start_tag("MODULES",2,true));
     }
 
@@ -1874,7 +1881,7 @@
     //This function makes all the necesary calls to every mod
     //to export itself and its files !!!
     function backup_module($bf,$preferences,$module) {
-         
+
         global $CFG;
 
         $status = true;
@@ -1904,9 +1911,9 @@
                 $status = false;
             }
         }
-   
-        return $status; 
-        
+
+        return $status;
+
     }
 
     //This function encode things to make backup multi-site fully functional
@@ -1921,7 +1928,7 @@
 
         //Use one static variable to cache all the require_once calls that,
         //under PHP5 seems to increase load too much, and we are requiring
-        //them here thousands of times (one per content). MDL-8700. 
+        //them here thousands of times (one per content). MDL-8700.
         //Once fixed by PHP, we'll delete this hack
 
         static $includedfiles;
@@ -1929,7 +1936,7 @@
             $includedfiles = array();
         }
 
-        //Check if preferences is ok. If it isn't set, we are 
+        //Check if preferences is ok. If it isn't set, we are
         //in a scheduled_backup to we are able to get a copy
         //from CFG->backup_preferences
         if (!isset($preferences)) {
@@ -1980,10 +1987,10 @@
         //First we check to "user_files" exists and create it as necessary
         //in temp/backup/$backup_code  dir
         $status = check_and_create_user_files_dir($preferences->backup_unique_code);
- 
-        //Now iterate over directories under "users" to check if that user must be 
+
+        //Now iterate over directories under "users" to check if that user must be
         //copied to backup
-        
+
         $rootdir = $CFG->dataroot."/users";
         //Check if directory exists
         if (is_dir($rootdir)) {
@@ -1993,7 +2000,7 @@
                 foreach ($list as $dir) {
                     //Look for dir like username in backup_ids
                     $data = get_record ("backup_ids","backup_code",$preferences->backup_unique_code,
-                                                     "table_name","user", 
+                                                     "table_name","user",
                                                      "old_id",$dir);
                     //If exists, copy it
                     if ($data) {
@@ -2018,10 +2025,10 @@
         //First we check if "group_files" exists and create it as necessary
         //in temp/backup/$backup_code  dir
         $status = check_and_create_group_files_dir($preferences->backup_unique_code);
- 
-        //Now iterate over directories under "groups" to check if that user must be 
+
+        //Now iterate over directories under "groups" to check if that user must be
         //copied to backup
-        
+
         $rootdir = $CFG->dataroot.'/groups';
         //Check if directory exists
         if (is_dir($rootdir)) {
@@ -2084,7 +2091,7 @@
     //the "oficial" name of the backup
     //It uses "pclzip" if available or system "zip" (unix only)
     function backup_zip ($preferences) {
-    
+
         global $CFG;
 
         $status = true;
@@ -2107,11 +2114,11 @@
         //echo "<br/>Status: ".$status;                                     //Debug
         return $status;
 
-    } 
+    }
 
     //This function copies the final zip to the course dir
     function copy_zip_to_course_dir ($preferences) {
-    
+
         global $CFG;
 
         $status = true;
@@ -2128,19 +2135,19 @@
         } else {
             //Define zip destination (course dir)
             $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
-    
+
             //echo "<p>From: ".$from_zip_file."<br />";                                              //Debug
-    
+
             //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
-    
+
             //Checks course dir exists
             $status = check_dir_exists($to_zip_file,true);
-    
+
             //Define zip destination (backup dir)
             $to_zip_file = $to_zip_file."/backupdata";
-    
+
             //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
-    
+
             //Checks backup dir exists
             $status = check_dir_exists($to_zip_file,true);
 
@@ -2158,15 +2165,15 @@
         return $status;
     }
 
-    /** 
+    /**
      * compatibility function
      * with new granular backup
-     * we need to know 
+     * we need to know
      */
     function backup_userdata_selected($preferences,$modname,$modid) {
         return ((empty($preferences->mods[$modname]->instances)
-                 && !empty($preferences->mods[$modname]->userinfo)) 
-                || (is_array($preferences->mods[$modname]->instances) 
+                 && !empty($preferences->mods[$modname]->userinfo))
+                || (is_array($preferences->mods[$modname]->instances)
                     && array_key_exists($modid,$preferences->mods[$modname]->instances)
                     && !empty($preferences->mods[$modname]->instances[$modid]->userinfo)));
     }
@@ -2174,19 +2181,19 @@
 
     function backup_mod_selected($preferences,$modname,$modid) {
         return ((empty($preferences->mods[$modname]->instances)
-                 && !empty($preferences->mods[$modname]->backup)) 
-                || (is_array($preferences->mods[$modname]->instances) 
+                 && !empty($preferences->mods[$modname]->backup))
+                || (is_array($preferences->mods[$modname]->instances)
                     && array_key_exists($modid,$preferences->mods[$modname]->instances)
                     && !empty($preferences->mods[$modname]->instances[$modid]->backup)));
     }
 
-    /* 
+    /*
      * Checks for the required files/functions to backup every mod
      * And check if there is data about it
      */
     function backup_fetch_prefs_from_request(&$preferences,&$count,$course) {
         global $CFG,$SESSION;
-        
+
         // check to see if it's in the session already
         if (!empty($SESSION->backupprefs)  && array_key_exists($course->id,$SESSION->backupprefs) && !empty($SESSION->backupprefs[$course->id])) {
             $sprefs = $SESSION->backupprefs[$course->id];
@@ -2199,7 +2206,7 @@
             $count = 1;
             return true;
         }
-            
+
         if ($allmods = get_records("modules") ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
@@ -2250,13 +2257,13 @@
 
                 //Check include user info
                 $var = "backup_user_info_".$modname;
-                $$var = optional_param( $var,0);       
+                $$var = optional_param( $var,0);
                 $preferences->$var = $$var;
                 $preferences->mods[$modname]->userinfo = $$var;
 
             }
         }
-        
+
         //Check other parameters
         $preferences->backup_metacourse = optional_param('backup_metacourse',1,PARAM_INT);
         $preferences->backup_users = optional_param('backup_users',1,PARAM_INT);
@@ -2276,17 +2283,17 @@
      * @param object $preferences
      * @param object $course
      * @return array of role objects
-     */ 
+     */
     function backup_fetch_roles($preferences) {
 
         global $CFG;
         $contexts = array();
         $roles = array();
-        
+
         /// adding course context
         $coursecontext = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
-        $contexts[$coursecontext->id] = $coursecontext; 
-         
+        $contexts[$coursecontext->id] = $coursecontext;
+
         /// adding mod contexts
         $mods = $preferences->mods;
         foreach ($mods as $modname => $mod) {
@@ -2301,47 +2308,47 @@
                 }
             }
         }
-        
+
         // add all roles assigned at user context
         if ($preferences->backup_users) {
             if ($users = get_records_sql("SELECT u.old_id, u.table_name,u.info
                                             FROM {$CFG->prefix}backup_ids u
                                             WHERE u.backup_code = '$preferences->backup_unique_code' AND
-                                            u.table_name = 'user'")) {                   
+                                            u.table_name = 'user'")) {
                 foreach ($users as $user) {
                     $context = get_context_instance(CONTEXT_USER, $user->old_id);
-                    $contexts[$context->id] = $context; 
-                }                
+                    $contexts[$context->id] = $context;
+                }
             }
-          
+
         }
 
         // add all roles assigned at block context
-        if ($courseblocks = get_records_sql("SELECT * 
+        if ($courseblocks = get_records_sql("SELECT *
                                              FROM {$CFG->prefix}block_instance
                                              WHERE pagetype = '".PAGE_COURSE_VIEW."'
                                                    AND pageid = {$preferences->backup_course}")) {
-        
+
             foreach ($courseblocks as $courseblock) {
-               
+
                 $context = get_context_instance(CONTEXT_BLOCK, $courseblock->id);
-                $contexts[$context->id] = $context;     
-            }                                         
-        }     
-        
+                $contexts[$context->id] = $context;
+            }
+        }
+
         // foreach context, call get_roles_on_exact_context insert into array
         foreach ($contexts as $context) {
             if ($proles = get_roles_on_exact_context($context)) {
                 foreach ($proles as $prole) {
-                    $roles[$prole->id] = $prole;  
+                    $roles[$prole->id] = $prole;
                 }
             }
         }
 
-        return $roles;         
+        return $roles;
     }
-    
-    /* function to print xml for overrides */    
+
+    /* function to print xml for overrides */
     function write_role_overrides_xml($bf, $context, $startlevel) {
         fwrite ($bf, start_tag("ROLES_OVERRIDES", $startlevel, true));
         if ($roles = get_roles_with_override_on_context($context)) {
@@ -2350,7 +2357,7 @@
                 fwrite ($bf, full_tag("ID", $startlevel+2, false, $role->id));
                 fwrite ($bf, full_tag("NAME", $startlevel+2, false, $role->name));
                 fwrite ($bf, full_tag("SHORTNAME", $startlevel+2, false, $role->shortname));
-                fwrite ($bf, start_tag("CAPABILITIES", $startlevel+2, true));    
+                fwrite ($bf, start_tag("CAPABILITIES", $startlevel+2, true));
                 if ($capabilities = get_capabilities_from_role_on_context($role, $context)) {
                     foreach ($capabilities as $capability) {
                         fwrite ($bf, start_tag("CAPABILITY", $startlevel+3, true));
@@ -2358,30 +2365,30 @@
                         fwrite ($bf, full_tag("PERMISSION", $startlevel+4, false, $capability->permission));
                         fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $capability->timemodified));
                         if (!isset($capability->modifierid)) {
-                            $capability->modifierid = 0;  
+                            $capability->modifierid = 0;
                         }
                         fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $capability->modifierid));
-                        fwrite ($bf, end_tag("CAPABILITY", $startlevel+3, true));     
-                    } 
+                        fwrite ($bf, end_tag("CAPABILITY", $startlevel+3, true));
+                    }
                 }
                 fwrite ($bf, end_tag("CAPABILITIES", $startlevel+2, true));
                 fwrite ($bf, end_tag("ROLE", $startlevel+1, true));
-            } 
+            }
         }
         fwrite ($bf, end_tag("ROLES_OVERRIDES", $startlevel, true));
     }
-    
+
     /* function to print xml for assignment */
     function write_role_assignments_xml($bf, $context, $startlevel) {
      /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
-        
+
         if ($roles = get_roles_with_assignment_on_context($context)) {
-            foreach ($roles as $role) {          
+            foreach ($roles as $role) {
                 fwrite ($bf, start_tag("ROLE", $startlevel+1, true));
                 fwrite ($bf, full_tag("ID", $startlevel+2, false, $role->id));
                 fwrite ($bf, full_tag("NAME", $startlevel+2, false, $role->name));
-                fwrite ($bf, full_tag("SHORTNAME", $startlevel+2, false, $role->shortname)); 
+                fwrite ($bf, full_tag("SHORTNAME", $startlevel+2, false, $role->shortname));
                 fwrite ($bf, start_tag("ASSIGNMENTS", $startlevel+2, true));
                 if ($assignments = get_users_from_role_on_context($role, $context)) {
                     foreach ($assignments as $assignment) {
@@ -2392,19 +2399,19 @@
                         fwrite ($bf, full_tag("TIMEEND", $startlevel+4, false, $assignment->timeend));
                         fwrite ($bf, full_tag("TIMEMODIFIED", $startlevel+4, false, $assignment->timemodified));
                         if (!isset($assignment->modifierid)) {
-                            $assignment->modifierid = 0;  
+                            $assignment->modifierid = 0;
                         }
                         fwrite ($bf, full_tag("MODIFIERID", $startlevel+4, false, $assignment->modifierid));
                         fwrite ($bf, full_tag("ENROL", $startlevel+4, false, $assignment->enrol));
                         fwrite ($bf, full_tag("SORTORDER", $startlevel+4, false, $assignment->sortorder));
-                        fwrite ($bf, end_tag("ASSIGNMENT", $startlevel+3, true));     
-                    }     
+                        fwrite ($bf, end_tag("ASSIGNMENT", $startlevel+3, true));
+                    }
                 }
                 fwrite ($bf, end_tag("ASSIGNMENTS", $startlevel+2, true));
-                fwrite ($bf, end_tag("ROLE", $startlevel+1, true));   
-            }  
-        }   
-        fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", $startlevel, true));     
+                fwrite ($bf, end_tag("ROLE", $startlevel+1, true));
+            }
+        }
+        fwrite ($bf, end_tag("ROLES_ASSIGNMENTS", $startlevel, true));
     }
 
 
@@ -2432,7 +2439,7 @@
         if (!$status) {
             if (!defined('BACKUP_SILENTLY')) {
                 error ("An error occurred deleting old backup data");
-            } 
+            }
             else {
                 $errorstr = "An error occurred deleting old backup data";
                 return false;
@@ -2541,7 +2548,7 @@
                 if (!$status = backup_user_info($backup_file,$preferences)) {
                     if (!defined('BACKUP_SILENTLY')) {
                         notify("An error occurred while backing up user info");
-                    } 
+                    }
                     else {
                         $errorstr = "An error occurred while backing up user info";
                         return false;
@@ -2583,10 +2590,10 @@
                     }
                 }
             }
-            
+
             //Print logs if selected
             if ($status) {
-                if ($preferences->backup_logs) {  
+                if ($preferences->backup_logs) {
                     if (!defined('BACKUP_SILENTLY')) {
                         echo "<li>".get_string("writingloginfo").'</li>';
                     }
@@ -2642,7 +2649,7 @@
                 if (!$status = backup_groups_info($backup_file,$preferences)) {
                     if (!defined('BACKUP_SILENTLY')) {
                         notify("An error occurred while backing up groups");
-                    } 
+                    }
                     else {
                         $errostr = "An error occurred while backing up groups";
                         return false;
@@ -2651,7 +2658,7 @@
             }
 
             //Print events info
-            if ($status) { 
+            if ($status) {
                 if (!defined('BACKUP_SILENTLY')) {
                     echo "<li>".get_string("writingeventsinfo").'</li>';
                 }
@@ -2667,7 +2674,7 @@
             }
 
             //Print gradebook info
-            if ($status) { 
+            if ($status) {
                 if (!defined('BACKUP_SILENTLY')) {
                     echo "<li>".get_string("writinggradebookinfo").'</li>';
                 }
@@ -2688,9 +2695,9 @@
                 $mods_to_backup = false;
                 //Check if we have any mod to backup
                 foreach ($preferences->mods as $module) {
-                    if ($module->backup) { 
+                    if ($module->backup) {
                         $mods_to_backup = true;
-                    }    
+                    }
                 }
                 //If we have to backup some module
                 if ($mods_to_backup) {
@@ -2701,7 +2708,7 @@
                     if (!$status = backup_modules_start ($backup_file,$preferences)) {
                         if (!defined('BACKUP_SILENTLY')) {
                             notify("An error occurred while backing up module info");
-                        } 
+                        }
                         else {
                             $errorstr = "An error occurred while backing up module info";
                             return false;
@@ -2710,7 +2717,7 @@
                     //Open ul for module list
                     if (!defined('BACKUP_SILENTLY')) {
                         echo "<ul>";
-                    }   
+                    }
                     //Iterate over modules and call backup
                     foreach ($preferences->mods as $module) {
                         if ($module->backup and $status) {
@@ -2745,7 +2752,7 @@
                 }
             }
 
-            //Backup course format data, if any. 
+            //Backup course format data, if any.
             if (!defined('BACKUP_SILENTLY')) {
                 echo '<li>'.get_string("courseformatdata").'</li>';
             }
@@ -2761,7 +2768,7 @@
                 }
             }
 
-            //Prints course end 
+            //Prints course end
             if ($status) {
                 if (!$status = backup_course_end($backup_file,$preferences)) {
                     if (!defined('BACKUP_SILENTLY')) {
@@ -2783,7 +2790,7 @@
                 echo "</ul></li>";
             }
         }
-        
+
         //Now, if selected, copy user files
         if ($status) {
             if ($preferences->backup_user_files) {
@@ -2870,11 +2877,11 @@
 
         return $status;
     }
-   
+
     /**
     * This function generates the default zipfile name for a backup
     * based on the course id and the unique code.
-    * 
+    *
     * @param object $course course object
     * @param string $backup_unique_code (optional, if left out current timestamp used)
     *

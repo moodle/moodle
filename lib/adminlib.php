@@ -118,7 +118,7 @@ function upgrade_plugins($type, $dir, $return) {
 
                 /// Run local install function if there is one
                     if (is_readable($fullplug .'/lib.php')) {
-                        include_once($fullplug .'/lib.php'); 
+                        include_once($fullplug .'/lib.php');
                         $installfunction = $plugin->name.'_install';
                         if (function_exists($installfunction)) {
                             if (! $installfunction() ) {
@@ -126,7 +126,7 @@ function upgrade_plugins($type, $dir, $return) {
                             }
                         }
                     }
-                    
+
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
                     notify('Installing '. $plugin->name .' FAILED!');
@@ -353,11 +353,11 @@ function upgrade_activity_modules($return) {
             if ($status) {
                 if ($module->id = insert_record('modules', $module)) {
 
-                /// Capabilities 
+                /// Capabilities
                     if (!update_capabilities('mod/'.$module->name)) {
                         error('Could not set up the capabilities for '.$module->name.'!');
                     }
-                    
+
                 /// Events
                     events_update_definition('mod/'.$module->name);
 
@@ -1473,7 +1473,7 @@ document.write(\'<div class="unmask"><input id="'.$id.'unmask" value="1" type="c
                 '<input type="password" class="form-text" id="id_s_'.$this->name.'" name="s_'.$this->name.'" value="'.s($current).'" />'.$unmaskjs,
                 $this->description);
     }
-    
+
 }
 
 class admin_setting_configcheckbox extends admin_setting {
@@ -1619,7 +1619,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
                 return explode(',', $CFG->{$this->name});
             } else {
                 return array();
-            }            
+            }
         } else {
             return NULL;
         }
@@ -2457,7 +2457,7 @@ class admin_setting_special_gradebookroles extends admin_setting {
         if (!empty($CFG->{$this->name})) {
             $result = explode(',', $CFG->{$this->name});
             foreach ($result as $roleid) {
-                $array[$roleid] = 1;  
+                $array[$roleid] = 1;
             }
             return $array;
         } else {
@@ -2532,7 +2532,7 @@ class admin_setting_special_coursemanager extends admin_setting {
         if (!empty($CFG->{$this->name})) {
             $result = explode(',', $CFG->{$this->name});
             foreach ($result as $roleid) {
-                $array[$roleid] = 1;  
+                $array[$roleid] = 1;
             }
             return $array;
         } else if (isset($CFG->{$this->name})) {
@@ -2607,7 +2607,7 @@ class admin_setting_special_gradeexport extends admin_setting {
         if (!empty($CFG->{$this->name})) {
             $result = explode(',', $CFG->{$this->name});
             foreach ($result as $plugin) {
-                $array[$plugin] = 1;  
+                $array[$plugin] = 1;
             }
             return $array;
         } else if (isset($CFG->{$this->name})) {
@@ -2787,7 +2787,7 @@ function admin_externalpage_setup($section) {
 function admin_externalpage_print_header() {
 
     global $CFG, $PAGE, $SITE, $THEME;
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
@@ -2817,11 +2817,11 @@ function admin_externalpage_print_header() {
 function admin_externalpage_print_footer() {
 
     global $CFG, $PAGE, $SITE, $THEME;
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
-    
+
     define('ADMIN_EXT_FOOTER_PRINTED', 'true');
 
     if (!empty($SITE->fullname)) {
@@ -2908,14 +2908,14 @@ function apply_default_exception_settings($defaults) {
 }
 
 function format_admin_setting($name, $title='', $form='', $description='', $label=true) {
-    
+
     // sometimes the id is not id_s_name, but id_s_name_m or something, and this does not validate
     if ($label) {
-        $labelfor = 'for = "id_s_'.$name.'"'; 
+        $labelfor = 'for = "id_s_'.$name.'"';
     } else {
-        $labelfor = '';  
+        $labelfor = '';
     }
-    
+
     $str = "\n".
            '<div class="form-item" id="admin-'.$name.'">'."\n".
            '<label '.$labelfor.'>'.$title."\n".
@@ -2925,11 +2925,11 @@ function format_admin_setting($name, $title='', $form='', $description='', $labe
            '<div class="description">'.$description.'</div>'."\n".
            '</div>'.
            "\n\n";
-  
+
     return $str;
 }
 
-/* 
+/*
  * Try to upgrade the given language pack (or current language)
  * If it doesn't work, fail silently and return false
  */
@@ -2968,7 +2968,7 @@ function upgrade_language_pack($lang='') {
  * Based on find_new_settings{@link ()}  in upgradesettings.php
  * Looks to find any admin settings that have not been initialized. Returns 1 if it finds any.
  *
- * @param string &$node The node at which to start searching. 
+ * @param string &$node The node at which to start searching.
  * @return int Returns 1 if any settings haven't been initialised, 0 if they all have
  */
 function any_new_admin_settings(&$node) {
