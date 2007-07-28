@@ -36,6 +36,7 @@ $string['configfilewritten'] = 'config.php arrakastaz sortu da';
 $string['configurationcompletehead'] = 'Ezarpen osatua';
 $string['configurationcompletesub'] = 'Moodlek ezarpen-fitxategia sortu du';
 $string['continue'] = 'Jarraitu';
+$string['customcheck'] = 'Beste konprobazio batzuk';
 $string['database'] = 'Datu-basea';
 $string['databasecreationsettingshead'] = 'Orain Moodleren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Instalatzaileak, beherago zehaztutako ezarpenen arabera, datu-basea sortuko du.';
 $string['databasecreationsettingssub'] = '<b>Mota:</b> lehenetsitako balorea \"mysql\" da<br />
