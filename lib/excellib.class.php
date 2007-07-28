@@ -130,7 +130,7 @@ class MoodleExcelWorksheet {
      * @param string  $str    The string to write
      * @param mixed   $format The XF format for the cell
      */
-    function write_string($row, $col, $str, $format=0) {
+    function write_string($row, $col, $str, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Loading the textlib singleton instance. We are going to need it.
@@ -151,7 +151,7 @@ class MoodleExcelWorksheet {
      * @param float   $num    The number to write
      * @param mixed   $format The XF format for the cell
      */
-    function write_number($row, $col, $num, $format=0) {
+    function write_number($row, $col, $num, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Add  the number safely to the PEAR Worksheet
@@ -164,7 +164,7 @@ class MoodleExcelWorksheet {
      * @param string  $url    The url to write
      * @param mixed   $format The XF format for the cell
      */
-    function write_url($row, $col, $url, $format=0) {
+    function write_url($row, $col, $url, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Add  the url safely to the PEAR Worksheet
@@ -177,7 +177,7 @@ class MoodleExcelWorksheet {
      * @param string  $formula The formula to write
      * @param mixed   $format The XF format for the cell
      */
-    function write_formula($row, $col, $formula, $format=0) {
+    function write_formula($row, $col, $formula, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Add  the formula safely to the PEAR Worksheet
@@ -189,7 +189,7 @@ class MoodleExcelWorksheet {
      * @param integer $col    Zero indexed column
      * @param mixed   $format The XF format for the cell
      */
-    function write_blank($row, $col, $format=0) {
+    function write_blank($row, $col, $format=null) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Add  the blank safely to the PEAR Worksheet
@@ -203,7 +203,7 @@ class MoodleExcelWorksheet {
      * @param mixed   $token  What we are writing
      * @param mixed   $format The XF format for the cell
      */
-    function write($row, $col, $token, $format=0) {
+    function write($row, $col, $token, $format=null) {
 
     /// Analyse what are we trying to send
         if (preg_match("/^([+-]?)(?=\d|\.\d)\d*(\.\d*)?([Ee]([+-]?\d+))?$/", $token)) {
@@ -240,7 +240,7 @@ class MoodleExcelWorksheet {
      * @param bool    $hidden The optional hidden attribute
      * @param integer $level  The optional outline level (0-7)
      */
-    function set_row ($row, $height, $format = 0, $hidden = false, $level = 0) {
+    function set_row ($row, $height, $format = null, $hidden = false, $level = 0) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Set the row safely to the PEAR Worksheet
@@ -255,7 +255,7 @@ class MoodleExcelWorksheet {
      * @param integer $hidden   The optional hidden atribute
      * @param integer $level    The optional outline level (0-7)
      */
-    function set_column ($firstcol, $lastcol, $width, $format = 0, $hidden = false, $level = 0) {
+    function set_column ($firstcol, $lastcol, $width, $format = null, $hidden = false, $level = 0) {
     /// Calculate the internal PEAR format
         $format = $this->MoodleExcelFormat2PearExcelFormat($format);
     /// Set the column safely to the PEAR Worksheet
@@ -267,10 +267,10 @@ class MoodleExcelWorksheet {
      * @return mixed PEAR Excel Format object
      */
     function MoodleExcelFormat2PearExcelFormat($format) {
-        if (is_object($format)) {
+        if ($format) {
             return $format->pear_excel_format;
         } else {
-            return 0;
+            return null;
         }
     }
 }
