@@ -728,7 +728,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $hidden   The optional hidden atribute
     * @param integer $level    The optional outline level
     */
-    function setColumn($firstcol, $lastcol, $width, $format = 0, $hidden = 0, $level = 0)
+    function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0)
     {
         $this->_colinfo[] = array($firstcol, $lastcol, $width, &$format, $hidden, $level);
 
@@ -1133,7 +1133,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $token  What we are writing
     * @param mixed   $format The optional format to apply to the cell
     */
-    function write($row, $col, $token, $format = 0)
+    function write($row, $col, $token, $format = null)
     {
         // Check for a cell reference in A1 notation and substitute row and column
         /*if ($_[0] =~ /^\D/) {
@@ -1178,7 +1178,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @return mixed PEAR_Error on failure
     */
 
-    function writeRow($row, $col, $val, $format = 0)
+    function writeRow($row, $col, $val, $format = null)
     {
         $retval = '';
         if (is_array($val)) {
@@ -1207,7 +1207,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @return mixed PEAR_Error on failure
     */
 
-    function writeCol($row, $col, $val, $format=0)
+    function writeCol($row, $col, $val, $format = null)
     {
         $retval = '';
         if (is_array($val)) {
@@ -1230,7 +1230,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     */
     function _XF(&$format)
     {
-        if (is_object($format)) {
+        if ($format) {
             return($format->getXfIndex());
         } else {
             return(0x0F);
@@ -1408,7 +1408,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The optional XF format
     * @return integer
     */
-    function writeNumber($row, $col, $num, $format = 0)
+    function writeNumber($row, $col, $num, $format = null)
     {
         $record    = 0x0203;                 // Record identifier
         $length    = 0x000E;                 // Number of bytes to follow
@@ -1461,7 +1461,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The XF format for the cell
     * @return integer
     */
-    function writeString($row, $col, $str, $format = 0)
+    function writeString($row, $col, $str, $format = null)
     {
         if ($this->_BIFF_version == 0x0600) {
             return $this->writeStringBIFF8($row, $col, $str, $format);
@@ -1535,7 +1535,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The XF format for the cell
     * @return integer
     */
-    function writeStringBIFF8($row, $col, $str, $format = 0)
+    function writeStringBIFF8($row, $col, $str, $format = null)
     {
         if ($this->_input_encoding == 'UTF-16LE')
         {
@@ -1683,7 +1683,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     function writeBlank($row, $col, $format)
     {
         // Don't write a blank cell unless it has a format
-        if (!is_object($format)) {
+        if (!$format) {
             return(0);
         }
 
@@ -1733,7 +1733,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format  The optional XF format
     * @return integer
     */
-    function writeFormula($row, $col, $formula, $format = 0)
+    function writeFormula($row, $col, $formula, $format = null)
     {
         $record    = 0x0006;     // Record identifier
 
@@ -1811,7 +1811,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The cell format
     * @return integer
     */
-    function writeUrl($row, $col, $url, $string = '', $format = 0)
+    function writeUrl($row, $col, $url, $string = '', $format = null)
     {
         // Add start row and col to arg list
         return($this->_writeUrlRange($row, $col, $row, $col, $url, $string, $format));
@@ -1835,7 +1835,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @return integer
     */
 
-    function _writeUrlRange($row1, $col1, $row2, $col2, $url, $string = '', $format = 0)
+    function _writeUrlRange($row1, $col1, $row2, $col2, $url, $string = '', $format = null)
     {
 
         // Check for internal/external sheet links or default to web link
@@ -1865,12 +1865,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The cell format
     * @return integer
     */
-    function _writeUrlWeb($row1, $col1, $row2, $col2, $url, $str, $format = 0)
+    function _writeUrlWeb($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if (!is_object($format)) {
+        if (!$format) {
             $format = $this->_url_format;
         }
 
@@ -1925,12 +1925,12 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The cell format
     * @return integer
     */
-    function _writeUrlInternal($row1, $col1, $row2, $col2, $url, $str, $format = 0)
+    function _writeUrlInternal($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if (!is_object($format)) {
+        if (!$format) {
             $format = $this->_url_format;
         }
 
@@ -1991,7 +1991,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format The cell format
     * @return integer
     */
-    function _writeUrlExternal($row1, $col1, $row2, $col2, $url, $str, $format = 0)
+    function _writeUrlExternal($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
         // Network drives are different. We will handle them separately
         // MS/Novell network drives and shares start with \\
@@ -2002,7 +2002,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
     
-        if (!is_object($format)) {
+        if (!$format) {
             $format = $this->_url_format;
         }
     
@@ -2121,7 +2121,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param bool    $hidden The optional hidden attribute
     * @param integer $level  The optional outline level for row, in range [0,7]
     */
-    function setRow($row, $height, $format = 0, $hidden = false, $level = 0)
+    function setRow($row, $height, $format = null, $hidden = false, $level = 0)
     {
         $record      = 0x0208;               // Record identifier
         $length      = 0x0010;               // Number of bytes to follow
@@ -2158,7 +2158,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
             $grbit |= 0x0020;
         }
         $grbit |= 0x0040; // fUnsynced
-        if (is_object($format)) {
+        if ($format) {
             $grbit |= 0x0080;
         }
         $grbit |= 0x0100;
