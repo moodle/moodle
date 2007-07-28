@@ -1,48 +1,13 @@
-Moodle documentation
---------------------
+This directory used to contain lots of documentation in HTML form.
 
-If you want to translate this documentation into another language,
-I would suggest that you:
-
- 1) don't include English versions of the files in this directory
-    because they will be used automatically anyway if it is missing
-    from your language pack.
-
- 2) translate them in this order (starting with the important ones):
-  
-    MOST IMPORTANT
-    |-------------------
-    |
-    |   - files.php
-    |   - install.html
-    |   - installamp.html
-    |   - upgrade.html
-    |   - faq.html
-    |
-    |  -----------------
-    |
-    |   - teacher.html
-    |   - module_files.txt
-    | 
-    |  -----------------
-    |   
-    |   - intro.html
-    |   - features.html
-    |   - release.html
-    |
-    |  -----------------
-    |
-    |   - developer.html
-    |   - cvs.html
-    |   - future.html
-    |
-    |  -----------------
-    |   
-    |   - license.html
-    |
-    |-------------------
-    LEAST IMPORTANT
-
- 3) Please don't translate credits.html at all - it changes too much.
+All of it has gone now because we now use the Moodle Docs wiki.
 
 
+To find out the new locations for all the information that was here, see:
+
+    http://docs.moodle.org/en/MoodleDocs_and_lang_packs
+
+    http://tracker.moodle.org/browse/MDL-4912
+
+Cheers,
+Martin Dougiamas, 10th July 2007
