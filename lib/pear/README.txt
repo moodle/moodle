@@ -15,7 +15,7 @@ the standard PHP directories and use the PEAR libraries there instead.
 In detail, the libraries added here are:
 
 - PEAR Spreadsheet_Excel_Writer classes:
-    - Current version: 0.9.0
+    - Current version: 0.9.1
     - by Xavier Noguer and Mika Tuupola
     - License: LGPL
     - http://pear.php.net/package/Spreadsheet_Excel_Writer
