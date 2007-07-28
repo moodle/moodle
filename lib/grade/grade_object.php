@@ -107,9 +107,10 @@ class grade_object {
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - proplems might appear later
-                error('Found more than one record in fetch() !');
+                debugging('More than one course grade_item was found for this course. Using the first one.');
+                $instances = reset($instances);
             }
-            return reset($instances);
+            return $instances;
         } else {
             return false;
         }

@@ -842,6 +842,9 @@ class grade_item extends grade_object {
      */
     function fetch_course_item($courseid) {
         if ($course_item = grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'))) {
+            if (!is_object($course_item)) {
+                debugging("grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course')) returned '$course_item'!!");
+            }
             return $course_item;
         }
 
