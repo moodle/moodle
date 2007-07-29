@@ -7,6 +7,15 @@ div.sideblock div.header div.bt {
   left: -13px;
   margin: 0 13px 0 0;
 }
+div.sideblock div.bt  div {
+  background-position: 100% 0;
+  right: -13px;
+}
+div.sideblock div.bt {
+  background-position: 0 0;
+  left: -13px;
+  margin: 0 13px 0 0;
+}
 div.sideblock div.bb  div {
   background-position: 100% 100%;
   right: -13px;

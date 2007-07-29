@@ -588,8 +588,6 @@ global $HTTPSPAGEREQUIRED;
         }
     }
     
-    $CFG->langdirection = (get_string('thisdirection') == 'rtl') ? 'rtl' : 'ltr';
-
     // set default locale and themes - might be changed again later from require_login()
     course_setup();
 

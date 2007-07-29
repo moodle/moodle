@@ -4,21 +4,7 @@
 /// how Moodle uses this theme.
 ////////////////////////////////////////////////////////////////////////////////
 
-//trigger_error('custom_corners/config.php - $CFG->langdirection: '.$CFG->langdirection, E_USER_NOTICE);
-
-if ($CFG->langdirection == 'rtl') {
-    $THEME->sheets = array('user_styles', 'styles_rtl');
-    //trigger_error('custom_corners/config.php - is rtl ::: ', E_USER_NOTICE);
-} else {
-    $THEME->sheets = array('user_styles');
-    //trigger_error('custom_corners/config.php - is not rtl ::: ', E_USER_NOTICE);
-}
-
-//trigger_error('custom_corners/config.php - $THEME->sheets: '.$THEME->sheets[0].', '.$THEME->sheets[1], E_USER_NOTICE);
-
-// $THEME->sheets = array('user_styles');
-
-// $THEME->sheets = array('user_styles', 'adminpage_correct');
+$THEME->sheets = array('user_styles', 'styles_rtl');
 
 /// This variable is an array containing the names of all the 
 /// stylesheet files you want included in this theme, and in what order
@@ -84,7 +70,7 @@ $THEME->blocksheets = true;
 /// It is HIGHLY recommended to leave this enabled.
 
 
-$THEME->langsheets = false;  
+$THEME->langsheets = false;
 
 /// By setting this to true, then this theme will search for 
 /// a file named "styles.php" inside the current language
@@ -95,7 +81,7 @@ $THEME->langsheets = false;
 $THEME->block_l_min_width = 180;
 $THEME->block_l_max_width = 210;
 $THEME->block_r_min_width = 180;
-$THEME->block_r_max_width = 210;;
+$THEME->block_r_max_width = 210;
 
 /// These values define the min and max width of the left and right
 /// sieblocks in the course pages. If not set or false the standard 
@@ -170,6 +156,13 @@ $THEME->chameleonteachereditenabled = false;
 /// If you use chameleon as a course theme setting this to true 
 /// will allow teachers on that course to edit the theme. 
 
+
+// $CFG->CSSEdit = true;
+
+/// When this is enabled then Moodle will include all CSS files
+/// seperately instead of writing all CSS code into one single
+/// CSS file per theme. The single CSS files can then be edited 
+/// and saved with interactive CSS editors like CSSEdit.
 
 
 $THEME->resource_mp3player_colors = 

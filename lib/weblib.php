@@ -2456,9 +2456,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $pageclass .= ' drag';
     }
 
-    if (!empty($CFG->langdirection)) {
-        $pageclass .= ' ' . $CFG->langdirection;
-    }
+    $pageclass .= ' dir-'.get_string('thisdirection');
 
     $pageclass .= ' lang-'.$currentlanguage;
 
@@ -2790,7 +2788,7 @@ function current_category_theme($categoryid=0) {
  * @param int $lifetime ?
  * @param string $thename ?
  */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='', $langdir='') {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='', $langdir='ltr') {
 
     global $CFG, $THEME;
 
@@ -2977,7 +2975,10 @@ function theme_setup($theme = '', $params=NULL) {
     }
 
 /// Add parameter for the language direction
-    $params[] = 'langdir='.get_string('thisdirection');
+    $langdir = get_string('thisdirection');
+    if ($langdir == 'rtl') {
+        $params[] = 'langdir='.get_string('thisdirection');
+    }
     
     if ($theme != $CFG->theme) {
         $params[] = 'forceconfig='.$theme;
