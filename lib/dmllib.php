@@ -1223,8 +1223,15 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
         }
     }
 
+/// NULL inserts - introduced in 1.9
+    if (is_null($newvalue)) {
+        $update = "$newfield = NULL";
+    } else {
+        $update = "$newfield = '$newvalue'";
+    }
+
 /// Arriving here, standard update 
-    return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
+    return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select);
 }
 
 /**
@@ -1558,7 +1565,7 @@ function update_record($table, $dataobject) {
         foreach ($ddd as $key => $value) {
             $count++;
             if ($value === NULL) {
-                $update .= $key .' = NULL'; // previosly NULLs were not updated
+                $update .= $key .' = NULL'; // previously NULLs were not updated
             } else {
                 $update .= $key .' = \''. $value .'\'';   // All incoming data is already quoted
             }
@@ -1943,11 +1950,11 @@ function sql_primary_role_subselect() {
  */
 function where_clause($field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
     if ($field1) {
-        $select = "WHERE $field1 = '$value1'";
+        $select = is_null($value1) ? "WHERE $field1 IS NULL" : "WHERE $field1 = '$value1'";
         if ($field2) {
-            $select .= " AND $field2 = '$value2'";
+            $select .= is_null($value2) ? " AND $field2 IS NULL" : " AND $field2 = '$value2'";
             if ($field3) {
-                $select .= " AND $field3 = '$value3'";
+                $select .= is_null($value3) ? " AND $field3 IS NULL" : " AND $field3 = '$value3'";
             }
         }
     } else {
