@@ -2145,9 +2145,22 @@ body#doc-contents ul {
   display: inline;
   margin-right: 10px;
 }
+
+/* scales edit */
+
+.grade-edit-scale .buttons {
+  margin: 20px;
+  text-align:center;
+}
+
+.grade-edit-scale .buttons .singlebutton {
+  display: inline;
+  padding: 5px;
+}
+
 /* gradebook edit tree */
 
-#grade-edit-edit_tree .gradetreebox {
+.grade-edit-tree .gradetreebox {
   width:70%;
   margin-left:auto;
   margin-right:auto;
@@ -2155,40 +2168,39 @@ body#doc-contents ul {
   padding-bottom:15px;
 }
 
-#grade-edit-tree .buttons {
+.grade-edit-tree .buttons {
   margin: 20px;
   text-align:center;
 }
 
-#grade-edit-tree .buttons .singlebutton {
+.grade-edit-tree .buttons .singlebutton {
   display: inline;
   padding: 5px;
 }
 
-
-#grade-edit-tree .movetarget {
+.grade-edit-tree .movetarget {
   position: relative;
   width: 80px;
   height: 16px;
 }
 
-#grade-edit-tree ul#grade_tree {
+.grade-edit-tree ul#grade_tree {
   width: auto;
 }
 
-#grade-edit-tree ul#grade_tree li {
+.grade-edit-tree ul#grade_tree li {
   list-style: none;
 }
 
-#grade-edit-tree ul#grade_tree li.category {
+.grade-edit-tree ul#grade_tree li.category {
   margin-bottom: 6px;
 }
 
-#grade-edit-tree .moving {
+.grade-edit-tree .moving {
   background-color: #E8EEF7;
 }
 
-#grade-edit-tree .iconsmall {
+.grade-edit-tree .iconsmall {
   margin-left: 4px;
 }
 

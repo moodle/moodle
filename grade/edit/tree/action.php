@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-require_once '../../config.php';
+require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
@@ -16,7 +16,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 // default return url
 $gpr = new grade_plugin_return();
-$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/edit/tree.php?id='.$course->id);
+$returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/edit/tree/index.php?id='.$course->id);
 
 // get the grading tree object
 $gtree = new grade_tree($courseid, false, false);

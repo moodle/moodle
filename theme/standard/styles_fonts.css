@@ -481,6 +481,10 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
+.grade-edit-scale .scale_options {
+  font-size: 0.7em;
+}
+
 
 /***
  *** Login

@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once '../../config.php';
+require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
@@ -42,7 +42,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/grade:manage', $context);
 
 /// return tracking object
-$gpr = new grade_plugin_return(array('type'=>'edit', 'courseid'=>$courseid));
+$gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
 $returnurl = $gpr->get_return_url(null);
 
 //first make sure we have proper final grades - we need it for locking changes

@@ -131,7 +131,7 @@ class block_admin extends block_list {
 
     /// Manage scales
         if (has_capability('moodle/course:managescales', $context) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="scales.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/scale/index.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" class="icon" alt="" />';      
         }
         

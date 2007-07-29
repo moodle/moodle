@@ -93,13 +93,33 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
     }
 
 /// editing scripts - not real plugins
-    if (has_capability('moodle/grade:manage', $context)) {
+    if (has_capability('moodle/grade:manage', $context)
+      or has_capability('moodle/course:managescales', $context)) {
         $menu['edit']='--'.get_string('edit');
-        $url = 'edit/tree.php?id='.$courseid;
-        if ($active_type == 'edit' and $active_plugin == 'tree' ) {
-            $active = $url;
+
+        if (has_capability('moodle/grade:manage', $context)) {
+            $url = 'edit/tree/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'tree' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('edittree', 'grades');
         }
-        $menu[$url] = get_string('edittree', 'grades');
+
+        if (has_capability('moodle/course:managescales', $context)) {
+            $url = 'edit/scale/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'scale' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('scales');
+        }
+
+        if (has_capability('moodle/grade:manage', $context)) { // TODO: add outcome cap
+            $url = 'edit/outcome/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'outcome' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('outcomes', 'grades');
+        }
     }
 
 /// finally print/return the popup form
@@ -174,10 +194,6 @@ class grade_plugin_return {
      */
     function get_return_url($default, $extras=null) {
         global $CFG;
-
-        if ($this->type == 'edit') {
-            return $CFG->wwwroot.'/grade/edit/tree.php?id='.$this->courseid;
-        }
 
         if (empty($this->type) or empty($this->plugin)) {
             return $default;
@@ -581,21 +597,21 @@ class grade_tree {
             case 'categoryitem':
             case 'courseitem':
                 if (empty($object->outcomeid)) {
-                    $url = $CFG->wwwroot.'/grade/edit/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                    $url = $CFG->wwwroot.'/grade/edit/tree/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 } else {
-                    $url = $CFG->wwwroot.'/grade/edit/outcomeitem.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                    $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 }
                 $url = $gpr->add_url_params($url);
                 break;
 
             case 'category':
-                $url = $CFG->wwwroot.'/grade/edit/category.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $CFG->wwwroot.'/grade/edit/tree/category.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 break;
 
             case 'grade':
                 //TODO: improve dealing with new grades
-                $url = $CFG->wwwroot.'/grade/edit/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $CFG->wwwroot.'/grade/edit/tree/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 if (!empty($object->feedback)) {
                     $feedback = format_text($object->feedback, $object->feedbackformat);
@@ -636,12 +652,12 @@ class grade_tree {
         }
 
         if ($element['object']->is_hidden()) {
-            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
 
         } else {
-            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
         }
@@ -667,7 +683,7 @@ class grade_tree {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {
                 return '';
             }
-            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
 
@@ -675,7 +691,7 @@ class grade_tree {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
                 return '';
             }
-            $url     = $CFG->wwwroot.'/grade/edit/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
         }
@@ -703,7 +719,7 @@ class grade_tree {
 
             // show calculation icon only when calculation possible
             if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
-                $url = $CFG->wwwroot.'/grade/edit/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 $calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'
                                        . $streditcalculation.'" title="'.$streditcalculation.'" /></a>'. "\n";

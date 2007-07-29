@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-require_once '../../config.php';
+require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php';
 require_once 'item_form.php';
@@ -18,7 +18,7 @@ require_capability('moodle/grade:manage', $context);
 
 // default return url
 $gpr = new grade_plugin_return();
-$returnurl = $gpr->get_return_url('tree.php?id='.$course->id);
+$returnurl = $gpr->get_return_url('index.php?id='.$course->id);
 
 $mform = new edit_item_form(null, array('gpr'=>$gpr));
 
@@ -29,7 +29,7 @@ if ($mform->is_cancelled()) {
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     // redirect if outcomeid present
     if (!empty($item->outcomeid)) {
-        $url = $CFG->wwwroot.'/grade/edit/outcome.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = $CFG->wwwroot.'/grade/edit/tree/outcome.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
 
@@ -48,6 +48,8 @@ if ($data = $mform->get_data()) {
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);
+
+    $grade_item->outcomeid = null;
 
     if (empty($grade_item->id)) {
         $grade_item->itemtype = 'manual'; // all new items to be manual only

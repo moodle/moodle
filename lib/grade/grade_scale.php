@@ -169,5 +169,48 @@ class grade_scale extends grade_object {
 
         return $scales[$grade-1];
     }
+
+    /**
+     * Determines if scale can be deleted.
+     * @return boolean
+     */
+    function can_delete() {
+        $count = $this->get_uses_count();
+        return empty($count);
+    }
+
+    /**
+     * Returns the number of places where scale is used - activities, grade items, outcomes, etc.
+     * @return int
+     */
+    function get_uses_count() {
+        global $CFG;
+
+        $count = 0;
+        if (!empty($this->courseid)) {
+            if ($scales_uses = course_scale_used($this->courseid,$this->id)) {
+                $count += count($scales_uses);
+            }
+        } else {
+            $courses = array();
+            if ($scales_uses = site_scale_used($this->id,$courses)) {
+                $count += count($scales_uses);
+            }
+        }
+
+        // count grade items
+        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE scaleid = {$this->id} AND outcomeid IS NULL";
+        if ($scales_uses = count_records_sql($sql)) {
+            $count += $scales_uses;
+        }
+
+        // count outcomes
+        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_outcomes WHERE scaleid = {$this->id}";
+        if ($scales_uses = count_records_sql($sql)) {
+            $count += $scales_uses;
+        }
+
+        return $count;
+    }
 }
 ?>
