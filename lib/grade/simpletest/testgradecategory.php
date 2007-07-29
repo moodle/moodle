@@ -118,7 +118,7 @@ class grade_category_test extends grade_test {
         $grade_category->fullname = 'Updated info for this unittest grade_category';
         $grade_category->path = null; // path must be recalculated if missing
         $grade_category->depth = null;
-        $grade_category->aggregation = GRADE_AGGREGATE_MAX; // should force regrading
+        $grade_category->aggregation = GRADE_AGGREGATE_MAX_ALL; // should force regrading
 
         $grade_item = $grade_category->get_grade_item();
         $this->assertEqual(0, $grade_item->needsupdate);
@@ -144,7 +144,7 @@ class grade_category_test extends grade_test {
 
         $this->assertFalse($grade_category->qualifies_for_regrading());
 
-        $grade_category->aggregation = GRADE_AGGREGATE_MAX;
+        $grade_category->aggregation = GRADE_AGGREGATE_MAX_ALL;
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
         $grade_category = new grade_category($this->grade_categories[0]);
@@ -305,14 +305,6 @@ class grade_category_test extends grade_test {
         $category->set_hidden(1);
         $category->load_grade_item();
         $this->assertEqual(true, $category->grade_item->is_hidden());
-    }
-
-    function test_grade_category_has_children() {
-        $category = new grade_category($this->grade_categories[0]);
-        $this->assertTrue(method_exists($category, 'has_children'));
-        $this->assertTrue($category->has_children());
-        $category = new grade_category();
-        $this->assertFalse($category->has_children());
     }
 
     function test_grade_category_generate_grades() {

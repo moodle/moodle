@@ -612,14 +612,6 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Returns true if this category has any child grade_category or grade_item.
-     * @return int number of direct children, or false if none found.
-     */
-    function has_children() {
-        return count_records('grade_categories', 'parent', $this->id) + count_records('grade_items', 'categoryid', $this->id);
-    }
-
-    /**
      * Returns tree with all grade_items and categories as elements
      * @static
      * @param int $courseid
