@@ -628,22 +628,12 @@ class grade_category extends grade_object {
      */
     function fetch_course_tree($courseid, $include_category_items=false) {
         $course_category = grade_category::fetch_course_category($courseid);
-        if (is_array($course_category)) {
-            debugging("grade_category::fetch_course_category($courseid) returned an array instead of an object. Returning only the first item.");
-            $course_category = reset($course_category);
-        }
-
-        if (is_object($course_category)) {
-            $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
-                                    'children'=>$course_category->get_children($include_category_items));
-            $sortorder = 1;
-            $course_category->set_sortorder($sortorder);
-            $course_category->sortorder = $sortorder;
-            return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
-        } else {
-            debugging("grade_category::fetch_course_category($courseid) returned '$course_category'");
-            return false;
-        }
+        $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
+                                'children'=>$course_category->get_children($include_category_items));
+        $sortorder = 1;
+        $course_category->set_sortorder($sortorder);
+        $course_category->sortorder = $sortorder;
+        return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
     }
 
     function _fetch_course_tree_recursion($category_array, &$sortorder) {
@@ -690,10 +680,6 @@ class grade_category extends grade_object {
         $cats  = get_records('grade_categories', 'courseid', $this->courseid);
         $items = get_records('grade_items', 'courseid', $this->courseid);
 
-        if (count($cats) == 0) {
-            debugging("get_records('grade_categories', 'courseid', $this->courseid) returned nothing.");
-        }
-
         // init children array first
         foreach ($cats as $catid=>$cat) {
             $cats[$catid]->children = array();
@@ -708,9 +694,6 @@ class grade_category extends grade_object {
                     continue;
                 }
                 $categoryid = $item->iteminstance;
-                if (is_null($categoryid)) {
-                    debugging("Itemtype was '$item->itemtype' (item->id=$item->id), but its iteminstance was null...");
-                }
             } else {
                 $categoryid = $item->categoryid;
             }
@@ -720,10 +703,6 @@ class grade_category extends grade_object {
             while(array_key_exists($sortorder, $cats[$categoryid]->children)) {
                 //debugging("$sortorder exists in item loop");
                 $sortorder++;
-            }
-
-            if (is_null($categoryid)) {
-                debugging('$categoryid was null!');
             }
 
             $cats[$categoryid]->children[$sortorder] = $item;

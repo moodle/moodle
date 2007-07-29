@@ -313,11 +313,8 @@ function grade_force_full_regrading($courseid) {
  * @return boolean true if ok, array of errors if problems found (item id is used as key)
  */
 function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {
-    $course_item = grade_item::fetch_course_item($courseid);
 
-    if (!is_object($course_item)) {
-        debugging("Could not instantiate the course item! grade_item::fetch_course_item($courseid) returned '$course_item'");
-    }
+    $course_item = grade_item::fetch_course_item($courseid);
 
     if ($userid) {
         // one raw grade updated for one user
