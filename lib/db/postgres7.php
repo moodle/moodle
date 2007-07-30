@@ -1683,6 +1683,8 @@ function main_upgrade($oldversion=0) {
         modify_database('',"CREATE INDEX prefix_role_capabilities_roleid_idx ON prefix_role_capabilities (roleid);");
         modify_database('',"CREATE INDEX prefix_role_capabilities_contextid_idx ON prefix_role_capabilities (contextid);");
         modify_database('',"CREATE INDEX prefix_role_capabilities_modifierid_idx ON prefix_role_capabilities (modifierid);");
+        // MDL-10640  adding missing index from upgrade
+        modify_database('',"CREATE INDEX prefix_role_capabilities_capability_idx ON prefix_role_capabilities (capability);");
         modify_database('',"CREATE UNIQUE INDEX prefix_role_capabilities_roleidcontextidcapability_idx ON prefix_role_capabilities (roleid, contextid, capability);"); 
         modify_database('',"CREATE INDEX prefix_role_deny_grant_roleid_idx ON prefix_role_deny_grant (roleid);");
         modify_database('',"CREATE INDEX prefix_role_deny_grant_unviewableroleid_idx ON prefix_role_deny_grant (unviewableroleid);");

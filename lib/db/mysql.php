@@ -2074,9 +2074,11 @@ function main_upgrade($oldversion=0) {
         execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD UNIQUE INDEX `contextid-roleid-userid` (`contextid`, `roleid`, `userid`)",true);
         execute_sql("ALTER TABLE `{$CFG->prefix}role_assignments` ADD INDEX `sortorder` (`sortorder`)",true);
 
-        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `roleid` (`roleid`)",true);  
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `roleid` (`roleid`)",true);
         execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `contextid` (`contextid`)",true); 
-        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `modifierid` (`modifierid`)",true); 
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `modifierid` (`modifierid`)",true);                
+        // MDL-10640  adding missing index from upgrade
+        execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD INDEX `capability` (`capability`)",true);   
         execute_sql("ALTER TABLE `{$CFG->prefix}role_capabilities` ADD UNIQUE INDEX `roleid-contextid-capability` (`roleid`, `contextid`, `capability`)",true);         
                         
         execute_sql("ALTER TABLE `{$CFG->prefix}role_deny_grant` ADD INDEX `roleid` (`roleid`)",true);
