@@ -147,10 +147,11 @@
     if($limitedcourses = get_records_select('course', 'enrolperiod > 0')) {
         foreach($limitedcourses as $course) {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            $oldenrolments = get_records_select('role_assignments', 'timeend > 0 AND timeend < ' . $timenow . ' AND contextid = ' . $context->id);
-            foreach ($oldenrolments as $oldenrolment) {
-                role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
-                $somefound = true;
+            if ($oldenrolments = get_records_select('role_assignments', 'timeend > 0 AND timeend < ' . $timenow . ' AND contextid = ' . $context->id)) {
+                foreach ($oldenrolments as $oldenrolment) {
+                    role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
+                    $somefound = true;
+                }
             }
         }
     }
