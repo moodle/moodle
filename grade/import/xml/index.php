@@ -29,7 +29,7 @@ $gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->s
 $gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
 $gradenav .= " -> $actionstr";
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
-
+print_grade_plugin_selector($id, 'import', 'xml');
 $mform = new grade_import_form();
 
 if ( $formdata = $mform->get_data()) {

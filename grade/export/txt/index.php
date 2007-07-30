@@ -49,7 +49,7 @@ $gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strg
 $gradenav .= " -> $actionstr";
 
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
-
+print_grade_plugin_selector($id, 'export', 'txt');
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {
 
