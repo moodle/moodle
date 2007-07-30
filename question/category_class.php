@@ -279,26 +279,16 @@ class question_category_object {
 
     function edit_single_category($categoryid) {
     /// Interface for adding a new category
-        global $USER, $COURSE;
+        global $CFG, $USER, $COURSE;
 
         /// Interface for editing existing categories
         if ($category = get_record("question_categories", "id", $categoryid)) {
-            echo '<h2 align="center">';
-            echo $this->str->edit;
-            helpbutton("categories_edit", $this->str->editcategory, "quiz");
-            echo '</h2>';
-            echo '<table width="100%"><tr><td>';
+            print_heading_with_help($this->str->edit, 'categories_edit', 'quiz');
             $this->output_edit_single_table($category);
-            echo '</td></tr></table>';
-            //cancel button
-            echo '<p><div align="center"><form action="category.php" method="get">
-                <div>';
-            echo $this->pageurl->hidden_params_out();
-            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
-                <input type="submit" value="' . $this->str->cancel . '" />
-                </div>
-                </form>
-                </div></p>';
+            echo '<div class="centerpara">';
+            print_single_button($CFG->wwwroot . '/question/category.php',
+                    $this->pageurl->params, $this->str->cancel);
+            echo '</div>';
             print_footer($COURSE);
             exit;
         } else {
@@ -355,8 +345,8 @@ class question_category_object {
 
         // wrap the table in a form and output it
         echo '<p><form action="category.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+        echo '<fieldset class="invisiblefieldset" style="display: block;">';
+        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />';
         echo $this->pageurl->hidden_params_out();
         echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
         print_table($edittable);
