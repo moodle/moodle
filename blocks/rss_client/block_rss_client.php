@@ -13,7 +13,7 @@
 
 /**
  * This class is for a block which defines a block for display on
- * any Moodle page. 
+ * any Moodle page.
  */
  class block_rss_client extends block_base {
 
@@ -43,7 +43,7 @@
 
     function get_content() {
         global $CFG, $editing, $COURSE, $USER;
-        
+
         if (!empty($COURSE)) {
             $this->courseid = $COURSE->id;
         }
@@ -74,7 +74,7 @@
 
         if (!empty($this->config)) {
             if (!empty($this->config->rssid)) {
-                if (is_array($this->config->rssid)) { 
+                if (is_array($this->config->rssid)) {
                     $rssidarray = $this->config->rssid;
                 } else {     // Make an array of the single value
                     $rssidarray = array($this->config->rssid);
@@ -87,9 +87,9 @@
                 $shownumentries = intval($this->config->shownumentries);
             }
         }
-        
+
         $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
-        
+
         if (has_capability('block/rss_client:createsharedfeeds', $context)
                     || has_capability('block/rss_client:createprivatefeeds', $context)) {
 
@@ -187,7 +187,7 @@
                     return '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_error.php?error='. urlencode($rsserror) .'">Error loading a feed.</a><br />'; //Daryl Hawes note: localize this line
                 }
             }
-            
+
             if ($shownumentries > 0 && $shownumentries < count($rss->items) ) {
                 $rss->items = array_slice($rss->items, 0, $shownumentries);
             }
@@ -198,8 +198,8 @@
                 $feedtitle = $this->format_title($rss_record->preferredtitle);
             }
 //            print_object($rss);
-            if (isset($this->config) && 
-                    isset($this->config->block_rss_client_show_channel_image) && 
+            if (isset($this->config) &&
+                    isset($this->config->block_rss_client_show_channel_image) &&
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
                 $returnstring .= "\n".'<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'" /></a></div>';
@@ -240,7 +240,7 @@
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
-                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) . 
+                                     format_text($item['description'], FORMAT_MOODLE, $formatoptions, $this->courseid) .
                                      '</div>';
                 }
                 $returnstring .= "</li>\n";
@@ -249,7 +249,7 @@
 
             if (!empty($rss->channel['link'])) {
                 $rss->channel['link'] = str_replace('&', '&amp;', $rss->channel['link']);
-            
+
                 if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
                     $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('clientchannellink', 'block_rss_client') .'</a>';
                 } 

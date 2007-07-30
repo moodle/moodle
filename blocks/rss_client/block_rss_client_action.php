@@ -97,14 +97,14 @@ if (isset($rss_record)) {
 
 
 if ($act == 'updfeed') {
-    
+
     if (!$managefeeds) {
         error(get_string('noguestpost', 'forum').
                 ' You are not allowed to make modifications to this RSS feed at this time.',
                 $referrer);
     }
-    
-    
+
+
     if (empty($url)) {
         error( 'URL not defined for rss feed' );
     }
@@ -148,10 +148,10 @@ if ($act == 'updfeed') {
     redirect($referrer, $message);
 
 } else if ($act == 'addfeed' ) {
-    
+
     $canaddprivfeeds = has_capability('block/rss_client:createprivatefeeds', $context);
     $canaddsharedfeeds = has_capability('block/rss_client:createsharedfeeds', $context);
-    
+
     if (!$canaddprivfeeds && !$canaddsharedfeeds) {
         error('You do not have the permission to add RSS feeds');
     }
@@ -164,13 +164,13 @@ if ($act == 'updfeed') {
     $dataobject->title = '';
     $dataobject->url = addslashes($url);
     $dataobject->preferredtitle = addslashes($preferredtitle);
-    
+
     if ($shared == 1 && $canaddsharedfeeds) {
         $dataobject->shared = 1;
     } else {
         $dataobject->shared = 0;
     }
-    
+
     $rssid = insert_record('block_rss_client', $dataobject);
     if (!$rssid) {
         error('There was an error trying to add a new rss feed:'. $url);
@@ -197,7 +197,7 @@ if ($act == 'updfeed') {
         }
         if (!empty($rss->channel['title'])) {
             $dataobject->title = addslashes($rss->channel['title']);
-        } 
+        }
         if (!update_record('block_rss_client', $dataobject)) {
             error('There was an error trying to update rss feed with id:'. $rssid);
         }
@@ -220,7 +220,7 @@ if ($act == 'updfeed') {
     rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
 
 } else if ($act == 'delfeed') {
-    
+
     if (!$managefeeds) {
         error(get_string('noguestpost', 'forum').
                 ' You are not allowed to make modifications to this RSS feed at this time.',
@@ -273,10 +273,10 @@ if ($act == 'updfeed') {
             if (file_exists($CFG->dirroot .'/blog/lib.php')) {
                 //Blog module is installed - provide "blog this" link
                 print '<td align="right">'."\n";
-                
+
                 /// MDL-9291, blog this feature needs further discussion/implementation
                 /// temporarily disabling for now.
-                
+
                 // print '<img src="'. $CFG->pixpath .'/blog/blog.gif" alt="'. get_string('blogthis', 'blog').'" title="'. get_string('blogthis', 'blog') .'" border="0" align="middle" />'."\n";
                 //print '<a href="'. $CFG->wwwroot .'/blog/blogthis.php?userid='. $USER->id .'&act=use&item='. $y .'&rssid='. $rssid .'"><small><strong>'. get_string('blogthis', 'blog') .'</strong></small></a>'."\n";
             } else {

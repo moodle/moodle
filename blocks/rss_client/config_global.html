@@ -6,7 +6,7 @@
     <td align="right">block_rss_client_num_entries:</td>
     <td>
     <input name="block" type="hidden" value="<?php echo intval($_REQUEST['block']); ?>" />
-    <input name="block_rss_client_num_entries" type="text" size="5" value="<?php 
+    <input name="block_rss_client_num_entries" type="text" size="5" value="<?php
         if(isset($CFG->block_rss_client_num_entries)) {
             p($CFG->block_rss_client_num_entries);
         } else {
@@ -21,7 +21,7 @@
 <tr valign="top">
     <td align="right">block_rss_timeout:</td>
     <td>
-    <input name="block_rss_timeout" type="text" size="5" value="<?php 
+    <input name="block_rss_timeout" type="text" size="5" value="<?php
         if(isset($CFG->block_rss_timeout)) {
             p($CFG->block_rss_timeout);
         } else {
@@ -47,7 +47,7 @@
                 // things are not quite working yet to allow this - revisit later
                 // also 'everybody' should be 'site members' or something clearer since
                 // it does not include guests
-                $options = array ( 
+                $options = array (
                                   SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody'),
                                   SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
                                   SUBMITTERS_ADMIN_AND_TEACHER => get_string('administratorsandteachers') );
@@ -65,7 +65,7 @@
     <input type="submit" value="<?php print_string('savechanges') ?>" /></td>
 </tr>
 <tr>
-    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?id=<?php 
+    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?id=<?php
     if (!isset($id)) {
         $id = '';
     }
