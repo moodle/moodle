@@ -214,8 +214,8 @@ function display() {
 
     $formatoptions = new object();
     $formatoptions->noclean = true;
-    
-    if ($resource->options == "frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
+
+    if ($resource->options != "bogusoption_usedtobe_frame") { // TODO nicolasconnault 14-03-07: This option should be renamed "embed"
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
@@ -223,7 +223,7 @@ function display() {
         } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
             $resourcetype = "mp3";
             $embedded = true;
-           
+
         } else if ($mimetype == "video/x-flv") {    // It's a Flash video file
             $resourcetype = "flv";
             $embedded = true;
@@ -390,7 +390,7 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty( $frameset ) and ($frameset == "top") ) {
-        
+
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         $options = new object();
@@ -495,10 +495,10 @@ function display() {
 
         } else if ($resourcetype == "mediaplayer") {
             echo '<div class="resourcecontent resourcewmv">';
-            echo '<object type="video/x-ms-wmv" data="' . $fullurl . '">';            
-            echo '<param name="controller" value="true" />';            
-            echo '<param name="autostart" value="true" />';            
-            echo "<param name=\"src\" value=\"$fullurl\" />"; 
+            echo '<object type="video/x-ms-wmv" data="' . $fullurl . '">';
+            echo '<param name="controller" value="true" />';
+            echo '<param name="autostart" value="true" />';
+            echo "<param name=\"src\" value=\"$fullurl\" />";
             echo '<param name="scale" value="noScale" />';
             echo "<a href=\"$fullurl\">$fullurl</a>";
             echo '</object>';
@@ -516,10 +516,10 @@ function display() {
             echo '<param name="showControls" value="true" />';
             echo '<param name="Volume" value="-450" />';
             echo '<!--[if !IE]>-->';
-            echo '<object type="video/mpeg" data="' . $fullurl . '">';            
-            echo '<param name="controller" value="true" />';            
-            echo '<param name="autostart" value="true" />';            
-            echo "<param name=\"src\" value=\"$fullurl\" />"; 
+            echo '<object type="video/mpeg" data="' . $fullurl . '">';
+            echo '<param name="controller" value="true" />';
+            echo '<param name="autostart" value="true" />';
+            echo "<param name=\"src\" value=\"$fullurl\" />";
             echo "<a href=\"$fullurl\">$fullurl</a>";
             echo '<!--<![endif]-->';
             echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
@@ -540,7 +540,7 @@ function display() {
             echo '/**/';
             echo '</style>';
             echo '<div class="resourcecontent resourceqt">';
-            
+
             echo '<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
             echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab">';
             echo "<param name=\"src\" value=\"$fullurl\" />";
@@ -548,7 +548,7 @@ function display() {
             echo '<param name="loop" value="true" />';
             echo '<param name="controller" value="true" />';
             echo '<param name="scale" value="aspect" />';
-            
+
             echo "<object class=\"hiddenObjectForIE\" type=\"video/quicktime\" data=\"$fullurl\">";
             echo '<param name="controller" value="true" />';
             echo '<param name="autoplay" value="true" />';
@@ -558,7 +558,7 @@ function display() {
             echo '<a href="' . $fullurl . '">' . $fullurl . '</a>';
             echo '</object>';
             echo '</div>';
-        }  else if ($resourcetype == "flash") { 
+        }  else if ($resourcetype == "flash") {
             echo '<div class="resourcecontent resourceswf">';
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">';
             echo "<param name=\"movie\" value=\"$fullurl\" />";
@@ -685,9 +685,9 @@ function setup_elements(&$mform) {
     $woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
     $mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
     $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
-        
+
     $mform->addElement('checkbox', 'framepage', get_string('keepnavigationvisible', 'resource'));
-    
+
     $mform->setHelpButton('framepage', array('frameifpossible', get_string('keepnavigationvisible', 'resource'), 'resource'));
     $mform->setDefault('framepage', 0);
     $mform->disabledIf('framepage', 'windowpopup', 'eq', 1);
