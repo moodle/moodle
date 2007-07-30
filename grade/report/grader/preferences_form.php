@@ -57,12 +57,12 @@ class grader_report_preferences_form extends moodleform {
                       'enableajax'             => $checkbox_default);
 
         $preferences['prefshow'] = array('showcalculations'       => $checkbox_default,
-                                     'showeyecons'            => $checkbox_default,
-                                     'showaverages'           => $checkbox_default,
-                                     'showgroups'             => $checkbox_default,
-                                     'showlocks'              => $checkbox_default,
-                                     'showranges'             => $checkbox_default,
-                                     'showuserimage'          => $checkbox_default,);
+                                         'showeyecons'            => $checkbox_default,
+                                         'showaverages'           => $checkbox_default,
+                                         'showgroups'             => $checkbox_default,
+                                         'showlocks'              => $checkbox_default,
+                                         'showranges'             => $checkbox_default,
+                                         'showuserimage'          => $checkbox_default,);
 
         $preferences['prefrows'] = array(
                     'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
@@ -118,7 +118,7 @@ class grader_report_preferences_form extends moodleform {
                 if (!is_null($options) AND $options[GRADE_REPORT_PREFERENCE_DEFAULT] == 'default') {
                     $options[GRADE_REPORT_PREFERENCE_DEFAULT] = get_string('sitedefault', 'grades', $default);
                 } elseif ($type == 'text') {
-                    $help_string = get_string("config$lang_string", 'grades', $default);
+                    $help_string = get_string("config{$lang_string}default", 'grades', $default);
                 }
 
                 $label = get_string($lang_string, 'grades') . $number;
