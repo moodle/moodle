@@ -228,7 +228,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
 
-        $mform->setType('feedbacktext', PARAM_TEXT);
+        $mform->setType('feedbacktext', PARAM_RAW);
         $mform->setType('feedbackboundaries', PARAM_NOTAGS);
 
         $nextel=$this->repeat_elements($repeatarray, $numfeedbacks-1,

@@ -346,7 +346,7 @@ function quiz_rescale_grade($rawgrade, $quiz) {
 
 /**
  * Get the feedback text that should be show to a student who
- * got this grade on this quiz.
+ * got this grade on this quiz. The feedback is processed ready for diplay.
  *
  * @param float $grade a grade on this quiz.
  * @param integer $quizid the id of the quiz object.
@@ -359,6 +359,11 @@ function quiz_feedback_for_grade($grade, $quizid) {
     if (empty($feedback)) {
         $feedback = '';
     }
+
+    // Clean the text, ready for display.
+    $formatoptions = new stdClass;
+    $formatoptions->noclean = true;
+    $feedback = format_text($feedback, FORMAT_MOODLE, $formatoptions);
 
     return $feedback;
 }
