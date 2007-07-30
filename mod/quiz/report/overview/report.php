@@ -55,6 +55,10 @@ class quiz_report extends quiz_default_report {
             break;
         }
 
+        // Set of format options for teacher-created content, for example overall feedback.
+        $nocleanformatoptions = new stdClass;
+        $nocleanformatoptions->noclean = true;
+
         // Set table options
         $noattempts = optional_param('noattempts', 0, PARAM_INT);
         $detailedmarks = optional_param('detailedmarks', 0, PARAM_INT);
@@ -480,7 +484,7 @@ class quiz_report extends quiz_default_report {
                     }
                     if ($hasfeedback) {
                         if ($attempt->timefinish) {
-                            $row[] = $attempt->feedbacktext;
+                            $row[] = format_text($attempt->feedbacktext, FORMAT_MOODLE, $nocleanformatoptions);
                         } else {
                             $row[] = '-';
                         }
