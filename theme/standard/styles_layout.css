@@ -3460,6 +3460,29 @@ table.quizreviewsummary td.cell {
   padding: 1px 1em 1px 0.5em;
 }
 
+#mod-quiz-mod #reviewoptionshdr .fitem {
+    float: left;
+    width: 30%;
+    margin-left: 10px;
+    clear: none;
+}
+#mod-quiz-mod #reviewoptionshdr .fitemtitle {
+    width: 100%;
+    font-weight: bold;
+    text-align: left;
+    height: 2.5em;
+	margin-left: 0;
+}
+#mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
+    width: 100%;
+    text-align: left;
+	margin-left: 0;
+}
+#mod-quiz-mod #reviewoptionshdr fieldset.fgroup span {
+    float: left;
+    clear: left;
+}
+
 #mod-quiz-edit #page .controls,
 #mod-quiz-edit #page .attemptsnotice
 {

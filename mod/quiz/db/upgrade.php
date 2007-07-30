@@ -66,6 +66,23 @@ function xmldb_quiz_upgrade($oldversion=0) {
         $db->debug = true;
     }
 
+    // Separate control for when overall feedback is displayed, independant of the question feedback settings.
+    if ($result && $oldversion < 2007072600) {
+        
+        // Adjust the quiz review options so that overall feedback is displayed whenever feedback is.
+        $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'quiz SET review = ' .
+                sql_bitor(sql_bitand('review', sql_bitnot(QUIZ_REVIEW_OVERALLFEEDBACK)),
+                sql_bitor(sql_bitand('review', QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY) . ' * 65536',
+                sql_bitor(sql_bitand('review', QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN) . ' * 16384',
+                          sql_bitand('review', QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED) . ' * 4096'))));
+
+        // Same adjustment to the defaults for new quizzes.
+        $result = $result && set_config('quiz_review', ($CFG->quiz_review & ~QUIZ_REVIEW_OVERALLFEEDBACK) |
+                (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY) << 16) |
+                (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN) << 14) |
+                (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED) << 12));
+    }
+    
     return $result;
 }
 

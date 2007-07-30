@@ -145,43 +145,49 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $immediatelyoptionsgrp=array();
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'responsesimmediately', '', get_string('responses', 'quiz'));
-        $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'scoreimmediately', '', get_string('scores', 'quiz'));
-        $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackimmediately', '', get_string('feedback', 'quiz'));
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'answersimmediately', '', get_string('answers', 'quiz'));
+        $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackimmediately', '', get_string('feedback', 'quiz'));
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'generalfeedbackimmediately', '', get_string('generalfeedback', 'quiz'));
+        $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'scoreimmediately', '', get_string('scores', 'quiz'));
+        $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackimmediately', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($immediatelyoptionsgrp, 'immediatelyoptionsgrp', get_string("reviewimmediately", "quiz"), null, false);
         $mform->setDefault('responsesimmediately', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('scoreimmediately', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('feedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
         $mform->setDefault('answersimmediately', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('feedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
         $mform->setDefault('generalfeedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('scoreimmediately', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('overallfeedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
         $openoptionsgrp=array();
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'responsesopen', '', get_string('responses', 'quiz'));
-        $openoptionsgrp[] = &$mform->createElement('checkbox', 'scoreopen', '', get_string('scores', 'quiz'));
-        $openoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackopen', '', get_string('feedback', 'quiz'));
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'answersopen', '', get_string('answers', 'quiz'));
+        $openoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackopen', '', get_string('feedback', 'quiz'));
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'generalfeedbackopen', '', get_string('generalfeedback', 'quiz'));
+        $openoptionsgrp[] = &$mform->createElement('checkbox', 'scoreopen', '', get_string('scores', 'quiz'));
+        $openoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackopen', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($openoptionsgrp, 'openoptionsgrp', get_string("reviewopen", "quiz"), array(' '), false);
         $mform->setDefault('responsesopen', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('scoreopen', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('feedbackopen', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
         $mform->setDefault('answersopen', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('feedbackopen', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
         $mform->setDefault('generalfeedbackopen', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('scoreopen', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('overallfeedbackopen', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_OPEN);
 
 
         $closedoptionsgrp=array();
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'responsesclosed', '', get_string('responses', 'quiz'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'scoreclosed', '', get_string('scores', 'quiz'));
-        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackclosed', '', get_string('feedback', 'quiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'answersclosed', '', get_string('answers', 'quiz'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'feedbackclosed', '', get_string('feedback', 'quiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'generalfeedbackclosed', '', get_string('generalfeedback', 'quiz'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'scoreclosed', '', get_string('scores', 'quiz'));
+        $closedoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackclosed', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($closedoptionsgrp, 'closedoptionsgrp', get_string("reviewclosed", "quiz"), array(' '), false);
         $mform->setDefault('responsesclosed', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('scoreclosed', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('feedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
         $mform->setDefault('answersclosed', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('feedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
         $mform->setDefault('generalfeedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('scoreclosed', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('overallfeedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_CLOSED);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('security', 'form'));
@@ -263,22 +269,25 @@ class mod_quiz_mod_form extends moodleform_mod {
             unset($default_values['review']);
 
             $default_values['responsesimmediately'] = $review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY;
-            $default_values['scoreimmediately'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY;
-            $default_values['feedbackimmediately'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY;
             $default_values['answersimmediately'] = $review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY;
+            $default_values['feedbackimmediately'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY;
             $default_values['generalfeedbackimmediately'] = $review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY;
+            $default_values['scoreimmediately'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY;
+            $default_values['overallfeedbackimmediately'] = $review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_IMMEDIATELY;
 
             $default_values['responsesopen'] = $review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN;
-            $default_values['scoreopen'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN;
-            $default_values['feedbackopen'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN;
             $default_values['answersopen'] = $review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN;
+            $default_values['feedbackopen'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN;
             $default_values['generalfeedbackopen'] = $review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN;
+            $default_values['scoreopen'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN;
+            $default_values['overallfeedbackopen'] = $review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_OPEN;
 
             $default_values['responsesclosed'] = $review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED;
-            $default_values['scoreclosed'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED;
-            $default_values['feedbackclosed'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED;
             $default_values['answersclosed'] = $review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED;
+            $default_values['feedbackclosed'] = $review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED;
             $default_values['generalfeedbackclosed'] = $review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED;
+            $default_values['scoreclosed'] = $review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED;
+            $default_values['overallfeedbackclosed'] = $review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_CLOSED;
         }
 
         if (isset($default_values['optionflags'])){
