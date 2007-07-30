@@ -680,6 +680,8 @@ class default_questiontype {
         return false;
     }
 
+    // Used by the following function, so that it only returns results once per quiz page.
+    var $already_done = false;
     /**
      * If this question type requires extra CSS or JavaScript to function,
      * then this method will return an array of <link ...> tags that reference
@@ -700,14 +702,13 @@ class default_questiontype {
         // script.js or script.php that exist in the plugin folder.
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
-        
+
         // We only do this once 
         // for this question type, no matter how often this method is called.
-        static $already_done = false;
-        if ($already_done) {
+        if ($this->already_done) {
             return array();
         }
-        $already_done = true;
+        $this->already_done = true;
         
         $plugindir = $this->plugin_dir();
         $baseurl = $this->plugin_baseurl();
