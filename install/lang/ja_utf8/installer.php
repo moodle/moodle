@@ -12,7 +12,7 @@
 $string['admindirerror'] = '設定されたadminディレクトリが正しくありません。';
 $string['admindirname'] = 'Adminディレクトリ';
 $string['admindirsettinghead'] = '管理ディレクトリの設定中 ...';
-$string['admindirsettingsub'] = 'まれなケースですが /admin をコントロールパネルまたはその他のページにアクセスするための特別なURLとして使用しているウェブホストがあります。残念ですが、これは標準的なMoodle管理ページのロケーションと衝突します。あなたのインストールに関するadminディレクトリをリネームすることで、この衝突を回避できます。例えば: <br /> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsettingsub'] = 'まれなケースですが /admin をコントロールパネルまたはその他のページにアクセスするための特別なURIとして使用しているウェブホストがあります。残念ですが、これは標準的なMoodle管理ページのロケーションと衝突します。あなたのインストールに関するadminディレクトリをリネームすることで、この衝突を回避できます。例えば: <br /> <br /><b>moodleadmin</b><br /> <br />
 これによりMoodleの管理ページへのリンクは修正されます。';
 $string['bypassed'] = 'バイパス';
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
@@ -102,7 +102,7 @@ $string['dbwrongnlslang'] = 'あなたのウェブサーバのNLS_LANG環境変�
 $string['dbwrongprefix'] = '上記説明の接頭辞に従ってください。';
 $string['directorysettingshead'] = 'Moodleのインストール先を確認してください。';
 $string['directorysettingssub'] = '<p><b>ウェブアドレス:</b>
-Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURLよりアクセス可能な場合は、学生が利用する最も自然なURLを選択してください。末尾にスラッシュを付けないでください。</p>
+Moodleにアクセスする完全なウェブアドレスを指定してください。複数のURIよりアクセス可能な場合は、学生が利用する最も自然なURIを選択してください。末尾にスラッシュを付けないでください。</p>
 <br />
 <br />
 <p><b>Moodleディレクトリ:</b>
@@ -222,7 +222,7 @@ $string['welcomep50'] = 'このパッケージ内のすべてのアプリケー�
 $string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
 $string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
 $string['wrongdestpath'] = '宛先パスが正しくありません。';
-$string['wrongsourcebase'] = 'ソースURLベースが正しくありません。';
+$string['wrongsourcebase'] = 'ソースURIベースが正しくありません。';
 $string['wrongzipfilename'] = 'ZIPファイル名が正しくありません。';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = '「ウェブアドレス」が正しくありません - インストール済みMoodleはそこに表示されません。下記の値はリセットされました。';
