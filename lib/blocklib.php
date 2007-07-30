@@ -168,7 +168,7 @@ function blocks_remove_inappropriate($page) {
 }
 
 function blocks_name_allowed_in_format($name, $pageformat) {
-    
+
     $accept  = NULL;
     $depth   = -1;
     if ($formats = block_method_result($name, 'applicable_formats')) {
@@ -238,10 +238,10 @@ function blocks_have_content(&$pageblocks, $position) {
             continue;
         }
         if(!$obj->is_empty()) {
-            // cache rec and obj 
+            // cache rec and obj
             // for blocks_print_group()
             $instance->rec = $record;
-            $instance->obj = $obj; 
+            $instance->obj = $obj;
             return true;
         }
     }
@@ -270,7 +270,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
 
     $isediting = $page->user_is_editing();
     foreach($pageblocks[$position] as $instance) {
-        
+
         // $instance may have ->rec and ->obj
         // cached from when we walked $pageblocks
         // in blocks_have_content()
@@ -289,7 +289,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             // Disabled by the admin
             continue;
         }
-        
+
         if (empty($instance->obj)) {
             if (!$obj = block_instance($block->name, $instance)) {
                 // Invalid block
@@ -331,7 +331,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
         }
         if (!empty($COURSE->javascriptportal)
                     && (empty($instance->pinned) || !$instance->pinned)) {
-            $COURSE->javascriptportal->block_add('inst'.$instance->id, !$instance->visible);    
+            $COURSE->javascriptportal->block_add('inst'.$instance->id, !$instance->visible);
         }
     } // End foreach
 
@@ -345,13 +345,13 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
 
     // for constant PAGE_MY_MOODLE
     include_once($CFG->dirroot.'/my/pagelib.php');
-    
+
     $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
     $myownblogpage = (isset($page->filtertype) && isset($page->filterselect) && $page->type=='blog-view' && $page->filtertype=='user' && $page->filterselect == $USER->id);
-    
+
     $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
     $editmymoodle = $page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
- 
+
     if ($page->blocks_default_position() == $position && 
         $page->user_is_editing() && 
         ($managecourseblocks || $editmymoodle || $myownblogpage)) {
@@ -470,12 +470,12 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             $block = blocks_get_record($instance->blockid);
             // Hacky hacky tricky stuff to get the original human readable block title,
             // even if the block has configured its title to be something else.
-            // Create the object WITHOUT instance data.            
+            // Create the object WITHOUT instance data.
             $blockobject = block_instance($block->name);
             if ($blockobject === false) {
                 break;
             }
-            
+
             // First of all check to see if the block wants to be edited
             if(!$blockobject->user_can_edit()) {
                 break;
@@ -484,7 +484,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             // Now get the title and AFTER that load up the instance
             $blocktitle = $blockobject->get_title();
             $blockobject->_load_instance($instance);
-            
+
             optional_param('submitted', 0, PARAM_INT);
 
             // Define the data we're going to silently include in the instance config form here,
@@ -514,7 +514,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
 
                 echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
-  
+ 
                 print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
@@ -575,7 +575,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                         update_record('block_pinned', $other);
                     } else {
                         update_record('block_instance', $other);
-                    }                        
+                    }
                 }
                 --$instance->weight;
                 if (!empty($pinned)) {
@@ -666,10 +666,10 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             $newpos = $page->blocks_default_position();
             if (!empty($pinned)) {
                 $sql = 'SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_pinned WHERE '
-                    .' pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''; 
+                    .' pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\'';
             } else {
-                $sql = 'SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->get_id() 
-                    .' AND pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\''; 
+                $sql = 'SELECT 1, max(weight) + 1 AS nextfree FROM '. $CFG->prefix .'block_instance WHERE pageid = '. $page->get_id()
+                    .' AND pagetype = \''. $page->get_type() .'\' AND position = \''. $newpos .'\'';
             }
             $weight = get_record_sql($sql);
 
@@ -714,7 +714,7 @@ function blocks_execute_url_action(&$PAGE, &$pageblocks,$pinned=false) {
 
     $instanceid  = optional_param('instanceid', 0, PARAM_INT);
     $blockid     = optional_param('blockid',    0, PARAM_INT);
-    
+
     if (!empty($blockid)) {
         blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $blockid, $pinned);
 
@@ -775,57 +775,57 @@ function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=f
  */
 function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
     global $CFG;
-    
+
     if ($pinned) {
         $blocklist = blocks_get_pinned($page);
     } else {
         $blocklist = blocks_get_by_page($page);
     }
-    
+
     if ($blocklist[$instance->position][$instance->weight]->id != $instance->id) {
         // The source block instance is not where we think it is.
         return false;
     }
-    
+
     // First we close the gap that will be left behind when we take out the
     // block from it's current column.
     if ($pinned) {
-        $closegapsql = "UPDATE {$CFG->prefix}block_instance 
-                           SET weight = weight - 1 
-                         WHERE weight > '$instance->weight' 
-                           AND position = '$instance->position' 
+        $closegapsql = "UPDATE {$CFG->prefix}block_instance
+                           SET weight = weight - 1
+                         WHERE weight > '$instance->weight'
+                           AND position = '$instance->position'
                            AND pagetype = '$instance->pagetype'";
     } else {
-        $closegapsql = "UPDATE {$CFG->prefix}block_instance 
-                           SET weight = weight - 1 
-                         WHERE weight > '$instance->weight' 
-                           AND position = '$instance->position' 
+        $closegapsql = "UPDATE {$CFG->prefix}block_instance
+                           SET weight = weight - 1
+                         WHERE weight > '$instance->weight'
+                           AND position = '$instance->position'
                            AND pagetype = '$instance->pagetype'
                            AND pageid = '$instance->pageid'";
     }
     if (!execute_sql($closegapsql, false)) {
         return false;
     }
-    
+
     // Now let's make space for the block being moved.
     if ($pinned) {
-        $opengapsql = "UPDATE {$CFG->prefix}block_instance 
-                           SET weight = weight + 1 
-                         WHERE weight >= '$destweight' 
-                           AND position = '$destpos' 
+        $opengapsql = "UPDATE {$CFG->prefix}block_instance
+                           SET weight = weight + 1
+                         WHERE weight >= '$destweight'
+                           AND position = '$destpos'
                            AND pagetype = '$instance->pagetype'";
     } else {
-        $opengapsql = "UPDATE {$CFG->prefix}block_instance 
-                           SET weight = weight + 1 
-                         WHERE weight >= '$destweight' 
-                           AND position = '$destpos' 
+        $opengapsql = "UPDATE {$CFG->prefix}block_instance
+                           SET weight = weight + 1
+                         WHERE weight >= '$destweight'
+                           AND position = '$destpos'
                            AND pagetype = '$instance->pagetype'
                            AND pageid = '$instance->pageid'";
     }
     if (!execute_sql($opengapsql, false)) {
         return false;
     }
-    
+
     // Move the block.
     $instance->position = $destpos;
     $instance->weight   = $destweight;
@@ -845,7 +845,7 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
  * 2) Array of pinned blocks for position BLOCK_POS_RIGHT
  */
 function blocks_get_pinned($page) {
-    
+
     $visible = true;
 
     if (method_exists($page,'edit_always')) {
@@ -853,7 +853,7 @@ function blocks_get_pinned($page) {
             $visible = false;
         }
     }
-    
+
     $blocks = get_records_select('block_pinned', 'pagetype = \''. $page->get_type() .
                     '\''.(($visible) ? 'AND visible = 1' : ''), 'position, weight');
 
@@ -875,7 +875,7 @@ function blocks_get_pinned($page) {
         $arr[$block->position][$block->weight] = $block;
     }
 
-    return $arr;    
+    return $arr;
 }
 
 
@@ -887,7 +887,7 @@ function blocks_get_pinned($page) {
 function blocks_get_by_page_pinned($page) {
     $pinned = blocks_get_pinned($page);
     $user = blocks_get_by_page($page);
-    
+
     $weights = array();
 
     foreach ($pinned as $pos => $arr) {
@@ -984,7 +984,7 @@ function blocks_repopulate_page($page) {
     else {
         $blocknames = $page->blocks_get_default();
     }
-    
+
     $positions = $page->blocks_get_positions();
     $posblocks = explode(':', $blocknames);
 
@@ -1034,7 +1034,7 @@ function upgrade_blocks_db($continueto) {
 
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', 
+        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
 
         upgrade_log_start();
@@ -1206,7 +1206,7 @@ function upgrade_blocks_plugins($continueto) {
 
         // Here is the place to see if the block implements a constructor (old style),
         // an init() function (new style) or nothing at all (error time).
-        
+
         $constructor = get_class_constructor($classname);
         if(empty($constructor)) {
             // No constructor
@@ -1245,7 +1245,7 @@ function upgrade_blocks_plugins($continueto) {
             } else if ($currblock->version < $block->version) {
                 if (empty($updated_blocks)) {
                     $strblocksetup    = get_string('blocksetup');
-                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
+                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '',
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 $updated_blocks = true;
@@ -1280,6 +1280,10 @@ function upgrade_blocks_plugins($continueto) {
                 $db->debug=false;
             /// Now analyze upgrade results
                 if ($oldupgrade_status && $newupgrade_status) {    // No upgrading failed
+
+                    // Set the block cron on upgrade
+                    $block->cron = !empty($blockobj->cron) ? $blockobj->cron : 0;
+
                     // OK so far, now update the block record
                     $block->id = $currblock->id;
                     if (! update_record('block', $block)) {
@@ -1289,7 +1293,7 @@ function upgrade_blocks_plugins($continueto) {
                     if (!update_capabilities($component)) {
                         error('Could not update '.$block->name.' capabilities!');
                     }
-                    
+
                     events_update_definition($component);
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                 } else {
@@ -1305,9 +1309,9 @@ function upgrade_blocks_plugins($continueto) {
 
             // If it allows multiples, start with it enabled
             $block->multiple = $blockobj->instance_allow_multiple();
-            if (!empty($blockobj->cron)) {
-                $block->cron = $blockobj->cron;
-            }
+
+            // Set the block cron on install
+            $block->cron = !empty($blockobj->cron) ? $blockobj->cron : 0;
 
             // [pj] Normally this would be inline in the if, but we need to
             //      check for NULL (necessary for 4.0.5 <= PHP < 4.2.0)
@@ -1319,7 +1323,7 @@ function upgrade_blocks_plugins($continueto) {
             }
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');
-                print_header($strblocksetup, $strblocksetup, $strblocksetup, '', 
+                print_header($strblocksetup, $strblocksetup, $strblocksetup, '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             $updated_blocks = true;
@@ -1347,7 +1351,7 @@ function upgrade_blocks_plugins($continueto) {
                     if (!update_capabilities($component)) {
                         notify('Could not set up '.$block->name.' capabilities!');
                     }
-                    
+
                     events_update_definition($component);
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     echo '<hr />';
