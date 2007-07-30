@@ -86,16 +86,7 @@ class grade_outcome extends grade_object {
      * @return object grade_outcome instance or false if none found.
      */
     function fetch($params) {
-        if ($outcome = grade_object::fetch_helper('grade_outcomes', 'grade_outcome', $params)) {
-            if (!empty($outcome->scaleid)) {
-                $outcome->scale = new grade_scale(array('id'=>$outcome->scaleid));
-                $outcome->scale->load_items();
-            }
-            return $outcome;
-
-        } else {
-            return false;
-        }
+        return grade_object::fetch_helper('grade_outcomes', 'grade_outcome', $params);
     }
 
     /**
@@ -103,34 +94,38 @@ class grade_outcome extends grade_object {
      * @static
      *
      * @param array $params associative arrays varname=>value
-     * @param bool $fetch_sitewide_outcomes Whether or not to also fetch all sitewide outcomes (with no courseid)
      * @return array array of grade_outcome insatnces or false if none found.
      */
-    function fetch_all($params, $fetch_sitewide_outcomes=false) {
-        global $CFG;
+    function fetch_all($params) {
+        return grade_object::fetch_all_helper('grade_outcomes', 'grade_outcome', $params);
+    }
 
-        if ($outcomes = grade_object::fetch_all_helper('grade_outcomes', 'grade_outcome', $params)) {
-            // Fetch sitewide outcomes if requested
-            if ($fetch_sitewide_outcomes) {
-                $sitewide_outcomes = array();
-                $records = get_records_sql("SELECT * FROM {$CFG->prefix}grade_outcomes WHERE courseid IS NULL");
-                foreach ($records as $outcomeid => $outcome) {
-                    $sitewide_outcomes[$outcomeid] = new grade_outcome($outcome, false);
-                }
-                $outcomes = array_merge($sitewide_outcomes, $outcomes);
-            }
-
-            foreach ($outcomes as $key=>$value) {
-                if (!empty($outcomes[$key]->scaleid)) {
-                    $outcomes[$key]->scale = new grade_scale(array('id'=>$outcomes[$key]->scaleid));
-                    $outcomes[$key]->scale->load_items();
-                }
-            }
-            return $outcomes;
-
-        } else {
-            return false;
+    /**
+     * Instantiates a grade_scale object whose data is retrieved from the
+     * @return object grade_scale
+     */
+    function load_scale() {
+        if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
+            $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
+            $this->scale->load_items();
         }
+        return $this->scale;
+    }
+
+    /**
+     * Static function returning all global outcomes
+     * @return object
+     */
+    function fetch_all_global() {
+        return grade_outcome::fetch_all(array('courseid'=>null));
+    }
+
+    /**
+     * Static function returning all local course outcomes
+     * @return object
+     */
+    function fetch_all_local($courseid) {
+        return grade_outcome::fetch_all(array('courseid'=>$courseid));
     }
 
     /**
@@ -139,7 +134,42 @@ class grade_outcome extends grade_object {
      * @return string name
      */
     function get_name() {
-        return $this->shortname;
+        return format_string($this->fullname);
+    }
+
+    /**
+     * Returns outcome short name.
+     * @return string name
+     */
+    function get_shortname() {
+        return format_string($this->shortname);
+    }
+
+    /**
+     * Checks if outcome can be deleted.
+     * @return boolean
+     */
+    function can_delete() {
+        $count = $this->get_uses_count();
+        return empty($count);
+    }
+
+    /**
+     * Returns the number of places where outcome is used.
+     * @return int
+     */
+    function get_uses_count() {
+        global $CFG;
+
+        $count = 0;
+
+        // count grade items
+        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE outcomeid = {$this->id}";
+        if ($scales_uses = count_records_sql($sql)) {
+            $count += $scales_uses;
+        }
+
+        return $count;
     }
 
     /**

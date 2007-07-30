@@ -113,12 +113,20 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('scales');
         }
 
-        if (has_capability('moodle/grade:manage', $context)) { // TODO: add outcome cap
+        if (has_capability('moodle/grade:manage', $context)) {
             $url = 'edit/outcome/index.php?id='.$courseid;
             if ($active_type == 'edit' and $active_plugin == 'outcome' ) {
                 $active = $url;
             }
             $menu[$url] = get_string('outcomes', 'grades');
+        }
+
+        if (has_capability('course:update', $context)) {
+            $url = 'edit/favoutcomes/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'favoutcomes' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('favouriteoutcomes', 'grades');
         }
     }
 

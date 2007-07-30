@@ -1059,23 +1059,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
 
 
-    /// Define table grade_outcomes_courses to be created
-        $table = new XMLDBTable('grade_outcomes_courses');
-
-    /// Adding fields to table grade_outcomes_courses
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->addFieldInfo('outcomeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-
-    /// Adding keys to table grade_outcomes_courses
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
-
-    /// Launch create table for grade_outcomes_courses
-        $result = $result && create_table($table);
-
-
     /// Define table grade_categories to be created
         $table = new XMLDBTable('grade_categories');
 
@@ -1451,16 +1434,14 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_default($table, $field);
     }
 
-    if ($result && $oldversion < 2007072500) {
-
-    /// Define key courseid-outcomeid (unique) to be added to grade_outcomes_courses
+    if ($result && $oldversion < 2007073000) {
+        // not used anymore
         $table = new XMLDBTable('grade_outcomes_courses');
-        $key = new XMLDBKey('courseid-outcomeid');
-        $key->setAttributes(XMLDB_KEY_UNIQUE, array('courseid', 'outcomeid'));
-
-    /// Launch add key courseid-outcomeid
-        $result = $result && add_key($table, $key);
+        if (table_exists($table)) {
+            drop_table($table);
+        }
     }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {

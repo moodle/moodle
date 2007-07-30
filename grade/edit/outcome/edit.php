@@ -12,18 +12,18 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 // a bit complex access control :-O
 if ($id) {
-    /// editing existing scale
-    if (!$scale_rec = get_record('scale', 'id', $id)) {
-        error('Incorrect scale id');
+    /// editing existing outcome
+    if (!$outcome_rec = get_record('grade_outcomes', 'id', $id)) {
+        error('Incorrect outcome id');
     }
-    if ($scale_rec->courseid) {
-        $scale_rec->standard = 0;
-        if (!$course = get_record('course', 'id', $scale_rec->courseid)) {
+    if ($outcome_rec->courseid) {
+        $outcome_rec->standard = 0;
+        if (!$course = get_record('course', 'id', $outcome_rec->courseid)) {
             error('Incorrect course id');
         }
         require_login($course);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:managescales', $context);
+        require_capability('moodle/grade:manage', $context);
         $courseid = $course->id;
     } else {
         if ($courseid) {
@@ -31,63 +31,66 @@ if ($id) {
                 error('Incorrect course id');
             }
         }
-        $scale_rec->standard = 1;
-        $scale_rec->courseid = $courseid;
+        $outcome_rec->standard = 1;
+        $outcome_rec->courseid = $courseid;
         require_login();
-        require_capability('moodle/course:managescales', $systemcontext);
+        require_capability('moodle/grade:manage', $systemcontext);
     }
 
 } else if ($courseid){
-    /// adding new scale from course
+    /// adding new outcome from course
     if (!$course = get_record('course', 'id', $courseid)) {
         print_error('nocourseid');
     }
-    $scale_rec = new object();
-    $scale_rec->standard = 0;
-    $scale_rec->courseid = $courseid;
+    $outcome_rec = new object();
+    $outcome_rec->standard = 0;
+    $outcome_rec->courseid = $courseid;
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/course:managescales', $context);
+    require_capability('moodle/grade:manage', $context);
 
 } else {
-    /// adding new scale from admin section
-    $scale_rec = new object();
-    $scale_rec->standard = 1;
-    $scale_rec->courseid = 0;
+    /// adding new outcome from admin section
+    $outcome_rec = new object();
+    $outcome_rec->standard = 1;
+    $outcome_rec->courseid = 0;
     require_login();
-    require_capability('moodle/course:managescales', $systemcontext);
+    require_capability('moodle/grade:manage', $systemcontext);
 }
 
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
 
-$mform = new edit_scale_form(null, array('gpr'=>$gpr));
+$mform = new edit_outcome_form(null, array('gpr'=>$gpr));
 
-$mform->set_data($scale_rec);
+$mform->set_data($outcome_rec);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
-    $scale = new grade_scale(array('id'=>$id));
-    $data->userid = $USER->id;
-    grade_scale::set_properties($scale, $data);
+    $outcome = new grade_outcome(array('id'=>$id));
+    $data->usermodified = $USER->id;
+    grade_outcome::set_properties($outcome, $data);
 
-    if (empty($scale->id)) {
+    if (empty($outcome->id)) {
         if (!has_capability('moodle/grade:manage', $systemcontext)) {
             $data->standard = 0;
         }
-        $scale->courseid = !empty($data->standard) ? 0 : $courseid;
-        $scale->insert();
+        $outcome->courseid = !empty($data->standard) ? null : $courseid;
+        if (empty($outcome->courseid)) {
+            $outcome->courseid = null;
+        }
+        $outcome->insert();
 
     } else {
         if (isset($data->standard)) {
-            $scale->courseid = !empty($data->standard) ? 0 : $courseid;
+            $outcome->courseid = !empty($data->standard) ? null : $courseid;
         } else {
-            unset($scale->couseid); // keep previous
+            unset($outcome->couseid); // keep previous
         }
-        $scale->update();
+        $outcome->update();
     }
 
     redirect($returnurl, 'temp debug delay', 3);
@@ -95,13 +98,13 @@ if ($mform->is_cancelled()) {
 
 $strgrades       = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
-$strscaleedit    = get_string('scale');
+$stroutcomeedit  = get_string('outcome', 'grades');
 
 if ($courseid) {
     $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                 array('name'=>$strscaleedit, 'link'=>'', 'type'=>'misc'));
+                 array('name'=>$stroutcomeedit, 'link'=>'', 'type'=>'misc'));
     $navigation = build_navigation($nav);
-    print_header_simple($strgrades.': '.$strgraderreport, ': '.$strscaleedit, $navigation, '', '', true, '', navmenu($course));
+    print_header_simple($strgrades.': '.$strgraderreport, ': '.$stroutcomeedit, $navigation, '', '', true, '', navmenu($course));
 
 } else {
     require_once $CFG->libdir.'/adminlib.php';

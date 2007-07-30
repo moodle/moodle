@@ -2158,6 +2158,18 @@ body#doc-contents ul {
   padding: 5px;
 }
 
+/* outcomes edit */
+
+.grade-edit-outcome .buttons {
+  margin: 20px;
+  text-align:center;
+}
+
+.grade-edit-outcome .buttons .singlebutton {
+  display: inline;
+  padding: 5px;
+}
+
 /* gradebook edit tree */
 
 .grade-edit-tree .gradetreebox {

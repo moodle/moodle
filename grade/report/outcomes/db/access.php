@@ -11,16 +11,6 @@ $gradereport_outcomes_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    ),
-
-    'gradereport/outcomes:manage' => array(
-        'riskbitmask' => RISK_CONFIG,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
     )
 
 );

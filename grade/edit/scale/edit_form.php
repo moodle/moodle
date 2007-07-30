@@ -14,7 +14,7 @@ class edit_scale_form extends moodleform {
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('advcheckbox', 'custom', get_string('coursescale', 'grades'));
+        $mform->addElement('advcheckbox', 'standard', get_string('scalestandard'));
 
         $mform->addElement('static', 'activities', get_string('activities'));
 
@@ -48,21 +48,33 @@ class edit_scale_form extends moodleform {
 
         $mform =& $this->_form;
 
+        $courseid = $mform->getElementValue('courseid');
+
         if ($id = $mform->getElementValue('id')) {
             $scale = grade_scale::fetch(array('id'=>$id));
-            if ($count = $scale->get_uses_count()) {
-                if (empty($scale->courseid)) {
-                    $mform->hardFreeze('custom');
-                }
+            $count = $scale->get_uses_count();
+
+            if ($count) {
                 $mform->hardFreeze('scale');
             }
+
+            if (empty($courseid)) {
+                $mform->hardFreeze('standard');
+
+            } else if (empty($scale->courseid) and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
+                $mform->hardFreeze('standard');
+
+            } else if ($count and !empty($scale->courseid)) {
+                $mform->hardFreeze('standard');
+            }
+
             $activities_el =& $mform->getElement('activities');
             $activities_el->setValue(get_string('usedinnplaces', '', $count));
 
         } else {
             $mform->removeElement('activities');
-            if (!has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
-                $mform->hardFreeze('custom');
+            if (empty($courseid) or !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
+                $mform->hardFreeze('standard');
             }
         }
     }

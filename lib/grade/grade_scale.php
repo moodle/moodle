@@ -97,6 +97,15 @@ class grade_scale extends grade_object {
     }
 
     /**
+     * Returns the most descriptive field for this object. This is a standard method used
+     * when we do not know the exact type of an object.
+     * @return string name
+     */
+    function get_name() {
+        return format_string($this->name);
+    }
+
+    /**
      * Loads the scale's items into the $scale_items array.
      * There are three ways to achieve this:
      * 1. No argument given: The $scale string is already loaded and exploded to an array of items.
@@ -171,7 +180,23 @@ class grade_scale extends grade_object {
     }
 
     /**
-     * Determines if scale can be deleted.
+     * Static function returning all global scales
+     * @return object
+     */
+    function fetch_all_global() {
+        return grade_scale::fetch_all(array('courseid'=>0));
+    }
+
+    /**
+     * Static function returning all local course scales
+     * @return object
+     */
+    function fetch_all_local($courseid) {
+        return grade_scale::fetch_all(array('courseid'=>$courseid));
+    }
+
+    /**
+     * Checks if scale can be deleted.
      * @return boolean
      */
     function can_delete() {

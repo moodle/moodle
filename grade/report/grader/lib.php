@@ -743,7 +743,7 @@ class grade_report_grader extends grade_report {
             $groupwheresql = null;
         }
 
-        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {           
+        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
             $totalcount = 0;
         } else {
             $totalcount = $this->get_numusers();
@@ -768,7 +768,7 @@ class grade_report_grader extends grade_report {
                 $sum_array[$itemid] = $csum->sum;
                 if ($totalcount) {
                     $count_array[$itemid] = $totalcount;
-                } else {  
+                } else {
                     $count_array[$itemid] = $csum->count;
                 }
             }

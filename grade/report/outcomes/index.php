@@ -4,15 +4,16 @@ include_once('../../../config.php');
 require_once($CFG->libdir . '/gradelib.php');
 require_once $CFG->dirroot.'/grade/lib.php';
 
-$courseid = required_param('id');                   // course id
+$courseid = required_param('id', PARAM_INT);                   // course id
 
 if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
 }
 
 require_login($course->id);
-
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+require_capability('gradereport/outcomes:view', $context);
 
 // Build navigation
 $strgrades = get_string('grades');
@@ -26,43 +27,27 @@ $navigation = build_navigation($navlinks);
 /// Print header
 print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
 print_grade_plugin_selector($courseid, 'report', 'outcomes');
-// Add tabs
-$currenttab = 'outcomereport';
-include('tabs.php');
 
-// Grab all outcomes, distinguishing between site-level and course-level outcomes
-$sql = "SELECT mdl_grade_outcomes.id,
-               mdl_grade_outcomes_courses.courseid,
-               mdl_grade_outcomes.shortname,
-               mdl_grade_outcomes.scaleid
-          FROM mdl_grade_outcomes
-     LEFT JOIN mdl_grade_outcomes_courses
-            ON (mdl_grade_outcomes.id = mdl_grade_outcomes_courses.outcomeid AND mdl_grade_outcomes_courses.courseid = $courseid)
-      ORDER BY mdl_grade_outcomes_courses.courseid DESC";
+//first make sure we have proper final grades
+grade_regrade_final_grades($courseid);
+
+// Grab all outcomes used in course
+$sql = "SELECT go.* FROM {$CFG->prefix}grade_outcomes go
+         WHERE go.id IN (SELECT gi.outcomeid FROM {$CFG->prefix}grade_items gi WHERE gi.courseid = $courseid)";
 
 $report_info = array();
 $outcomes = get_records_sql($sql);
 
 // Get grade_items that use each outcome
 foreach ($outcomes as $outcomeid => $outcome) {
-    $sql = "SELECT mdl_grade_items.id,
-                   mdl_grade_items.itemname,
-                   mdl_grade_items.itemmodule,
-                   mdl_grade_items.iteminstance,
-                   mdl_grade_items.itemtype,
-                   mdl_grade_items.itemnumber,
-                   mdl_grade_items.courseid,
-                   mdl_grade_items.idnumber
-              FROM mdl_grade_items
-             WHERE mdl_grade_items.outcomeid = $outcomeid";
-    $report_info[$outcomeid]['items'] = get_records_sql($sql);
+    $report_info[$outcomeid]['items'] = get_records_select('grade_items', "outcomeid = $outcomeid AND courseid = $courseid");
     $report_info[$outcomeid]['outcome'] = $outcome;
 
     // Get average grades for each item
     if (is_array($report_info[$outcomeid]['items'])) {
         foreach ($report_info[$outcomeid]['items'] as $itemid => $item) {
             $sql = "SELECT id, AVG(finalgrade) AS `avg`, COUNT(finalgrade) AS `count`
-                      FROM mdl_grade_grades
+                      FROM {$CFG->prefix}grade_grades
                      WHERE itemid = $itemid
                   GROUP BY itemid";
             $info = get_records_sql($sql);
@@ -113,8 +98,14 @@ foreach ($report_info as $outcomeid => $outcomedata) {
                 $items_html .= "<tr>\n";
             }
 
-            $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
-            $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.$item->itemname.'</a>';
+            $grade_item = new grade_item($item, false);
+
+            if ($item->itemtype == 'mod') {
+                $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
+                $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.$item->itemname.'</a>';
+            } else {
+                $itemname = $grade_item->get_name();
+            }
 
             $outcomedata['outcome']->sum += $item->avg;
             $gradehtml = $scale->get_nearest_item($item->avg);
