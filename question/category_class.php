@@ -370,30 +370,22 @@ class question_category_object {
 
     function edit_single_category($categoryid,$page=1) {
     /// Interface for adding a new category
-        global $USER;
+        global $CFG, $USER;
         $this->initialize();
 
         /// Interface for editing existing categories
         if ($category = get_record("question_categories", "id", $categoryid)) {
-            echo '<h2 align="center">';
-            echo $this->str->edit;
-            helpbutton("categories_edit", $this->str->editcategory, "quiz");
-            echo '</h2>';
-            echo '<table width="100%"><tr><td>';
+            print_heading_with_help($this->str->edit, 'categories_edit', 'quiz');
             $this->output_edit_single_table($category,$page);
-            echo '</td></tr></table>';
-            echo '<p><div align="center"><form action="category.php" method="get">
-                <div>
-                <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
-                <input type="hidden" name="id" value="' . $this->course->id . '" />
-                <input type="submit" value="' . $this->str->cancel . '" />
-                </div>
-                </form>
-                </div></p>';
+            echo '<div class="centerpara">';
+            print_single_button($CFG->wwwroot . '/question/category.php',
+                    array('id' => $this->course->id), $this->str->cancel);
+            echo '</div>';
             print_footer($this->course);
             exit;
         } else {
-            error("Category $categoryid not found", "category.php?id={$this->course->id}");
+            error("Category $categoryid not found",
+                    $CFG->wwwroot . "/question/category.php?id={$this->course->id}");
         }
     }
 
@@ -446,11 +438,11 @@ class question_category_object {
 
         // wrap the table in a form and output it
         echo '<p><form action="category.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+        echo '<fieldset class="invisiblefieldset" style="display: block;">';
+        echo '<input type="hidden" name="sesskey" value="' . $USER->sesskey . '" />'s;
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
-        echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />";
+        echo '<input type="hidden" name="page" value="' . $page . '" />';
         print_table($edittable);
         echo '</fieldset>';
         echo '</form></p>';
