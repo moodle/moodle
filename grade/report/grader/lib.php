@@ -743,38 +743,35 @@ class grade_report_grader extends grade_report {
             $groupwheresql = null;
         }
 
-        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
-            // non empty grades
-            $meanstr = "AND NOT g.finalgrade IS NULL";
+        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {           
+            $totalcount = 0;
         } else {
-            $meanstr = "";
+            $totalcount = $this->get_numusers();
         }
         if ($showaverages) {
-
-            /** SQL for finding the SUM grades of all visible users ($CFG->gradebookroles) or group sum*/
-            // do not sum -1 (no grade), treat as 0 for now
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
-                FROM {$CFG->prefix}grade_items gi LEFT JOIN
-                     {$CFG->prefix}grade_grades g ON gi.id = g.itemid RIGHT OUTER JOIN
-                     {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
+                FROM {$CFG->prefix}grade_items gi INNER JOIN
+                     {$CFG->prefix}grade_grades g ON gi.id = g.itemid INNER JOIN
+                     {$CFG->prefix}user u ON u.id = g.userid INNER JOIN
                      {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                      $groupsql
                 WHERE gi.courseid = $this->courseid
                      $groupwheresql
                 AND ra.roleid in ($this->gradebookroles)
                 AND ra.contextid ".get_related_contexts_string($this->context)."
-                $meanstr
                 GROUP BY g.itemid";
 
             $sum_array = array();
             $count_array = array();
             $sums = get_records_sql($SQL);
-
             foreach ($sums as $itemid => $csum) {
                 $sum_array[$itemid] = $csum->sum;
-                $count_array[$itemid] = $csum->count;
+                if ($totalcount) {
+                    $count_array[$itemid] = $totalcount;
+                } else {  
+                    $count_array[$itemid] = $csum->count;
+                }
             }
-
             $avghtml = '<tr><th>'.$straverage.'</th>';
             foreach ($this->items as $item) {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
