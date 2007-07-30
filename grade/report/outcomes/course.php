@@ -5,6 +5,7 @@
 
 include_once('../../../config.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once $CFG->dirroot.'/grade/lib.php';
 
 $page = optional_param('page', 0, PARAM_INT); // current page
 $search = optional_param('search', 0, PARAM_TEXT);
@@ -78,7 +79,7 @@ $navigation = build_navigation($navlinks);
 
 /// Print header
 print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
-
+print_grade_plugin_selector($courseid, 'report', 'outcomes');
     // Add tabs
     $currenttab = 'courseoutcomes';
     include('tabs.php');

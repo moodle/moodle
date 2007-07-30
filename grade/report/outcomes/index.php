@@ -2,6 +2,7 @@
 
 include_once('../../../config.php');
 require_once($CFG->libdir . '/gradelib.php');
+require_once $CFG->dirroot.'/grade/lib.php';
 
 $courseid = required_param('id');                   // course id
 
@@ -24,7 +25,7 @@ $navigation = build_navigation($navlinks);
 
 /// Print header
 print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);
-
+print_grade_plugin_selector($courseid, 'report', 'outcomes');
 // Add tabs
 $currenttab = 'outcomereport';
 include('tabs.php');
