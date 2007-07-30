@@ -1078,6 +1078,23 @@ function get_field_sql($sql) {
 }
 
 /**
+ * Get a single value from a table row where a particular select clause is true.
+ *
+ * @uses $CFG
+ * @param string $table the table to query.
+ * @param string $return the field to return the value of.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
+ */
+function get_fieldset_select($table, $return, $select) {
+    global $CFG;
+    if ($select) {
+        $select = ' WHERE '. $select;
+    }
+    return get_fieldset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . $select);
+}
+
+/**
  * Get an array of data from one or more fields from a database
  * use to get a column, or a series of distinct values
  *
