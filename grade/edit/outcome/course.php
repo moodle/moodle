@@ -15,26 +15,100 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:update', $context);
 
-/// form processing
-if ($data = data_submitted()) {
-    require_capability('moodle/grade:manageoutcomes', get_context_instance(CONTEXT_COURSE, $courseid));
-    if (!empty($data->add) && !empty($data->addoutcomes)) {
-    /// add all selected to course list
-        foreach ($data->addoutcomes as $add) {
-            $goc -> courseid = $courseid;
-            $goc -> outcomeid = $add;
-            insert_record('grade_outcomes_courses', $goc);
-        }
-    } else if (!empty($data->remove) && !empty($data->removeoutcomes)) {
-    /// remove all selected from course outcomes list
-        foreach ($data->removeoutcomes as $remove) {
-            delete_records('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $remove);
+/// return tracking object
+$gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcomes', 'courseid'=>$courseid));
+
+// first of all fix the state of outcomes_course table
+if (!$standardoutcomes = grade_outcome::fetch_all_global()) {
+    $standardoutcomes = array();
+}
+if (!$co_custom = grade_outcome::fetch_all_local($courseid)) {
+    $co_custom = array();
+}
+$co_standard_used = array();
+$co_standard_notused = array();
+
+if ($courseused = get_records('grade_outcomes_courses', 'courseid', $courseid, '', 'outcomeid')) {
+    $courseused = array_keys($courseused);
+} else {
+    $courseused = array();
+}
+
+// fix wrong entries in outcomes_courses
+foreach ($courseused as $oid) {
+    if (!array_key_exists($oid, $standardoutcomes) and !array_key_exists($oid, $co_custom)) {
+        delete_records('grade_outcomes_courses', 'outcomeid', $oid, 'courseid', $courseid);
+    }
+}
+
+// fix local custom outcomes missing in outcomes_course
+foreach($co_custom as $oid=>$outcome) {
+    if (!in_array($oid, $courseused)) {
+        $courseused[$oid] = $oid;
+        $obj = new object();
+        $obj->courseid = $courseid;
+        $obj->outcomeid = $oid;
+        insert_record('grade_outcomes_courses', $obj);
+    }
+}
+
+// now check all used standard outcomes are in outcomes_course too
+if ($realused = get_records_select('grade_items', "courseid=$courseid and outcomeid IS NOT NULL", '', 'outcomeid')) {
+    $realused = array_keys($realused);
+    foreach ($realused as $oid) {
+        if (array_key_exists($oid, $standardoutcomes)) {
+
+            $co_standard_used[$oid] = $standardoutcomes[$oid];
+            unset($standardoutcomes[$oid]);
+
+            if (!in_array($oid, $courseused)) {
+                $courseused[$oid] = $oid;
+                $obj = new object();
+                $obj->courseid = $courseid;
+                $obj->outcomeid = $oid;
+                insert_record('grade_outcomes_courses', $obj);
+            }
         }
     }
 }
 
-/// return tracking object
-$gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcomes', 'courseid'=>$courseid));
+// find all unused standard course outcomes - candidates for removal
+foreach ($standardoutcomes as $oid=>$outcome) {
+    if (in_array($oid, $courseused)) {
+        $co_standard_notused[$oid] = $standardoutcomes[$oid];
+        unset($standardoutcomes[$oid]);
+    }
+}
+
+
+/// form processing
+if ($data = data_submitted()) {
+    require_capability('moodle/grade:manageoutcomes', $context);
+    if (!empty($data->add) && !empty($data->addoutcomes)) {
+    /// add all selected to course list
+        foreach ($data->addoutcomes as $add) {
+            $add = clean_param($add, PARAM_INT);
+            if (!array_key_exists($add, $standardoutcomes)) {
+                continue;
+            }
+            $goc = new object();
+            $goc->courseid = $courseid;
+            $goc->outcomeid = $add;
+            insert_record('grade_outcomes_courses', $goc);
+        }
+
+    } else if (!empty($data->remove) && !empty($data->removeoutcomes)) {
+    /// remove all selected from course outcomes list
+        foreach ($data->removeoutcomes as $remove) {
+            $remove = clean_param($remove, PARAM_INT);
+            if (!array_key_exists($remove, $co_standard_notused)) {
+                continue;
+            }
+            delete_records('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $remove);
+        }
+    }
+    redirect('course.php?id='.$courseid); // we must redirect to get fresh data
+}
 
 $strgrades = get_string('grades');
 $pagename  = get_string('outcomescourse', 'grades');
@@ -43,23 +117,6 @@ $navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.
                   array('name'=>$pagename, 'link'=>'', 'type'=>'misc'));
 $navigation = build_navigation($navlinks);
 
-$outcomes = grade_outcome::fetch_all_global();
-$courseoutcomes = array();
-if ($coutcomes = get_records_sql('SELECT go.id, go.fullname
-                                       FROM '.$CFG->prefix.'grade_outcomes_courses goc,
-                                            '.$CFG->prefix.'grade_outcomes go
-                                        WHERE goc.courseid = '.$courseid.'
-                                       AND goc.outcomeid = go.id')) {
-    foreach ($coutcomes as $id=>$coutcome) {
-        $courseoutcomes[$id] = new grade_outcome(array('id'=>$id));
-    }
-}
-
-if (empty($courseoutcomes)) {
-    $courseoutcomes = grade_outcome::fetch_all(array('courseid'=>$courseid));
-} elseif ($mcourseoutcomes = grade_outcome::fetch_all(array('courseid'=>$courseid))) {
-    $courseoutcomes += $mcourseoutcomes;
-}
 /// Print header
 print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
 
