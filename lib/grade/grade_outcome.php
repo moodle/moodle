@@ -162,19 +162,54 @@ class grade_outcome extends grade_object {
 
     /**
      * Static function returning all global outcomes
+     * @static
      * @return object
      */
     function fetch_all_global() {
-        return grade_outcome::fetch_all(array('courseid'=>null));
+        if (!$outcomes = grade_outcome::fetch_all(array('courseid'=>null))) {
+            $outcomes = array();
+        }
+        return $outcomes;
     }
 
     /**
      * Static function returning all local course outcomes
+     * @static
+     * @param int $courseid
      * @return object
      */
     function fetch_all_local($courseid) {
-        return grade_outcome::fetch_all(array('courseid'=>$courseid));
+        if (!$outcomes =grade_outcome::fetch_all(array('courseid'=>$courseid))) {
+            $outcomes = array();
+        }
+        return $outcomes;
     }
+
+    /**
+     * Static method - returns all outcomes available in course
+     * @static
+     * @param int $courseid
+     * @return array
+     */
+    function fetch_all_available($courseid) {
+        global $CFG;
+
+        $result = array();
+        $sql = "SELECT go.*
+                  FROM {$CFG->prefix}grade_outcomes go, {$CFG->prefix}grade_outcomes_courses goc
+                 WHERE go.id = goc.outcomeid AND goc.courseid = {$courseid}
+              ORDER BY go.id ASC";
+
+        if ($datas = get_records_sql($sql)) {
+            foreach($datas as $data) {
+                $instance = new grade_outcome();
+                grade_object::set_properties($instance, $data);
+                $result[$instance->id] = $instance;
+            }
+        }
+        return $result;
+    }
+
 
     /**
      * Returns the most descriptive field for this object. This is a standard method used

@@ -19,13 +19,9 @@ require_capability('moodle/course:update', $context);
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcomes', 'courseid'=>$courseid));
 
 // first of all fix the state of outcomes_course table
-if (!$standardoutcomes = grade_outcome::fetch_all_global()) {
-    $standardoutcomes = array();
-}
-if (!$co_custom = grade_outcome::fetch_all_local($courseid)) {
-    $co_custom = array();
-}
-$co_standard_used = array();
+$standardoutcomes    = grade_outcome::fetch_all_global();
+$co_custom           = grade_outcome::fetch_all_local($courseid);
+$co_standard_used    = array();
 $co_standard_notused = array();
 
 if ($courseused = get_records('grade_outcomes_courses', 'courseid', $courseid, '', 'outcomeid')) {

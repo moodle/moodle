@@ -20,7 +20,7 @@ class edit_outcomeitem_form extends moodleform {
 
         // allow setting of outcomes on module items too
         $options = array();
-        if ($outcomes = grade_outcome::fetch_all(array('courseid'=>$COURSE->id), true)) {
+        if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
             foreach ($outcomes as $outcome) {
                 $options[$outcome->id] = $outcome->get_name();
             }
