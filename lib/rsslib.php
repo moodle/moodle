@@ -336,8 +336,8 @@ if (!isset($CFG->block_rss_client_submitters) ) {
 if (empty($CFG->block_rss_client_num_entries) ) {
     $CFG->block_rss_client_num_entries = 5; //default to 5 entries per block
 }
-if (!isset($CFG->block_rss_timeout) ) {
-    $CFG->block_rss_timeout = 30;
+if (!isset($CFG->block_rss_client_timeout) ) {
+    $CFG->block_rss_client_timeout = 30; //default to 30 mins
 }
 
 // Defines for moodle's use of magpierss classes
@@ -347,7 +347,7 @@ define('MAGPIE_DIR', $CFG->dirroot.'/lib/magpie/');
 define('MAGPIE_CACHE_DIR', $CFG->dataroot .'/cache/rsscache');
 define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config option, but perhaps this is something that should truly just be on unless the code is tweaked
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
-define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
+define('MAGPIE_CACHE_AGE', $CFG->block_rss_client_timeout * 60);
 define('MAGPIE_DEBUG', $CFG->debug); // magpie, like moodle, takes an integer debug
 
 // defines for config var block_rss_client_submitters
