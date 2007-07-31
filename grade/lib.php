@@ -122,11 +122,11 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
         }
 
         if (has_capability('course:update', $context)) {
-            $url = 'edit/favoutcomes/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'favoutcomes' ) {
+            $url = 'edit/courseoutcomes/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'courseoutcomes' ) {
                 $active = $url;
             }
-            $menu[$url] = get_string('favouriteoutcomes', 'grades');
+            $menu[$url] = get_string('courseoutcomes', 'grades');
         }
     }
 
