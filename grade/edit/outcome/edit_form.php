@@ -10,11 +10,11 @@ class edit_outcome_form extends moodleform {
         // visible elements
         $mform->addElement('header', 'general', get_string('outcomes', 'grades'));
 
-        $mform->addElement('text', 'fullname', get_string('fullname'));
+        $mform->addElement('text', 'fullname', get_string('fullname'), 'size="40"');
         $mform->addRule('fullname', get_string('required'), 'required');
         $mform->setType('fullname', PARAM_TEXT);
 
-        $mform->addElement('text', 'shortname', get_string('shortname'));
+        $mform->addElement('text', 'shortname', get_string('shortname'), 'size="20"');
         $mform->addRule('shortname', get_string('required'), 'required');
         $mform->setType('shortname', PARAM_NOTAGS);
 
@@ -24,6 +24,8 @@ class edit_outcome_form extends moodleform {
 
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
         $mform->addRule('scaleid', get_string('required'), 'required');
+
+        $mform->addElement('htmleditor', 'description', get_string('description'), array('cols'=>80, 'rows'=>20));
 
 
         // hidden params

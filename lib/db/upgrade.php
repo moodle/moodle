@@ -1045,6 +1045,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('shortname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('fullname', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
         $table->addFieldInfo('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
@@ -1197,6 +1198,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('shortname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('fullname', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
 
     /// Adding keys to table grade_outcomes_history
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1531,6 +1533,26 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+    if ($result && $oldversion < 2007073105) {
+
+    /// Define field description to be added to grade_outcomes
+        $table = new XMLDBTable('grade_outcomes');
+        $field = new XMLDBField('description');
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'scaleid');
+        /// Launch add field description
+            $result = $result && add_field($table, $field);
+        }
+
+        $table = new XMLDBTable('grade_outcomes_history');
+        $field = new XMLDBField('description');
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'scaleid');
+        /// Launch add field description
+            $result = $result && add_field($table, $field);
+        }
+
+    }
 
 
 /*

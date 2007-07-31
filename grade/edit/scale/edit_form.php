@@ -10,7 +10,7 @@ class edit_scale_form extends moodleform {
         // visible elements
         $mform->addElement('header', 'general', get_string('scale'));
 
-        $mform->addElement('text', 'name', get_string('name'));
+        $mform->addElement('text', 'name', get_string('name'), 'size="40"');
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 

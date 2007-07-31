@@ -73,6 +73,12 @@ class grade_outcome extends grade_object {
     var $scaleid;
 
     /**
+     * The description of this outcome - FORMAT_MOODLE.
+     * @var string $description
+     */
+    var $description;
+
+    /**
      * The userid of the person who last modified this outcome.
      * @var int $usermodified
      */
@@ -223,11 +229,11 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Returns outcome short name.
+     * Returns unique outcome short name.
      * @return string name
      */
     function get_shortname() {
-        return format_string($this->shortname);
+        return $this->shortname;
     }
 
     /**
