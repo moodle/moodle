@@ -164,7 +164,9 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
                 $caneditthisscale = has_capability('moodle/course:managescales', $context);
             }
             if ($caneditthisscale) {
-                $line[] = '<a href="'.$CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid.'&amp;id='.$scale->id.'">'.$scale->get_name().'</a>';
+                $url = $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid.'&amp;id='.$scale->id;
+                $url = $gpr->add_url_params($url);
+                $line[] = '<a href="'.$url.'">'.$scale->get_name().'</a>';
             } else {
                 $line[] = $scale->get_name();
             }
