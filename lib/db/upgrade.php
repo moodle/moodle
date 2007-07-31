@@ -1520,6 +1520,19 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
 
+    if ($result && $oldversion < 2007073103) {
+
+    /// Define field rawname to be added to tag
+        $table = new XMLDBTable('tag');
+        $field = new XMLDBField('rawname');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'name');
+
+    /// Launch add field rawname
+        $result = $result && add_field($table, $field);
+    }
+
+
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
