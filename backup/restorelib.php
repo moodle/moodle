@@ -1347,8 +1347,11 @@
                             //print_object ($GLOBALS['traverse_array']);         //Debug
                             //$GLOBALS['traverse_array']="";                     //Debug
                             //Now build the GRADE_PREFERENCES record structure
-
-                            $dbrec->courseid   = $restore->course_id;
+                            if ($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#']) {
+                                $dbrec->courseid   = $restore->course_id;  
+                            } else {
+                                $dbrec->courseid   = NULL;
+                            }
                             $dbrec->shortname =  backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
                             $dbrec->fullname =  backup_todb($info['GRADE_OUTCOME']['#']['FULLNAME']['0']['#']);
 
@@ -1362,8 +1365,22 @@
 
                             // Structure is equal to db, insert record
                             // If the shortname doesn't exist
-                            if (!$prerec = get_record('grade_outcomes','courseid',$dbrec->courseid,'shortname',$dbrec->shortname)) {
-                                $status = insert_record('grade_outcomes',$dbrec);
+                            
+                              
+                            if (!empty($dbrec->courseid)) {
+                                $course_to_search = 0;
+                            } else {
+                                $course_to_search = $restore->course_id;
+                            }
+                            
+                            if (!$prerec = get_record('grade_outcomes','courseid',$course_to_search,'shortname',$dbrec->shortname)) {
+                                $newid = insert_record('grade_outcomes',$dbrec);
+                            } else {
+                                $newid = $prerec->id;  
+                            }
+                            
+                            if ($newid) {
+                                backup_putid($restore->backup_unique_code,"grade_outcomes", $rec->old_id, $newid);
                             }
                         }
                         //Increment counters
@@ -1413,7 +1430,6 @@
                             $dbrec->courseid = $restore->course_id;
 
                             if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
-
                                 $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
                                 $dbrec->categoryid = $category->new_id;
                             }
@@ -1455,6 +1471,12 @@
                             } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
                                 if ($restoreall) {
                                     // TODO any special code needed here to restore course item without duplicating it?
+                                    // find the course category with depth 1, and course id = current course id
+                                    // this would have been already restored                                    
+                                    
+                                    $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
+                                    $dbrec->iteminstance = $cat->id;
+                                    
                                 } else {
                                     continue;
                                 }
@@ -1470,11 +1492,12 @@
 
                             if ($info['GRADE_ITEM']['#']['SCALEID']['0']['#']) {
                                 $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#']));
-                                $derec->scaleid = $scale->new_id;
+                                $dbrec->scaleid = $scale->new_id;
                             }
 
                             /// needs to be restored first
-                            $dbrec->outcomeid = backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']);
+                            $dbrec->outcomeid = backup_getid($restore->backup_unique_code,"grade_outcomes",backup_todb($info['GRADE_ITEM']['#']['OUTCOMEID']['0']['#']));                            
+                            
                             $dbrec->gradepass = backup_todb($info['GRADE_ITEM']['#']['GRADEPASS']['0']['#']);
                             $dbrec->multfactor = backup_todb($info['GRADE_ITEM']['#']['MULTFACTOR']['0']['#']);
                             $dbrec->plusfactor = backup_todb($info['GRADE_ITEM']['#']['PLUSFACTOR']['0']['#']);
@@ -1513,7 +1536,7 @@
                                 $dbrec->sortorder = $lastitem->sortorder + 1;
                             } else {
                                 // this is the first grade_item
-                                $dbrec->sortorder = 0;
+                                $dbrec->sortorder = 1;
                             }
 
                             $itemid = insert_record('grade_items',$dbrec);
@@ -1548,8 +1571,8 @@
                                     $grade->overridden = backup_todb($ite_info['#']['OVERRIDDEN']['0']['#']);
                                     $grade->excluded = backup_todb($ite_info['#']['EXCLUDED']['0']['#']);
 
-                                    insert_record('grade_grades', $grade);
-
+                                    $newid = insert_record('grade_grades', $grade);
+                                    backup_putid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['ID']['0']['#']), $newid);
                                     $counter++;
                                     if ($counter % 20 == 0) {
                                         if (!defined('RESTORE_SILENTLY')) {
@@ -1573,6 +1596,7 @@
                                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
                                     $grade = backup_getid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['GRADEID']['0']['#']));
+                                    
                                     $text->gradeid = $grade->new_id;
                                     $text->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
                                     $text->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);

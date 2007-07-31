@@ -1494,6 +1494,7 @@
                 //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_item->id));
+                fwrite ($bf,full_tag("CATEGORYID",5,false,$grade_item->categoryid));
                 fwrite ($bf,full_tag("ITEMNAME",5,false,$grade_item->itemname));
                 fwrite ($bf,full_tag("ITEMTYPE",5,false,$grade_item->itemtype));
                 fwrite ($bf,full_tag("ITEMMODULE",5,false,$grade_item->itemmodule));
@@ -1535,31 +1536,43 @@
 
         $status = true;
 
-        // get all the grade_items
-        // might need to do it using sortorder
-        if ($grade_outcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course)) {
+        // get all global outcomes (used in this course) 
+        // and course specific outcomes
+        // we don't need to backup all the outcomes in this case        
+        $grade_outcomes = get_records_sql('SELECT go.*
+                                       FROM '.$CFG->prefix.'grade_outcomes_courses goc,
+                                            '.$CFG->prefix.'grade_outcomes go
+                                        WHERE goc.courseid = '.$preferences->backup_course.'
+                                       AND goc.outcomeid = go.id');
 
-            //Begin grade_items tag
+        if (empty($grade_outcomes)) {
+            $grade_outcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course);
+        } elseif ($mcourseoutcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course)) {
+            $grade_outcomes += $mcourseoutcomes;
+        }
+
+        if (!empty($grade_outcomes)) {
+            //Begin grade_outcomes tag
             fwrite ($bf,start_tag("GRADE_OUTCOMES",3,true));
-            //Iterate for each item
+            //Iterate for each outcome
             foreach ($grade_outcomes as $grade_outcome) {
-                //Begin grade_item
+                //Begin grade_outcome
                 fwrite ($bf,start_tag("GRADE_OUTCOME",4,true));
                 //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_outcome->id));
+                fwrite ($bf,full_tag("COURSEID",5,false,$grade_outcome->courseid));             
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_outcome->fullname));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_outcome->scaleid));
                 fwrite ($bf,full_tag("USERMODIFIED",5,false,$grade_outcome->usermodified));
 
-                //End grade_item
+                //End grade_outcome
                 fwrite ($bf,end_tag("GRADE_OUTCOME",4,true));
             }
-            //End grade_items tag
+            //End grade_outcomes tag
             $status = fwrite ($bf,end_tag("GRADE_OUTCOMES",3,true));
         }
-
         return $status;
     }
 
