@@ -1041,6 +1041,16 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+
+    'moodle/tag:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    )
 );
 
 ?>

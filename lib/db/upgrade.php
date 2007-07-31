@@ -1453,6 +1453,73 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);      
     }
 
+
+    if ($result && $oldversion < 2007073101) {    // Add new tag tables
+
+    /// Define table tag to be created
+        $table = new XMLDBTable('tag');
+
+    /// Adding fields to table tag
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('tagtype', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+        $table->addFieldInfo('descriptionformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('flag', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '0');
+        $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+
+    /// Adding keys to table tag
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table tag
+        $table->addIndexInfo('name', XMLDB_INDEX_UNIQUE, array('name'));
+
+    /// Launch create table for tag
+        $result = $result && create_table($table);
+
+
+
+    /// Define table tag_correlation to be created
+        $table = new XMLDBTable('tag_correlation');
+
+    /// Adding fields to table tag_correlation
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('correlatedtags', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table tag_correlation
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table tag_correlation
+        $table->addIndexInfo('tagid', XMLDB_INDEX_UNIQUE, array('tagid'));
+
+    /// Launch create table for tag_correlation
+        $result = $result && create_table($table);
+
+
+
+    /// Define table tag_instance to be created
+        $table = new XMLDBTable('tag_instance');
+
+    /// Adding fields to table tag_instance
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('tagid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemtype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('itemid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table tag_instance
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table tag_instance
+        $table->addIndexInfo('tagiditem', XMLDB_INDEX_NOTUNIQUE, array('tagid', 'itemtype', 'itemid'));
+
+    /// Launch create table for tag_instance
+        $result = $result && create_table($table);
+
+    }
+
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
