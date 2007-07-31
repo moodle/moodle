@@ -108,7 +108,7 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * In addition to update() it also updates grade_outcomes_courses if needed 
+     * In addition to update() it also updates grade_outcomes_courses if needed
      * @param string $source from where was the object inserted
      * @return boolean success
      */
