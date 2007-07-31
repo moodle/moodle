@@ -32,17 +32,8 @@ print_grade_plugin_selector($courseid, 'report', 'outcomes');
 grade_regrade_final_grades($courseid);
 
 // Grab all outcomes used in course
-$sql = "SELECT mdl_grade_outcomes.id, 	
-               mdl_grade_outcomes_courses.courseid, 	
-               mdl_grade_outcomes.shortname, 	
-               mdl_grade_outcomes.scaleid 	
-          FROM mdl_grade_outcomes 	
-     LEFT JOIN mdl_grade_outcomes_courses 	
-            ON (mdl_grade_outcomes.id = mdl_grade_outcomes_courses.outcomeid AND mdl_grade_outcomes_courses.courseid = $courseid) 	
-      ORDER BY mdl_grade_outcomes_courses.courseid DESC";
-
 $report_info = array();
-$outcomes = get_records_sql($sql);
+$outcomes = grade_outcome::fetch_all_available($courseid);
 
 // Get grade_items that use each outcome
 foreach ($outcomes as $outcomeid => $outcome) {
