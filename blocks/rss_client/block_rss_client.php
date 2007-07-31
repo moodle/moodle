@@ -19,7 +19,8 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2006100102;
+        $this->version = 2007080100;
+        $this->cron = 1;
     }
 
     function preferred_width() {
@@ -43,6 +44,8 @@
 
     function get_content() {
         global $CFG, $editing, $COURSE, $USER;
+
+        $starttime =  microtime();
 
         if (!empty($COURSE)) {
             $this->courseid = $COURSE->id;
@@ -139,6 +142,7 @@
         }
 
         $this->content->text = $output;
+        //echo 'Time: ' . microtime_diff($starttime, microtime());
         return $this->content;
     }
 
@@ -282,6 +286,17 @@
          else {
              return s($textlib->substr($title,0,$max-3).'...');
          }
+     }
+
+     // cron function, used to refresh all the RSS feeds from Moodle cron
+     function cron() {
+         $rs = get_recordset('block_rss_client');
+         $counter = 0;
+         while  ($rec = rs_fetch_next_record($rs)) {
+             $counter ++;
+         }
+         rs_close($rs);
+         mtrace($counter . ' feeds refreshed');
      }
 }
 
