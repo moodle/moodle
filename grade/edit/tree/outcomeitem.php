@@ -110,7 +110,7 @@ if ($data = $mform->get_data(false)) {
         $grade_item->update();
     }
 
-    redirect($returnurl, 'temporary debug delay', 5);
+    redirect($returnurl);
 }
 
 $strgrades       = get_string('grades');

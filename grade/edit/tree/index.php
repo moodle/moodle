@@ -151,8 +151,8 @@ if ($moving) {
     print_single_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
     print_single_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
     print_single_button('outcomeitem.php', array('courseid'=>$course->id), get_string('addoutcomeitem', 'grades'), 'get');
-    print_single_button('tree.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
-    print_single_button('tree.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
+    //print_single_button('index.php', array('id'=>$course->id, 'action'=>'autosort'), get_string('autosort', 'grades'), 'get');
+    print_single_button('index.php', array('id'=>$course->id, 'action'=>'synclegacy'), get_string('synclegacygrades', 'grades'), 'get');
 }
 echo '</div>';
 print_footer($course);
