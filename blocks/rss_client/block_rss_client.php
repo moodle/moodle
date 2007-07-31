@@ -19,8 +19,8 @@
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2007080100;
-        $this->cron = 1;
+        $this->version = 2007080101;
+        $this->cron = 300; /// Set min time between cron executions to 300 secs (5 mins)
     }
 
     function preferred_width() {
@@ -45,10 +45,15 @@
     function get_content() {
         global $CFG, $editing, $COURSE, $USER;
 
-        $starttime =  microtime();
-
         if (!empty($COURSE)) {
             $this->courseid = $COURSE->id;
+        }
+
+    /// When displaying feeds in block, we double $CFG->block_rss_client_timeout
+    /// so those feeds retrieved and cached by the cron() process will have a
+    /// better chance to be used
+        if (!empty($CFG->block_rss_client_timeout)) {
+            $CFG->block_rss_client_timeout *= 2;
         }
 
         require_once($CFG->libdir .'/rsslib.php');
@@ -142,7 +147,6 @@
         }
 
         $this->content->text = $output;
-        //echo 'Time: ' . microtime_diff($starttime, microtime());
         return $this->content;
     }
 
@@ -290,13 +294,46 @@
 
      // cron function, used to refresh all the RSS feeds from Moodle cron
      function cron() {
+
+         global $CFG;
+
+     /// We are going to measure execution times
+         $starttime =  microtime();
+
+     /// And we have one initial $status
+         $status = true;
+
+     /// We require some stuff
+         require_once($CFG->libdir .'/rsslib.php');
+         require_once(MAGPIE_DIR .'rss_fetch.inc');
+
+         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
+             define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
+         }
+
+     /// Fetch all site feeds.
          $rs = get_recordset('block_rss_client');
          $counter = 0;
+         mtrace('');
          while  ($rec = rs_fetch_next_record($rs)) {
+             mtrace('    ' . $rec->url . ' ', '');
+         /// Fetch the rss feed, using standard magpie caching
+         /// so feeds will be renewed only if cache has expired
+             if ($rss = fetch_rss($rec->url)) {
+                 mtrace ('ok');
+             } else {
+                 mtrace ('error');
+                 $status = false;
+             }
              $counter ++;
          }
          rs_close($rs);
-         mtrace($counter . ' feeds refreshed');
+
+     /// Show times
+         mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');
+
+     /// And return $status
+         return $status;
      }
 }
 
