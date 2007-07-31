@@ -5798,7 +5798,21 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * @param string $iconpath  The path to the icon to be displayed
  */
 function page_doc_link($text='', $iconpath='') {
-    global $ME, $CFG;
+    global $ME, $COURSE, $CFG;
+
+    if (empty($CFG->docroot)) {
+        return '';
+    }
+
+    if (empty($COURSE->id)) {
+        $context = get_context_instance(CONTEXT_SYSTEM);
+    } else {
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+    }
+
+    if (!has_capability('moodle/site:doclinks', $context)) {
+        return '';
+    }
 
     if (empty($CFG->pagepath)) {
         $CFG->pagepath = $ME;
@@ -5824,10 +5838,6 @@ function page_doc_link($text='', $iconpath='') {
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
-
-    if (empty($CFG->docroot) ||  !has_capability('moodle/site:doclinks')) {
-        return '';
-    }
 
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
