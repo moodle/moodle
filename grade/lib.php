@@ -94,7 +94,8 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
 
 /// editing scripts - not real plugins
     if (has_capability('moodle/grade:manage', $context)
-      or has_capability('moodle/course:managescales', $context)) {
+      or has_capability('moodle/course:managescales', $context)
+      or has_capability('moodle/course:update', $context)) {
         $menu['edit']='--'.get_string('edit');
 
         if (has_capability('moodle/grade:manage', $context)) {
@@ -113,20 +114,16 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('scales');
         }
 
-        if (has_capability('moodle/grade:manage', $context)) {
-            $url = 'edit/outcome/index.php?id='.$courseid;
+        if (has_capability('moodle/grade:manage', $context) or has_capability('course:update', $context)) {
+            if (has_capability('moodle/grade:manage', $context)) {
+                $url = 'edit/outcome/index.php?id='.$courseid;
+            } else {
+                $url = 'edit/outcome/course.php?id='.$courseid;
+            }
             if ($active_type == 'edit' and $active_plugin == 'outcome' ) {
                 $active = $url;
             }
             $menu[$url] = get_string('outcomes', 'grades');
-        }
-
-        if (has_capability('course:update', $context)) {
-            $url = 'edit/courseoutcomes/index.php?id='.$courseid;
-            if ($active_type == 'edit' and $active_plugin == 'courseoutcomes' ) {
-                $active = $url;
-            }
-            $menu[$url] = get_string('courseoutcomes', 'grades');
         }
     }
 

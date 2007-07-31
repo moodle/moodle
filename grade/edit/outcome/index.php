@@ -75,6 +75,9 @@ if ($courseid) {
     /// Print the plugin selector at the top
     print_grade_plugin_selector($courseid, 'edit', 'outcome');
 
+    $currenttab = 'outcomes';
+    require('tabs.php');
+
 } else {
     admin_externalpage_print_header();
 }

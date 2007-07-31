@@ -155,6 +155,12 @@ class block_admin extends block_list {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" class="icon" alt="" />';
         }
 
+    /// Used outcomes
+        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />'; //TODO: add outcomes icon
+        }
+
     /// View course grades (or just your own grades, same link)
         if ((has_capability('moodle/grade:viewall', $context) or 
             (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {

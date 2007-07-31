@@ -17,7 +17,7 @@ require_capability('moodle/course:update', $context);
 
 /// form processing
 if ($data = data_submitted()) {
-    require_capability('gradereport/outcomes:manage', get_context_instance(CONTEXT_COURSE, $courseid));
+    require_capability('moodle/grade:manageoutcomes', get_context_instance(CONTEXT_COURSE, $courseid));
     if (!empty($data->add) && !empty($data->addoutcomes)) {
     /// add all selected to course list
         foreach ($data->addoutcomes as $add) {
@@ -34,10 +34,10 @@ if ($data = data_submitted()) {
 }
 
 /// return tracking object
-$gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'favoutcomes', 'courseid'=>$courseid));
+$gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcomes', 'courseid'=>$courseid));
 
 $strgrades = get_string('grades');
-$pagename  = get_string('courseoutcomes', 'grades');
+$pagename  = get_string('outcomescourse', 'grades');
 
 $navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
                   array('name'=>$pagename, 'link'=>'', 'type'=>'misc'));
@@ -51,7 +51,7 @@ if ($coutcomes = get_records_sql('SELECT go.id, go.fullname
                                         WHERE goc.courseid = '.$courseid.'
                                        AND goc.outcomeid = go.id')) {
     foreach ($coutcomes as $id=>$coutcome) {
-        $courseoutcomes[$id] = new grade_outcome(array('id'=>$id));     
+        $courseoutcomes[$id] = new grade_outcome(array('id'=>$id));
     }
 }
 
@@ -64,11 +64,13 @@ if (empty($courseoutcomes)) {
 print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
 
 /// Print the plugin selector at the top
-print_grade_plugin_selector($courseid, 'edit', 'courseoutcomes');
-print_heading(get_string('courseoutcomes', 'grades'));
+print_grade_plugin_selector($courseid, 'edit', 'outcome');
+
+$currenttab = 'courseoutcomes';
+require('tabs.php');
 
 check_theme_arrows();
-include_once('form.html');
+require('course_form.html');
 
 print_footer($course);
 ?>
