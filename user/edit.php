@@ -35,6 +35,12 @@
         error('User ID was incorrect');
     }
 
+    //user interests separated by commas
+    if (!empty($CFG->usetags)) {
+        require_once($CFG->dirroot.'/tag/lib.php');
+        $user->interests = tag_names_csv(get_item_tags('user',$userid));
+    }
+
     // remote users cannot be edited
     if (is_mnet_remote_user($user)) {
         redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
@@ -65,11 +71,13 @@
     //Load custom profile fields data
     profile_load_data($user);
 
+  
     //create form
     $userform = new user_edit_form();
     $userform->set_data($user);
 
     if ($usernew = $userform->get_data()) {
+
         add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
         $authplugin = get_auth_plugin($user->auth);
@@ -90,7 +98,12 @@
 
         //update preferences
         useredit_update_user_preference($usernew);
-
+        
+        //update interests
+        if (!empty($CFG->usetags)) {
+            useredit_update_interests($usernew, $usernew->interests);
+        }
+        
         //update user picture
         if (!empty($CFG->gdversion) and empty($CFG->disableuserimages)) {
             useredit_update_picture($usernew, $userform);

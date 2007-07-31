@@ -52,6 +52,12 @@
     //Load custom profile fields data
     profile_load_data($user);
 
+    //user interests separated by commas
+    if (!empty($CFG->usetags)) {
+        require_once($CFG->dirroot.'/tag/lib.php');
+        $user->interests = tag_names_csv(get_item_tags('user',$userid));
+    }
+
     //create form
     $userform = new user_editadvanced_form();
     $userform->set_data($user);
@@ -108,6 +114,11 @@
         //update preferences
         useredit_update_user_preference($usernew);
 
+        // update tags
+        if (!empty($CFG->usetags)) {
+            useredit_update_interests($usernew, $usernew->interests);
+        }
+
         //update user picture
         if (!empty($CFG->gdversion)) {
             useredit_update_picture($usernew, $userform);
@@ -116,7 +127,7 @@
         // update mail bounces
         useredit_update_bounces($user, $usernew);
 
-        /// update forum track preference
+        // update forum track preference
         useredit_update_trackforums($user, $usernew);
 
         // save custom profile fields data

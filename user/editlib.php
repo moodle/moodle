@@ -54,6 +54,11 @@ function useredit_update_trackforums($user, $usernew) {
     }
 }
 
+function useredit_update_interests($user, $cvs_tag_names)
+{
+    update_item_tags('user', $user->id, $cvs_tag_names);
+}
+
 function useredit_shared_definition(&$mform) {
     global $CFG;
 
@@ -216,6 +221,12 @@ function useredit_shared_definition(&$mform) {
 
     }
 
+    if( !empty($CFG->usetags)) {
+        $mform->addElement('header', 'moodle_interests', get_string('interests'));
+        $mform->addElement('static', 'helptextinterests', '' , get_string('enteryourinterests'));
+        $mform->addElement('textarea', 'interests', get_string('interests'), 'cols="45" rows="3"');
+    }
+    
     /// Moodle optional fields
     $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
     $mform->setAdvanced('moodle_optional');
@@ -255,6 +266,8 @@ function useredit_shared_definition(&$mform) {
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
     $mform->setType('address', PARAM_MULTILANG);
+    
+    
 }
 
 ?>

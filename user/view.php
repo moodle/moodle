@@ -4,6 +4,8 @@
     
     require_once("../config.php");
     require_once($CFG->dirroot.'/user/profile/lib.php');
+    require_once($CFG->dirroot.'/tag/lib.php');
+    
     $id      = optional_param('id',     0,      PARAM_INT);   // user id
     $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
     $enable  = optional_param('enable', '');                  // enable email
@@ -370,6 +372,18 @@
         }
     }
 /// End of printing groups
+
+/// Printing Interests
+	if( !empty($CFG->usetags)) {
+	    $interests = get_item_tags('user', $user->id);
+    
+        $instereststr = tag_links_csv($interests);
+    
+        if ($interests) {
+            print_row(get_string('interests').": ",rtrim($instereststr));
+        }
+    }
+/// End of Printing Interests    
 
     echo "</table>";
 
