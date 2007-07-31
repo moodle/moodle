@@ -4,6 +4,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once($CFG->libdir.'/gradelib.php');
 
     require_login();
 
@@ -100,6 +101,16 @@
         $form->return = $return;
         $form->update = $update;
 
+        // add existing outcomes
+        if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
+                                           'iteminstance'=>$form->instance, 'courseid'=>$COURSE->id))) {
+            foreach ($items as $item) {
+                if (!empty($item->outcomeid)) {
+                    $form->{'outcome_'.$item->outcomeid} = 1;
+                }
+            }
+        }
+
         $sectionname = get_section_name($course->format);
         $fullmodulename = get_string("modulename", $module->name);
 
@@ -149,7 +160,7 @@
         } else {
             redirect("view.php?id=$course->id#section-".$cousesection);
         }
-    } else if ($fromform=$mform->get_data()){
+    } else if ($fromform = $mform->get_data()) {
         if (empty($fromform->coursemodule)) { //add
             if (! $course = get_record("course", "id", $fromform->course)) {
                 error("This course doesn't exist");
@@ -281,6 +292,54 @@
                        "$fromform->instance", $fromform->coursemodule);
         } else {
             error("Data submitted is invalid.");
+        }
+
+        // add outcomes if requested
+        if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+            foreach($outcomes as $outcome) {
+                $elname = 'outcome_'.$outcome->id;
+                if (array_key_exists($elname, $fromform) and $fromform->$elname) {
+                    // we have a request for new outcome grade item
+                    $grade_item = new grade_item();
+                    $max = 999;
+                    if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
+                                 'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id))) {
+                        $exists = false;
+                        foreach($items as $item) {
+                            if ($item->outcomeid == $outcome->id) {
+                                $exists = true;
+                                break;
+                            }
+                            if (empty($item->outcomeid)) {
+                                continue;
+                            }
+                            if ($item->itemnumber > $max) {
+                                $max = $item->itemnumber;
+                            }
+                        }
+                    }
+                    if ($exists) {
+                        continue;
+                    }
+                    $grade_item->courseid     = $COURSE->id;
+                    $grade_item->itemtype     = 'mod';
+                    $grade_item->itemmodule   = $fromform->modulename;
+                    $grade_item->iteminstance = $fromform->instance;
+                    $grade_item->itemnumber   = $max + 1;
+                    $grade_item->itemname     = $fromform->name.' - '.$outcome->fullname;
+                    $grade_item->outcomeid    = $outcome->id;
+                    $grade_item->gradetype    = GRADE_TYPE_SCALE;
+                    $grade_item->scaleid      = $outcome->scaleid;
+
+                    $grade_item->insert();
+
+                    if ($item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$grade_item->itemmodule,
+                                 'iteminstance'=>$grade_item->iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
+                        $grade_item->set_parent($item->categoryid);
+                        $grade_item->move_after_sortorder($item->sortorder);
+                    }
+                }
+            }
         }
 
         rebuild_course_cache($course->id);

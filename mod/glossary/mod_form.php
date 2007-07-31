@@ -150,7 +150,8 @@ class mod_glossary_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    function definition_after_data(){
+    function definition_after_data() {
+        parent::definition_after_data();
         global $COURSE;
         $mform    =& $this->_form;
         $mainglossaryel =& $mform->getElement('mainglossary');

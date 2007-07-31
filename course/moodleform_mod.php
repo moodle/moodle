@@ -35,6 +35,7 @@ class moodleform_mod extends moodleform {
         $this->_cm = $cm;
         parent::moodleform('modedit.php');
     }
+
     /**
      * Only available on moodleform_mod.
      *
@@ -42,6 +43,29 @@ class moodleform_mod extends moodleform {
      */
     function data_preprocessing(&$default_values){
     }
+
+    function definition_after_data() {
+        global $COURSE;
+        $mform =& $this->_form;
+
+        if ($id = $mform->getElementValue('update')) {
+            $modulename = $mform->getElementValue('modulename');
+            $instance   = $mform->getElementValue('instance');
+
+            if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,
+                                               'iteminstance'=>$instance, 'courseid'=>$COURSE->id))) {
+                foreach ($items as $item) {
+                    if (!empty($item->outcomeid)) {
+                        $elname = 'outcome_'.$item->outcomeid;
+                        if ($mform->elementExists($elname)) {
+                            $mform->hardFreeze($elname); // prevent removing of existing outcomes
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Load in existing data as form defaults. Usually new entry defaults are stored directly in
      * form definition (new entry form); this function is used to load in data where values
@@ -56,12 +80,14 @@ class moodleform_mod extends moodleform {
         $this->data_preprocessing($default_values);
         parent::set_data($default_values + $this->standard_coursemodule_elements_settings());//never slashed for moodleform_mod
     }
+
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
      *
      * @param bool $supportsgroups does this module support groups?
      */
     function standard_coursemodule_elements($supportsgroups=true){
+        global $COURSE;
         $mform =& $this->_form;
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
         if ($supportsgroups){
@@ -70,6 +96,14 @@ class moodleform_mod extends moodleform {
         }
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
+
+        if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+            $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
+            foreach($outcomes as $outcome) {
+                $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
+            }
+            
+        }
         $this->standard_hidden_coursemodule_elements();
     }
 
