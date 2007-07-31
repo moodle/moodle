@@ -552,6 +552,7 @@ $string['enrolstartdate'] = 'Start date';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your
    password and have the new password sent to you via email.';
+$string['enteryourinterests'] = 'Enter your interests separated by commas';
 $string['entries'] = 'Entries';
 $string['error'] = 'Error';
 $string['errortoomanylogins'] = 'Sorry, you have exceeded the allowed number of login attempts. Restart your browser.';
@@ -773,6 +774,7 @@ $string['includeuserfiles'] = 'Include User Files';
 $string['info'] = 'Information';
 $string['institution'] = 'Institution';
 $string['instudentview'] = 'in student view';
+$string['interests'] = 'Interests';
 $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['ip_address'] = 'IP Address';
