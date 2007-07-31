@@ -99,10 +99,12 @@ class grade_outcome extends grade_object {
      */
     function insert($source=null) {
         if ($result = parent::insert($source)) {
-            $goc = new object();
-            $goc->courseid = $this->courseid;
-            $goc->outcomeid = $this->id;
-            insert_record('grade_outcomes_courses', $goc);
+            if (!empty($this->courseid)) {
+                $goc = new object();
+                $goc->courseid = $this->courseid;
+                $goc->outcomeid = $this->id;
+                insert_record('grade_outcomes_courses', $goc);
+            }
         }
         return $result;
     }
