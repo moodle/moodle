@@ -397,6 +397,7 @@
         $rolenames = array(0 => get_string('all')) + $rolenames;
         popup_form("$CFG->wwwroot/user/index.php?contextid=$context->id&amp;sifirst=&amp;silast=&amp;roleid=", $rolenames,
                    'rolesform', $roleid, '');
+        echo '</div>';
     }
 
     if ($roleid) {
