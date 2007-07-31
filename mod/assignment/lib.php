@@ -503,6 +503,7 @@ class assignment_base {
 
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
+                $this->process_outcomes();
                 if ($submission = $this->process_feedback()) {
                     //IE needs proper header with encoding
                     print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
@@ -615,6 +616,7 @@ class assignment_base {
             case 'saveandnext':
                 ///We are in pop up. save the current one and go to the next one.
                 //first we save the current changes
+                $this->process_outcomes();
                 if ($submission = $this->process_feedback()) {
                     //print_heading(get_string('changessaved'));
                     $extra_javascript = $this->update_main_listing($submission);
@@ -842,6 +844,23 @@ class assignment_base {
         echo '<div class="grade">'.get_string('grade').':';
         choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1);
         echo '</div>';
+
+        require_once($CFG->libdir.'/gradelib.php');
+        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
+            echo '<div class="outcomes">';
+            foreach($outcomes as $n=>$data) {
+                echo format_string($data->name).':';
+                $options = make_grades_menu(-$data->scaleid);
+                if ($data->locked) {
+                    $options[0] = get_string('nograde');
+                    echo $options[$data->grade];
+                } else {
+                    choose_from_menu($options, 'outcome_'.$n, $data->grade, get_string('nograde'), '', -1);
+                }
+            }
+            echo '</div>';
+        }
+
         echo '<div class="clearer"></div>';
 
         $this->preprocess_submission($submission);
@@ -1193,6 +1212,36 @@ class assignment_base {
         echo '</form>';
         ///End of mini form
         print_footer($this->course);
+    }
+
+    /**
+     *  Process teacher outcomes
+     *
+     * This is called by submissions() when a grading even has taken place.
+     * It gets its data from the submitted form.
+     */
+    function process_outcomes() {
+        global $CFG;
+
+        if (!$formdata = data_submitted()) {      // No incoming data?
+            return;
+        }
+
+        $userid = $formdata->userid;
+
+        require_once($CFG->libdir.'/gradelib.php');
+        $data = array();
+        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
+            foreach($outcomes as $n=>$old) {
+                $name = 'outcome_'.$n;
+                if (array_key_exists($name, $formdata)) {
+                    $data[$n] = $formdata->$name;
+                }
+            }
+        }
+        if (count($data) > 0) {
+            grade_update_outcomes('mod/assignment', $this->course->id, 'mod', 'assignment', $this->assignment->id, $userid, $data);
+        }
     }
 
     /**

@@ -988,14 +988,14 @@ class grade_item extends grade_object {
      * @param int $userid
      * @return object grade_grade object instance
      */
-    function get_grade($userid) {
+    function get_grade($userid, $create=true) {
         if (empty($this->id)) {
             debugging('Can not use before insert');
             return false;
         }
 
         $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$this->id));
-        if (empty($grade->id)) {
+        if (empty($grade->id) and $create) {
             $grade->insert();
         }
 

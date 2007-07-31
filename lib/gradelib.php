@@ -96,7 +96,7 @@ require_once($CFG->libdir . '/grade/grade_grade_text.php');
  *
  * @param string $source source of the grade such as 'mod/assignment', often used to prevent infinite loops when processing grade_updated events
  * @param int $courseid id of course
- * @param string $itemtype type of grade item - mod, block, gradecategory, calculated
+ * @param string $itemtype type of grade item - mod, block
  * @param string $itemmodule more specific then $itemtype - assignment, forum, etc.; maybe NULL for some item types
  * @param int $iteminstance instance it of graded subject
  * @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
@@ -262,22 +262,21 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
 
 /**
-* Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
-* This is a combination of the actual settings in the grade tables and a check on moodle/course:editgradeswhenlocked.
-* If it's locked to the current use then the module can print a nice message or prevent editing in the module.
-* If no $userid is given, the method will always return the grade_item's locked state.
-* If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
-* the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
-* return the locked state of the specific grade.
-*
-* @param int $courseid id of course
-* @param string $itemtype 'mod', 'blocks', 'import', 'calculated' etc
-* @param string $itemmodule 'forum, 'quiz', 'csv' etc
-* @param int $iteminstance id of the item module
-* @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
-* @param int $userid ID of the graded user
-* @return boolean Whether the grade is locked or not
-*/
+ * Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
+ * If it's locked to the current use then the module can print a nice message or prevent editing in the module.
+ * If no $userid is given, the method will always return the grade_item's locked state.
+ * If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
+ * the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will
+ * return the locked state of the specific grade.
+ *
+ * @param int $courseid id of course
+ * @param string $itemtype 'mod', 'block'
+ * @param string $itemmodule 'forum, 'quiz', etc.
+ * @param int $iteminstance id of the item module
+ * @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
+ * @param int $userid ID of the graded user
+ * @return boolean Whether the grade is locked or not
+ */
 function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $userid=NULL) {
 
     if (!$grade_items = grade_item::fetch_all(compact('courseid', 'itemtype', 'itemmodule', 'iteminstance', 'itemnumber'))) {
@@ -295,6 +294,67 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
             }
         }
         return false;
+    }
+}
+
+/**
+ * Returns list of outcomes used in course together with current outcomes for this user
+ * @param int $courseid id of course
+ * @param string $itemtype 'mod', 'block'
+ * @param string $itemmodule 'forum, 'quiz', etc.
+ * @param int $iteminstance id of the item module
+ * @param int $userid ID of the graded user
+ * @return array of outcome information objects (scaleid, name, grade and locked status) indexed with itemnumbers
+ */
+function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $userid) {
+    $result = array();
+    if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
+        foreach ($items as $item) {
+            if (empty($item->outcomeid)) {
+                continue;
+            }
+            if (!$outcome = grade_outcome::fetch(array('id'=>$item->outcomeid))) {
+                debugging('Incorect outcomeid found');
+                continue;
+            }
+            // prepare outcome info with user grade
+            $o = new object();
+            $o->scaleid = $outcome->scaleid;
+            $o->name    = $outcome->fullname;
+
+            if ($grade = $item->get_grade($userid,false)) {
+                $o->grade  = $grade->finalgrade;
+                $o->locked = $grade->is_locked();
+            } else {
+                $o->grade = null;
+                $o->locked = $item->is_locked();
+            }
+            $o->grade = intval($o->grade); // 0 means no grade, int for scales
+            
+            $result[$item->itemnumber] = $o;
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Updates outcomes of user
+ * @param int $courseid id of course
+ * @param string $itemtype 'mod', 'block'
+ * @param string $itemmodule 'forum, 'quiz', etc.
+ * @param int $iteminstance id of the item module
+ * @param int $userid ID of the graded user
+ */
+function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $iteminstance, $userid, $data) {
+    if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
+        foreach ($items as $item) {
+            if (!array_key_exists($item->itemnumber, $data)) {
+                continue;
+            }
+            $grade = $data[$item->itemnumber] < 1 ? null : $data[$item->itemnumber];
+            $item->update_final_grade($userid, $grade, $source);
+        }        
     }
 }
 
