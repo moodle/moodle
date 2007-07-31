@@ -9,6 +9,9 @@
 
             <?php
             foreach ($outcomes as $outcome) {
+                if (in_array($outcome->id, array_keys($courseoutcomes))) {
+                    continue;
+                }
                 echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
             }
             ?>
@@ -22,11 +25,11 @@
             </p>
         </td>
         <td>
-            <label for="removeoutcomes"><?php print_string('favoutcomes', 'grades'); ?></label>
+            <label for="removeoutcomes"><?php print_string('courseoutcomes', 'grades'); ?></label>
             <br />
             <select id="removeoutcomes" size="20" name="removeoutcomes[]" multiple="multiple">
             <?php
-            foreach ($favoutcomes as $outcome) {
+            foreach ($courseoutcomes as $outcome) {
                 echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
             }
             ?>
