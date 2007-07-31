@@ -278,63 +278,62 @@
         return $returnstring;
     }
 
-     // just strips the title down and adds ... for excessively long titles.
-     function format_title($title,$max=64) {
+    // just strips the title down and adds ... for excessively long titles.
+    function format_title($title,$max=64) {
 
-     /// Loading the textlib singleton instance. We are going to need it.
-         $textlib = textlib_get_instance();
+    /// Loading the textlib singleton instance. We are going to need it.
+        $textlib = textlib_get_instance();
 
-         if ($textlib->strlen($title) <= $max) {
-             return s($title);
-         }
-         else {
-             return s($textlib->substr($title,0,$max-3).'...');
-         }
-     }
+        if ($textlib->strlen($title) <= $max) {
+            return s($title);
+        } else {
+            return s($textlib->substr($title,0,$max-3).'...');
+        }
+    }
 
-     // cron function, used to refresh all the RSS feeds from Moodle cron
-     function cron() {
+    // cron function, used to refresh all the RSS feeds from Moodle cron
+    function cron() {
 
-         global $CFG;
+        global $CFG;
 
-     /// We are going to measure execution times
-         $starttime =  microtime();
+    /// We are going to measure execution times
+        $starttime =  microtime();
 
-     /// And we have one initial $status
-         $status = true;
+    /// And we have one initial $status
+        $status = true;
 
-     /// We require some stuff
-         require_once($CFG->libdir .'/rsslib.php');
-         require_once(MAGPIE_DIR .'rss_fetch.inc');
+    /// We require some stuff
+        require_once($CFG->libdir .'/rsslib.php');
+        require_once(MAGPIE_DIR .'rss_fetch.inc');
 
-         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-             define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
-         }
+        if (!defined('MAGPIE_OUTPUT_ENCODING')) {
+            define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
+        }
 
-     /// Fetch all site feeds.
-         $rs = get_recordset('block_rss_client');
-         $counter = 0;
-         mtrace('');
-         while  ($rec = rs_fetch_next_record($rs)) {
-             mtrace('    ' . $rec->url . ' ', '');
-         /// Fetch the rss feed, using standard magpie caching
-         /// so feeds will be renewed only if cache has expired
-             if ($rss = fetch_rss($rec->url)) {
-                 mtrace ('ok');
-             } else {
-                 mtrace ('error');
-                 $status = false;
-             }
-             $counter ++;
-         }
-         rs_close($rs);
+    /// Fetch all site feeds.
+        $rs = get_recordset('block_rss_client');
+        $counter = 0;
+        mtrace('');
+        while  ($rec = rs_fetch_next_record($rs)) {
+            mtrace('    ' . $rec->url . ' ', '');
+        /// Fetch the rss feed, using standard magpie caching
+        /// so feeds will be renewed only if cache has expired
+            if ($rss = fetch_rss($rec->url)) {
+                mtrace ('ok');
+            } else {
+                mtrace ('error');
+                $status = false;
+            }
+            $counter ++;
+        }
+        rs_close($rs);
 
-     /// Show times
-         mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');
+    /// Show times
+        mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');
 
-     /// And return $status
-         return $status;
-     }
+    /// And return $status
+        return $status;
+    }
 }
 
 ?>
