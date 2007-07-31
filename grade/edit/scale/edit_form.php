@@ -52,7 +52,7 @@ class edit_scale_form extends moodleform {
 
         if ($id = $mform->getElementValue('id')) {
             $scale = grade_scale::fetch(array('id'=>$id));
-            $count = $scale->get_uses_count();
+            $count = $scale->get_item_uses_count();
 
             if ($count) {
                 $mform->hardFreeze('scale');

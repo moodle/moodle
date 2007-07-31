@@ -108,6 +108,25 @@ class grade_outcome extends grade_object {
     }
 
     /**
+     * In addition to update() it also updates grade_outcomes_courses if needed 
+     * @param string $source from where was the object inserted
+     * @return boolean success
+     */
+    function update($source=null) {
+        if ($result = parent::update($source)) {
+            if (!empty($this->courseid)) {
+                if (!get_records('grade_outcomes_courses', 'courseid', $this->courseid, 'outcomeid', $this->id)) {
+                    $goc = new object();
+                    $goc->courseid = $this->courseid;
+                    $goc->outcomeid = $this->id;
+                    insert_record('grade_outcomes_courses', $goc);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Finds and returns a grade_outcome instance based on params.
      * @static
      *

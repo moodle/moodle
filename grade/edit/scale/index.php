@@ -39,7 +39,7 @@ $strname           = get_string('name');
 $strdelete         = get_string('delete');
 $stredit           = get_string('edit');
 $srtcreatenewscale = get_string('scalescustomcreate');
-$stractivities     = get_string('activities');
+$stritems          = get_string('items', 'grades');
 $stredit           = get_string('edit');
 
 switch ($action) {
@@ -84,7 +84,7 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
         $line = array();
         $line[] = format_string($scale->name).'<div class="scale_options">'.str_replace(",",", ",$scale->scale).'</div>';
 
-        $scales_uses = $scale->get_uses_count();
+        $scales_uses = $scale->get_item_uses_count();
         $line[] = $scales_uses;
 
         $buttons = "";
@@ -97,7 +97,7 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
         $line[] = $buttons;
         $data[] = $line;
     }
-    $table->head  = array($strscale, $stractivities, $stredit);
+    $table->head  = array($strscale, $stritems, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
     $table->width = '90%';
@@ -112,7 +112,7 @@ if ($scales = grade_scale::fetch_all_global()) {
         $line = array();
         $line[] = format_string($scale->name).'<div class="scale_options">'.str_replace(",",", ",$scale->scale).'</div>';
 
-        $scales_uses = $scale->get_uses_count();
+        $scales_uses = $scale->get_item_uses_count();
         $line[] = $scales_uses;
 
         $buttons = "";
@@ -127,7 +127,7 @@ if ($scales = grade_scale::fetch_all_global()) {
         $line[] = $buttons;
         $data[] = $line;
     }
-    $table->head  = array($strscale, $stractivities, $stredit);
+    $table->head  = array($strscale, $stritems, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
     $table->width = '90%';

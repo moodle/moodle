@@ -200,7 +200,7 @@ class grade_scale extends grade_object {
      * @return boolean
      */
     function can_delete() {
-        $count = $this->get_uses_count();
+        $count = $this->get_item_uses_count();
         return empty($count);
     }
 
@@ -208,9 +208,10 @@ class grade_scale extends grade_object {
      * Returns the number of places where scale is used - activities, grade items, outcomes, etc.
      * @return int
      */
-    function get_uses_count() {
+    function get_item_uses_count() {
         global $CFG;
 
+//TODO: fix me - this methods does some duplicate counting in grade items and activities
         $count = 0;
         if (!empty($this->courseid)) {
             if ($scales_uses = course_scale_used($this->courseid,$this->id)) {
