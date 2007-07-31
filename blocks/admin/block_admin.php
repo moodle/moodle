@@ -61,7 +61,6 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" class="icon" alt="" />';
         }
             
-
     /// Assign roles to the course
 
         if (has_capability('moodle/role:assign', $context) && ($course->id!==SITEID)) { 
@@ -69,6 +68,26 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';         
             
         }
+
+    /// View course grades (or just your own grades, same link)
+        if ((has_capability('moodle/grade:viewall', $context) or 
+            (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
+        }
+
+    /// Course outcomes
+        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />'; //TODO: add outcomes icon
+        }
+
+    /// Manage scales
+        if (has_capability('moodle/course:managescales', $context) && ($course->id!==SITEID)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/scale/index.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" class="icon" alt="" />';      
+        }
+        
 
     /// Manage metacourses
         if ($course->metacourse) {
@@ -129,12 +148,6 @@ class block_admin extends block_list {
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" class="icon" alt="" />';
         }
 
-    /// Manage scales
-        if (has_capability('moodle/course:managescales', $context) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/scale/index.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" class="icon" alt="" />';      
-        }
-        
 
     /// Manage files
         if (has_capability('moodle/course:managefiles', $context) && ($course->id!==SITEID)) {
@@ -155,19 +168,7 @@ class block_admin extends block_list {
             $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/payment.gif" class="icon" alt="" />';
         }
 
-    /// Used outcomes
-        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />'; //TODO: add outcomes icon
-        }
-
-    /// View course grades (or just your own grades, same link)
-        if ((has_capability('moodle/grade:viewall', $context) or 
-            (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
-        }
-
+    /// Unenrol link
         if (empty($course->metacourse) && ($course->id!==SITEID)) {
             if (has_capability('moodle/legacy:guest', $context, NULL, false)) {   // Are a guest now
                 $this->content->items[]='<a href="enrol.php?id='.$this->instance->pageid.'">'.get_string('enrolme', '', format_string($course->shortname)).'</a>';
@@ -177,6 +178,7 @@ class block_admin extends block_list {
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" class="icon" alt="" />';
             }
         }
+
 
     /// Should the following two be in this block?
 
