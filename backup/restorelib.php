@@ -1357,23 +1357,24 @@
 
                             if ($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']) {
                                 $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_OUTCOME']['#']['SCALEID']['0']['#']));
-                                $derec->scaleid = $scale->new_id;
+                                $dbrec->scaleid = $scale->new_id;
                             }
 
                             $modifier = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_OUTCOME']['#']['USERMODIFIED']['0']['#']));
-                            $derec->usermodified = $modifier->new_id;
+                            $dbrec->usermodified = $modifier->new_id;
 
                             // Structure is equal to db, insert record
-                            // If the shortname doesn't exist
-                            
+                            // If the shortname doesn't exist                            
                               
-                            if (!empty($dbrec->courseid)) {
-                                $course_to_search = 0;
+                            if (empty($info['GRADE_OUTCOME']['#']['COURSEID']['0']['#'])) {
+                                $prerec = get_record_sql("SELECT * FROM {$CFG->prefix}grade_outcomes 
+                                                                   WHERE courseid IS NULL
+                                                                   AND shortname = '$dbrec->shortname'");
                             } else {
-                                $course_to_search = $restore->course_id;
+                                $prerec = get_record('grade_outcomes','courseid',$restore->course_id,'shortname',$dbrec->shortname);
                             }
                             
-                            if (!$prerec = get_record('grade_outcomes','courseid',$course_to_search,'shortname',$dbrec->shortname)) {
+                            if (!$prerec) {
                                 $newid = insert_record('grade_outcomes',$dbrec);
                             } else {
                                 $newid = $prerec->id;  
