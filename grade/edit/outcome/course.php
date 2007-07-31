@@ -45,10 +45,10 @@ foreach ($courseused as $oid) {
 foreach($co_custom as $oid=>$outcome) {
     if (!in_array($oid, $courseused)) {
         $courseused[$oid] = $oid;
-        $obj = new object();
-        $obj->courseid = $courseid;
-        $obj->outcomeid = $oid;
-        insert_record('grade_outcomes_courses', $obj);
+        $goc = new object();
+        $goc->courseid = $courseid;
+        $goc->outcomeid = $oid;
+        insert_record('grade_outcomes_courses', $goc);
     }
 }
 
@@ -63,10 +63,10 @@ if ($realused = get_records_select('grade_items', "courseid=$courseid and outcom
 
             if (!in_array($oid, $courseused)) {
                 $courseused[$oid] = $oid;
-                $obj = new object();
-                $obj->courseid = $courseid;
-                $obj->outcomeid = $oid;
-                insert_record('grade_outcomes_courses', $obj);
+                $goc = new object();
+                $goc->courseid = $courseid;
+                $goc->outcomeid = $oid;
+                insert_record('grade_outcomes_courses', $goc);
             }
         }
     }

@@ -90,7 +90,7 @@ if ($mform->is_cancelled()) {
         $scale->update();
     }
 
-    redirect($returnurl, 'temp debug delay', 3);
+    redirect($returnurl);
 }
 
 $strgrades       = get_string('grades');

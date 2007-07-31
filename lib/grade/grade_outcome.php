@@ -79,6 +79,35 @@ class grade_outcome extends grade_object {
     var $usermodified;
 
     /**
+     * Deletes this outcome from the database.
+     * @param string $source from where was the object deleted (mod/forum, manual, etc.)
+     * @return boolean success
+     */
+    function delete($source=null) {
+        if (!empty($this->courseid)) {
+            delete_records('grade_outcomes_courses', 'outcomeid', $this->id, 'courseid', $this->courseid);
+        }
+        return parent::delete($source);
+    }
+
+    /**
+     * Records this object in the Database, sets its id to the returned value, and returns that value.
+     * If successful this function also fetches the new object data from database and stores it
+     * in object properties.
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return int PK ID if successful, false otherwise
+     */
+    function insert($source=null) {
+        if ($result = parent::insert($source)) {
+            $goc = new object();
+            $goc->courseid = $this->courseid;
+            $goc->outcomeid = $this->id;
+            insert_record('grade_outcomes_courses', $goc);
+        }
+        return $result;
+    }
+
+    /**
      * Finds and returns a grade_outcome instance based on params.
      * @static
      *
@@ -150,26 +179,37 @@ class grade_outcome extends grade_object {
      * @return boolean
      */
     function can_delete() {
-        $count = $this->get_uses_count();
-        return empty($count);
+        if ($this->get_item_uses_count()) {
+            return false;
+        }
+        if (empty($this->courseid)) {
+            if ($this->get_course_uses_count()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Returns the number of places where outcome is used.
      * @return int
      */
-    function get_uses_count() {
+    function get_course_uses_count() {
         global $CFG;
 
-        $count = 0;
-
-        // count grade items
-        $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE outcomeid = {$this->id}";
-        if ($scales_uses = count_records_sql($sql)) {
-            $count += $scales_uses;
+        if (!empty($this->courseid)) {
+            return 1;
         }
 
-        return $count;
+        return count_records('grade_outcomes_courses', 'outcomeid', $this->id);
+    }
+
+    /**
+     * Returns the number of places where outcome is used.
+     * @return int
+     */
+    function get_item_uses_count() {
+        return count_records('grade_items', 'outcomeid', $this->id);
     }
 
     /**

@@ -80,9 +80,10 @@ class edit_outcome_form extends moodleform {
 
         if ($id = $mform->getElementValue('id')) {
             $outcome = grade_outcome::fetch(array('id'=>$id));
-            $count = $outcome->get_uses_count();
+            $itemcount   = $outcome->get_item_uses_count();
+            $coursecount = $outcome->get_course_uses_count();
 
-            if ($count) {
+            if ($itemcount) {
                 $mform->hardFreeze('scaleid');
             }
 
@@ -92,7 +93,7 @@ class edit_outcome_form extends moodleform {
             } else if (empty($outcome->courseid) and !has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
                 $mform->hardFreeze('standard');
 
-            } else if ($count and !empty($outcome->courseid)) {
+            } else if ($coursecount and empty($outcome->courseid)) {
                 $mform->hardFreeze('standard');
             }
 

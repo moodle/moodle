@@ -41,7 +41,8 @@ $strcustomoutcomes   = get_string('outcomescustom', 'grades');
 $strdelete           = get_string('delete');
 $stredit             = get_string('edit');
 $srtcreatenewoutcome = get_string('outcomecreate', 'grades');
-$stractivities       = get_string('activities');
+$stritems            = get_string('items', 'grades');
+$strcourses          = get_string('courses');
 $stredit             = get_string('edit');
 
 switch ($action) {
@@ -121,13 +122,12 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
             }
         }
 
-        $outcomes_uses = $outcome->get_uses_count();
-        $line[] = $outcomes_uses;
+        $line[] = $outcome->get_item_uses_count();
 
         $buttons = "";
         $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$outcome->id\"><img".
                     " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
-        if (empty($outcomes_uses)) {
+        if ($outcome->can_delete()) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
@@ -135,7 +135,7 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
         $data[] = $line;
     }
     $table = new object();
-    $table->head  = array($strfullname, $strshortname, $strscale, $stractivities, $stredit);
+    $table->head  = array($strfullname, $strshortname, $strscale, $stritems, $stredit);
     $table->size  = array('30%', '20%', '20%', '20%', '10%');
     $table->align = array('left', 'left', 'left', 'center', 'center');
     $table->width = '90%';
@@ -172,15 +172,15 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
             }
         }
 
-        $outcomes_uses = $outcome->get_uses_count();
-        $line[] = $outcomes_uses;
+        $line[] = $outcome->get_course_uses_count();
+        $line[] = $outcome->get_item_uses_count();
 
         $buttons = "";
         if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
             $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$outcome->id\"><img".
                         " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         }
-        if (empty($outcomes_uses) and has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('moodle/grade:manage', get_context_instance(CONTEXT_SYSTEM)) and $outcome->can_delete()) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;outcomeid=$outcome->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
@@ -188,9 +188,9 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
         $data[] = $line;
     }
     $table = new object();
-    $table->head  = array($strfullname, $strshortname, $strscale, $stractivities, $stredit);
-    $table->size  = array('30%', '20%', '20%', '20%', '10%');
-    $table->align = array('left', 'left', 'left', 'center', 'center');
+    $table->head  = array($strfullname, $strshortname, $strscale, $strcourses, $stritems, $stredit);
+    $table->size  = array('30%', '20%', '20%', '10%', '10%', '10%');
+    $table->align = array('left', 'left', 'left', 'center', 'center', 'center');
     $table->width = '90%';
     $table->data  = $data;
     print_table($table);
