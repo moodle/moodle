@@ -7132,5 +7132,37 @@ function in_object_vars($var, $object)
     return in_array($var, $class_vars);
 }
 
+/**
+ * Returns an array without repeated objects. 
+ * This function is similar to array_unique, but for arrays that have objects as values
+ * 
+ * @param unknown_type $array
+ * @param unknown_type $keep_key_assoc
+ * @return unknown
+ */
+function object_array_unique($array, $keep_key_assoc = true) {
+    $duplicate_keys = array();
+    $tmp         = array();       
+
+    foreach ($array as $key=>$val) {
+        // convert objects to arrays, in_array() does not support objects
+        if (is_object($val)) {
+            $val = (array)$val;
+        }
+
+        if (!in_array($val, $tmp)) {
+            $tmp[] = $val;
+        } else {
+            $duplicate_keys[] = $key;
+        }
+    }
+
+    foreach ($duplicate_keys as $key) {
+        unset($array[$key]);
+    }
+       
+    return $keep_key_assoc ? $array : array_values($array);
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
