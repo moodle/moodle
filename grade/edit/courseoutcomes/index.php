@@ -65,6 +65,7 @@ print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '',
 
 /// Print the plugin selector at the top
 print_grade_plugin_selector($courseid, 'edit', 'courseoutcomes');
+print_heading(get_string('courseoutcomes', 'grades'));
 
 check_theme_arrows();
 include_once('form.html');
