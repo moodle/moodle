@@ -37,7 +37,7 @@ class block_admin extends block_list {
             $course = $SITE;
         }
 
-        if (!has_capability('moodle/course:view', $context)) {  // Just return 
+        if (!has_capability('moodle/course:view', $context)) {  // Just return
             return $this->content;
         }
 
@@ -56,21 +56,21 @@ class block_admin extends block_list {
             } else {
                 $this->content->items[]='<a href="view.php?id='.$this->instance->pageid.'&amp;edit=on&amp;sesskey='.sesskey().'">'.get_string('turneditingon').'</a>';
             }
-            
+
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid.'">'.get_string('settings').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/settings.gif" class="icon" alt="" />';
         }
-            
+
     /// Assign roles to the course
 
-        if (has_capability('moodle/role:assign', $context) && ($course->id!==SITEID)) { 
+        if (has_capability('moodle/role:assign', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';         
-            
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';
+
         }
 
     /// View course grades (or just your own grades, same link)
-        if ((has_capability('moodle/grade:viewall', $context) or 
+        if ((has_capability('moodle/grade:viewall', $context) or
             (has_capability('moodle/grade:view', $context) && $course->showgrades)) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/report/index.php?id='.$this->instance->pageid.'">'.get_string('grades').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />';
@@ -79,19 +79,19 @@ class block_admin extends block_list {
     /// Course outcomes
         if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/grades.gif" class="icon" alt="" />'; //TODO: add outcomes icon
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';
         }
 
     /// Manage scales
         if (has_capability('moodle/course:managescales', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/scale/index.php?id='.$this->instance->pageid.'">'.get_string('scales').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" class="icon" alt="" />';      
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/scales.gif" class="icon" alt="" />';
         }
-        
+
 
     /// Manage metacourses
         if ($course->metacourse) {
-            if (has_capability('moodle/course:managemetacourse', $context)) { 
+            if (has_capability('moodle/course:managemetacourse', $context)) {
                 $strchildcourses = get_string('childcourses');
                 $this->content->items[]='<a href="importstudents.php?id='.$this->instance->pageid.'">'.$strchildcourses.'</a>';
                 $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/course.gif" class="icon" alt="" />';
@@ -113,35 +113,35 @@ class block_admin extends block_list {
 
     /// Backup this course
 
-        if (has_capability('moodle/site:backup', $context)&& ($course->id!==SITEID)) { 
+        if (has_capability('moodle/site:backup', $context)&& ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/backup/backup.php?id='.$this->instance->pageid.'">'.get_string('backup').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/backup.gif" class="icon" alt="" />';
         }
-            
+
     /// Restore to this course
         if (has_capability('moodle/site:restore', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'&amp;wdir=/backupdata">'.get_string('restore').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" class="icon" alt="" />';
         }
-        
+
     /// Import data from other courses
         if (has_capability('moodle/site:import', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/import.php?id='.$this->instance->pageid.'">'.get_string('import').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/restore.gif" class="icon" alt="" />';
         }
-        
+
     /// Reset this course
         if (has_capability('moodle/course:reset', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/reset.php?id='.$this->instance->pageid.'">'.get_string('reset').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/return.gif" class="icon" alt="" />';
         }
-        
+
     /// View course reports
         if (has_capability('moodle/site:viewreports', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/course/report.php?id='.$this->instance->pageid.'">'.get_string('reports').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/stats.gif" class="icon" alt="" />';
         }
-        
+
     /// Manage questions
         if (has_capability('moodle/question:manage', $context) && ($course->id!==SITEID)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
