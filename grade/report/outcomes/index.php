@@ -32,8 +32,14 @@ print_grade_plugin_selector($courseid, 'report', 'outcomes');
 grade_regrade_final_grades($courseid);
 
 // Grab all outcomes used in course
-$sql = "SELECT go.* FROM {$CFG->prefix}grade_outcomes go
-         WHERE go.id IN (SELECT gi.outcomeid FROM {$CFG->prefix}grade_items gi WHERE gi.courseid = $courseid)";
+$sql = "SELECT mdl_grade_outcomes.id, 	
+               mdl_grade_outcomes_courses.courseid, 	
+               mdl_grade_outcomes.shortname, 	
+               mdl_grade_outcomes.scaleid 	
+          FROM mdl_grade_outcomes 	
+     LEFT JOIN mdl_grade_outcomes_courses 	
+            ON (mdl_grade_outcomes.id = mdl_grade_outcomes_courses.outcomeid AND mdl_grade_outcomes_courses.courseid = $courseid) 	
+      ORDER BY mdl_grade_outcomes_courses.courseid DESC";
 
 $report_info = array();
 $outcomes = get_records_sql($sql);
@@ -67,24 +73,25 @@ foreach ($outcomes as $outcomeid => $outcome) {
     }
 }
 
-$html = '<table border="1" summary="Outcomes Report">' . "\n";
-$html .= '<tr><th>' . get_string('outcomename', 'grades') . '</th>';
-$html .= '<th>' . get_string('overallavg', 'grades') . '</th>';
-$html .= '<th>' . get_string('sitewide', 'grades') . '</th>';
-$html .= '<th>' . get_string('activities', 'grades') . '</th>';
-$html .= '<th>' . get_string('average', 'grades') . '</th>';
-$html .= '<th>' . get_string('numberofgrades', 'grades') . '</th></tr>' . "\n";
+$html = '<table class="generaltable boxaligncenter" width="90%" cellspacing="1" cellpadding="5" summary="Outcomes Report">' . "\n";
+$html .= '<tr><th class="header c0" scope="col">' . get_string('outcomename', 'grades') . '</th>';
+$html .= '<th class="header c1" scope="col">' . get_string('overallavg', 'grades') . '</th>';
+$html .= '<th class="header c2" scope="col">' . get_string('sitewide', 'grades') . '</th>';
+$html .= '<th class="header c3" scope="col">' . get_string('activities', 'grades') . '</th>';
+$html .= '<th class="header c4" scope="col">' . get_string('average', 'grades') . '</th>';
+$html .= '<th class="header c5" scope="col">' . get_string('numberofgrades', 'grades') . '</th></tr>' . "\n";
 
+$row = 0;
 foreach ($report_info as $outcomeid => $outcomedata) {
     $rowspan = count($outcomedata['items']);
-    $shortname_html = '<tr><td rowspan="' . $rowspan . '">' . $outcomedata['outcome']->shortname . "</td>\n";
+    $shortname_html = '<tr class="r' . $row . '"><td class="cell c0" rowspan="' . $rowspan . '">' . $outcomedata['outcome']->shortname . "</td>\n";
 
     $sitewide = get_string('no');
     if (empty($outcomedata['outcome']->courseid)) {
         $sitewide = get_string('yes');
     }
 
-    $sitewide_html = '<td rowspan="' . $rowspan . '">' . $sitewide . "</td>\n";
+    $sitewide_html = '<td class="cell c2" rowspan="' . $rowspan . '">' . $sitewide . "</td>\n";
 
     $outcomedata['outcome']->sum = 0;
     $scale = new grade_scale(array('id' => $outcomedata['outcome']->scaleid), false);
@@ -95,14 +102,15 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     if (is_array($outcomedata['items'])) {
         foreach ($outcomedata['items'] as $itemid => $item) {
             if ($print_tr) {
-                $items_html .= "<tr>\n";
+                $row++;
+                $items_html .= "<tr class=\"r$row\">\n";
             }
 
             $grade_item = new grade_item($item, false);
 
             if ($item->itemtype == 'mod') {
                 $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
-                $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.$item->itemname.'</a>';
+                $itemname = '<a href="'.$CFG->wwwroot.'/mod/'.$item->itemmodule.'/view.php?id='.$cm->id.'">'.$grade_item->get_name().'</a>';
             } else {
                 $itemname = $grade_item->get_name();
             }
@@ -110,11 +118,13 @@ foreach ($report_info as $outcomeid => $outcomedata) {
             $outcomedata['outcome']->sum += $item->avg;
             $gradehtml = $scale->get_nearest_item($item->avg);
 
-            $items_html .= "<td>$itemname</td><td>$gradehtml ($item->avg)</td><td>$item->count</td></tr>\n";
+            $items_html .= "<td class=\"cell c3\">$itemname</td>"
+                         . "<td class=\"cell c4\">$gradehtml ($item->avg)</td>"
+                         . "<td class=\"cell c5\">$item->count</td></tr>\n";
             $print_tr = true;
         }
     } else {
-        $items_html .= "<td> - </td><td> - </td><td> 0 </td></tr>\n";
+        $items_html .= "<td class=\"cell c3\"> - </td><td class=\"cell c4\"> - </td><td class=\"cell c5\"> 0 </td></tr>\n";
     }
 
     // Calculate outcome average
@@ -125,14 +135,17 @@ foreach ($report_info as $outcomeid => $outcomedata) {
         $avg_html = ' - ';
     }
 
-    $outcomeavg_html = '<td rowspan="' . $rowspan . '">' . $avg_html . "</td>\n";
+    $outcomeavg_html = '<td class="cell c1" rowspan="' . $rowspan . '">' . $avg_html . "</td>\n";
 
     $html .= $shortname_html . $outcomeavg_html . $sitewide_html . $items_html;
+    $row++;
 }
 
 
 
 $html .= '</table>';
+print_heading($stroutcomes);
+
 echo $html;
 print_footer($course);
 
