@@ -69,21 +69,30 @@ switch ($action) {
         break;
 }
 
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+$caneditsystemscales = has_capability('moodle/course:managescales', $systemcontext);
+
 if ($courseid) {
     /// Print header
     print_header_simple($strgrades.': '.$pagename, ': '.$strgrades, $navigation, '', '', true, '', navmenu($course));
     /// Print the plugin selector at the top
     print_grade_plugin_selector($courseid, 'edit', 'outcome');
 
+    $caneditcoursescales = has_capability('moodle/course:managescales', $context);
+
     $currenttab = 'outcomes';
     require('tabs.php');
 
 } else {
     admin_externalpage_print_header();
+
+    $caneditcoursescales = $caneditsystemscales;
 }
 
 
+
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
+
     print_heading($strcustomoutcomes);
     $data = array();
     foreach($outcomes as $outcome) {
@@ -92,7 +101,23 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
         $line[] = $outcome->get_shortname();
 
         $scale = $outcome->load_scale();
-        $line[] = $scale->get_name();
+        if (empty($scale->id)) {   // hopefully never happens
+            $line[] = $scale->get_name();
+        } else {
+            if (empty($scale->courseid)) {
+                $caneditthisscale = $caneditsystemscales;
+            } else if ($scale->courseid == $courseid) {
+                $caneditthisscale = $caneditcoursescales;
+            } else {
+                $context = get_context_instance(CONTEXT_COURSE, $scale->courseid);
+                $caneditthisscale = has_capability('moodle/course:managescales', $context);
+            }
+            if ($caneditthisscale) {
+                $line[] = '<a href="'.$CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid.'&amp;id='.$scale->id.'">'.$scale->get_name().'</a>';
+            } else {
+                $line[] = $scale->get_name();
+            }
+        }
 
         $outcomes_uses = $outcome->get_uses_count();
         $line[] = $outcomes_uses;
@@ -125,7 +150,23 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
         $line[] = $outcome->get_shortname();
 
         $scale = $outcome->load_scale();
-        $line[] = $scale->get_name();
+        if (empty($scale->id)) {   // hopefully never happens
+            $line[] = $scale->get_name();
+        } else {
+            if (empty($scale->courseid)) {
+                $caneditthisscale = $caneditsystemscales;
+            } else if ($scale->courseid == $courseid) {
+                $caneditthisscale = $caneditcoursescales;
+            } else {
+                $context = get_context_instance(CONTEXT_COURSE, $scale->courseid);
+                $caneditthisscale = has_capability('moodle/course:managescales', $context);
+            }
+            if ($caneditthisscale) {
+                $line[] = '<a href="'.$CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid.'&amp;id='.$scale->id.'">'.$scale->get_name().'</a>';
+            } else {
+                $line[] = $scale->get_name();
+            }
+        }
 
         $outcomes_uses = $outcome->get_uses_count();
         $line[] = $outcomes_uses;
