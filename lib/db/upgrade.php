@@ -1566,6 +1566,13 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_key($table, $key);
     }
 
+    if ($result && $oldversion < 2007080101) {
+        if ($firstadmin = get_admin()) {  // the person currently used for support emails
+            set_config('supportname',  s(fullname($firstadmin)));   // New settings same as old
+            set_config('supportemail',  s($firstadmin->email));
+        }
+    }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
