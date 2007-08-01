@@ -330,7 +330,7 @@ function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $u
                 $o->locked = $item->is_locked();
             }
             $o->grade = intval($o->grade); // 0 means no grade, int for scales
-            
+
             $result[$item->itemnumber] = $o;
         }
     }
@@ -354,7 +354,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
             }
             $grade = $data[$item->itemnumber] < 1 ? null : $data[$item->itemnumber];
             $item->update_final_grade($userid, $grade, $source);
-        }        
+        }
     }
 }
 

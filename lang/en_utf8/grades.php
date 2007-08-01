@@ -106,6 +106,7 @@ $string['enableajax'] = 'Enable AJAX';
 $string['enableoutcomes'] = 'Enable outcomes';
 $string['encoding'] = 'Encoding';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
+$string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
 $string['errornocategorizedid'] = 'Could not get an uncategorized id!';
 $string['errornocourse'] = 'Could not get course information';

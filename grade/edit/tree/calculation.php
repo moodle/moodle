@@ -34,11 +34,12 @@ $mform = new edit_calculation_form(null, array('gpr'=>$gpr));
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if (!$mform->is_submitted()) {
-    $calculation = grade_item::denormalize_formula($grade_item->calculation, $grade_item->courseid);
-    $mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname));
+}
 
-} else if ($data = $mform->get_data()) {
+$calculation = grade_item::denormalize_formula($grade_item->calculation, $grade_item->courseid);
+$mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname));
+
+if ($data = $mform->get_data()) {
     $grade_item->set_calculation($data->calculation);
     redirect($returnurl);
 }

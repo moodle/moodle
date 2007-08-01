@@ -345,22 +345,10 @@ class grade_item extends grade_object {
             $this->sortorder = 1;
         }
 
-        // If not set, generate an idnumber from itemmodule and iteminstance
-        if (empty($this->idnumber)) {
-            if (!empty($this->itemmodule) && !empty($this->iteminstance)) {
-                $this->idnumber = "$this->itemmodule.$this->iteminstance";
-            } else { // No itemmodule or iteminstance, generate a random idnumber
-                $this->idnumber = rand(0,9999999999); // TODO replace rand() with proper random generator
-            }
-        }
-
         // add proper item numbers to manual items
         if ($this->itemtype == 'manual') {
             if (empty($this->itemnumber)) {
                 $this->itemnumber = 0;
-            }
-            while (grade_item::fetch(array('courseid'=>$this->courseid, 'itemtype'=>'manual', 'itemnumber'=>$this->itemnumber))) {
-                $this->itemnumber++;
             }
         }
 
@@ -372,6 +360,39 @@ class grade_item extends grade_object {
         } else {
             debugging("Could not insert this grade_item in the database!");
             return false;
+        }
+    }
+
+    /**
+     * Set idnumber of grade item, updates also course_modules table
+     * @param string $idnumber
+     * @return boolean success
+     */
+    function add_idnumber($idnumber) {
+        //TODO: add uniqueness checking
+        if (!empty($this->idnumber)) {
+            return false;
+        }
+
+        if ($this->itemtype == 'mod' and !$this->is_outcome_item()) {
+            if (!$cm = get_coursemodule_from_instance($this->itemmodule, $this->iteminstance, $this->courseid)) {
+                return false;
+            }
+            if (!empty($cm->idnumber)) {
+                return false;
+            }
+            $ncm = new object();
+            $ncm->id = $cm->id;
+            $ncm->idnumber = $idnumber();
+            if(update_record('course_modules', $ncm)) {
+                $this->idnumber = $idnumber;
+                return $this->update();
+            }
+            return false;
+
+        } else {
+            $this->idnumber = $idnumber;
+            return $this->update();
         }
     }
 

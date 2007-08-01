@@ -206,7 +206,7 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
                     $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
                 } else {
                     $icon = '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'.get_string('outcome', 'grades').'"/>';
-                    
+
                 }
             }
             break;
