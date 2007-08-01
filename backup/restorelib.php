@@ -1197,6 +1197,7 @@
         $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories');
         $itemscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items');
         $outcomecount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes');
+        $outcomescoursescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_courses');
 
         // we need to know if all grade items that were backed up are being restored
         // if that is not the case, we do not restore grade categories nor gradeitems of category type or course type
@@ -1383,6 +1384,54 @@
                             if ($newid) {
                                 backup_putid($restore->backup_unique_code,"grade_outcomes", $rec->old_id, $newid);
                             }
+                        }
+                        //Increment counters
+                        $counter++;
+                        //Do some output
+                        if ($counter % 1 == 0) {
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo ".";
+                                if ($counter % 20 == 0) {
+                                    echo "<br />";
+                                }
+                            }
+                            backup_flush(300);
+                        }
+                    }
+                }
+            }
+        }
+
+        // process outcomescourses
+        if ($outcomescoursescount && $continue) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>'.get_string('gradeoutcomescourses','grades').'</li>';
+            }
+            $counter = 0;
+            while ($counter < $outcomescoursescount) {
+                //Fetch recordset_size records in each iteration
+                $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_courses' AND backup_code = '$restore->backup_unique_code'",
+                                            "old_id",
+                                            "old_id, old_id",
+                                            $counter,
+                                            $recordset_size);
+                if ($recs) {
+                    foreach ($recs as $rec) {
+                        //Get the full record from backup_ids
+                        $data = backup_getid($restore->backup_unique_code,'grade_outcomes_courses',$rec->old_id);
+                        if ($data) {
+                            //Now get completed xmlized object
+                            $info = $data->info;
+                            //traverse_xmlize($info);                            //Debug
+                            //print_object ($GLOBALS['traverse_array']);         //Debug
+                            //$GLOBALS['traverse_array']="";                     //Debug
+
+                            $oldoutcomesid = backup_todb($info['GRADE_OUTCOMES_COURSE']['#']['OUTCOMEID']['0']['#']);
+                            $newoutcome = backup_getid($restore->backup_unique_code,"grade_outcomes",$oldoutcomesid); 
+                            unset($dbrec);
+                            $dbrec->courseid = $restore->course_id;
+                            $dbrec->outcomeid = $newoutcome->new_id;
+                            insert_record('grade_outcomes_courses', $dbrec);
                         }
                         //Increment counters
                         $counter++;
@@ -3543,7 +3592,7 @@
 
             //If we are under a GRADE_PREFERENCE, GRADE_LETTER or GRADE_CATEGORY tag under a GRADEBOOK zone, accumule it
             if (isset($this->tree[5]) and isset($this->tree[3])) {
-                if (($this->tree[5] == "GRADE_ITEM" || $this->tree[5] == "GRADE_CATEGORY" || $this->tree[5] == "GRADE_OUTCOME") && ($this->tree[3] == "GRADEBOOK")) {
+                if (($this->tree[5] == "GRADE_ITEM" || $this->tree[5] == "GRADE_CATEGORY" || $this->tree[5] == "GRADE_OUTCOME" || $this->tree[5] == "GRADE_OUTCOMES_COURSE") && ($this->tree[3] == "GRADEBOOK")) {
                     if (!isset($this->temp)) {
                         $this->temp = "";
                     }
@@ -4638,7 +4687,7 @@
                 if ($this->level == 4) {
                     $this->temp = "";
                 }
-                //If we've finished a message, xmlize it an save to db
+                //If we've finished a grade item, xmlize it an save to db
                 if (($this->level == 5) and ($tagName == "GRADE_ITEM")) {
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
@@ -4688,7 +4737,7 @@
                     unset($this->temp);
                 }
 
-                //If we've finished a grade_category, xmlize it an save to db
+                //If we've finished a grade_outcome, xmlize it an save to db
                 if (($this->level == 5) and ($tagName == "GRADE_OUTCOME")) {
                     //Prepend XML standard header to info gathered
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
@@ -4705,6 +4754,30 @@
                     $this->counter++;
                     //Save to db
                     $status = backup_putid($this->preferences->backup_unique_code, 'grade_outcomes' ,$outcome_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                
+                //If we've finished a grade_outcomes_course, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_OUTCOMES_COURSE")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one CATECORY)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $outcomes_course_id = $data["GRADE_OUTCOMES_COURSE"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_outcomes_courses' ,$outcomes_course_id,
                                            null,$data);
                     //Create returning info
                     $this->info = $this->counter;

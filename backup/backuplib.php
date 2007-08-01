@@ -1366,7 +1366,6 @@
     function backup_gradebook_info($bf,$preferences) {
 
         global $CFG;
-
         $status = true;
 
         // see if ALL grade items of type mod of this course are being backed up
@@ -1401,6 +1400,7 @@
         }
         $status = backup_gradebook_item_info($bf,$preferences, $backupall);
         $status = backup_gradebook_outcomes_info($bf, $preferences);
+        $status = backup_gradebook_outcomes_courses_info($bf, $preferences);
         // back up grade outcomes
 
         //Gradebook footer
@@ -1408,13 +1408,9 @@
         return $status;
     }
 
-
     function backup_gradebook_category_info($bf,$preferences) {
         global $CFG;
-
         $status = true;
-
-        //Output grade_category
 
         // getting grade categories, but make sure parents come before children
         // because when we do restore, we need to recover the parents first
@@ -1448,18 +1444,14 @@
         }
 
         return $status;
-
     }
-
 
     //Backup gradebook_item (called from backup_gradebook_info
     function backup_gradebook_item_info($bf,$preferences, $backupall) {
 
         global $CFG;
         require_once($CFG->libdir . '/gradelib.php');
-
         $status = true;
-
         // get all the grade_items, ordered by sort order since upon restoring, it is not always
         // possible to use the same sort order. We could at least preserve the sortorder by restoring
         // grade_items in the original sortorder
@@ -1533,23 +1525,13 @@
     function backup_gradebook_outcomes_info($bf,$preferences) {
 
         global $CFG;
-
         $status = true;
-
-        // get all global outcomes (used in this course) 
-        // and course specific outcomes
-        // we don't need to backup all the outcomes in this case        
+        // only back up courses already in the grade_outcomes_courses table    
         $grade_outcomes = get_records_sql('SELECT go.*
                                        FROM '.$CFG->prefix.'grade_outcomes_courses goc,
                                             '.$CFG->prefix.'grade_outcomes go
                                         WHERE goc.courseid = '.$preferences->backup_course.'
                                        AND goc.outcomeid = go.id');
-
-        if (empty($grade_outcomes)) {
-            $grade_outcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course);
-        } elseif ($mcourseoutcomes = get_records('grade_outcomes', 'courseid', $preferences->backup_course)) {
-            $grade_outcomes += $mcourseoutcomes;
-        }
 
         if (!empty($grade_outcomes)) {
             //Begin grade_outcomes tag
@@ -1572,6 +1554,35 @@
             }
             //End grade_outcomes tag
             $status = fwrite ($bf,end_tag("GRADE_OUTCOMES",3,true));
+        }
+        return $status;
+    }
+    
+    // outcomes assigned to this course
+    function backup_gradebook_outcomes_courses_info($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+        // get all global outcomes (used in this course) 
+        // and course specific outcomes
+        // we don't need to backup all the outcomes in this case        
+        if ($outcomes_courses = get_records('grade_outcomes_courses', 'courseid', $preferences->backup_course)) {
+            //Begin grade_outcomes tag
+            fwrite ($bf,start_tag("GRADE_OUTCOMES_COURSES",3,true));
+            //Iterate for each outcome
+            foreach ($outcomes_courses as $outcomes_course) {
+                //Begin grade_outcome
+                fwrite ($bf,start_tag("GRADE_OUTCOMES_COURSE",4,true));
+                //Output individual fields
+                fwrite ($bf,full_tag("ID",5,false,$outcomes_course->id));
+                fwrite ($bf,full_tag("OUTCOMEID",5,false,$outcomes_course->outcomeid));
+
+                //End grade_outcome
+                fwrite ($bf,end_tag("GRADE_OUTCOMES_COURSE",4,true));
+            }
+            //End grade_outcomes tag
+            $status = fwrite ($bf,end_tag("GRADE_OUTCOMES_COURSES",3,true));
         }
         return $status;
     }
