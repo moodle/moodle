@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
-$string['modulename'] = 'Import XML file';
+$string['modulename'] = 'XML file';
 
 ?>

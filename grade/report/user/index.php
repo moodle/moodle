@@ -71,10 +71,7 @@ $USER->grade_last_report[$course->id] = 'user';
 $strgrades  = get_string('grades');
 $reportname = get_string('modulename', 'gradereport_user');
 
-$navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$reportname, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
-
+$navigation = grade_build_nav(__FILE__, get_string('user', 'grades'), $courseid);
 
 /// Print header
 print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,

@@ -114,10 +114,7 @@ $strgraderreport = get_string('graderreport', 'grades');
 $strgradeedit    = get_string('editgrade', 'grades');
 $struser         = get_string('user');
 
-$nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strgradeedit, 'link'=>'', 'type'=>'misc'));
-
-$navigation = build_navigation($nav);
+$navigation = grade_build_nav(__FILE__, $strgradeedit, array('courseid' => $courseid));
 
 /*********** BEGIN OUTPUT *************/
 

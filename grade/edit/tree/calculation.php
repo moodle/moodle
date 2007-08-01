@@ -46,11 +46,7 @@ $strgrades          = get_string('grades');
 $strgraderreport    = get_string('graderreport', 'grades');
 $strcalculationedit = get_string('editcalculation', 'grades');
 
-$nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strcalculationedit, 'link'=>'', 'type'=>'misc'));
-
-$navigation = build_navigation($nav);
-
+$navigation = grade_build_nav(__FILE__, $strcalculationedit, array('courseid' => $courseid));
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcalculationedit, $navigation, '', '', true, '', navmenu($course));
 

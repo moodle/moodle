@@ -65,13 +65,7 @@ $strgrades = get_string('grades');
 $strgraderreport = get_string('modulename', 'gradereport_grader');
 $strgradepreferences = get_string('gradepreferences', 'grades');
 
-$navlinks = array();
-$navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
-$navlinks[] = array('name' => $strgraderreport,
-    'link' => $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $courseid, 'type' => 'misc');
-$navlinks[] = array('name' => $strgradepreferences, 'link' => '', 'type' => 'misc');
-
-$navigation = build_navigation($navlinks);
+$navigation = grade_build_nav(__FILE__, $strgradepreferences, $courseid);
 
 print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferences,': '.$strgradepreferences, $navigation,
                     '', '', true, '', navmenu($course));

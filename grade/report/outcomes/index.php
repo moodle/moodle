@@ -18,11 +18,8 @@ require_capability('gradereport/outcomes:view', $context);
 // Build navigation
 $strgrades = get_string('grades');
 $stroutcomes = get_string('outcomes', 'grades');
-$navlinks = array();
-$navlinks[] = array('name' => $strgrades, 'link' => $CFG->wwwroot . '/grade/index.php?id='.$courseid, 'type' => 'misc');
-$navlinks[] = array('name' => $stroutcomes, 'link' => '', 'type' => 'misc');
 
-$navigation = build_navigation($navlinks);
+$navigation = grade_build_nav(__FILE__, $stroutcomes, $course->id);
 
 /// Print header
 print_header_simple($strgrades.':'.$stroutcomes, ':'.$strgrades, $navigation, '', '', true);

@@ -101,9 +101,7 @@ $strgraderreport = get_string('graderreport', 'grades');
 $stroutcomeedit  = get_string('outcome', 'grades');
 
 if ($courseid) {
-    $nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                 array('name'=>$stroutcomeedit, 'link'=>'', 'type'=>'misc'));
-    $navigation = build_navigation($nav);
+    $navigation = grade_build_nav(__FILE__, $stroutcomeedit, array('courseid' => $courseid));
     print_header_simple($strgrades.': '.$strgraderreport, ': '.$stroutcomeedit, $navigation, '', '', true, '', navmenu($course));
 
 } else {

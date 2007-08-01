@@ -33,9 +33,7 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'cours
 $strgrades = get_string('grades');
 $pagename  = get_string('outcomes', 'grades');
 
-$navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$pagename, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
+$navigation = grade_build_nav(__FILE__, $pagename, $courseid);
 
 $strshortname        = get_string('shortname');
 $strfullname         = get_string('fullname');

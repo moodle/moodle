@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
-$string['modulename'] = 'Export to Excel spreadsheet';
+$string['modulename'] = 'Excel spreadsheet';
 
 ?>

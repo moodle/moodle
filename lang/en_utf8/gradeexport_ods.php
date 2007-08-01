@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
-$string['modulename'] = 'Export to OpenOffice spreadsheet';
+$string['modulename'] = 'OpenOffice spreadsheet';
 
 ?>

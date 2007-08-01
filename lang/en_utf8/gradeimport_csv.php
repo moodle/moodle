@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
-$string['modulename'] = 'Import CSV file';
+$string['modulename'] = 'CSV file';
 
 ?>

@@ -28,9 +28,7 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'scale', 'coursei
 $strgrades = get_string('grades');
 $pagename  = get_string('scales');
 
-$navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$pagename, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
+$navigation = grade_build_nav(__FILE__, $pagename, array('courseid' => $courseid));
 
 $strscale          = get_string('scale');
 $strstandardscale  = get_string('scalesstandard');

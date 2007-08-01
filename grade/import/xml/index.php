@@ -24,11 +24,10 @@ require_capability('gradeimport/xml:view', $context);
 
 // print header
 $strgrades = get_string('grades', 'grades');
-$actionstr = get_string('importxml', 'grades');
-$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
-$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
-$gradenav .= " -> $actionstr";
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
+$actionstr = get_string('xml', 'grades');
+$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
+
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'import', 'xml');
 $mform = new grade_import_form();
 

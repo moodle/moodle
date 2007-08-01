@@ -78,11 +78,9 @@ if ($data = $mform->get_data()) {
 $strgrades       = get_string('grades');
 $strgraderreport = get_string('graderreport', 'grades');
 $stritemsedit    = get_string('itemsedit', 'grades');
+$stritem         = get_string('item', 'grades');
 
-$nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$stritemsedit, 'link'=>'', 'type'=>'misc'));
-
-$navigation = build_navigation($nav);
+$navigation = grade_build_nav(__FILE__, $stritem, array('courseid' => $courseid));
 
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $stritemsedit, $navigation, '', '', true, '', navmenu($course));

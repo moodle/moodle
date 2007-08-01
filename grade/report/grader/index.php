@@ -65,10 +65,7 @@ $USER->grade_last_report[$course->id] = 'grader';
 $strgrades  = get_string('grades');
 $reportname = get_string('modulename', 'gradereport_grader');
 
-$navlinks = array(array('name'=>$strgrades, 'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$reportname, 'link'=>'', 'type'=>'misc'));
-$navigation = build_navigation($navlinks);
-
+$navigation = grade_build_nav(__FILE__, get_string('grader', 'grades'), $courseid);
 
 /// Build editing on/off buttons
 

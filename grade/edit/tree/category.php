@@ -58,13 +58,10 @@ if ($mform->is_cancelled()) {
 
 $strgrades         = get_string('grades');
 $strgraderreport   = get_string('graderreport', 'grades');
-$strcategoriesedit = get_string('categoriesedit', 'grades');
+$strcategoriesedit = get_string('categoryedit', 'grades');
+$strcategory       = get_string('category', 'grades');
 
-$nav = array(array('name'=>$strgrades,'link'=>$CFG->wwwroot.'/grade/index.php?id='.$courseid, 'type'=>'misc'),
-             array('name'=>$strcategoriesedit, 'link'=>'', 'type'=>'misc'));
-
-$navigation = build_navigation($nav);
-
+$navigation = grade_build_nav(__FILE__, $strcategory, array('courseid' => $courseid));
 
 print_header_simple($strgrades . ': ' . $strgraderreport, ': ' . $strcategoriesedit, $navigation, '', '', true, '', navmenu($course));
 

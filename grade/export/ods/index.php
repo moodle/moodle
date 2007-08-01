@@ -43,12 +43,9 @@ require_capability('gradeexport/ods:view', $context);
 
 $strgrades = get_string('grades', 'grades');
 $actionstr = get_string('modulename', 'gradeexport_ods');
+$navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course->id));
 
-$gradenav = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>";
-$gradenav .= " -> <a href=\"$CFG->wwwroot/grade/index.php?id=$course->id\">$strgrades</a>";
-$gradenav .= " -> $actionstr";
-
-print_header($course->shortname.': '.get_string('grades'), $course->fullname, $gradenav);
+print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'ods');
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {

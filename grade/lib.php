@@ -330,6 +330,105 @@ class grade_plugin_return {
     }
 }
 
+/**
+ * Function central to gradebook for building and printing the navigation (breadcrumb trail).
+ * @param string $path The path of the calling script (using __FILE__?)
+ * @param string $pagename The language string to use as the last part of the navigation (non-link)
+ * @param mixed  $id Either a plain integer (assuming the key is 'id') or an array of keys and values (e.g courseid => $courseid, itemid...)
+ * @return string
+ */
+function grade_build_nav($path, $pagename=null, $id=null) {
+    global $CFG, $COURSE;
+
+    $strgrades = get_string('grades', 'grades');
+
+    // Parse the path and build navlinks from its elements
+    $dirroot_length = strlen($CFG->dirroot) + 1; // Add 1 for the first slash
+    $path = substr($path, $dirroot_length);
+    $path = str_replace('\\', '/', $path);
+
+    $path_elements = explode('/', $path);
+
+    $path_elements_count = count($path_elements);
+
+    $last_element = $path_elements[$path_elements_count-1]; // Should be the filename (including extension)
+
+    // First link is always 'grade'
+    $navlinks = array();
+    $navlinks[] = array('name' => $strgrades,
+                        'link' => $CFG->wwwroot.'/grade/index.php?id='.$COURSE->id,
+                        'type' => 'misc');
+
+    $link = '';
+    $numberofelements = 3;
+
+    // Prepare URL params string
+    $id_string = '?';
+    if (!is_null($id)) {
+        if (is_array($id)) {
+            foreach ($id as $idkey => $idvalue) {
+                $id_string .= "$idkey=$idvalue&amp;";
+            }
+        } else {
+            $id_string .= "id=$id";
+        }
+    }
+
+    $navlink4 = null;
+
+    // Second level links
+    switch ($path_elements[1]) {
+        case 'edit': // No link
+            if ($path_elements[3] != 'index.php') {
+                $numberofelements = 4;
+            }
+            break;
+        case 'import': // No link
+            break;
+        case 'export': // No link
+            break;
+        case 'report':
+            // $id is required for this link. Do not print it if $id isn't given
+            if (!is_null($id)) {
+                $link = $CFG->wwwroot . '/grade/report/index.php' . $id_string;
+            }
+
+            if ($path_elements[2] == 'grader') {
+                $numberofelements = 4;
+            }
+            break;
+
+        default:
+            // If this element isn't among the ones already listed above, it isn't supported, throw an error.
+            debugging("grade_build_nav() doesn't support ". $path_elements[1] . " as the second path element after 'grade'.");
+            return false;
+    }
+
+    $navlinks[] = array('name' => get_string($path_elements[1], 'grades'), 'link' => $link, 'type' => 'misc');
+
+    // Third level links
+    if (empty($pagename)) {
+        $pagename = get_string($path_elements[2], 'grades');
+    }
+
+    switch ($numberofelements) {
+        case 3:
+            $navlinks[] = array('name' => $pagename, 'link' => $link, 'type' => 'misc');
+            break;
+        case 4:
+
+            if ($path_elements[2] == 'grader' AND $path_elements[3] != 'index.php') {
+                $navlinks[] = array('name' => get_string('grader', 'grades'),
+                                    'link' => "$CFG->wwwroot/grade/report/grader/index.php$id_string",
+                                    'type' => 'misc');
+            }
+            $navlinks[] = array('name' => $pagename, 'link' => '', 'type' => 'misc');
+            break;
+    }
+    $navigation = build_navigation($navlinks);
+
+    return $navigation;
+  }
 
 /**
  * This class represents a complete tree of categories, grade_items and final grades,
