@@ -828,6 +828,14 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Is this an outcome item?
+     * @return boolean
+     */
+    function is_outcome_item() {
+        return !empty($this->outcomeid);
+    }
+
+    /**
      * Is the grade item normal - associated with module, plugin or something else?
      * @return boolean
      */
@@ -1180,7 +1188,8 @@ class grade_item extends grade_object {
             }
 
             // if we can update the raw grade, do update it
-            if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
+            if ($this->is_outcome_item() or !$this->is_normal_item()
+             or $this->plusfactor != 0 or $this->multfactor != 1
              or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
                 if (!$grade->overridden) {
                     $grade->overridden = time();
@@ -1260,7 +1269,8 @@ class grade_item extends grade_object {
         }
 
         // calculated grades can not be updated; course and category can not be updated  because they are aggregated
-        if ($this->is_calculated() or !$this->is_normal_item() or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
+        if ($this->is_calculated() or $this->is_outcome_item() or !$this->is_normal_item()
+         or $this->gradetype == GRADE_TYPE_NONE or $this->is_locked()) {
             return false;
         }
 

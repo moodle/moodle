@@ -202,7 +202,12 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
                 $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'.get_string('modulename', $object->itemmodule).'"/>';
             } else if ($object->itemtype == 'manual') {
                 //TODO: add manual grading icon
-                $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
+                if (empty($object->outcomeid)) {
+                    $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
+                } else {
+                    $icon = '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'.get_string('outcome', 'grades').'"/>';
+                    
+                }
             }
             break;
         case 'courseitem':

@@ -822,7 +822,8 @@ class grade_tree {
             $streditcalculation = get_string('editcalculation', 'grades');
 
             // show calculation icon only when calculation possible
-            if (!$object->is_normal_item() and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
+            if ((!$object->is_normal_item() or $object->is_outcome_item())
+              and ($object->gradetype == GRADE_TYPE_SCALE or $object->gradetype == GRADE_TYPE_VALUE)) {
                 $url = $CFG->wwwroot.'/grade/edit/tree/calculation.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 $url = $gpr->add_url_params($url);
                 $calculation_icon = '<a href="'. $url.'"><img src="'.$CFG->pixpath.'/t/calc.gif" class="iconsmall" alt="'

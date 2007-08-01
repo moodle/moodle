@@ -29,7 +29,7 @@ if ($mform->is_cancelled()) {
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     // redirect if outcomeid present
     if (!empty($item->outcomeid) && !empty($CFG->enableoutcomes)) {
-        $url = $CFG->wwwroot.'/grade/edit/tree/outcome.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
 

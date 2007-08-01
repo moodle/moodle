@@ -30,11 +30,11 @@ if ($mform->is_cancelled() || empty($CFG->enableoutcomes)) {
 if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     // redirect if outcomeid present
     if (empty($item->outcomeid)) {
-        $url = $CFG->wwwroot.'/grade/edit/tree/outcome.php?id='.$id.'&amp;courseid='.$courseid;
+        $url = $CFG->wwwroot.'/grade/edit/tree/item.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
 
-//    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
+    $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
 
     if ($item->itemtype == 'mod') {
         $cm = get_coursemodule_from_instance($item->itemmodule, $item->iteminstance, $item->courseid);
@@ -48,7 +48,7 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
 
 if ($data = $mform->get_data(false)) {
     if (array_key_exists('calculation', $data)) {
-//        $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
+        $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
