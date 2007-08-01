@@ -77,9 +77,11 @@ class block_admin extends block_list {
         }
 
     /// Course outcomes
-        if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';
+        if (!empty($CFG->enableoutcomes)) {
+            if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';
+            }
         }
 
     /// Manage scales
