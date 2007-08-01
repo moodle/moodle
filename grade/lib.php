@@ -2024,7 +2024,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
             $header = '<tr><th rowspan="2">'.$student_heading_link.'</th>';
         }
         else {
-            $header = '</tr>';
+            $header = '<tr>';
         }
         $header1 = '<tr>';
         
