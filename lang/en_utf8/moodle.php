@@ -480,7 +480,7 @@ line at the top of your web browser window.
 If you need help, please contact the site administrator,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: Change password confirmation';
-$string['emailpasswordconfirmmaybesent'] = '<p>If you supplied correct username or address an email should have been sent to you.</p>
+$string['emailpasswordconfirmmaybesent'] = '<p>If you supplied a correct username or address an email should have been sent to you.</p>
    <p>It contains easy instructions to confirm and complete this password change.
 If you continue to have difficulty, please contact the site administrator.</p>';
 $string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>$a</b>.
