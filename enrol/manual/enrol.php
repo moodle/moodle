@@ -96,11 +96,8 @@ function print_entry($course) {
         }
     }
 
-    if ($teachers = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'moodle/course:update', 
-                                                            'u.*,ra.hidden', 'r.sortorder ASC',
-                                                            0, 1, '', '', false, true)) {  
-        $teacher = array_shift($teachers);
-    }
+    // if we get here we are going to display the form asking for the enrolment key
+    // and (hopefully) provide information about who to ask for it.
     if (!isset($password)) {
         $password = '';
     }
@@ -199,10 +196,16 @@ function check_group_entry ($courseid, $password) {
 * This function is called from admin/enrol.php, and outputs a 
 * full page with a form for defining the current enrolment plugin.
 *
-* @param    page  an object containing all the data for this page
+* @param    frm  an object containing all the data for this page
 */
-function config_form($page) {
+function config_form($frm) {
+    global $CFG;
+
+    if (!isset( $frm->enrol_manual_keyholderrole )) {
+        $frm->enrol_manual_keyholderrole = '';
+    } 
     
+    include ("$CFG->dirroot/enrol/manual/config.html");
 }
 
 
@@ -370,6 +373,59 @@ function get_access_icons($course) {
     return $str;
 }
 
+/**
+ * Prints the message telling you were to get the enrolment key
+ * appropriate for the prevailing circumstances
+ * A bit clunky because I didn't want to change the standard strings
+ */
+function print_enrolmentkeyfrom($course) {
+    global $CFG;
+    global $USER;
+
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+    $guest = has_capability('moodle/legacy:guest', $context, $USER->id, false);
+
+    // if a keyholder role is defined we list teachers in that role (if any exist)
+    $contactslisted = false;
+    if (!empty($CFG->enrol_manual_keyholderrole)) {
+        if ($contacts = get_role_users($CFG->enrol_manual_keyholderrole, get_context_instance(CONTEXT_COURSE, $course->id), true )) {
+            // guest user has a slightly different message
+            if ($guest) {
+                print_string('enrolmentkeyfromguest', '', ':<br />' );
+            }
+            else {
+                print_string('enrolmentkeyfrom', '', ':<br />');
+            }
+            foreach ($contacts as $contact) {
+                $contactname = "<a href=\"../user/view.php?id=$contact->id&course=".SITEID."\">".fullname($contact)."</a>.";
+                echo "$contactname<br />";
+            }
+            $contactslisted = true;
+        } 
+    }
+
+    // if no keyholder role is defined OR nobody is in that role we do this the 'old' way
+    // (show the first person with update rights)
+    if (!$contactslisted) {
+        if ($teachers = get_users_by_capability(get_context_instance(CONTEXT_COURSE, $course->id), 'moodle/course:update', 
+            'u.*,ra.hidden', 'r.sortorder ASC', 0, 1, '', '', false, true)) {  
+            $teacher = array_shift($teachers);
+        }
+        if (!empty($teacher)) {
+            $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
+        } else {
+            $teachername = strtolower( get_string('defaultcourseteacher') ); //get_string('yourteacher', '', $course->teacher);
+        }
+
+        // guest user has a slightly different message
+        if ($guest) {
+            print_string('enrolmentkeyfromguest', '', $teachername );
+        }
+        else {
+            print_string('enrolmentkeyfrom', '', $teachername);
+        }
+    }
+}
 
 } /// end of class
 
