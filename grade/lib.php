@@ -601,7 +601,7 @@ class grade_tree {
             case 'item':
             case 'categoryitem':
             case 'courseitem':
-                if (empty($object->outcomeid)) {
+                if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
                     $url = $CFG->wwwroot.'/grade/edit/tree/item.php?courseid='.$this->courseid.'&amp;id='.$object->id;
                 } else {
                     $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?courseid='.$this->courseid.'&amp;id='.$object->id;
