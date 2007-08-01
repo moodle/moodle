@@ -89,6 +89,16 @@ class moodleform_mod extends moodleform {
     function standard_coursemodule_elements($supportsgroups=true){
         global $COURSE;
         $mform =& $this->_form;
+
+        if (!empty($CFG->enableoutcomes)) {
+            if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+                $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
+                foreach($outcomes as $outcome) {
+                    $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
+                }
+            }
+        }
+
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
         if ($supportsgroups){
             // TODO: we must define this as mod property!
@@ -97,13 +107,6 @@ class moodleform_mod extends moodleform {
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
 
-        if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
-            $mform->addElement('header', 'modoutcomes', get_string('outcomes', 'grades'));
-            foreach($outcomes as $outcome) {
-                $mform->addElement('advcheckbox', 'outcome_'.$outcome->id, $outcome->get_name());
-            }
-            
-        }
         $this->standard_hidden_coursemodule_elements();
     }
 
