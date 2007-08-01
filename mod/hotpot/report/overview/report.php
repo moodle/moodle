@@ -150,7 +150,7 @@ function deletecheck(p, v, x) {
 	}
 	// confirm deletion
 	var n = navigator;
-	if (x || (n.appName=='Netscape' && parseint(n.appVersion)==2)) {
+	if (x || (n.appName=='Netscape' && parseInt(n.appVersion)==2)) {
 		r = confirm(p);
 		if (r) {
 			f.del.value = v;
