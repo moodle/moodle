@@ -6033,6 +6033,9 @@ function course_scale_used($courseid, $scaleid) {
                 }
             }
         }
+        
+        // check if any course grade item makes use of the scale
+        $return += count_records('grade_items', 'courseid', $courseid, 'scaleid', $scaleid);                            
     }
     return $return;
 }

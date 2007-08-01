@@ -2321,7 +2321,13 @@
                         } else {
                             $course_to_search = $restore->course_id;
                         }
-                        $sca_db = get_record("scale","scale",$sca->scale,"courseid",$course_to_search);
+                        
+                        // scale is not course unique, use get_record_sql to suppress warning
+                        
+                        $sca_db = get_record_sql("SELECT * FROM {$CFG->prefix}scale
+                                                           WHERE scale = '$sca->scale'
+                                                           AND courseid = $course_to_search", true);                  
+                        
                         //If it doesn't exist, create
                         if (!$sca_db) {
                             $create_scale = true;
