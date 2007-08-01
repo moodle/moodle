@@ -2,6 +2,8 @@
 
 // This file defines settingpages and externalpages under the "server" category
 
+global $USER;
+
 // "systempaths" settingpage
 $temp = new admin_settingpage('systempaths', get_string('systempaths','admin'));
 $temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','admin'), get_string('configgdversion', 'admin'), check_gd_version(), array('0' => get_string('gdnot'),
