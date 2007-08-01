@@ -17,6 +17,10 @@ if ($courseid) {
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/grade:manage', $context);
 
+    if (empty($CFG->enableoutcomes)) {
+        redirect('../../index.php?id='.$courseid);
+    }
+
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');

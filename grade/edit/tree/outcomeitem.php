@@ -16,13 +16,14 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/grade:manage', $context);
 
+
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$course->id);
 
 $mform = new edit_outcomeitem_form(null, array('gpr'=>$gpr));
 
-if ($mform->is_cancelled()) {
+if ($mform->is_cancelled() || empty($CFG->enableoutcomes)) {
     redirect($returnurl);
 }
 
