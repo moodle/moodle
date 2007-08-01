@@ -56,6 +56,7 @@ $temp->add(new admin_setting_configselect('sitemailcharset', get_string('sitemai
 $temp->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'admin'), get_string('configallowusermailcharset', 'admin'), 0));
 $temp->add(new admin_setting_configtext('supportname', get_string('supportname', 'admin'), get_string('configsupportname', 'admin'), '', PARAM_NOTAGS));
 $temp->add(new admin_setting_configtext('supportemail', get_string('supportemail', 'admin'), get_string('configsupportemail', 'admin'), '', PARAM_NOTAGS));
+$temp->add(new admin_setting_configtext('supportpage', get_string('supportpage', 'admin'), get_string('configsupportpage', 'admin'), '', PARAM_URL));
 $ADMIN->add('server', $temp, 100);
 
 
