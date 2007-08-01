@@ -10,5 +10,5 @@ $string['description'] = 'This is the default form of enrolment. There are two m
     able to add themselves to a course.</li>
 </ul>';
 $string['enrolname'] = 'Internal Enrolment';
-
+$string['keyholderrole' ] = 'The role of the user that holds the enrolment key for a course. Displayed to students attempting to enrol on the course.';
 ?>

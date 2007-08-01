@@ -529,6 +529,8 @@ $string['enrolmentend'] = 'Enrolment Ends';
 $string['enrolmentkey'] = 'Enrolment key';
 $string['enrolmentkeyfrom'] = 'This course requires an \'enrolment key\' - a one-time<br />
 password that you should have received from $a';
+$string['enrolmentkeyfromguest'] = 'This course requires an \'enrolment key\' - as a guest<br />
+you must enter it each time you enter the course. You should have received it from $a';
 $string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'$a\')';
 $string['enrolmentnew'] = 'New enrolment in $a';
