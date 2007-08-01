@@ -1553,7 +1553,18 @@ function xmldb_main_upgrade($oldversion=0) {
         }
 
     }
+    
+    // adding unique contraint on (courseid,shortname) of an outcome
+    if ($result && $oldversion < 2007080100) {
 
+    /// Define key courseid-shortname (unique) to be added to grade_outcomes
+        $table = new XMLDBTable('grade_outcomes');
+        $key = new XMLDBKey('courseid-shortname');
+        $key->setAttributes(XMLDB_KEY_UNIQUE, array('courseid', 'shortname'));
+
+    /// Launch add key courseid-shortname
+        $result = $result && add_key($table, $key);
+    }
 
 /*
     /// drop old gradebook tables

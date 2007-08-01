@@ -1290,7 +1290,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="courseid"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="scaleid"/>
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="courseid" NEXT="usermodified"/>
-        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="scaleid"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="scaleid" NEXT="courseid-shortname"/>
+        <KEY NAME="courseid-shortname" TYPE="unique" FIELDS="courseid, shortname" COMMENT="Default comment for the key, please edit me" PREVIOUS="usermodified"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="grade_outcomes_courses" COMMENT="stores what outcomes are used in what courses." PREVIOUS="grade_outcomes" NEXT="grade_categories">
