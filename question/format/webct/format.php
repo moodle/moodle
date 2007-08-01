@@ -166,8 +166,8 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-   global $QTYPES ;
-      //  $qtypecalculated = new qformat_webct_modified_calculated_qtype();
+        global $QTYPES ;
+        //  $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -348,6 +348,13 @@ class qformat_webct extends qformat_default {
                                 unset($question->answer); //not used in calculated question
                                 break;
                             case MATCH:
+                                // MDL-10680:
+                                // switch subquestions and subanswers
+                                foreach ($question->subquestions as $id=>$subquestion) {
+                                    $temp = $question->subquestions[$id];
+                                    $question->subquestions[$id] = $question->subanswers[$id];
+                                    $question->subanswers[$id] = $temp; 
+                                }
                                 if (count($question->answer) < 3){
                                     // add a dummy missing question
                                     $question->name = 'Dummy question added '.$question->name ;
