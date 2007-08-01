@@ -1,15 +1,10 @@
 <?php 
 
     if ($course->password != '' and !(isguestuser() and !empty($USER->enrolkey[$course->id]))) {   // password
-    
         print_box_start('generalbox centerpara');
         echo '<p align="center">';
-        if (!empty($teacher)) {
-            $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=".SITEID."\">".fullname($teacher)."</a>.";
-        } else {
-            $teachername = get_string('defaultcourseteacher'); //get_string('yourteacher', '', $course->teacher);
-        }
-        print_string('enrolmentkeyfrom', '', $teachername);
+
+        $this->print_enrolmentkeyfrom( $course );    
  ?>
       </p>
 
