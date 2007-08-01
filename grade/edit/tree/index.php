@@ -86,7 +86,7 @@ switch ($action) {
                 $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
                 $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
                 $optionsno  = array('id'=>$course->id);
-                notice_yesno($strdeletecheckfull, 'tree.php', 'tree.php', $optionsyes, $optionsno, 'post', 'get');
+                notice_yesno($strdeletecheckfull, 'index.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
                 print_footer($course);
                 die;
             }
@@ -144,7 +144,7 @@ print_box_end();
 
 echo '<div class="buttons">';
 if ($moving) {
-    print_single_button('tree.php', array('id'=>$course->id), get_string('cancel'), 'get');
+    print_single_button('index.php', array('id'=>$course->id), get_string('cancel'), 'get');
 } else {
     print_single_button('category.php', array('courseid'=>$course->id), get_string('addcategory', 'grades'), 'get');
     print_single_button('item.php', array('courseid'=>$course->id), get_string('additem', 'grades'), 'get');
@@ -176,8 +176,8 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
     $actions = $gtree->get_edit_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
-        $actions .= '<a href="tree.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
+        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
+        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
     }
 
     $actions .= $gtree->get_locking_icon($element, $gpr);
@@ -223,7 +223,7 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
     $moveto = '';
     if ($moving) {
         $actions = ''; // no action icons when moving
-        $moveto = '<li><a href="tree.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='.$eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" /></a></li>';
+        $moveto = '<li><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='.$eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" /></a></li>';
     }
 
 /// print the list items now
