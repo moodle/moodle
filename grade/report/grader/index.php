@@ -65,7 +65,7 @@ $USER->grade_last_report[$course->id] = 'grader';
 $strgrades  = get_string('grades');
 $reportname = get_string('modulename', 'gradereport_grader');
 
-$navigation = grade_build_nav(__FILE__, get_string('grader', 'grades'), $courseid);
+$navigation = grade_build_nav(__FILE__, $reportname, $courseid);
 
 /// Build editing on/off buttons
 

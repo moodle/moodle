@@ -71,7 +71,7 @@ $USER->grade_last_report[$course->id] = 'user';
 $strgrades  = get_string('grades');
 $reportname = get_string('modulename', 'gradereport_user');
 
-$navigation = grade_build_nav(__FILE__, get_string('user', 'grades'), $courseid);
+$navigation = grade_build_nav(__FILE__, $reportname, $courseid);
 
 /// Print header
 print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
