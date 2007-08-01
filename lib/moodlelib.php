@@ -3444,15 +3444,15 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         }
     }
 
-    $adminuser = get_admin();
+    $supportuser = generate_email_supportuser();
+
 
     // make up an email address for handling bounces
     if (!empty($CFG->handlebounces)) {
         $modargs = 'B'.base64_encode(pack('V',$user->id)).substr(md5($user->email),0,16);
         $mail->Sender = generate_email_processing_address(0,$modargs);
-    }
-    else {
-        $mail->Sender   = $adminuser->email;
+    } else {
+        $mail->Sender   = $supportuser->email;
     }
 
     if (is_string($from)) { // So we can pass whatever we want if there is need
@@ -3505,7 +3505,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if ($attachment && $attachname) {
         if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
-            $mail->AddAddress($adminuser->email, fullname($adminuser) );
+            $mail->AddAddress($supportuser->email, fullname($supportuser, true) );
             $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
             require_once($CFG->libdir.'/filelib.php');
@@ -3565,6 +3565,49 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 }
 
 /**
+ * Generate a signoff for emails based on support settings
+ *
+ */
+function generate_email_signoff() {
+    global $CFG;
+
+    $signoff = "\n";
+    if (!empty($CFG->supportname)) {
+        $signoff .= $CFG->supportname."\n";
+    }
+    if (!empty($CFG->supportemail)) {
+        $signoff .= $CFG->supportemail."\n";
+    }
+    if (!empty($CFG->supportpage)) {
+        $signoff .= $CFG->supportpage."\n";
+    }
+    return $signoff;
+}
+
+/**
+ * Generate a fake user for emails based on support settings
+ *
+ */
+function generate_email_supportuser() {
+
+    global $CFG;
+
+    static $supportuser;
+
+    if (!empty($supportuser)) {
+        return $supportuser;
+    }
+
+    $supportuser = new object;
+    $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $CFG->noreplyaddress;
+    $supportuser->firstname = $CFG->supportname ? $CFG->supportname : get_string('noreplyname');
+    $supportuser->lastname = '';
+
+    return $supportuser;
+}
+
+
+/**
  * Sets specified user's password and send the new password to the user via email.
  *
  * @uses $CFG
@@ -3577,7 +3620,8 @@ function setnew_password_and_mail($user) {
     global $CFG;
 
     $site  = get_site();
-    $from = get_admin();
+
+    $supportuser = generate_email_supportuser();
 
     $newpassword = generate_password();
 
@@ -3587,18 +3631,18 @@ function setnew_password_and_mail($user) {
     }
 
     $a = new object();
-    $a->firstname   = $user->firstname;
+    $a->firstname   = fullname($user, true);
     $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
     $a->newpassword = $newpassword;
     $a->link        = $CFG->wwwroot .'/login/';
-    $a->signoff     = fullname($from, true).' ('. $from->email .')';
+    $a->signoff     = generate_email_signoff();
 
     $message = get_string('newusernewpasswordtext', '', $a);
 
     $subject  = format_string($site->fullname) .': '. get_string('newusernewpasswordsubj');
 
-    return email_to_user($user, $from, $subject, $message);
+    return email_to_user($user, $supportuser, $subject, $message);
 
 }
 
@@ -3615,7 +3659,7 @@ function reset_password_and_mail($user) {
     global $CFG;
 
     $site  = get_site();
-    $from = get_admin();
+    $supportuser = generate_email_supportuser();
 
     $userauth = get_auth_plugin($user->auth);
     if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
@@ -3635,13 +3679,13 @@ function reset_password_and_mail($user) {
     $a->username = $user->username;
     $a->newpassword = $newpassword;
     $a->link = $CFG->httpswwwroot .'/login/change_password.php';
-    $a->signoff = fullname($from, true).' ('. $from->email .')';
+    $a->signoff = generate_email_signoff();
 
     $message = get_string('newpasswordtext', '', $a);
 
     $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
 
-    return email_to_user($user, $from, $subject, $message);
+    return email_to_user($user, $supportuser, $subject, $message);
 
 }
 
@@ -3658,12 +3702,12 @@ function reset_password_and_mail($user) {
     global $CFG;
 
     $site = get_site();
-    $from = get_admin();
+    $supportuser = generate_email_supportuser();
 
     $data = new object();
     $data->firstname = fullname($user);
     $data->sitename = format_string($site->fullname);
-    $data->admin = fullname($from) .' ('. $from->email .')';
+    $data->admin = generate_email_signoff();
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
@@ -3673,7 +3717,7 @@ function reset_password_and_mail($user) {
 
     $user->mailformat = 1;  // Always send HTML version as well
 
-    return email_to_user($user, $from, $subject, $message, $messagehtml);
+    return email_to_user($user, $supportuser, $subject, $message, $messagehtml);
 
 }
 
@@ -3690,18 +3734,18 @@ function send_password_change_confirmation_email($user) {
     global $CFG;
 
     $site = get_site();
-    $from = get_admin();
+    $supportuser = generate_email_supportuser();
 
     $data = new object();
     $data->firstname = $user->firstname;
     $data->sitename = format_string($site->fullname);
     $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
-    $data->admin = fullname($from).' ('. $from->email .')';
+    $data->admin = generate_email_signoff();
 
     $message = get_string('emailpasswordconfirmation', '', $data);
     $subject = get_string('emailpasswordconfirmationsubject', '', format_string($site->fullname));
 
-    return email_to_user($user, $from, $subject, $message);
+    return email_to_user($user, $supportuser, $subject, $message);
 
 }
 
@@ -3718,20 +3762,20 @@ function send_password_change_info($user) {
     global $CFG;
 
     $site = get_site();
-    $from = get_admin();
+    $supportuser = generate_email_supportuser();
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     $data = new object();
     $data->firstname = $user->firstname;
     $data->sitename = format_string($site->fullname);
-    $data->admin = fullname($from).' ('. $from->email .')';
+    $data->admin = generate_email_signoff();
 
     $userauth = get_auth_plugin($user->auth);
 
     if (!is_enabled_auth($user->auth) or $user->auth == 'nologin') {
         $message = get_string('emailpasswordchangeinfodisabled', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
-        return email_to_user($user, $from, $subject, $message);
+        return email_to_user($user, $supportuser, $subject, $message);
     }
 
     if ($userauth->can_change_password() and $userauth->change_password_url()) {
@@ -3751,7 +3795,7 @@ function send_password_change_info($user) {
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
     }
 
-    return email_to_user($user, $from, $subject, $message);
+    return email_to_user($user, $supportuser, $subject, $message);
 
 }
 
