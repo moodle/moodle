@@ -136,7 +136,7 @@ class hotpot_report extends hotpot_default_report {
 function deletecheck(p, v, x) {
 	var r = false; // result
 	// get length of form elements
-	var f = getElementById('deleteform');
+	var f = document.getElementById('deleteform');
 	var l = f ? f.elements.length : 0;
 	// count selected items, if necessary
 	if (!x) {
@@ -150,7 +150,7 @@ function deletecheck(p, v, x) {
 	}
 	// confirm deletion
 	var n = navigator;
-	if (x || (n.appName=='Netscape' && parseint(n.appVersion)==2)) {
+	if (x || (n.appName=='Netscape' && parseInt(n.appVersion)==2)) {
 		r = confirm(p);
 		if (r) {
 			f.del.value = v;
