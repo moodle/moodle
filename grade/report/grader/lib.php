@@ -432,10 +432,17 @@ class grade_report_grader extends grade_report {
             }
 
             foreach ($row as $columnkey => $element) {
+                $sort_link = '';
+                if (isset($element['object']->id)) {
+                    $sort_link = $this->baseurl.'&amp;sortitemid=' . $element['object']->id;
+                }
+
                 $eid    = $element['eid'];
                 $object = $element['object'];
                 $type   = $element['type'];
                 $categorystate = @$element['categorystate'];
+                $itemmodule = null;
+                $iteminstance = null;
 
                 if (!empty($element['colspan'])) {
                     $colspan = 'colspan="'.$element['colspan'].'"';
@@ -467,14 +474,17 @@ class grade_report_grader extends grade_report {
                 }
 // Element is a grade_item
                 else {
+                    $itemmodule = $element['object']->itemmodule;
+                    $iteminstance = $element['object']->iteminstance;
+
                     if ($element['object']->id == $this->sortitemid) {
                         if ($this->sortorder == 'ASC') {
-                            $arrow = print_arrow('up', $strsortasc, true);
+                            $arrow = $this->get_sort_arrow('up', $sort_link);
                         } else {
-                            $arrow = print_arrow('down', $strsortdesc, true);
+                            $arrow = $this->get_sort_arrow('down', $sort_link);
                         }
                     } else {
-                        $arrow = '';
+                        $arrow = $this->get_sort_arrow('move', $sort_link);
                     }
 
                     $dimmed = '';
@@ -487,15 +497,12 @@ class grade_report_grader extends grade_report {
                               .$this->get_lang_string('modulename', $object->itemmodule).'"/>';
                     } else if ($object->itemtype == 'manual') {
                         //TODO: add manual grading icon
-                        $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.$this->get_lang_string('manualgrade', 'grades')
-                              .'"/>';
+                        $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'
+                                .$this->get_lang_string('manualgrade', 'grades') .'"/>';
                     }
 
-
-                    $headerhtml .= '<th class="'.$type.$catlevel.$dimmed.'"><a href="'.$this->baseurl.'&amp;sortitemid='
-                              . $element['object']->id .'">'. $element['object']->get_name()
-                              . '</a>' . $arrow;
-
+                    $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance);
+                    $headerhtml .= '<th class="'.$type.$catlevel.$dimmed.'">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
 
                     $this->items[$element['object']->sortorder] =& $element['object'];

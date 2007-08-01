@@ -342,5 +342,50 @@ class grade_report {
             $this->groupwheresql = " AND gm.groupid = $this->currentgroup ";
         }
     }
+
+    /**
+     * Returns an arrow icon inside an <a> tag, for the purpose of sorting a column.
+     * @param string $direction
+     * @param string $sort_link
+     * @param string HTML
+     */
+    function get_sort_arrow($direction='move', $sort_link=null) {
+        $matrix = array('up' => 'asc', 'down' => 'desc', 'move' => 'asc');
+        $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
+        $arrow = print_arrow($direction, $strsort, true);
+        $html = '<a href="'.$sort_link .'">' . $arrow . '</a>';
+        return $html;
+    }
+
+    /**
+     * Builds and returns a HTML link to the grade or view page of the module given.
+     * If no itemmodule is given, only the name of the category/item is returned, no link.
+     * @param string $modulename The shortname of the module, will become the visible header
+     * @param string $itemmodule The name of the module type (e.g. assignment, quiz...)
+     * @param int $iteminstance The instance number of the module
+     * @return string HTML
+     */
+    function get_module_link($modulename, $itemmodule=null, $iteminstance=null) {
+        global $CFG, $COURSE;
+
+        $link = null;
+        if (!is_null($itemmodule) AND !is_null($iteminstance)) {
+            $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $COURSE->id);
+
+            $dir = $CFG->dirroot . "/mod/$itemmodule/";
+            $url = $CFG->wwwroot . "/mod/$itemmodule/";
+
+            if (file_exists($dir . 'grade.php')) {
+                $url .= 'grade.php';
+            } else {
+                $url .= 'view.php';
+            }
+
+            $url .= "?id=$coursemodule->id";
+            return '<a href="' . $url . '">' . $modulename . '</a>';
+        }
+
+        return $modulename;
+    }
 }
 ?>

@@ -2136,7 +2136,7 @@ function convert_urls_into_links(&$text) {
  *
  * @param string $needle The string to search for
  * @param string $haystack The string to search for $needle in
- * @param int $case whether to do case-sensitive or insensitive matching. 
+ * @param int $case whether to do case-sensitive or insensitive matching.
  * @return string
  * @todo Finish documenting this function
  */
@@ -2897,7 +2897,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
     }
 
     $oppositlangdir = ($langdir == 'rtl') ? '_ltr' : '_rtl';
-    
+
     if ($files) {
     /// Produce a list of all the files first
         echo '/**************************************'."\n";
@@ -2979,7 +2979,7 @@ function theme_setup($theme = '', $params=NULL) {
     if ($langdir == 'rtl') {
         $params[] = 'langdir='.get_string('thisdirection');
     }
-    
+
     if ($theme != $CFG->theme) {
         $params[] = 'forceconfig='.$theme;
     }
@@ -5839,7 +5839,7 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
 
     echo '<div '.$attrtext.'>';
-    
+
     if (!empty($THEME->customcorners)) {
         echo '<div class="wrap">'."\n";
     }
@@ -5884,9 +5884,9 @@ function print_side_block_end($attributes = array()) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
         print_custom_corners_end();
     }
-    
+
     echo '</div>';
-    
+
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
         echo '<script type="text/javascript">'."\n//<![CDATA[\n".'elementCookieHide("'.$attributes['id'].'"); '.
@@ -6347,7 +6347,7 @@ function print_location_comment($file, $line, $return = false)
 function print_arrow($direction='up', $strsort=null, $return=false) {
     global $CFG;
 
-    if (!in_array($direction, array('up', 'down', 'right', 'left'))) {
+    if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
         return null;
     }
 
@@ -6359,6 +6359,9 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
             break;
         case 'down':
             $sortdir = 'desc';
+            break;
+        case 'move':
+            $sortdir = 'asc';
             break;
         default:
             $sortdir = null;
