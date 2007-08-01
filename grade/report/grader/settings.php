@@ -73,6 +73,9 @@ $settings->add(new admin_setting_configcheckbox('grade_report_showranges', get_s
 $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                             get_string('configshowuserimage', 'grades'), 1));
 
+$settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons', get_string('showactivityicons', 'grades'),
+                                            get_string('configshowactivityicons', 'grades'), 1));
+
 $settings->add(new admin_setting_configselect('grade_report_averagesdisplaytype', get_string('averagesdisplaytype', 'grades'),
                                           get_string('configaveragesdisplaytype', 'grades'), false,
                                           array(GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,

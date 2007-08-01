@@ -370,6 +370,12 @@ class grade_report {
 
         $link = null;
         if (!is_null($itemmodule) AND !is_null($iteminstance)) {
+            // Add module icon if toggle is enabled
+            if ($this->get_pref('showactivityicons')) {
+                $modulename = '<img src="' . $CFG->modpixpath . '/' . $itemmodule
+                            . '/icon.gif" class="icon activity" alt="' . $modulename . '" />' . $modulename;
+            }
+
             $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $COURSE->id);
 
             $dir = $CFG->dirroot . "/mod/$itemmodule/";

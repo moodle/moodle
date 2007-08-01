@@ -5,7 +5,6 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * First implementation of the preferences in the form of a moodleform.
  * TODO add "reset to site defaults" button
- * TODO show site defaults near each setting
  */
 class grader_report_preferences_form extends moodleform {
 
@@ -37,32 +36,33 @@ class grader_report_preferences_form extends moodleform {
 //--------------------------------------------------------------------------------
         $preferences = array();
         $preferences['prefgeneral'] = array(
-                      'studentsperpage'        => 'text',
-                      'quickgrading'           => $checkbox_default,
-                      'quickfeedback'          => $checkbox_default,
-                      'decimalpoints'          => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default', 0, 1, 2, 3, 4, 5),
-                      'aggregationposition'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                        GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
-                                                        GRADE_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades')),
-                      'aggregationview'        => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                        GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
-                                                        GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades')),
-                      'gradedisplaytype'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                        GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                        GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                        GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                      'meanselection'          => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                        GRADE_AGGREGATE_MEAN_ALL => get_string('meanall', 'grades'),
-                                                        GRADE_AGGREGATE_MEAN_GRADED => get_string('meangraded', 'grades')),
-                      'enableajax'             => $checkbox_default);
+                      'studentsperpage'     => 'text',
+                      'quickgrading'        => $checkbox_default,
+                      'quickfeedback'       => $checkbox_default,
+                      'decimalpoints'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default', 0, 1, 2, 3, 4, 5),
+                      'aggregationposition' => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                                                     GRADE_REPORT_AGGREGATION_POSITION_LEFT => get_string('left', 'grades'),
+                                                     GRADE_REPORT_AGGREGATION_POSITION_RIGHT => get_string('right', 'grades')),
+                      'aggregationview'     => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                                                     GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
+                                                     GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades')),
+                      'gradedisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                                                     GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                                                     GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                                                     GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
+                      'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
+                                                     GRADE_AGGREGATE_MEAN_ALL => get_string('meanall', 'grades'),
+                                                     GRADE_AGGREGATE_MEAN_GRADED => get_string('meangraded', 'grades')),
+                      'enableajax'          => $checkbox_default);
 
-        $preferences['prefshow'] = array('showcalculations'       => $checkbox_default,
-                                         'showeyecons'            => $checkbox_default,
-                                         'showaverages'           => $checkbox_default,
-                                         'showgroups'             => $checkbox_default,
-                                         'showlocks'              => $checkbox_default,
-                                         'showranges'             => $checkbox_default,
-                                         'showuserimage'          => $checkbox_default,);
+        $preferences['prefshow'] = array('showcalculations'  => $checkbox_default,
+                                         'showeyecons'       => $checkbox_default,
+                                         'showaverages'      => $checkbox_default,
+                                         'showgroups'        => $checkbox_default,
+                                         'showlocks'         => $checkbox_default,
+                                         'showranges'        => $checkbox_default,
+                                         'showuserimage'     => $checkbox_default,
+                                         'showactivityicons' => $checkbox_default);
 
         $preferences['prefrows'] = array(
                     'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
