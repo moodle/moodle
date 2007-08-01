@@ -2342,7 +2342,7 @@ function hotpot_utf8_to_html_entity($char) {
     return '&#x'.sprintf('%04X', $dec).';';
 }
 
-function hotpot_print_show_links($course, $location, $reference, $actions='', $spacer=' &nbsp; ', $new_window=false) {
+function hotpot_print_show_links($course, $location, $reference, $actions='', $spacer=' &nbsp; ', $new_window=false, $return=false) {
     global $CFG;
     if (is_string($actions)) {
         if (empty($actions)) {
@@ -2355,7 +2355,12 @@ function hotpot_print_show_links($course, $location, $reference, $actions='', $s
 <script type="text/javascript">
 //<![CDATA[
     function setLink(lnk) {
-        var form = document.forms['form'];
+        var form = null;
+        if (document.forms['mform1']) {
+            var form = document.forms['mform1'];
+        } else if (document.forms['form']) {
+            var form = document.forms['form'];
+        }
         return setLinkAttribute(lnk, 'reference', form) && setLinkAttribute(lnk, 'location', form);
     }
     function setLinkAttribute(lnk, name, form) {
@@ -2426,7 +2431,12 @@ END_OF_SCRIPT;
         .   '>'.get_string($action, 'hotpot').'</a>'
         ;
     }
-    print '<span class="helplink">'.$html.'</span>';
+    $html = '<span class="helplink">'.$html.'</span>';
+    if ($return) {
+        return $html;
+    } else {
+        print $html;
+    }
 }
 
 ?>
