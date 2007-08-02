@@ -32,13 +32,15 @@ function tag_create($tag_names_csv, $tag_type="default") {
         // rawname keeps the original casing of the string
         $tag_object->rawname        = tag_normalize($tag, false);
         
-        // name lowecases the string
+        // name lowercases the string
         $tag_object->name           = tag_normalize($tag);
         $norm_tag_names_csv         .= $tag_object->name . ',';
+
+        $tag_object->timemodified   = time();        
         
-        $tag_object->timemodified   = time();
-        
-        if ( $can_create_tags && !empty($tag_object->name) && !is_numeric($tag_object->name) ) {
+        $exists = record_exists('tag', 'name', $tag_object->name);
+       
+        if ( $can_create_tags && !$exists && !empty($tag_object->name) && !is_numeric($tag_object->name) ) {
             insert_record('tag', $tag_object);
         }
     }
@@ -345,8 +347,14 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
 
     //create tag instances
     foreach ($tags_created_ids as $tag_id) {
+        
         $tag_instance->tagid = $tag_id;
-        insert_record('tag_instance',$tag_instance);
+        
+        $exists = record_exists('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
+        
+        if (!$exists) {
+            insert_record('tag_instance',$tag_instance);
+        }
     }
    
 
