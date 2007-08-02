@@ -21,6 +21,12 @@ require_once $CFG->dirroot.'/mnet/remote_client.php';
 // Content type for output is not html:
 header('Content-type: text/xml; charset=utf-8');
 
+// PHP 5.2.2: $HTTP_RAW_POST_DATA not populated bug:
+// http://bugs.php.net/bug.php?id=41293
+if (empty($HTTP_RAW_POST_DATA)) {
+    $HTTP_RAW_POST_DATA = file_get_contents('php://input');
+}
+
 if (!empty($CFG->mnet_rpcdebug)) {
     trigger_error("HTTP_RAW_POST_DATA");
     trigger_error($HTTP_RAW_POST_DATA);
