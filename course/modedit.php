@@ -381,7 +381,7 @@
 
                     $sortorder = $grade_category->sortorder;
 
-                    if () {
+                    if ($item) {
                         $item->set_parent($grade_category->id);
                         $sortorder = $item->sortorder;
                     }
