@@ -1,5 +1,23 @@
 Animation Release Notes
 
+*** version 2.3.0 ***
+
+* duration of zero now executes 1 frame animation
+* added setEl() method to enable reuse
+* fixed stop() for multiple animations
+
+*** version 2.2.2 **
+
+* no change
+
+*** version 2.2.1 **
+
+* no change
+
+*** version 2.2.0 **
+
+* Fixed AnimMgr.stop() when called without tween
+
 *** version 0.12.2 ***
 
 * raised AnimMgr.fps to 1000

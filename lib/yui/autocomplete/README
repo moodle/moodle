@@ -1,5 +1,56 @@
 AutoComplete Release Notes
 
+*** version 2.3.0 ***
+
+* Applied new skinning model.
+
+* The default queryDelay value has been changed to 0.2. In low-latency
+implementations (e.g., when queryDelay is set to 0 against a local
+JavaScript DataSource), typeAhead functionality may experience a race condition
+when retrieving the value of the textbox. To avoid this problem, implementers
+are advised not to set the queryDelay value too low.
+
+* Fixed runtime property value validation.
+
+* Implemented new method doBeforeSendQuery().
+
+* Implemented new method destroy().
+
+* Added support for latest JSON lib http://www.json.org/json.js.
+
+* Fixed forceSelection issues with matched selections and multiple selections.
+
+* No longer create var oAnim in global scope.
+
+* The properties alwaysShowContainer and useShadow should not be enabled together.
+
+* There is a known issue in Firefox where the native browser autocomplete
+attribute cannot be disabled programmatically on input boxes that are in use.
+
+
+
+
+
+**** version 2.2.2 ***
+
+* No changes.
+
+
+
+*** version 2.2.1 ***
+
+* Fixed form submission in Safari bug.
+* Fixed broken DS_JSArray support for minQueryLength=0.
+* Improved type checking with YAHOO.lang.
+
+
+
+*** version 2.2.0 ***
+
+* No changes.
+
+
+
 *** version 0.12.2 ***
 
 * No changes.

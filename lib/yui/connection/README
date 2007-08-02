@@ -1,5 +1,75 @@
 Connection Manager Release Notes
 
+*** version 2.3.0 ***
+
+* Custom Events are introduced in Connection Manager.  These events -- for a
+non-file upload transaction -- are:
+
+   * startEvent
+   * completeEvent
+   * successEvent
+   * failureEvent
+   * abortEvent
+
+For transactions involving file upload with an HTML form, the events are:
+
+   * startEvent
+   * completeEvent
+   * uploadEvent
+   * abortEvent
+
+* Event utility is a now Connection Manager dependency.
+
+* abort() and isCallInProgress() are now functional for file upload
+transactions.
+
+* NOTE: The XHR implementation in Safari 2.0.4 has been confirmed to leak
+memory.
+
+* UPDATE: The XHR implementation in Safari 3.0 beta(and WebKit builds) now
+appear to handle HTTP 204 responses correctly.  XHR in Opera, as of 9.21, still
+does not produce a valid HTTP status code with an HTTP 204 response.
+
+*** version 2.2.2 ***
+
+* No revisions.
+
+*** version 2.2.1 ***
+
+* setForm() will include the correct name-value of the HTML Submit button
+clicked where multiple HTML Submit button options are present in an HTML form.
+To enable this feature, include the Event utility source file as a dependency
+before the Connection Manager source file.
+
+* The XHR implementation in IE6 and IE7, Opera, and Safari do not properly
+handle an HTTP 204 response.  IE6/7 will instead return a Win error 1223.
+handleTransactionResponse() will treat 1223 as an HTTP 204, and route the
+response appropriately to the success callback.  createResponseObject() will
+normalize the response object's status and statusText values to 204 and "No
+Content" respectively.  However, no headers are returned.
+
+Opera and Safari provide no discernable response with HTTP 204(e.g., response
+object's properties are undefined).  This response will trigger the failure
+callback with a status of 0 and statusText of "communication failure".
+
+*** version 2.2.0 ***
+
+* initHeader() now accepts a third argument as a boolean.  When set to true,
+this specific header will automatically be sent with each transaction.
+Otherwise, the header will be set and sent for the specific transaction only.
+Example: initHeader('X-YUI-State','Beta', true); all transactions will send this
+header.
+   * resetDefaultHeaders() will clear the default headers collection.
+
+* All Connection Mananger transactions will broadcast the header: "X-Requested-
+With: XMLHttpRequest".
+   * This can be turned off: YAHOO.util.Connect.setDefaultXhrHeader(false);
+
+* The HTTP method argument in asyncRequest is now case-insensitive.
+
+* uploadFile() will now correctly handle the absence of a callback object,
+allowing the transaction to complete silently.
+
 *** version 0.12.2 ***
 
 * The Opera/Connection Manager concurrent object condition, described in version
@@ -143,6 +213,13 @@ and returns false if the connection object is no longer available.
 *** version 0.9.0 ***
 
 * Initial release
+
+
+
+
+
+
+
 
 
 

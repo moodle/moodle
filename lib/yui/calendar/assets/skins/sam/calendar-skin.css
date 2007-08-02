@@ -1,0 +1,231 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
+/**
+ * SAM
+ *
+ * Skin colors used:
+ *
+ * - Control Border : 808080
+ * - Control Chrome : f2f2f2
+ * - Cell Borders : cccccc
+ * - Normal Cell BG : ffffff
+ * - Date Links : 0066cc
+ * - Selected Cells BG : b3d4ff
+ * - Cell Hover BG : 426fd9
+ * - Disabled BG : cccccc
+ * - Disabled Text Color : a6a6a6
+ **/
+
+/* CALENDAR BOUNDING BOX */
+.yui-skin-sam .yui-calcontainer {
+	background-color:#f2f2f2;
+	border:1px solid #808080;
+	padding:10px;
+}
+
+/* CALENDARGROUP BOUNDING BOX */
+.yui-skin-sam .yui-calcontainer.multi {
+	padding:0 5px 0 5px;
+}
+
+/* BOUNDING BOX FOR EACH CALENDAR GROUP PAGE */
+.yui-skin-sam .yui-calcontainer.multi .groupcal {
+	background-color:transparent;
+	border:none;
+	padding:10px 5px 10px 5px;
+	margin:0;
+}
+
+/* TITLE BAR */
+.yui-skin-sam .yui-calcontainer .title {
+	background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+	border-bottom:1px solid #cccccc;
+	font:100% sans-serif;
+	color:#000;
+	font-weight:bold;
+	height:auto;
+	padding:.4em;
+	margin:0 -10px 10px -10px;
+	top:0;
+	left:0;
+	text-align:left;
+}
+
+.yui-skin-sam .yui-calcontainer.multi .title {
+	margin:0 -5px 0 -5px;
+}
+
+.yui-skin-sam .yui-calcontainer.withtitle {
+	padding-top:0;
+}
+
+/* CLOSE BUTTON */
+.yui-skin-sam .yui-calcontainer .calclose {
+	background:url(../../../../assets/skins/sam/sprite.png) no-repeat 0 -300px;
+	width:25px;
+	height:15px;
+	top:.4em;
+	right:.4em;
+	cursor:pointer;
+}
+
+/* CALENDAR TABLE */
+.yui-skin-sam .yui-calendar {
+	border-spacing:0;
+	border-collapse:collapse;
+	font:100% sans-serif;
+	text-align:center;
+}
+
+/* NAVBAR BOUNDING BOX */
+.yui-skin-sam .yui-calendar .calhead {
+	background:transparent;
+	border:none;
+	vertical-align:middle;
+}
+
+/* NAVBAR TEXT CONTAINER */
+.yui-skin-sam .yui-calendar .calheader {
+	background:transparent;
+	font-weight:bold;
+	padding:0 0 .6em 0;
+	text-align:center;
+}
+
+.yui-skin-sam .yui-calendar .calheader img {
+	border:none;
+}
+
+/* NAVBAR LEFT ARROW */
+.yui-skin-sam .yui-calendar .calnavleft {
+	background:url(../../../../assets/skins/sam/sprite.png) no-repeat 0 -450px;
+	width:25px;
+	height:15px;
+	top:0;
+	bottom:0;
+	left:-10px;
+	margin-left:.4em;
+	cursor:pointer;
+}
+
+/* NAVBAR RIGHT ARROW */
+.yui-skin-sam .yui-calendar .calnavright {
+	background:url(../../../../assets/skins/sam/sprite.png) no-repeat 0 -500px;
+	width:25px;
+	height:15px;
+	top:0;
+	bottom:0;
+	right:-10px;
+	margin-right:.4em;
+	cursor:pointer;
+}
+
+/* WEEKDAY HEADER ROW */
+.yui-skin-sam .yui-calendar .calweekdayrow {
+	height:2em;
+}
+
+/* WEEKDAY (Su, Mo, Tu...) HEADER CELLS */
+.yui-skin-sam .yui-calendar .calweekdaycell {
+	color:#000;
+	font-weight:bold;
+	text-align:center;
+	width:2em;
+}
+
+/* CALENDAR FOOTER. NOT IMPLEMENTED BY DEFAULT */
+.yui-skin-sam .yui-calendar .calfoot {
+	background-color:#f2f2f2;
+}
+
+/* WEEK NUMBERS (ROW HEADERS/FOOTERS) */
+.yui-skin-sam .yui-calendar .calrowhead, .yui-skin-sam .yui-calendar .calrowfoot {
+	color:#a6a6a6;
+	font-size:85%;
+	font-style:normal;
+	font-weight:normal;
+}
+
+.yui-skin-sam .yui-calendar .calrowhead {
+	text-align:right;
+	padding-right:2px;
+}
+
+.yui-skin-sam .yui-calendar .calrowfoot {
+	text-align:left;
+	padding-left:2px;
+}
+
+/* NORMAL CELLS */
+.yui-skin-sam .yui-calendar td.calcell {
+	border:1px solid #cccccc;
+	background:#fff;
+	padding:1px;
+	height:1.6em;
+	line-height:1.6em; /* set line height equal to cell height to center vertically */
+	text-align:center;
+	white-space:nowrap;
+}
+
+/* LINK INSIDE NORMAL CELLS */
+.yui-skin-sam .yui-calendar td.calcell a {
+	color:#0066cc;
+	display:block;
+	height:100%;
+	text-decoration:none;
+}
+
+/* TODAY'S DATE */
+.yui-skin-sam .yui-calendar td.calcell.today {
+	background-color:#000;
+}
+
+.yui-skin-sam .yui-calendar td.calcell.today a {
+	background-color:#fff;
+}
+
+/* OOM DATES */
+.yui-skin-sam .yui-calendar td.calcell.oom {
+	background-color:#cccccc;
+	color:#a6a6a6;
+	cursor:default;
+}
+
+/* SELECTED DATE */
+.yui-skin-sam .yui-calendar td.calcell.selected {
+	background-color:#fff;
+	color:#000;
+}
+
+.yui-skin-sam .yui-calendar td.calcell.selected a {
+	background-color:#b3d4ff;
+	color:#000;
+}
+
+/* HOVER DATE */
+.yui-skin-sam .yui-calendar td.calcell.calcellhover {
+	background-color:#426fd9;
+	color:#fff;
+	cursor:pointer;
+}
+
+.yui-skin-sam .yui-calendar td.calcell.calcellhover a {
+	background-color:#426fd9;
+	color:#fff;
+}
+
+/* DEFAULT OOB DATES */
+.yui-skin-sam .yui-calendar td.calcell.previous {
+	color:#e0e0e0;
+}
+
+/* CUSTOM RENDERERS */
+.yui-skin-sam .yui-calendar td.calcell.restricted { text-decoration:line-through; }
+.yui-skin-sam .yui-calendar td.calcell.highlight1 { background-color:#ccff99; }
+.yui-skin-sam .yui-calendar td.calcell.highlight2 { background-color:#99ccff; }
+.yui-skin-sam .yui-calendar td.calcell.highlight3 { background-color:#ffcccc; }
+.yui-skin-sam .yui-calendar td.calcell.highlight4 { background-color:#ccff99; }

@@ -1,5 +1,40 @@
 Drag and Drop Release Notes
 
+2.3.0
+  * YAHOO.util.DragDropMgr.stopDrag is now public, and can be used to cancel
+    a drag in progress.  An optional "silent" flag was added to skip the
+    onMouseUp and endDrag functions when needed (eliminating the need to
+    supply mouseup page coordinates to these functions).
+  * DDProxy: the position of the proxy is not set before the drag is confirmed,
+    preventing auto-scroll from distrupting the user experience.
+  * Modified the default proxy so that IE properly registers the proxy as
+    the event target during the drag.
+  * If a dd instance is created using a dom reference rather than an id, that
+    reference is stored and used throughout making it possible to control
+    instances outside the current window.
+  * The document mousemove listener no longer returns true.
+
+2.2.2
+  * No change
+
+2.2.1
+
+  * Added YAHOO.util.DragDropMgr.interactionInfo, which is
+    a repository of interaction information accumulated during
+    the current event loop result, and accessible from the
+    handlers for the events.
+  * The region for the dragged element is now cached while
+    processing the drag and drop events
+  * List example supports moving an item to an empty list
+  * Fixed missing html tags in the examples
+  * The debug version now works when included before the logger is included.
+
+2.2.0
+
+  * onMouseDown event is executed before element positions are calculated
+  * refreshCache refreshes everything if groups array is not provided
+  * setX/setYConstraint doesn't fail when presented ints cast as strings
+
 0.12.2
 
   * No change

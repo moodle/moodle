@@ -1,0 +1,211 @@
+DataTable Release Notes
+
+*** version 2.3.0 ***
+
+* DataSource requests over XHR no longer automatically insert a "?" in the URIs
+between the host and the query. Implementers should explicitly include the
+question mark if it is required by your server. Please refer to the XHR
+examples for implementation details.
+
+* Applied new skinning model.
+
+* The MVC model has been stabilized and many APIs have been renamed or changed
+quite a bit from the previous version. Implementers should now only use
+DataTable APIs and not use any Record or RecordSet APIs to add/delete/update
+rows, Records, and DOM elements. RecordSet synchronization will be managed for
+you under the hood. For example, myDataTable.addRow() now accepts an object
+literal of data and will create a Record and update the DOM. Calling
+myDataTable.deleteRow() will delete the appropriate Record and update the DOM.
+Please refer to the API reference for full details on property and method names and
+argument signatures. When possible, Logger messages will provide deprecation warnings,
+so implementers upgrading from the previous version are encouraged to use the debug
+build of DataTable.
+
+* The DataTable constructor signature has changed in 2 major ways:
+1) Do not pass in a ColumnSet instance. Instead, pass in an array of Column
+definitions directly, and a ColumnSet instance will be created for you under the hood.
+2) In the progressive enhancement case, first instantiate a DataSource pointing
+to your HTML TABLE element, and then pass in that DataSource instance to your
+DataTable constructor. Please refer to the progressive enhancement example
+for implementation details.
+
+* DataTable now extends Element, which has become a required dependency. Implementers
+should now use the myDataTable.set("propertyName", newValue) syntax instead of direct
+dot notation of any properties.
+
+* The underlying pagination architecture and API have been revised. Specifically,
+the property paginator has been deprecated in favor of paginated,
+paginatorOptions has been deprecated in favor of paginator, and related events
+and method names have been changed. Please see the pagination examples for
+implementation details. Please refer to the API reference for full details on
+new property and method names and argument signatures.
+
+* There is a known pagination bug where changing the rows-per-page dropdown while
+on a page number that is out of bounds of the new range, the current page value
+fails to get reset to an appropriate default value.
+
+* There is a known pagination bug where custom containers are ignored.
+
+* There is a known bug where row and cell selections are not tracked correctly in
+paginated DataTables.
+
+* The underlying editing architecture and API have been revised. Specifically, the
+ColumnEditor class is no longer used, the method editCell() has been deprecated
+in favor of showCellEditor(), and the Custom Event "cellEditEvent" is now
+"editorSaveEvent". Please see the inline editing example for
+implementation details. Please refer to the API reference for full details on
+property and method names and argument signatures.
+
+* There is a known issue where the built-in date editor throws a JavaScript
+exception when encountering a null or non-Date value. Implementers using the built-in
+date editor should validate for type Date and avoid null values in these data
+fields.
+
+* The underlying sort architecture, including YAHOO.util.Sort, has been modified
+to accept a single sort function rather than separate functions for ascending
+and descending sorts.
+
+* Scrolling a DataTable with an active Cell Editor will cancel the edit to
+to prevent the Cell Editor's position from getting out of sync with its
+associated TD element.
+
+* The following static methods are executed in the scope of the DataTable
+instance: DataTable.validateNumber(), DataTable.formatButton(),
+DataTable.formatCheckbox(), DataTable.formatCurrency(), DataTable.formatDate(),
+DataTable.formatDropdown(), DataTable.formatEmail(), DataTable.formatLink(),
+DataTable.formatNumber(), DataTable.formatRadio(), DataTable.formatText(),
+DataTable.formatTextarea(), DataTable.formatTextbox().
+
+* The following DataTable APIs have changed:
+- The following static constants have been removed: CLASS_CURRENCY, CLASS_CURRENTPAGE,
+CLASS_DATE, CLASS_EMAIL, CLASS_FIRSTLINK, CLASS_FIRSTPAGE, CLASS_HEADCONTAINER,
+CLASS_HEADRESIZER, CLASS_HEADTEXT, CLASS_HIGHLIGHT, CLASS_LASTLINK, CLASS_LASTPAGE,
+CLASS_LINK, CLASS_NEXTLINK, CLASS_NEXTPAGE, CLASS_NUMBER, CLASS_PAGELINK,
+CLASS_PAGELINKS, CLASS_PAGESELECT, CLASS_PREVLINK, CLASS_PREVPAGE, CLASS_SORTEDBYASC,
+CLASS_SORTEDBYDESC, CLASS_STRING.
+- The following static constants have been added: CLASS_ASC, CLASS_BUTTON,
+CLASS_DEFAULT, CLASS_DESC, CLASS_DISABLED, CLASS_DROPDOWN, CLASS_HEADER,
+CLASS_HIGHLIGHTED, CLASS_LABEL, CLASS_NEXT, CLASS_PAGE, CLASS_PREVIOUS,
+CLASS_RESIZER
+- The property contextMenu is no longer supported.
+- The property dataSource has been deprecated in favor of the accessor method
+getDataSource().
+- The property fixedWidth is not fully supported.
+- The property sortedBy now defines key instead of colKey.
+- The property rowSingleSelect has been deprecated in favor of selectionMode.
+
+* The following Record APIs have changed:
+- Record data values are no longer accessible with oRecord[key] or oRecord.key.
+Implementers should now use oRecord.getData(key).
+- The property yuiRecordId has been deprecated in favor of the accessor method
+getId().
+
+* The following RecordSet APIs have changed:
+- The method getRecordBy() is not implemented.
+- The method insert() has been deprecated in favor of addRecord() and addRecords().
+- The method replace() has been renamed replaceRecords().
+- The method sort() has been deprecated in favor of sortRecords().
+
+* The following Column APIs have changed:
+- Column type has been deprecated in favor of formatter. In your Column
+definitions, please change type:"date" to formatter:"date", type:"currency" to
+formatter:"currency", etc.
+- The property parser is no longer used. Implementers should use the static
+DataSource methods DataSource.parseDate(), DataSource.parseNumber(), and
+DataSource.parseString() for type conversion functionality.
+- The methods getColSpan() and getRowSpan() have been renamed to getColspan()
+and getRowspan().
+- The return value for the method getId() has been changed.
+- The following methods are no longer implemented: parse(), parseCheckbox(),
+parseDate(), parseNumber(), parseSelect(). Implementers should now use a
+DataSource with a data type of HTML TABLE element.
+- The showEditor() method is no longer implemented. Implementers should now use
+the DataTable method showCellEditor().
+- All static formatter functions have been moved from the Column class to the
+DataTable class.
+
+* The DataTable method getColumn() has a known issue where instead of accepting
+a Column's key index value, the method accepts a Column's ID value. Until this
+issue is fixed, implementers can use the following workaround:
+
+    // Instead of this:
+    // var oColumn = myDataTable.getColumn(0);
+
+    // Use this:
+    var oColumn = myDataTable.getColumn(myDataTable.getFirstTrEl().cells[0].yuiColumnId);
+
+
+
+
+
+
+
+
+
+
+*** version 2.2.2 ***
+
+* Removed workaround for a fixed Dom.getXY() bug that was causing a positioning
+problem for inline editors on scrolled pages.
+
+
+
+**** version 2.2.1 ***
+
+* Changed default pagination from enabled to disabled. Must set property
+paginator to true to enable built-in client-side pagination.
+* Removed deleteSelectedRows() and added deleteRows().
+* Deprecated properties isEmpty and isLoading, and methods showLoadingMessage(),
+showEmptyMessage(), and hideTableMessages(). Implementers should now use
+showTableMessage() and hideTableMessage().
+* Deprecated methods paginateRows() and onDataReturnPaginateRows(). Implementers
+should now use popualateTable() and onDataReturnPopulateTable().
+* Deprecated pagination properties pageCurrent, rowsPerPage, startRecordIndex,
+pageLinksLength, rowsPerPageDropdown, pageLinksStart, and pagers.
+* Fixed unclickable links.
+* Fix to support data values of 0 (zero).
+* Fixed broken validation in multiple places when the value 0 (zero) is passed
+in as an argument.
+* Fixed incorrect month output in formatDate().
+* Fixed broken empty message when there are zero rows.
+* Allow implementers to use data with field name "id".
+* Fixed Column resizeability in -min builds.
+* Fixed Column sorting of null, undefined, and empty values.
+* Fixed Column sorting of nested headers.
+* Fixed paginator dropdowns to stay in sync when paginating.
+* Fixed rowSingleSelect for paginated DataTable.
+* Fix for currency values with more than 2 decimal places.
+* Fixed broken TR ID assignments in replaceRows().
+* Fixed Opera UI artifacting problem when repaginating via dropdowns.
+* Fixed orphaned ColumnEditor during pagination or other de facto blur
+interaction. Data gets saved.
+* Extracted non-foundational CSS for scrollable DataTables to make UI easier to
+customize.
+* Updated methods select() and unselect() to also accept an array of elements or
+an array of strings.
+* Improved row selection behavior to model the desktop paradigm (i.e., require
+CONTROL and/or SHIFT keys to multi-select).
+* Tweaked inline editing for better Mac performance.
+* Refactored pagination code to be easier to implement, configure, and extend.
+* Accept an error boolean from DataSource in case of data error and show error
+message.
+* The CustomEvent rowDeleteEvent is now only fired once per deleted row and
+its argument signature has been modified.
+* Added selectRow(), rowSelectEvent, unselectRow(), rowUnselectEvent, rowAddEvent,
+and rowUpdateEvent.
+* Added constants CLASS_TABLE, CLASS_EDITOR, CLASS_FIRST, and CLASS_LAST.
+* Added ColumnEditor class moveContainerTo().
+* Add IDs and class hooks to TABLE element and ColumnEditor's container DIV.
+* Add class hooks to first and last TR elements.
+* Added hook to doBeforeLoadData() for the not-from-markup constructor flow.
+* Added properties paginator and paginatorOptions, as well as method getPaginator().
+* Added methods saveEditorData() and cancelEditorData().
+* Improved type checking with YAHOO.lang.
+
+
+
+**** version 2.2.0 ***
+
+* Beta release.
+* Caption is not supported when scrolling is enabled.
+* Resizeability is not supported for fixed-width DataTables.

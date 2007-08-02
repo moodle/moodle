@@ -1,5 +1,16 @@
 YUI Library - Grids - Release Notes
 
+Version 2.3.0
+
+  * Added more specific selectors to allow deeper nesting of both 
+    grids inside special grids, special grids within special 
+	grids, and special grids within grids.
+  * Added #doc4 which provides a 974px page width
+
+Version 2.2.0 - 2.2.2
+
+  * No changes.
+
 Version 0.12.1 - 0.12.2
 
   * No changes.

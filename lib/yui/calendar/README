@@ -1,5 +1,38 @@
 Calendar Release Notes
 
+*** version 2.3.0 ***
+
+	- Added checks to select, selectCell, deselect and deselectCell methods to ensure the Calendar/Calendar group was not set to an invalid state by programmatically selecting unselectable dates or cells.
+	- Added new locale configuration properties for the Month/Year label used in the Calendar header (MY_LABEL_MONTH_POSITION, MY_LABEL_YEAR_POSITION, MY_LABEL_YEAR_SUFFIX, MY_LABEL_MONTH_SUFFIX). Japan is an example locale, where customization of the Month/Year label is required.
+	- Changed "first", "last" class names to "first-of-type", "last-of-type", to avoid collision with YUI Grids' use of the "first" class name.
+	- Added public isDateOOB method, to check if a given date is outside of the minimum/maximum configuration dates of the Calendar.
+	- Deprecated YAHOO.widget.Calendar.browser, refactored to use YAHOO.env.ua instead.
+	- Removed overflow:hidden from default Calendar/CalendarGroup container for non-IE6 browsers to fix clipping issue with IE7 when CalendarGroup was inside a box with a specific width. overflow:hidden is still required for IE6 with an iframe shim.
+	- Added Opera container width calculation fix to CalendarGroup.show method, to fix incorrect wrapping when using a CalendarGroup which is initially rendered hidden (display:none). Previously this fix was only applied on render.
+
+*** version 2.2.2 ***
+
+	- Fixed problem with selected dates being shared across instances, when more than one Calendar/CalendarGroup was on the page
+
+*** version 2.2.1 ***
+
+	- Fixed problem with selectCell adding duplicate selected date entries for dates which were already selected
+	- Fixed problem with CalendarGroup iframe shim not covering the CalendarGroup title area
+	- Removed javascript:void(null) from close button and cell links which was interrupting form submission and firing onbeforeunload in IE
+	- Fixed problem with CalendarGroup getSelectedDates returning invalid results, when used in conjunction with the "selected" Config property (either passed in the constructor config argument or set seperately after construction)
+	- Refactored Calendar and CalendarGroup to improve performance, especially when working with a large number of instances in IE6
+
+*** version 2.2.0 ***
+
+	- Image customization can now be done through CSS. Images for Close, Left and Right Arrows are now pulled in using CSS defined in calendar.css and by default use relative paths to the images in the same directory as calendar.css. 
+	- Deprecated Calendar.IMG_ROOT and NAV_ARROW_LEFT, NAV_ARROW_RIGHT configuration properties. Customizations based on older releases which set these properties will still function as expected.
+	- Deprecated CalendarGroup.CSS_2UPCLOSE. Calendar's Style.CSS_CLOSE property now represents the new default CSS class (calclose) for the close button. CSS_2UPCLOSE is still applied along with CSS_CLOSE to the new markup for the close button to support existing customizations of the CSS_2UPCLOSE CSS class (close-icon)
+	- Fixed problem with Safari setting Calendar pages to incorrect dates if the pages spanned a year boundary in CalendarGroups with 3 or more pages, due to a bug in Safari's implementation of Date setMonth
+	- Fixed problem with CalendarGroup setMonth rendering Calendar pages with incorrect dates in all browsers if current pages spanned year boundary
+	- Fixed incorrect CalendarGroup logging statement in calendar-debug.js
+	- Fixed domEventMap support for Safari versions prior to 2.0.2, caused by hasOwnProperty not being supported
+	- Removed unused private property : _pageDate from Calendar class
+
 *** version 0.12.2 ***
 
 	- Corrected documentation for clearTime function to reflect the change from midnight to noon

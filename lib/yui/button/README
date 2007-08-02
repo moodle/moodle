@@ -1,0 +1,272 @@
+*** Version 2.3.0 ***
+
+Added the following features:
+-----------------------------
+
++ Added a "focusmenu" configuration attribute that controls whether or not a 
+  Button instance's menu will automatically be focused when made visible. 
+
++ Added a "lazyloadmenu" configuration attribute that controls the value of 
+  the "lazyload" configuration property of a Button's menu.
+
++ Added "menuclassname" configuration attribute that defines a CSS class name
+  to be applied to the root HTML element of a button's menu.
+
+
+Fixed the following bugs:
+-------------------------
+
++ Setting the "label" attribute of a Button of type "link" to a string with 
+  a "www." prefix will no longer result in the value of the "href" property 
+  being used for the "label" in IE.
+
++ Disabling a Button when its menu is visible will now result in the menu 
+  being hidden.
+
++ Hidden field(s) created by a Button instance are now removed if the 
+  submission of its parent form is cancelled.
+
++ If a Button instance is preceeded by another enabled HTML submit button 
+  (<input type="submit" ...> or <button type="submit" ...>), it will no longer 
+  create a hidden field representing its name and value when its parent form 
+  is submitted.
+
++ If an HTML form contains a mix of YUI Buttons of type "submit" and standard 
+  HTML submit buttons (<input type="submit" ...> or <button type="submit" ...>) 
+  its "submit" event will no longer fire twice when it is submitted by the user 
+  pressing the enter key while focus inside another HTML form control.
+
++ If all Button instances in a form are disabled, the form will no longer be 
+  submitted when the user presses the enter key while focused inside another 
+  HTML form control.
+
++ The first enabled Button instance in a form now correctly adds its name and 
+  value to the form's data set when the form is submitted by the user pressing 
+  the enter key while focused inside another form control.  
+
++ Fixed typo in the source file for the ButtonGroup class that was causing the 
+  private variable "m_oButtons" to be declared as a global.
+
++ Switched to use of the CSS display type "-moz-inline-box" from 
+  "-moz-inline-stack" for Gecko-based browsers so that the entire area of a 
+  Button instance is clickable when it is rendered inside another inline 
+  element.
+
++ Added "yui-button" and "yui-[button type]-button" prefix to CSS classes to 
+  sandbox Button styles.
+
+
+Changes:
+--------
+
++ Default value of "type" configuration attribute now "push" (was "button").
+
++ Type "menubutton" now "menu."
+
++ Type "splitbuton" now "split."
+
++ Added "addStateCSSClasses" method.
+
++ Added "removeStateCSSClasses" method.
+
++ Renamed protected property "_hiddenField" to "_hiddenFields."
+
++ Removed protected "submit" event handler named "_onFormSubmit."
+
++ Renamed public method "createHiddenField" to "createHiddenFields."
+
++ Added new "removeHiddenFields" method.
+
++ Renamed static method "YAHOO.widget.Button.onFormKeyDown" 
+  to "YAHOO.widget.Button.onFormKeyPress."
+
++ Renamed "TAG_NAME" constant (YAHOO.widget.Button.prototype.TAG_NAME and 
+  YAHOO.widget.ButtonGroup.prototype.TAG_NAME) to 
+  "NODE_NAME" (YAHOO.widget.Button.prototype.NODE_NAME and 
+  YAHOO.widget.ButtonGroup.prototype.NODE_NAME).
+
++ The "selectedMenuItem" configuration attribute now correctly gets/sets the 
+  index of the selected MenuItem instance of the button's menu, rather than a
+  MenuItem instance.
+
++ The "container" configuration attribute is now writeonce
+
++ The "menu" configuration attribute is now writeonce
+
++ The root element of each button's menu now will have two CSS classes 
+  appended to it:
+    - The CSS class name specified by the "menuclassname" configuration 
+      attribute (by default is "yui-button-menu")
+    - A type-specific class name (either "yui-split-button-menu" 
+      or "yui-menu-button-menu")
+
++ "menu" configuration attribute now supports creation or use of 
+  YAHOO.widget.Overlay in addition to previously supported 
+  YAHOO.widget.Menu:
+  
+	- To create a menu from existing markup using YAHOO.widget.Overlay, pass the
+	  id or node reference of the HTML element to be used to create the Overlay 
+	  as the value of the "menu" configuration attribute.
+
+    - YAHOO.widget.Overlay instances passed as a value for the "menu" 
+      configuration attribute need to be fully rendered.  
+
+	- To create a menu from existing markup using YAHOO.widget.Menu, pass the 
+	  id or node reference of the HTML element to be used to create the menu 
+	  as the value of the "menu" configuration attribute and give the 
+	  HTML element the same class name as specified by 
+	  YAHOO.widget.Menu.prototype.CSS_CLASS_NAME.
+	
+	- YAHOO.widget.Overlay instances used as a menu are by default not rendered 
+	  until they are are made visible for the first time.  This behavior 
+	  can be changed so that they are rendered immediately by setting the value 
+	  of the "lazyloadmenu" configuration attribute to "false."
+
++ If you pass an element id for the value of the "menu" configuration 
+  attribute, that node is now accessed immediately via the "get" method of the 
+  Dom utility (YAHOO.util.Dom) as opposed to the "onContentReady" method of the
+  Event utility (YAHOO.util.Event).
+
++ Modified code to support a more generic markup format.  Now any number of 
+  HTML elements can exist between a Button's root HTML element and its button 
+  node (be it an <A> or <BUTTON> element):
+
+    <ROOT_NODE> ... <BUTTON_NODE /> ... </ROOT_NODE>
+
++ A Button can now be initialized using any of the following six HTML patterns:
+
+    - <A> TEXT/HTML </A>
+    - <BUTTON> TEXT/HTML </BUTTON>
+    - <INPUT />
+    - <ROOT_NODE> ... <A> TEXT/HTML </A> ... </ROOT_NODE>
+    - <ROOT_NODE> ... <BUTTON> TEXT/HTML </BUTTON> ... </ROOT_NODE>
+    - <ROOT_NODE> ... <INPUT /> ... </ROOT_NODE>
+
++ The id of a Button instance can now match that of its source element.
+
++ CSS changes:
+
+    1) All Buttons have a "yui-" prefix as opposed to "yui":
+    
+    2.2.2	    | 2.3
+    -------------------------
+    .yuibutton  | .yui-button
+    
+    
+    2) Each Button type has its own class name with a "yui-" prefix and 
+    "-button" suffix IN ADDITION TO the default "yui-button" class name:
+    
+    2.2.2			| 2.3
+    ------------------------------------------
+    .yuibutton.splitbutton	| .yui-split-button
+    .yuibutton.menubutton	| .yui-menu-button
+    
+    * Allows for the definition of generic styles that apply to all buttons, 
+    while providing a means for uniquely styling buttons of a specific type.
+    
+    
+    3) For states that are common to all Buttons, two classes are applied: a
+    generic class name (i.e. yui-button-[state]) and a type-specific state class
+    name (yui-[type]-button-[state]):
+    
+    2.2.2			| 2.3
+    -------------------------------------------
+    .yuibutton.focus	| .yui-button-focus
+    .yuibutton.radio.focus	| .yui-radio-button-focus
+    
+    * States common to all Button types are:
+        + focus
+        + hover
+        + active
+        + disabled
+    
+    ** Allows for the definition of generic styles that apply to all states of 
+    all buttons, while providing a means for uniquely styling states for 
+    buttons of a specific type.
+    
+    
+    4) Buttons of type "radio" and "checkbox" have two classes applied to 
+    represent their "checked" state: a generic class name 
+    (i.e. yui-button-checked) and a type-specific class 
+    name (yui-[type]-button-checked):
+    
+    2.2.2			    | 2.3
+    -------------------------------------------
+    .yuibutton.checked	    | .yui-button-checked
+    .yuibutton.radio.checked    | .yui-radio-button-checked
+    .yuibutton.checkbox.checked | .yui-checkbox-button-checked
+    
+    ** This allows for the definition of a universal style for all Buttons that
+    have a "checked" state or the ability to define a type-specific style for 
+    the "checked" state.
+    
+    
+    5) States that are specific to a particular type only get a type-specific 
+    state class name.  Currently this only applies to the "splitbutton" type:
+    
+    2.2.2			    | 2.3
+    -------------------------------------------
+    .yuibutton.activeoption     | .yui-split-button-activeoption
+    
+    
+    6) The "ie6" class name is removed.
+
+
+*** Version 2.2.2 ***
+
++ No changes
+
+
+*** Version 2.2.1 ***
+
+Added the following features:
+-----------------------------
+
++ Added "getHiddenField" method to YAHOO.widget.Button.
+
+
+Fixed the following bugs:
+-------------------------
+
++ Removed built-in use of the Event utility's "onAvailable" method from the
+  constructor of Button and ButtonGroup as it was preventing the addition of 
+  event listeners on instances created from existing markup.  Going forward 
+  Button and ButtonGroup instances created from existing markup can only be 
+  instantiated once their source HTML element is available in the DOM.  The 
+  Button examples illustrate how this can be accomplished.
+
++ Modified code so that disabled Button instances no longer fire DOM events.
+
++ Pressing the enter key while focused on a form field whose parent form 
+  contains a Button instance of type "submit" will now automatically submit 
+  the form using the first Button instance of type "submit".
+
++ Clicking a Button instance of type="submit" will now cause the Button's 
+  parent form's "submit" event to fire.
+
++ Modified Button CSS so that the filter used to apply alpha transparency to 
+  a Button's background PNG is only used by IE 6.  The previous code was 
+  enabling IE's Alpha image loader for IE 7 in Quirks mode. 
+
++ Fixed documentation error for "getForm" method.  
+
+
+Changes:
+--------
+
++ Made the "submitForm" method of YAHOO.widget.Button public (was 
+  previously protected).  
+
++ Removed "init" event and corresponding "oninit" configuration attribute
+  from YAHOO.widget.Button and YAHOO.widget.ButtonGroup.
+
++ Added the CSS class "ie6" to button.css.  This classname is append to root 
+  DOM element of Button instances created with IE 6.  By default this class
+  is used to apply a filter that gives alpha transparency to a Button's 
+  background PNG.
+
+
+
+*** Version 2.2.0 ***
+
+* Button Control introduced

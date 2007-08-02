@@ -1,0 +1,68 @@
+**** version 2.3.0 ***
+
+* Beta release.
+
+* Known Issues
+    * All
+        1. Removed the menu for Create Ordered Lists, it now defaults to creating a simple OL with no type.
+     
+    * Safari
+        1. Bug #1390926 - Safari may not inject the editor's HTML into the text area when the config handleSubmit is set to true.
+            You can get around this with the following code (where comment is the id of the textarea):
+                YAHOO.util.Dom.setStyle('comment', 'visibility', 'hidden');
+                YAHOO.util.Dom.setStyle('comment', 'position', 'absolute');
+                YAHOO.util.Dom.setStyle('comment', 'display', 'block');
+                oEditor.saveHTML();
+                window.setTimeout(function() {
+                        YAHOO.util.Dom.get('comment').form.submit();
+                }, 200);
+
+            This issue will be fixed in a later release..
+        2. Unable to get the cursor position inside the editable area.
+            What this means is that when an image/object is inserted into the document
+            we have no way of knowing "exactly" where to put it. So we make an educated guess.
+            If they user clicked on an "element" (HTML Element) in the editor, then we will place
+            the newly inserted element directly after it in the DOM. If there was no element clicked
+            We will append the new element to the body.
+
+        3. Ordered/Unorder Lists are not support natively. So we have built a work around for this.
+            Most browsers will allow you to select a block of text and create a list out of it "automagically"
+            by inserting an LI around blocks that are separated by line breaks, BRs or Ps. In Safari, the 
+            entire text block will be turned into the first LI of the list. The user can then place the cursor
+            at the beginning of each line, and backspace, then hit enter to create the new list item. There are some
+            use cases that this might fail.
+
+        4. Dragging and dropping of selections and images/objects is not supported.
+            Safari will do some weird things if the text in the editable area is selected and dragged and dropped.
+            We prevent this from happening to images inside of the editable area, but we can not prevent it for text.
+            Safari will also give unexpected results if text from another Safari window in selected, then dragged
+            into the editable area.
+
+    * Opera
+        1. Placing the cursor in the editor, then Shift Clicking to highlight will not work. The limitation appear to be in Opera.
+
+        2. Image resize is unavailable, due to limitations in the browser
+
+        3. Shortcut keys are not supported in this release.
+
+        4. Dragging and dropping of selections and images/objects is not supported.
+
+        5. Hitting the back button on the page will not reload the iframe.
+
+        6. Selecting the editable area, then hitting the shortcut keys for "Reload" will
+            cause the current page to be displayed inside the editable area.
+
+
+**** version 2.3.0 Peview Release Notes ***
+
+* The only server side resource required to run the editor, is the blankimage file.
+    The blankimage file is the temporary image loaded into the editor when you click the
+    "Insert Image" button in the toolbar.
+
+    This can be set using:
+
+    var myEditor = new YAHOO.widget.Editor('test', {
+        blankimage: 'MY_IMAGE_PATH'
+    });
+
+* There is a performance issue with Safari on a G4 computer. We will be working to get this resolved before the initial beta release.

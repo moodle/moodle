@@ -1,18 +1,27 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
 /* for all templates and grids */
 body{text-align:center;}
 #ft{clear:both;}
 /**/
 /* 750 centered, and backward compatibility */ 
-#doc,#doc2,#doc3,.yui-t1,.yui-t2,.yui-t3,.yui-t4,.yui-t5,.yui-t6,.yui-t7 {
+#doc,#doc2,#doc3,#doc4,.yui-t1,.yui-t2,.yui-t3,.yui-t4,.yui-t5,.yui-t6,.yui-t7 {
 	margin:auto;text-align:left;
-	width:57.69em;*width:56.3em;min-width:750px;}
+	width:57.69em;*width:56.301em;min-width:750px;}
 /* 950 centered */ 
 #doc2 {
-	width:73.074em;*width:71.313em;min-width:950px;}
+	width:73.074em;*width:71.313em;}
 /* 100% with 10px viewport side matting */ 
 #doc3 {
 	margin:auto 10px; /* not for structure, but so content doesn't bleed to edge */
 	width:auto;}
+/* 974 centered */
+#doc4 {
+	width:74.923em;*width:73.117em;}
 	
 /* below required for all fluid grids; adjust widths and margins above accordingly */
 
@@ -77,36 +86,120 @@ body{text-align:center;}
 }
 #yui-main .yui-b {float:none;width:auto;}
 /* GRIDS (not TEMPLATES) */
-.yui-g .yui-u, 
-.yui-g .yui-g, 
-.yui-gc .yui-u,
-.yui-gc .yui-g .yui-u,
-.yui-ge .yui-u, 
-.yui-gf .yui-u{float:right;display:inline;}
-.yui-g div.first, 
-.yui-gc div.first,
-.yui-gc div.first div.first,
-.yui-gd div.first, 
-.yui-ge div.first, 
-.yui-gf div.first{float:left;}
-.yui-g .yui-u, 
-.yui-g .yui-g{width:49.1%;}
-.yui-g .yui-g .yui-u,
-.yui-gc .yui-g .yui-u {width:48.1%;}
+
+.yui-gb .yui-g,/*new for nesting normal grids in special grids*/
+.yui-gb .yui-gb,/*new for nesting normal grids in special grids*/
 .yui-gb .yui-u, 
+.yui-g .yui-gb .yui-u,
+.yui-gb .yui-gc,
+.yui-gb .yui-gd,
+.yui-gb .yui-ge,
+.yui-gb .yui-gf, 
 .yui-gc .yui-u, 
-.yui-gd .yui-u{float:left;margin-left:2%;*margin-left:1.895%;width:32%;}
-.yui-gb div.first, 
+.yui-gc .yui-g,
+.yui-gd .yui-u{float:left;margin-left:2%;width:32%;}
+
+.yui-gb .yui-gb .yui-u,
+.yui-gb .yui-gc .yui-u {_margin-left:1.2%;*margin-left:1.7%;}
+.yui-g .yui-gb .yui-u {_margin-left:.8%;} /* for #8-10 for IE6 */
+.yui-gb .yui-u {margin-left:2%;width:32%;float:right;*width:31.8%;}
+.yui-gb div.first {margin-left:0;*margin-right:1px;float:left;}
+.yui-gb .yui-gb div.first {*margin-right:0;width:31.7%;} /* for #29 for IE7*/
+.yui-gb .yui-gc div.first, /* for #41 for IE7 */
+.yui-gb .yui-gd div.first  /* for #40 for IE7 */
+	 {*margin-right:0;}
+
+.yui-g .yui-gc div.first,
+.yui-g .yui-ge div.first {float:left;}
+
+.yui-gb .yui-gd .yui-u {*width:66%;_width:61.2%;} 
+.yui-gb .yui-gd div.first {*width:31%;_width:29.5%;}
+
+.yui-gb .yui-gc .yui-u,
+.yui-g .yui-gc .yui-u {_float:right;width:32%;_width:29.9%;}
+.yui-gb .yui-gc div.first {width:66%;*width:64.5%;*float:left;*margin-left:0;}
+.yui-gb .yui-ge .yui-u, 
+.yui-gb .yui-gf .yui-u {margin:0;}
+
+	/*Float units (and sub grids) to the right */
+	.yui-g .yui-u,
+	.yui-g .yui-g,
+	.yui-g .yui-gb, 
+	.yui-g .yui-gc, 
+	.yui-g .yui-gd, 
+	.yui-g .yui-ge, 
+	.yui-g .yui-gf, 
+	.yui-gc .yui-u, 
+	.yui-gd .yui-g,
+	.yui-g .yui-gc .yui-u,
+	.yui-ge .yui-u, 
+	.yui-ge .yui-g, 
+	.yui-gf .yui-g,
+	.yui-gf .yui-u{float:right;display:inline;}
+	
+	/*Float units (and sub grids) to the left */
+	.yui-g div.first,
+	.yui-g div.first, 
+	.yui-gc div.first,
+	.yui-gc div.first div.first,
+	.yui-gd div.first, 
+	.yui-ge div.first, 
+	.yui-gf div.first{float:left;}
+
+.yui-g .yui-g .yui-u,
+.yui-gb .yui-g .yui-u,
+.yui-gc .yui-g .yui-u,
+.yui-gd .yui-g .yui-u,
+.yui-ge .yui-g .yui-u,
+.yui-gf .yui-g .yui-u {width:48.1%;*margin-left:0;}
+.yui-g .yui-g div.first {*margin:0;}
+.yui-gb .yui-g div.first {*margin-right:1px;}
+
+.yui-gb .yui-gb .yui-u {_margin-left:.7%;} /* for #23-32 for IE6*/
+.yui-gb .yui-g div.first, /* for #23 for IE6*/
+.yui-gb .yui-gb div.first {*margin-left:0;}
+
+.yui-gc .yui-g .yui-u,
+.yui-gd .yui-g .yui-u {_width:48.1%;*width:48.1%;*margin-left:0;}
+
+.yui-g .yui-u,
+.yui-g .yui-g,
+.yui-g .yui-gb,
+.yui-g .yui-gc,
+.yui-g .yui-gd,
+.yui-g .yui-ge,
+.yui-g .yui-gf {width:49.1%;}
+
+.yui-g .yui-gb div.first,
+       .yui-gb div.first, 
+       .yui-gc div.first, 
+       .yui-gd div.first {margin-left:0;}
+	   
+.yui-g .yui-gc div.first, 
 .yui-gc div.first, 
-.yui-gd div.first{margin-left:0;}
-.yui-gc div.first, 
-.yui-gd .yui-u{width:66%;}
-.yui-gd div.first{width:32%;}
-.yui-ge .yui-u{width:24%;}
+.yui-gd .yui-g, /* for 056, 057 */
+.yui-gd .yui-u {width:66%;}
+
+.yui-gd div.first,
+.yui-gb .yui-gd div.first {width:32%;}
+.yui-g .yui-gd div.first {_width:29.9%;}
+
+.yui-ge .yui-u,
+.yui-ge .yui-g,
+.yui-gf div.first {width:24%;}
+
 .yui-ge div.first, 
+.yui-gf .yui-g,
 .yui-gf .yui-u{width:74.2%;}
-.yui-gf div.first{width:24%;}
-.yui-ge div.first{width:74.2%;}
+
+/* narrower width in nexted contexts */
+.yui-gb .yui-ge .yui-u,
+.yui-gb .yui-gf div.first {*width:24%;_width:20%;}
+
+/* narrower width in nexted contexts */
+.yui-gb .yui-ge div.first, 
+.yui-gb .yui-gf .yui-u{*width:73.5%;_width:65.5%;}
+
 #bd:after,
 .yui-g:after, 
 .yui-gb:after, 

@@ -1,5 +1,43 @@
 YAHOO Global - Release Notes
 
+2.3.0
+  * Added YAHOO.env.ua - browser detection
+  * Added YAHOO.lang.merge - object merge
+  * Added YAHOO.lang.trim - whitespace removal
+  * Added YAHOO.lang.augmentObject - mixins.  Renamed augment to augmentProto and 
+    made augment an alias to augmentProto
+  * isObject/isArray return false rather than null when testing null
+
+2.2.2
+
+  * No change
+
+2.2.1
+
+  * YAHOO.lang.isObject returns false for null
+  * YAHOO.lang.isArray no longer generates an error when the argument is null/undefined
+  * Better error messages for YAHOO.lang.augment/extend failures that are usually due 
+    to missing dependencies.
+
+2.2.0a
+
+  * Fixed a typo that prevented the proper detection of multiple YAHOO_config listeners
+
+2.2.0
+
+  * Added configuration of the library via a YAHOO_config object defined
+    prior to the reference to the library.  Currently it supports a listener
+    parameter that will execute every time a new module YUI module is loaded.
+
+  * Added YAHOO.register & YAHOO.getVersion for version stamping modules.
+  
+  * Added YAHOO.env which is the home for the information about the loaded
+    YUI modules, and will host more info later.
+    
+  * YAHOO.util.Lang was relocated to this package and is now YAHOO.lang.
+    YAHOO.extend and YAHOO.augment have moved to env (the original
+    functions still work).
+
 0.12.2
 
   * No change

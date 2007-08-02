@@ -1,0 +1,20 @@
+Element Release Notes
+
+*** version 2.3.0 ***
+* setAttributes now sets in order configs were added
+* added subscribe alias for on/addListener
+
+** version 2.2.2 ***
+
+* fixed contentReady timing regression
+
+*** version 2.2.1 ***
+
+* Added support for "dblclick", "focus", "blur", and "submit" event (for elements that support them)
+* Fixed scope correction for addListener/on/subscribe
+
+*** version 2.2.0 ***
+
+* beta introduction (broken out of TabView for general use)
+
+* The Element class provides a wrapper for HTMLElements in the DOM and makes simpler common tasks such as adding listeners, manipulating the DOM, and setting and getting attributes.

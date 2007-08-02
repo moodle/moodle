@@ -1,5 +1,36 @@
 TreeView - Release Notes
 
+2.3.0
+  * The image preload feature was restored.
+  * Added the new skin
+  * Leaf nodes created with expanded=true have the child div hidden initially
+    to work around an IE rendering issue.
+
+2.2.2
+  * No change
+
+2.2.1
+  * Fixed the default value in the documentation for the nowrap property in Node
+    (the default value is false).
+
+2.2.0
+
+  * Node::insertAfter properly nulls the nextSibling attribute when the
+    inserted before the firstChild.
+
+  * MenuNodes inserted at the root level will no longer lose the menu behavior.
+
+  * TextNode::setUpLabel sets the data.label property as well as the label property.
+
+  * TaskNode example: made the logger optional, and moved the creation of the logger
+    instance to the proper location.
+
+  * TaskNodes added to a node that is in a fully selected state will update the
+    parent to a partially selected state.
+
+  * TaskNode example fixed to propagate the labelClick event
+
+
 0.12.2
 
   * removeChildren will now work properly on the root node.

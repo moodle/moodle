@@ -1,0 +1,633 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
+/* Setup the container with some padding and zoom it for IE's hasLayout */
+.yui-toolbar-container .yui-toolbar-subcont {
+    padding: .25em 0;
+    zoom: 1;
+}
+/* Setup the :after so that compliant browsers don't loose the bounding box */
+.yui-toolbar-container .yui-toolbar-subcont:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+
+/* Drag handle for the toolbar's draggable property */
+.yui-toolbar-container span.yui-toolbar-draghandle {
+    cursor: move;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    overflow: hidden;
+    text-indent: 77777px;
+    width: 2px;
+    height: 20px;
+    display: block;
+    clear: none;
+    float: left;
+    margin: 0 0 0 .2em;
+}
+/* If the titlebar is draggable, the set the cursor */
+.yui-toolbar-container .yui-toolbar-titlebar.draggable {
+    cursor: move;
+}
+/* Set the titlebar to relative so we can position the collapse button */
+.yui-toolbar-container .yui-toolbar-titlebar {
+    position: relative;
+}
+/* Toolbar's titlebar styles */
+.yui-toolbar-container .yui-toolbar-titlebar h2 {
+    font-weight: bold;
+    border: none;
+    color: #000;
+    margin: 0;
+    padding: .2em;
+}
+/* If the toolbar is grouped the draghandle needs to be bigger */
+.yui-toolbar-container.yui-toolbar-grouped span.yui-toolbar-draghandle {
+    height: 40px;
+}
+
+/* Float the groups so they position nicely and zoom them for IE */
+.yui-toolbar-container .yui-toolbar-group {
+    float: left;
+    zoom: 1;
+}
+/* Setup the :after so that compliant browsers don't loose the bounding box */
+.yui-toolbar-container .yui-toolbar-group:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+/* Grouped title styles */
+.yui-toolbar-container .yui-toolbar-group h3 {
+    font-size: 75%;
+    color: #999;
+    padding-left: .25em;
+}
+/* Style the separators with a left border */
+.yui-toolbar-container span.yui-toolbar-separator {
+    border-left: 1px solid #999;
+    overflow: hidden;
+    text-indent: 77777px;
+    width: 2px;
+    height: 18px;
+    margin: .2em 0 .2em .1em;
+    display: block;
+    clear: none;
+    float: left;
+}
+/* Set the height of a grouped separator to a little bit bigger */
+.yui-toolbar-container.yui-toolbar-grouped span.yui-toolbar-separator {
+    height: 35px;
+}
+
+/* Reset the height of a separator inside of a group */
+.yui-toolbar-container.yui-toolbar-grouped .yui-toolbar-group span.yui-toolbar-separator {
+    height: 18px;
+}
+
+/* Kill the default styles of the list */
+.yui-toolbar-container ul li {
+    margin: 0;
+    float: left;
+}
+
+/* Setup the default style of a button in the toolbar */
+.yui-toolbar-container .yui-button {
+    border: 1px solid #999999;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    height: 20px;
+    width: 30px;
+    overflow: hidden;
+    display: block;
+    float: left;
+    margin: 0 1px;
+    position: relative;
+    filter: none; /* UNDO Button filter..*/
+}
+
+/* setup the default style of the A inside of the toolbar button */
+.yui-toolbar-container .yui-button .first-child, .yui-toolbar-container .yui-button .first-child a {
+    margin: 0;
+    border: 0;
+    display: block;
+    text-indent: 50px !important; /* IE Fix */
+    width: 200px;
+    overflow:hidden;
+}
+
+/* Setup the disabled state of a button */
+.yui-toolbar-container .yui-button-disabled {
+    opacity: .5;
+    filter: alpha(opacity=50);
+    cursor: default;
+}
+/* remove any padding from the A */
+.yui-toolbar-container .yui-button a {
+    padding: 0;
+}
+/* Fix a style inherited from the Button widget for IE */
+.yui-toolbar-container .yui-button.ie6.hover {
+    background-color: #98D5FC !important;
+}
+
+/* Select Button Emulation */
+.yui-toolbar-container .yui-toolbar-select {
+    height: 20px;
+    width: auto;
+}
+
+/* Override the default Button style for select menu*/
+.yui-toolbar-container .yui-toolbar-select a {
+    border: none;
+    background-color: transparent;
+    height: 19px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    opacity: 1;
+    filter: none;
+}
+/* Fix IE */
+.yui-toolbar-container .yui-toolbar-select .first-child {
+    width: 100% !important; /* For IE */
+}
+/* Reset the text-indent because we want to see the text of a select menu */
+.yui-toolbar-container .yui-toolbar-select .first-child a {
+    text-indent: 3px !important;
+    width: 100% !important; /* For IE */
+}
+
+/* Fix styles inherited from Button  */
+.yui-toolbar-container .yui-toolbar-select.yui-button-disabled a {
+    cursor: default;
+    opacity: 1;
+    filter: none;
+    display: block;
+}
+
+
+/* Font Family Drop Down */
+.yui-toolbar-container .yui-toolbar-fontname {
+    width: 125px;
+}
+
+/* Header Drop Down */
+.yui-toolbar-container .yui-toolbar-heading {
+    width: 80px;
+}
+
+/* Font Family Menu Style - This styles the menu items and the selected menu item */
+.yui-toolbar-fontname-arial { font-family: Arial; }
+.yui-toolbar-fontname-arial-black { font-family: Arial Black; }
+.yui-toolbar-fontname-comic-sans-ms { font-family: Comic Sans MS; }
+.yui-toolbar-fontname-courier-new { font-family: Courier New; }
+.yui-toolbar-fontname-times-new-roman { font-family: Times New Roman; }
+.yui-toolbar-fontname-verdana { font-family: Verdana; }
+.yui-toolbar-fontname-impact { font-family: Impact; }
+.yui-toolbar-fontname-lucida-console { font-family: Lucida Console; }
+.yui-toolbar-fontname-tahoma { font-family: Tahoma; }
+.yui-toolbar-fontname-trebuchet-ms { font-family: Trebuchet MS; }
+
+/* Put a fake border around buttons that have focus */
+.yui-toolbar-container .yui-push-button-focus {
+    border: 1px dotted #999;
+}
+
+/* Spin Button */
+.yui-toolbar-container .yui-toolbar-spinbutton {
+    position: relative;
+    width: 35px;
+}
+
+/* Set a default width */
+.yui-toolbar-container .yui-toolbar-spinbutton .first-child {
+    width: 35px;
+}
+/* Setup the default style for the A */
+.yui-toolbar-container .yui-toolbar-spinbutton .first-child a {
+    border: none;
+    background-color: transparent;
+    background-image: none;
+    background-repeat: no-repeat;
+    width: 28px;
+    height: 20px;
+    text-align: left;
+    text-indent: 2px !important;
+    z-index: 0;
+    opacity: 1;
+    filter: none;
+}
+
+/* Setup the position and style for the up and down arrows */
+.yui-toolbar-container .yui-toolbar-spinbutton.yui-button a.up, .yui-toolbar-container .yui-toolbar-spinbutton.yui-button a.down {
+    position: absolute;
+    display: block
+    right: 0;
+    cursor: pointer;
+    text-indent: 999px;
+    overflow: hidden;
+    z-index: 1;
+    border: none;
+}
+/* Position all panels/overlays as absolute by default */
+.yui-toolbar-container .yui-overlay {
+    position: absolute;
+}
+/* Smash the default style for lists */
+.yui-toolbar-container .yui-overlay ul li {
+    float: none;
+}
+
+/* Setup the default look of a color menu and Zoom it for IE */
+.yui-toolbar-colors {
+    width: 133px;
+    zoom: 1;
+    display: none;
+    z-index: 100;
+    overflow: hidden;
+}
+
+/* Setup the :after so that compliant browsers don't loose the bounding box */
+.yui-toolbar-colors:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+/* Style all of the A's so the float properly */
+.yui-toolbar-colors a {
+    height: 9px;
+    width: 9px;
+    float: left;
+    display: block;
+    overflow: hidden;
+    text-indent: 999px;
+    margin: 0;
+    cursor: pointer;
+    border: 1px solid #F6F7EE;
+}
+/* Put a little border around one that is hovered over */
+.yui-toolbar-colors a:hover {
+    border: 1px solid black;
+}
+
+/* Smash the inhertited Menu style */
+.yui-color-button-menu {
+    overflow: hidden;
+    background-color: transparent;
+}
+
+/* This is the preview box at the bottom of the menu - Zoom it for IE */
+.yui-toolbar-colors span {
+    position: relative;
+    display: block;
+    padding: 3px;
+    overflow: hidden;
+    float: left;
+    width: 100%;
+    zoom: 1;
+}
+/* Setup the :after so that compliant browsers don't loose the bounding box */
+.yui-toolbar-colors span:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+
+/* This is the box with the color preview in it */
+.yui-toolbar-colors span em {
+    height: 35px;
+    width: 30px;
+    float: left;
+    display: block;
+    overflow: hidden;
+    text-indent: 999px;
+    margin: 0.75px;
+    border: 1px solid black;
+}
+
+/* The container for the name and hex code */
+.yui-toolbar-colors span strong {
+    font-weight: normal;
+    padding-left: 3px;
+    display: block;
+    font-size: 85%;
+    float: left;
+    width: 65%;
+}
+
+/* Reset the z-index of the toolbar container so that menu's appear over the iframe in IE and Safari */
+.yui-toolbar-container {
+    z-index: 1;
+}
+
+/* The div around the iFrame */
+.yui-editor-container .yui-editor-editable-container {
+    position: relative;
+    z-index: 0;
+}
+/* The disbled state of the Editor */
+.yui-editor-container .yui-editor-masked {
+    background-color: #CCC;
+}
+/* Style the eidtable iframe to hide it */
+.yui-editor-container iframe {
+    border: 0px;
+    padding: 0;
+    margin: 0;
+}
+/* Reset some padding on the editable iframes container */
+.yui-editor-container .yui-editor-editable {
+    padding: 0;
+    margin: 0;
+}
+/* Style the dom path box at the bottom of the editor */
+.yui-editor-container .dompath {
+    height: 1em;
+    padding:0.25em;
+    font-size: 85%;
+}
+
+/* Header styles for the Property Editor */
+.yui-editor-panel .hd {
+    text-align: left;
+    position: relative;
+}
+/* Setup some padding around the h3 */
+.yui-editor-panel .hd h3 {
+    font-weight: bold;
+    padding: 0.25em 0pt 0.25em 0.25em;
+}
+
+/* set it to relative so we can position the close button - Zoom it for IE */
+.yui-editor-panel .bd {
+    width: 100%;
+    zoom: 1;
+    position: relative;
+}
+/* Setup some padding for the body container - Zoom it for IE */
+.yui-editor-panel .bd div.yui-editor-body-cont {
+    padding: .25em .1em;
+    zoom: 1;
+}
+
+/* Setup the :after so that compliant browsers don't loose the bounding box */
+.yui-editor-panel .bd div.yui-editor-body-cont:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+
+/* style the footer of the property editor */
+.yui-editor-panel .ft {
+    text-align: right;
+    width: 99%;
+    float: left;
+    clear: both;
+}
+
+/* Style the "tip" icon */
+.yui-editor-panel .ft span.tip {
+    display: block;
+    position: relative;
+    padding-left:23px;
+    text-align:left;
+    margin: .5em;
+    zoom: 1;
+}
+
+
+/* setup some form fields */
+.yui-editor-panel label {
+    clear: both;
+    float: left;
+    padding: 0;
+    overflow: auto; /* This fixes the caret issue in Firefox */
+    width: 100%;
+    zoom: 1;
+    text-align: left;
+}
+
+/* more form fields */
+.yui-editor-panel label strong {
+    float: left;
+    width: 6em;
+}
+
+/* The remove link in the Link Property Editor */
+.yui-editor-panel .removeLink {
+    width: 80%;
+    text-align: right;
+}
+
+/* More form styling */
+.yui-editor-panel label input {
+    margin-left: .25em;
+    float: left;
+}
+
+/* Image Padding in the Property Editor */
+.yui-editor-panel .yui-toolbar-group-padding {
+    width: 100px;
+}
+
+/* Image Border in the Property Editor */
+.yui-editor-panel .yui-toolbar-group-border {
+    width: 175px;
+    *width: 190px;
+}
+
+/* Image Text Flow in the Property Editor */
+.yui-editor-panel .yui-toolbar-group-textflow {
+    width: 150px;
+    *width: 180px;
+}
+
+/* Image Height/Width in the Property Editor */
+.yui-editor-panel .height-width {
+    float: left;
+    width: 68%;
+}
+/* Image Height/Width title */
+.yui-editor-panel .height-width h3 {
+    padding-right: 11px;
+}
+/* Image Height/Width container */
+.yui-editor-panel .height-width span {
+    font-style: italic;
+    display: block;
+    float: left;
+    overflow:auto;
+}
+/* Image Height/Width original info container */
+.yui-editor-panel .height-width span.info {
+    font-size: 70%;
+}
+
+/* Border Size/Type button widths */
+.yui-editor-panel .yui-toolbar-bordersize, .yui-editor-panel .yui-toolbar-bordertype {
+    width: 50px;
+    font-size: 75%;
+}
+
+/* Kill the separators in the Property Editor */
+.yui-editor-panel .yui-toolbar-container span.yui-toolbar-separator {
+    border: none;
+}
+
+/* Undo the floats on the a's */
+.yui-editor-panel .yui-toolbar-container div.yuimenu li.yuimenuitem a {
+    float: none;
+}
+
+/* Border Type solid */
+.yui-editor-panel .yui-toolbar-bordertype span a span.yui-toolbar-bordertype-solid {
+    border-bottom: 1px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Type dotted */
+.yui-editor-panel .yui-toolbar-bordertype span a span.yui-toolbar-bordertype-dotted {
+    border-bottom: 1px dotted black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Type dashed */
+.yui-editor-panel .yui-toolbar-bordertype span a span.yui-toolbar-bordertype-dashed {
+    border-bottom: 1px dashed black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Size 1 */
+.yui-editor-panel .yui-toolbar-bordersize span a span.yui-toolbar-bordersize-1 {
+    border-bottom: 1px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Size 2 */
+.yui-editor-panel .yui-toolbar-bordersize span a span.yui-toolbar-bordersize-2 {
+    border-bottom: 2px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Size 3 */
+.yui-editor-panel .yui-toolbar-bordersize span a span.yui-toolbar-bordersize-3 {
+    border-bottom: 3px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Size 4 */
+.yui-editor-panel .yui-toolbar-bordersize span a span.yui-toolbar-bordersize-4 {
+    border-bottom: 4px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+/* Border Size 5 */
+.yui-editor-panel .yui-toolbar-bordersize span a span.yui-toolbar-bordersize-5 {
+    border-bottom: 5px solid black;
+    text-indent: 777px;
+    overflow: hidden;
+    display: block;
+    width: 22px;
+    height: 8px;
+    position: absolute;
+    left: 2px;
+}
+
+/* Border Size menu size */
+.yui-toolbar-container .yui-toolbar-bordersize-menu {
+    width: 30px;
+}
+/* Border Size menu styles */
+.yui-toolbar-bordersize-menu .yuimenuitemlabel, .yui-toolbar-bordertype-menu .yuimenuitemlabel {
+    display: block;
+    width: 50px;
+    color: #ffffff;
+    position: relative;
+    margin-left: 20px;
+    padding: 0;
+}
+/* Border Size menu styles - Checked */
+.yui-toolbar-bordersize-menu .yuimenuitemlabel .checkedindicator, .yui-toolbar-bordertype-menu .yuimenuitemlabel .checkedindicator {
+    position: absolute;
+    left: -14px;
+}
+/* Border Size menu styles - Selected */
+.yui-toolbar-bordersize-menu .yuimenuitem a.selected, .yui-toolbar-bordertype-menu .yuimenuitem a.selected {
+    color: #B3D4FF;
+}
+
+/* Border Size 0 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-0 a {
+    color: #000;
+}
+/* Border Size 0 - Selected Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-0 a.selected {
+    color: #fff;
+}
+/* Border Size 1 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-1 a {
+    border-bottom: 1px solid black;
+}
+/* Border Size 2 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-2 a {
+    border-bottom: 2px solid black;
+}
+/* Border Size 3 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-3 a {
+    border-bottom: 3px solid black;
+}
+/* Border Size 4 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-4 a {
+    border-bottom: 4px solid black;
+}
+/* Border Size 5 - Menu Item */
+div.yuimenu.yui-toolbar-bordersize-menu li.yui-toolbar-bordersize-5 a {
+    border-bottom: 5px solid black;
+}
+
+
+/* Border Type Solid - Menu Item */
+div.yuimenu.yui-toolbar-bordertype-menu li.yui-toolbar-bordertype-solid a {
+    border-bottom: 1px solid black;
+}
+/* Border Type Dashed - Menu Item */
+div.yuimenu.yui-toolbar-bordertype-menu li.yui-toolbar-bordertype-dashed a {
+    border-bottom: 1px dashed black;
+}
+/* Border Type Dotted - Menu Item */
+div.yuimenu.yui-toolbar-bordertype-menu li.yui-toolbar-bordertype-dotted a {
+    border-bottom: 1px dotted black;
+}
+/* Hidden Headers for Accessibility */
+h2.yui-editor-skipheader, h3.yui-editor-skipheader {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: 0;
+    overflow: hidden;
+    position: absolute;
+}
+

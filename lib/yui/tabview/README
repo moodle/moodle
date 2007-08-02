@@ -1,3 +1,25 @@
+TabView Release Notes
+
+** version 2.3.0 ***
+* no longer firing tabChange if already selected
+* multiple clicks no longer trigger extra xhr if in progress
+* now using existing href for Tab href attribute
+* CLASSNAME now added if not present on tabview element
+
+*** version 2.2.2 ***
+
+* no change
+
+
+*** version 2.2.1 ***
+
+* no change
+
+*** version 2.2.0 ***
+
+* Element broken out into seperate pkg
+  NOTE: new dependency required - element-beta.js
+
 *** version 0.12.2 ***
 
 * var Tab is now private

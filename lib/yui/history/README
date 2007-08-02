@@ -1,0 +1,35 @@
+YUI Library - History - Release Notes
+
+2.3.0
+
+  * The Browser History Manager now works on IE if used inside an IFrame
+    (See SourceForge Bug #1729569)
+  * Added multiNavigate method, which allows changing the state of several
+    modules at once, without introducing intermediate history entries
+    (See SourceForge Bug #1713236)
+  * Do not raise an exception when re-registering a module
+    (See SourceForge Bug #1708840)
+
+2.2.1
+
+  * Use YAHOO.lang.hasOwnProperty when iterating over the _modules associative
+    array. This way, the browser history manager will play nice with the
+    libraries that add methods to the prototype of the Array object.
+  * Fixed bug related to escaping / unescaping some values.
+  * Added parameters to the register method to look like the addListener method
+    of the Event utility (you can now pass an object that becomes the scope of
+    the onStateChange handler, or is simply passed in to that handler)
+  * Upgraded code presentation to work with Crockford's latest recommendations
+    (which the latest version of JSLint online implements)
+  * Integrated David Bloom's findings to not have to use an external asset
+    (blank.html) on IE (when not going through HTTPS)
+
+2.2.0
+
+  * This is the initial release of the browser history manager.
+    This component is considered experimental.  Experimental components
+    are released for community experimentation and feedback; they
+    are not considered appropriate for implementation in mission-
+    critical applications. Please see the YUI FAQ at
+    http://developer.yahoo.com/yui/articles/faq/#experimental
+    for more information about the "experimental" designation.

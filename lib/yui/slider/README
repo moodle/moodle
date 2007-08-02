@@ -1,12 +1,26 @@
 Slider - Release Notes
 
-0.12.2
+2.3.0
+   * Added valueChangeSource, which specifies whether the last value change
+     was the result of user interaction with the control, or a result of a
+     programmatic update (setValue)
 
+2.2.2
+   * No change
+
+2.2.1
+   * No change
+
+2.2.0
+   * Added the missing "force" parameter to the signature for setRegionValue
+   * Deprecated the moveComplete flag
+
+0.12.2
    * No change
 
 0.12.1
 
-   * Removed unneccessary getXY calls that were contribuing to slower performance
+   * Removed unnecessary getXY calls that were contributing to slower performance
      in FireFox when the slider was deeply nested in the DOM.
 
 0.12.0

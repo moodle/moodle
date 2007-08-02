@@ -1,5 +1,33 @@
 Dom Release Notes
 
+*** version 2.3.0 ***
+* added getAncestorBy methods
+* added getChildren methods
+* added getSibling methods
+* trimming added for class mgmt methods
+* fixed getXY inside table for Opera 
+
+** Known Issues **
+* margin/padding/borders on HTML element cause getXY to misreport
+* margin on BODY causes Safari to misreport getXY
+* Fixed postioning causes getXY to misreport in some cases
+
+*** version 2.2.2 ***
+
+* fixed getXY scroll regression
+
+*** version 2.2.1 ***
+* fixed toCamel propertyCache used by set/getStyle
+* added set/getStyle support for float property
+* optimized get() for common use case
+* fixed getXY for safari when el has absolute ancestors
+* using className property instead of string literal for class mgmt methods
+* added getXY/getRegion support for body element
+
+*** version 2.2.0 ***
+* no change
+
+
 *** version 0.12.2 ***
 * no change
 

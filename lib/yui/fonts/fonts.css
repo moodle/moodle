@@ -1,23 +1,16 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
 /**
  * Percents could work for IE, but for backCompat purposes, we are using keywords.
  * x-small is for IE6/7 quirks mode.
- * 
  */
-body {font:13px arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}
+body {font:13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}
 table {font-size:inherit;font:100%;}
-
 /**
- * 99% for safari; 100% is too large
+ * Bump up IE to get to 13px equivalent
  */
-select, input, textarea {font:99% arial,helvetica,clean,sans-serif;}
-
-/**
- * Bump up !IE to get to 13px equivalent
- */
-pre, code {font:115% monospace;*font-size:100%;}
-
-/**
- * Default line-height based on font-size rather than "computed-value"
- * see: http://www.w3.org/TR/CSS21/visudet.html#line-height
- */
-body * {line-height:1.22em;}
+pre,code,kbd,samp,tt {font-family:monospace;*font-size:108%;line-height:99%;}

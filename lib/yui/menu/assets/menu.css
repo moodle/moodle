@@ -1,15 +1,12 @@
 /*
-Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.txt
-Version: 0.12.1
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
 */
+/* Menu & MenuBar styles */
 
-
-
-/* Menu styles */
-
-div.yuimenu {
+.yuimenu {
 
     background-color:#f6f7ee;
     border:solid 1px #c4c4be;
@@ -17,83 +14,92 @@ div.yuimenu {
     
 }
 
-/* Submenus are positioned absolute and hidden by default */
+/*
 
-div.yuimenu div.yuimenu,
-div.yuimenubar div.yuimenu {
+The following style rule (".yuimenu.show-scrollbars") overrides the 
+".show-scrollbars" rule defined in container.css which sets the 
+"overflow" property of a YAHOO.widget.Overlay instance's root HTML element to 
+"auto" when it is visible.  Without this override, a Menu would have scrollbars
+when one of its submenus is visible.
+
+*/
+
+.yuimenu.show-scrollbars {
+
+	overflow: visible; 
+
+}
+
+.yui-menu-shadow {
+
+    display: none;
+
+}
+
+.yuimenu .yuimenu,
+.yuimenubar .yuimenu {
 
     position:absolute;
     visibility:hidden;
 
 }
 
-/* MenuBar Styles */
-
-div.yuimenubar {
+.yuimenubar {
 
     background-color:#f6f7ee;
     
 }
 
-/*
-    Applying a width triggers "haslayout" in IE so that the module's
-    body clears its floated elements
-*/
-div.yuimenubar div.bd {
+.yuimenubar ul {
 
-    width:100%;
+    *zoom:1;
 
 }
 
-/*
-    Clear the module body for other browsers
-*/
-div.yuimenubar div.bd:after {
+.yuimenubar ul:after {
 
-    content:'.';
+    content:".";
     display:block;
     clear:both;
     visibility:hidden;
     height:0;
+    line-height:0;
 
 }
 
-
-/* Matches the group title (H6) inside a Menu or MenuBar instance */
-
-div.yuimenu h6,
-div.yuimenubar h6 { 
+.yuimenu h6,
+.yuimenubar h6 { 
 
     font-size:100%;
-    font-weight:normal;    
+    font-weight:normal;
     margin:0;
     border:solid 1px #c4c4be;
     color:#b9b9b9;    
 
 }
 
-div.yuimenubar h6 {
+.yuimenubar h6 {
 
     float:left;
-    display:inline; /* Prevent margin doubling in IE */
     padding:4px 12px;
     border-width:0 1px 0 0;
-    
+
 }
 
-div.yuimenu h6 {
+.yuimenubar .yuimenu h6 {
 
     float:none;
-    display:block;
+
+}
+
+.yuimenu h6 {
+
     border-width:1px 0 0 0;
     padding:5px 10px 0 10px;
 
 }
 
-
-/* Matches the UL inside a Menu or MenuBar instance */
-
-div.yuimenubar ul {
+.yuimenubar ul {
 
     list-style-type:none;
     margin:0;
@@ -101,7 +107,7 @@ div.yuimenubar ul {
 
 }
 
-div.yuimenu ul {
+.yuimenu ul {
 
     list-style-type:none;
     border:solid 1px #c4c4be;
@@ -111,187 +117,228 @@ div.yuimenu ul {
 
 }
 
-
-div.yuimenu ul.first-of-type, 
-div.yuimenu ul.hastitle,
-div.yuimenu h6.first-of-type {
+.yuimenu ul.first-of-type, 
+.yuimenu ul.hastitle,
+.yuimenu h6.first-of-type {
 
     border-width:0;
+
+}
+
+.yuimenu .topscrollbar,
+.yuimenu .bottomscrollbar {
+
+    height:16px;
+    background-image:url(map.gif);
+    background-repeat:no-repeat;
+
+}
+
+.yuimenu .topscrollbar {
+
+    background-image:url(map.gif);
+    background-position:center -72px;
+
+}
+
+.yuimenu .topscrollbar_disabled {
+
+    background-image:url(map.gif);
+    background-position:center -88px;
+
+}
+
+.yuimenu .bottomscrollbar {
+
+    background-image:url(map.gif);
+    background-position:center -104px;
+
+}
+
+.yuimenu .bottomscrollbar_disabled {
+
+    background-image:url(map.gif);
+    background-position:center -120px;
 
 }
 
 
 /* MenuItem and MenuBarItem styles */
 
-div.yuimenu li,
-div.yuimenubar li {
+.yuimenubaritem {
 
-    font-size:85%;
-    cursor:pointer;
-    cursor:hand;
-    white-space:nowrap;
-    text-align:left;
+    float:left;
 
 }
 
-div.yuimenu li.yuimenuitem {
+.yuimenuitemlabel,
+.yuimenubaritemlabel {
+
+    white-space: nowrap;
+    font-size:85%;
+    display:block;
+    color:#000;
+    text-decoration:none;
+
+}
+
+.yuimenuitemlabel {
 
     padding:2px 24px;
+    outline:none;
     
 }
 
-div.yuimenu li li,
-div.yuimenubar li li {
+.yuimenubaritemlabel {
 
-    font-size:100%;
+    border-width:0 0 0 1px;
+    border-style:solid;
+    border-color:#c4c4be;
+    padding:4px 24px;
 
 }
 
+li.first-of-type .yuimenubaritemlabel {
 
-/* Matches the help text for a menu item */
+    border-width:0;
 
-div.yuimenu li em {
+}
+
+.yuimenuitemlabel .helptext {
 
     font-style:normal;
     margin:0 0 0 40px;
-
-}
-
-div.yuimenu li a em {
-
-    margin:0;
-
-}
-
-div.yuimenu li a,
-div.yuimenubar li a {
-    
-    /*
-        "zoom:1" triggers "haslayout" in IE to ensure that the mouseover and 
-        mouseout events bubble to the parent LI in IE.
-    */
-    zoom:1;
-    color:#000;
-    text-decoration:none;
     
 }
 
-div.yuimenu li.hassubmenu,
-div.yuimenu li.hashelptext {
+.yuimenuitemlabel .submenuindicator,
+.yuimenuitemlabel .checkedindicator, 
+.yuimenubaritemlabel .submenuindicator {
+    
+    display:block;
+    height:8px;
+    width:8px;
+    overflow:hidden;
+    vertical-align:middle;
+    text-indent:9px;
+    background-image:url(http://yui.yahooapis.com/2.2.2/build/menu/assets/map.gif);
+    background-repeat:no-repeat;
 
+}
+
+.yuimenubaritemlabel .submenuindicator {
+
+    display:-moz-inline-stack; /* Gecko */
+    display:inline-block; /* IE, Opera and Safari */
+    font:0/0 arial; /* Gecko */
+
+}
+
+.yuimenuitemlabel .submenuindicator {
+
+    background-position:0 0;
+
+}
+
+.yuimenubaritemlabel .submenuindicator {
+
+    background-position:0 -24px;
+    margin:0 0 0 10px;
+
+}
+
+.yuimenuitemlabel .checkedindicator {
+
+    background-position:0 -48px;
+
+}
+
+.visible .yuimenuitem,
+.visible .yuimenuitemlabel {
+
+    *zoom:1;
+
+}
+
+.visible .yuimenuitemlabel .helptext {
+
+    float:right;
+    width:100%;
     text-align:right;
+    margin:-1.2em 0 0 0;
+    *cursor:hand; /* Required to restore the style of the cursor in IE */
 
 }
 
-div.yuimenu li.hassubmenu a.hassubmenu,
-div.yuimenu li.hashelptext a.hashelptext {
+.visible .yuimenuitemlabel .submenuindicator {
 
-    float:left;
-    display:inline; /* Prevent margin doubling in IE */
-    text-align:left;
+    margin:-.9em -16px 4px auto;
+    *margin:-.9em -16px 0 105%;
+
+}
+
+.visible .yuimenuitemlabel .checkedindicator {
+
+    margin:-.9em auto 4px -16px;
+    *margin-bottom:0;
 
 }
 
 
-/* Matches focused and selected menu items */
 
-div.yuimenu li.selected,
-div.yuimenubar li.selected {
+/* Matches selected menu items */
+
+.yuimenuitem a.selected,
+.yuimenubaritem a.selected {
 
     background-color:#8c8ad0;
-
-}
-
-div.yuimenu li.selected a.selected,
-div.yuimenubar li.selected a.selected {
-
     text-decoration:underline;
+    color:#fff;
 
 }
 
-div.yuimenu li.selected a.selected,
-div.yuimenu li.selected em.selected, 
-div.yuimenubar li.selected a.selected {
+.yuimenubaritem a.selected .submenuindicator {
 
-    color:#fff;
+    background-position:0 -32px;
+
+}
+
+.yuimenuitem a.selected .submenuindicator {
+
+    background-position:0 -8px;
+
+}
+
+.yuimenuitem a.selected .checkedindicator {
+
+    background-position:0 -56px;
 
 }
 
 
 /* Matches disabled menu items */
 
-div.yuimenu li.disabled, 
-div.yuimenubar li.disabled {
+.yuimenubaritem a.disabled .submenuindicator {
 
-    cursor:default;
+    background-position:0 -40px;
 
 }
 
-div.yuimenu li.disabled a.disabled,
-div.yuimenu li.disabled em.disabled,
-div.yuimenubar li.disabled a.disabled {
+.yuimenuitem a.disabled {
 
+    cursor:default;
     color:#b9b9b9;
-    cursor:default;
-    
-}
-
-div.yuimenubar li.yuimenubaritem {
-
-    float:left;
-    display:inline; /* Prevent margin doubling in IE */
-    border-width:0 0 0 1px;
-    border-style:solid;
-    border-color:#c4c4be;
-    padding:4px 24px;
-    margin:0;
 
 }
 
-div.yuimenubar li.yuimenubaritem.first-of-type {
+.yuimenuitem a.disabled .submenuindicator {
 
-    border-width:0;
-
-}
-
-
-/* Matches the submenu indicator for menu items */
-
-div.yuimenubar li.yuimenubaritem img {
-
-    height:8px;
-    width:8px;
-    margin:0 0 0 10px;
-    vertical-align:middle;
+    background-position:0 -16px;
 
 }
 
-div.yuimenu li.yuimenuitem img {
+.yuimenuitem a.disabled .checkedindicator {
 
-    height:8px;
-    width:8px;
-    margin:0 -16px 0 0;
-    padding-left:10px;
-    border:0;
+    background-position:0 -64px;
 
-}
-
-div.yuimenu li.checked {
-
-    position:relative;
-
-}
-
-div.yuimenu li.checked img.checked {
-
-    height:8px;
-    width:8px;
-    margin:0;
-    padding:0;
-    border:0;
-    position:absolute;
-    left:6px;
-    _left:-16px; /* Underscore hack b/c this is for IE 6 only */
-    top:.5em;
-    
 }
