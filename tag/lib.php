@@ -1165,7 +1165,7 @@ function print_tag_description_box($tag_object) {
  * @param int $limitnum prints this many users (optional, required if $limitfrom is set).
  */
 
-function print_tagged_users_table($tag_object, $users_per_row='5', $limitfrom='' , $limitnum='') {
+function print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='') {
 
     //List of users with this tag
     $userlist = array_values( get_items_tagged_with(
@@ -1179,7 +1179,7 @@ function print_tagged_users_table($tag_object, $users_per_row='5', $limitfrom=''
     //user table box
     print_box_start('generalbox', 'tag-user-table');
 
-        print_user_table($userlist, $users_per_row);
+        print_user_list($userlist);
 
     print_box_end();
     //end table box
@@ -1189,35 +1189,16 @@ function print_tagged_users_table($tag_object, $users_per_row='5', $limitfrom=''
 }
 
 /**
- *  Prints a table of users
+ *  Prints a list of users
  *
  * @param array $userlist an array of user objects
- * @param int $users_per_row number of users per row to display
  */
-function print_user_table($userlist, $users_per_row='5') {
+function print_user_list($userlist) {
     
-    $nrofrows = ceil( count($userlist) / $users_per_row );
-    for($row = 0; $row < $nrofrows; $row++){
-
-        //table row box
-        print_box_start('user-table-row', 'row_'.$row);
-
-        for($col = 0; ($col < $users_per_row) ; $col++ ) {
-
-            $index = $row * $users_per_row + $col;
-
-            if ($index < count($userlist) ) {
-
-                print_user_box( $userlist[$index] );
-
-            }
-
-        }
-
-        print_box_end();
-        //end table row box
-
+    foreach ($userlist as $user){
+        print_user_box( $user );
     }
+
     
 }
 

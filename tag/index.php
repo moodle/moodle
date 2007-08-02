@@ -12,7 +12,7 @@ if (empty($CFG->usetags)) {
 
 $tagid       = optional_param('id',     0,      PARAM_INT);   // tag id
 $userpage    = optional_param('userpage', 0, PARAM_INT);      // which page to show
-$perpage     = optional_param('perpage', 16, PARAM_INT);
+$perpage     = optional_param('perpage', 20, PARAM_INT);
 
 $tag      = tag_by_id($tagid);
 
@@ -51,7 +51,7 @@ if ($usercount > 0) {
     
     print_paging_bar($usercount, $userpage, $perpage, $baseurl.'&amp;', 'userpage');
     
-    print_tagged_users_table($tag, 4, $userpage * $perpage, $perpage);
+    print_tagged_users_table($tag, $userpage * $perpage, $perpage);
 
 }
 

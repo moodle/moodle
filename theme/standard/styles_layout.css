@@ -2751,7 +2751,7 @@ ul.tabrow1 li.here.selected a {
  ***/
 
 div#tag-description {
- 	width:600px;
+	width:60%;
 	padding-top:0px;
 	margin-top:20px;
 	margin-left:auto;
@@ -2766,25 +2766,19 @@ div#tag-management-box {
 }
 	  
 div#tag-user-table {
-	width:600px;
+	width:60%;
 	margin-left:auto;
 	margin-right:auto;	
 	display:table;
 }
 
-div.user-table-row {
-	width:100%;
-	min-height:150px;	
-	margin-top:20px;
-	margin-bottom:20px;	
-	margin-left:auto;
-	margin-right:auto;
-	text-align:center;
-	display:block;
-}
-
 div.user-box {
-	width:150px;
+	margin-left:15px;
+	margin-right:15px;
+	margin-top:5px;
+	margin-bottom:5px;			
+	width:115px;
+	height:150px;	
 	text-align:center;
 	display:block;	
 	float:left;
