@@ -2518,8 +2518,9 @@ function move_courses ($courseids, $categoryid) {
                     if (!update_record('course', $course)) {
                         notify("An error occurred - course not moved!");
                     }
-                    // parents changed (course category), do not delete child context relations
-                    insert_context_rel(get_context_instance(CONTEXT_COURSE, $course->id), false);
+                    // parents changed (course category)
+                    // rebuild this context and all children
+                    rebuild_context_rel(get_context_instance(CONTEXT_COURSE, $course->id));
                 }
             }
             fix_course_sortorder();

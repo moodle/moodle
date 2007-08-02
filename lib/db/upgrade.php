@@ -1551,7 +1551,6 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Launch add field description
             $result = $result && add_field($table, $field);
         }
-
     }
     
     // adding unique contraint on (courseid,shortname) of an outcome
@@ -1571,6 +1570,12 @@ function xmldb_main_upgrade($oldversion=0) {
             set_config('supportname',  s(fullname($firstadmin)));   // New settings same as old
             set_config('supportemail',  s($firstadmin->email));
         }
+    }
+    
+    /// MDL-10679, context_rel clean up
+    if ($result && $oldversion < 2007080200) {
+        delete_records('context_rel');
+        build_context_rel();
     }
 
 /*

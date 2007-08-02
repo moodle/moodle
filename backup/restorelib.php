@@ -7010,11 +7010,9 @@
             }
 
             $newcontext = get_context_instance($contextlevel, $oldinstance->new_id);
-            $override->contextid = $newcontext->id; // new context id
-            // might already have same override
-            if (!get_record('role_capabilities', 'capability', $override->capability, 'roleid', $override->roleid, 'contextid', $override->contextid)) {
-                insert_record('role_capabilities', $override);
-            }
+            $override->contextid = $newcontext->id; // new context id                
+            // use assign capability instead so we can add context to context_rel
+            assign_capability($override->capability, $override->permission, $override->roleid, $override->contextid);
         }
     }
     //write activity date changes to the html log file, and update date values in the the xml array

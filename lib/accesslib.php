@@ -1691,9 +1691,7 @@ function create_context($contextlevel, $instanceid) {
         $context->contextlevel = $contextlevel;
         $context->instanceid = $instanceid;
         if ($id = insert_record('context',$context)) {
-            // we need to populate context_rel for every new context inserted
-            $c = get_record('context','id',$id);
-            insert_context_rel ($c);           
+            $c = get_record('context','id',$id);          
             return $c;
         } else {
             debugging('Error: could not insert new context level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
@@ -1958,6 +1956,7 @@ function create_role($name, $shortname, $description, $legacy='') {
  * @return success
  */
 function delete_role($roleid) {
+    global $CFG;
     $success = true;
 
 // mdl 10149, check if this is the last active admin role
@@ -1995,12 +1994,28 @@ function delete_role($roleid) {
 
 // cleanup all references to this role, ignore errors
     if ($success) {
+      
+        // MDL-10679 find all contexts where this role has an override
+        $contexts = get_records_sql("SELECT contextid, contextid 
+                                     FROM {$CFG->prefix}role_capabilities
+                                     WHERE roleid = $roleid");
+      
         delete_records('role_capabilities', 'roleid', $roleid);
+        
+        // MDL-10679, delete from context_rel if this role holds the last override in these contexts
+        if ($contexts) {
+            foreach ($contexts as $context) {
+                if (!record_exists('role_capabilities', 'contextid', $context->contextid)) {
+                    delete_records('context_rel', 'c1', $context->contextid);  
+                }   
+            }
+        }
+
         delete_records('role_allow_assign', 'roleid', $roleid);
         delete_records('role_allow_assign', 'allowassign', $roleid);
         delete_records('role_allow_override', 'roleid', $roleid);
         delete_records('role_allow_override', 'allowoverride', $roleid);
-        delete_records('role_names', 'roleid', $roleid);
+        delete_records('role_names', 'roleid', $roleid);    
     }
 
 // finally delete the role itself
@@ -2048,6 +2063,9 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         $cap->id = $existing->id;
         return update_record('role_capabilities', $cap);
     } else {
+        $c = get_record('context', 'id', $contextid);
+        /// MDL-10679 insert context rel here
+        insert_context_rel ($c);
         return insert_record('role_capabilities', $cap);
     }
 }
@@ -2062,9 +2080,19 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
 function unassign_capability($capability, $roleid, $contextid=NULL) {
 
     if (isset($contextid)) {
+        // delete from context rel, if this is the last override in this context
         $status = delete_records('role_capabilities', 'capability', $capability,
                 'roleid', $roleid, 'contextid', $contextid);
+        
+        // MDL-10679, if this is no more overrides for this context
+        // delete entries from context where this context is a child
+        if (!record_exists('role_capabilities', 'contextid', $contextid)) {
+            delete_records('context_rel', 'c1', $contextid);  
+        }             
+                
     } else {
+        // There is no need to delete from context_rel here because
+        // this is only used for legacy, for now
         $status = delete_records('role_capabilities', 'capability', $capability,
                 'roleid', $roleid);
     }
@@ -4044,24 +4072,30 @@ function insert_context_rel($context, $deletechild=true, $deleteparent=true) {
  */
 function build_context_rel() {
   
-    global $db;
+    global $CFG, $db;
     $savedb = $db->debug;
-  
+
+    // MDL-10679, only identify contexts with overrides in them
+    $contexts = get_records_sql("SELECT c.* FROM {$CFG->prefix}context c, 
+                                                 {$CFG->prefix}role_capabilities rc
+                                            WHERE c.id = rc.contextid");
     // total number of records
-    $total = count_records('context');
+    // subtract one because the site context should not be calculated, will not be processed
+    $total = count($contexts) - 1;
+    
     // processed records
     $done = 0;
     print_progress($done, $total, 10, 0, 'Processing context relations');
-    $db->debug = false;
-    if ($contexts = get_records('context')) {
-        foreach ($contexts as $context) {
-            // no need to delete because it's all empty
-            insert_context_rel($context, false, false);
-            $db->debug = true;
-            print_progress(++$done, $total, 10, 0, 'Processing context relations');
-            $db->debug = false;
-        }
-    }
+    $db->debug = false;    
+      
+    //if ($contexts = get_records('context')) {
+    foreach ($contexts as $context) {
+        // no need to delete because it's all empty
+        insert_context_rel($context, false, false);
+        $db->debug = true;
+        print_progress(++$done, $total, 10, 0, 'Processing context relations');
+        $db->debug = false;
+    }    
     
     $db->debug = $savedb;
 }
@@ -4077,4 +4111,37 @@ function role_get_name($role, $context) {
         return format_string($role->name);
     }
 }
+
+/* 
+ * @param int object - context object (node), from which we find all it's children
+ * and rebuild all associated context_rel info
+ * this is needed when a course or course category is moved
+ * as the children's relationship to grandparents needs to be fixed
+ * @return int number of contexts rebuilt
+ */
+function rebuild_context_rel($context) {
+
+    $contextlist = array();
+    
+    if (record_exists('role_capabilities', 'contextid', $context->id)) {
+        $contextlist[] = $context;    
+    }
+
+    // find all children used in context_rel
+    if ($childcontexts = get_records('context_rel', 'c2', $context->id)) {
+        foreach ($childcontexts as $childcontext) {
+            $contextlist[$childcontext->c1] = get_record('context', 'id', $childcontext->c1);      
+        }
+    }
+    
+    $i = 0;
+    // rebuild all the contexts of this list
+    foreach ($contextlist as $c) {
+        insert_context_rel($c);
+        $i++;
+    }
+    
+    return $i;
+}
+
 ?>

@@ -184,7 +184,9 @@
             if ($tempcat->parent != $moveto) {
                 if (! set_field('course_categories', 'parent', $moveto, 'id', $tempcat->id)) {
                     notify('Could not update that category!');
-                }
+                } else {
+                    rebuild_context_rel(get_context_instance(CONTEXT_COURSECAT, $move)); 
+                }            
             }
         }
     }

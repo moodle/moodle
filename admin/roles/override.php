@@ -100,33 +100,12 @@
                  continue;
             }
 
-            if (isset($localoverrides[$capname])) {    // Something exists, so update it
-                if ($value == CAP_INHERIT) {       // inherit = delete
-                    delete_records('role_capabilities', 'roleid', $roleid, 'contextid', $context->id,
-                                                        'capability', $capname);
-                } else {
-                    $localoverride = new object();
-                    $localoverride->id = $localoverrides[$capname]->id;
-                    $localoverride->permission = $value;
-                    $localoverride->timemodified = time();
-                    $localoverride->modifierid = $USER->id;
-                    if (!update_record('role_capabilities', $localoverride)) {
-                        error('Could not update a capability!');
-                    }
-                }
-
+            if (isset($localoverrides[$capname])) {    
+                // Something exists, so update it               
+                assign_capability($capname, $value, $roleid, $context->id, true);
             } else { // insert a record
                 if ($value != CAP_INHERIT) {    // Ignore inherits
-                    $localoverride = new object();
-                    $localoverride->capability = $capname;
-                    $localoverride->contextid = $context->id;
-                    $localoverride->roleid = $roleid;
-                    $localoverride->permission = $value;
-                    $localoverride->timemodified = time();
-                    $localoverride->modifierid = $USER->id;
-                    if (!insert_record('role_capabilities', $localoverride)) {
-                        error('Could not insert a capability!');
-                    }
+                    assign_capability($capname, $value, $roleid, $context->id);
                 }
             }
         }
