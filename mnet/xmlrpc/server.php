@@ -356,7 +356,7 @@ function mnet_server_dispatch($payload) {
     //            xmlrpc_decode_request($xml,                   &$method)
     $params     = xmlrpc_decode_request($payload, $method);
 
-    // $method is something like: "mod/forum/lib/forum_add_instance"
+    // $method is something like: "mod/forum/lib.php/forum_add_instance"
     // $params is an array of parameters. A parameter might itself be an array.
 
     // Whitelist characters that are permitted in a method name
