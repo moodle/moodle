@@ -87,7 +87,7 @@ class moodleform_mod extends moodleform {
      * @param bool $supportsgroups does this module support groups?
      */
     function standard_coursemodule_elements($supportsgroups=true){
-        global $COURSE;
+        global $COURSE, $CFG;
         $mform =& $this->_form;
 
         if (!empty($CFG->enableoutcomes)) {
