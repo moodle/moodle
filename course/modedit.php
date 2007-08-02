@@ -121,9 +121,9 @@
         } else {
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
-        
+
         $navlinksinstancename = array('name' => format_string($form->name,true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
-       
+
         $CFG->pagepath = 'mod/'.$module->name;
         if (!empty($type)) {
             $CFG->pagepath .= '/'.$type;
@@ -180,7 +180,7 @@
         }
 
         require_login($course->id); // needed to setup proper $COURSE
-        
+
         if (!empty($fromform->coursemodule)) {
             $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
         } else {
@@ -217,10 +217,10 @@
             if (isset($fromform->groupmode)) {
                 set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
             }
-            
+
             // set cm id number
             if (isset($fromform->cmidnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);  
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
             }
 
             add_to_log($course->id, "course", "update mod",
@@ -278,12 +278,12 @@
             }
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-            
+
             // set cm idnumber
             if (isset($fromform->cmidnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);  
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
             }
-            
+
             add_to_log($course->id, "course", "add mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
                        "$fromform->modulename $fromform->instance");
@@ -305,12 +305,17 @@
 
         // add outcomes if requested
         if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+            $grade_items = array();
+
             foreach($outcomes as $outcome) {
                 $elname = 'outcome_'.$outcome->id;
+
                 if (array_key_exists($elname, $fromform) and $fromform->$elname) {
                     // we have a request for new outcome grade item
                     $grade_item = new grade_item();
-                    $max = 999;
+
+                    // Outcome grade_item.itemnumber start at 1000
+                    $max_itemnumber = 999;
                     if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
                                  'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id))) {
                         $exists = false;
@@ -322,8 +327,8 @@
                             if (empty($item->outcomeid)) {
                                 continue;
                             }
-                            if ($item->itemnumber > $max) {
-                                $max = $item->itemnumber;
+                            if ($item->itemnumber > $max_itemnumber) {
+                                $max_itemnumber = $item->itemnumber;
                             }
                         }
                     }
@@ -334,19 +339,53 @@
                     $grade_item->itemtype     = 'mod';
                     $grade_item->itemmodule   = $fromform->modulename;
                     $grade_item->iteminstance = $fromform->instance;
-                    $grade_item->itemnumber   = $max + 1;
-                    $grade_item->itemname     = $fromform->name.' - '.$outcome->fullname;
+                    $grade_item->itemnumber   = $max_itemnumber + 1;
+                    $grade_item->itemname     = $outcome->fullname;
                     $grade_item->outcomeid    = $outcome->id;
                     $grade_item->gradetype    = GRADE_TYPE_SCALE;
                     $grade_item->scaleid      = $outcome->scaleid;
 
                     $grade_item->insert();
 
+                    // TODO comment on these next 4 lines
                     if ($item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$grade_item->itemmodule,
                                  'iteminstance'=>$grade_item->iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
                         $grade_item->set_parent($item->categoryid);
                         $grade_item->move_after_sortorder($item->sortorder);
                     }
+                    $grade_items[] = $grade_item;
+                }
+            }
+
+            // Create a grade_category to represent this module, if outcomes have been attached
+            if (!empty($grade_items)) {
+                $cat_params = array('courseid'=>$COURSE->id, 'fullname'=>$fromform->name);
+                $grade_category = grade_category::fetch($cat_params);
+
+                if (!$grade_category) {
+                    $grade_category = new grade_category($cat_params);
+                    $grade_category->courseid = $COURSE->id;
+                    $grade_category->fullname = $fromform->name;
+                    $grade_category->insert();
+                }
+
+                $sortorder = $grade_category->sortorder;
+
+                // Add the module's normal grade_item as a child of this category
+                $item_params = array('itemtype'=>'mod',
+                                     'itemmodule'=>$fromform->modulename,
+                                     'iteminstance'=>$fromform->instance,
+                                     'itemnumber'=>0,
+                                     'courseid'=>$COURSE->id);
+                if ($item = grade_item::fetch($item_params)) {
+                    $item->set_parent($grade_category->id);
+                    $sortorder = $item->sortorder;
+                }
+
+                // Add the outcomes as children of this category
+                foreach ($grade_items as $gi) {
+                    $gi->set_parent($grade_category->id);
+                    $gi->move_after_sortorder($sortorder);
                 }
             }
         }
@@ -363,19 +402,19 @@
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
         }
         require_capability('moodle/course:manageactivities', $context);
-        
+
         $streditinga = get_string("editinga", "moodle", $fullmodulename);
         $strmodulenameplural = get_string("modulenameplural", $module->name);
-        
+
         $navlinks = array();
         $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
         if (isset($navlinksinstancename)) {
             $navlinks[] = $navlinksinstancename;
         }
         $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');
-        
+
         $navigation = build_navigation($navlinks);
-        
+
         print_header_simple($streditinga, '', $navigation, $mform->focus(), "", false);
 
         if (!empty($cm->id)) {
