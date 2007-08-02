@@ -132,6 +132,7 @@ function upgrade_18_gradebook($courseid) {
         $item->itemtype        = 'mod';
         $item->itemmodule      = $olditem->modname;
         $item->iteminstance    = $olditem->cminstance;
+        $item->idnumber        = $olditem->cmidnumber;
         $item->itemname        = NULL;
         $item->itemnumber      = 0;
         $item->gradetype       = GRADE_TYPE_VALUE;
