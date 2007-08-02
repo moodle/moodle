@@ -1,15 +1,34 @@
+<?php $maxlength=70; ?>
+
 <form action="course.php" method="post">
 <div>
 <table style="margin-left:auto;margin-right:auto">
     <tr>
         <td>
-            <label for="addoutcomes"><?php print_string('outcomesstandardavailable', 'grades'); ?></label>
+            <label for="removeoutcomes"><?php print_string('outcomescourse', 'grades'); ?></label>
             <br />
-            <select id="addoutcomes" size="20" name="addoutcomes[]" multiple="multiple">
-
+            <select id="removeoutcomes" size="20" name="removeoutcomes[]" multiple="multiple">
             <?php
-            foreach ($standardoutcomes as $outcome) {
-                echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
+            if ($co_standard_notused) {
+                echo '<optgroup label="'.get_string('outcomescoursenotused', 'grades').'">';
+                foreach ($co_standard_notused as $outcome) {
+                    echo '<option value="'.$outcome->id.'">'.shorten_text($outcome->get_name(), $maxlength).'</option>';
+                }
+                echo '</optgroup>';
+            }
+            if ($co_standard_used) {
+                echo '<optgroup label="'.get_string('outcomescourseused', 'grades').'">';
+                foreach ($co_standard_used as $outcome) {
+                    echo '<option value="'.$outcome->id.'">'.shorten_text($outcome->get_name(), $maxlength).'</option>';
+                }
+                echo '</optgroup>';
+            }
+            if ($co_custom) {
+                echo '<optgroup label="'.get_string('outcomescoursecustom', 'grades').'">';
+                foreach ($co_custom as $outcome) {
+                    echo '<option value="'.$outcome->id.'">'.shorten_text($outcome->get_name(), $maxlength).'</option>';
+                }
+                echo '</optgroup>';
             }
             ?>
             </select>
@@ -19,37 +38,20 @@
         ?>
         <td>
             <p class="arrow_button">
-                <input name="add" id="add" type="submit" value="<?php echo '&nbsp; '.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
+                <input name="add" id="add" type="submit" value="<?php echo '&nbsp; '.$THEME->larrow.' &nbsp; &nbsp; '.get_string('add'); ?>" title="<?php print_string('add'); ?>" />
                 <br />
-                <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp;'.$THEME->larrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
+                <input name="remove" id="remove" type="submit" value="<?php echo '&nbsp;'.$THEME->rarrow.' &nbsp; &nbsp; '.get_string('remove'); ?>" title="<?php print_string('remove'); ?>" />
             </p>
         </td>
         <?php } ?>
         <td>
-            <label for="removeoutcomes"><?php print_string('outcomescourse', 'grades'); ?></label>
+            <label for="addoutcomes"><?php print_string('outcomesstandardavailable', 'grades'); ?></label>
             <br />
-            <select id="removeoutcomes" size="20" name="removeoutcomes[]" multiple="multiple">
+            <select id="addoutcomes" size="20" name="addoutcomes[]" multiple="multiple">
+
             <?php
-            if ($co_standard_notused) {
-                echo '<optgroup label="'.get_string('outcomescoursenotused', 'grades').'">';
-                foreach ($co_standard_notused as $outcome) {
-                    echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
-                }
-                echo '</optgroup>';
-            }
-            if ($co_standard_used) {
-                echo '<optgroup label="'.get_string('outcomescourseused', 'grades').'">';
-                foreach ($co_standard_used as $outcome) {
-                    echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
-                }
-                echo '</optgroup>';
-            }
-            if ($co_custom) {
-                echo '<optgroup label="'.get_string('outcomescoursecustom', 'grades').'">';
-                foreach ($co_custom as $outcome) {
-                    echo '<option value="'.$outcome->id.'">'.$outcome->get_name().'</option>';
-                }
-                echo '</optgroup>';
+            foreach ($standardoutcomes as $outcome) {
+                echo '<option value="'.$outcome->id.'">'.shorten_text($outcome->get_name(), $maxlength).'</option>';
             }
             ?>
             </select>
