@@ -356,7 +356,7 @@ function mnet_server_dispatch($payload) {
     //            xmlrpc_decode_request($xml,                   &$method)
     $params     = xmlrpc_decode_request($payload, $method);
 
-    // $method is something like: "mod/forum/lib/forum_add_instance"
+    // $method is something like: "mod/forum/lib.php/forum_add_instance"
     // $params is an array of parameters. A parameter might itself be an array.
 
     // Whitelist characters that are permitted in a method name
@@ -366,8 +366,12 @@ function mnet_server_dispatch($payload) {
         exit(mnet_server_fault(713, 'nosuchfunction'));
     }
 
-    $callstack  = explode('/', $method);
-    // callstack will look like array('mod', 'forum', 'lib', 'forum_add_instance');
+    if(preg_match("/^system./", $method)) {
+        $callstack  = explode('.', $method);
+    } else {
+        $callstack  = explode('/', $method);
+        // callstack will look like array('mod', 'forum', 'lib.php', 'forum_add_instance');
+    }
 
     /**
      * What has the site administrator chosen as his dispatcher setting?
@@ -485,7 +489,7 @@ function mnet_server_dispatch($payload) {
                 // The call stack holds the path to any include file
                 $includefile = $CFG->dirroot.'/'.implode('/',$callstack).'/'.$filename.'.php';
 
-                $response = mnet_server_invoke_function($includefile, $functionname, $method, $payload);
+                $response = mnet_server_invoke_method($includefile, $functionname, $method, $payload);
                 echo $response;
             }
 
