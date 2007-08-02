@@ -171,7 +171,24 @@ class edit_item_form extends moodleform {
 
 /// perform extra validation before submission
     function validation($data){
-        $errors= array();
+        $errors = array();
+
+        if (array_key_exists('idnumber', $data)) {
+            if ($data['id']) {
+                $grade_item = new grade_item(array('id'=>$data['id'], 'courseid'=>$data['courseid']));
+                if ($grade_item->itemtype == 'mod') {
+                    $cm = get_coursemodule_from_instance($grade_item->itemmodule, $grade_item->iteminstance, $grade_item->courseid);
+                } else {
+                    $cm = null;
+                }
+            } else {
+                $grade_item = null;
+                $cm = null;
+            }
+            if (!grade_verify_idnumber($data['idnumber'], $grade_item, $cm)) {
+                $errors['idnumber'] = get_string('idnumbertaken');
+            }
+        }
 
         if (array_key_exists('calculation', $data) and $data['calculation'] != '') {
             $grade_item = new grade_item(array('id'=>$data['id'], 'itemtype'=>$data['itemtype'], 'courseid'=>$data['courseid']));

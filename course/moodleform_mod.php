@@ -66,6 +66,32 @@ class moodleform_mod extends moodleform {
         }
     }
 
+    // form verification
+    function validation($data) {
+        global $COURSE;
+
+        $errors = array();
+
+        $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$data['modulename'],
+                     'iteminstance'=>$data['instance'], 'itemnumber'=>0, 'courseid'=>$COURSE->id));
+        if ($data['coursemodule']) {
+            $cm = get_record('course_modules', 'id', $data['coursemodule']);
+        } else {
+            $cm = null;
+        }
+
+        // verify the idnumber
+        if (!grade_verify_idnumber($data['cmidnumber'], $grade_item, $cm)) {
+            $errors['cmidnumber'] = get_string('idnumbertaken');
+        }
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
+    }
+
     /**
      * Load in existing data as form defaults. Usually new entry defaults are stored directly in
      * form definition (new entry form); this function is used to load in data where values

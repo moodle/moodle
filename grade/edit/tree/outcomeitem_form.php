@@ -104,6 +104,17 @@ class edit_outcomeitem_form extends moodleform {
     function validation($data){
         $errors= array();
 
+        if (array_key_exists('idnumber', $data)) {
+            if ($data['id']) {
+                $grade_item = new grade_item(array('id'=>$data['id'], 'courseid'=>$data['courseid']));
+            } else {
+                $grade_item = null;
+            }
+            if (!grade_verify_idnumber($data['idnumber'], $grade_item, null)) {
+                $errors['idnumber'] = get_string('idnumbertaken');
+            }
+        }
+
         if (0 == count($errors)){
             return true;
         } else {

@@ -294,6 +294,15 @@
             error("Data submitted is invalid.");
         }
 
+        //sync idnumber with grade_item
+        if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
+                     'iteminstance'=>$fromform->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
+            if ($grade_item->idnumber != $fromform->idnumber) {
+                $grade_item->idnumber = $fromform->idnumber;
+                $grade_item->update();
+            }
+        }
+
         // add outcomes if requested
         if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
             foreach($outcomes as $outcome) {

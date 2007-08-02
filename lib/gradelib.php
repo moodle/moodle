@@ -360,6 +360,42 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 
 /***** END OF PUBLIC API *****/
 
+
+/**
+ * Verify nwe value of idnumber - checks for uniqueness of new idnubmers, old are kept intact
+ * @param string idnumber string (with magic quotes)
+ * @param object $cm used for course module idnumbers and items attached to modules
+ * @param object $gradeitem is item idnumber
+ * @return boolean true means idnumber ok
+ */
+function grade_verify_idnumber($idnumber, $grade_item=null, $cm=null) {
+    if ($idnumber == '') {
+        //we allow empty idnumbers
+        return true;
+    }
+
+    // keep existing even when not unique
+    if ($cm and $cm->idnumber == $idnumber) {
+        return true;
+    } else if ($grade_item and $grade_item->idnumber == $idnumber) {
+        return true;
+    }
+
+    if (get_records('course_modules', 'idnumber', $idnumber)) {
+        return false;
+    }
+
+    if (get_records('grade_items', 'idnumber', $idnumber)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Force final grade recalculation in all course items
+ * @param int $courseid
+ */
 function grade_force_full_regrading($courseid) {
     set_field('grade_items', 'needsupdate', 1, 'courseid', $courseid);
 }

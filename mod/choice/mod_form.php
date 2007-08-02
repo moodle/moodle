@@ -115,20 +115,31 @@ class mod_choice_mod_form extends moodleform_mod {
     }
 
     function validation($data){
-        $choices=0;
+        $errors = parent::validation($data);
+        if ($errors === true) {
+            $errors = array();
+        }
+
+        $choices = 0;
         foreach ($data['option'] as $option){
-            if (trim($option)!=''){
+            if (trim($option) != ''){
                 $choices++;
             }
         }
-        if ($choices>1){
-           return true;
-        } elseif ($choices==0) {
-           return array('option[0]'=>get_string('fillinatleastoneoption', 'choice'));
-        } else  {
-           return array('option[1]'=>get_string('fillinatleastoneoption', 'choice'));
+
+        if ($choices < 1) {
+           $errors['option[0]'] = get_string('fillinatleastoneoption', 'choice');
         }
 
+        if ($choices < 2) {
+           $errors['option[1]'] = get_string('fillinatleastoneoption', 'choice');
+        }
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
 
     }
 

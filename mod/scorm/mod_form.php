@@ -232,12 +232,21 @@ class mod_scorm_mod_form extends moodleform_mod {
     }
 
     function validation($data) {
+        $errors = parent::validation($data);
+        if ($errors === true) {
+            $errors = array();
+        }
+
         $validate = scorm_validate($data);
 
-        if ($validate->result) {
+        if (!$validate->result) {
+            $errors = $errors + $validate->errors;
+        }
+
+        if (count($errors) == 0) {
             return true;
         } else {
-            return $validate->errors;
+            return $errors;
         }
     }
 

@@ -304,7 +304,11 @@ class mod_quiz_mod_form extends moodleform_mod {
     }
 
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
+        if ($errors === true) {
+            $errors = array();
+        }
+
         // Check open and close times are consistent.
         if ($data['timeopen'] != 0 && $data['timeclose'] != 0 && $data['timeclose'] < $data['timeopen']) {
             $errors['timeclose'] = get_string('closebeforeopen', 'quiz');
@@ -344,7 +348,12 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $errors["feedbacktext[$i]"] = get_string('feedbackerrorjunkinfeedback', 'quiz', $i + 1);
             }
         }
-        return $errors;
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
     }
 
 }
