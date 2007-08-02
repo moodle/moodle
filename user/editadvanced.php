@@ -55,7 +55,7 @@
     //user interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
-        $user->interests = tag_names_csv(get_item_tags('user',$userid));
+        $user->interests = tag_names_csv(get_item_tags('user',$id));
     }
 
     //create form

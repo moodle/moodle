@@ -9,6 +9,7 @@ $string['edittag'] = 'Edit this tag';
 $string['flag'] = 'Flag';
 $string['flagasinappropriate'] = 'Flag as inappropriate';
 $string['helprelatedtags'] = 'Comma separated related tags';
+$string['id'] = 'id';
 $string['managetags'] = 'Manage Tags';
 $string['name'] = 'Name';
 $string['noresultsfor'] = 'No results for \"$a\"';

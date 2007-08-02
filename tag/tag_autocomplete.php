@@ -13,7 +13,7 @@ $similar_tags = similar_tags($query);
 
 $count = 0;
 foreach ($similar_tags as $tag){
-    echo $tag->name . "\t" . $tag->id . "\n";
+    echo tag_display_name($tag) . "\t" . $tag->id . "\n";
 }
 
 ?>

@@ -13,11 +13,11 @@ if( empty($CFG->usetags)) {
 
 $tagid    = required_param('id', PARAM_INT);   // user id
 $tag      = tag_by_id($tagid);
-$tagname  = /*ucwords*/($tag->name);
+$tagname  = tag_display_name($tag);
 
-//Editing a tag requires moodle/tag:edittags capability
+//Editing a tag requires moodle/tag:edit capability
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/tag:edittags', $systemcontext);
+require_capability('moodle/tag:edit', $systemcontext);
 
 // set the relatedtags field of the $tag object that will be passed to the form
 $tag->relatedtags = tag_names_csv( get_item_tags('tag',$tagid) );

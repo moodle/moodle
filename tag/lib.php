@@ -17,9 +17,7 @@ require_once('../config.php');
 function tag_create($tag_names_csv, $tag_type="default") {
     global $USER;
 
-    $normalized_tag_names_csv = tag_normalize($tag_names_csv) ;
-
-    $tags = explode(",", $normalized_tag_names_csv );
+    $tags = explode(",", $tag_names_csv );
 
     $tag_object = new StdClass;
     $tag_object->tagtype = $tag_type;
@@ -28,18 +26,26 @@ function tag_create($tag_names_csv, $tag_type="default") {
     $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
     $can_create_tags = has_capability('moodle/tag:create',$systemcontext);
     
-    foreach ($tags as $tag_name) {
+    $norm_tag_names_csv = '';
+    foreach ($tags as $tag) {
 
-        $tag_object->name = $tag_name;
-        $tag_object->timemodified = time();
+        // rawname keeps the original casing of the string
+        $tag_object->rawname        = tag_normalize($tag, false);
         
-//        if ( !record_exists('tag', 'name', $tag_name) && !empty($tag_name) && !is_numeric($tag_name) ) {
-        if ( $can_create_tags && !empty($tag_name) && !is_numeric($tag_name) ) {
+        // name lowecases the string
+        $tag_object->name           = tag_normalize($tag);
+        $norm_tag_names_csv         .= $tag_object->name . ',';
+        
+        $tag_object->timemodified   = time();
+        
+        if ( $can_create_tags && !empty($tag_object->name) && !is_numeric($tag_object->name) ) {
             insert_record('tag', $tag_object);
         }
     }
 
-    return tags_id($normalized_tag_names_csv);
+    $norm_tag_names_csv = substr($norm_tag_names_csv,0,-1);
+    
+    return tags_id( $norm_tag_names_csv );
 
 }
 
@@ -77,7 +83,7 @@ function tag_delete($tag_names_or_ids_csv) {
  *   (optional, by default 'id, tagtype, name'). The first field will be used as key for the
  *   array so must be a unique field such as 'id'. 
  */
-function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields='id, tagtype, name') {
+function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields='id, tagtype, name, rawname') {
     
     if ($tag_types_csv == '*'){
         return get_records('tag', '', '', $sort, $fields);
@@ -113,7 +119,13 @@ function tag_exists($tag_name_or_id) {
  */
 function tag_id($tag_name) {
     $tag = get_record('tag', 'name', trim($tag_name), '', '', '', '', 'id');
-    return $tag->id;
+    
+    if ($tag){
+        return $tag->id;
+    }
+    else{
+        return false;
+    }    
 }
 
 /**
@@ -147,7 +159,13 @@ function tags_id($tag_names_csv) {
  */
 function tag_name($tag_id) {
     $tag = get_record('tag', 'id', $tag_id, '', '', '', '', 'name');
-    return $tag->name;
+    
+    if ($tag){
+        return $tag->name;
+    }
+    else{
+        return '';
+    }
 }
 
 /**
@@ -159,6 +177,9 @@ function tag_name($tag_id) {
 
 function tags_name($tag_ids_csv) {
     
+    //remove any white spaces
+    $tag_ids_csv = str_replace(' ', '', $tag_ids_csv);
+    
     $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv ) . "'";
     
     $tag_objects = get_records_list('tag','id', $tag_ids_csv_with_apos, "" , "name, id" );
@@ -169,6 +190,27 @@ function tags_name($tag_ids_csv) {
     }
 
     return $tags_names;
+}
+
+/**
+ * Function that returns the name of a tag for display. 
+ * 
+ * @param mixed $tag_object
+ * @return string
+ */
+function tag_display_name($tag_object){
+    
+    global $CFG;
+    
+    if( !empty($CFG->keeptagnamecase) ) {
+        //this is the normalized tag name
+        return mb_convert_case($tag_object->name, MB_CASE_TITLE,"UTF-8"); 
+    }
+    else {
+        //original casing of the tag name
+        return $tag_object->rawname;
+    }
+    
 }
 
 /**
@@ -194,11 +236,18 @@ function tag_by_name($tag_name) {
 }
 
 /**
- * Returns comma separated ids of tags given a string with comma separated names or ids of tags
+ * In a comma separated string of ids or names of tags, replaces all tag names with their correspoding ids
  * 
- * Ex: tag_id_from_string('moodle, 12, education, 33, 11')
- *     might return the string '10,12,22,33,11'
+ * Ex: 
+ *  Suppose the DB contains only the following entries in the tags table:
+ *      id    name 
+ *      10    moodle
+ *      12    science
+ *      22    education
  * 
+ * tag_id_from_string('moodle, 12, education, programming, 33, 11')
+ *    will return '10,12,22,,33,11'
+ *      
  * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
  * 
  * @param string $tag_names_or_ids_csv comma separated **normalized** names or ids of tags
@@ -212,7 +261,7 @@ function tag_id_from_string($tag_names_or_ids_csv) {
     foreach ($tag_names_or_ids as $name_or_id) {
 
         if (is_numeric($name_or_id)){
-            $tag_ids[] = $name_or_id;
+            $tag_ids[] = trim($name_or_id);
         }
         elseif (is_string($name_or_id)) {
             $tag_ids[] = tag_id( $name_or_id );
@@ -223,14 +272,21 @@ function tag_id_from_string($tag_names_or_ids_csv) {
     $tag_ids_csv = implode(',',$tag_ids);
     $tag_ids_csv = str_replace(' ', '', $tag_ids_csv);
     
-    return rtrim($tag_ids_csv, ',');
+    return $tag_ids_csv;
 }
 
 /**
- * Returns comma separated **normalized** names of tags given a string with comma separated names or ids of tags
+ * In a comma separated string of ids or names of tags, replaces all tag ids with their correspoding names
  * 
- * Ex: tag_name_from_string('mOOdle, 12, eduCAtIOn, 33, 11')
- *     might return the string 'moodle,computers,education,algorithms,software'
+ * Ex: 
+ *  Suppose the DB contains only the following entries in the tags table:
+ *      id    name 
+ *      10    moodle
+ *      12    science
+ *      22    education
+ * 
+ *  tag_name_from_string('mOOdle, 10, HiStOrY, 17, 22')
+ *     will return the string 'mOOdle,moodle,HiStOrY,,education'
  * 
  * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
  * 
@@ -248,14 +304,14 @@ function tag_name_from_string($tag_names_or_ids_csv) {
             $tag_names[] =  tag_name($name_or_id);
         }
         elseif (is_string($name_or_id)) {
-            $tag_names[] = tag_normalize($name_or_id);
+            $tag_names[] = trim($name_or_id);
         }
 
     }
 
     $tag_names_csv = implode(',',$tag_names);
     
-    return rtrim($tag_names_csv, ',');
+    return $tag_names_csv;
     
 }
 
@@ -277,10 +333,8 @@ function tag_name_from_string($tag_names_or_ids_csv) {
 
 function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="default") {
 
-    $norm_tag_names_or_ids_csv = tag_normalize($tag_names_or_ids_csv);
-    
     //convert any tag ids passed to their corresponding tag names
-    $tag_names_csv = tag_name_from_string($norm_tag_names_or_ids_csv);
+    $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
     
     //create the tags
     $tags_created_ids = tag_create($tag_names_csv,$tag_type);
@@ -328,17 +382,14 @@ function update_item_tags($item_type, $item_id, $tag_names_or_ids_csv, $tag_type
         return;
     }
     
-    //normalize tags names
-    $norm_tag_names_or_ids_csv = tag_normalize($tag_names_or_ids_csv);
-
     //convert any tag ids passed to their corresponding tag names
-    $tag_names_csv = tag_name_from_string($norm_tag_names_or_ids_csv);    
+    $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);    
     
     //associate the tags passed with the item
     tag_an_item($item_type, $item_id, $tag_names_csv, $tag_type );
 
     //get the ids of the tags passed
-    $existing_and_new_tags_ids = tags_id( $tag_names_csv );
+    $existing_and_new_tags_ids = tags_id( tag_normalize($tag_names_csv) );
 
     // delete any tag instance with $item_type and $item_id
     // that are not in $tag_names_csv
@@ -403,7 +454,7 @@ function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 
-function get_item_tags($item_type, $item_id, $fields='id, name, tagtype, flag', $limitfrom='', $limitnum='') {
+function get_item_tags($item_type, $item_id, $fields='id, name, rawname, tagtype, flag', $limitfrom='', $limitnum='') {
     
     global $CFG;
     
@@ -441,7 +492,8 @@ function get_item_tags($item_type, $item_id, $fields='id, name, tagtype, flag', 
  *      (to avoid field name ambiguity in the query, use the identifier "it" Ex: 'it.name ASC' )
  * @param string $fields a comma separated list of fields to return 
  *   (optional, by default all fields are returned). The first field will be used as key for the
- *   array so must be a unique field such as 'id'.
+ *   array so must be a unique field such as 'id'. To avoid field name ambiguity in the query, 
+ *   use the identifier "it" Ex: 'it.name, it.id' )
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects indexed by their ids, or false if no records were found or an error occured.
@@ -559,7 +611,7 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
     if ($ordered) {
         $query = "
             SELECT 
-                tg.id, tg.name, COUNT(ti.id) AS count 
+                tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count 
             FROM 
                 {$CFG->prefix}tag tg
             LEFT JOIN 
@@ -578,7 +630,7 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
     } else {
         $query = "
             SELECT 
-                tg.id, tg.name
+                tg.id, tg.name, tg.rawname
             FROM
                 {$CFG->prefix}tag tg
             WHERE
@@ -609,11 +661,11 @@ function similar_tags($text, $limitfrom='' , $limitnum='' ) {
 
     $query = "
         SELECT 
-            *
+            tg.id, tg.name, tg.rawname
         FROM
-            {$CFG->prefix}tag t
+            {$CFG->prefix}tag tg
         WHERE
-            t.name
+            tg.name
         LIKE
             '{$text}%'
         ";
@@ -669,7 +721,7 @@ function correlated_tags($tag_name_or_id) {
 
     $tags_id_csv_with_apos = stripcslashes($tag_correlation->correlatedtags);
 
-    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', 'id, name, tagtype');
+    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', 'id, name, rawname, tagtype');
 }
 
 /**
@@ -833,7 +885,7 @@ function tag_instance_table_cleanup() {
  * @return string **normalized** CSV tag names
  */
 
-function tag_normalize($tag_names_csv) {
+function tag_normalize($tag_names_csv, $lowercase=true) {
 
     $tags = explode(',', $tag_names_csv);
 
@@ -849,9 +901,16 @@ function tag_normalize($tag_names_csv) {
 
     // only one tag was passed
     else {
-        // value is converted to lowercase and all non-alphanumeric characters are removed
-        //$value = preg_replace('|[^\w ]|i', '', strtolower(trim($tag_names_csv)));
-        $value = preg_replace('|[\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\.\[\]\{\}\:\;\\\/\<\>\|]|i', '', moodle_strtolower(trim($tag_names_csv)));
+       
+        if ($lowercase){
+            $value = moodle_strtolower($tag_names_csv);
+        }
+        else {
+            $value = $tag_names_csv;
+        }
+        
+        //$value = preg_replace('|[^\w ]|i', '', strtolower(trim($tag_names_csv)));        
+        $value = preg_replace('|[\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
 
         //removes excess white spaces
         $value = preg_replace('/\s\s+/', ' ', $value);
@@ -927,7 +986,7 @@ function tag_links_csv($tag_objects) {
         
     foreach ($tag_objects as $tag){
         //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = $tag->name;
+        $tagname = tag_display_name($tag);
         if ($tag->flag > 0 && $can_manage_tags) {
             $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
         }
@@ -954,7 +1013,7 @@ function tag_names_csv($tag_objects) {
     $tags = array();
 
     foreach ($tag_objects as $tag){
-        $tags[] = $tag->name;
+        $tags[] = tag_display_name($tag);
     }
 
     return implode(',', $tags);
@@ -991,7 +1050,7 @@ function rand_tags_count($nr_of_tags=20, $tag_type = 'default') {
     
     $query = "
         SELECT 
-            tg.id, tg.name, COUNT(ti.id) AS count, tg.flag 
+            tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count, tg.flag 
         FROM 
             {$CFG->prefix}tag_instance ti 
         INNER JOIN 
@@ -1025,7 +1084,7 @@ function print_tag_management_box($tag_object) {
 
     global $USER, $CFG;
 
-    $tagname  = /*ucwords*/($tag_object->name);
+    $tagname  = tag_display_name($tag_object);
 
     print_box_start('box','tag-management-box');
 
@@ -1044,7 +1103,7 @@ function print_tag_management_box($tag_object) {
         echo $addtaglink .' | ';
     }
 
-    // only people with moodle/tag:edittags capability may edit the tag description
+    // only people with moodle/tag:edit capability may edit the tag description
     if ( has_capability('moodle/tag:edit',$systemcontext) && is_item_tagged_with('user', $USER->id, $tag_object->id ) ) {
         echo ' <a href="'. $CFG->wwwroot . '/tag/edit.php?id='.$tag_object->id .'">'.get_string('edittag', 'tag').'</a> | ';
     }
@@ -1068,7 +1127,7 @@ function print_tag_description_box($tag_object) {
     
     global $USER, $CFG;
 
-    $tagname  = /*ucwords*/($tag_object->name);
+    $tagname  = tag_display_name($tag_object);
     $related_tags =  related_tags($tag_object->id); //get_item_tags('tags',$tag_object->id);
 
 
@@ -1256,7 +1315,7 @@ function print_tag_search_results($query,  $page, $perpage) {
             for($i = 0; $i < $nr_of_uls; $i++) {
                 echo '<li>';
                 foreach (array_slice($tags, $i * $nr_of_lis_per_ul, $nr_of_lis_per_ul ) as $tag) {
-                    $tag_link = ' <a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'.$tag->name.'</a>';
+                    $tag_link = ' <a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'.tag_display_name($tag).'</a>';
                     echo '&#8226;' . $tag_link . '<br/>';
                 }
                 echo '</li>';        
@@ -1283,7 +1342,8 @@ function print_tag_search_results($query,  $page, $perpage) {
 /**
  * Prints a tag cloud
  *
- * @param int $nr_of_tags number of tags in the cloud
+ * @param array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
+ * @param boolean $shuffle wether or not to shuffle the array passed
  * @param int $max_size maximum text size, in percentage
  * @param int $min_size minimum text size, in percentage
  */
@@ -1334,9 +1394,9 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
         $href = 'href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'"';
 
         //highlight tags that have been flagged as inappropriate for those who can manage them
-        $tagname = $tag->name;
+        $tagname = tag_display_name($tag);
         if ($tag->flag > 0 && $can_manage_tags) {
-            $tagname =  '<span class="flagged-tag">' . $tag->name . '</span>';
+            $tagname =  '<span class="flagged-tag">' . tag_display_name($tag) . '</span>';
         }
         
         $tag_link = '<li><a '.$href.' '.$title.' '. $style .'>'.$tagname.'</a></li> ';
@@ -1354,8 +1414,10 @@ function print_tag_management_list($perpage='100') {
     require_once($CFG->libdir.'/tablelib.php');
     
     //setup table
-    $tablecolumns = array('name', 'owner', 'count', 'flag', 'timemodified', '');
-    $tableheaders = array(  get_string('name' , 'tag'),
+    
+    $tablecolumns = array('id','name', 'owner', 'count', 'flag', 'timemodified', '');
+    $tableheaders = array(  get_string('id' , 'tag'),
+                            get_string('name' , 'tag'),
                             get_string('owner','tag'),
                             get_string('count','tag'),
                             get_string('flag','tag'),
@@ -1402,7 +1464,7 @@ function print_tag_management_list($perpage='100') {
             
     $query = "
         SELECT 
-            tg.id, tg.name, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified    
+            tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified    
         FROM 
             {$CFG->prefix}tag_instance ti 
         RIGHT JOIN 
@@ -1436,8 +1498,9 @@ function print_tag_management_list($perpage='100') {
     
         //populate table with data
         foreach ($taglist as $tag ){
-           
-            $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'.$tag->name.'</a>'; 
+            
+            $id             =   $tag->id;
+            $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>'; 
             $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . $tag->owner . '</a>';
             $count          =   $tag->count;
             $flag           =   $tag->flag;
@@ -1446,6 +1509,7 @@ function print_tag_management_list($perpage='100') {
             
             //if the tag if flagged, highlight it
             if ($tag->flag > 0) {
+                $id = '<span class="flagged-tag">' . $id . '</span>';
                 $name = '<span class="flagged-tag">' . $name . '</span>';
                 $owner = '<span class="flagged-tag">' . $owner . '</span>';
                 $count = '<span class="flagged-tag">' . $count . '</span>';
@@ -1453,7 +1517,7 @@ function print_tag_management_list($perpage='100') {
                 $timemodified = '<span class="flagged-tag">' . $timemodified . '</span>';
             }
     
-            $data = array($name , $owner ,$count ,$flag, $timemodified, $checkbox);
+            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $checkbox);
                  
             $table->add_data($data);       
         }

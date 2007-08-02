@@ -20,7 +20,7 @@ if (!$tag) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
 
-$tagname  = mb_convert_case($tag->name, MB_CASE_TITLE, "UTF-8");
+$tagname  = tag_display_name($tag);
 
 $navlinks = array();
 $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
@@ -54,9 +54,6 @@ if ($usercount > 0) {
     print_tagged_users_table($tag, 4, $userpage * $perpage, $perpage);
 
 }
-//print_box_start('generalbox', 'small-tag-cloud-box');
-//    print_tag_cloud(15,170,80);
-//print_box_end();
 
 print_footer();
 

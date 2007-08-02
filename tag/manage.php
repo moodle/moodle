@@ -10,9 +10,9 @@ if( empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-//managing tags requires moodle/tag:managetags capability
+//managing tags requires moodle/tag:manage capability
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/tag:managetags', $systemcontext);
+require_capability('moodle/tag:manage', $systemcontext);
 
 $tagschecked    = optional_param('tagschecked', array());
 $action         = optional_param('action', '', PARAM_ALPHA);
