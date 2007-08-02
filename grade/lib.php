@@ -114,11 +114,12 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('scales');
         }
 
-        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or has_capability('course:update', $context))) {
-            if (has_capability('moodle/grade:manage', $context)) {
-                $url = 'edit/outcome/index.php?id='.$courseid;
-            } else {
+        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or 
+                                             has_capability('moodle/course:update', $context))) {
+            if (has_capability('moodle/course:update', $context)) {  // Default to course assignment
                 $url = 'edit/outcome/course.php?id='.$courseid;
+            } else {
+                $url = 'edit/outcome/index.php?id='.$courseid;
             }
             if ($active_type == 'edit' and $active_plugin == 'outcome' ) {
                 $active = $url;
