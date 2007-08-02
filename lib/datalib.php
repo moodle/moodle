@@ -2,7 +2,7 @@
 
 /**
  * Library of functions for database manipulation.
- * 
+ *
  * Other main libraries:
  * - weblib.php - functions that produce web output
  * - moodlelib.php - general-purpose Moodle functions
@@ -13,7 +13,7 @@
  */
 
 
-/** 
+/**
  * Escape all dangerous characters in a data record
  *
  * $dataobject is an object containing needed data
@@ -62,11 +62,11 @@ function get_admin () {
 function get_admins() {
 
     global $CFG;
-    
+
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     return get_users_by_capability($context, 'moodle/site:doanything', 'u.*, ra.id as adminid', 'ra.id ASC'); // only need first one
-                             
+
 }
 
 
@@ -90,10 +90,10 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
     }
 
     $alreadycourses = get_courses_in_metacourse($metacourseid);
-    
+
     $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
     AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1 ".((empty($count)) ? " ORDER BY c.shortname" : "");
-    
+
     return get_records_sql($sql);
 }
 
@@ -116,7 +116,7 @@ function count_courses_notin_metacourse($metacourseid) {
 /**
  * Search through course users
  *
- * If $coursid specifies the site course then this function searches 
+ * If $coursid specifies the site course then this function searches
  * through all undeleted and confirmed users
  *
  * @uses $CFG
@@ -125,7 +125,7 @@ function count_courses_notin_metacourse($metacourseid) {
  * @param int $groupid The group in question.
  * @param string $searchtext ?
  * @param string $sort ?
- * @param string $exceptions ? 
+ * @param string $exceptions ?
  * @return object
  */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
@@ -214,7 +214,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
                    $firstinitial='', $lastinitial='', $page='', $recordsperpage='', $fields='*') {
 
     global $CFG;
-    
+
     if ($get && !$recordsperpage) {
         debugging('Call to get_users with $get = true no $recordsperpage limit. ' .
                 'On large installations, this will probably cause an out of memory error. ' .
@@ -500,11 +500,11 @@ function get_site() {
 function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
     global $USER, $CFG;
-    
+
     if ($categoryid != "all" && is_numeric($categoryid)) {
         $categoryselect = "WHERE c.category = '$categoryid'";
     } else {
-        $categoryselect = "";  
+        $categoryselect = "";
     }
 
     if (empty($sort)) {
@@ -514,10 +514,10 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
     }
 
     $visiblecourses = array();
-    
+
     // pull out all course matching the cat
-    if ($courses = get_records_sql("SELECT $fields 
-                                FROM {$CFG->prefix}course c 
+    if ($courses = get_records_sql("SELECT $fields
+                                FROM {$CFG->prefix}course c
                                 $categoryselect
                                 $sortstatement")) {
 
@@ -528,11 +528,11 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
                 // for hidden courses, require visibility check
                 if (has_capability('moodle/course:viewhiddencourses',
                         get_context_instance(CONTEXT_COURSE, $course->id))) {
-                    $visiblecourses [] = $course;  
+                    $visiblecourses [] = $course;
                 }
             } else {
-                $visiblecourses [] = $course;  
-            } 
+                $visiblecourses [] = $course;
+            }
         }
     }
     return $visiblecourses;
@@ -574,7 +574,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
  * Returns list of courses, for whole site, or category
  *
  * Similar to get_courses, but allows paging
- * Important: Using c.* for fields is extremely expensive because 
+ * Important: Using c.* for fields is extremely expensive because
  *            we are using distinct. You almost _NEVER_ need all the fields
  *            in such a large SELECT
  *
@@ -585,32 +585,32 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
                           &$totalcount, $limitfrom="", $limitnum="") {
 
     global $USER, $CFG;
-    
+
     $categoryselect = "";
     if ($categoryid != "all" && is_numeric($categoryid)) {
         $categoryselect = "WHERE c.category = '$categoryid'";
     } else {
-        $categoryselect = "";  
-    }  
-    
+        $categoryselect = "";
+    }
+
     // pull out all course matching the cat
     $visiblecourses = array();
-    if (!($courses = get_records_sql("SELECT $fields 
-                                FROM {$CFG->prefix}course c 
+    if (!($courses = get_records_sql("SELECT $fields
+                                FROM {$CFG->prefix}course c
                                 $categoryselect
                                 ORDER BY $sort"))) {
         return $visiblecourses;
     }
     $totalcount = 0;
-    
+
     if (!$limitnum) {
-        $limitnum = count($courses);  
+        $limitnum = count($courses);
     }
-    
+
     if (!$limitfrom) {
-        $limitfrom = 0;  
+        $limitfrom = 0;
     }
-    
+
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
     foreach ($courses as $course) {
         if ($course->visible <= 0) {
@@ -626,9 +626,9 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
             if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
                 $visiblecourses [] = $course;
             }
-        } 
+        }
     }
-    
+
     return $visiblecourses;
 
 /**
@@ -710,14 +710,14 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
             } else {
                 return $USER->mycourses[$doanything];
             }
-        } else {            
+        } else {
             // now, this is the first call, i.e. no cache, and we are using defaults, with a limit supplied,
             // we need to store the limit somewhere, retrieve all, cache properly and then slice the array
             // to return the proper number of entries. This is so that we don't keep missing calls like limit 20,20,20 
             if ($limit) {
                 $reallimit = $limit;
                 $limit = 0;
-            }          
+            }
         }
     }
 
@@ -728,10 +728,10 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
 
     // Attempt to filter the list of courses in order to reduce the number
     // of queries in the next part.
-    
+
     // Check root permissions
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID); 
-    
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
     // Guest's do not have any courses
     if (has_capability('moodle/legacy:guest',$sitecontext,$userid,false)) {
         return(array());
@@ -746,39 +746,39 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     if ($candoanything || has_capability('moodle/course:view',$sitecontext,$userid,$doanything)) {
         // User can view all courses, although there might be exceptions
         // which we will filter later.
-        $rs = get_recordset('course c', '', '', $sort, $fields);        
+        $rs = get_recordset('course c', '', '', $sort, $fields);
     } else {
-        // The only other context level above courses that applies to moodle/course:view 
+        // The only other context level above courses that applies to moodle/course:view
         // is category. So we consider:
         // 1. All courses in which the user is assigned a role
         // 2. All courses in categories in which the user is assigned a role
         // 2BIS. All courses in subcategories in which the user gets assignment because he is assigned in one of its ascendant categories
         // 3. All courses which have overrides for moodle/course:view
-        // Remember that this is just a filter. We check each individual course later. 
+        // Remember that this is just a filter. We check each individual course later.
         // However for a typical student on a large system this can reduce the
         // number of courses considered from around 2,000 to around 2, with corresponding
         // reduction in the number of queries needed.
         $rs=get_recordset_sql("
             SELECT $fields
             FROM {$CFG->prefix}course c, (
-                SELECT 
+                SELECT
                     c.id
-                FROM 
+                FROM
                     {$CFG->prefix}role_assignments ra
                     INNER JOIN {$CFG->prefix}context x ON x.id         = ra.contextid
                     INNER JOIN {$CFG->prefix}course c  ON x.instanceid = c.id
-                WHERE 
+                WHERE
                     ra.userid      = $userid AND
                     x.contextlevel = 50
                 UNION
-                SELECT 
+                SELECT
                     c.id
-                FROM 
+                FROM
                     {$CFG->prefix}role_assignments ra
                     INNER JOIN {$CFG->prefix}context x ON x.id = ra.contextid
                     INNER JOIN {$CFG->prefix}course_categories a ON a.path LIKE ".sql_concat("'%/'", 'x.instanceid', "'/%'")." OR x.instanceid = a.id
                     INNER JOIN {$CFG->prefix}course c ON c.category = a.id
-                WHERE 
+                WHERE
                     ra.userid = $userid AND
                     x.contextlevel = 40
                 UNION
@@ -788,7 +788,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                     {$CFG->prefix}role_capabilities ca
                     INNER JOIN {$CFG->prefix}context x ON x.id = ca.contextid
                     INNER JOIN {$CFG->prefix}course c  ON c.id = x.instanceid
-                WHERE 
+                WHERE
                     ca.capability  = 'moodle/course:view' AND
                     ca.contextid  != {$sitecontext->id} AND
                     x.contextlevel = 50
@@ -808,10 +808,10 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
                 }
 
                 // users with moodle/course:view are considered course participants
-                // the course needs to be visible, or user must have moodle/course:viewhiddencourses 
-                // capability set to view hidden courses  
+                // the course needs to be visible, or user must have moodle/course:viewhiddencourses
+                // capability set to view hidden courses
                 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-                if ( has_capability('moodle/course:view', $context, $userid, $doanything) && 
+                if ( has_capability('moodle/course:view', $context, $userid, $doanything) &&
                     !has_capability('moodle/legacy:guest', $context, $userid, false) &&
                     ($course->visible || has_capability('moodle/course:viewhiddencourses', $context, $userid))) {
                     $mycourses[$course->id] = $course;
@@ -832,7 +832,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults && $limit == 0) {
         $USER->mycourses[$doanything] = $mycourses;
     }
-    
+
     if ($reallimit) {
         return array_slice($mycourses, 0, $reallimit, true);
     } else {
@@ -896,8 +896,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
             $summarysearch .= " summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
             $fullnamesearch .= " fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
-            $summarysearch .= ' summary '. $LIKE .'\'%'. $searchterm .'%\' ';
-            $fullnamesearch .= ' fullname '. $LIKE .'\'%'. $searchterm .'%\' ';
+            $summarysearch .= ' summary '. $LIKE .' \'%'. $searchterm .'%\' ';
+            $fullnamesearch .= ' fullname '. $LIKE .' \'%'. $searchterm .'%\' ';
         }
 
     }
@@ -980,14 +980,14 @@ function get_all_subcategories($catid) {
 *       safely from 1.4 to 1.5
 */
 function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') {
-    
+
     global $CFG;
 
     $count = 0;
-    
+
     $catgap    = 1000; // "standard" category gap
     $tolerance = 200;  // how "close" categories can get
-    
+
     if ($categoryid > 0){
         // update depth and path
         $cat   = get_record('course_categories', 'id', $categoryid);
@@ -1003,15 +1003,15 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
         $path  = $path . '/' . $categoryid;
         $depth = $depth + 1;
 
-        set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);        
-        set_field('course_categories', 'depth', $depth, 'id', $categoryid);        
+        set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);
+        set_field('course_categories', 'depth', $depth, 'id', $categoryid);
     }
 
     // get some basic info about courses in the category
-    $info = get_record_sql('SELECT MIN(sortorder) AS min, 
+    $info = get_record_sql('SELECT MIN(sortorder) AS min,
                                    MAX(sortorder) AS max,
-                                   COUNT(sortorder)  AS count                                   
-                            FROM ' . $CFG->prefix . 'course 
+                                   COUNT(sortorder)  AS count
+                            FROM ' . $CFG->prefix . 'course
                             WHERE category=' . $categoryid);
     if (is_object($info)) { // no courses?
         $max   = $info->max;
@@ -1025,11 +1025,11 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
     }
 
     // $hasgap flag indicates whether there's a gap in the sequence
-    $hasgap    = false; 
+    $hasgap    = false;
     if ($max-$min+1 != $count) {
         $hasgap = true;
     }
-    
+
     // $mustshift indicates whether the sequence must be shifted to
     // meet its range
     $mustshift = false;
@@ -1047,36 +1047,36 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
         if ( $mustshift && !$safe && !$hasgap) {
             $shift = $n + $catgap - $min;
             // UPDATE course SET sortorder=sortorder+$shift
-            execute_sql("UPDATE {$CFG->prefix}course 
-                         SET sortorder=sortorder+$shift 
+            execute_sql("UPDATE {$CFG->prefix}course
+                         SET sortorder=sortorder+$shift
                          WHERE category=$categoryid", 0);
-            $n = $n + $catgap + $count; 
-            
+            $n = $n + $catgap + $count;
+
         } else { // do it slowly
-            $n = $n + $catgap;             
+            $n = $n + $catgap;
             // if the new sequence overlaps the current sequence, lack of transactions
             // will stop us -- shift things aside for a moment...
             if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbfamily==='mysql')) {
                 $shift = $max + $n + 1000;
-                execute_sql("UPDATE {$CFG->prefix}course 
-                         SET sortorder=sortorder+$shift 
+                execute_sql("UPDATE {$CFG->prefix}course
+                         SET sortorder=sortorder+$shift
                          WHERE category=$categoryid", 0);
             }
 
             $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');
             begin_sql();
-            foreach ($courses as $course) { 
+            foreach ($courses as $course) {
                 if ($course->sortorder != $n ) { // save db traffic
                     set_field('course', 'sortorder', $n, 'id', $course->id);
                 }
                 $n++;
             }
             commit_sql();
-        }    
+        }
     }
     set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
 
-    // $n could need updating     
+    // $n could need updating
     $max = get_field_sql("SELECT MAX(sortorder) from {$CFG->prefix}course WHERE category=$categoryid");
     if ($max > $n) {
         $n = $max;
@@ -1105,7 +1105,7 @@ function get_my_remotecourses($userid=0) {
         $userid = $USER->id;
     }
 
-    $sql = "SELECT c.remoteid, c.shortname, c.fullname, 
+    $sql = "SELECT c.remoteid, c.shortname, c.fullname,
                    c.hostid, c.summary, c.cat_name,
                    h.name AS hostname
             FROM   {$CFG->prefix}mnet_enrol_course c
@@ -1453,7 +1453,7 @@ function instance_is_visible($moduletype, $module) {
                                              cm.module = m.id AND
                                              m.name = '$moduletype' AND
                                              cm.instance = '$module->id'")) {
-    
+
             foreach ($records as $record) { // there should only be one - use the first one
                 return $record->visible;
             }
@@ -1533,12 +1533,12 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 /// Store lastaccess times for the current user, do not use in cron and other commandline scripts
 
     if (!empty($USER->id) && ($userid == $USER->id) && !defined('FULLME')) {
-        $db->Execute('UPDATE '. $CFG->prefix .'user 
+        $db->Execute('UPDATE '. $CFG->prefix .'user
                          SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                        WHERE id = \''. $userid .'\' ');
         if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
-            
+
             if ($record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
                 $record->timeaccess = $timenow;
                 return update_record('user_lastaccess', $record);
@@ -1547,7 +1547,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
                 $record->userid = $userid;
                 $record->courseid = $courseid;
                 $record->timeaccess = $timenow;
-                return insert_record('user_lastaccess', $record);  
+                return insert_record('user_lastaccess', $record);
             }
         }
     }
@@ -1693,13 +1693,13 @@ function course_parent_visible($course = null) {
 }
 
 function category_parent_visible($parent = 0) {
-    
+
     static $visible;
 
     if (!$parent) {
         return true;
     }
-    
+
     if (empty($visible)) {
         $visible = array(); // initialize
     }
@@ -1707,7 +1707,7 @@ function category_parent_visible($parent = 0) {
     if (array_key_exists($parent,$visible)) {
         return $visible[$parent];
     }
-    
+
     $category = get_record('course_categories', 'id', $parent);
     $list = explode('/', preg_replace('/^\/(.*)$/', '$1', $category->path));
     $list[] = $parent;
@@ -1723,7 +1723,7 @@ function category_parent_visible($parent = 0) {
 }
 
 /**
- * This function is the official hook inside XMLDB stuff to delegate its debug to one 
+ * This function is the official hook inside XMLDB stuff to delegate its debug to one
  * external function.
  *
  * Any script can avoid calls to this function by defining XMLDB_SKIP_DEBUG_HOOK before
@@ -1739,28 +1739,28 @@ function xmldb_debug($message, $object) {
 
 /**
  * Get the lists of courses the current user has $cap capability in
- * I am not sure if this is needed, it loops through all courses so 
- * could cause performance problems. 
- * If it's not used, we can use a faster function to detect 
+ * I am not sure if this is needed, it loops through all courses so
+ * could cause performance problems.
+ * If it's not used, we can use a faster function to detect
  * capability in restorelib.php
  * @param string $cap
  * @return array
  */
 function get_capability_courses($cap) {
     global $USER;
-    
+
     $mycourses = array();
     if ($courses = get_records('course')) {
         foreach ($courses as $course) {
             if (has_capability($cap, get_context_instance(CONTEXT_COURSE, $course->id))) {
-                $mycourses[] = $course->id;  
+                $mycourses[] = $course->id;
             }
         }
     }
-  
+
     return $mycourses;
-} 
- 
+}
+
 /**
  * true or false function to see if user can create any courses at all
  * @return bool
@@ -1768,13 +1768,13 @@ function get_capability_courses($cap) {
 function user_can_create_courses() {
     global $USER;
     // if user has course creation capability at any site or course cat, then return true;
-    
+
     if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        return true;  
+        return true;
     } else {
-        return (bool) count(get_creatable_categories());  
+        return (bool) count(get_creatable_categories());
     }
-      
+
 }
 
 /**
@@ -1782,7 +1782,7 @@ function user_can_create_courses() {
  * @return array
  */
 function get_creatable_categories() {
-    
+
     $creatablecats = array();
     if ($cats = get_records('course_categories')) {
         foreach ($cats as $cat) {
