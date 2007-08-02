@@ -365,11 +365,10 @@ class grade_item extends grade_object {
 
     /**
      * Set idnumber of grade item, updates also course_modules table
-     * @param string $idnumber
+     * @param string $idnumber (without magic quotes)
      * @return boolean success
      */
     function add_idnumber($idnumber) {
-        //TODO: add uniqueness checking
         if (!empty($this->idnumber)) {
             return false;
         }
@@ -381,10 +380,7 @@ class grade_item extends grade_object {
             if (!empty($cm->idnumber)) {
                 return false;
             }
-            $ncm = new object();
-            $ncm->id = $cm->id;
-            $ncm->idnumber = $idnumber();
-            if(update_record('course_modules', $ncm)) {
+            if (set_field('course_modules', 'idnumber', addslashes($idnumber), 'id', $cm->id)) {
                 $this->idnumber = $idnumber;
                 return $this->update();
             }

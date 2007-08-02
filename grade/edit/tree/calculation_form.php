@@ -94,17 +94,40 @@ class edit_calculation_form extends moodleform {
     function validation($data){
         $errors = array();
 
-        //first validate and store the new idnubmers
+        $mform =& $this->_form;
+
+        //first validate and store the new idnumbers
         if ($this->noidnumbers and $this->showing) {
-            foreach ($this->noidnumbers as $item) {
-                if (!empty($data['idnumber_'.$item->id])) {
-                    if(!$item->add_idnumber(stripslashes($data['idnumber_'.$item->id]))) {
-                        $errors['idnumber_'.$item->id] = get_string('error');
+            foreach ($this->noidnumbers as $grade_item) {
+                $idnumber = 'idnumber_'.$grade_item->id;
+                if (!empty($data[$idnumber])) {
+                    if ($grade_item->itemtype == 'mod') {
+                        $cm = get_coursemodule_from_instance($grade_item->itemmodule, $grade_item->iteminstance, $grade_item->courseid);
+                    } else {
+                        $cm = null;
                     }
+
+                    if (!grade_verify_idnumber($data[$idnumber], $grade_item, $cm)) {
+                        $errors[$idnumber] = get_string('idnumbertaken');
+                        continue;
+                    }
+
+                    if (empty($grade_item->idnumber) and !$grade_item->add_idnumber(stripslashes($data['idnumber_'.$grade_item->id]))) {
+                        $errors[$idnumber] = get_string('error');
+                        continue;
+                    }
+                }
+
+                // lock the adding field if idnumber already present or just changed
+                if (!empty($grade_item->idnumber)) {
+                    $el =& $mform->getElement($idnumber);
+                    $el->setValue($grade_item->idnumber);
+                    $mform->hardFreeze($idnumber);
                 }
             }
         }
 
+        // check the calculation formula
         if ($data['calculation'] != '') {
             $grade_item = grade_item::fetch(array('id'=>$data['id'], 'courseid'=>$data['courseid']));
             $result = $grade_item->validate_formula(stripslashes($data['calculation']));
@@ -112,6 +135,7 @@ class edit_calculation_form extends moodleform {
                 $errors['calculation'] = $result;
             }
         }
+
         if (0 == count($errors)){
             return true;
         } else {
