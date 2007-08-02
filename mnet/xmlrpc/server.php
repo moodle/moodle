@@ -482,12 +482,18 @@ function mnet_server_dispatch($payload) {
         } elseif ('dangerous' == $CFG->mnet_dispatcher_mode && $MNET_REMOTE_CLIENT->plaintext_is_ok()) {
 
             $functionname = array_pop($callstack);
-            $filename     = array_pop($callstack);
 
             if ($MNET_REMOTE_CLIENT->plaintext_is_ok()) {
 
+                $filename = clean_param(implode('/',$callstack), PARAM_PATH);
+                if (0 == preg_match("/php$/", $filename)) {
+                    // Filename doesn't end in 'php'; possible attack?
+                    // Generate error response - unable to locate function
+                    exit(mnet_server_fault(7012, 'nosuchfunction'));
+                } 
+
                 // The call stack holds the path to any include file
-                $includefile = $CFG->dirroot.'/'.implode('/',$callstack).'/'.$filename.'.php';
+                $includefile = $CFG->dirroot.'/'.$filename;
 
                 $response = mnet_server_invoke_method($includefile, $functionname, $method, $payload);
                 echo $response;
