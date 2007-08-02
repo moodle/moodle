@@ -1578,16 +1578,19 @@ function xmldb_main_upgrade($oldversion=0) {
         build_context_rel();
     }
 
-    if ($result && $oldversion < 2007080201) {
+    if ($result && $oldversion < 2007080202) {
 
     /// Define index tagiditem (not unique) to be dropped form tag_instance
         $table = new XMLDBTable('tag_instance');
         $index = new XMLDBIndex('tagiditem');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('tagid', 'itemtype', 'itemid'));
 
     /// Launch drop index tagiditem
         drop_index($table, $index);
 
    /// Define index tagiditem (unique) to be added to tag_instance
+        $table = new XMLDBTable('tag_instance');
+        $index = new XMLDBIndex('tagiditem');
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('tagid', 'itemtype', 'itemid'));
 
     /// Launch add index tagiditem
