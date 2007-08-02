@@ -359,33 +359,38 @@
 
             // Create a grade_category to represent this module, if outcomes have been attached
             if (!empty($grade_items)) {
-                $cat_params = array('courseid'=>$COURSE->id, 'fullname'=>$fromform->name);
-                $grade_category = grade_category::fetch($cat_params);
-
-                if (!$grade_category) {
-                    $grade_category = new grade_category($cat_params);
-                    $grade_category->courseid = $COURSE->id;
-                    $grade_category->fullname = $fromform->name;
-                    $grade_category->insert();
-                }
-
-                $sortorder = $grade_category->sortorder;
-
                 // Add the module's normal grade_item as a child of this category
                 $item_params = array('itemtype'=>'mod',
                                      'itemmodule'=>$fromform->modulename,
                                      'iteminstance'=>$fromform->instance,
                                      'itemnumber'=>0,
                                      'courseid'=>$COURSE->id);
-                if ($item = grade_item::fetch($item_params)) {
-                    $item->set_parent($grade_category->id);
-                    $sortorder = $item->sortorder;
-                }
+                $item = grade_item::fetch($item_params);
 
-                // Add the outcomes as children of this category
-                foreach ($grade_items as $gi) {
-                    $gi->set_parent($grade_category->id);
-                    $gi->move_after_sortorder($sortorder);
+                // Only create the category if it will contain at least 2 items
+                if ($item OR count($grade_items) > 1) { // If we are here it means there is at least 1 outcome
+                    $cat_params = array('courseid'=>$COURSE->id, 'fullname'=>$fromform->name);
+                    $grade_category = grade_category::fetch($cat_params);
+
+                    if (!$grade_category) {
+                        $grade_category = new grade_category($cat_params);
+                        $grade_category->courseid = $COURSE->id;
+                        $grade_category->fullname = $fromform->name;
+                        $grade_category->insert();
+                    }
+
+                    $sortorder = $grade_category->sortorder;
+
+                    if () {
+                        $item->set_parent($grade_category->id);
+                        $sortorder = $item->sortorder;
+                    }
+
+                    // Add the outcomes as children of this category
+                    foreach ($grade_items as $gi) {
+                        $gi->set_parent($grade_category->id);
+                        $gi->move_after_sortorder($sortorder);
+                    }
                 }
             }
         }
