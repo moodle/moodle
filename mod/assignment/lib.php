@@ -503,7 +503,6 @@ class assignment_base {
 
         switch ($mode) {
             case 'grade':                         // We are in a popup window grading
-                $this->process_outcomes();
                 if ($submission = $this->process_feedback()) {
                     //IE needs proper header with encoding
                     print_header(get_string('feedback', 'assignment').':'.format_string($this->assignment->name));
@@ -542,6 +541,9 @@ class assignment_base {
                 foreach ($_POST[$col] as $id => $unusedvalue){
 
                     $id = (int)$id; //clean parameter name
+
+                    $this->process_outcomes($id);
+
                     if (!$submission = $this->get_submission($id)) {
                         $submission = $this->prepare_new_submission($id);
                         $newsubmission = true;
@@ -600,6 +602,7 @@ class assignment_base {
                     }
 
                 }
+
                 print_heading(get_string('changessaved'));
                 $this->display_submissions();
                 break;
@@ -616,7 +619,6 @@ class assignment_base {
             case 'saveandnext':
                 ///We are in pop up. save the current one and go to the next one.
                 //first we save the current changes
-                $this->process_outcomes();
                 if ($submission = $this->process_feedback()) {
                     //print_heading(get_string('changessaved'));
                     $extra_javascript = $this->update_main_listing($submission);
@@ -688,6 +690,29 @@ class assignment_base {
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
+
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
+        // TODO: add some javascript for updating of outcomes here
+            if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid)) {
+                foreach($outcomes_data as $n=>$data) {
+                    if ($data->locked) {
+                        continue;
+                    }
+
+                    if ($quickgrade){
+                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.
+                        '").selectedIndex="'.$data->grade.'";'."\n";
+                    } else {
+                        $options = make_grades_menu(-$data->scaleid);
+                        $options[0] = get_string('nooutcome', 'grades');
+                        $output.= 'opener.document.getElementById("outcome_'.$n.'_'.$submission->userid.'").innerHTML="'.$options[$data->grade]."\";\n";
+
+                    }
+
+                }
+            }
+        }
+
         $output .= "\n-->\n</script>";
         return $output;
     }
@@ -738,6 +763,7 @@ class assignment_base {
     function display_submission($extra_javascript = '') {
 
         global $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
 
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
@@ -841,27 +867,27 @@ class assignment_base {
             echo '<div class="time">'.userdate($submission->timemarked).'</div>';
             echo '</div>';
         }
-        echo '<div class="grade">'.get_string('grade').':';
+        echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label>';
         choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1);
         echo '</div>';
+        echo '<div class="clearer"></div>';
 
-        require_once($CFG->libdir.'/gradelib.php');
-        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
+        if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
             echo '<div class="outcomes">';
-            foreach($outcomes as $n=>$data) {
-                echo format_string($data->name).':';
+            foreach($outcomes_data as $n=>$data) {
+                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label>';
                 $options = make_grades_menu(-$data->scaleid);
                 if ($data->locked) {
-                    $options[0] = get_string('nograde');
+                    $options[0] = get_string('nooutcome', 'grades');
                     echo $options[$data->grade];
                 } else {
-                    choose_from_menu($options, 'outcome_'.$n, $data->grade, get_string('nograde'), '', -1);
+                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $data->grade, get_string('nooutcome', 'grades'), '', 0);
                 }
+                echo '</div>';
             }
             echo '</div>';
         }
 
-        echo '<div class="clearer"></div>';
 
         $this->preprocess_submission($submission);
 
@@ -939,8 +965,8 @@ class assignment_base {
      *  Display all the submissions ready for grading
      */
     function display_submissions() {
-
         global $CFG, $db, $USER;
+        require_once($CFG->libdir.'/gradelib.php');
 
         /* first we check to see if the form has just been submitted
          * to request user_preference updates
@@ -995,8 +1021,8 @@ class assignment_base {
         /// Get all ppl that are allowed to submit assignments
         $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
-        $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'));
+        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', '');
+        $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'), get_string('outcomes', 'grades'));
 
         require_once($CFG->libdir.'/tablelib.php');
         $table = new flexible_table('mod-assignment-submissions');
@@ -1019,6 +1045,7 @@ class assignment_base {
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
+        $table->column_class('outcomes', 'outcomes');
 
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'attempts');
@@ -1149,11 +1176,28 @@ class assignment_base {
                 } else {
                     ///No more buttons, we use popups ;-).
                     $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++,
-                                                    'grade'.$auser->id, $buttontext, 500, 780, $buttontext, 'none', true, 'button'.$auser->id);
+                                                    'grade'.$auser->id, $buttontext, 600, 780, $buttontext, 'none', true, 'button'.$auser->id);
     
                     $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
                 }
-                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
+
+                $outcomes = '';
+                if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
+                    foreach($outcomes_data as $n=>$data) {
+                        $outcomes .= '<div class="outcome"><label for="outcome_'.$n.'['.$auser->id.']">'.format_string($data->name).'</label>';
+                        $options = make_grades_menu(-$data->scaleid);
+                        if ($data->locked or !$quickgrade) {
+                            $options[0] = get_string('nooutcome', 'grades');
+                            $outcomes .= ':<span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$data->grade].'</span>';
+                        } else {
+                            $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']', $data->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
+                        }
+                        echo '</div>';
+                    }
+                }
+
+
+                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status, $outcomes);
                 $table->add_data($row);
             }
         }
@@ -1215,36 +1259,6 @@ class assignment_base {
     }
 
     /**
-     *  Process teacher outcomes
-     *
-     * This is called by submissions() when a grading even has taken place.
-     * It gets its data from the submitted form.
-     */
-    function process_outcomes() {
-        global $CFG;
-
-        if (!$formdata = data_submitted()) {      // No incoming data?
-            return;
-        }
-
-        $userid = $formdata->userid;
-
-        require_once($CFG->libdir.'/gradelib.php');
-        $data = array();
-        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
-            foreach($outcomes as $n=>$old) {
-                $name = 'outcome_'.$n;
-                if (array_key_exists($name, $formdata)) {
-                    $data[$n] = $formdata->$name;
-                }
-            }
-        }
-        if (count($data) > 0) {
-            grade_update_outcomes('mod/assignment', $this->course->id, 'mod', 'assignment', $this->assignment->id, $userid, $data);
-        }
-    }
-
-    /**
      *  Process teacher feedback submission
      *
      * This is called by submissions() when a grading even has taken place.
@@ -1269,6 +1283,9 @@ class assignment_base {
         if (!empty($feedback->cancel)) {          // User hit cancel button
             return false;
         }
+
+        // store outcomes if needed
+        $this->process_outcomes($feedback->userid);
 
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
@@ -1297,6 +1314,29 @@ class assignment_base {
                    'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
 
         return $submission;
+
+    }
+
+    function process_outcomes($userid) {
+        global $CFG, $USER;
+        require_once($CFG->libdir.'/gradelib.php');
+
+        if (!$formdata = data_submitted()) {
+            return;
+        }
+
+        $data = array();
+        if ($outcomes = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
+            foreach($outcomes as $n=>$old) {
+                $name = 'outcome_'.$n;
+                if (isset($formdata->{$name}[$userid]) and $old->grade != $formdata->{$name}[$userid]) {
+                    $data[$n] = $formdata->{$name}[$userid];
+                }
+            }
+        }
+        if (count($data) > 0) {
+            grade_update_outcomes('mod/assignment', $this->course->id, 'mod', 'assignment', $this->assignment->id, $userid, $data);
+        }
 
     }
 

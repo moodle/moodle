@@ -55,6 +55,9 @@ class assignment_offline extends assignment_base {
             return false;
         }
 
+        // store outcomes if needed
+        $this->process_outcomes($feedback->userid);
+
         $submission = $this->get_submission($feedback->userid, true);  // Get or make one
 
         $submission->grade      = $feedback->grade;

@@ -1257,7 +1257,8 @@ class grade_item extends grade_object {
             }
         }
 
-        if ($result and !$grade->overridden) {
+        // no events for overridden items and outcomes
+        if ($result and !$grade->overridden and $this->itemnumber < 1000) {
             $this->trigger_raw_updated($grade, $source);
         }
 
@@ -1354,7 +1355,8 @@ class grade_item extends grade_object {
             }
         }
 
-        if ($result) {
+        // no events for outcomes
+        if ($result and $this->itemnumber < 1000) {
             $this->trigger_raw_updated($grade, $source);
         }
 
