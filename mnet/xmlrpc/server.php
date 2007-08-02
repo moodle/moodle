@@ -360,7 +360,7 @@ function mnet_server_dispatch($payload) {
         exit(mnet_server_fault(713, 'nosuchfunction'));
     }
 
-    if(preg_match("/^system./", $method)) {
+    if(preg_match("/^system\./", $method)) {
         $callstack  = explode('.', $method);
     } else {
         $callstack  = explode('/', $method);
@@ -462,7 +462,7 @@ function mnet_server_dispatch($payload) {
         }
 
     ////////////////////////////////////// STRICT MOD/*
-    } elseif ($callstack[0] == 'mod' || 'promiscuous' == $CFG->mnet_dispatcher_mode) {
+    } elseif ($callstack[0] == 'mod' || 'dangerous' == $CFG->mnet_dispatcher_mode) {
         list($base, $module, $filename, $functionname) = $callstack;
 
     ////////////////////////////////////// STRICT MOD/*
@@ -472,16 +472,22 @@ function mnet_server_dispatch($payload) {
             $response = mnet_server_prepare_response($response);
             echo $response;
 
-    ////////////////////////////////////// PROMISCUOUS
-        } elseif ('promiscuous' == $CFG->mnet_dispatcher_mode && $MNET_REMOTE_CLIENT->plaintext_is_ok()) {
+    ////////////////////////////////////// DANGEROUS
+        } elseif ('dangerous' == $CFG->mnet_dispatcher_mode && $MNET_REMOTE_CLIENT->plaintext_is_ok()) {
 
             $functionname = array_pop($callstack);
-            $filename     = array_pop($callstack);
 
             if ($MNET_REMOTE_CLIENT->plaintext_is_ok()) {
 
+                $filename = clean_param(implode('/',$callstack), PARAM_PATH);
+                if (0 == preg_match("/php$/", $filename)) {
+                    // Filename doesn't end in 'php'; possible attack?
+                    // Generate error response - unable to locate function
+                    exit(mnet_server_fault(7012, 'nosuchfunction'));
+                } 
+
                 // The call stack holds the path to any include file
-                $includefile = $CFG->dirroot.'/'.implode('/',$callstack).'/'.$filename.'.php';
+                $includefile = $CFG->dirroot.'/'.$filename;
 
                 $response = mnet_server_invoke_method($includefile, $functionname, $method, $payload);
                 echo $response;

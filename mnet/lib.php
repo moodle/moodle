@@ -407,7 +407,7 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
 
     $permissionobj = record_exists_sql($sql);
 
-    if ($permissionobj === false) {
+    if ($permissionobj === false && 'dangerous' != $CFG->mnet_dispatcher_mode) {
         return RPC_FORBIDDENMETHOD;
     }
 
