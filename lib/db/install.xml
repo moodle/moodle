@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070801" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070802" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1641,7 +1641,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tag_instance"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="tagiditem" UNIQUE="false" FIELDS="tagid, itemtype, itemid"/>
+        <INDEX NAME="tagiditem" UNIQUE="true" FIELDS="tagid, itemtype, itemid"/>
       </INDEXES>
     </TABLE>
   </TABLES>
