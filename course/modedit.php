@@ -297,8 +297,8 @@
         //sync idnumber with grade_item
         if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
                      'iteminstance'=>$fromform->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
-            if ($grade_item->idnumber != $fromform->idnumber) {
-                $grade_item->idnumber = $fromform->idnumber;
+            if ($grade_item->idnumber != $fromform->cmidnumber) {
+                $grade_item->idnumber = $fromform->cmidnumber;
                 $grade_item->update();
             }
         }
