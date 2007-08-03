@@ -871,6 +871,8 @@ class assignment_base {
         choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1);
         echo '</div>';
 
+        echo '<div class="clearer"></div>';
+
         if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
             foreach($outcomes_data as $n=>$data) {
                 echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label> ';
@@ -882,10 +884,10 @@ class assignment_base {
                     choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $data->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
                 }
                 echo '</div>';
+                echo '<div class="clearer"></div>';
             }
         }
 
-        echo '<div class="clearer"></div>';
 
         $this->preprocess_submission($submission);
 
