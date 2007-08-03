@@ -184,6 +184,7 @@
              SELECT DISTINCT 
                  h.id, 
                  h.name,
+                 h.wwwroot,
                  a.name as application,
                  a.display_name
              FROM 
