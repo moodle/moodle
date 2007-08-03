@@ -2076,14 +2076,26 @@ function set_coursemodule_visible($id, $visible, $prevstateoverrides=false) {
  *
  */
 function delete_course_module($id) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
     if (!$cm = get_record('course_modules', 'id', $id)) {
         return true;
     }
     $modulename = get_field('modules', 'name', 'id', $cm->module);
+    //delete events from calendar
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
             delete_event($event->id);
         }
+    }
+    //delete grade items, outcome items and grades attached to modules
+    if ($grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,
+                                                   'iteminstance'=>$cm->instance, 'courseid'=>$cm->course))) {
+        foreach ($grade_items as $grade_item) {
+            $grade_item->delete('moddelete');
+        }
+        
     }
     return delete_records('course_modules', 'id', $cm->id);
 }

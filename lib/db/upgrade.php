@@ -1604,6 +1604,8 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2007072209) {
         $tables = array('grade_category',
                         'grade_item',
+                        'grade_letter',
+                        'grade_preferences',
                         'grade_exceptions');
 
         foreach ($tables as $table) {

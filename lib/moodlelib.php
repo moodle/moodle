@@ -2968,6 +2968,7 @@ function set_login_session_preferences() {
  */
 function delete_course($courseid, $showfeedback = true) {
     global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
     $result = true;
 
     if (!remove_course_contents($courseid, $showfeedback)) {
@@ -2976,6 +2977,8 @@ function delete_course($courseid, $showfeedback = true) {
         }
         $result = false;
     }
+
+    remove_course_grades($courseid, $showfeedback);
 
     if (!delete_records("course", "id", $courseid)) {
         if ($showfeedback) {
@@ -3150,11 +3153,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'log' => 'course', // Delete logs
         'course_sections' => 'course', // Delete any course stuff
         'course_modules' => 'course',
-        'grade_category' => 'courseid', // Delete gradebook stuff
-        'grade_exceptions' => 'courseid',
-        'grade_item' => 'courseid',
-        'grade_letter' => 'courseid',
-        'grade_preferences' => 'courseid',
         'backup_courses' => 'courseid', // Delete scheduled backup stuff
         'backup_log' => 'courseid'
     );

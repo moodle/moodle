@@ -754,6 +754,40 @@ function grade_get_legacy_grade_item($modinstance, $grademax, $scaleid) {
     return $grade_item;
 }
 
+/**
+ * Remove all grade related course data - history is kept
+ * @param int $courseid
+ * @showfeedback boolean print feedback
+ */
+function remove_course_grades($courseid, $showfeedback) {
+    $strdeleted = get_string('deleted');
+
+    $course_category = grade_category::fetch_course_category($courseid);
+    $course_category->delete('coursedelete');
+    if ($showfeedback) {
+        notify($strdeleted.' - '.get_string('grades', 'grades').', '.get_string('items', 'grades').', '.get_string('categories', 'grades'));
+    }
+
+    if ($outcomes = grade_outcome::fetch_all(array('courseid'=>$courseid))) {
+        foreach ($outcomes as $outcome) {
+            $outcome->delete('coursedelete');
+        }
+    }
+    delete_records('grade_outcomes_courses', 'courseid', $courseid);
+    if ($showfeedback) {
+        notify($strdeleted.' - '.get_string('outcomes', 'grades'));
+    }
+
+    if ($scales = grade_scale::fetch_all(array('courseid'=>$courseid))) {
+        foreach ($scales as $scale) {
+            $scale->delete('coursedelete');
+        }
+    }
+    if ($showfeedback) {
+        notify($strdeleted.' - '.get_string('scales'));
+    }
+
+}
 
 /**
  * Builds an array of percentages indexed by integers for the purpose of building a select drop-down element.

@@ -299,12 +299,9 @@ class grade_item extends grade_object {
      * @return boolean success
      */
     function delete($source=null) {
-        if ($this->is_course_item()) {
-            debuggin('Can not delete course or category item!');
-            return false;
+        if (!$this->is_course_item()) {
+            $this->force_regrading();
         }
-
-        $this->force_regrading();
 
         if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
             foreach ($grades as $grade) {

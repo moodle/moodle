@@ -189,25 +189,42 @@ class grade_category extends grade_object {
      * @return boolean success
      */
     function delete($source=null) {
-        if ($this->is_course_category()) {
-            debuggin('Can not delete top course category!');
-            return false;
-        }
-
-        $this->force_regrading();
-
         $grade_item = $this->load_grade_item();
-        $parent = $this->load_parent_category();
 
-        // Update children's categoryid/parent field first
-        if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-            foreach ($children as $child) {
-                $child->set_parent($parent->id);
+        if ($this->is_course_category()) {
+            if ($categories = grade_category::fetch_all(array('courseid'=>$this->courseid))) {
+                foreach ($categories as $category) {
+                    if ($category->id == $this->id) {
+                        continue; // do not delete course category yet
+                    }
+                    $category->delete($source);
+                }
             }
-        }
-        if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-            foreach ($children as $child) {
-                $child->set_parent($parent->id);
+            
+            if ($items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
+                foreach ($items as $item) {
+                    if ($item->id == $grade_item->id) {
+                        continue; // do not delete course item yet
+                    }
+                    $item->delete($source);
+                }
+            }
+
+        } else {
+            $this->force_regrading();
+    
+            $parent = $this->load_parent_category();
+    
+            // Update children's categoryid/parent field first
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+                foreach ($children as $child) {
+                    $child->set_parent($parent->id);
+                }
+            }
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+                foreach ($children as $child) {
+                    $child->set_parent($parent->id);
+                }
             }
         }
 
@@ -254,7 +271,10 @@ class grade_category extends grade_object {
     }
 
     /**
-     * TODO document
+     * Internal function - used only from fetch_course_category()
+     * Normal insert() can not be used for course category
+     * @param int $courseid
+     * @return bool success
      */
     function insert_course_category($courseid) {
         $this->courseid  = $courseid;
