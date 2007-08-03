@@ -34,7 +34,7 @@ if ($category = get_record('grade_categories', 'id', $id, 'courseid', $course->i
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data(false)) {
     $grade_category = new grade_category(array('id'=>$id, 'courseid'=>$course->id));
     grade_category::set_properties($grade_category, $data);
 

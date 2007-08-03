@@ -41,7 +41,7 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     $mform->set_data($item);
 }
 
-if ($data = $mform->get_data()) {
+if ($data = $mform->get_data(false)) {
     if (array_key_exists('calculation', $data)) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }

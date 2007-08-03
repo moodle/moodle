@@ -82,7 +82,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 // form processing
-} else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
     // update final grade or feedback
@@ -90,7 +90,7 @@ if ($mform->is_cancelled()) {
 
     $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
 
-    $grade_grade->set_hidden($data->hidden); // TODO: this is wrong!
+    $grade_grade->set_hidden($data->hidden); // TODO: this is wrong - hidden might be a data to hide until
 
     // ignore overridden flag when changing final grade
     if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {

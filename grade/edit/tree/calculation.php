@@ -39,7 +39,7 @@ if ($mform->is_cancelled()) {
 $calculation = grade_item::denormalize_formula($grade_item->calculation, $grade_item->courseid);
 $mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname));
 
-if ($data = $mform->get_data()) {
+if ($data = $mform->get_data(false)) {
     $grade_item->set_calculation($data->calculation);
     redirect($returnurl);
 }
