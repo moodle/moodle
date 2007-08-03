@@ -15,9 +15,9 @@ require_once($CFG->libdir.'/json/JSON.php');
 
 require_js('yui_yahoo');
 require_js('yui_dom');
+require_js('yui_utilities');
 require_js('yui_connection');
 require_js($CFG->wwwroot.'/group/lib/clientlib.js');
-
 
 $success = true;
 
@@ -319,7 +319,7 @@ if (empty($CFG->enablegroupings)) {
             . get_string('editgroupsettings', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="'
             . get_string('deleteselectedgroup', 'group') . '" /></p>'."\n";
-    
+
     if ($shownotdone) {
         echo '<p><input type="submit" '.$disabled.' name="act_removegroup" '
                 . 'id="removegroup" value="' . get_string('removegroupfromselectedgrouping', 'group') . '" /></p>'."\n";
