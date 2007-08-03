@@ -1003,14 +1003,17 @@ class assignment_base {
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
 
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-        
+
         $navlinks = array();
         $navlinks[] = array('name' => $this->strassignments, 'link' => "index.php?id=$course->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($this->assignment->name,true), 'link' => "view.php?a={$this->assignment->id}", 'type' => 'activityinstance');
+        $navlinks[] = array('name' => format_string($this->assignment->name,true),
+                            'link' => "view.php?a={$this->assignment->id}",
+                            'type' => 'activityinstance');
         $navlinks[] = array('name' => $this->strsubmissions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
 
-        print_header_simple(format_string($this->assignment->name,true), "", $navigation, '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+        print_header_simple(format_string($this->assignment->name,true), "", $navigation,
+                '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1022,7 +1025,14 @@ class assignment_base {
         $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', '');
-        $tableheaders = array('', get_string('fullname'), get_string('grade'), get_string('comment', 'assignment'), get_string('lastmodified').' ('.$course->student.')', get_string('lastmodified').' ('.$course->teacher.')', get_string('status'), get_string('outcomes', 'grades'));
+        $tableheaders = array('',
+                              get_string('fullname'),
+                              get_string('grade'),
+                              get_string('comment', 'assignment'),
+                              get_string('lastmodified').' ('.$course->student.')',
+                              get_string('lastmodified').' ('.$course->teacher.')',
+                              get_string('status'),
+                              get_string('outcomes', 'grades'));
 
         require_once($CFG->libdir.'/tablelib.php');
         $table = new flexible_table('mod-assignment-submissions');
@@ -1116,7 +1126,8 @@ class assignment_base {
                 ///attach file or print link to student answer, depending on the type of the assignment.
                 ///Refer to print_student_answer in inherited classes.
                     if ($auser->timemodified > 0) {
-                        $studentmodified = '<div id="ts'.$auser->id.'">'.$this->print_student_answer($auser->id).userdate($auser->timemodified).'</div>';
+                        $studentmodified = '<div id="ts'.$auser->id.'">'.$this->print_student_answer($auser->id)
+                                         . userdate($auser->timemodified).'</div>';
                     } else {
                         $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
                     }
@@ -1125,24 +1136,30 @@ class assignment_base {
                         $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
 
                         if ($quickgrade) {
-                            $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
-                            'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
+                            $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
+                                                     'menu['.$auser->id.']', $auser->grade,
+                                                     get_string('nograde'),'',-1,true,false,$tabindex++);
+                            $grade = '<div id="g'.$auser->id.'">'. $menu .'</div>';
                         } else {
                             $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
                         }
 
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
-                        if ($quickgrade){
-                            $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
-                            'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
+                        if ($quickgrade) {
+                            $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
+                                                     'menu['.$auser->id.']', $auser->grade,
+                                                     get_string('nograde'),'',-1,true,false,$tabindex++);
+                            $grade = '<div id="g'.$auser->id.'">'.$menu.'</div>';
                         } else {
                             $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
                         }
                     }
                 ///Print Comment
-                    if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'.$auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
+                    if ($quickgrade) {
+                        $comment = '<div id="com'.$auser->id.'">'
+                                 . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
+                                 . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->submissioncomment),15).'</div>';
                     }
@@ -1150,14 +1167,20 @@ class assignment_base {
                     $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
                     $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
                     $status          = '<div id="st'.$auser->id.'">&nbsp;</div>';
-                    if ($quickgrade){   // allow editing
-                        $grade = '<div id="g'.$auser->id.'">'.choose_from_menu(make_grades_menu($this->assignment->grade),
-                                 'menu['.$auser->id.']', $auser->grade, get_string('nograde'),'',-1,true,false,$tabindex++).'</div>';
+
+                    if ($quickgrade) {   // allow editing
+                        $menu = choose_from_menu(make_grades_menu($this->assignment->grade),
+                                                 'menu['.$auser->id.']', $auser->grade,
+                                                 get_string('nograde'),'',-1,true,false,$tabindex++);
+                        $grade = '<div id="g'.$auser->id.'">'.$menu.'</div>';
                     } else {
                         $grade = '<div id="g'.$auser->id.'">-</div>';
                     }
-                    if ($quickgrade){
-                        $comment = '<div id="com'.$auser->id.'"><textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'.$auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
+
+                    if ($quickgrade) {
+                        $comment = '<div id="com'.$auser->id.'">'
+                                 . '<textarea tabindex="'.$tabindex++.'" name="submissioncomment['.$auser->id.']" id="submissioncomment'
+                                 . $auser->id.'" rows="2" cols="20">'.($auser->submissioncomment).'</textarea></div>';
                     } else {
                         $comment = '<div id="com'.$auser->id.'">&nbsp;</div>';
                     }
@@ -1175,24 +1198,30 @@ class assignment_base {
                     $status = get_string('gradeitemlocked', 'grades');
                 } else {
                     ///No more buttons, we use popups ;-).
-                    $button = link_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++,
-                                                    'grade'.$auser->id, $buttontext, 600, 780, $buttontext, 'none', true, 'button'.$auser->id);
-    
+                    $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
+                               . '&amp;userid='.$auser->id.'&amp;mode=single'.'&amp;offset='.$offset++;
+                    $button = link_to_popup_window ($popup_url, 'grade'.$auser->id, $buttontext, 600, 780,
+                                                    $buttontext, 'none', true, 'button'.$auser->id);
+
                     $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
                 }
 
                 $outcomes = '';
+
                 if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
+
                     foreach($outcomes_data as $n=>$data) {
-                        $outcomes .= '<div class="outcome"><label for="outcome_'.$n.'['.$auser->id.']">'.format_string($data->name).'</label>';
+                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label>';
                         $options = make_grades_menu(-$data->scaleid);
+
                         if ($data->locked or !$quickgrade) {
                             $options[0] = get_string('nooutcome', 'grades');
                             $outcomes .= ':<span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$data->grade].'</span>';
                         } else {
-                            $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']', $data->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
+                            $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']',
+                                        $data->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
                         }
-                        echo '</div>';
+                        $outcomes .= '</div>';
                     }
                 }
 
@@ -1719,12 +1748,12 @@ class assignment_base {
      * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
      * for the course (see resource).
      *
-     * Given a course_module object, this function returns any "extra" information that may be needed 
+     * Given a course_module object, this function returns any "extra" information that may be needed
      * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
-     * 
+     *
      * @param $coursemodule object The coursemodule object (record).
      * @return object An object on information that the coures will know about (most noticeably, an icon).
-     * 
+     *
      */
     function get_coursemodule_info($coursemodule) {
         return false;
@@ -2088,7 +2117,7 @@ function assignment_grade_handler($eventdata) {
     if (isset($eventdata->feedback)) {
         $submission->submissioncomment = addslashes($eventdata->feedback);
     }
-    
+
     if (isset($eventdata->feedbackformat)) {
         $submission->format            = (int)$eventdata->feedbackformat;
     }
@@ -2507,12 +2536,12 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
  * Add a get_coursemodule_info function in case any assignment type wants to add 'extra' information
  * for the course (see resource).
  *
- * Given a course_module object, this function returns any "extra" information that may be needed 
+ * Given a course_module object, this function returns any "extra" information that may be needed
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
- * 
+ *
  * @param $coursemodule object The coursemodule object (record).
  * @return object An object on information that the coures will know about (most noticeably, an icon).
- * 
+ *
  */
 function assignment_get_coursemodule_info($coursemodule) {
     global $CFG;
