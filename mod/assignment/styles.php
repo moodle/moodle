@@ -89,6 +89,10 @@
   text-align: center;
 }
 
+#mod-assignment-submissions .submissions .outcome {
+  text-align: right;
+}
+
 #mod-assignment-view #online .singlebutton {
   text-align: center;
 }
