@@ -18,6 +18,11 @@
   float: right;
 }
 
+.mod-assignment .feedback .outcome {
+  float: right;
+  clear:both;
+}
+
 .mod-assignment .feedback .from {
   float: left;
 }

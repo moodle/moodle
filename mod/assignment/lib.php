@@ -860,33 +860,32 @@ class assignment_base {
 
         //new hidden field, initialized to -1.
         echo '<input type="hidden" name="saveuserid" value="-1" />';
+
         if ($submission->timemarked) {
             echo '<div class="from">';
             echo '<div class="fullname">'.fullname($teacher, true).'</div>';
             echo '<div class="time">'.userdate($submission->timemarked).'</div>';
             echo '</div>';
         }
-        echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label>';
+        echo '<div class="grade"><label for="menugrade">'.get_string('grade').'</label> ';
         choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', $submission->grade, get_string('nograde'), '', -1);
         echo '</div>';
-        echo '<div class="clearer"></div>';
 
         if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
-            echo '<div class="outcomes">';
             foreach($outcomes_data as $n=>$data) {
-                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label>';
+                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label> ';
                 $options = make_grades_menu(-$data->scaleid);
                 if ($data->locked) {
                     $options[0] = get_string('nooutcome', 'grades');
                     echo $options[$data->grade];
                 } else {
-                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $data->grade, get_string('nooutcome', 'grades'), '', 0);
+                    choose_from_menu($options, 'outcome_'.$n.'['.$userid.']', $data->grade, get_string('nooutcome', 'grades'), '', 0, false, false, 0, 'menuoutcome_'.$n);
                 }
                 echo '</div>';
             }
-            echo '</div>';
         }
 
+        echo '<div class="clearer"></div>';
 
         $this->preprocess_submission($submission);
 
@@ -1218,7 +1217,7 @@ class assignment_base {
                 if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
 
                     foreach($outcomes_data as $n=>$data) {
-                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label>';
+                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label> ';
                         $options = make_grades_menu(-$data->scaleid);
 
                         if ($data->locked or !$quickgrade) {
