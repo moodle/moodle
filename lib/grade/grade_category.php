@@ -253,6 +253,9 @@ class grade_category extends grade_object {
         return $this->id;
     }
 
+    /**
+     * TODO document
+     */
     function insert_course_category($courseid) {
         $this->courseid  = $courseid;
         $this->fullname  = 'course grade category';
