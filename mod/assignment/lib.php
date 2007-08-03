@@ -851,7 +851,7 @@ class assignment_base {
         echo '</td>';
         echo '<td class="content">';
         echo '<form id="submitform" action="submissions.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
+        echo '<div>'; // xhtml compatibility - invisiblefieldset was breaking layout here
         echo '<input type="hidden" name="offset" value="'.($offset+1).'" />';
         echo '<input type="hidden" name="userid" value="'.$userid.'" />';
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
@@ -891,7 +891,6 @@ class assignment_base {
 
         $this->preprocess_submission($submission);
 
-        echo '<br />';
         print_textarea($this->usehtmleditor, 14, 58, 0, 0, 'submissioncomment', $submission->submissioncomment, $this->course->id);
 
         if ($this->usehtmleditor) {
@@ -913,8 +912,7 @@ class assignment_base {
             echo '<input type="submit" name="next" value="'.get_string('next').'" onclick="setNext();" />';
         }
         echo '</div>';
-        echo '</fieldset>';
-        echo '</form>';
+        echo '</div></form>';
 
         $customfeedback = $this->custom_feedbackform($submission, true);
         if (!empty($customfeedback)) {
