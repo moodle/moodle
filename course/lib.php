@@ -246,6 +246,9 @@ function make_log_url($module, $url) {
         case 'blog':
             return "/$module/$url";
             break;
+        case 'mnet course':
+            return "/course/$url";
+            break;
         case 'upload':
             return $url;
             break;
@@ -508,7 +511,11 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
             echo "<td class=\"cell c0\">\n";
-            echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>\n";
+            if (empty($log->course)) {
+                echo format_string($log->info)."\n";
+            } else {
+                echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>\n";
+            }
             echo "</td>\n";
         }
         echo "<td class=\"cell c1\" align=\"right\">".userdate($log->time, '%a').

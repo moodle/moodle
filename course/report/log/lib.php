@@ -85,6 +85,9 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             order by
                 h.name";
 
+    $hostarray = array();
+    $dropdown  = array();
+
     if ($hosts = get_records_sql($sql)) {
         foreach($hosts as $host) {
             $hostarray[$host->id] = $host->name;
@@ -94,36 +97,34 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     $hostarray[$CFG->mnet_localhost_id] = $SITE->fullname;
     asort($hostarray);
 
-    foreach($hostarray as $hostid => $name) {
+    // $hostid already exists
+    foreach($hostarray as $hostid_ => $name) {
         $courses = array();
         $sites = array();
-        if ($CFG->mnet_localhost_id == $hostid) {
-            if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
+        if (has_capability('moodle/site:viewreports', $context) && $showcourses) {
+            if ($CFG->mnet_localhost_id == $hostid_) {
                 if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
-                            $sites["$hostid/$cc->id"]   = format_string($cc->fullname).' ('.get_string('site').')';
+                            $sites["$hostid_/$cc->id"]   = format_string($cc->fullname).' ('.get_string('site').')';
                         } else {
-                            $courses["$hostid/$cc->id"] = format_string($cc->fullname);
+                            $courses["$hostid_/$cc->id"] = format_string($cc->fullname);
                         }
                     }
                 }
-            }
-        } else {
-            if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
-                $sql = "select distinct course, coursename from mdl_mnet_log where hostid = '$hostid'";
+            } else {
+                $sql = "select distinct course, coursename from mdl_mnet_log where hostid = '$hostid_'";
                 if ($ccc = get_records_sql($sql)) {
                     foreach ($ccc as $cc) {
-                        if (1 == $cc->course) { // TODO: this might be wrong - site course may have another id
-                            $sites["$hostid/$cc->course"]   = $cc->coursename.' ('.get_string('site').')';
+                        if (1 == $cc->course) { // TODO: MDL-8187 : this might be wrong - site course may have another id
+                            $sites["$hostid_/$cc->course"]   = $cc->coursename.' ('.get_string('site').')';
                         } else {
-                            $courses["$hostid/$cc->course"] = $cc->coursename;
+                            $courses["$hostid_/$cc->course"] = $cc->coursename;
                         }
                     }
                 }
             }
         }
-
         asort($courses);
         $dropdown[$name] = $sites + $courses;
     }
