@@ -64,6 +64,7 @@
     $backup_logs = optional_param('backup_logs',0);
     $backup_user_files = optional_param('backup_user_files',1);
     $backup_course_files = optional_param('backup_course_files',1);
+    $backup_gradebook_history =  optional_param('backup_gradebook_history', 1, PARAM_INT);
     $backup_messages = optional_param('backup_messages',1);
 
     if ($count == 0) {
@@ -260,6 +261,16 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         choose_from_menu($course_file_options, "backup_course_files", $backup_course_files, "");
         echo "</td></tr>";
 
+        // do you want grade histories to be backed up?
+        echo "<tr>";
+        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo get_string ('gradebookhistories', 'grades').":";
+        echo "</b></td><td colspan=\"2\">";
+        $gradebook_history_options[0] = get_string("no");
+        $gradebook_history_options[1] = get_string("yes");
+        choose_from_menu($gradebook_history_options, "backup_gradebook_history", $backup_gradebook_history, "");
+        echo "</td></tr>";
+
         if (empty($to) && $course->id == SITEID) {
             //If we are in a SITEID backup print the Messages tr
             echo "<tr>";
@@ -282,6 +293,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     //Calculate the backup unique code to allow simultaneus backups (to define
     //the temp-directory name and records in backup temp tables
     $backup_name = backup_get_zipfile_name($course, $backup_unique_code);
+    
+    
 ?>
 </table>
 
