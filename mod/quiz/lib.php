@@ -571,14 +571,7 @@ function quiz_process_options(&$quiz) {
         $quiz->preventlate = 0;
     }
 
-    // Quiz name. (Make up a default if one was not given.)
-    if (empty($quiz->name)) {
-        if (empty($quiz->intro)) {
-            $quiz->name = get_string('modulename', 'quiz');
-        } else {
-            $quiz->name = shorten_text(strip_tags($quiz->intro));
-        }
-    }
+    // Quiz name (now a required field).
     $quiz->name = trim($quiz->name);
 
     // Time limit. (Get rid of it if the checkbox was not ticked.)
