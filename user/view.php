@@ -200,10 +200,14 @@
         $remotehost = get_record_sql($sql);
         
         echo '<p class="errorboxcontent">'.get_string('remote'.$remotehost->application.'user')." <br />\n";
-        if ($remotehost->application =='moodle') {
-            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
+        if ($USER->id == $user->id) {
+            if ($remotehost->application =='moodle') {
+                echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
+            } else {
+                echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a> ".get_string('gotoyourserver')." </p>\n";
+            }
         } else {
-            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a> ".get_string('gotoyourserver')." </p>\n";
+            echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/\">{$remotehost->name}</a></p>\n";
         }
     }
 
