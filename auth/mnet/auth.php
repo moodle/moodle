@@ -285,7 +285,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $firsttime = false;
 
         // get the local record for the remote user
-        $localuser = get_record('user', 'username', $remoteuser->username, 'mnethostid', $remotehost->id);
+        $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id);
 
         // add the remote user to the database if necessary, and if allowed
         // TODO: refactor into a separate function
