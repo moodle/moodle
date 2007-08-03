@@ -179,7 +179,11 @@
     if (is_mnet_remote_user($user)) {
         echo "<p class=\"errorboxcontent\">This profile is for a remote user from another Moodle system. <br />\n";
         $remotehost = get_record('mnet_host', 'id', $user->mnethostid);
-        echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
+        if ($USER->id == $user->id) {
+            echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> (click here to edit your profile on the remote server) </p>\n";
+        } else {
+            echo "Remote Moodle: <a href=\"{$remotehost->wwwroot}\">{$remotehost->name}</a> </p>\n";
+        }
     }
 
     echo '<table width="80%" class="userinfobox" summary="">';
