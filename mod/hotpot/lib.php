@@ -300,24 +300,16 @@ function hotpot_set_form_values(&$hotpot) {
     $hotpot->timecreated = $time;
     $hotpot->timemodified = $time;
 
-    if (empty($hotpot->enabletimeopen)) {
-        $hotpot->timeopen = 0;
-    } else {
-        $hotpot->timeopen = make_timestamp(
-            $hotpot->openyear, $hotpot->openmonth, $hotpot->openday,
-            $hotpot->openhour, $hotpot->openminute, 0
-        );
+    if (empty($hotpot->mode)) {
+        // moodle 1.9 (from mod_form.lib)
+        if ($hotpot->add) {
+            $hotpot->mode = 'add';
+        } else if ($hotpot->update) {
+            $hotpot->mode = 'update';
+        } else {
+            $hotpot->mode = '';
+        }
     }
-
-    if (empty($hotpot->enabletimeclose)) {
-        $hotpot->timeclose = 0;
-    } else {
-        $hotpot->timeclose = make_timestamp(
-            $hotpot->closeyear, $hotpot->closemonth, $hotpot->closeday,
-            $hotpot->closehour, $hotpot->closeminute, 0
-        );
-    }
-
     if ($hotpot->quizchain==HOTPOT_YES) {
         switch ($hotpot->mode) {
             case 'add':
