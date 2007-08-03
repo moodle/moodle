@@ -640,7 +640,7 @@ class assignment_base {
     * @param $submission object The submission whose data is to be updated on the main page
     */
     function update_main_listing($submission) {
-        global $SESSION;
+        global $SESSION, $CFG;
 
         $output = '';
 
@@ -690,9 +690,8 @@ class assignment_base {
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
-
-        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
-        // TODO: add some javascript for updating of outcomes here
+    
+        if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
             if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid)) {
                 foreach($outcomes_data as $n=>$data) {
                     if ($data->locked) {
@@ -872,7 +871,7 @@ class assignment_base {
         echo '</div>';
         echo '<div class="clearer"></div>';
 
-        if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
+        if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
             echo '<div class="outcomes">';
             foreach($outcomes_data as $n=>$data) {
                 echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label>';
@@ -1024,15 +1023,21 @@ class assignment_base {
         /// Get all ppl that are allowed to submit assignments
         $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', '');
+        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
+        if (!empty($CFG->enableoutcomes)) {
+            $tablecolumns[] = ''; // no sorting based on outcomes column
+        }
+
         $tableheaders = array('',
                               get_string('fullname'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.$course->student.')',
                               get_string('lastmodified').' ('.$course->teacher.')',
-                              get_string('status'),
-                              get_string('outcomes', 'grades'));
+                              get_string('status'));
+        if (!empty($CFG->enableoutcomes)) {
+            $tableheaders[] = get_string('outcomes', 'grades');
+        }
 
         require_once($CFG->libdir.'/tablelib.php');
         $table = new flexible_table('mod-assignment-submissions');
@@ -1055,7 +1060,9 @@ class assignment_base {
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
-        $table->column_class('outcomes', 'outcomes');
+        if (!empty($CFG->enableoutcomes)) {
+            $table->column_class('outcomes', 'outcomes');
+        }
 
         $table->set_attribute('cellspacing', '0');
         $table->set_attribute('id', 'attempts');
@@ -1208,7 +1215,7 @@ class assignment_base {
 
                 $outcomes = '';
 
-                if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
+                if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
 
                     foreach($outcomes_data as $n=>$data) {
                         $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label>';
@@ -1226,7 +1233,11 @@ class assignment_base {
                 }
 
 
-                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status, $outcomes);
+                $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
+                if (!empty($CFG->enableoutcomes)) {
+                    $row[] = $outcomes;
+                }
+
                 $table->add_data($row);
             }
         }
@@ -1348,6 +1359,11 @@ class assignment_base {
 
     function process_outcomes($userid) {
         global $CFG, $USER;
+
+        if (empty($CFG->enableoutcomes)) {
+            return;
+        }
+
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!$formdata = data_submitted()) {
