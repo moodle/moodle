@@ -36,7 +36,7 @@ class question_shortanswer_qtype extends default_questiontype {
 
     function save_question_options($question) {
         $result = new stdClass;
-        
+
         if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();
         }
@@ -165,8 +165,8 @@ class question_shortanswer_qtype extends default_questiontype {
                 }
             }
         }
-        
-        /// Removed correct answer, to be displayed later MDL-7496               
+
+        /// Removed correct answer, to be displayed later MDL-7496
         include("$CFG->dirroot/question/type/shortanswer/display.html");
     }
 
@@ -198,6 +198,8 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function test_response(&$question, $state, $answer) {
+        // Trim the response before it is saved in the database. See MDL-10709
+        $state->responses[''] = trim($state->responses['']);
         return $this->compare_string_with_wildcard(stripslashes_safe($state->responses['']),
                 $answer->answer, !$question->options->usecase);
     }
@@ -209,12 +211,12 @@ class question_shortanswer_qtype extends default_questiontype {
         $bits = array_map('preg_quote', $bits);
         // Put it back together to make the regexp.
         $regexp = '|^' . implode('.*', $bits) . '$|u';
-        
+
         // Make the match insensitive if requested to.
         if ($ignorecase) {
             $regexp .= 'i';
         }
-        
+
         return preg_match($regexp, trim($string));
     }
 
@@ -313,8 +315,8 @@ class question_shortanswer_qtype extends default_questiontype {
 
         return $status;
     }
-    
-    
+
+
         /**
     * Prints the score obtained and maximum score available plus any penalty
     * information
@@ -338,7 +340,7 @@ class question_shortanswer_qtype extends default_questiontype {
         maximum grade available and a warning if a penalty was applied for the
         attempt and displays the overall grade obtained counting all previous
         responses (and penalties) */
-        
+
         // MDL-7496 show correct answer after "Incorrect"
         $correctanswer = '';
         if ($correctanswers = $this->get_correct_responses($question, $state)) {
@@ -350,9 +352,9 @@ class question_shortanswer_qtype extends default_questiontype {
                         $delimiter = ', ';
                     }
                 }
-            }         
+            }
         }
-      
+
         if (QUESTION_EVENTDUPLICATE == $state->event) {
             echo ' ';
             print_string('duplicateresponse', 'quiz');
@@ -382,7 +384,7 @@ class question_shortanswer_qtype extends default_questiontype {
                 } else {
                     echo ' incorrect">';
                     // MDL-7496
-                    print_string('incorrect', 'quiz');                   
+                    print_string('incorrect', 'quiz');
                     if ($correctanswer) {
                         echo ('<div class="correctness">');
                         print_string('correctansweris', 'quiz', s($correctanswer));
@@ -420,12 +422,6 @@ class question_shortanswer_qtype extends default_questiontype {
             }
         }
     }
-    
-    
-    
-    
-    
-
 }
 //// END OF CLASS ////
 
