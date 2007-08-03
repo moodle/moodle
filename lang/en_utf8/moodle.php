@@ -660,6 +660,7 @@ $string['gdneed'] = 'GD must be installed to see this graph';
 $string['gdnot'] = 'GD is not installed';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
+$string['gotoyourserver'] = '(Links back to your server)';
 $string['gpl'] = 'Copyright (C) 1999 onwards  Martin Dougiamas  (http://moodle.com)
 
 This program is free software; you can redistribute it and/or modify
@@ -1177,6 +1178,7 @@ $string['registrationno'] = 'No, I do not want to receive email';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, please notify me about important issues';
 $string['reject'] = 'Reject';
+$string['remotemaharauser'] = 'Remote Mahara User';
 $string['remove'] = 'Remove';
 $string['removeadmin'] = 'Remove admin';
 $string['removecreator'] = 'Remove course creator';
