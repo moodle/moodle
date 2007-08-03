@@ -23,7 +23,7 @@ switch ($action) {
         tag_an_item('user',$USER->id, $name);
 
         if (!empty($name) && !$id) {
-            $id = tag_id($name);
+            $id = tag_id(tag_normalize($name));
         }
                 
         redirect($CFG->wwwroot.'/tag/index.php?id='.$id);

@@ -19,14 +19,12 @@ $navlinks = array();
 $navlinks[] = array('name' => get_string('tags', 'tag'), 'link' => "{$CFG->wwwroot}/tag/search.php", 'type' => '');
 $navigation = build_navigation($navlinks);
 
-
-print_header_simple(get_string('tags', 'tag'), '', $navigation);
-
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {
     $manage_link =  "<a href=\"{$CFG->wwwroot}/tag/manage.php\">" . get_string('managetags', 'tag') . "</a>" ;
-    print_box($manage_link, '', 'tags-management-links');
 }
+
+print_header_simple(get_string('tags', 'tag'), '', $navigation, '', '', '', $manage_link);
 
 print_heading(get_string('searchtags', 'tag'), '', 2);
 

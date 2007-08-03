@@ -918,17 +918,13 @@ function tag_normalize($tag_names_csv, $lowercase=true) {
         }
         
         //$value = preg_replace('|[^\w ]|i', '', strtolower(trim($tag_names_csv)));        
-        $value = preg_replace('|[\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
+        $value = preg_replace('|[\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\\"\'\_.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
 
         //removes excess white spaces
         $value = preg_replace('/\s\s+/', ' ', $value);
         
         return $value;
     }
-
-}
-
-function is_tag_clean($tag_names_csv) {
 
 }
 
@@ -1024,7 +1020,7 @@ function tag_names_csv($tag_objects) {
         $tags[] = tag_display_name($tag);
     }
 
-    return implode(',', $tags);
+    return implode(', ', $tags);
 }
 
 
@@ -1138,9 +1134,10 @@ function print_tag_description_box($tag_object) {
     $tagname  = tag_display_name($tag_object);
     $related_tags =  related_tags($tag_object->id); //get_item_tags('tags',$tag_object->id);
 
-
     print_box_start('generalbox', 'tag-description');
 
+    print_tag_management_box($tag_object);
+    
     if (!empty($tag_object->description)) {
         echo format_text($tag_object->description, $tag_object->descriptionformat );
     }
@@ -1150,7 +1147,7 @@ function print_tag_description_box($tag_object) {
 
 
     if ($related_tags) {
-        echo '<br/><b>'.get_string('relatedtags','tag').': </b>' . tag_links_csv($related_tags);
+        echo '<br/><br/><b>'.get_string('relatedtags','tag').': </b>' . tag_links_csv($related_tags);
     }
 
     print_box_end();
@@ -1290,7 +1287,7 @@ function print_tag_search_results($query,  $page, $perpage) {
         
     if($tags) { // there are results to display!!
         
-        print_heading(get_string('searchresultsfor', 'tag') . " \"{$query}\" : {$count}", '', 3);
+        print_heading(get_string('searchresultsfor', 'tag', $query) . " : {$count}", '', 3);
     
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
@@ -1316,7 +1313,7 @@ function print_tag_search_results($query,  $page, $perpage) {
     }
     else { //no results were found!!
         
-        print_heading(get_string('noresultsfor', 'tag') . " \"{$query}\" ", '', 3);
+        print_heading(get_string('noresultsfor', 'tag', $query), '', 3);
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {

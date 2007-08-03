@@ -4459,6 +4459,32 @@ function update_mymoodle_icon() {
 }
 
 /**
+ * Returns a turn edit on/off button for tag in a self contained form.
+ *
+ * @uses $CFG
+ * @uses $USER
+ * @return string
+ */
+function update_tag_button($tagid) {
+
+    global $CFG, $USER;
+
+    if (!empty($USER->editing)) {
+        $string = get_string('turneditingoff');
+        $edit = '0';
+    } else {
+        $string = get_string('turneditingon');
+        $edit = '1';
+    }
+
+    return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/tag/index.php\">".
+           "<div>".
+           "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+           "<input type=\"hidden\" name=\"id\" value=\"$tagid\" />".
+           "<input type=\"submit\" value=\"$string\" /></div></form>";
+}
+
+/**
  * Prints the editing button on a module "view" page
  *
  * @uses $CFG
