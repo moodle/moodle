@@ -1350,14 +1350,16 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @var      string
     * @access   private
     */
-    var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\">";
+    // var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\">";
+    var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\"><div>";
    /**
     * Header Template string
     * @var      string
     * @access   private
     */
     var $_headerTemplate =
-       "\n\t\t<legend>{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div>\n\t\t";
+       // "\n\t\t<legend>{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div>\n\t\t";
+       "\n\t\t<legend class=\"ftoggler\">{header}</legend>\n\t\t<div class=\"advancedbutton\">{advancedimg}{button}</div><div class=\"fcontainer clearfix\">\n\t\t";
 
    /**
     * Template used when opening a fieldset
@@ -1371,7 +1373,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     * @var      string
     * @access   private
     */
-    var $_closeFieldsetTemplate = "\n\t\t</fieldset>";
+    // var $_closeFieldsetTemplate = "\n\t\t</fieldset>";
+    var $_closeFieldsetTemplate = "\n\t\t</div></fieldset>";
 
    /**
     * Required Note template string
@@ -1394,11 +1397,11 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t".'<li class="fitem"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class="qfelement<!-- BEGIN error --> error<!-- END error --> {type}"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></li>');
         $this->_elementTemplates = array(
-        'default'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</label>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
+        'default'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg} </label>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
 
-        'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
+        'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg} </div>{help}</div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
 
-        'static'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg}</div>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>');
+        'static'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fstaticlabel">{label}<!-- BEGIN required -->{req} <!-- END required -->{advancedimg} </div>{help}</div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>');
 
         parent::HTML_QuickForm_Renderer_Tableless();
     }
