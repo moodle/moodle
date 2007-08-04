@@ -833,7 +833,7 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
         $USER->mycourses[$doanything] = $mycourses;
     }
 
-    if ($reallimit) {
+    if (!empty($mycourses) && $reallimit) {
         return array_slice($mycourses, 0, $reallimit, true);
     } else {
         return $mycourses;
