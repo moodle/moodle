@@ -51,11 +51,16 @@ if ($frm = data_submitted()) {
 
 $user_fields = array("firstname", "lastname", "email", "phone1", "phone2", "department", "address", "city", "country", "description", "idnumber", "lang");
 
-$modules = get_list_of_plugins('auth');
-foreach ($modules as $module) {
-    $options[$module] = get_string("auth_{$module}title", 'auth');
-}
-asort($options);
+/// Get the auth title (from core or own auth lang files)
+    $authtitle = get_string("auth_{$auth}title", "auth");
+    if ($authtitle == "[[auth_{$auth}title]]") {
+        $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
+    }
+/// Get the auth descriptions (from core or own auth lang files)
+    $authdescription = get_string("auth_{$auth}description", "auth");
+    if ($authdescription == "[[auth_{$auth}description]]") {
+        $authdescription = get_string("auth_{$auth}description", "auth_{$auth}");
+    }
 
 // output configuration form
 admin_externalpage_print_header();
@@ -68,9 +73,9 @@ echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
 
 // auth plugin description
 print_simple_box_start('center', '80%');
-print_heading($options[$auth]);
-print_simple_box_start('center', '60%', '', 5, 'informationbox');
-print_string("auth_{$auth}description", 'auth');
+print_heading($authtitle);
+print_simple_box_start('center', '80%', '', 5, 'informationbox');
+echo $authdescription;
 print_simple_box_end();
 echo "<hr />\n";
 $authplugin->config_form($frm, $err, $user_fields);

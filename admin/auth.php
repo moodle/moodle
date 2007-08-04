@@ -139,9 +139,15 @@ $registrationauths = array();
 $registrationauths[''] = $txt->disable;
 foreach ($authsenabled as $auth) {
     $authplugin = get_auth_plugin($auth);
-    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
+/// Get the auth title (from core or own auth lang files)
+    $authtitle = get_string("auth_{$auth}title", "auth");
+    if ($authtitle == "[[auth_{$auth}title]]") {
+        $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
+    }
+/// Apply titles
+    $displayauths[$auth] = $authtitle;
     if ($authplugin->can_signup()) {
-        $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
+        $registrationauths[$auth] = $authtitle;
     }
 }
 
@@ -150,9 +156,15 @@ foreach ($authsavailable as $auth) {
         continue; //already in the list
     }
     $authplugin = get_auth_plugin($auth);
-    $displayauths[$auth] = get_string("auth_{$auth}title", 'auth');
+/// Get the auth title (from core or own auth lang files)
+    $authtitle = get_string("auth_{$auth}title", "auth");
+    if ($authtitle == "[[auth_{$auth}title]]") {
+        $authtitle = get_string("auth_{$auth}title", "auth_{$auth}");
+    }
+/// Apply titles
+    $displayauths[$auth] = $authtitle;
     if ($authplugin->can_signup()) {
-        $registrationauths[$auth] = get_string("auth_{$auth}title", 'auth');
+        $registrationauths[$auth] = $authtitle;
     }
 }
 
