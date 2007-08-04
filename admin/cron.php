@@ -268,6 +268,11 @@
             }
         }
         
+        if(!empty($CFG->usetags)){
+            require_once($CFG->dirroot.'/tag/lib.php');
+            tag_cron();
+        }
+        
     } // End of occasional clean-up tasks
 
 

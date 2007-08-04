@@ -1076,7 +1076,18 @@ function rand_tags_count($nr_of_tags=20, $tag_type = 'default') {
     
 }
 
-/*-------------------- Printing functions -------------------- */
+function tag_cron(){
+    
+    tag_instance_table_cleanup();
+    
+    $tags = get_all_tags('*');
+    
+    foreach ($tags as $tag){
+        cache_correlated_tags($tag->id);
+    }
+    
+}
+/*-------------------- Printçing functions -------------------- */
 
 /**
  * Prints a box that contains the management links of a tag
