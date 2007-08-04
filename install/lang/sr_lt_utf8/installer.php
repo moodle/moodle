@@ -53,6 +53,42 @@ $string['databasesettingssub'] = '<b>Tip:</b> mysql ili postgres7<br />
 <b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
 <b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
 <b>Prefiks tabela:</b> opcioni prefiks koji će se koristiti u nazivima svih tabela';
+$string['databasesettingssub_mssql'] = '<b>Tip:</b> SQL* Server (koji nije UTF-8) <b><font color=\"red\">Eksperimentalan! (nije za javni pristup)</font></b><br />
+<b>Server:</b> npr localhost ili db.isp.com<br />
+<b>Naziv:</b> naziv baze podataka, npr moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiks tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno)';
+$string['databasesettingssub_mssql_n'] = '<b>Tip:</b> SQL* Server (UTF-8 omogućen)<br />
+<b>Server:</b> npr localhost ili db.isp.com<br />
+<b>Naziv:</b> naziv baze podataka, npr moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi odataka<br />
+<b>Prefiks tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno)';
+$string['databasesettingssub_mysql'] = '<b>Tip:</b> MySQL<br />
+<b>Server:</b> npr localhost ili db.isp.com<br />
+<b>Naziv:</b> naziv baze podataka, npr moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiksi tabela:</b> prefiks koji će se  koristiti u nazivima svih tabela (opciono)';
+$string['databasesettingssub_oci8po'] = '<b>Tip:</b> Oracle<br />
+<b>Server:</b> ne koristi se, mora se ostaviti prazno<br />
+<b>Naziv:</b> ime koje ste dali tnsnames.ora konekciji<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiksi tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno, maksimalno 2 vidljive kopije)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Tip:</b> SQL* Server (preko ODBC) <b><font color=\"red\">Eksperimentalno! (nije za javni pristup)</font></b><br />
+<b>Server:</b> ime koje ste dali DSN-u u ODBC kontrolnom panelu<br />
+<b>Naziv:</b> naziv baze podataka, npr moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Password:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiksi tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno)';
+$string['databasesettingssub_postgres7'] = '<b>Tip:</b> PostgreSQL<br />
+<b>Server:</b> npr localhost ili db.isp.com<br />
+<b>Naziv:</b> naziv baze podataka, npr moodle<br />
+<b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
+<b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
+<b>Prefiksi tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno)';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['datarooterror'] = '\'Direktorijum podataka\' koji ste naveli ne može biti pronađen ili kreiran. Unesite tačnu putanju ili napravite taj direktorijum ručno.';
 $string['dbconnectionerror'] = 'Nemoguće je uspostaviti vezu sa bazom podataka koju ste naveli. Molimo proverite podešavanja baze podataka.';
@@ -61,10 +97,13 @@ $string['dbhost'] = 'Server';
 $string['dbprefix'] = 'Prefiks tabele';
 $string['dbtype'] = 'Tip';
 $string['dbwrongencoding'] = 'Izabrana baza podataka radi pod nepreporučljivim kodnim rasporedom ($a). Bilo bi bolje da umesto nje koristite Unicode (UTF-8) kodiranu bazu. U svakom slučaju, možete izbeći ovaj test biranjem opcije \"Preskočiti test kodnog rasporeda baze podataka\" ispod, ali se u budućnosti možete suočiti sa problemima pri korišćenju izabrane baze.';
+$string['dbwronghostserver'] = 'Morate pratiti pravila \"Servera\" kao što je objašnjeno iznad.';
+$string['dbwrongnlslang'] = 'NLS_LANG promenljiva okruženja Vašeg Web servera mora da koristi AL32UTF8 skup karaktera. Pogledajte PHP dokumentaciju o tome kako da pravilno podesite OCI8.';
+$string['dbwrongprefix'] = 'Morate pratiti pravila \"Prefiksi tabela\" kao što je gore objašnjeno.';
 $string['directorysettingshead'] = 'Molimo potvrdite lokacije ove Moodle instalacije';
 $string['directorysettingssub'] = '<b>Web adresa:</b>
-Specificirajte potpunu web adresu na kojoj će se pristupati Moodle sistemu.
-Ako je Vašem web sajtu moguće pristupiti preko više URL-ova, izaberite onaj koji će najverovatnije koristiti Vaši studenti. Nemojte navoditi krajnju kosu crtu.
+Specificirajte potpunu Web adresu na kojoj će se pristupati Moodle sistemu.
+Ako je Vašem Web sajtu moguće pristupiti preko više URL-ova, izaberite onaj koji će najverovatnije koristiti Vaši studenti. Nemojte navoditi krajnju kosu crtu.
 <br />
 <br />
 <b>Moodle direktorijum:</b>
@@ -73,7 +112,7 @@ Vodite računa o velikim i malim slovima.
 <br />
 <br />
 <b>Direktorijum podataka:</b>
-Morate odrediti mesto na kom će Moodle čuvati postavljene datoteke. Korisnik web servera (obično \'niko\' ili \'apache\') bi morao imati mogućnost da čita podatke iz tog direktorijuma, ali i da ih u njega upisuje, ali oni ne bi trebali biti dostupni direktno preko web-a.';
+Morate odrediti mesto na kom će Moodle čuvati postavljene datoteke. Korisnik Web servera (obično \'niko\' ili \'apache\') bi morao imati mogućnost da čita podatke iz tog direktorijuma, ali i da ih u njega upisuje, ali oni ne bi trebali biti dostupni direktno preko Web-a.';
 $string['dirroot'] = 'Moodle direktorijum';
 $string['dirrooterror'] = 'Podešavanje \'Moodle direktorijuma\' je čini se netačno - ne može se tamo naći Moodle instalacija. Niža vrednost će biti ponovo dovedena na početni položaj.';
 $string['download'] = 'Preuzeti';
@@ -124,32 +163,42 @@ $string['memorylimithelp'] = '<p>PHP ograničenje memorije za Vaš server je tre
 
 <p>Ovo može da prouzrokuje kasnije memorijske probleme Vašeg Moodle sistema, posebno ako imate mnogo dozvoljenih modula i/ili mnogo korisnika.</p>
 
-<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 40M. Postoji nekoliko načina da se to uradi. Pokušajte:</p><ol>
+<p>Preporučujemo da konfigurišete PHP sa višim ograničenjem ako je moguće, recimo 16M. Postoji nekoliko načina da se to uradi. Pokušajte:</p><ol>
 <li>Ako možete, rekompajlirajte PHP sa <i>--enable-memory-limit</i>. Ovo će dozvoliti Moodle sistemu da postavi memorijsko ograničenje sam za sebe.</li>
-<li>Ako imate pristup Vašoj php.ini datoteci, možete promeniti <b>memory_limit</b> podešavanje u recimo 40M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi za Vas.</li>
+<li>Ako imate pristup Vašoj php.ini datoteci, možete promeniti <b>memory_limit</b> podešavanje u recimo 16M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi za Vas.</li>
 <li>Na nekim PHP serverima možete kreirati .htaccess datoteku u Moodle direktorijumu koja sadrži red:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Kakogod, na nekim serverima će to sprečiti prikazivanje <b>svih</b> PHP stranica (biće Vam prikazana poruka o grešci umesto svake stranice), pa ćete sa njih morati ukloniti .htaccess datoteku.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Nedostaje neko obavezno polje';
 $string['moodledocslink'] = 'Moodle dokumentacija za ovu stranicu';
+$string['mssql'] = 'SQL* Server (mssql)';
+$string['mssql_n'] = 'SQL* Server sa UTF-8 podrškom (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa MSSQL ekstenzijom tako da može komunicirati sa SQL* Serverom. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Međutim, ako Vaš sajt koristi iso-8859-1 (latin) jezike, možete da nastavite s korišćenjem Vaše trenutno instalirane MySQL verzije 4.1.12 (ili više).';
 $string['mysql416required'] = 'MySQL 4.1.16 je minimalna verzija potrebna za Moodle 1.6 da bi se garantovalo dalje konvertovanje svih podataka u UTF-8.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP neće biti propisno konfigurisan sa MySQL ekstenzijom tako da može komunicirati sa MySQL-om. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
 $string['name'] = 'Ime';
 $string['next'] = 'Sledeći';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa OCI8 ekstenzijom tako da može komunicirati sa Oracle-om. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
+$string['odbc_mssql'] = 'SQL* Server preko ODBCa (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa ODBC ekstenzijom tako da može komunicirati sa SQL* Serverom. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Instaliranje opcione OpenSSL biblioteke je vrlo preporučljivo -- ona omogućava korišćenje funkcija za umrežavanje.';
 $string['parentlanguage'] = '<< PREVODIOCI: Ako Vaš jezik ima nadređeni jezik koji Moodle treba da koristi kada neki izrazi nedostaju Vašem jezičkom paketu, specificirajte njegov kod. Ako ovo polje ostavite prazno biće korišćen engleski jezik. Primer: nl >>';
 $string['pass'] = 'Prošlo';
 $string['password'] = 'Lozinka';
+$string['pgsqlextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa  PGSQL ekstenzijom tako da može komunicirati sa PostgreSQLom. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
 $string['php50restricted'] = 'PHP 5.0.x ima više poznatih problema, molimo unapredite ga do verzije 5.1.x ili snizite do 4.3.x ili 4.4.x';
 $string['phpversion'] = 'PHP verzija';
 $string['phpversionerror'] = 'PHP verzija mora biti bar 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme)';
 $string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme).</p>
 <p>Trenutno imate verziju $a</p>
-<p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web server sa novijom verzijom PHP-a!</br>
+<p>Morate nadograditi PHP ili premestiti Moodle instalaciju na Web server sa novijom verzijom PHP-a!</br>
 (U slučaju verzije 5.0.x bilo bi dobro da je snizite na 4.4.x verziju)</p>';
+$string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prethodni';
 $string['qtyperqpwillberemoved'] = 'Tokom nadogradnje, RQP tipovi pitanja biće uklonjeni. Nećete koristiti ovaj tip pitanja, tako da ne očekujte probleme u vezi s tim.';
 $string['qtyperqpwillberemovedanyway'] = 'Tokom nadogradnje biće uklonjen RQP tip pitanja. Kako imate neka RQP pitanja u svojoj bazi, preporučuje se da ponovo instalirate dodatak sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 pre nastavka nadogradnje da bi ona mogla i dalje nesmetano da se koriste.';
