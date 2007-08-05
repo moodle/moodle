@@ -119,7 +119,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          }
 
          # Write
-         $result=insert_record(EWIKI_DB_TABLE_NAME,$args,false);
+         $result=insert_record(EWIKI_DB_TABLE_NAME,(object)$args,false);
 
          #$result = mysql_query("$COMMAND INTO " . EWIKI_DB_TABLE_NAME .
          #   " (" . $sql1 . ") VALUES (" . $sql2 . ")"
@@ -161,7 +161,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          }
          break;
 
-      /* Counts the number of Versions 
+      /* Counts the number of Versions
       */
       case "COUNTVERSIONS":
          $sql= "SELECT pagename AS id, count(*) as versioncount".
@@ -175,7 +175,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
             $r[$key]=$val->versioncount;
          }
       break;
-      
+
       /*  Returns an array of __all__ pages, where each entry is made up
           of the fields from the database requested with the $args array,
           e.g. array("flags","meta","lastmodified");
