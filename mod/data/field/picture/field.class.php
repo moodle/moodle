@@ -217,7 +217,7 @@ class data_field_picture extends data_field_file {
             if ($thumbwidth && !$thumbheight) {
                 $thumbheight = $image->height * $thumbwidth / $image->width;
             } else if($thumbheight && !$thumbwidth) {
-                $thumbheight = $image->width * $thumbheight / $image->height;
+                $thumbwidth = $image->width * $thumbheight / $image->height;
             } else { // BOTH are set - may need to crop if aspect ratio differs
                 $hratio = $image->height / $thumbheight;
                 $wratio = $image->width  / $thumbwidth;
