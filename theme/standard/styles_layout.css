@@ -2890,6 +2890,10 @@ body#mod-forum-search .introcontent {
   text-align:center;
 }
 
+#mod-forum-view .forumaddnew {
+  margin-bottom: 20px;
+}
+
 #mod-forum-view .forumcontrol .groupmenu {
   float: left;
   text-align:left;
