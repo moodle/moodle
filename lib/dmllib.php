@@ -395,9 +395,9 @@ function count_records_sql($sql) {
  * @return mixed a fieldset object containing the first mathcing record, or false if none found.
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
-    
+
     global $CFG;
-    
+
     // Check to see whether this record is eligible for caching (fields=*, only condition is id)
     $docache = false;
     if (!empty($CFG->rcache) && $CFG->rcache === true && $field1=='id' && !$field2 && !$field3 && $fields=='*') {
@@ -408,11 +408,11 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
             return $cached;
         }
     }
-    
+
     $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
     $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
-    
+
     // If we're caching records, store this one 
     // (supposing we got something - we don't cache failures)
     if ($docache) {
@@ -653,7 +653,7 @@ function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
 
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
     if (!empty($CFG->rolesactive)) {
-        if (strpos($sql, ' '.$CFG->prefix.'user_students ') || 
+        if (strpos($sql, ' '.$CFG->prefix.'user_students ') ||
             strpos($sql, ' '.$CFG->prefix.'user_teachers ') ||
             strpos($sql, ' '.$CFG->prefix.'user_coursecreators ') ||
             strpos($sql, ' '.$CFG->prefix.'user_admins ')) {
@@ -736,7 +736,7 @@ function recordset_to_array($rs) {
 
 /**
  * This function is used to get the current record from the recordset. It
- * doesn't advance the recordset position. You'll need to do that by 
+ * doesn't advance the recordset position. You'll need to do that by
  * using the rs_next_record($recordset) function.
  * @param ADORecordSet the recordset to fetch current record from
  * @return ADOFetchObj the object containing the fetched information
@@ -851,7 +851,7 @@ function onespace2empty(&$item, $key=null) {
  * @param string $field a field to check (optional).
  * @param string $value the value the field must have (requred if field1 is given, else optional).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default 
+ * @param string $fields a comma separated list of fields to return (optional, by default
  *   all fields are returned). The first field will be used as key for the
  *   array so must be a unique field such as 'id'.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
@@ -871,7 +871,7 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
  * @param string $table the table to query.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return 
+ * @param string $fields a comma separated list of fields to return
  *   (optional, by default all fields are returned). The first field will be used as key for the
  *   array so must be a unique field such as 'id'.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
@@ -907,8 +907,8 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
  *
  * Return value as for @see function get_records.
  *
- * @param string $sql the SQL select query to execute. The first column of this SELECT statement 
- *   must be a unique value (usually the 'id' field), as it will be used as the key of the 
+ * @param string $sql the SQL select query to execute. The first column of this SELECT statement
+ *   must be a unique value (usually the 'id' field), as it will be used as the key of the
  *   returned array.
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
@@ -1202,7 +1202,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
         if ($select) {
             $select = 'WHERE ' . $select;
         }
-    
+
         // Clear record_cache based on the parameters passed
         // (individual record or whole table)
         if ($CFG->rcache === true) {
@@ -1327,7 +1327,7 @@ function delete_records_select($table, $select='') {
  * @uses $db
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param array $dataobject A data object with values for one or more fields in the record
+ * @param object $dataobject A data object with values for one or more fields in the record
  * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
  * @param string $primarykey The primary key of the table we are inserting into (almost always "id")
  */
@@ -1337,6 +1337,12 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     if (empty($db)) {
         return false;
+    }
+
+/// Check we are handling a proper $dataobject
+    if (is_array($dataobject)) {
+        debugging('Warning. Wrong call to insert_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
+        $dataobject = (object)$dataobject;
     }
 
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
@@ -1432,7 +1438,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
             case 'mssql':
                 $clobdefault = 'null'; //Value of empty default clobs for this DB (under mssql this won't be executed
                 $blobdefault = 'null'; //Value of empty default blobs for this DB
-                break;  
+                break;
         }
         $insertSQL = str_replace("'@#CLOB#@'", $clobdefault, $insertSQL);
         $insertSQL = str_replace("'@#BLOB#@'", $blobdefault, $insertSQL);
@@ -1451,7 +1457,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// Under Oracle, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
     if ($CFG->dbfamily == 'oracle' &&
-      !empty($dataobject->{$primarykey}) && 
+      !empty($dataobject->{$primarykey}) &&
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
@@ -1477,7 +1483,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 /// Under MSSQL all the Clobs and Blobs (IMAGE) present in the record
 /// if we know we have some of them in the query
     if (($CFG->dbfamily == 'mssql') &&
-      !empty($id) && 
+      !empty($id) &&
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $id, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
@@ -1509,7 +1515,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
  * @uses $CFG
  * @uses $db
  * @param string $table The database table to be checked against.
- * @param array $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+ * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
  * @return bool
  */
 function update_record($table, $dataobject) {
@@ -1520,11 +1526,17 @@ function update_record($table, $dataobject) {
         return false;
     }
 
+/// Check we are handling a proper $dataobject
+    if (is_array($dataobject)) {
+        debugging('Warning. Wrong call to update_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
+        $dataobject = (object)$dataobject;
+    }
+
     // Remove this record from record cache since it will change
     if ($CFG->rcache === true) {
         rcache_unset($table, $dataobject->id);
     }
-    
+
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
     if (!empty($CFG->rolesactive)) {
         if (in_array($table, array('user_students', 'user_teachers', 'user_coursecreators', 'user_admins'))) {
@@ -1604,7 +1616,7 @@ function update_record($table, $dataobject) {
 /// Under Oracle AND MSSQL, finally, Update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
     if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') &&
-        !empty($dataobject->id) && 
+        !empty($dataobject->id) &&
         (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
@@ -1642,10 +1654,10 @@ function sql_paging_limit($page, $recordsperpage) {
 /**
  * Returns the proper SQL to do LIKE in a case-insensitive way
  *
- * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use 
+ * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
  * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
  * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
- * 
+ *
  * @uses $CFG
  * @return string
  */
@@ -1715,7 +1727,7 @@ function sql_concat() {
  */
 function sql_concat_join($separator="' '", $elements=array()) {
     global $db;
- 
+
     // copy to ensure pass by value
     $elem = $elements;
 
@@ -1916,12 +1928,12 @@ function sql_bitnot($int1) {
 }
 
 /**
- * Returns SQL to be used as a subselect to find the primary role of users.  
+ * Returns SQL to be used as a subselect to find the primary role of users.
  * Geoff Cant <geoff@catalyst.net.nz> (the author) is very keen for this to
- * be implemented as a view in future versions. 
+ * be implemented as a view in future versions.
  *
  * eg if this function returns a string called $primaryroles, then you could:
- * $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs 
+ * $sql = 'SELECT COUNT(DISTINCT prs.userid) FROM ('.$primary_roles.') prs
  *          WHERE prs.primary_roleid='.$role->id.' AND prs.courseid='.$course->id.
  *          ' AND prs.contextlevel = '.CONTEXT_COURSE;
  *
@@ -1945,8 +1957,8 @@ function sql_primary_role_subselect() {
                               SELECT 1
                               FROM '.$CFG->prefix.'role_assignments i_ra
                               INNER JOIN '.$CFG->prefix.'role i_r ON i_ra.roleid = i_r.id
-                              WHERE ra.userid = i_ra.userid AND 
-                                     ra.contextid = i_ra.contextid AND 
+                              WHERE ra.userid = i_ra.userid AND
+                                     ra.contextid = i_ra.contextid AND
                                      i_r.sortorder < r.sortorder
                               ) ';
 }
@@ -2216,7 +2228,7 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
             continue;
         }
     /// If the field is CLOB, update its value to '@#CLOB#@' and store it in the $clobs array
-        if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) { 
+        if (strtoupper($columns[strtolower($fieldname)]->type) == $clobdbtype) {
         /// Oracle optimization. CLOBs under 4000cc can be directly inserted (no need to apply 2-phases to them)
             if ($CFG->dbfamily == 'oracle' && strlen($dataobject->$fieldname) < 4000) {
                 continue;
@@ -2288,7 +2300,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 /// Update all the clobs
     if ($clobs) {
         foreach ($clobs as $key => $value) {
-        
+
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
 
             if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
@@ -2305,7 +2317,7 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 /// Update all the blobs
     if ($blobs) {
         foreach ($blobs as $key => $value) {
-        
+
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
 
             if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
@@ -2342,11 +2354,11 @@ function rcache_set($table, $id, $rec) {
         $rcache->data[$table][$id] = $rec;
     } else {
         $key   = $table . '|' . $id;
-        
+
         if (isset($MCACHE)) {
             // $table is a flag used to mark
-            // a table as dirty & uncacheable 
-            // when an UPDATE or DELETE not bound by ID 
+            // a table as dirty & uncacheable
+            // when an UPDATE or DELETE not bound by ID
             // is taking place
             if (!$MCACHE->get($table)) {
                 // this will also release the _forfill lock
@@ -2355,7 +2367,7 @@ function rcache_set($table, $id, $rec) {
         }
     }
     return true;
-   
+
 }
 
 /**
@@ -2386,9 +2398,9 @@ function rcache_unset($table, $id) {
 /**
  * Get cached record if available. ONLY use if you
  * are trying to get the cached record and will NOT
- * fetch it yourself if not cached. 
- * 
- * Use rcache_getforfill() if you are going to fetch 
+ * fetch it yourself if not cached.
+ *
+ * Use rcache_getforfill() if you are going to fetch
  * the record if not cached...
  *
  * This function is private and must not be used outside dmllib at all
@@ -2407,14 +2419,14 @@ function rcache_get($table, $id) {
         } else {
             $rcache->misses++;
             return false;
-        } 
+        }
     }
 
     if (isset($MCACHE)) {
         $key   = $table . '|' . $id;
         // we set $table as a flag used to mark
-        // a table as dirty & uncacheable 
-        // when an UPDATE or DELETE not bound by ID 
+        // a table as dirty & uncacheable
+        // when an UPDATE or DELETE not bound by ID
         // is taking place
         if ($MCACHE->get($table)) {
             $rcache->misses++;
@@ -2427,7 +2439,7 @@ function rcache_get($table, $id) {
             } else {
                 $rcache->misses++;
                 return false;
-            } 
+            }
         }
     }
     return false;
@@ -2435,12 +2447,12 @@ function rcache_get($table, $id) {
 
 /**
  * Get cached record if available. In most cases you want
- * to use this function -- namely if you are trying to get 
+ * to use this function -- namely if you are trying to get
  * the cached record and will fetch it yourself if not cached.
  * (and set the cache ;-)
  *
  * Uses the getforfill caching mechanism. See lib/eaccelerator.class.php
- * for a detailed description of the technique. 
+ * for a detailed description of the technique.
  *
  * Note: if you call rcache_getforfill() you are making an implicit promise
  * that if the cache is empty, you will later populate it, or cancel the promise
@@ -2471,7 +2483,7 @@ function rcache_getforfill($table, $id) {
         if (!empty($rec)) {
             $rcache->hits++;
             return $rec;
-        } 
+        }
         $rcache->misses++;
         return false;
     }
@@ -2479,7 +2491,7 @@ function rcache_getforfill($table, $id) {
 }
 
 /**
- * Release the exclusive lock obtained by 
+ * Release the exclusive lock obtained by
  * rcache_getforfill(). See rcache_getforfill()
  * for more details.
  *
@@ -2491,7 +2503,7 @@ function rcache_getforfill($table, $id) {
  */
 function rcache_releaseforfill($table, $id) {
     global $CFG, $MCACHE;
-    
+
     if (isset($MCACHE)) {
         $key   = $table . '|' . $id;
         return $MCACHE->releaseforfill($key);
@@ -2521,7 +2533,7 @@ function rcache_unset_table ($table) {
 
     if (isset($MCACHE)) {
         // at least as long as content keys to ensure they expire
-        // before the dirty flag 
+        // before the dirty flag
         $MCACHE->set($table, true, $CFG->rcachettl);
     }
     return true;
