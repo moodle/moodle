@@ -5874,7 +5874,7 @@ function print_side_block_start($heading='', $attributes = array()) {
         // echo '<div class="header">'.$heading.'</div>';
         echo '<div class="header">';
         if (!empty($THEME->customcorners)) {
-            echo '<div class="bt"><div>&nbsp;</div></div>';
+            echo '<div class="bt"><div>.</div></div>';
             echo '<div class="i1"><div class="i2">';
             echo '<div class="i3">';
         }
@@ -5885,7 +5885,7 @@ function print_side_block_start($heading='', $attributes = array()) {
         echo '</div>';
     } else {
         if (!empty($THEME->customcorners)) {
-            echo '<div class="bt"><div>&nbsp;</div></div>';
+            echo '<div class="bt"><div>.</div></div>';
         }
     }
 

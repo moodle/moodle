@@ -438,6 +438,18 @@ div.homelink {
 div.logininfo {
   white-space: nowrap;
 }
+div.bt div {
+  font-size: 1px;
+  line-height: 0;
+  height: 0;
+  color: transparent;
+}
+div.bb div {
+  font-size: 1px;
+  line-height: 0;
+  height: 0;
+  color: transparent;
+}
 div.sideblock div.bt div {
   background-image: url(pix/box.png);
   background-repeat: no-repeat;
