@@ -25,6 +25,7 @@
 
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
+require_once $CFG->dirroot.'/grade/report/lib.php'; // for preferences
 
 $courseid = required_param('id', PARAM_INT);
 $action   = optional_param('action', 0, PARAM_ALPHA);
@@ -63,6 +64,7 @@ if (empty($eid)) {
     $object = $element['object'];
 }
 
+$switch = grade_report::get_pref('aggregationposition');
 
 $strgrades             = get_string('grades');
 $strgraderreport       = get_string('graderreport', 'grades');
@@ -138,7 +140,7 @@ print_heading(get_string('categoriesedit', 'grades'));
 
 print_box_start('gradetreebox generalbox');
 echo '<ul id="grade_tree">';
-print_grade_tree($gtree, $gtree->top_element, $moving, $gpr);
+print_grade_tree($gtree, $gtree->top_element, $moving, $gpr, $switch);
 echo '</ul>';
 print_box_end();
 
@@ -161,7 +163,7 @@ die;
 
 
 
-function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
+function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedlast=false) {
     global $CFG, $COURSE;
 
 /// fetch needed strings
@@ -196,6 +198,8 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
 
 /// prepare icon
     $icon = '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" class="icon" alt=""/>';
+    $last = '';
+    $catcourseitem = false;
     switch ($element['type']) {
         case 'item':
             if ($object->itemtype == 'mod') {
@@ -213,6 +217,7 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
         case 'courseitem':
         case 'categoryitem':
             $icon = '<img src="'.$CFG->pixpath.'/i/category_grade.gif" class="icon" alt="'.get_string('categorygrade').'"/>'; // TODO: localize
+            $catcourseitem = true;
             break;
         case 'category':
             $icon = '<img src="'.$CFG->pixpath.'/f/folder.gif" class="icon" alt="'.get_string('category').'"/>';
@@ -232,13 +237,28 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr) {
         echo '<li class="'.$element['type'].' moving">'.$icon.$name.'('.get_string('move').')</li>';
 
     } else if ($element['type'] != 'category') {
-        echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>'.$moveto;
+        if ($catcourseitem and $switch) {
+            if ($switchedlast) {
+                echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>';
+            } else {
+                echo $moveto;
+            }
+        } else {
+            echo '<li class="'.$element['type'].'">'.$icon.$name.$actions.'</li>'.$moveto;
+        }
 
     } else {
         echo '<li class="'.$element['type'].'">'.$icon.$name.$actions;
         echo '<ul class="catlevel'.$element['depth'].'">';
+        $last = null;
         foreach($element['children'] as $child_el) {
-            print_grade_tree($gtree, $child_el, $moving, $gpr);
+            if ($switch and empty($last)) {
+                $last = $child_el;
+            }
+            print_grade_tree($gtree, $child_el, $moving, $gpr, $switch);
+        }
+        if ($last) {
+            print_grade_tree($gtree, $last, $moving, $gpr, $switch, true);
         }
         echo '</ul></li>';
         if ($element['depth'] > 1) {
