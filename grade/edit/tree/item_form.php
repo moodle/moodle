@@ -13,7 +13,10 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('text', 'itemname', get_string('itemname', 'grades'));
         $mform->addElement('text', 'iteminfo', get_string('iteminfo', 'grades'));
+        $mform->setHelpButton('iteminfo', array(false, get_string('iteminfo', 'grades'), false, true, false, 'iteminfohelp'));
+
         $mform->addElement('text', 'idnumber', get_string('idnumber'));
+        $mform->setHelpButton('idnumber', array(false, get_string('idnumber', 'grades'), false, true, false, 'idnumberhelp'));
 
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
@@ -21,6 +24,7 @@ class edit_item_form extends moodleform {
                          GRADE_TYPE_TEXT=>get_string('typetext', 'grades'));
 
         $mform->addElement('select', 'gradetype', get_string('gradetype', 'grades'), $options);
+        $mform->setHelpButton('gradetype', array(false, get_string('gradetype', 'grades'), false, true, false, 'gradetypehelp'));
         $mform->setDefault('gradetype', GRADE_TYPE_VALUE);
 
         //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
@@ -34,37 +38,46 @@ class edit_item_form extends moodleform {
             }
         }
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
+        $mform->setHelpButton('scaleid', array(false, get_string('scaleid', 'grades'), false, true, false, 'scaleidhelp'));
         $mform->disabledIf('scaleid', 'gradetype', 'noteq', GRADE_TYPE_SCALE);
 
         $mform->addElement('text', 'grademax', get_string('grademax', 'grades'));
+        $mform->setHelpButton('grademax', array(false, get_string('grademax', 'grades'), false, true, false, 'grademaxhelp'));
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->setDefault('grademax', 100.0);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
+        $mform->setHelpButton('grademin', array(false, get_string('grademin', 'grades'), false, true, false, 'grademinhelp'));
         $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
         $mform->setDefault('grademin', 0.0);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+        $mform->setHelpButton('gradepass', array(false, get_string('gradepass', 'grades'), false, true, false, 'gradepasshelp'));
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('gradepass', 0.0);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
+        $mform->setHelpButton('multfactor', array(false, get_string('multfactor', 'grades'), false, true, false, 'multfactorhelp'));
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('multfactor', 1.0);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
+        $mform->setHelpButton('plusfactor', array(false, get_string('plusfactor', 'grades'), false, true, false, 'plusfactorhelp'));
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
         $mform->setDefault('plusfactor', 0.0);
 
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
+        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'), false, true, false, 'aggregationcoefhelp'));
         $mform->setDefault('aggregationcoef', 0.0);
 
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
+        $mform->setHelpButton('locked', array(false, get_string('locked', 'grades'), false, true, false, 'lockedhelp'));
 
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
+        $mform->setHelpButton('locktime', array(false, get_string('locktime', 'grades'), false, true, false, 'locktimehelp'));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         // user preferences
