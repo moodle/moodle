@@ -32,12 +32,6 @@ define("QUIZ_GRADEHIGHEST", "1");
 define("QUIZ_GRADEAVERAGE", "2");
 define("QUIZ_ATTEMPTFIRST", "3");
 define("QUIZ_ATTEMPTLAST",  "4");
-$QUIZ_GRADE_METHOD = array(
-        QUIZ_GRADEHIGHEST => get_string("gradehighest", "quiz"),
-        QUIZ_GRADEAVERAGE => get_string("gradeaverage", "quiz"),
-        QUIZ_ATTEMPTFIRST => get_string("attemptfirst", "quiz"),
-        QUIZ_ATTEMPTLAST  => get_string("attemptlast", "quiz")
-);
 /**#@-*/
 
 /// Functions related to attempts /////////////////////////////////////////
@@ -566,6 +560,26 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
             }
             return $maxattempt;
     }
+}
+
+/**
+ * @return the options for calculating the quiz grade from the individual attempt grades.
+ */
+function quiz_get_grading_options() {
+    return array (
+            QUIZ_GRADEHIGHEST => get_string('gradehighest', 'quiz'),
+            QUIZ_GRADEAVERAGE => get_string('gradeaverage', 'quiz'),
+            QUIZ_ATTEMPTFIRST => get_string('attemptfirst', 'quiz'),
+            QUIZ_ATTEMPTLAST  => get_string('attemptlast', 'quiz'));
+}
+
+/**
+ * @param int $option one of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST.
+ * @return the lang string for that option.
+ */
+function quiz_get_grading_option_name($option) {
+    $strings = quiz_get_grading_options();
+    return $strings[$option];
 }
 
 /// Other quiz functions ////////////////////////////////////////////////////

@@ -8,7 +8,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $COURSE, $CFG, $QUIZ_GRADE_METHOD;
+        global $COURSE, $CFG;
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'gradeshdr', get_string('grades', 'grades'));
-        $mform->addElement('select', 'grademethod', get_string("grademethod", "quiz"), $QUIZ_GRADE_METHOD);
+        $mform->addElement('select', 'grademethod', get_string("grademethod", "quiz"), quiz_get_grading_options());
         $mform->setHelpButton('grademethod', array("grademethod", get_string("grademethod","quiz"), "quiz"));
         $mform->setAdvanced('grademethod', $CFG->quiz_fix_grademethod);
         $mform->setDefault('grademethod', $CFG->quiz_grademethod);
