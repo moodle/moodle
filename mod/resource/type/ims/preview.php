@@ -1,13 +1,14 @@
-<?php
+<?php // $Id$
+
     require_once('../../../../config.php');
     require_once('../../lib.php');
     require_once('resource.class.php');
     require_once('../../../../backup/lib.php');
     require_once('../../../../lib/filelib.php');
     require_once('../../../../lib/xmlize.php');
-    
+
     require_once('repository_config.php');
-    
+
     $directory = required_param ('directory', PARAM_PATH);
     $choose = optional_param ('choose', 'id_reference_value', PARAM_FILE);
     $page = optional_param ('page', 0, PARAM_INT);
@@ -24,7 +25,7 @@
             echo '<p align="center">'.$errortext.'</p>';
             print_footer();
             exit;
-    }               
+    }
 
 /// Load serialized IMS CP index to memory only once.
     if (empty($items)) {
@@ -35,7 +36,7 @@
 
 /// fast forward to first non-index page
     while (empty($items[$page]->href)) $page++;
-    
+
 /// Select direction
     if (get_string('thisdirection') == 'rtl') {
         $direction = ' dir="rtl"';
@@ -57,18 +58,17 @@
     print_header();
 /// content - this produces everything else
 
-/// adds side navigation bar if needed. must also adjust width of iframe to accomodate 
-    echo "<div id=\"ims-menudiv\">";  
-    preview_buttons($directory, $items['title'], $choose); 
+/// adds side navigation bar if needed. must also adjust width of iframe to accomodate
+    echo "<div id=\"ims-menudiv\">";
+    preview_buttons($directory, $items['title'], $choose);
     echo preview_ims_generate_toc($items, $directory, 0, $page); echo "</div>";
-    
+
     $fullurl = "$CFG->repositorywebroot/$directory/".$items[$page]->href;
 /// prints iframe filled with $fullurl ;width:".$iframewidth." missing also height=\"420px\"
-    echo "<iframe id=\"ims-contentframe\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame 
+    echo "<iframe id=\"ims-contentframe\" name=\"ims-contentframe\" src=\"{$fullurl}\"></iframe>"; //Content frame
 /// moodle footer
     echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
-    
-    
+
     /*** This function will generate the TOC file for the package
      *   from an specified parent to be used in the view of the IMS
      */
@@ -100,7 +100,7 @@
             }
         /// We are after page and inside it (level > endlevel)
             if ($item->id > $page && $item->level > $endlevel) {
-            /// Start Level 
+            /// Start Level
                 if ($item->level > $currlevel) {
                     $contents .= '<ol class="listlevel_'.$item->level.'">';
                     $openlielement = false;
@@ -140,11 +140,11 @@
 
         return $contents;
     }
-    
+
     function preview_buttons($directory, $name, $choose='') {
         $strchoose = get_string('choose','resource');
         $strback = get_string('back','resource');
-        
+
         $path = $directory;
         $arr = explode('/', $directory);
         array_pop($arr);
@@ -163,5 +163,5 @@
              "(<a href=\"finder.php?directory=$directory&amp;choose=$choose\">$strback</a>) ".
              "(<a onclick=\"return set_value('#$path')\" href=\"#\">$strchoose</a>)</div>";
     }
-    
+
 ?>
