@@ -80,6 +80,35 @@ $THEME->langsheets = false;
 /// different styles.
 
 
+$THEME->courseformatsheets = true;
+
+/// When this is enabled, this theme will search for files 
+/// named "styles.php" inside all course formats and 
+/// include them.  This allows course formats to provide 
+/// their own default styles.
+
+
+$THEME->metainclude = true;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from this theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->standardmetainclude = true;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the standard theme into the 
+/// <head></head> part of the page.
+
+
+$THEME->parentmetainclude = false;
+
+/// When this is enabled (or not set!) then Moodle will try 
+/// to include a file meta.php from the parent theme into the 
+/// <head></head> part of the page.
+
+
 $THEME->navmenuwidth = 50;
 
 /// You can use this to control the cutoff point for strings 
