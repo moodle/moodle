@@ -148,7 +148,7 @@ httpsrequired();
                 die;
             }
 
-            // Let's get them all set up.
+        /// Let's get them all set up.
             $USER = $user;
 
             add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
@@ -165,11 +165,13 @@ httpsrequired();
             }
             set_login_session_preferences();
 
-            /// This is what lets the user do anything on the site :-)
+        /// This is what lets the user do anything on the site :-)
             load_all_capabilities();
+
+        /// Select password change url
             $userauth = get_auth_plugin($USER->auth);
 
-            // check whether the user should be changing password
+        /// check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
                 //Select password change url
                 if ($userauth->can_change_password()) {
@@ -184,7 +186,7 @@ httpsrequired();
             }
 
 
-          /// Prepare redirection
+        /// Prepare redirection
             if (user_not_fully_set_up($USER)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php';
                 // We don't delete $SESSION->wantsurl yet, so we get there later
@@ -199,7 +201,7 @@ httpsrequired();
                 unset($SESSION->wantsurl);
             }
 
-          /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
+        /// Go to my-moodle page instead of homepage if mymoodleredirect enabled
             if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) and !empty($CFG->mymoodleredirect) and !isguest()) {
                 if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
                     $urltogo = $CFG->wwwroot.'/my/';
@@ -207,8 +209,8 @@ httpsrequired();
             }
 
 
-            // check if user password has expired
-            // Currently supported only for ldap-authentication module
+        /// check if user password has expired
+        /// Currently supported only for ldap-authentication module
             if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
                     $days2expire = $userauth->password_expire($USER->username);
                         if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
