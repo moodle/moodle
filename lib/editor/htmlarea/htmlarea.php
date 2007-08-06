@@ -1542,21 +1542,23 @@ HTMLArea.prototype._createLink = function(link) {
         }
         var a = link;
         if (!a) {
-            // Since startContainer check does not work
-            // very well in Moz use just insertHTML.
-            var sel = editor._getSelection();
-            var range = editor._createRange(sel);
-            var strLink  = '<a href="'+ param.f_href.trim() +'"';
-            if ( param.f_title != "" ) {
-                strLink += ' title="'+ param.f_title.trim() +'"';
+            // Create a temporary unique link, insert it then find it and set the correct parameters
+            var tmpLink = 'http://www.moodle.org/'+Math.random();
+            var elm = editor._doc.execCommand("createlink",false,tmpLink);
+            var links=editor._doc.getElementsByTagName("a");
+            for(var i=0;i<links.length;i++){
+                var link=links[i];
+                if(link.href==tmpLink) {
+                    link.href=param.f_href.trim();
+                    if(param.f_target){
+                        link.target=param.f_target.trim();
+                    }
+                    if(param.f_title){
+                        link.title=param.f_title.trim();
+                    }
+                    break;
+                }
             }
-            if ( param.f_target != "" ) {
-                strLink += ' target="'+ param.f_target.trim() +'"';
-            }
-            strLink += '>';
-            strLink += (!HTMLArea.is_ie) ? sel : range.text;
-            strLink += '</a>';
-            editor.insertHTML(strLink);
         } else {
             var href = param.f_href.trim();
             editor.selectNodeContents(a);
