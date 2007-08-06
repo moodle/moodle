@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 require_once ($CFG->dirroot.'/lib/formslib.php');
 
 class mod_glossary_entry_form extends moodleform {
