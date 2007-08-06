@@ -232,6 +232,11 @@ class grade_item extends grade_object {
         // Retrieve scale and infer grademax/min from it if needed
         $this->load_scale();
 
+        // make sure there is not 0 in outcomeid
+        if (empty($this->outcomeid)) {
+            $this->outcomeid = null;
+        }
+
         if ($this->qualifies_for_regrading()) {
             $this->force_regrading();
         }
@@ -347,6 +352,11 @@ class grade_item extends grade_object {
             if (empty($this->itemnumber)) {
                 $this->itemnumber = 0;
             }
+        }
+
+        // make sure there is not 0 in outcomeid
+        if (empty($this->outcomeid)) {
+            $this->outcomeid = null;
         }
 
         if (parent::insert($source)) {
@@ -1127,10 +1137,17 @@ class grade_item extends grade_object {
                 return array();
             }
 
+            if (!empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
+                $outcomes_sql = "";
+            } else {
+                $outcomes_sql = "AND gi.outcomeid IS NULL";
+            }
+
             $sql = "SELECT gi.id
                       FROM {$CFG->prefix}grade_items gi
                      WHERE gi.categoryid = {$grade_category->id}
-                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")  
+                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                           $outcomes_sql
 
                     UNION
 
@@ -1138,7 +1155,8 @@ class grade_item extends grade_object {
                       FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
                      WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
                            AND gc.parent = {$grade_category->id}
-                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")";  
+                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                           $outcomes_sql";
 
             if ($children = get_records_sql($sql)) {
                 return array_keys($children);

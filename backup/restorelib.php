@@ -1283,6 +1283,7 @@
                             $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
                             $dbrec->keephigh = backup_todb($info['GRADE_CATEGORY']['#']['KEEPHIGH']['0']['#']);
                             $dbrec->droplow = backup_todb($info['GRADE_CATEGORY']['#']['DROPLOW']['0']['#']);
+                            $dbrec->aggregateoutcomes = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATEOUTCOMES']['0']['#']);
                             $dbrec->hidden = backup_todb($info['GRADE_CATEGORY']['#']['HIDDEN']['0']['#']);
 
                             //Structure is equal to db, insert record

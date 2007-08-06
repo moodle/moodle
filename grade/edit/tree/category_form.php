@@ -29,6 +29,10 @@ class edit_category_form extends moodleform {
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setDefault('gradetype', GRADE_AGGREGATE_MEAN_ALL);
 
+        if (!empty($CFG->enableoutcomes)) {
+            $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+        }
+
         $options = array();
         $options[0] = get_string('none');
         for ($i=1; $i<=20; $i++) {

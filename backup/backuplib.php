@@ -1386,6 +1386,7 @@
                 fwrite ($bf,full_tag("AGGREGATION",5,false,$grade_category->aggregation));
                 fwrite ($bf,full_tag("KEEPHIGH",5,false,$grade_category->keephigh));
                 fwrite ($bf,full_tag("DROPLOW",5,false,$grade_category->droplow));
+                fwrite ($bf,full_tag("AGGREGATEOUTCOMES",5,false,$grade_category->aggregateoutcomes));
 
                 //End grade_category
                 fwrite ($bf,end_tag("GRADE_CATEGORY",4,true));

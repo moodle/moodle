@@ -21,6 +21,7 @@ $string['aggregatemaxall'] = 'Highest grade of all grades';
 $string['aggregatemaxgraded'] = 'Highest grade of non-empty grades';
 $string['aggregatemodeall'] = 'Mode of all grades';
 $string['aggregatemodegraded'] = 'Mode of non-empty grades';
+$string['aggregateoutcomes'] = 'Aggregate also outcomes';
 $string['aggregateweightedmeanall'] = 'Weighted mean of all grades';
 $string['aggregateweightedmeangraded'] = 'Weighted mean of non-empty grades';
 $string['aggregation'] = 'Aggregation';

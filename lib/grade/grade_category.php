@@ -94,6 +94,12 @@ class grade_category extends grade_object {
     var $droplow = 0;
 
     /**
+     * Aggregate outcomes together with normal items
+     * @$aggregateoutcomes
+     */
+    var $aggregateoutcomes = 0;
+
+    /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
      * @var array $children
      */
@@ -308,11 +314,12 @@ class grade_category extends grade_object {
 
         $db_item = grade_category::fetch(array('id'=>$this->id));
 
-        $aggregationdiff = $db_item->aggregation != $this->aggregation;
-        $keephighdiff    = $db_item->keephigh    != $this->keephigh;
-        $droplowdiff     = $db_item->droplow     != $this->droplow;
+        $aggregationdiff = $db_item->aggregation       != $this->aggregation;
+        $keephighdiff    = $db_item->keephigh          != $this->keephigh;
+        $droplowdiff     = $db_item->droplow           != $this->droplow;
+        $aggoutcomesdiff = $db_item->aggregateoutcomes != $this->aggregateoutcomes;
 
-        return ($aggregationdiff || $keephighdiff || $droplowdiff);
+        return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggoutcomesdiff);
     }
 
     /**
@@ -668,10 +675,15 @@ class grade_category extends grade_object {
         // recursively resort children
         if (!empty($category_array['children'])) {
             $result['children'] = array();
+            //process the category item first
+            $cat_item_id = null;
             foreach($category_array['children'] as $oldorder=>$child_array) {
                 if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
                     $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
-                } else {
+                }
+            }            
+            foreach($category_array['children'] as $oldorder=>$child_array) {
+                if ($child_array['type'] != 'courseitem' and $child_array['type'] != 'categoryitem') {
                     $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
                 }
             }

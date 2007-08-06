@@ -26,6 +26,7 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
         $mform->addElement('select', 'outcomeid', get_string('outcome', 'grades'), $options);
+        $mform->addRule('outcomeid', get_string('required'), 'required');
 
         $options = array(0=>get_string('none'));
         if ($coursemods = get_course_mods($COURSE->id)) {

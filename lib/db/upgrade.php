@@ -1073,6 +1073,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
@@ -1232,6 +1233,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
     /// Adding keys to table grade_categories_history
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1598,6 +1600,28 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007080300) {
+
+    /// Define field aggregateoutcomes to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('aggregateoutcomes');
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'droplow');
+
+        /// Launch add field aggregateoutcomes
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field aggregateoutcomes to be added to grade_categories
+        $table = new XMLDBTable('grade_categories_history');
+        $field = new XMLDBField('aggregateoutcomes');
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'droplow');
+
+        /// Launch add field aggregateoutcomes
+            $result = $result && add_field($table, $field);
+        }
+    }
 
 /*
     /// drop old gradebook tables
