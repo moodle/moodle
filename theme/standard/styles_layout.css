@@ -2147,6 +2147,9 @@ body#doc-contents ul {
   margin-right: 10px;
 }
 
+.grade-report-grader .quickfeedback {
+  border: #000000 1px dashed;
+}
 /* scales edit */
 
 .grade-edit-scale .buttons {
@@ -2767,7 +2770,7 @@ div#tag-description {
 	margin-right:auto;
 	display:block;
 }
-  
+
 div#tag-management-box {
 	margin-bottom:10px;
 	text-align:center;
@@ -2775,7 +2778,7 @@ div#tag-management-box {
 	display:block;
 	font-size:12px;
 }
-	  
+	
 div#tag-user-table {
 	padding:3px;
 	width:95%;
@@ -2809,7 +2812,7 @@ div#small-tag-cloud-box {
 	margin-bottom:0px;
 	margin-top:0px;
 }
-        
+
 div#big-tag-cloud-box {
 	width:600px;
 	margin-left:auto;
@@ -2927,7 +2930,7 @@ form#tag-management-form {
 	overflow:hidden;
 	z-index:9050;
 }
-#relatedtags-autocomplete .ysearchquery 
+#relatedtags-autocomplete .ysearchquery
 {
 	position:absolute;
 	right:10px;
@@ -2953,7 +2956,7 @@ form#tag-management-form {
 	white-space:
 	nowrap;
 }
-#relatedtags-autocomplete li.yui-ac-highlight 
+#relatedtags-autocomplete li.yui-ac-highlight
 {
 	background:#FFFFCC;
 }

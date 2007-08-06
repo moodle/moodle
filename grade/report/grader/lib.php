@@ -523,6 +523,7 @@ class grade_report_grader extends grade_report {
         global $CFG, $USER;
         $studentshtml = '';
         $strfeedback = $this->get_lang_string("feedback");
+        $strgrade = $this->get_lang_string('grade');
         $gradetabindex = 1;
         $showuserimage = $this->get_pref('showuserimage');
         $numusers = count($this->users);
@@ -638,7 +639,8 @@ class grade_report_grader extends grade_report {
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $value = $this->get_grade_clean($gradeval, $decimalpoints);
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
-                            $studentshtml .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade'] . '" type="text" name="grade_'
+                            $studentshtml .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade']
+                                          . '" type="text" title="'. $strgrade .'" name="grade_'
                                           .$userid.'_' .$item->id.'" value="'.$value.'" />';
                         } else {
                             $studentshtml .= $this->get_grade_clean($gradeval, $decimalpoints);
@@ -653,7 +655,8 @@ class grade_report_grader extends grade_report {
                         }
                         $studentshtml .= '<input type="hidden" name="oldfeedback_'
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
-                        $studentshtml .= '<input tabindex="' . $tabindices[$item->id]['feedback'] . '" size="6" type="text" name="feedback_'
+                        $studentshtml .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback']
+                                      . '" size="6" title="' . $strfeedback . '" type="text" name="feedback_'
                                       .$userid.'_'.$item->id.'" value="' . s($grade->feedback) . '" />';
                     }
 
