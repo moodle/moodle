@@ -160,14 +160,14 @@ $string['memorylimithelp'] = '<p>Mængden af hukommelse som PHP kan bruge er sat
 
 <p>Dette kan forårsage at der opstår problemer senere, især hvis du har mange moduler installeret eller mange brugere.</p>
 
-<p>Vi anbefaler at du konfigurerer PHP til at kunne bruge mere hukommelse, f.eks. 40Mb. 
+<p>Vi anbefaler at du konfigurerer PHP til at kunne bruge mere hukommelse, f.eks. 16Mb. 
 Der er flere måder hvorpå du kan rette det.</p>
 <ol>
 <li>Hvis du har mulighed for det kan du rekompilere PHP med <i>--enable-memory-limit</i>. 
 Dette vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.</li>
 <li>Hvis du har adgang til php.ini filen kan du ændre <b>memory_limit</b>-
-indstillingen så der er minimum 40Mb til rådighed. Hvis du ikke har direkte adgang til den kan du spørge systemadministratoren om han han vil gøre det for dig.</li>
-<li>På nogle servere kan du oprette en \'.htaccess\' fil, gemme den i Moodle-biblioteket med linjen <p><blockquote>php_value memory_limit 40M</blockquote></p>
+indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte adgang til den kan du spørge systemadministratoren om han han vil gøre det for dig.</li>
+<li>På nogle servere kan du oprette en \'.htaccess\' fil, gemme den i Moodle-biblioteket med linjen <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHP-siderne. I så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
 </ol>';
 $string['missingrequiredfield'] = 'Der mangler nogle obligatoriske felter';
