@@ -206,7 +206,7 @@ class grade_category extends grade_object {
                     $category->delete($source);
                 }
             }
-            
+
             if ($items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
                 foreach ($items as $item) {
                     if ($item->id == $grade_item->id) {
@@ -218,9 +218,9 @@ class grade_category extends grade_object {
 
         } else {
             $this->force_regrading();
-    
+
             $parent = $this->load_parent_category();
-    
+
             // Update children's categoryid/parent field first
             if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
                 foreach ($children as $child) {
@@ -681,7 +681,7 @@ class grade_category extends grade_object {
                 if ($child_array['type'] == 'courseitem' or $child_array['type'] == 'categoryitem') {
                     $result['children'][$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
                 }
-            }            
+            }
             foreach($category_array['children'] as $oldorder=>$child_array) {
                 if ($child_array['type'] != 'courseitem' and $child_array['type'] != 'categoryitem') {
                     $result['children'][++$sortorder] = grade_category::_fetch_course_tree_recursion($child_array, $sortorder);
@@ -1008,21 +1008,29 @@ class grade_category extends grade_object {
      * Sets the grade_item's locked variable and updates the grade_item.
      * Method named after grade_item::set_locked().
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $refresh refresh grades when unlocking
      * @return boolean success if category locked (not all children mayb be locked though)
      */
-    function set_locked($lockedstate) {
+    function set_locked($lockedstate, $refresh=true) {
         $this->load_grade_item();
-        $result = $this->grade_item->set_locked($lockedstate);
+
+        $result = $this->grade_item->set_locked($lockedstate, true);
         if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
             foreach($children as $child) {
-                $child->set_locked($lockedstate);
+                $child->set_locked($lockedstate, false);
+                if (empty($lockedstate) and $refresh) {
+                    //refresh when unlocking
+                    $child->refresh_grades();
+                }
             }
         }
         if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
             foreach($children as $child) {
-                $child->set_locked($lockedstate);
+                $child->set_locked($lockedstate, true);
             }
         }
+
+
         return $result;
     }
 

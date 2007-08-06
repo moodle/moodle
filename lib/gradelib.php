@@ -619,7 +619,7 @@ function grade_grab_grades() {
  * @param object $modinstance object with extra cmidnumber and modname property
  * @return boolean success
  */
-function grade_update_mod_grades($modinstance) {
+function grade_update_mod_grades($modinstance, $userid=0) {
     global $CFG;
 
     $fullmod = $CFG->dirroot.'/mod/'.$modinstance->modname;
@@ -635,6 +635,8 @@ function grade_update_mod_grades($modinstance) {
     $updateitemfunc   = $modinstance->modname.'_grade_item_update';
 
     if (function_exists($gradefunc)) {
+
+        // legacy module - not yet converted
         if ($oldgrades = $gradefunc($modinstance->id)) {
 
             $grademax = $oldgrades->maxgrade;
@@ -654,9 +656,12 @@ function grade_update_mod_grades($modinstance) {
             }
 
             $grades = array();
-            foreach ($oldgrades->grades as $userid=>$usergrade) {
+            foreach ($oldgrades->grades as $uid=>$usergrade) {
+                if ($userid and $uid != $userid) {
+                    continue;
+                }
                 $grade = new object();
-                $grade->userid = $userid;
+                $grade->userid = $uid;
 
                 if ($usergrade == '-') {
                     // no grade
@@ -681,10 +686,10 @@ function grade_update_mod_grades($modinstance) {
     } else if (function_exists($updategradesfunc) and function_exists($updateitemfunc)) {
         //new grading supported, force updating of grades
         $updateitemfunc($modinstance);
-        $updategradesfunc($modinstance);
+        $updategradesfunc($modinstance, $userid);
 
     } else {
-        // mudule does not support grading
+        // mudule does not support grading??
     }
 
     return true;

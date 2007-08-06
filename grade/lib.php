@@ -114,7 +114,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $menu[$url] = get_string('scales');
         }
 
-        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or 
+        if (!empty($CFG->enableoutcomes) && (has_capability('moodle/grade:manage', $context) or
                                              has_capability('moodle/course:update', $context))) {
             if (has_capability('moodle/course:update', $context)) {  // Default to course assignment
                 $url = 'edit/outcome/course.php?id='.$courseid;

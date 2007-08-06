@@ -424,11 +424,11 @@ class grade_item extends grade_object {
 
     /**
      * Locks or unlocks this grade_item and (optionally) all its associated final grades.
-     * @param boolean $update_final Whether to update final grades too
-     * @param boolean $new_state Optional new state. Will use inverse of current state otherwise.
+     * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $refresh refresh grades when unlocking
      * @return boolean true if grade_item all grades updated, false if at least one update fails
      */
-    function set_locked($lockedstate) {
+    function set_locked($lockedstate, $refresh=true) {
         if ($lockedstate) {
         /// setting lock
             if (!empty($this->locked)) {
@@ -448,7 +448,7 @@ class grade_item extends grade_object {
             foreach($grades as $g) {
                 $grade = new grade_grade($g, false);
                 $grade->grade_item =& $this;
-                if (!$grade->set_locked(true)) {
+                if (!$grade->set_locked(1, false)) {
                     $result = false;
                 }
             }
@@ -478,10 +478,15 @@ class grade_item extends grade_object {
                         $result = false; // can not unlock grade that should be already locked
                     }
 
-                    if (!$grade->set_locked(false)) {
+                    if (!$grade->set_locked(0, false)) {
                         $result = false;
                     }
                 }
+            }
+
+            if ($refresh) {
+                //refresh when unlocking
+                $this->refresh_grades();
             }
 
             return $result;
@@ -1166,6 +1171,34 @@ class grade_item extends grade_object {
 
         } else {
             return array();
+        }
+    }
+
+    /**
+     * Refetch grades from moudles, plugins.
+     * @param int $userid optional, one user only
+     */
+    function refresh_grades($userid=0) {
+        if ($this->itemtype == 'mod') {
+            if ($this->is_outcome_item()) {
+                //nothing to do
+                return;
+            }
+
+            if (!$activity = get_record($this->itemmodule, 'id', $this->iteminstance)) {
+                debuggin('Can not find activity');
+                return;
+            }
+
+            if (! $cm = get_coursemodule_from_instance($this->itemmodule, $activity->id, $this->courseid)) {
+                debuggin('Can not find course module');
+                return;
+            }
+
+            $activity->modname    = $this->itemmodule;
+            $activity->cmidnumber = $cm->idnumber;
+
+            grade_update_mod_grades($activity);
         }
     }
 

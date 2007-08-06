@@ -258,10 +258,11 @@ class grade_grade extends grade_object {
     /**
      * Lock/unlock this grade.
      *
-     * @param boolean $lockstate true means lock, false unlock grade
+     * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $refresh refresh grades when unlocking
      * @return boolean true if sucessful, false if can not set new lock state for grade
      */
-    function set_locked($lockedstate) {
+    function set_locked($lockedstate, $refresh=true) {
         $this->load_grade_item();
 
         if ($lockedstate) {
@@ -292,6 +293,11 @@ class grade_grade extends grade_object {
             $this->locked = 0;
 
             $this->update();
+
+            if ($refresh) {
+                //refresh when unlocking
+                $this->grade_item->refresh_grades($this->userid);
+            }
 
             return true;
         }
