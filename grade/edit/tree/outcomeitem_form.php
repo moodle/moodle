@@ -37,8 +37,7 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addElement('select', 'cmid', get_string('linkedactivity', 'grades'), $options);
         $mform->setDefault('cmid', 0);
 
-
-        $mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
+        //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
 
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
         $mform->setDefault('aggregationcoef', 0.0);

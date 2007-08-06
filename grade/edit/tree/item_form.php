@@ -23,9 +23,9 @@ class edit_item_form extends moodleform {
         $mform->addElement('select', 'gradetype', get_string('gradetype', 'grades'), $options);
         $mform->setDefault('gradetype', GRADE_TYPE_VALUE);
 
-        $mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
-        $mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_NONE);
+        //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
+        //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_TEXT);
+        //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         $options = array(0=>get_string('usenoscale', 'grades'));
         if ($scales = get_records('scale')) {
@@ -130,7 +130,7 @@ class edit_item_form extends moodleform {
                 if ($grade_item->is_normal_item()) {
                     // following items are set up from modules and should not be overrided by user
                     $mform->hardFreeze('itemname,idnumber,gradetype,grademax,grademin,scaleid');
-                    $mform->removeElement('calculation');
+                    //$mform->removeElement('calculation');
 
                 } else if ($grade_item->is_manual_item()) {
                     // manual grade item does not use these - uses only final grades
@@ -190,6 +190,7 @@ class edit_item_form extends moodleform {
             }
         }
 
+        /*
         if (array_key_exists('calculation', $data) and $data['calculation'] != '') {
             $grade_item = new grade_item(array('id'=>$data['id'], 'itemtype'=>$data['itemtype'], 'courseid'=>$data['courseid']));
             $result = $grade_item->validate_formula($data['calculation']);
@@ -197,6 +198,7 @@ class edit_item_form extends moodleform {
                 $errors['calculation'] = $result;
             }
         }
+        */
 
         if (array_key_exists('grademin', $data) and array_key_exists('grademax', $data)) {
             if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
