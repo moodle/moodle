@@ -1039,15 +1039,11 @@ class default_questiontype {
         allowed. */
 
         if (($cmoptions->optionflags & QUESTION_ADAPTIVE) and !$options->readonly) {
-            echo '<input type="submit" name="';
-            echo $question->name_prefix;
-            echo 'submit" value="';
-            print_string('mark', 'quiz');
-            echo '" class="submit btn"';
-            echo ' />';
+            echo '<input type="submit" name="', $question->name_prefix, 'submit" value="',
+                    get_string('mark', 'quiz'), '" class="submit btn" onclick="', 
+                    "form.action = form.action + '#q", $question->id, "'; return true;", '" />';
         }
     }
-
 
     /**
     * Return a summary of the student response
