@@ -73,6 +73,13 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'), false, true, false, 'aggregationcoefhelp'));
         $mform->setDefault('aggregationcoef', 0.0);
 
+        /// hiding
+        /// advcheckbox is not compatible with disabledIf !!
+        $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+        $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
+        $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
+
+        /// locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
         $mform->setHelpButton('locked', array(false, get_string('locked', 'grades'), false, true, false, 'lockedhelp'));
 

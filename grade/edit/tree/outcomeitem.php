@@ -34,6 +34,13 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
         redirect($gpr->add_url_params($url));
     }
 
+    if ($item->hidden > 1) {
+        $item->hiddenuntil = $item->hidden;
+        $item->hidden = 0;
+    } else {
+        $item->hiddenuntil = 0;
+    }
+
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
 
     if ($item->itemtype == 'mod') {
@@ -50,6 +57,11 @@ if ($data = $mform->get_data(false)) {
     if (array_key_exists('calculation', $data)) {
         $data->calculation = grade_item::normalize_formula($data->calculation, $course->id);
     }
+
+    $hidden      = empty($data->hidden) ? 0: $data->hidden;
+    $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;
+    unset($data->hidden);
+    unset($data->hiddenuntil);
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);
@@ -109,6 +121,13 @@ if ($data = $mform->get_data(false)) {
 
     } else {
         $grade_item->update();
+    }
+
+    // update hiding flag (in grades too if needed)
+    if (empty($hidden)) {
+        $grade_item->set_hidden($hiddenuntil);
+    } else {
+        $grade_item->set_hidden(1);
     }
 
     redirect($returnurl);

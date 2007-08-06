@@ -43,8 +43,14 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
         $mform->setDefault('aggregationcoef', 0.0);
 
-        $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
+        /// hiding
+        /// advcheckbox is not compatible with disabledIf !!
+        $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+        $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddeuntil', 'grades'), array('optional'=>true));
+        $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
 
+        //locking
+        $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
 
 /// hidden params

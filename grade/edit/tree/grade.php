@@ -52,7 +52,7 @@ if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid)
 
 $mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr));
 
-if ($grade = get_record('grade_grades', 'itemid', $id, 'userid', $userid)) {
+if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $userid)) {
     if ($grade_text = get_record('grade_grades_text', 'gradeid', $grade->id)) {
         // always clean existing feedback - grading should not have XSS risk
         if (can_use_html_editor()) {
@@ -68,9 +68,16 @@ if ($grade = get_record('grade_grades', 'itemid', $id, 'userid', $userid)) {
         }
     }
 
-    $grade->locked     = $grade->locked     > 0 ? 1:0;
-    $grade->overridden = $grade->overridden > 0 ? 1:0;
-    $grade->excluded   = $grade->excluded   > 0 ? 1:0;
+    $grade->locked      = $grade->locked     > 0 ? 1:0;
+    $grade->overridden  = $grade->overridden > 0 ? 1:0;
+    $grade->excluded    = $grade->excluded   > 0 ? 1:0;
+
+    if ($grade->hidden > 1) {
+        $grade->hiddenuntil = $grade->hidden;
+        $grade->hidden = 0;
+    } else {
+        $grade->hiddenuntil = 0;
+    }
 
     $mform->set_data($grade);
 
@@ -90,7 +97,15 @@ if ($mform->is_cancelled()) {
 
     $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
 
-    $grade_grade->set_hidden($data->hidden); // TODO: this is wrong - hidden might be a data to hide until
+    if (empty($data->hidden)) {
+        if (empty($data->hiddenuntil)) {
+            $grade_grade->set_hidden(0);
+        } else {
+            $grade_grade->set_hidden($data->hiddenuntil);
+        }
+    } else {
+        $grade_grade->set_hidden(1);
+    }
 
     // ignore overridden flag when changing final grade
     if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {

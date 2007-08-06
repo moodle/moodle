@@ -165,6 +165,7 @@ $string['grades'] = 'Grades';
 $string['gradetype'] = 'Grade type';
 $string['gradeview'] = 'View Grade';
 $string['gradeweighthelp'] = 'Grade Weight Help';
+$string['hiddenuntil'] = 'Hidden until';
 $string['hideadvanced'] = 'Hide Advanced Features';
 $string['hidecalculations'] = 'Hide calculations';
 $string['hidecategory'] = 'Hidden';
