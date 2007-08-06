@@ -2328,13 +2328,6 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                             }
                         }
 
-                        // remove any forum subscriptions which may be present
-                        if ($forums = get_records('forum', 'course', $context->instanceid)) {
-                            foreach ($forums as $forum) {
-                                delete_records('forum_subscriptions', 'forum', $forum->id, 'userid', $ra->userid);
-                            }
-                        }
-
                         // delete lastaccess records
                         delete_records('user_lastaccess', 'userid', $ra->userid, 'courseid', $context->instanceid);
                     }
