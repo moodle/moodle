@@ -97,7 +97,7 @@
             echo "<p>".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
         }
         if ($quiz->attempts != 1) {
-            echo "<p>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+            echo "<p>".get_string("grademethod", "quiz").": ".quiz_get_grading_option_name($quiz->grademethod)."</p>";
         }
 
         // Print information about timings.
@@ -289,7 +289,7 @@
             if ($overallstats) {
                 if ($available && $moreattempts) {
                     $a = new stdClass;
-                    $a->method = $QUIZ_GRADE_METHOD[$quiz->grademethod];
+                    $a->method = quiz_get_grading_option_name($quiz->grademethod);
                     $a->mygrade = $mygrade;
                     $a->quizgrade = $quiz->grade;
                     print_heading(get_string('gradesofar', 'quiz', $a));

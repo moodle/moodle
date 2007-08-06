@@ -224,7 +224,7 @@
   <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
   <td>
     <?php
-       choose_from_menu ($QUIZ_GRADE_METHOD, "grademethod", $form->grademethod, "", "", "");
+       choose_from_menu (quiz_get_grading_options(), "grademethod", $form->grademethod, "", "", "");
        helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
     ?>
   </td>
