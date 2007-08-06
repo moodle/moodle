@@ -201,7 +201,7 @@ class grade_report_grader extends grade_report {
                         $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                     }
                 } else {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
                 }
             }
             $SESSION->gradeuserreport->sortitemid = $this->sortitemid;

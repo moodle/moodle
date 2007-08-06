@@ -350,7 +350,7 @@ class grade_report {
      * @param string HTML
      */
     function get_sort_arrow($direction='move', $sort_link=null) {
-        $matrix = array('up' => 'asc', 'down' => 'desc', 'move' => 'asc');
+        $matrix = array('up' => 'asc', 'down' => 'desc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
         $arrow = print_arrow($direction, $strsort, true);
         $html = '<a href="'.$sort_link .'">' . $arrow . '</a>';
