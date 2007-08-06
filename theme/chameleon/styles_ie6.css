@@ -1,0 +1,36 @@
+/*
+ * These styles are ONLY included for IE 6 (via meta.php)
+ */
+div.breadcrumb span.sep {
+  font-family: arial, sans-serif;
+}
+.tabtree {
+  height: 100%;
+}
+.tabrow0 {
+  padding-top: 10px;
+}
+.tabrow0 li {
+  margin: 0;
+  /*padding: 0;*/
+}
+.tabrow0 li.first {
+  margin: 0;
+}
+.tabrow0 li.last a {
+  margin-right: 0;
+}
+.tabrow0 li.onerow {
+  margin-right: 0;
+}
+.tabrow0 a {
+  padding: 0 5px 5px;
+}
+.tabrow0 a span {
+  padding: 0;
+}
+.tabrow0 div,
+.tabrow0 ul {
+  top: 100%;
+  padding: 0 0 3px 0;
+}
