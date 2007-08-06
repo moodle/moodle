@@ -87,9 +87,9 @@ class grade_report_grader extends grade_report {
 
         // base url for sorting by first/last name
         $this->baseurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
-                        .'&amp;page='.$this->page.'&amp;';
+                        .'&amp;page='.$this->page;
         //
-        $this->pbarurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage').'&amp;';
+        $this->pbarurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage');
 
         // Setup groups if requested
         if ($this->get_pref('showgroups')) {
@@ -188,11 +188,11 @@ class grade_report_grader extends grade_report {
 
         if ($this->sortitemid) {
             if (!isset($SESSION->gradeuserreport->sort)) {
-                $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+                $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
             } else {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
-                    $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
+                    $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
                 } else if ($SESSION->gradeuserreport->sortitemid == $this->sortitemid) {
                     // same as last sort
                     if ($SESSION->gradeuserreport->sort == 'ASC') {
