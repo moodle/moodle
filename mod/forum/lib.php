@@ -616,7 +616,7 @@ function forum_cron() {
                     course_setup($course);
 
                     $strforums = get_string('forums', 'forum');
-                    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
+                    $canunsubscribe = ! forum_is_forcesubscribed($forum);
                     $canreply = forum_user_can_post($forum, $userto);
 
 
@@ -775,7 +775,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 
     $strforums = get_string('forums', 'forum');
 
-    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
+    $canunsubscribe = ! forum_is_forcesubscribed($forum);
     $canreply = forum_user_can_post($forum, $userto);
 
     $posttext = '';
@@ -836,7 +836,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
 
     $strforums = get_string('forums', 'forum');
     $canreply = forum_user_can_post($forum, $userto);
-    $canunsubscribe = ! $forum->forcesubscribe;
+    $canunsubscribe = ! forum_is_forcesubscribed($forum);
 
     $posthtml = '<head>';
     foreach ($CFG->stylesheets as $stylesheet) {
@@ -858,7 +858,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
     $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
 
     if ($canunsubscribe) {
-        $posthtml .= '<br /><div class="unsubscribelink"><a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.
+        $posthtml .= '<hr /><div align="center" class="unsubscribelink"><a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.
                      get_string('unsubscribe', 'forum').'</a></div>';
     }
 
@@ -1893,7 +1893,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
         $groupselect = '';
     }
 
-    if (forum_is_forcesubscribed($forum->id)) {
+    if (forum_is_forcesubscribed($forum)) {
         $results = get_course_users($course->id);     // Otherwise get everyone in the course
     } else {
         $results = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
@@ -3148,8 +3148,12 @@ function forum_forcesubscribe($forumid, $value=1) {
 /**
  * 
  */
-function forum_is_forcesubscribed($forumid) {
-    return (get_field("forum", "forcesubscribe", "id", $forumid) == 1);
+function forum_is_forcesubscribed($forum) {
+    if (isset($forum->forcesubscribe)) {    // then we use that
+        return ($forum->forcesubscribe == FORUM_FORCESUBSCRIBE);
+    } else {   // Check the database
+       return (get_field('forum', 'forcesubscribe', 'id', $forum) == FORUM_FORCESUBSCRIBE);
+    }
 }
 
 /**
