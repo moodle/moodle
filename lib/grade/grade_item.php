@@ -1082,7 +1082,10 @@ class grade_item extends grade_object {
             return format_string($this->itemname);
 
         } else if ($this->is_course_item()) {
-            return get_string('total');
+            return get_string('coursetotal', 'grades');
+
+        } else if ($this->is_category_item()) {
+            return get_string('categorytotal', 'grades');
 
         } else {
             return get_string('grade');
