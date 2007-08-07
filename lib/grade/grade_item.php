@@ -611,6 +611,10 @@ class grade_item extends grade_object {
                 return "Could not calculate grades for grade item"; // TODO: improve and localize
             }
 
+        // noncalculated outcomes already have final values - raw grades not used
+        } else if ($this->is_outcome_item()) {
+            return true;
+
         // aggregate the category grade
         } else if ($this->is_category_item() or $this->is_course_item()) {
             // aggregate category grade item
@@ -1262,13 +1266,16 @@ class grade_item extends grade_object {
                 $grade->finalgrade = $finalgrade;
             }
 
-            // if we can update the raw grade, do update it
-            if ($this->is_outcome_item() or !$this->is_normal_item()
-             or $this->plusfactor != 0 or $this->multfactor != 1
-             or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
+            if ($this->is_outcome_item()) {
+                // no updates of raw grades for outcomes - raw grades not used
+
+            } else if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
+                    or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
+                // we can not update the raw grade - flag it as overridden
                 if (!$grade->overridden) {
                     $grade->overridden = time();
                 }
+
             } else {
                 $grade->rawgrade = $finalgrade;
                 // copy current grademin/max and scale

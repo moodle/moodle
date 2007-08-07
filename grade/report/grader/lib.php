@@ -616,10 +616,16 @@ class grade_report_grader extends grade_report {
                         }
 
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
+                            $oldval = empty($gradeval) ? -1 : $gradeval;
+                            if (empty($item->outcomeid)) {
+                                $nogradestr = $this->get_lang_string('nograde'); 
+                            } else {
+                                $nogradestr = $this->get_lang_string('nooutcome', 'grades'); 
+                            }
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'
-                                          .$item->id.'" value="'.$gradeval.'"/>';
+                                          .$item->id.'" value="'.$oldval.'"/>';
                             $studentshtml .= choose_from_menu($scaleopt, 'grade_'.$userid.'_'.$item->id,
-                                                              $gradeval, $this->get_lang_string('nograde'), '', '-1',
+                                                              $gradeval, $nogradestr, '', '-1',
                                                               true, false, $tabindices[$item->id]['grade']);
                         } elseif(!empty($scale)) {
                             $scales = explode(",", $scale->scale);

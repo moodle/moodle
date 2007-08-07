@@ -24,7 +24,12 @@ class edit_grade_form extends moodleform {
         } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
             // scale grade
             $scaleopt = array();
-            $scaleopt[-1] = get_string('nograde');
+
+            if (empty($grade_item->outcomeid)) {
+                $scaleopt[-1] = get_string('nograde'); 
+            } else {
+                $scaleopt[-1] = get_string('nooutcome', 'grades'); 
+            }
 
             $i = 1;
             if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {

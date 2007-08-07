@@ -108,6 +108,11 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
+    // fix no grade for scales
+    if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
+        $data->finalgrade = NULL;
+    }
+
     // update final grade or feedback
     $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);
 
@@ -125,7 +130,7 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    if (has_capability('moodle/grade:override', $context)) {
+    if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:override', $context)) {
         // ignore overridden flag when changing final grade
         if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
             if ($grade_grade->set_overridden($data->overridden) and empty($data->overridden)) {
