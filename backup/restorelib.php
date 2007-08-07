@@ -1556,29 +1556,8 @@
                             $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);
                             $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);
 
-                            /// if thesse 5 all match then we know this item is already in db
-
-                            /*
-                            $itemex = get_record_sql('SELECT id,id FROM grade_items
-                                                      WHERE courseid = '.$dbrec->courseid.'
-                                                      AND itemtype = '.$dbrec->itemtype.'
-                                                      AND itemmodule = '.$dbrec->itemmodule.'
-                                                      AND iteminstance = '.$dbrec->iteminstance.'
-                                                      AND itemnumber = '.$dbrec->itemnumber);
-
-                            if (!$itemex) {
-                                //Structure is equal to db, insert record
-                                $itemid = insert_record('grade_items',$dbrec);
-                            } else {
-                                //Simply remap category
-                                $itemid = $itemex->id;
-                            }
-                            */
-
-                            // always insert, since modules restored to existing courses are always inserted
 
                             // get the current sortorder, add 1 to it and use that
-
                             if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
                                                         WHERE courseid = $restore->course_id
                                                         ORDER BY sortorder DESC ", true)) {
@@ -1589,9 +1568,11 @@
                                 // this is the first grade_item
                                 $dbrec->sortorder = 1;
                             }
-
+                            // always insert, since modules restored to existing courses are always inserted
                             $itemid = insert_record('grade_items',$dbrec);
-
+                            if ($itemid) {
+                                backup_putid($restore->backup_unique_code,'grade_items', backup_todb($info['GRADE_ITEM']['#']['ID']['0']['#']), $itemid);
+                            }
                             /// now, restore grade_grades, grade_text
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
                                 //Iterate over items
@@ -1623,7 +1604,9 @@
                                     $grade->excluded = backup_todb($ite_info['#']['EXCLUDED']['0']['#']);
 
                                     $newid = insert_record('grade_grades', $grade);
-                                    backup_putid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['ID']['0']['#']), $newid);
+                                    if ($newid) {
+                                        backup_putid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['ID']['0']['#']), $newid);
+                                    }
                                     $counter++;
                                     if ($counter % 20 == 0) {
                                         if (!defined('RESTORE_SILENTLY')) {
@@ -1654,8 +1637,10 @@
                                     $text->feedback = backup_todb($ite_info['#']['FEEDBACK']['0']['#']);
                                     $text->feedbackformat = backup_todb($ite_info['#']['FEEDBACKFORMAT']['0']['#']);
 
-                                    insert_record('grade_grades_text', $text);
-
+                                    $newid = insert_record('grade_grades_text', $text);
+                                    if ($newid) {
+                                        backup_putid($restore->backup_unique_code,'grade_grades_text', backup_todb($ite_info['#']['ID']['0']['#']), $newid);
+                                    }
                                     $counter++;
                                     if ($counter % 20 == 0) {
                                         if (!defined('RESTORE_SILENTLY')) {
