@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
 $string['adminseesall'] = 'Admins See All';
@@ -54,7 +54,7 @@ $string['configallowusermailcharset'] = 'Enabling this, every user in the site w
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
 $string['configallusersaresitestudents'] = 'For activities on the front page of the site, should ALL users be considered as students?  If you answer \"Yes\", then any confirmed user account will be allowed to participate as a student in those activities.  If you answer \"No\", then only users who are already a participant in at least one course will be able to take part in those front page activities. Only admins and specially assigned teachers can act as teachers for these front page activities.';
 $string['configvisiblecourses'] = 'Display courses in hidden categories normally';
-$string['configauthenticationplugins'] = 'Please choose the authentication plugins you wish to use and arrange them in order of failthrough. Self registration will be handled by the plugin selected in the \'Registration\' column (usually \'email\').';
+$string['configauthenticationplugins'] = 'Please choose the authentication plugins you wish to use and arrange them in order of failthrough.';
 $string['configautologinguests'] = 'Should visitors be logged in as guests automatically when entering courses with guest access?';
 $string['configbloglevel'] = 'This setting allows you to restrict the level to which user blogs can be viewed on this site.  Note that they specify the maximum context of the VIEWER not the poster or the types of blog posts.  Blogs can also be disabled completely if you don\'t want them at all.';
 $string['configcachetext'] = 'For larger sites or sites that use text filters, this setting can really speed things up.  Copies of texts will be retained in their processed form for the time specified here.  Setting this too small may actually slow things down slightly,  but setting it too large may mean texts take too long to refresh (with new links, for example).';
