@@ -26,6 +26,7 @@ if (!$element = $gtree->locate_element($eid)) {
     error('Incorrect element id!', $returnurl);
 }
 $object = $element['object'];
+$type   = $element['type'];
 
 
 switch ($action) {
@@ -33,6 +34,9 @@ switch ($action) {
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
                 error('No permission to hide!', $returnurl);
+            }
+            if ($type == 'grade' and empty($object->id)) {
+                $object->insert();
             }
             $object->set_hidden(1);
         }
@@ -43,6 +47,9 @@ switch ($action) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:hide', $context)) {
                 error('No permission to show!', $returnurl);
             }
+            if ($type == 'grade' and empty($object->id)) {
+                $object->insert();
+            }
             $object->set_hidden(0);
         }
         break;
@@ -52,6 +59,9 @@ switch ($action) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context)) {
                 error('No permission to lock!', $returnurl);
             }
+            if ($type == 'grade' and empty($object->id)) {
+                $object->insert();
+            }
             $object->set_locked(1);
         }
         break;
@@ -60,6 +70,9 @@ switch ($action) {
         if ($eid and confirm_sesskey()) {
             if (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context)) {
                 error('No permission to unlock!', $returnurl);
+            }
+            if ($type == 'grade' and empty($object->id)) {
+                $object->insert();
             }
             $object->set_locked(0);
         }

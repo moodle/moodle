@@ -43,7 +43,7 @@ class edit_grade_form extends moodleform {
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
-        $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddeuntil', 'grades'), array('optional'=>true));
+        $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
         $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
 
         /// locking

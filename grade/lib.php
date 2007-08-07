@@ -648,8 +648,27 @@ class grade_tree {
      * @return object element
      */
     function locate_element($eid) {
-        if (strpos($eid, 'g') === 0) {
-            // it is a grade  construct a new object
+        // it is a grade - construct a new object
+        if (strpos($eid, 'n') === 0) {
+            if (!preg_match('/n(\d+)u(\d+)/', $eid, $matches)) {
+                return null;
+            }
+
+            $itemid = $matches[1];
+            $userid = $matches[2];
+
+            //extra security check - the grade item must be in this tree
+            if (!$item_el = $this->locate_element('i'.$itemid)) {
+                return null;
+            }
+
+            // $gradea->id may be null - means does not exist yet
+            $grade = new grade_grade(array('itemid'=>$itemid, 'userid'=>$userid));
+
+            $grade->grade_item =& $item_el['object']; // this may speedup grade_grade methods!
+            return array('eid'=>'n'.$itemid.'u'.$userid,'object'=>$grade, 'type'=>'grade');
+
+        } else if (strpos($eid, 'g') === 0) {
             $id = (int)substr($eid, 1);
             if (!$grade = grade_grade::fetch(array('id'=>$id))) {
                 return null;
@@ -675,6 +694,19 @@ class grade_tree {
         }
 
         return null;
+    }
+
+    /**
+     * Returns the grade eid - the grade may not exist yet.
+     * @param $grade_grade object
+     * @return string eid
+     */
+    function get_grade_eid($grade_grade) {
+        if (empty($grade_grade->id)) {
+            return 'n'.$grade_grade->itemid.'u'.$grade_grade->userid;
+        } else {
+            return 'g'.$grade_grade->id;
+        }
     }
 
     /**
@@ -715,8 +747,11 @@ class grade_tree {
                 break;
 
             case 'grade':
-                //TODO: improve dealing with new grades
-                $url = $CFG->wwwroot.'/grade/edit/tree/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                if (empty($object->id)) {
+                    $url = $CFG->wwwroot.'/grade/edit/tree/grade.php?courseid='.$this->courseid.'&amp;itemid='.$object->itemid.'&amp;userid='.$object->userid;
+                } else {
+                    $url = $CFG->wwwroot.'/grade/edit/tree/grade.php?courseid='.$this->courseid.'&amp;id='.$object->id;
+                }
                 $url = $gpr->add_url_params($url);
                 if (!empty($object->feedback)) {
                     $feedback = format_text($object->feedback, $object->feedbackformat);

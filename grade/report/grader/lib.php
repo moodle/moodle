@@ -562,7 +562,6 @@ class grade_report_grader extends grade_report {
 
                 if (isset($this->finalgrades[$userid][$item->id])) {
                     $gradeval = $this->finalgrades[$userid][$item->id]->finalgrade;
-
                     $grade = new grade_grade($this->finalgrades[$userid][$item->id], false);
                     $grade->feedback = stripslashes_safe($this->finalgrades[$userid][$item->id]->feedback);
                     $grade->feedbackformat = $this->finalgrades[$userid][$item->id]->feedbackformat;
@@ -577,7 +576,8 @@ class grade_report_grader extends grade_report {
                 $grade->grade_item =& $this->items[$itemid]; // this speedsup is_hidden() and other grade_grade methods
 
                 // emulate grade element
-                $element = array('eid'=>'g'.$grade->id, 'object'=>$grade, 'type'=>'grade');
+                $eid = $this->gtree->get_grade_eid($grade);
+                $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
                 if ($grade->is_overridden()) {
                     $studentshtml .= '<td class="overridden">';
@@ -590,8 +590,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 // Do not show any icons if no grade (no record in DB to match)
-                // TODO: change edit/hide/etc. links to use itemid and userid to allow creating of new grade objects
-                if (!$item->needsupdate and !empty($grade->id) and $USER->gradeediting[$this->courseid]) {
+                if (!$item->needsupdate and $USER->gradeediting[$this->courseid]) {
                     $studentshtml .= $this->get_icons($element);
                 }
 
