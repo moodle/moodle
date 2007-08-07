@@ -153,7 +153,7 @@ if ($mform->is_cancelled()) {
         $grade_grade->set_locktime($data->locktime);
       }
 
-    redirect($returnurl, 'x', 10);
+    redirect($returnurl);
 }
 
 $strgrades       = get_string('grades');
