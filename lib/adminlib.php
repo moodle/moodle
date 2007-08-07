@@ -2653,6 +2653,10 @@ function admin_externalpage_print_header($adminroot) {
 
     global $CFG, $PAGE, $SITE, $THEME;
 
+    if (!empty($THEME->customcorners)) {
+        require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
+    }
+
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
 
@@ -2660,7 +2664,6 @@ function admin_externalpage_print_header($adminroot) {
                                                blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
         $PAGE->print_header();
-        echo "\n".'<!-- admin_externalpage_print_header start-->'."\n";
         echo '<table id="layout-table" summary=""><tr>';
         
         $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
@@ -2672,38 +2675,23 @@ function admin_externalpage_print_header($adminroot) {
             switch ($column) {
                 case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
         
                 case 'middle':
         echo '<td id="middle-column">';
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div>.</div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
                 break;
                 
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            if (!empty($THEME->roundcorners)) {
-                echo '<div class="bt"><div>.</div></div>';
-                echo '<div class="i1"><div class="i2"><div class="i3">';
-            }
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-            if (!empty($THEME->roundcorners)) {
-                echo '</div></div></div>';
-                echo '<div class="bb"><div>.</div></div>';
-            }
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
             echo '</td>';
         }
                 break;
@@ -2712,14 +2700,12 @@ function admin_externalpage_print_header($adminroot) {
     } else {
         print_header();
     }
-    echo "\n".'<!-- admin_externalpage_print_header end-->'."\n";
 }
 
 function admin_externalpage_print_footer($adminroot) {
 
     global $CFG, $PAGE, $SITE, $THEME;
     
-    echo "\n".'<!-- admin_externalpage_print_footer start-->'."\n";
     if (!empty($SITE->fullname)) {
         $pageblocks = blocks_setup($PAGE);
         $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
@@ -2738,38 +2724,23 @@ function admin_externalpage_print_footer($adminroot) {
             switch ($column) {
                 case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
-        if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
-            echo '<div class="i1"><div class="i2"><div class="i3">';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
                 
                 case 'middle':
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div>.</div></div>';
-        }
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
                 
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
-            if (!empty($THEME->roundcorners)) {
-                echo '<div class="bt"><div>.</div></div>';
-                echo '<div class="i1"><div class="i2"><div class="i3">';
-            }
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-            if (!empty($THEME->roundcorners)) {
-                echo '</div></div></div>';
-                echo '<div class="bb"><div>.</div></div>';
-            }
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
             echo '</td>';
         }
                 break;
@@ -2778,7 +2749,6 @@ function admin_externalpage_print_footer($adminroot) {
         echo '</tr></table>';
     }
     print_footer();
-    echo "\n".'<!-- admin_externalpage_print_footer end-->'."\n";
 }
 
 function admin_get_root() {
