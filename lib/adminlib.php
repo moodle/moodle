@@ -2802,13 +2802,38 @@ function admin_externalpage_print_header() {
                                                BLOCK_L_MAX_WIDTH);
         $PAGE->print_header();
         echo '<table id="layout-table" summary=""><tr>';
+        
+        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+        foreach ($lt as $column) {
+            $lt1[] = $column;
+            if ($column == 'middle') break;
+        }
+        foreach ($lt1 as $column) {
+            switch ($column) {
+                case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
+                break;
+        
+                case 'middle':
         echo '<td id="middle-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
+                break;
+                
+                case 'right':
+        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
+            echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
+            echo '</td>';
+        }
+                break;
+            }
+        }
     } else {
         print_header();
     }
@@ -2829,14 +2854,41 @@ function admin_externalpage_print_footer() {
         $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
                                                 blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                                 BLOCK_R_MAX_WIDTH);
+
+        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+        foreach ($lt as $column) {
+            if ($column != 'middle') {
+                array_shift($lt);
+            } else if ($column == 'middle') {
+                break;
+            }
+        }
+        foreach ($lt as $column) {
+            switch ($column) {
+                case 'left':
+        echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+        if (!empty($THEME->customcorners)) print_custom_corners_start();
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
+                break;
+                
+                case 'middle':
+        if (!empty($THEME->customcorners)) print_custom_corners_end();
+        echo '</td>';
+                break;
+                
+                case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
             if (!empty($THEME->customcorners)) print_custom_corners_start();
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+
             if (!empty($THEME->customcorners)) print_custom_corners_end();
             echo '</td>';
+        }
+                break;
+            }
         }
         echo '</tr></table>';
     }
