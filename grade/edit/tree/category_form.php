@@ -27,6 +27,7 @@ class edit_category_form extends moodleform {
                          GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED=>get_string('aggregateextracreditmeangraded', 'grades'));
 
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
+        $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
         $mform->setDefault('gradetype', GRADE_AGGREGATE_MEAN_ALL);
 
         if (!empty($CFG->enableoutcomes)) {
