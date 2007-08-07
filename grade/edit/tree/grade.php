@@ -13,11 +13,11 @@ if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
 }
 
-// TODO: fix capabilities check
-// TODO: add proper check that grade is editable
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-require_capability('moodle/grade:override', $context);
+if (!has_capability('moodle/grade:manage', $context)) {
+    require_capability('moodle/grade:override', $context);
+}
 
 // default return url
 $gpr = new grade_plugin_return();
@@ -82,7 +82,7 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
     $mform->set_data($grade);
 
 } else {
-    $mform->set_data(array('itemid'=>$itemid, 'userid'=>$userid));
+    $mform->set_data(array('itemid'=>$itemid, 'userid'=>$userid, 'locked'=>$grade_item->locked, 'locktime'=>$grade_item->locktime));
 }
 
 if ($mform->is_cancelled()) {
@@ -97,31 +97,47 @@ if ($mform->is_cancelled()) {
 
     $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
 
-    if (empty($data->hidden)) {
-        if (empty($data->hiddenuntil)) {
-            $grade_grade->set_hidden(0);
+    if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
+        if (empty($data->hidden)) {
+            if (empty($data->hiddenuntil)) {
+                $grade_grade->set_hidden(0);
+            } else {
+                $grade_grade->set_hidden($data->hiddenuntil);
+            }
         } else {
-            $grade_grade->set_hidden($data->hiddenuntil);
+            $grade_grade->set_hidden(1);
         }
+    }
+
+    if (has_capability('moodle/grade:override', $context)) {
+        // ignore overridden flag when changing final grade
+        if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
+            if ($grade_grade->set_overridden($data->overridden) and empty($data->overridden)) {
+                $grade_item->force_regrading(); // force regrading only when clearing the flag
+            }
+        }
+    }
+
+    if (has_capability('moodle/grade:manage', $context)) {
+        if ($grade_grade->set_excluded($data->excluded)) {
+            $grade_item->force_regrading();
+        }
+    }
+
+    if (($old_grade_grade->locked or $old_grade_grade->locktime)
+      and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context))) {
+        //ignore data
+
+    } else if ((!$old_grade_grade->locked and !$old_grade_grade->locktime)
+      and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context))) {
+        //ignore data
+
     } else {
-        $grade_grade->set_hidden(1);
-    }
+        $grade_grade->set_locked($data->locked);
+        $grade_grade->set_locktime($data->locktime);
+      }
 
-    // ignore overridden flag when changing final grade
-    if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
-        if ($grade_grade->set_overridden($data->overridden) and empty($data->overridden)) {
-            $grade_item->force_regrading(); // force regrading only when clearing the flag
-        }
-    }
-
-    if ($grade_grade->set_excluded($data->excluded)) {
-        $grade_item->force_regrading();
-    }
-
-    $grade_grade->set_locked($data->locked);
-    $grade_grade->set_locktime($data->locktime);
-
-    redirect($returnurl);
+    redirect($returnurl, 'x', 10);
 }
 
 $strgrades       = get_string('grades');
