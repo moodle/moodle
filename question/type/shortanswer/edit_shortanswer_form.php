@@ -29,7 +29,7 @@ class question_edit_shortanswer_form extends question_edit_form {
         $gradeoptions = $creategrades->gradeoptions;
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerno', 'qtype_shortanswer', '{no}'));
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 54));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
 
