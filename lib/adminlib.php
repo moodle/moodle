@@ -2660,7 +2660,17 @@ function admin_externalpage_print_header($adminroot) {
                                                blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                                BLOCK_L_MAX_WIDTH);
         $PAGE->print_header();
+        echo "\n".'<!-- admin_externalpage_print_header start-->'."\n";
         echo '<table id="layout-table" summary=""><tr>';
+        
+        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+        foreach ($lt as $column) {
+            $lt1[] = $column;
+            if ($column == 'middle') break;
+        }
+        foreach ($lt1 as $column) {
+            switch ($column) {
+                case 'left':
         echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
         if (!empty($THEME->roundcorners)) {
             echo '<div class="bt"><div></div></div>';
@@ -2672,46 +2682,103 @@ function admin_externalpage_print_header($adminroot) {
             echo '<div class="bb"><div></div></div>';
         }
         echo '</td>';
+                break;
+        
+                case 'middle':
         echo '<td id="middle-column">';
         if (!empty($THEME->roundcorners)) {
-            echo '<div class="bt"><div></div></div>';
+            echo '<div class="bt"><div>.</div></div>';
             echo '<div class="i1"><div class="i2"><div class="i3">';
         }
-    } else {
-        print_header();
-    }
-}
-
-function admin_externalpage_print_footer($adminroot) {
-
-    global $CFG, $PAGE, $SITE, $THEME;
-
-    if (!empty($SITE->fullname)) {
-        $pageblocks = blocks_setup($PAGE);
-        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
-                                                blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
-                                                BLOCK_R_MAX_WIDTH);
-        if (!empty($THEME->roundcorners)) {
-            echo '</div></div></div>';
-            echo '<div class="bb"><div></div></div>';
-        }
-        echo '</td>';
+                break;
+                
+                case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
             if (!empty($THEME->roundcorners)) {
-                echo '<div class="bt"><div></div></div>';
+                echo '<div class="bt"><div>.</div></div>';
                 echo '<div class="i1"><div class="i2"><div class="i3">';
             }
             blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
             if (!empty($THEME->roundcorners)) {
                 echo '</div></div></div>';
-                echo '<div class="bb"><div></div></div>';
+                echo '<div class="bb"><div>.</div></div>';
             }
             echo '</td>';
+        }
+                break;
+            }
+        }
+    } else {
+        print_header();
+    }
+    echo "\n".'<!-- admin_externalpage_print_header end-->'."\n";
+}
+
+function admin_externalpage_print_footer($adminroot) {
+
+    global $CFG, $PAGE, $SITE, $THEME;
+    
+    echo "\n".'<!-- admin_externalpage_print_footer start-->'."\n";
+    if (!empty($SITE->fullname)) {
+        $pageblocks = blocks_setup($PAGE);
+        $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH,
+                                                blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
+                                                BLOCK_R_MAX_WIDTH);
+        
+        $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
+        foreach ($lt as $column) {
+            if ($column != 'middle') {
+                array_shift($lt);
+            } else if ($column == 'middle') {
+                break;
+            }
+        }
+        foreach ($lt as $column) {
+            switch ($column) {
+                case 'left':
+        echo '<td style="width: ' . $preferred_width_left . 'px;" id="left-column">';
+        if (!empty($THEME->roundcorners)) {
+            echo '<div class="bt"><div></div></div>';
+            echo '<div class="i1"><div class="i2"><div class="i3">';
+        }
+        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div></div></div>';
+        }
+        echo '</td>';
+                break;
+                
+                case 'middle':
+        if (!empty($THEME->roundcorners)) {
+            echo '</div></div></div>';
+            echo '<div class="bb"><div>.</div></div>';
+        }
+        echo '</td>';
+                break;
+                
+                case 'right':
+        if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
+            echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
+            if (!empty($THEME->roundcorners)) {
+                echo '<div class="bt"><div>.</div></div>';
+                echo '<div class="i1"><div class="i2"><div class="i3">';
+            }
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            if (!empty($THEME->roundcorners)) {
+                echo '</div></div></div>';
+                echo '<div class="bb"><div>.</div></div>';
+            }
+            echo '</td>';
+        }
+                break;
+            }
         }
         echo '</tr></table>';
     }
     print_footer();
+    echo "\n".'<!-- admin_externalpage_print_footer end-->'."\n";
 }
 
 function admin_get_root() {
