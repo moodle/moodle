@@ -306,7 +306,7 @@ function grade_is_locked($courseid, $itemtype, $itemmodule, $iteminstance, $item
  * @param int $userid ID of the graded user
  * @return array of outcome information objects (scaleid, name, grade and locked status) indexed with itemnumbers
  */
-function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $userid) {
+function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $userid=0) {
     $result = array();
     if ($items = grade_item::fetch_all(array('itemtype'=>$itemtype, 'itemmodule'=>$itemmodule, 'iteminstance'=>$iteminstance, 'courseid'=>$courseid))) {
         foreach ($items as $item) {
@@ -322,7 +322,9 @@ function grade_get_outcomes($courseid, $itemtype, $itemmodule, $iteminstance, $u
             $o->scaleid = $outcome->scaleid;
             $o->name    = $outcome->fullname;
 
-            if ($grade = $item->get_grade($userid,false)) {
+            if (empty($userid)) {
+                //no user info
+            } if ($grade = $item->get_grade($userid,false)) {
                 $o->grade  = $grade->finalgrade;
                 $o->locked = $grade->is_locked();
             } else {

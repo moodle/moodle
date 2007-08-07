@@ -988,6 +988,12 @@ class assignment_base {
             $quickgrade = get_user_preferences('assignment_quickgrade', 0);
         }
 
+        if (!empty($CFG->enableoutcomes) and grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id)) {
+            $uses_outcomes = true;
+        } else {
+            $uses_outcomes = false;
+        }
+
         $teacherattempts = true; /// Temporary measure
         $page    = optional_param('page', 0, PARAM_INT);
         $strsaveallfeedback = get_string('saveallfeedback', 'assignment');
@@ -1023,7 +1029,7 @@ class assignment_base {
         $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
-        if (!empty($CFG->enableoutcomes)) {
+        if ($uses_outcomes) {
             $tablecolumns[] = ''; // no sorting based on outcomes column
         }
 
@@ -1034,7 +1040,7 @@ class assignment_base {
                               get_string('lastmodified').' ('.$course->student.')',
                               get_string('lastmodified').' ('.$course->teacher.')',
                               get_string('status'));
-        if (!empty($CFG->enableoutcomes)) {
+        if ($uses_outcomes) {
             $tableheaders[] = get_string('outcomes', 'grades');
         }
 
@@ -1059,7 +1065,7 @@ class assignment_base {
         $table->column_class('timemodified', 'timemodified');
         $table->column_class('timemarked', 'timemarked');
         $table->column_class('status', 'status');
-        if (!empty($CFG->enableoutcomes)) {
+        if ($uses_outcomes) {
             $table->column_class('outcomes', 'outcomes');
         }
 
@@ -1214,16 +1220,17 @@ class assignment_base {
 
                 $outcomes = '';
 
-                if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
+                if ($uses_outcomes and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
 
                     foreach($outcomes_data as $n=>$data) {
-                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label> ';
+                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label>';
                         $options = make_grades_menu(-$data->scaleid);
 
                         if ($data->locked or !$quickgrade) {
                             $options[0] = get_string('nooutcome', 'grades');
-                            $outcomes .= ':<span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$data->grade].'</span>';
+                            $outcomes .= ': <span id="outcome_'.$n.'_'.$auser->id.'">'.$options[$data->grade].'</span>';
                         } else {
+                            $outcomes .= ' ';
                             $outcomes .= choose_from_menu($options, 'outcome_'.$n.'['.$auser->id.']',
                                         $data->grade, get_string('nooutcome', 'grades'), '', 0, true, false, 0, 'outcome_'.$n.'_'.$auser->id);
                         }
@@ -1233,7 +1240,7 @@ class assignment_base {
 
 
                 $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
-                if (!empty($CFG->enableoutcomes)) {
+                if ($uses_outcomes) {
                     $row[] = $outcomes;
                 }
 
