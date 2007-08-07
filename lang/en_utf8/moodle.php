@@ -228,6 +228,7 @@ $string['complete'] = 'Complete';
 $string['completereport'] = 'Complete report';
 $string['configuration'] = 'Configuration';
 $string['confirm'] = 'Confirm';
+$string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm $a ?';
 $string['confirmed'] = 'Your registration has been confirmed';
 $string['confirmednot'] = 'Your registration has not yet been confirmed!';
 $string['continue'] = 'Continue';
