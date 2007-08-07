@@ -49,6 +49,22 @@ if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid)
     error('Can not find grade_item');
 }
 
+// now verify grading user has access to all groups or is member of the same group when separate groups used in course
+if (groupmode($COURSE) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+    if ($groups = user_group($COURSE->id, $userid)) {
+        $ok = false;
+        foreach ($groups as $group) {
+            if (groups_is_member($group->id, $USER->id)) {
+                $ok = true;
+            }
+        }
+        if (!$ok) {
+            error('Can not grade this user');
+        }
+    } else {
+        error('Can not grade this user');
+    }
+}
 
 $mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr));
 
