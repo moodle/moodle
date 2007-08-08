@@ -581,8 +581,8 @@ function create_course ($course,$skip_fix_course_sortorder=0){
 
     // truncate a few key fields
     $course->idnumber  = substr($course->idnumber, 0, 100);
-    $course->shortname = substr($course->shortname, 0, 15);
-    
+    $course->shortname = substr($course->shortname, 0, 100);
+
     // store it and log
     if ($newcourseid = insert_record("course", addslashes_object($course))) {  // Set up new course
         $section = NULL;
