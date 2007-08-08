@@ -289,35 +289,6 @@ class qformat_xml extends qformat_default {
     }
     
     /**
-     * import regexp type question
-     * @param array question question array from xml tree
-     * @return object question object
-     */
-    function import_regexp( $question ) {
-        // get common parts
-        $qo = $this->import_headers( $question );
-
-        // header parts particular to shortanswer
-        $qo->qtype = regexp;
-
-        // get usecase
-        $qo->usecase = $question['#']['usecase'][0]['#'];
-
-        // run through the answers
-        $answers = $question['#']['answer'];  
-        $a_count = 0;
-        foreach ($answers as $answer) {
-            $ans = $this->import_answer( $answer );
-            $qo->answer[$a_count] = $ans->answer;
-            $qo->fraction[$a_count] = $ans->fraction;
-            $qo->feedback[$a_count] = $ans->feedback;
-            ++$a_count;
-        }
-
-        return $qo;
-    }
-    
-    /**
      * import description type question
      * @param array question question array from xml tree
      * @return object question object
@@ -564,9 +535,6 @@ class qformat_xml extends qformat_default {
             elseif ($question_type=='shortanswer') {
                 $qo = $this->import_shortanswer( $question );
             }
-            //elseif ($question_type=='regexp') {
-            //    $qo = $this->import_regexp( $question );
-            //}
             elseif ($question_type=='numerical') {
                 $qo = $this->import_numerical( $question );
             }
@@ -589,9 +557,14 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_category( $question );
             }
             else {
-                $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
-                $this->error( $notsupported );
-                $qo = null;
+                // try for plugin support
+                // no default question, as the plugin can call 
+                // import_headers() itself if it wants to
+                if (!$qo=$this->try_importing_using_qtypes( $question )) {
+                    $notsupported = get_string( 'xmltypeunsupported','quiz',$question_type );
+                    $this->error( $notsupported );
+                    $qo = null;
+                }
             }
 
             // stick the result in the $questions array
@@ -629,9 +602,6 @@ class qformat_xml extends qformat_default {
         case SHORTANSWER:
             $name = 'shortanswer';
             break;
-        //case regexp:
-        //    $name = 'regexp';
-        //    break;
         case NUMERICAL:
             $name = 'numerical';
             break;
@@ -651,7 +621,7 @@ class qformat_xml extends qformat_default {
             $name = 'calculated';
             break;
         default:
-            $name = 'unknown';
+            $name = false;
         }
         return $name;
     }
@@ -792,10 +762,10 @@ class qformat_xml extends qformat_default {
         // add comment
         $expout .= "\n\n<!-- question: $question->id  -->\n";
 
-        // check question type - make sure valid
-        $question_type = $this->get_qtype( $question->qtype );
-        if ($question_type=='unknown') {
-            $expout .= "<!-- question: $question->name is not a supported type -->\n\n";
+        // check question type
+        if (!$question_type = $this->get_qtype( $question->qtype )) {
+            // must be a plugin then, so just accept the name supplied
+            $question_type = $question->qtype;
         }
 
         // add opening tag
@@ -896,18 +866,6 @@ class qformat_xml extends qformat_default {
                 $expout .= "    </answer>\n";
             }
             break;
-        //case regexp:
-        //$expout .= "    <usecase>{$question->options->usecase}</usecase>\n ";
-        //    foreach($question->options->answers as $answer) {
-        //        $percent = 100 * $answer->fraction;
-        //        $expout .= "    <answer fraction=\"$percent\">\n";
-        //        $expout .= $this->writetext( $answer->answer,3,false );
-        //        $expout .= "      <feedback>\n";
-        //        $expout .= $this->writetext( $answer->feedback,4,false );
-        //        $expout .= "      </feedback>\n";
-        //        $expout .= "    </answer>\n";
-        //    }
-        //    break;
         case NUMERICAL:
             foreach ($question->options->answers as $answer) {
                 $tolerance = $answer->tolerance;
@@ -1027,8 +985,10 @@ class qformat_xml extends qformat_default {
             }                      
             break;
         default:
-            // should not get here
-            error( 'Unsupported question type detected in strange circumstances!' );
+            // try support by optional plugin
+            if (!$expout .= $this->try_exporting_using_qtypes( $question->qtype, $question )) { 
+                error( "Unsupported question type $question->qtype" );
+            }
         }
 
         // close the question tag

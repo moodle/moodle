@@ -112,6 +112,33 @@ class qformat_default {
          $this->importerrors++;
     }
 
+    /** 
+     * Import for questiontype plugins
+     * Do not override.
+     * @param data mixed The segment of data containing the question
+     * @param question object processed (so far) by standard import code if appropriate
+     * @param extra mixed any additional format specific data that may be passed by the format
+     * @return object question object suitable for save_options() or false if cannot handle
+     */
+    function try_importing_using_qtypes( $data, $question=null, $extra=null ) {
+        global $QTYPES;
+
+        // work out what format we are using
+        $formatname = substr( get_class( $this ), strlen('qformat_'));
+        $methodname = "import_from_$formatname";
+
+        // loop through installed questiontypes checking for
+        // function to handle this question
+        foreach ($QTYPES as $qtype) {
+            if (method_exists( $qtype, $methodname)) {
+                if ($question = $qtype->$methodname( $data, $question, $this, $extra )) {
+                    return $question;
+                }
+            }
+        } 
+        return false;   
+    }
+
     /**
      * Perform any required pre-processing
      * @return boolean success
@@ -393,6 +420,32 @@ class qformat_default {
 /*******************
  * EXPORT FUNCTIONS
  *******************/
+
+    /** 
+     * Provide export functionality for plugin questiontypes
+     * Do not override
+     * @param name questiontype name
+     * @param question object data to export 
+     * @param extra mixed any addition format specific data needed
+     * @return string the data to append to export or false if error (or unhandled)
+     */
+    function try_exporting_using_qtypes( $name, $question, $extra=null ) {
+        global $QTYPES;
+
+        // work out the name of format in use
+        $formatname = substr( get_class( $this ), strlen( 'qformat_' ));
+        $methodname = "export_to_$formatname";
+
+        if (array_key_exists( $name, $QTYPES )) {
+            $qtype = $QTYPES[ $name ];
+            if (method_exists( $qtype, $methodname )) {
+                if ($data = $qtype->$methodname( $question, $this, $extra )) {
+                    return $data;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Return the files extension appropriate for this type
