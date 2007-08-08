@@ -877,7 +877,8 @@ class grade_category extends grade_object {
      */
     function get_name() {
         if (empty($this->parent)) {
-            return "Top course category"; //TODO: localize
+            $course = get_record('course', 'id', $this->courseid);
+            return format_string($course->fullname);
         } else {
             return $this->fullname;
         }
