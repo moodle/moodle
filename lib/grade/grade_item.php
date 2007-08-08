@@ -1193,7 +1193,7 @@ class grade_item extends grade_object {
             }
 
             if (!$activity = get_record($this->itemmodule, 'id', $this->iteminstance)) {
-                debuggin('Can not find activity');
+                debugging('Can not find activity');
                 return;
             }
 

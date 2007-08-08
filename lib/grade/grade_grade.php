@@ -156,13 +156,10 @@ class grade_grade extends grade_object {
 
     /**
      * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access.
-     * @param object $grade_item An optional grade_item given to avoid having to reload one from the DB
      * @return object grade_item.
      */
-    function load_grade_item($grade_item=null) {
-        if (!empty($grade_item) && get_class($grade_item) == 'grade_item') {
-            $this->grade_item = $grade_item;
-        } elseif (empty($this->grade_item) && !empty($this->itemid)) {
+    function load_grade_item() {
+        if (empty($this->grade_item) and !empty($this->itemid)) {
             $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
         return $this->grade_item;
@@ -170,15 +167,14 @@ class grade_grade extends grade_object {
 
     /**
      * Is grading object editable?
-     * @param object $grade_item An optional grade_item given to avoid having to reload one from the DB
      * @return boolean
      */
-    function is_editable($grade_item=null) {
-        if ($this->is_locked($grade_item)) {
+    function is_editable() {
+        if ($this->is_locked()) {
             return false;
         }
 
-        $grade_item = $this->load_grade_item($grade_item);
+        $grade_item = $this->load_grade_item();
 
         if ($grade_item->gradetype == GRADE_TYPE_NONE) {
             return false;
@@ -192,11 +188,10 @@ class grade_grade extends grade_object {
      * Internally any date in locked field (including future ones) means locked,
      * the date is stored for logging purposes only.
      *
-     * @param object $grade_item An optional grade_item given to avoid having to reload one from the DB
      * @return boolean true if locked, false if not
      */
-    function is_locked($grade_item=null) {
-        $this->load_grade_item($grade_item);
+    function is_locked() {
+        $this->load_grade_item();
 
         return !empty($this->locked) or $this->grade_item->is_locked();
     }
