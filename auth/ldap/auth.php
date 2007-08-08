@@ -342,9 +342,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function sync_users ($bulk_insert_records = 1000, $do_updates = true) {
 
-        global $CFG, $db;
-
-        $db->debug = true;
+        global $CFG;
 
         $textlib = textlib_get_instance();
 
@@ -373,10 +371,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             case 'mssql':
                 $temptable = '#'.$CFG->prefix . 'extuser'; /// MSSQL temp tables begin with #
                 $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, true); /// Drop temp table to avoid persistence problems later
+                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
                 echo "Creating temp table $temptable\n";
                 $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', true);
+                execute_sql('CREATE TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', false);
                 break;
             case 'oracle':
                 $temptable = $CFG->prefix . 'extuser';
@@ -742,7 +740,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // join and quote the whole lot
         $sql = $sql . "('" . implode("'),('", $users) . "')";
         print "\t+ " . count($users) . " users\n";
-        execute_sql($sql, true);
+        execute_sql($sql, false);
     }
 
 
