@@ -986,9 +986,10 @@ class qformat_xml extends qformat_default {
             break;
         default:
             // try support by optional plugin
-            if (!$expout .= $this->try_exporting_using_qtypes( $question->qtype, $question )) { 
+            if (!$data = $this->try_exporting_using_qtypes( $question->qtype, $question )) { 
                 error( "Unsupported question type $question->qtype" );
             }
+            $expout .= $data;
         }
 
         // close the question tag
