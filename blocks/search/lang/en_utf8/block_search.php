@@ -1,4 +1,4 @@
-<?
+<?php
 $string['blockname'] = 'Global Search';
 $string['configbuttonlabel'] = 'Button label';
 $string['configenablefileindexing'] = 'Enable file indexing';
