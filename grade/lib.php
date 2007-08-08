@@ -429,7 +429,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
     $navigation = build_navigation($navlinks);
 
     return $navigation;
-  }
+}
 
 /**
  * This class represents a complete tree of categories, grade_items and final grades,
@@ -547,7 +547,7 @@ class grade_tree {
               and $element['children'][$sortorder]['object']->is_outcome_item()) {
                 unset($element['children'][$sortorder]);
 
-            } else if ($element['children'][$sortorder]['type'] == 'category') {  
+            } else if ($element['children'][$sortorder]['type'] == 'category') {
                 grade_tree::no_outcomes($element['children'][$sortorder]);
             }
         }
@@ -822,12 +822,23 @@ class grade_tree {
         }
 
         if ($element['object']->is_hidden()) {
-            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $icon = 'show';
+            $tooltip = '';
+
+            if ($element['object']->hidden > 1) { // Change the icon and add a tooltip showing the date
+                $icon = 'hiddenuntil';
+                $tooltip = userdate($element['object']->hidden);
+            }
+
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
+                     . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/show.gif" class="iconsmall" alt="'.$strshow.'" title="'.$strshow.'"/></a>';
+            $action  = '<a href="'.$url.'"><img title="' . $tooltip . '" src="'.$CFG->pixpath.'/t/' . $icon . '.gif" class="iconsmall" alt="'
+                     . $strshow.'" title="'.$strshow.'"/></a>';
 
         } else {
-            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=hide&amp;sesskey='.sesskey()
+                     . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
             $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$strhide.'" title="'.$strhide.'"/></a>';
         }
@@ -850,20 +861,33 @@ class grade_tree {
         }
 
         if ($element['object']->is_locked()) {
+            $icon = 'unlock';
+            $tooltip = '';
+
+            if ($element['object']->locktime > 1) { // Change the icon and add a tooltip showing the date
+                $icon = 'locktime';
+                $tooltip = userdate($element['object']->locktime);
+            }
+
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {
                 return '';
             }
-            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=unlock&amp;sesskey='.sesskey()
+                     . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/unlock.gif" class="iconsmall" alt="'.$strunlock.'" title="'.$strunlock.'"/></a>';
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/' . $icon . '.gif" title="' . $tooltip
+                     . '" class="iconsmall" alt="'.$strunlock
+                     . '" title="'.$strunlock.'"/></a>';
 
         } else {
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:lock', $this->context)) {
                 return '';
             }
-            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey().'&amp;eid='.$element['eid'];
+            $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=lock&amp;sesskey='.sesskey()
+                     . '&amp;eid='.$element['eid'];
             $url     = $gpr->add_url_params($url);
-            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'.$strlock.'"/></a>';
+            $action  = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/lock.gif" class="iconsmall" alt="'.$strlock.'" title="'
+                     . $strlock.'"/></a>';
         }
         return $action;
     }

@@ -352,7 +352,7 @@ class grade_report_grader extends grade_report {
                        'calculations' => 't/calc.gif',
                        'locks' => 't/lock.gif',
                        'averages' => 't/sigma.gif',
-                       'nooutcomes' => 'i/outcomes.gif');
+                       'nooutcomes' => 't/outcomes.gif');
 
         $pref_name = 'grade_report_show' . $type;
 
@@ -634,9 +634,9 @@ class grade_report_grader extends grade_report {
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
                             $oldval = empty($gradeval) ? -1 : $gradeval;
                             if (empty($item->outcomeid)) {
-                                $nogradestr = $this->get_lang_string('nograde'); 
+                                $nogradestr = $this->get_lang_string('nograde');
                             } else {
-                                $nogradestr = $this->get_lang_string('nooutcome', 'grades'); 
+                                $nogradestr = $this->get_lang_string('nooutcome', 'grades');
                             }
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'
                                           .$item->id.'" value="'.$oldval.'"/>';

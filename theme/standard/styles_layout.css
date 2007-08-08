@@ -2150,6 +2150,11 @@ body#doc-contents ul {
 .grade-report-grader .quickfeedback {
   border: #000000 1px dashed;
 }
+
+.popupfeedback {
+  background-color: #FFFFFF;
+  border: #000000 1px dashed;
+}
 /* scales edit */
 
 .grade-edit-scale .buttons {
