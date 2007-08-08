@@ -32,6 +32,8 @@ class edit_category_form extends moodleform {
 
         if (!empty($CFG->enableoutcomes)) {
             $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
+            $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
+                              false, true, false, get_string("aggregateoutcomeshelp", 'grades')));
         }
 
         $options = array();
@@ -40,9 +42,13 @@ class edit_category_form extends moodleform {
             $options[$i] = $i;
         }
         $mform->addElement('select', 'keephigh', get_string('keephigh', 'grades'), $options);
+        $mform->setHelpButton('keephigh', array(false, get_string('keephigh', 'grades'),
+                          false, true, false, get_string("keephighhelp", 'grades')));
         $mform->disabledIf('keephigh', 'droplow', 'noteq', 0);
 
         $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
+        $mform->setHelpButton('droplow', array(false, get_string('droplow', 'grades'),
+                          false, true, false, get_string("droplowhelp", 'grades')));
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
 
         // user preferences
