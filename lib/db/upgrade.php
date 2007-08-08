@@ -1623,6 +1623,17 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007080800) { /// Normalize course->shortname MDL-10026
+
+    /// Changing precision of field shortname on table course to (100)
+        $table = new XMLDBTable('course');
+        $field = new XMLDBField('shortname');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null, 'fullname');
+
+    /// Launch change of precision for field shortname
+        $result = $result && change_field_precision($table, $field);
+    }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
