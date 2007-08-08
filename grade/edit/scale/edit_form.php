@@ -15,10 +15,13 @@ class edit_scale_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         $mform->addElement('advcheckbox', 'standard', get_string('scalestandard'));
+        $mform->setHelpButton('standard', array(false, get_string('scalestandard'),
+                false, true, false, get_string('scalestandardhelp', 'grades')));
 
         $mform->addElement('static', 'activities', get_string('activities'));
 
         $mform->addElement('textarea', 'scale', get_string('scale'), array('cols'=>50, 'rows'=>2));
+        $mform->setHelpButton('scale', array('scales', get_string('scale')));
         $mform->addRule('scale', get_string('required'), 'required', null, 'client');
         $mform->setType('scale', PARAM_TEXT);
 

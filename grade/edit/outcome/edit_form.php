@@ -19,10 +19,14 @@ class edit_outcome_form extends moodleform {
         $mform->setType('shortname', PARAM_NOTAGS);
 
         $mform->addElement('advcheckbox', 'standard', get_string('outcomestandard', 'grades'));
+        $mform->setHelpButton('standard', array(false, get_string('outcomestandard', 'grades'),
+                false, true, false, get_string('outcomestandardhelp', 'grades')));
 
         $options = array();
 
         $mform->addElement('select', 'scaleid', get_string('scale'), $options);
+        $mform->setHelpButton('scaleid', array(false, get_string('scale'),
+                false, true, false, get_string('scaleidhelp', 'grades', get_string('outcome', 'grades'))));
         $mform->addRule('scaleid', get_string('required'), 'required');
 
         $mform->addElement('htmleditor', 'description', get_string('description'), array('cols'=>80, 'rows'=>20));
