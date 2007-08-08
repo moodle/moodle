@@ -70,7 +70,6 @@
         case "grade":
             $course = get_record('course', 'id', required_param('id', PARAM_INT));
             if (!empty($course->showgrades)) {
-                require_once $CFG->libdir.'/gradelib.php';
                 require_once $CFG->dirroot.'/grade/lib.php';
                 require_once $CFG->dirroot.'/grade/report/user/lib.php';
                 $context     = get_context_instance(CONTEXT_COURSE, $id);
