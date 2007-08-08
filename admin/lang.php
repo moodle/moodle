@@ -583,6 +583,9 @@ function lang_fix_value_before_save($value='') {
     if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
         $value = str_replace("\\","",$value);           // Delete all slashes
     }
+    if (ini_get_bool('magic_quotes_sybase')) {          // Unescape escaped sybase quotes
+        $value = str_replace("''", "'", $value);
+    }
     $value = str_replace("'", "\\'", $value);           // Add slashes for '
     $value = str_replace('"', "\\\"", $value);          // Add slashes for "
     $value = str_replace("%","%%",$value);              // Escape % characters
