@@ -2,10 +2,6 @@
 
 require_once($CFG->libdir.'/pagelib.php');
 require_once('lib.php');
-require_once($CFG->dirroot.'/lib/weblib.php');
-if (!empty($THEME->customcorners)) {
-    require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-}
 
 define('PAGE_TAG_INDEX',   'tag-index');
 

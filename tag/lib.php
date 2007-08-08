@@ -698,7 +698,7 @@ function related_tags($tag_name_or_id, $limitnum=10) {
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     //gets the manually added related tags
-    $manual_related_tags = get_item_tags('tag',$tag_id);
+    $manual_related_tags = get_item_tags('tag',$tag_id, 'id, name, rawname, tagtype, flag');
     if ($manual_related_tags == false) $manual_related_tags = array();
 
     //gets the correlated tags
@@ -729,7 +729,7 @@ function correlated_tags($tag_name_or_id) {
 
     $tags_id_csv_with_apos = stripcslashes($tag_correlation->correlatedtags);
 
-    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', 'id, name, rawname, tagtype');
+    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', 'id, name, rawname, tagtype, flag');
 }
 
 /**
@@ -1087,7 +1087,7 @@ function tag_cron(){
     }
     
 }
-/*-------------------- Printçing functions -------------------- */
+/*-------------------- Printing functions -------------------- */
 
 /**
  * Prints a box that contains the management links of a tag
