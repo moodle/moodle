@@ -348,6 +348,13 @@ class qformat_webct extends qformat_default {
                                 unset($question->answer); //not used in calculated question
                                 break;
                             case MATCH:
+                                // MDL-10680:
+                                // switch subquestions and subanswers
+                                foreach ($question->subquestions as $id=>$subquestion) {
+                                    $temp = $question->subquestions[$id];
+                                    $question->subquestions[$id] = $question->subanswers[$id];
+                                    $question->subanswers[$id] = $temp; 
+                                }
                                 if (count($question->answer) < 3){
                                     // add a dummy missing question
                                     $question->name = 'Dummy question added '.$question->name ;
