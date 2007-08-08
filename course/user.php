@@ -70,8 +70,25 @@
         case "grade":
             $course = get_record('course', 'id', required_param('id', PARAM_INT));
             if (!empty($course->showgrades)) {
-                require_once($CFG->dirroot.'/grade/lib.php');
-                print_student_grade($user, $course);
+                require_once $CFG->libdir.'/gradelib.php';
+                require_once $CFG->dirroot.'/grade/lib.php';
+                require_once $CFG->dirroot.'/grade/report/user/lib.php';
+                $context     = get_context_instance(CONTEXT_COURSE, $id);
+                /// return tracking object
+                $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$id, 'userid'=>$user->id));
+                // Create a report instance
+                $report = new grade_report_user($id, $gpr, $context, $user->id);
+
+                $gradetotal = 0;
+                $gradesum = 0;
+
+                // print the page
+                print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+
+                if ($report->fill_table()) {
+                    echo $report->print_table(true);
+                }
+                // print_student_grade($user, $course);
             }
             break;
       
