@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
 $string['adminseesall'] = 'Admins See All';
