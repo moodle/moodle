@@ -80,8 +80,14 @@ class grade_report_grader extends grade_report {
         } else {
             $this->collapsed = array();
         }
+        if (empty($CFG->enableoutcomes)) {
+            $nooutcomes = false;
+        } else {
+            $nooutcomes = get_user_preferences('grade_report_shownooutcomes');
+        }
+
         // Grab the grade_tree for this course
-        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'), $this->collapsed);
+        $this->gtree = new grade_tree($this->courseid, true, $this->get_pref('aggregationposition'), $this->collapsed, $nooutcomes);
 
         $this->sortitemid = $sortitemid;
 
@@ -306,7 +312,8 @@ class grade_report_grader extends grade_report {
      * @return string HTML code
      */
     function get_toggles_html() {
-        global $USER;
+        global $CFG, $USER;
+
         $html = '<div id="grade-report-toggles">';
         if ($USER->gradeediting[$this->courseid]) {
             if (has_capability('moodle/grade:manage', $this->context) or has_capability('moodle/grade:hide', $this->context)) {
@@ -325,6 +332,9 @@ class grade_report_grader extends grade_report {
         $html .= $this->print_toggle('averages', true);
         $html .= $this->print_toggle('groups', true);
         $html .= $this->print_toggle('ranges', true);
+        if (!empty($CFG->enableoutcomes)) {
+            $html .= $this->print_toggle('nooutcomes', true);
+        }
         $html .= '</div>';
         return $html;
     }
@@ -338,13 +348,19 @@ class grade_report_grader extends grade_report {
     function print_toggle($type, $return=false) {
         global $CFG;
 
-        $icons = array('eyecons' => 'hide',
-                       'calculations' => 'calc',
-                       'locks' => 'lock',
-                       'averages' => 'sigma');
+        $icons = array('eyecons' => 't/hide.gif',
+                       'calculations' => 't/calc.gif',
+                       'locks' => 't/lock.gif',
+                       'averages' => 't/sigma.gif',
+                       'nooutcomes' => 'i/outcomes.gif');
 
         $pref_name = 'grade_report_show' . $type;
-        $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
+
+        if (array_key_exists($pref_name, $CFG)) {
+            $show_pref = get_user_preferences($pref_name, $CFG->$pref_name);
+        } else {
+            $show_pref = get_user_preferences($pref_name);
+        }
 
         $strshow = $this->get_lang_string('show' . $type, 'grades');
         $strhide = $this->get_lang_string('hide' . $type, 'grades');
@@ -360,12 +376,12 @@ class grade_report_grader extends grade_report {
         if (array_key_exists($type, $icons)) {
             $image_name = $icons[$type];
         } else {
-            $image_name = $type;
+            $image_name = "t/$type.gif";
         }
 
         $string = ${'str' . $show_hide};
 
-        $img = '<img src="'.$CFG->pixpath.'/t/'.$image_name.'.gif" class="iconsmall" alt="'
+        $img = '<img src="'.$CFG->pixpath.'/'.$image_name.'" class="iconsmall" alt="'
                       .$string.'" title="'.$string.'" />'. "\n";
 
         $retval = '<div class="gradertoggle">' . $img . '<a href="' . $this->baseurl . "&amp;toggle=$toggle_action&amp;toggle_type=$type\">"

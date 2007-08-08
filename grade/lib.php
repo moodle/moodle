@@ -470,7 +470,7 @@ class grade_tree {
      * @param boolean $category_grade_last category grade item is the last child
      * @param array $collapsed array of collapsed categories
      */
-    function grade_tree($courseid, $fillers=true, $category_grade_last=false, $collapsed=null) {
+    function grade_tree($courseid, $fillers=true, $category_grade_last=false, $collapsed=null, $nooutcomes=false) {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
@@ -484,6 +484,11 @@ class grade_tree {
         // collapse the categories if requested
         if (!empty($collapsed)) {
             grade_tree::category_collapse($this->top_element, $collapsed);
+        }
+
+        // no otucomes if requested
+        if (!empty($nooutcomes)) {
+            grade_tree::no_outcomes($this->top_element);
         }
 
         // move category item to last position in category
@@ -523,6 +528,27 @@ class grade_tree {
         } else {
             foreach ($element['children'] as $sortorder=>$child) {
                 grade_tree::category_collapse($element['children'][$sortorder], $collapsed);
+            }
+        }
+    }
+
+    /**
+     * Static recursive helper - removes all outcomes
+     * @static
+     * @param array $element The seed of the recursion
+     * @return void
+     */
+    function no_outcomes(&$element) {
+        if ($element['type'] != 'category') {
+            return;
+        }
+        foreach ($element['children'] as $sortorder=>$child) {
+            if ($element['children'][$sortorder]['type'] == 'item'
+              and $element['children'][$sortorder]['object']->is_outcome_item()) {
+                unset($element['children'][$sortorder]);
+
+            } else if ($element['children'][$sortorder]['type'] == 'category') {  
+                grade_tree::no_outcomes($element['children'][$sortorder]);
             }
         }
     }
