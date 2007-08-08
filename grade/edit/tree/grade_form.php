@@ -20,15 +20,17 @@ class edit_grade_form extends moodleform {
         if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
             // numeric grade
             $mform->addElement('text', 'finalgrade', get_string('finalgrade', 'grades'));
+            $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
+                    false, true, false, get_string('finalgradehelp', 'grades')));
 
         } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
             // scale grade
             $scaleopt = array();
 
             if (empty($grade_item->outcomeid)) {
-                $scaleopt[-1] = get_string('nograde'); 
+                $scaleopt[-1] = get_string('nograde');
             } else {
-                $scaleopt[-1] = get_string('nooutcome', 'grades'); 
+                $scaleopt[-1] = get_string('nooutcome', 'grades');
             }
 
             $i = 1;
@@ -40,25 +42,37 @@ class edit_grade_form extends moodleform {
             }
 
             $mform->addElement('select', 'finalgrade', get_string('finalgrade', 'grades'), $scaleopt);
+            $mform->setHelpButton('finalgrade', array(false, get_string('finalgrade', 'grades'),
+                    false, true, false, get_string('finalgradehelp', 'grades')));
         }
 
         $mform->addElement('advcheckbox', 'overridden', get_string('overridden', 'grades'));
+        $mform->setHelpButton('overridden', array(false, get_string('overridden', 'grades'),
+                false, true, false, get_string('overriddenhelp', 'grades')));
         $mform->addElement('advcheckbox', 'excluded', get_string('excluded', 'grades'));
+        $mform->setHelpButton('excluded', array(false, get_string('excluded', 'grades'),
+                false, true, false, get_string('excludedhelp', 'grades')));
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+        $mform->setHelpButton('hidden', array('hidden', get_string('hidden', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
+        $mform->setHelpButton('hiddenuntil', array('hiddenuntil', get_string('hiddenuntil', 'grades'), 'grade'));
         $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
 
         /// locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
+        $mform->setHelpButton('locked', array('locked', get_string('locked', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
+        $mform->setHelpButton('locktime', array('locktime', get_string('locktime', 'grades'), 'grade'));
         $mform->disabledIf('locktime', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         // Feedback format is automatically converted to html if user has enabled editor
         $mform->addElement('htmleditor', 'feedback', get_string('feedback', 'grades'),
             array('rows'=>'15', 'course'=>$COURSE->id, 'cols'=>'45'));
+        $mform->setHelpButton('feedback', array(false, get_string('feedback', 'grades'),
+                false, true, false, get_string('feedbackhelp', 'grades')));
         $mform->setType('text', PARAM_RAW); // to be cleaned before display, no XSS risk
         $mform->addElement('format', 'feedbackformat', get_string('format'));
         $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));

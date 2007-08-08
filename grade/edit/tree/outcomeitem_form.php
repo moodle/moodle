@@ -15,8 +15,12 @@ class edit_outcomeitem_form extends moodleform {
         $mform->addRule('itemname', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('text', 'iteminfo', get_string('iteminfo', 'grades'));
+        $mform->setHelpButton('iteminfo', array(false, get_string('iteminfo', 'grades'),
+                false, true, false, get_string('iteminfohelp', 'grades')));
 
         $mform->addElement('text', 'idnumber', get_string('idnumber'));
+        $mform->setHelpButton('idnumber', array(false, get_string('idnumber'),
+                false, true, false, get_string('idnumberhelp', 'grades')));
 
         // allow setting of outcomes on module items too
         $options = array();
@@ -26,6 +30,8 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
         $mform->addElement('select', 'outcomeid', get_string('outcome', 'grades'), $options);
+        $mform->setHelpButton('outcomeid', array(false, get_string('outcomeid', 'grades'),
+                false, true, false, get_string('outcomeidhelp', 'grades')));
         $mform->addRule('outcomeid', get_string('required'), 'required');
 
         $options = array(0=>get_string('none'));
@@ -36,6 +42,8 @@ class edit_outcomeitem_form extends moodleform {
             }
         }
         $mform->addElement('select', 'cmid', get_string('linkedactivity', 'grades'), $options);
+        $mform->setHelpButton('cmid', array(false, get_string('linkedactivity', 'grades'),
+                false, true, false, get_string('linkedactivityhelp', 'grades')));
         $mform->setDefault('cmid', 0);
 
         //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
@@ -46,12 +54,16 @@ class edit_outcomeitem_form extends moodleform {
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
+        $mform->setHelpButton('hidden', array('hidden', get_string('hidden', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
+        $mform->setHelpButton('hiddenuntil', array('hiddenuntil', get_string('hiddenuntil', 'grades'), 'grade'));
         $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
 
         //locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
+        $mform->setHelpButton('locked', array('locked', get_string('locked', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'locktime', get_string('locktime', 'grades'), array('optional'=>true));
+        $mform->setHelpButton('locktime', array('locktime', get_string('locktime', 'grades'), 'grade'));
 
 /// hidden params
         $mform->addElement('hidden', 'id', 0);
