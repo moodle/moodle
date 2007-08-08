@@ -435,7 +435,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     }
 
-    if (has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $course))) {
+    if (has_capability('mod/quiz:grade', get_context_instance(CONTEXT_MODULE, $activity->instance))) {
         $grades = "(" .  $activity->content->sumgrades . " / " . $activity->content->maxgrade . ") ";
         echo "<a href=\"$CFG->wwwroot/mod/quiz/review.php?q="
              . $activity->instance . "&amp;attempt="
