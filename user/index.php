@@ -625,7 +625,9 @@
     } else if ($matchcount > 0 && $perpage < $matchcount) {
         echo '<div id="showall"><a href="'.$perpageurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>';
     }
-
+    
+    echo '</div>';
+    
     print_footer($course);
 
 
