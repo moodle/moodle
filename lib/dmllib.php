@@ -2303,6 +2303,11 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
 
+        /// Oracle CLOBs doesn't like quoted strings (are inserted via prepared statemets)
+            if ($CFG->dbfamily == 'oracle') {
+                $value = stripslashes_safe($value);
+            }
+
             if (!$db->UpdateClob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
                 $statement = "UpdateClob('$CFG->prefix$table', '$key', '" . substr($value, 0, 100) . "...', '$sqlcondition')";
@@ -2319,6 +2324,11 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
         foreach ($blobs as $key => $value) {
 
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
+
+        /// Oracle BLOBs doesn't like quoted strings (are inserted via prepared statemets)
+            if ($CFG->dbfamily == 'oracle') {
+                $value = stripslashes_safe($value);
+            }
 
             if(!$db->UpdateBlob($CFG->prefix.$table, $key, $value, $sqlcondition)) {
                 $status = false;
