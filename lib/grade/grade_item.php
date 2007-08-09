@@ -1115,7 +1115,7 @@ class grade_item extends grade_object {
                 return array();
             }
 
-            if (!empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
+            if (empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
                 $outcomes_sql = "";
             } else {
                 $outcomes_sql = "AND gi.outcomeid IS NULL";
