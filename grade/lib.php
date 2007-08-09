@@ -864,9 +864,9 @@ class grade_tree {
             $icon = 'unlock';
             $tooltip = '';
 
-            if ($element['object']->locktime > 1) { // Change the icon and add a tooltip showing the date
+            if ($element['type'] != 'category' and $element['object']->get_locktime() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'locktime';
-                $tooltip = userdate($element['object']->locktime);
+                $tooltip = userdate($element['object']->get_locktime());
             }
 
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {

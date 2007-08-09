@@ -40,6 +40,8 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
         $item->hiddenuntil = 0;
     }
 
+    $item->locked = !empty($item->locked);
+
     // Get Item preferences
     $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $id);
     $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $id);
@@ -57,6 +59,11 @@ if ($data = $mform->get_data(false)) {
     $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;
     unset($data->hidden);
     unset($data->hiddenuntil);
+
+    $locked   = empty($data->locked) ? 0: $data->locked;
+    $locktime = empty($data->locktime) ? 0: $data->locktime;
+    unset($data->locked);
+    unset($data->locktime);
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);
@@ -77,6 +84,9 @@ if ($data = $mform->get_data(false)) {
     } else {
         $grade_item->set_hidden(1);
     }
+
+    $grade_item->set_locktime($locktime); // locktime first - it might be removed when unlocking
+    $grade_item->set_locked($locked, false, true);
 
     // Handle user preferences
     if (isset($data->pref_gradedisplaytype)) {

@@ -95,6 +95,10 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
         $grade->hiddenuntil = 0;
     }
 
+    if ($grade_item->is_locked()) {
+        $grade->locked = 1;
+    }
+
     $mform->set_data($grade);
 
 } else {
@@ -109,14 +113,22 @@ if ($mform->is_cancelled()) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
     // fix no grade for scales
-    if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
+    if (!isset($data->finalgrade)) {
+        $data->finalgrade = $old_grade_grade->finalgrade;
+
+    } else if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
         $data->finalgrade = NULL;
     }
 
+    if (!isset($data->feedback)) {
+        $data->feedback       = $old_grade_grade->feedback;
+        $data->feedbackformat = $old_grade_grade->feedbackformat;
+    }
     // update final grade or feedback
     $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);
 
     $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
+    $grade_grade->grade_item =& $grade_item; // no db fetching
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
         if (empty($data->hidden)) {
@@ -130,33 +142,43 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:override', $context)) {
+    if (isset($data->locked) and !$grade_item->is_locked()) {
+        if (($old_grade_grade->locked or $old_grade_grade->locktime)
+          and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context))) {
+            //ignore data
+
+        } else if ((!$old_grade_grade->locked and !$old_grade_grade->locktime)
+          and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context))) {
+            //ignore data
+
+        } else {
+            $grade_grade->set_locktime($data->locktime); //set_lock may reset locktime
+            $grade_grade->set_locked($data->locked, false, true);
+        }
+    }
+
+    if (isset($data->excluded) and has_capability('moodle/grade:manage', $context)) {
+        $grade_grade->set_excluded($data->excluded);
+    }
+
+    if (isset($data->overridden) and has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:override', $context)) {
         // ignore overridden flag when changing final grade
         if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
-            if ($grade_grade->set_overridden($data->overridden) and empty($data->overridden)) {
-                $grade_item->force_regrading(); // force regrading only when clearing the flag
-            }
+            $grade_grade->set_overridden($data->overridden);
         }
     }
 
-    if (has_capability('moodle/grade:manage', $context)) {
-        if ($grade_grade->set_excluded($data->excluded)) {
-            $grade_item->force_regrading();
-        }
+    // detect cases when we need to do full regrading
+    if ($old_grade_grade->excluded != $grade_grade->excluded) {
+        $parent = $grade_item->get_parent_category();
+        $parent->force_regrading();
+
+    } else if ($old_grade_grade->overridden != $grade_grade->overridden and empty($grade_grade->overridden)) { // only when unoverriding
+        $grade_item->force_regrading();
+
+    } else if ($old_grade_grade->locktime != $grade_grade->locktime) {
+        $grade_item->force_regrading();
     }
-
-    if (($old_grade_grade->locked or $old_grade_grade->locktime)
-      and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:unlock', $context))) {
-        //ignore data
-
-    } else if ((!$old_grade_grade->locked and !$old_grade_grade->locktime)
-      and (!has_capability('moodle/grade:manage', $context) and !has_capability('moodle/grade:lock', $context))) {
-        //ignore data
-
-    } else {
-        $grade_grade->set_locked($data->locked);
-        $grade_grade->set_locktime($data->locktime);
-      }
 
     redirect($returnurl);
 }

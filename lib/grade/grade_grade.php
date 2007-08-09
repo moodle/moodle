@@ -159,9 +159,20 @@ class grade_grade extends grade_object {
      * @return object grade_item.
      */
     function load_grade_item() {
-        if (empty($this->grade_item) and !empty($this->itemid)) {
+        if (empty($this->itemid)) {
+            debugging('Missing itemid');
+            $this->grade_item = null;
+            return null;
+        }
+
+        if (empty($this->grade_item)) {
+            $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
+
+        } else if ($this->grade_item->id != $this->itemid) {
+            debugging('Itemid mismatch');
             $this->grade_item = grade_item::fetch(array('id'=>$this->itemid));
         }
+
         return $this->grade_item;
     }
 
@@ -254,17 +265,14 @@ class grade_grade extends grade_object {
      * Lock/unlock this grade.
      *
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $cascade ignored param
      * @param boolean $refresh refresh grades when unlocking
      * @return boolean true if sucessful, false if can not set new lock state for grade
      */
-    function set_locked($lockedstate, $refresh=true) {
+    function set_locked($lockedstate, $cascade=false, $refresh=true) {
         $this->load_grade_item();
 
         if ($lockedstate) {
-            if (!empty($this->locked)) {
-                return true; // already locked
-            }
-
             if ($this->grade_item->needsupdate) {
                 //can not lock grade if final not calculated!
                 return false;
@@ -276,17 +284,13 @@ class grade_grade extends grade_object {
             return true;
 
         } else {
-            if (empty($this->locked)) {
-                return true; // not locked
-            }
-
-            if ($this->grade_item->is_locked()) {
-                return false;
+            if (!empty($this->locked) and $this->locktime < time()) {
+                //we have to reset locktime or else it would lock up again
+                $this->locktime = 0;
             }
 
             // remove the locked flag
             $this->locked = 0;
-
             $this->update();
 
             if ($refresh) {
@@ -298,42 +302,79 @@ class grade_grade extends grade_object {
         }
     }
 
+    /**
+     * Lock the grade if needed - make sure this is called only when final grade is valid
+     */
+    function check_locktime() {
+        if (!empty($this->locked)) {
+            return; // already locked - do not use is_locked() because we do not want the locking status of grade_item here
+        }
+
+        if ($this->locktime and $this->locktime < time()) {
+            $this->locked = time();
+            $this->update('locktime');
+        }
+    }
+
+
+    /**
+     * Lock the grade if needed - make sure this is called only when final grades are valid
+     * @param int $courseid
+     * @param array $items array of all grade item ids (speedup only)
+     * @return void
+     */
+    function check_locktime_all($courseid, $items=null) {
+        global $CFG;
+
+        if (!$items) {
+            if (!$items = get_records('grade_items', 'courseid', $courseid, '', 'id')) {
+                return; // no items?
+            }
+            $items = array_keys($items);
+        }
+
+        $items_sql = implode(',', $items);
+
+        $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds
+
+        if ($rs = get_recordset_select('grade_grades', "itemid IN ($items_sql) AND locked = 0 AND locktime > 0 AND locktime < $now")) {
+            if ($rs->RecordCount() > 0) {
+                while ($grade = rs_fetch_next_record($rs)) {
+                    $grade_grade = new grade_grade($grade, false);
+                    $grade_grade->locked = time();
+                    $grade_grade->update('locktime');
+                }
+            }
+            rs_close($rs);
+        }
+    }
 
     /**
      * Set the locktime for this grade.
      *
      * @param int $locktime timestamp for lock to activate
-     * @return boolean true if sucessful, false if can not set new lock state for grade
+     * @return void
      */
     function set_locktime($locktime) {
+        $this->locktime = $locktime;
+        $this->update();
+    }
 
-        if ($locktime) {
-            // if current locktime is before, no need to reset
+    /**
+     * Set the locktime for this grade.
+     *
+     * @return int $locktime timestamp for lock to activate
+     */
+    function get_locktime() {
+        $this->load_grade_item();
 
-            if ($this->locktime && $this->locktime <= $locktime) {
-                return true;
-            }
+        $item_locktime = $this->grade_item->get_locktime();
 
-            /*
-            if ($this->grade_item->needsupdate) {
-                //can not lock grade if final not calculated!
-                return false;
-            }
-            */
-
-            $this->locktime = $locktime;
-            $this->update();
-
-            return true;
+        if (empty($this->locktime) or ($item_locktime and $item_locktime < $this->locktime)) {
+            return $item_locktime;
 
         } else {
-
-            // remove the locktime timestamp
-            $this->locktime = 0;
-
-            $this->update();
-
-            return true;
+            return $this->locktime;
         }
     }
 

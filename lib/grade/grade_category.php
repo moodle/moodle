@@ -1009,28 +1009,32 @@ class grade_category extends grade_object {
      * Sets the grade_item's locked variable and updates the grade_item.
      * Method named after grade_item::set_locked().
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $cascade lock/unlock child objects too
      * @param boolean $refresh refresh grades when unlocking
      * @return boolean success if category locked (not all children mayb be locked though)
      */
-    function set_locked($lockedstate, $refresh=true) {
+    function set_locked($lockedstate, $cascade=false, $refresh=true) {
         $this->load_grade_item();
 
-        $result = $this->grade_item->set_locked($lockedstate, true);
-        if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-            foreach($children as $child) {
-                $child->set_locked($lockedstate, false);
-                if (empty($lockedstate) and $refresh) {
-                    //refresh when unlocking
-                    $child->refresh_grades();
+        $result = $this->grade_item->set_locked($lockedstate, $cascade, true);
+
+        if ($cascade) {
+            //process all children - items and categories
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+                foreach($children as $child) {
+                    $child->set_locked($lockedstate, true, false);
+                    if (empty($lockedstate) and $refresh) {
+                        //refresh when unlocking
+                        $child->refresh_grades();
+                    }
+                }
+            }
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+                foreach($children as $child) {
+                    $child->set_locked($lockedstate, true, true);
                 }
             }
         }
-        if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-            foreach($children as $child) {
-                $child->set_locked($lockedstate, true);
-            }
-        }
-
 
         return $result;
     }

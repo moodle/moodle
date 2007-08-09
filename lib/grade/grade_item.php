@@ -266,6 +266,7 @@ class grade_item extends grade_object {
         $outcomeiddiff   = $db_item->outcomeid   != $this->outcomeid;
         $multfactordiff  = $db_item->multfactor  != $this->multfactor;
         $plusfactordiff  = $db_item->plusfactor  != $this->plusfactor;
+        $locktimediff    = $db_item->locktime    != $this->locktime;
         $acoefdiff       = $db_item->aggregationcoef != $this->aggregationcoef;
 
         $needsupdatediff = !$db_item->needsupdate &&  $this->needsupdate;    // force regrading only if setting the flag first time
@@ -273,7 +274,7 @@ class grade_item extends grade_object {
 
         return ($calculationdiff || $categorydiff || $gradetypediff || $grademaxdiff || $grademindiff || $scaleiddiff
              || $outcomeiddiff || $multfactordiff || $plusfactordiff || $needsupdatediff
-             || $lockeddiff || $acoefdiff);
+             || $lockeddiff || $acoefdiff || $locktimediff);
     }
 
     /**
@@ -425,61 +426,46 @@ class grade_item extends grade_object {
     /**
      * Locks or unlocks this grade_item and (optionally) all its associated final grades.
      * @param int $locked 0, 1 or a timestamp int(10) after which date the item will be locked.
+     * @param boolean $cascade lock/unlock child objects too
      * @param boolean $refresh refresh grades when unlocking
      * @return boolean true if grade_item all grades updated, false if at least one update fails
      */
-    function set_locked($lockedstate, $refresh=true) {
+    function set_locked($lockedstate, $cascade=false, $refresh=true) {
         if ($lockedstate) {
         /// setting lock
-            if (!empty($this->locked)) {
-                return true; // already locked
-            }
-
             if ($this->needsupdate) {
-                return false; // can not lock grade without first calculating final grade
+                return false; // can not lock grade without first having final grade
             }
 
             $this->locked = time();
             $this->update();
 
-            // this could be improved with direct SQL update
-            $result = true;
-            $grades = $this->get_final();
-            foreach($grades as $g) {
-                $grade = new grade_grade($g, false);
-                $grade->grade_item =& $this;
-                if (!$grade->set_locked(1, false)) {
-                    $result = false;
+            if ($cascade) {
+                $grades = $this->get_final();
+                foreach($grades as $g) {
+                    $grade = new grade_grade($g, false);
+                    $grade->grade_item =& $this;
+                    $grade->set_locked(1, null, false);
                 }
             }
 
-            return $result;
+            return true;
 
         } else {
         /// removing lock
-            if (empty($this->locked)) {
-                return true; // not locked
-            }
-
-            if (!empty($this->locktime) and $this->locktime < time()) {
-                return false; // can not unlock grade item that should be already locked
+            if (!empty($this->locked) and $this->locktime < time()) {
+                //we have to reset locktime or else it would lock up again
+                $this->locktime = 0;
             }
 
             $this->locked = 0;
             $this->update();
 
-            // this could be improved with direct SQL update
-            $result = true;
-            if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
-                foreach($grades as $grade) {
-                    $grade->grade_item =& $this;
-
-                    if (!empty($grade->locktime) and $grade->locktime < time()) {
-                        $result = false; // can not unlock grade that should be already locked
-                    }
-
-                    if (!$grade->set_locked(0, false)) {
-                        $result = false;
+            if ($cascade) {
+                if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
+                    foreach($grades as $grade) {
+                        $grade->grade_item =& $this;
+                        $grade->set_locked(0, null, false);
                     }
                 }
             }
@@ -489,47 +475,64 @@ class grade_item extends grade_object {
                 $this->refresh_grades();
             }
 
-            return $result;
-
+            return true;
         }
     }
 
     /**
-     * Set the locktime for this grade.
+     * Lock the grade if needed - make sure this is called only when final grades are valid
+     */
+    function check_locktime() {
+        if (!empty($this->locked)) {
+            return; // already locked
+        }
+
+        if ($this->locktime and $this->locktime < time()) {
+            $this->locked = time();
+            $this->update('locktime');
+        }
+    }
+
+    /**
+     * Lock all grade items if needed - make sure this is called only when final grades are valid
+     * @static
+     * @param int $courseid
+     * @return void
+     */
+    function check_locktime_all($courseid) {
+        global $CFG;
+
+        $now = time(); // no need to round it here, executed from cron only
+        $sql = "SELECT * FROM {$CFG->prefix}grade_items
+                 WHERE courseid=$courseid AND locked = 0 AND locktime > 0 AND locktime < $now";
+
+        if ($items = get_records_sql($sql)) {
+            foreach ($items as $item) {
+                $grade_item = new grade_grade($item, false);
+                $grade_item->locked = time();
+                $grade_item->update('locktime');
+            }
+        }
+    }
+
+    /**
+     * Set the locktime for this grade item.
      *
      * @param int $locktime timestamp for lock to activate
-     * @return boolean true if sucessful, false if can not set new lock state for grade
+     * @return void
      */
     function set_locktime($locktime) {
+        $this->locktime = $locktime;
+        $this->update();
+    }
 
-        if ($locktime) {
-            // if current locktime is before, no need to reset
-
-            if ($this->locktime && $this->locktime <= $locktime) {
-                return true;
-            }
-
-            /*
-            if ($this->grade_item->needsupdate) {
-                //can not lock grade if final not calculated!
-                return false;
-            }
-            */
-
-            $this->locktime = $locktime;
-            $this->update();
-
-            return true;
-
-        } else {
-
-            // remove the locktime timestamp
-            $this->locktime = 0;
-
-            $this->update();
-
-            return true;
-        }
+    /**
+     * Set the locktime for this grade item.
+     *
+     * @return int $locktime timestamp for lock to activate
+     */
+    function get_locktime() {
+        return $this->locktime;
     }
 
     /**
@@ -579,11 +582,6 @@ class grade_item extends grade_object {
         $this->needsupdate = 0;
         //do not use $this->update() because we do not want this logged in grade_item_history
         set_field('grade_items', 'needsupdate', 0, 'id', $this->id);
-
-        if (!empty($this->locktime) and empty($this->locked) and $this->locktime < time()) {
-            // time to lock this grade_item
-            $this->set_locked(true);
-        }
     }
 
     /**
@@ -640,25 +638,19 @@ class grade_item extends grade_object {
         if ($rs) {
             if ($rs->RecordCount() > 0) {
                 while ($grade_record = rs_fetch_next_record($rs)) {
+                    $grade = new grade_grade($grade_record, false);
+
                     if (!empty($grade_record->locked) or !empty($grade_record->overridden)) {
                         // this grade is locked - final grade must be ok
                         continue;
                     }
 
-                    $grade = new grade_grade($grade_record, false);
                     $grade->finalgrade = $this->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
                     if ($grade_record->finalgrade !== $grade->finalgrade) {
                         if (!$grade->update('system')) {
                             $result = "Internal error updating final grade";
                         }
-                    }
-
-                    // time to lock this grade?
-                    if (!empty($grade->locktime) and empty($grade->locked) and $grade->locktime < time()) {
-                        $grade->locked = time();
-                        $grade->grade_item =& $this;
-                        $grade->set_locked(true);
                     }
                 }
             }
@@ -1238,8 +1230,20 @@ class grade_item extends grade_object {
         if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
             $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
         }
-
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
+
+        if ($grade->is_locked()) {
+            // do not update locked grades at all
+            return false;
+        }
+
+        $locktime = $grade->get_locktime();
+        if ($locktime and $locktime < time()) {
+            // do not update grades that should be already locked and force regrade
+            $this->force_regrading();
+            return false;
+        }
+
         $oldgrade = new object();
         $oldgrade->finalgrade  = $grade->finalgrade;
         $oldgrade->rawgrade    = $grade->rawgrade;
@@ -1248,17 +1252,6 @@ class grade_item extends grade_object {
         $oldgrade->rawscaleid  = $grade->rawscaleid;
         $oldgrade->overridden  = $grade->overridden;
 
-        if ($grade->is_locked()) {
-            // do not update locked grades at all
-            return false;
-        }
-
-        if (!empty($grade->locktime) and $grade->locktime < time()) {
-            // do not update grades that should be already locked
-            // this does not solve all problems, cron is still needed to recalculate the final grades periodically
-            return false;
-        }
-
         if ($finalgrade !== false) {
             if (!is_null($finalgrade)) {
                 $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
@@ -1266,7 +1259,10 @@ class grade_item extends grade_object {
                 $grade->finalgrade = $finalgrade;
             }
 
-            if ($this->is_outcome_item()) {
+            if ($this->is_manual_item() and !$this->is_calculated()) {
+                // no overriding on manual grades - raw not used
+
+            } else if ($this->is_outcome_item() and !$this->is_calculated()) {
                 // no updates of raw grades for outcomes - raw grades not used
 
             } else if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
@@ -1360,25 +1356,26 @@ class grade_item extends grade_object {
         if (!$grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
             $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
         }
-
         $grade->grade_item =& $this; // prevent db fetching of this grade_item
-        $oldgrade = new object();
-        $oldgrade->finalgrade  = $grade->finalgrade;
-        $oldgrade->rawgrade    = $grade->rawgrade;
-        $oldgrade->rawgrademin = $grade->rawgrademin;
-        $oldgrade->rawgrademax = $grade->rawgrademax;
-        $oldgrade->rawscaleid  = $grade->rawscaleid;
 
         if ($grade->is_locked()) {
             // do not update locked grades at all
             return false;
         }
 
-        if (!empty($grade->locktime) and $grade->locktime < time()) {
-            // do not update grades that should be already locked
-            // this does not solve all problems, cron is still needed to recalculate the final grades periodically
+        $locktime = $grade->get_locktime();
+        if ($locktime and $locktime < time()) {
+            // do not update grades that should be already locked and force regrade
+            $this->force_regrading();
             return false;
         }
+
+        $oldgrade = new object();
+        $oldgrade->finalgrade  = $grade->finalgrade;
+        $oldgrade->rawgrade    = $grade->rawgrade;
+        $oldgrade->rawgrademin = $grade->rawgrademin;
+        $oldgrade->rawgrademax = $grade->rawgrademax;
+        $oldgrade->rawscaleid  = $grade->rawscaleid;
 
         // fist copy current grademin/max and scale
         $grade->rawgrademin = $this->grademin;
@@ -1598,6 +1595,10 @@ class grade_item extends grade_object {
             or $grade->rawgrade    !== $oldgrade->rawgrade) {
 
             $grade->update('system');
+        }
+
+        if ($result !== false) {
+            //lock grade if needed
         }
 
         if ($result === false) {

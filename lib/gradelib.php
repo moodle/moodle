@@ -435,8 +435,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     $depends_on = array();
 
     // first mark all category and calculated items as needing regrading
-    // this is slower, but 100% accurate - this function is called only when there is
-    // a change in grading setup, update of individual grade does not trigger this function
+    // this is slower, but 100% accurate
     foreach ($grade_items as $gid=>$gitem) {
         if (!empty($updated_item) and $updated_item->id == $gid) {
             $grade_items[$gid]->needsupdate = 1;
@@ -480,8 +479,10 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
 
                 if ($result === true) {
                     $grade_items[$gid]->regrading_finished();
+                    $grade_items[$gid]->check_locktime(); // do the locktime item locking
                     $count++;
                     $finalids[] = $gid;
+
                 } else {
                     $grade_items[$gid]->force_regrading();
                     $errors[$gid] = $result;
@@ -508,6 +509,10 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     }
 
     if (count($errors) == 0) {
+        if (empty($userid)) {
+            // do the locktime locking of grades, but only when doing full regrading
+            grade_grade::check_locktime_all($courseid, $gids);
+        }
         return true;
     } else {
         return $errors;
