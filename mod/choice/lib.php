@@ -317,7 +317,12 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
     }
 
     $groupmode = groupmode($course, $cm);
-    $currentgroup = get_current_group($course->id);
+
+    if ($groupmode > 0) {
+        $currentgroup = get_current_group($course->id);
+    } else {
+        $currentgroup = 0;
+    }
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false);
 
