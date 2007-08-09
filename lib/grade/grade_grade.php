@@ -304,11 +304,10 @@ class grade_grade extends grade_object {
 
     /**
      * Lock the grade if needed - make sure this is called only when final grades are valid
-     * @param int $courseid
      * @param array $items array of all grade item ids
      * @return void
      */
-    function check_locktime_all($courseid, $items) {
+    function check_locktime_all($items) {
         global $CFG;
 
         $items_sql = implode(',', $items);
