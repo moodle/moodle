@@ -1345,6 +1345,22 @@ class default_questiontype {
         return format_text($text, $textformat, $formatoptions, $cmoptions === NULL ? NULL : $cmoptions->course);
     }
 
+    /**
+     * @return the best link to pass to print_error.
+     * @param $cmoptions as passed in from outside.
+     */
+    function error_link($cmoptions) {
+        global $CFG;
+        $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
+        if (!empty($cm->id)) {
+            return $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
+        } else if (!empty($cm->course)) {
+            return $CFG->wwwroot . '/course/view.php?id=' . $cm->course;
+        } else {
+            return '';
+        }
+    }
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
