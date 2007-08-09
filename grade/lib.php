@@ -832,7 +832,7 @@ class grade_tree {
 
             if ($element['type'] != 'category' and $element['object']->get_hidden() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'hiddenuntil';
-                $tooltip = userdate($element['object']->get_hidden());
+                $tooltip = get_string('hiddenuntildate', 'grades', userdate($element['object']->get_hidden()));
             }
 
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
@@ -871,7 +871,7 @@ class grade_tree {
 
             if ($element['type'] != 'category' and $element['object']->get_locktime() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'locktime';
-                $tooltip = userdate($element['object']->get_locktime());
+                $tooltip = get_string('locktimedate', 'grades', userdate($element['object']->get_locktime()));
             }
 
             if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:unlock', $this->context)) {
