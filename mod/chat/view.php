@@ -118,10 +118,10 @@
         // if user is using screen reader, then there is no need to display this link again
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
-            echo '<p>';
+            echo '<p>(';
             link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                                  "chat$course->id$chat->id$groupparam", '('.get_string('noframesjs', 'message').')', 500, 700, get_string('modulename', 'chat'));
-            echo '</p>';
+                                  "chat$course->id$chat->id$groupparam", get_string('noframesjs', 'message'), 500, 700, get_string('modulename', 'chat'));
+            echo ')</p>';
         }
 
         print_box_end();
