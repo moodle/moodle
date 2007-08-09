@@ -38,7 +38,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_hidden(1);
+            $object->set_hidden(1, true);
         }
         break;
 
@@ -50,7 +50,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_hidden(0);
+            $object->set_hidden(0, true);
         }
         break;
 

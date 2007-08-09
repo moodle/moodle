@@ -78,11 +78,11 @@ if ($data = $mform->get_data(false)) {
         $grade_item->update();
     }
 
-    // update hiding flag (in grades too if needed)
-    if (empty($hidden)) {
-        $grade_item->set_hidden($hiddenuntil);
+    // update hiding flag
+    if ($hiddenuntil) {
+        $grade_item->set_hidden($hiddenuntil, false);
     } else {
-        $grade_item->set_hidden(1);
+        $grade_item->set_hidden($hidden, false);
     }
 
     $grade_item->set_locktime($locktime); // locktime first - it might be removed when unlocking

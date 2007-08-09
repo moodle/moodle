@@ -59,7 +59,7 @@ class edit_grade_form extends moodleform {
         $mform->setHelpButton('hidden', array('hidden', get_string('hidden', 'grades'), 'grade'));
         $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
         $mform->setHelpButton('hiddenuntil', array('hiddenuntil', get_string('hiddenuntil', 'grades'), 'grade'));
-        $mform->disabledIf('hiddenuntil', 'hidden', 'checked');
+        $mform->disabledIf('hidden', 'hiddenuntil[off]', 'notchecked');
 
         /// locking
         $mform->addElement('advcheckbox', 'locked', get_string('locked', 'grades'));
@@ -135,6 +135,10 @@ class edit_grade_form extends moodleform {
         }
 
         $old_grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$userid));
+
+        if ($grade_item->is_hidden()) {
+            $mform->hardFreeze('hidden');
+        }
 
         if ($old_grade_grade->is_locked()) {
             if ($grade_item->is_locked()) {

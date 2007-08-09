@@ -356,24 +356,49 @@ class grade_grade extends grade_object {
     }
 
     /**
-     * Check grade lock status. Uses both grade item lock and grade lock.
-     * Internally any date in hidden field (including future ones) means hidden,
-     * the date is stored for logging purposes only.
-     *
-     * @param object $grade_item An optional grade_item given to avoid having to reload one from the DB
+     * Check grade hidden status. Uses data from both grade item and grade.
      * @return boolean true if hidden, false if not
      */
-    function is_hidden($grade_item=null) {
-        $this->load_grade_item($grade_item);
+    function is_hidden() {
+        $this->load_grade_item();
 
-        return $this->hidden == 1 or $this->hidden > time() or $this->grade_item->is_hidden();
+        return $this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()) or $this->grade_item->is_hidden();
+    }
+
+    /**
+     * Check grade hidden status. Uses data from both grade item and grade.
+     * @return int 0 means visible, 1 hidden always, timestamp hidden until
+     */
+    function get_hidden() {
+        $this->load_grade_item();
+
+        $item_hidden = $this->grade_item->get_hidden();
+
+        if ($item_hidden == 1) {
+            return 1;
+
+        } else if ($item_hidden == 0) {
+            return $this->hidden;
+
+        } else {
+            if ($this->hidden == 0) {
+                return $item_hidden;
+            } else if ($this->hidden == 1) {
+                return 1;
+            } else if ($this->hidden > $item_hidden) {
+                return $this->hidden;
+            } else {
+                return $item_hidden;
+            }
+        }
     }
 
     /**
      * Set the hidden status of grade, 0 mean visible, 1 always hidden, number means date to hide until.
+     * @param boolean $cascade ignored
      * @param int $hidden new hidden status
      */
-    function set_hidden($hidden) {
+    function set_hidden($hidden, $cascade=false) {
        $this->hidden = $hidden;
        $this->update();
     }

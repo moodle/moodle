@@ -1053,22 +1053,24 @@ class grade_category extends grade_object {
      * Sets the grade_item's hidden variable and updates the grade_item.
      * Method named after grade_item::set_hidden().
      * @param int $hidden 0, 1 or a timestamp int(10) after which date the item will be hidden.
+     * @param boolean $cascade apply to child objects too
      * @return void
      */
-    function set_hidden($hidden) {
+    function set_hidden($hidden, $cascade=false) {
         $this->load_grade_item();
         $this->grade_item->set_hidden($hidden);
-        if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-            foreach($children as $child) {
-                $child->set_hidden($hidden);
+        if ($cascade) {
+            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+                foreach($children as $child) {
+                    $child->set_hidden($hidden, $cascade);
+                }
             }
-        }
-        if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-            foreach($children as $child) {
-                $child->set_hidden($hidden);
+            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
+                foreach($children as $child) {
+                    $child->set_hidden($hidden, $cascade);
+                }
             }
         }
     }
-
 }
 ?>

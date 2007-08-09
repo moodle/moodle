@@ -514,41 +514,37 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Returns the hidden state of this grade_item (if the grade_item is hidden OR no specific
-     * $userid is given) or the hidden state of a specific grade within this item if a specific
-     * $userid is given and the grade_item is unhidden.
-     *
-     * @param int $userid
+     * Returns the hidden state of this grade_item
      * @return boolean hidden state
      */
     function is_hidden($userid=NULL) {
-        if ($this->hidden == 1 or $this->hidden > time()) {
-            return true;
-        }
+        return ($this->hidden == 1 or ($this->hidden != 0 and $this->hidden > time()));
+    }
 
-        if (!empty($userid)) {
-            if ($grade = grade_grade::fetch(array('itemid'=>$this->id, 'userid'=>$userid))) {
-                $grade->grade_item =& $this; // prevent db fetching of cached grade_item
-                return $grade->is_hidden();
-            }
-        }
-
-        return false;
+    /**
+     * Check grade item hidden status.
+     * @return int 0 means visible, 1 hidden always, timestamp hidden until
+     */
+    function get_hidden() {
+        return $this->hidden;
     }
 
     /**
      * Set the hidden status of grade_item and all grades, 0 mean visible, 1 always hidden, number means date to hide until.
      * @param int $hidden new hidden status
+     * @param boolean $cascade apply to child objects too
      * @return void
      */
-    function set_hidden($hidden) {
+    function set_hidden($hidden, $cascade=false) {
         $this->hidden = $hidden;
         $this->update();
 
-        if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
-            foreach($grades as $grade) {
-                $grade->grade_item =& $this;
-                $grade->set_hidden($hidden);
+        if ($cascade) {
+            if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
+                foreach($grades as $grade) {
+                    $grade->grade_item =& $this;
+                    $grade->set_hidden($hidden, $cascade);
+                }
             }
         }
     }

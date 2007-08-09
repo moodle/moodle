@@ -90,9 +90,13 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
 
     if ($grade->hidden > 1) {
         $grade->hiddenuntil = $grade->hidden;
-        $grade->hidden = 0;
+        $grade->hidden = 1;
     } else {
         $grade->hiddenuntil = 0;
+    }
+
+    if ($grade_item->is_hidden()) {
+        $grade->hidden = 1;
     }
 
     if ($grade_item->is_locked()) {
@@ -131,14 +135,21 @@ if ($mform->is_cancelled()) {
     $grade_grade->grade_item =& $grade_item; // no db fetching
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
-        if (empty($data->hidden)) {
-            if (empty($data->hiddenuntil)) {
-                $grade_grade->set_hidden(0);
+        $hidden      = empty($data->hidden) ? 0: $data->hidden;
+        $hiddenuntil = empty($data->hiddenuntil) ? 0: $data->hiddenuntil;
+
+        if ($grade_item->is_hidden()) {
+            if ($old_grade_grade->hidden == 1 and $hiddenuntil == 0) {
+                //nothing to do - grade was originally hidden, we want to keep it that way
             } else {
-                $grade_grade->set_hidden($data->hiddenuntil);
+                $grade_grade->set_hidden($hiddenuntil);
             }
         } else {
-            $grade_grade->set_hidden(1);
+            if ($hiddenuntil) {
+                $grade_grade->set_hidden($hiddenuntil);
+            } else {
+                $grade_grade->set_hidden($hidden); // checkbox data might be undefined
+            }
         }
     }
 

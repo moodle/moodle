@@ -825,9 +825,9 @@ class grade_tree {
             $icon = 'show';
             $tooltip = '';
 
-            if ($element['object']->hidden > 1) { // Change the icon and add a tooltip showing the date
+            if ($element['type'] != 'category' and $element['object']->get_hidden() > 1) { // Change the icon and add a tooltip showing the date
                 $icon = 'hiddenuntil';
-                $tooltip = userdate($element['object']->hidden);
+                $tooltip = userdate($element['object']->get_hidden());
             }
 
             $url     = $CFG->wwwroot.'/grade/edit/tree/action.php?id='.$this->courseid.'&amp;action=show&amp;sesskey='.sesskey()
