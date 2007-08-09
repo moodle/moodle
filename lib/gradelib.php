@@ -798,7 +798,6 @@ function remove_course_grades($courseid, $showfeedback) {
     if ($showfeedback) {
         notify($strdeleted.' - '.get_string('scales'));
     }
-
 }
 
 /**
@@ -810,6 +809,24 @@ function remove_course_grades($courseid, $showfeedback) {
  */
 function build_percentages_array($steps=1, $order='desc', $lowest=0, $highest=100) {
     // TODO reject or implement
+}
+
+/**
+ * Grading cron job
+ */
+function grade_cron() {
+    // go through all courses that have proper final grades and lock them if needed
+    if ($rs = get_recordset_select('grade_items', "itemtype='course' AND needsupdate=0", '', 'courseid')) {
+        if ($rs->RecordCount() > 0) {
+            while ($courseitem = rs_fetch_next_record($rs)) {
+                $courseid = $courseitem->courseid;
+                grade_grade::check_locktime_all($courseid);
+                grade_item::check_locktime_all($courseid);
+            }
+        }
+        rs_close($rs);
+    }
+    
 }
 
 ?>

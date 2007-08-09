@@ -32,6 +32,7 @@
 
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir.'/adminlib.php');
+    require_once($CFG->libdir.'/gradelib.php');
 
 /// extra safety
     @session_write_close();
@@ -160,6 +161,12 @@
     } else {
         mtrace('none found');
     }
+
+
+    mtrace('Starting grade job ...', '');
+    grade_cron();
+    mtrace('Done ...', '');
+    
 
 
 /// Run all core cron jobs, but not every time since they aren't too important.
