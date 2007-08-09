@@ -36,7 +36,8 @@ $settings->add(new admin_setting_configselect('grade_report_aggregationposition'
 $settings->add(new admin_setting_configselect('grade_report_aggregationview', get_string('aggregationview', 'grades'),
                                           get_string('configaggregationview', 'grades'), false,
                                           array(GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('full', 'grades'),
-                                                GRADE_REPORT_AGGREGATION_VIEW_COMPACT => get_string('compact', 'grades'))));
+                                                GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
+                                                GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades'))));
 
 $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', get_string('gradedisplaytype', 'grades'),
                                           get_string('configgradedisplaytype', 'grades'), false,

@@ -52,7 +52,7 @@ class grade_report_grader extends grade_report {
     var $userselect;
 
     /**
-     * List of collapsed captegories from user perference
+     * List of collapsed categories from user preference
      * @var array $collapsed
      */
     var $collapsed;
@@ -72,14 +72,10 @@ class grade_report_grader extends grade_report {
         // load collapsed settings for this report
         if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
             $this->collapsed = unserialize($collapsed);
-            foreach ($this->collapsed as $key=>$id) {
-                if ($this->get_pref('aggregationview', $id) == GRADE_REPORT_AGGREGATION_VIEW_FULL) {
-                    unset($this->collapsed[$key]); // full view categories can not be collapsed
-                }
-            }
         } else {
-            $this->collapsed = array();
+            $this->collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
         }
+
         if (empty($CFG->enableoutcomes)) {
             $nooutcomes = false;
         } else {
@@ -977,14 +973,19 @@ class grade_report_grader extends grade_report {
 
         $contract_expand_icon = '';
         // If object is a category, display expand/contract icon
-        if ($element['type'] == 'category' && $this->get_pref('aggregationview', $element['object']->id) == GRADE_REPORT_AGGREGATION_VIEW_COMPACT) {
+        if ($element['type'] == 'category') {
             // Load language strings
-            $strswitch_minus = $this->get_lang_string('contract', 'grades');
-            $strswitch_plus  = $this->get_lang_string('expand', 'grades');
-            $expand_contract = 'switch_minus'; // Default: expanded
+            $strswitch_minus = $this->get_lang_string('aggregatesonly', 'grades');
+            $strswitch_plus  = $this->get_lang_string('gradesonly', 'grades');
+            $strswitch_whole = $this->get_lang_string('fullmode', 'grades');
 
-            if (in_array($element['object']->id, $this->collapsed)) {
+            $expand_contract = 'switch_minus'; // Default: expanded
+            // $this->get_pref('aggregationview', $element['object']->id) == GRADE_REPORT_AGGREGATION_VIEW_COMPACT
+
+            if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
                 $expand_contract = 'switch_plus';
+            } elseif (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
+                $expand_contract = 'switch_whole';
             }
             $url = $this->gpr->get_return_url(null, array('target'=>$element['eid'], 'action'=>$expand_contract, 'sesskey'=>sesskey()));
             $contract_expand_icon = '<a href="'.$url.'"><img src="'.$CFG->pixpath.'/t/'.$expand_contract.'.gif" class="iconsmall" alt="'
@@ -1008,25 +1009,35 @@ class grade_report_grader extends grade_report {
         if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
             $collapsed = unserialize($collapsed);
         } else {
-            $collapsed = array();
+            $collapsed = array('aggregatesonly' => array(), 'gradesonly' => array());
         }
 
         switch ($action) {
-            case 'switch_minus':
-                if (!in_array($targetid, $collapsed)) {
-                    $collapsed[] = $targetid;
+            case 'switch_minus': // Add category to array of aggregatesonly
+                if (!in_array($targetid, $collapsed['aggregatesonly'])) {
+                    $collapsed['aggregatesonly'][] = $targetid;
                     set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
                 }
                 break;
 
-            case 'switch_plus':
-                $key = array_search($targetid, $collapsed);
+            case 'switch_plus': // Remove category from array of aggregatesonly, and add it to array of gradesonly
+                $key = array_search($targetid, $collapsed['aggregatesonly']);
                 if ($key !== false) {
-                    unset($collapsed[$key]);
+                    unset($collapsed['aggregatesonly'][$key]);
+                }
+                if (!in_array($targetid, $collapsed['gradesonly'])) {
+                    $collapsed['gradesonly'][] = $targetid;
+                }
+                set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
+                break;
+            case 'switch_whole': // Remove the category from the array of collapsed cats
+                $key = array_search($targetid, $collapsed['gradesonly']);
+                if ($key !== false) {
+                    unset($collapsed['gradesonly'][$key]);
                     set_user_preference('grade_report_grader_collapsed_categories', serialize($collapsed));
                 }
-                break;
 
+                break;
             default:
                 break;
         }

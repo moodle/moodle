@@ -6075,9 +6075,9 @@ function course_scale_used($courseid, $scaleid) {
                 }
             }
         }
-        
+
         // check if any course grade item makes use of the scale
-        $return += count_records('grade_items', 'courseid', $courseid, 'scaleid', $scaleid);                            
+        $return += count_records('grade_items', 'courseid', $courseid, 'scaleid', $scaleid);
     }
     return $return;
 }
@@ -7178,16 +7178,16 @@ function in_object_vars($var, $object)
 }
 
 /**
- * Returns an array without repeated objects. 
+ * Returns an array without repeated objects.
  * This function is similar to array_unique, but for arrays that have objects as values
- * 
+ *
  * @param unknown_type $array
  * @param unknown_type $keep_key_assoc
  * @return unknown
  */
 function object_array_unique($array, $keep_key_assoc = true) {
     $duplicate_keys = array();
-    $tmp         = array();       
+    $tmp         = array();
 
     foreach ($array as $key=>$val) {
         // convert objects to arrays, in_array() does not support objects
@@ -7205,7 +7205,7 @@ function object_array_unique($array, $keep_key_assoc = true) {
     foreach ($duplicate_keys as $key) {
         unset($array[$key]);
     }
-       
+
     return $keep_key_assoc ? $array : array_values($array);
 }
 

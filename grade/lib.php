@@ -521,12 +521,17 @@ class grade_tree {
             return;
         }
 
-        if (in_array($element['object']->id, $collapsed)) {
+        if (in_array($element['object']->id, $collapsed['aggregatesonly'])) {
             $category_item = reset($element['children']); //keep only category item
             $element['children'] = array(key($element['children'])=>$category_item);
 
         } else {
-            foreach ($element['children'] as $sortorder=>$child) {
+            if (in_array($element['object']->id, $collapsed['gradesonly'])) { // Remove category item
+                reset($element['children']);
+                $first_key = key($element['children']);
+                unset($element['children'][$first_key]);
+            }
+            foreach ($element['children'] as $sortorder=>$child) { // Recurse through the element's children
                 grade_tree::category_collapse($element['children'][$sortorder], $collapsed);
             }
         }
