@@ -56,7 +56,7 @@ $options['0'] = get_string('none');
 $options = array_merge($options, $charsets);
 $temp->add(new admin_setting_configselect('sitemailcharset', get_string('sitemailcharset', 'admin'), get_string('configsitemailcharset','admin'), '', $options));
 $temp->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'admin'), get_string('configallowusermailcharset', 'admin'), 0));
-if (empty($USER)) {
+if (empty($USER->email)) {
     if ($mainadmin = get_admin()) {
         $primaryadminemail = $mainadmin->email;
         $primaryadminname = fullname($mainadmin);
