@@ -4,7 +4,7 @@
 /// how Moodle uses this theme.
 ////////////////////////////////////////////////////////////////////////////////
 
-$THEME->sheets = array('user_styles', 'styles_rtl');
+$THEME->sheets = array('user_styles');
 
 /// This variable is an array containing the names of all the 
 /// stylesheet files you want included in this theme, and in what order
