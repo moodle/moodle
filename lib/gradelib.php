@@ -511,7 +511,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
     if (count($errors) == 0) {
         if (empty($userid)) {
             // do the locktime locking of grades, but only when doing full regrading
-            grade_grade::check_locktime_all($courseid, $gids);
+            grade_grade::check_locktime_all($gids);
         }
         return true;
     } else {
