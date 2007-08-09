@@ -549,7 +549,7 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 ?>
-<html dir="<?php echo (right_to_left() ? 'rtl' : 'ltr' ?>">
+<html dir="<?php echo (right_to_left() ? 'rtl' : 'ltr'); ?>">
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
