@@ -259,6 +259,10 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
+            // try for plugins
+            if ($question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
+                return $question;
+            }
             $giftqtypenotset = get_string('giftqtypenotset','quiz');
             $this->error( $giftqtypenotset, $text );
             return false;
@@ -628,7 +632,13 @@ function writequestion( $question ) {
         $expout .= "// CLOZE type is not supported\n";
         break;
     default:
-        notify("No handler for qtype $question->qtype for GIFT export" );
+        // check for plugins
+        if ($out = $this->try_exporting_using_qtypes( $question->qtype, $question )) {
+            $expout .= $out;
+        }
+        else {
+            notify("No handler for qtype '$question->qtype' for GIFT export" );
+        }
     }
     // add empty line to delimit questions
     $expout .= "\n";
