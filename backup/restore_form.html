@@ -222,9 +222,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "<td align=\"right\">";
         print_string("shortname");
         echo " :</td>";
-        echo "<td><input type=\"text\" name=\"shortname\" maxlength=\"15\"  size=\"10\" value=\"$form1->shortname\" alt=\"".get_string("shortname")."\"  />" ;
+        echo "<td><input type=\"text\" name=\"shortname\" maxlength=\"100\"  size=\"10\" value=\"$form1->shortname\" alt=\"".get_string("shortname")."\"  />" ;
         helpbutton("courseshortname", get_string("shortname")) ;
-        if (isset($err["shortname"])) formerr($err["shortname"]); 
+        if (isset($err["shortname"])) formerr($err["shortname"]);
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
         print_string("fullname");
