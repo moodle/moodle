@@ -494,28 +494,6 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Lock all grade items if needed - make sure this is called only when final grades are valid
-     * @static
-     * @param int $courseid
-     * @return void
-     */
-    function check_locktime_all($courseid) {
-        global $CFG;
-
-        $now = time(); // no need to round it here, executed from cron only
-        $sql = "SELECT * FROM {$CFG->prefix}grade_items
-                 WHERE courseid=$courseid AND locked = 0 AND locktime > 0 AND locktime < $now";
-
-        if ($items = get_records_sql($sql)) {
-            foreach ($items as $item) {
-                $grade_item = new grade_grade($item, false);
-                $grade_item->locked = time();
-                $grade_item->update('locktime');
-            }
-        }
-    }
-
-    /**
      * Set the locktime for this grade item.
      *
      * @param int $locktime timestamp for lock to activate

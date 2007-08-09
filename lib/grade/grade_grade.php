@@ -303,35 +303,13 @@ class grade_grade extends grade_object {
     }
 
     /**
-     * Lock the grade if needed - make sure this is called only when final grade is valid
-     */
-    function check_locktime() {
-        if (!empty($this->locked)) {
-            return; // already locked - do not use is_locked() because we do not want the locking status of grade_item here
-        }
-
-        if ($this->locktime and $this->locktime < time()) {
-            $this->locked = time();
-            $this->update('locktime');
-        }
-    }
-
-
-    /**
      * Lock the grade if needed - make sure this is called only when final grades are valid
      * @param int $courseid
-     * @param array $items array of all grade item ids (speedup only)
+     * @param array $items array of all grade item ids
      * @return void
      */
-    function check_locktime_all($courseid, $items=null) {
+    function check_locktime_all($courseid, $items) {
         global $CFG;
-
-        if (!$items) {
-            if (!$items = get_records('grade_items', 'courseid', $courseid, '', 'id')) {
-                return; // no items?
-            }
-            $items = array_keys($items);
-        }
 
         $items_sql = implode(',', $items);
 
