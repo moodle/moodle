@@ -728,7 +728,7 @@ class default_questiontype {
         $contributions = array();
         foreach ($stylesheets as $stylesheet) {
             $contributions[] = '<link rel="stylesheet" type="text/css" href="' .
-                    $baseurl . '/' . $stylesheet . '" />"';
+                    $baseurl . '/' . $stylesheet . '" />';
         }
         return $contributions;
     }
