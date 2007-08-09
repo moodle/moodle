@@ -1126,9 +1126,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
 
     /// Adding indexes to table grade_grades
-        $table->addIndexInfo('locktime', XMLDB_INDEX_NOTUNIQUE, array('locktime'));
-        $table->addIndexInfo('locked', XMLDB_INDEX_NOTUNIQUE, array('locked'));
-        $table->addIndexInfo('itemtype', XMLDB_INDEX_NOTUNIQUE, array('itemtype'));
+        $table->addIndexInfo('locked-locktime', XMLDB_INDEX_NOTUNIQUE, array('locked', 'locktime'));
         $table->addIndexInfo('itemtype-needsupdate', XMLDB_INDEX_NOTUNIQUE, array('itemtype', 'needsupdate'));
         $table->addIndexInfo('gradetype', XMLDB_INDEX_NOTUNIQUE, array('gradetype'));
 
@@ -1166,8 +1164,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
     /// Adding indexes to table grade_grades
-        $table->addIndexInfo('locktime', XMLDB_INDEX_NOTUNIQUE, array('locktime'));
-        $table->addIndexInfo('locked', XMLDB_INDEX_NOTUNIQUE, array('locked'));
+        $table->addIndexInfo('locked-locktime', XMLDB_INDEX_NOTUNIQUE, array('locked', 'locktime'));
 
     /// Launch create table for grade_grades
         $result = $result && create_table($table);
@@ -1663,21 +1660,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
-    if ($result && $oldversion < 2007080902) {
+    if ($result && $oldversion < 2007080903) {
     /// Define index
         $table = new XMLDBTable('grade_grades');
-        $index = new XMLDBIndex('locktime');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locktime'));
-
-        if (!index_exists($table, $index)) {
-        /// Launch add index
-            $result = $result && add_index($table, $index);
-        }
-
-    /// Define index
-        $table = new XMLDBTable('grade_grades');
-        $index = new XMLDBIndex('locked');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked'));
+        $index = new XMLDBIndex('locked-locktime');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked', 'locktime'));
 
         if (!index_exists($table, $index)) {
         /// Launch add index
@@ -1686,28 +1673,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Define index
         $table = new XMLDBTable('grade_items');
-        $index = new XMLDBIndex('locktime');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locktime'));
-
-        if (!index_exists($table, $index)) {
-        /// Launch add index
-            $result = $result && add_index($table, $index);
-        }
-
-    /// Define index
-        $table = new XMLDBTable('grade_items');
-        $index = new XMLDBIndex('locked');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked'));
-
-        if (!index_exists($table, $index)) {
-        /// Launch add index
-            $result = $result && add_index($table, $index);
-        }
-
-    /// Define index
-        $table = new XMLDBTable('grade_items');
-        $index = new XMLDBIndex('itemtype');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('itemtype'));
+        $index = new XMLDBIndex('locked-locktime');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked', 'locktime'));
 
         if (!index_exists($table, $index)) {
         /// Launch add index

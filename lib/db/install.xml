@@ -1369,10 +1369,8 @@
         <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="scaleid"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="locktime" UNIQUE="false" FIELDS="locktime" COMMENT="locktime index" NEXT="locked"/>
-        <INDEX NAME="locked" UNIQUE="false" FIELDS="locked" COMMENT="locked index" PREVIOUS="locktime" NEXT="itemtype"/>
-        <INDEX NAME="itemtype" UNIQUE="false" FIELDS="itemtype" COMMENT="itemtypeindex" PREVIOUS="locked" NEXT="itemtype-needsupdate"/>
-        <INDEX NAME="itemtype-needsupdate" UNIQUE="false" FIELDS="itemtype, needsupdate" COMMENT="used in grading cron" PREVIOUS="itemtype" NEXT="gradetype"/>
+        <INDEX NAME="locked-locktime" UNIQUE="false" FIELDS="locked, locktime" COMMENT="used in grading cron" NEXT="itemtype-needsupdate"/>
+        <INDEX NAME="itemtype-needsupdate" UNIQUE="false" FIELDS="itemtype, needsupdate" COMMENT="used in grading cron" PREVIOUS="locked-locktime" NEXT="gradetype"/>
         <INDEX NAME="gradetype" UNIQUE="false" FIELDS="gradetype" COMMENT="index for gradetype" PREVIOUS="itemtype-needsupdate"/>
       </INDEXES>
     </TABLE>
@@ -1404,8 +1402,7 @@
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="rawscaleid"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="locktime" UNIQUE="false" FIELDS="locktime" COMMENT="locktiem index" NEXT="locked"/>
-        <INDEX NAME="locked" UNIQUE="false" FIELDS="locked" COMMENT="Locked index" PREVIOUS="locktime"/>
+        <INDEX NAME="locked-locktime" UNIQUE="false" FIELDS="locked, locktime" COMMENT="used in grading cron"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades_text" COMMENT="This table keeps additional textual information about each individual grade, whether it be automatically generated from the module or entered manually by the teacher. It's here separate from the all-numeric grade_grades for database efficiency reasons." PREVIOUS="grade_grades" NEXT="grade_outcomes_history">
