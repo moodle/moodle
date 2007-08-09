@@ -1371,8 +1371,9 @@
       <INDEXES>
         <INDEX NAME="locktime" UNIQUE="false" FIELDS="locktime" COMMENT="locktime index" NEXT="locked"/>
         <INDEX NAME="locked" UNIQUE="false" FIELDS="locked" COMMENT="locked index" PREVIOUS="locktime" NEXT="itemtype"/>
-        <INDEX NAME="itemtype" UNIQUE="false" FIELDS="itemtype" COMMENT="itemtypeindex" PREVIOUS="locked" NEXT="needsupdate"/>
-        <INDEX NAME="needsupdate" UNIQUE="false" FIELDS="needsupdate" COMMENT="needsupdate index" PREVIOUS="itemtype"/>
+        <INDEX NAME="itemtype" UNIQUE="false" FIELDS="itemtype" COMMENT="itemtypeindex" PREVIOUS="locked" NEXT="itemtype-needsupdate"/>
+        <INDEX NAME="itemtype-needsupdate" UNIQUE="false" FIELDS="itemtype, needsupdate" COMMENT="used in grading cron" PREVIOUS="itemtype" NEXT="gradetype"/>
+        <INDEX NAME="gradetype" UNIQUE="false" FIELDS="gradetype" COMMENT="index for gradetype" PREVIOUS="itemtype-needsupdate"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value." PREVIOUS="grade_items" NEXT="grade_grades_text">

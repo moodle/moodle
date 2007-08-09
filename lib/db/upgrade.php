@@ -1129,7 +1129,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addIndexInfo('locktime', XMLDB_INDEX_NOTUNIQUE, array('locktime'));
         $table->addIndexInfo('locked', XMLDB_INDEX_NOTUNIQUE, array('locked'));
         $table->addIndexInfo('itemtype', XMLDB_INDEX_NOTUNIQUE, array('itemtype'));
-        $table->addIndexInfo('needsupdate', XMLDB_INDEX_NOTUNIQUE, array('needsupdate'));
+        $table->addIndexInfo('itemtype-needsupdate', XMLDB_INDEX_NOTUNIQUE, array('itemtype', 'needsupdate'));
+        $table->addIndexInfo('gradetype', XMLDB_INDEX_NOTUNIQUE, array('gradetype'));
 
     /// Launch create table for grade_items
         $result = $result && create_table($table);
@@ -1662,7 +1663,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
-    if ($result && $oldversion < 2007080901) {
+    if ($result && $oldversion < 2007080902) {
     /// Define index
         $table = new XMLDBTable('grade_grades');
         $index = new XMLDBIndex('locktime');
@@ -1713,16 +1714,24 @@ function xmldb_main_upgrade($oldversion=0) {
             $result = $result && add_index($table, $index);
         }
 
+    /// Define index itemtype-needsupdate (not unique) to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('itemtype-needsupdate');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('itemtype', 'needsupdate'));
+        if (!index_exists($table, $index)) {
+        /// Launch add index itemtype-needsupdate
+            $result = $result && add_index($table, $index);
+        }
+
     /// Define index
         $table = new XMLDBTable('grade_items');
-        $index = new XMLDBIndex('needsupdate');
-        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('needsupdate'));
+        $index = new XMLDBIndex('gradetype');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('gradetype'));
 
         if (!index_exists($table, $index)) {
         /// Launch add index
             $result = $result && add_index($table, $index);
         }
-
 
     }
 
