@@ -21,7 +21,8 @@
 // Print the header
     $strquizzes = get_string("modulenameplural", "quiz");
     $streditquestions = '';
-    if (has_capability('moodle/question:manage', $coursecontext)) {
+    $editqcontexts = new question_edit_contexts($coursecontext);
+    if ($editqcontexts->have_one_edit_tab_cap('questions')) {
         $streditquestions =
                 "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/question/edit.php\">
                    <div>
@@ -33,7 +34,7 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strquizzes, 'link' => '', 'type' => 'activity');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple($strquizzes, '', $navigation,
                  '', '', true, $streditquestions, navmenu($course));
 

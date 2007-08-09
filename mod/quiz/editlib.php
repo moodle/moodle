@@ -141,6 +141,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     $strgrade = get_string("grade");
     $strremove = get_string('remove', 'quiz');
     $stredit = get_string("edit");
+    $strview = get_string("view");
     $straction = get_string("action");
     $strmoveup = get_string("moveup");
     $strmovedown = get_string("movedown");
@@ -155,7 +156,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         return 0;
     }
 
-    if (!$questions = get_records_sql("SELECT q.*,c.course
+    if (!$questions = get_records_sql("SELECT q.*,c.contextid
                               FROM {$CFG->prefix}question q,
                                    {$CFG->prefix}question_categories c
                              WHERE q.id in ($quiz->questions)
@@ -169,7 +170,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     $count = 0;
     $qno = 1;
     $sumgrade = 0;
-    $order = explode(",", $quiz->questions);
+    $order = explode(',', $quiz->questions);
     $lastindex = count($order)-1;
     // If the list does not end with a pagebreak then add it on.
     if ($order[$lastindex] != 0) {
@@ -235,12 +236,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
                 echo '<td colspan="2">&nbsp;</td>';
             }
             $count++;
-            // missing </tr> here, if loop is broken, need to close the </tr> from line 199/201
+            // missing </tr> here, if loop is broken, need to close the </tr>
             echo "</tr>";
             continue;
         }
         $question = $questions[$qnum];
-        $canedit = has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $question->course));
 
         echo "<td>";
         if ($count != 0) {
@@ -276,17 +276,20 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         }
         echo '</td><td align="center">';
 
-        if ($question->qtype != 'random') {
-            quiz_question_preview_button($quiz, $question);
+        if (($question->qtype != 'random')){
+            echo quiz_question_preview_button($quiz, $question);
         }
-        if ($canedit) {
-            $returnurl = $pageurl->out();
-            $questionparams = array('returnurl' => $returnurl, 'cmid'=>$quiz->cmid, 'id' => $qnum);
-            $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+        $returnurl = $pageurl->out();
+        $questionparams = array('returnurl' => $returnurl, 'cmid'=>$quiz->cmid, 'id' => $question->id);
+        $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+        if (question_has_capability_on($question, 'edit', $question->category) || question_has_capability_on($question, 'move', $question->category)) {
             echo "<a title=\"$stredit\" href=\"".$questionurl->out()."\">
                     <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a>";
+        } elseif (question_has_capability_on($question, 'view', $question->category)){
+            echo "<a title=\"$strview\" href=\"".$questionurl->out(false, array('id'=>$question->id))."\"><img
+                    src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>&nbsp;";
         }
-        if ($allowdelete) {
+        if ($allowdelete && question_has_capability_on($question, 'use', $question->category)) { // remove from quiz, not question delete.
             echo "<a title=\"$strremove\" href=\"".$pageurl->out_action(array('delete'=>$count))."\">
                     <img src=\"$CFG->pixpath/t/removeright.gif\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
         }

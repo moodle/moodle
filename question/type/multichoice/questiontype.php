@@ -395,7 +395,7 @@ class question_multichoice_qtype extends default_questiontype {
     function response_summary($question, $state, $length = 80) {
         return implode(',', $this->get_actual_response($question, $state));
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
@@ -555,7 +555,7 @@ class question_multichoice_qtype extends default_questiontype {
     /**
      * Decode links in question type specific tables.
      * @return bool success or failure.
-     */ 
+     */
     function decode_content_links_caller($questionids, $restore, &$i) {
         $status = true;
 
@@ -601,7 +601,7 @@ class question_multichoice_qtype extends default_questiontype {
     function get_numbering_styles() {
         return array('abc', 'ABC', '123', 'none');
     }
-    
+
     function number_html($qnum) {
         return '<span class="anun">' . $qnum . '<span class="anumsep">.</span></span> ';
     }
@@ -623,6 +623,36 @@ class question_multichoice_qtype extends default_questiontype {
                 return '';
             default:
                 return 'ERR';
+        }
+    }
+
+    function find_file_links($question, $courseid){
+        $urls = array();
+        $urls = parent::find_file_links($question, $courseid);
+        // find links in the question_match_sub table.
+        foreach ($question->options->subquestions as $subquestion) {
+            $urls += question_find_file_links_from_html($subquestion->questiontext, $courseid);
+
+        }
+        //set all the values of the array to the question id
+        if ($urls){
+            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
+        }
+        $urls = array_merge_recursive($urls, parent::find_file_links($question, $courseid));
+        return $urls;
+    }
+
+    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
+        parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
+        // replace links in the question_match_sub table.
+        $optionschanged = false;
+        $question->options->correctfeedback = question_replace_file_links_in_html($question->options->correctfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        $question->options->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        $question->options->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
+        if ($optionschanged){
+            if (!update_record('question_multichoice', addslashes_recursive($question->options))) {
+                error('Couldn\'t update \'question_multichoice\' record '.$question->options->id);
+            }
         }
     }
 }

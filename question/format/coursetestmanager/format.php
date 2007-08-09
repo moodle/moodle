@@ -25,8 +25,8 @@ class qformat_coursetestmanager extends qformat_default {
     }
 
     function importprocess($filename) {
-        global $CFG,$strimportquestions,$form,$question_category,$category,$course,
-        $hostname, $mdapath, $mdbpath;
+        global $CFG, $USER, $strimportquestions,$form,$question_category,$category,$course,
+            $hostname, $mdapath, $mdbpath;
         if ((PHP_OS == "Linux") and isset($hostname)) {
             $hostname = trim($hostname);
             // test the ODBC socket server connection
@@ -261,6 +261,8 @@ class qformat_coursetestmanager extends qformat_default {
             echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
+            $question->createdby = $USER->id;
+            $question->timecreated = time();
             if (!$question->id = insert_record("question", $question)) {
                 error("Could not insert new question!");
             }

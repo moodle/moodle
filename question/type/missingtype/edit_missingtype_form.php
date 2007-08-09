@@ -25,15 +25,20 @@ class question_edit_missingtype_form extends question_edit_form {
         $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_multichoice', '{no}'));
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
+        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
+                                array('course' => $this->coursefilesid));
 
         if (isset($this->question->options)){
             $countanswers = count($this->question->options->answers);
         } else {
             $countanswers = 0;
         }
-        $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                            QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
+                                QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
+        } else {
+            $repeatsatstart = $countanswers;
+        }
         $repeatedoptions = array();
         $repeatedoptions['fraction']['default'] = 0;
         $mform->setType('answer', PARAM_NOTAGS);
@@ -62,7 +67,7 @@ class question_edit_missingtype_form extends question_edit_form {
     }
 
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
         $answers = $data['answer'];
         $answercount = 0;
 

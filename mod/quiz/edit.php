@@ -30,12 +30,12 @@
     require_once($CFG->dirroot.'/mod/quiz/editlib.php');
 
     /**
-     * Callback function called from question_list() function (which is called from showbank()
+     * Callback function called from question_list() function (which is called from showbank())
      * Displays action icon as first action for each question.
      */
-    function module_specific_actions($pageurl, $questionid, $cmid){
+    function module_specific_actions($pageurl, $questionid, $cmid, $canuse){
         global $CFG;
-        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
+        if ($canuse){
             $straddtoquiz = get_string("addtoquiz", "quiz");
             $out = "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$questionid&amp;sesskey=".sesskey()."\"><img
                   src=\"$CFG->pixpath/t/moveleft.gif\" alt=\"$straddtoquiz\" /></a>&nbsp;";
@@ -45,28 +45,24 @@
         }
     }
     /**
-     * Callback function called from question_list() function (which is called from showbank()
+     * Callback function called from question_list() function (which is called from showbank())
      * Displays button in form with checkboxes for each question.
      */
     function module_specific_buttons($cmid){
         global $THEME;
-        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
-            $straddtoquiz = get_string("addtoquiz", "quiz");
-            $out = "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
-            $out .= '</td><td>';
-            return $out;
-        } else {
-            return '';
-        }
+        $straddtoquiz = get_string("addtoquiz", "quiz");
+        $out = "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
+        echo '<br />';
+        return $out;
     }
-    
-    
+
+
     /**
-     * Callback function called from question_list() function (which is called from showbank()
-     * Displays button in form with checkboxes for each question.
+     * Callback function called from question_list() function (which is called from showbank())
      */
-    function module_specific_controls($totalnumber, $recurse, $categoryid, $cmid){
-        if (has_capability("mod/quiz:manage", get_context_instance(CONTEXT_MODULE, $cmid))){
+    function module_specific_controls($totalnumber, $recurse, $category, $cmid){
+        $catcontext = get_context_instance_by_id($category->contextid);
+        if (has_capability('moodle/question:useall', $catcontext)){
             for ($i = 1;$i <= min(10, $totalnumber); $i++) {
                 $randomcount[$i] = $i;
             }
@@ -76,16 +72,16 @@
             $out = '<br />';
             $out .= get_string('addrandom', 'quiz', choose_from_menu($randomcount, 'randomcount', '1', '', '', '', true));
             $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-            $out .= "<input type=\"hidden\" name=\"categoryid\" value=\"$categoryid\" />";
+            $out .= "<input type=\"hidden\" name=\"categoryid\" value=\"$category->id\" />";
             $out .= ' <input type="submit" name="addrandom" value="'. get_string('add') .'" />';
             $out .= helpbutton('random', get_string('random', 'quiz'), 'quiz', true, false, '', true);
-            return $out;
         } else {
-            return '';
+            $out = '';
         }
-    }       
-        
-    list($thispageurl, $courseid, $cmid, $cm, $quiz, $pagevars) = question_edit_setup(true);
+        return $out;
+    }
+
+    list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) = question_edit_setup('editq', true);
 
     //these params are only passed from page request to request while we stay on this page
     //otherwise they would go in question_edit_setup
@@ -99,12 +95,12 @@
     if ($quiz_reordertool != 0) {
         $thispageurl->param('reordertool', $quiz_reordertool);
     }
-        
+
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
     $streditingquestions = get_string('editquestions', "quiz");
     $streditingquiz = get_string('editinga', 'moodle', $strquiz);
-    
+
 
 
 
@@ -112,15 +108,14 @@
     if (! $course = get_record("course", "id", $quiz->course)) {
         error("This course doesn't exist");
     }
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $quiz->course);
-    $quizcontext = get_context_instance(CONTEXT_MODULE, $quiz->cmid);
-    
+
 
     // Log this visit.
     add_to_log($cm->course, 'quiz', 'editquestions',
             "view.php?id=$cm->id", "$quiz->id", $cm->id);
 
-    require_capability('mod/quiz:manage', $quizcontext);
+    //you need mod/quiz:manage in addition to question capabilities to access this page.
+    require_capability('mod/quiz:manage', $contexts->lowest());
 
     if (isset($quiz->instance)
         && empty($quiz->grades)){  // Construct an array to hold all the grades.
@@ -187,6 +182,8 @@
         if (! $category = get_record('question_categories', 'id', $categoryid)) {
             error('Category ID is incorrect');
         }
+        $catcontext = get_context_instance_by_id($category->contextid);
+        require_capability('moodle/question:useall', $catcontext);
         $category->name = addslashes($category->name);
         // find existing random questions in this category
         $random = RANDOM;
@@ -214,7 +211,7 @@
         if ($randomcreate > 0) {
 
             $form->name = get_string('random', 'quiz') .' ('. $category->name .')';
-            $form->category = $category->id;
+            $form->category = "$category->id,$category->contextid";
             $form->questiontext = $recurse; // we use the questiontext field to store the info
                                             // on whether to include questions in subcategories
             $form->questiontextformat = 0;
@@ -246,7 +243,6 @@
             error('Could not save layout');
         }
     }
-
     if (isset($_REQUEST['delete']) and confirm_sesskey()) { /// Remove a question from the quiz
         quiz_delete_quiz_question($_REQUEST['delete'], $quiz);
     }
@@ -267,7 +263,7 @@
                 $questions[$value] = $oldquestions[$key];
             }
         }
-        
+
         // If ordering info was given, reorder the questions
         if ($questions) {
             ksort($questions);
@@ -296,26 +292,23 @@
         delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
     }
 
-/// all commands have been dealt with, now print the page
+    question_showbank_actions($thispageurl, $cm);
 
-    if (empty($quiz->category) or !record_exists('question_categories', 'id', $quiz->category)) {
-        $category = get_default_question_category($course->id);
-        $quiz->category = $category->id;
-    }
+/// all commands have been dealt with, now print the page
 
     // Print basic page layout.
 
     if (isset($quiz->instance) and record_exists_select('quiz_attempts', "quiz = '$quiz->instance' AND preview = '0'")){
         // one column layout with table of questions used in this quiz
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
                     : "";
         $navlinks = array();
-        $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-        $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
+        $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+        $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-           
+
         print_header_simple($streditingquiz, '', $navigation, "", "",
                  true, $strupdatemodule);
 
@@ -329,9 +322,7 @@
         $a->attemptnum = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
         $a->studentnum = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
         $a->studentstring  = $course->students;
-        if (! $cm = get_coursemodule_from_instance("quiz", $quiz->instance, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
+
         echo "<div class=\"attemptsnotice\">\n";
         echo "<a href=\"report.php?mode=overview&amp;id=$cm->id\">".get_string('numattempts', 'quiz', $a)."</a><br />".get_string("attemptsexist","quiz");
         echo "</div><br />\n";
@@ -347,15 +338,15 @@
     }
 
     // two column layout with quiz info in left column
-    $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
+    $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
         ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
         : "";
     $navlinks = array();
-    $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');    
-    $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');    
+    $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
+    $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?q=$quiz->instance", 'type' => 'activityinstance');
     $navlinks[] = array('name' => $streditingquiz, 'link' => '', 'type' => 'title');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple($streditingquiz, '', $navigation, "", "", true, $strupdatemodule);
 
     $currenttab = 'edit';
@@ -377,7 +368,7 @@
 
     echo '</td><td style="width:50%" valign="top">';
 
-    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
+    question_showbank('editq', $contexts, $thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
                     $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 
     echo '</td></tr>';

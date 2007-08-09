@@ -38,12 +38,7 @@
         $continue = false;
     }
 
-    require_login();
 
-    // this might break things in the future
-    if (!isteacherinanycourse()) {
-        error('This page is for teachers only');
-    }
 
     if (!$continue) {
         // Start a new attempt; delete the old session
@@ -57,20 +52,23 @@
         $url .= '&amp;continue=1';
         redirect($url);
     }
-
-    if (empty($quizid)) {
-        $quiz = new cmoptions;
-        $quiz->id = 0;
-        $quiz->review = $CFG->quiz_review;
-
-    } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
-        error("Quiz id $quizid does not exist");
-    }
-
     // Load the question information
     if (!$questions = get_records('question', 'id', $id)) {
         error('Could not load question');
     }
+    if (empty($quizid)) {
+        $quiz = new cmoptions;
+        $quiz->id = 0;
+        $quiz->review = $CFG->quiz_review;
+        require_login_in_context($questions[$id]->contextid);
+    } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
+        error("Quiz id $quizid does not exist");
+    } else {
+        require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
+    }
+
+
+
     if ($maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $id)) {
         $questions[$id]->maxgrade = $maxgrade;
     } else {
@@ -84,10 +82,12 @@
         error("This question doesn't belong to a valid category!");
     }
 
-    if (!has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $category->course)) and !$category->publish) {
+    if (!question_has_capability_on($questions[$id], 'use', $questions[$id]->category)){
         error("You can't preview these questions!");
     }
-    $quiz->course = $category->course;
+    if (isset($COURSE)){
+        $quiz->course = $COURSE->id;
+    }
 
     // Load the question type specific information
     if (!get_question_options($questions)) {
@@ -197,7 +197,7 @@
     echo '<br />';
 
 
-    
+
     echo '<div class="controls">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";

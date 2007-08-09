@@ -85,82 +85,210 @@
 
     include_once($CFG->libdir.'/questionlib.php');
 
-    function restore_question_categories($category,$restore) {
+    /**
+    * Returns the best question category (id) found to restore one
+    * question category from a backup file. Works by stamp.
+    *
+    * @param object $restore preferences for restoration
+    * @param array $contextinfo fragment of decoded xml
+    * @return object best context instance for this category to be in
+    */
+    function restore_question_get_best_category_context($restore, $contextinfo) {
+        switch ($contextinfo['LEVEL'][0]['#']) {
+            case 'module':
+                $instanceinfo = backup_getid($restore->backup_unique_code, 'course_modules', $contextinfo['INSTANCE'][0]['#']);
+                $tocontext = get_context_instance(CONTEXT_MODULE, $instanceinfo->new_id);
+                break;
+            case 'course':
+                $tocontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+                break;
+            case 'coursecategory':
+                //search COURSECATEGORYLEVEL steps up the course cat tree or
+                //to the top of the tree if steps are exhausted.
+                $catno = $contextinfo['COURSECATEGORYLEVEL'][0]['#'];
+                $catid = get_field('course', 'parent', 'id', $restore->course_id);
+                while ($catno > 1){
+                    $nextcatid = get_field('course_categories', 'parent', 'id', $catid);
+                    if ($nextcatid == 0){
+                        break;
+                    }
+                    $catid == $nextcatid;
+                    $catno--;
+                }
+                $tocontext = get_context_instance(CONTEXT_COURSECAT, $catid);
+                break;
+            case 'system':
+                $tocontext = get_context_instance(CONTEXT_SYSTEM);
+                break;
+        }
+        return $tocontext;
+    }
 
-        global $CFG;
-
+    function restore_question_categories($info, $restore) {
         $status = true;
-
-        //Hook to call Moodle < 1.5 Quiz Restore
-        if ($restore->backup_version < 2005043000) {
-            include_once($CFG->dirroot.'/mod/quiz/restorelibpre15.php');
-            return quiz_restore_pre15_question_categories($category,$restore);
+        //Iterate over each category
+        foreach ($info as $category) {
+            $status = $status && restore_question_category($category, $restore);
         }
-
-        //Get record from backup_ids
-        $data = backup_getid($restore->backup_unique_code,"question_categories",$category->id);
-
-        if ($data) {
-            //Now get completed xmlized object
-            $info = $data->info;
-            //traverse_xmlize($info);                                                                     //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //Now, build the question_categories record structure
-            $question_cat = new stdClass;
-            $question_cat->course = $restore->course_id;
-            $question_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
-            $question_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
-            $question_cat->publish = backup_todb($info['QUESTION_CATEGORY']['#']['PUBLISH']['0']['#']);
-            $question_cat->stamp = backup_todb($info['QUESTION_CATEGORY']['#']['STAMP']['0']['#']);
-            $question_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
-            $question_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
-
-            if ($catfound = restore_get_best_question_category($question_cat, $restore->course_id)) {
-                $newid = $catfound;
-            } else {
-                if (!$question_cat->stamp) {
-                    $question_cat->stamp = make_unique_id_code();
-                }
-                $newid = insert_record ("question_categories",$question_cat);
-            }
-
-            //Do some output
-            if ($newid) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$question_cat->name."\"<br />";
-                }
-            } else {
-                //We must never arrive here !!
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$question_cat->name."\" Error!<br />";
-                }
-                $status = false;
-            }
-            backup_flush(300);
-
-            //Here category has been created or selected, so save results in backup_ids and start with questions
-            if ($newid and $status) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"question_categories",
-                             $category->id, $newid);
-                //Now restore question
-                $status = restore_questions ($category->id, $newid,$info,$restore);
-            } else {
-                $status = false;
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        } else {
-            echo 'Could not get backup info for question category'. $category->id;
-        }
-
+        $status = $status && restore_recode_category_parents($restore);
         return $status;
     }
 
-    function restore_questions ($old_category_id,$new_category_id,$info,$restore) {
+    function restore_question_category($category, $restore){
+        $status = true;
+        //Skip empty categories (some backups can contain them)
+        if (!empty($category->id)) {
+            //Get record from backup_ids
+            $data = backup_getid($restore->backup_unique_code, "question_categories", $category->id);
+
+            if ($data) {
+                //Now get completed xmlized object
+                $info = $data->info;
+                //traverse_xmlize($info);                                                                     //Debug
+                //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                //Now, build the question_categories record structure
+                $question_cat = new stdClass;
+                $question_cat->name = backup_todb($info['QUESTION_CATEGORY']['#']['NAME']['0']['#']);
+                $question_cat->info = backup_todb($info['QUESTION_CATEGORY']['#']['INFO']['0']['#']);
+                $question_cat->stamp = backup_todb($info['QUESTION_CATEGORY']['#']['STAMP']['0']['#']);
+                //parent is fixed after all categories are restored and we know all the new ids.
+                $question_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
+                $question_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
+                if (!$question_cat->stamp) {
+                    $question_cat->stamp = make_unique_id_code();
+                }
+                if (isset($info['QUESTION_CATEGORY']['#']['PUBLISH'])) {
+                    $course = $restore->course_id;
+                    $publish = backup_todb($info['QUESTION_CATEGORY']['#']['PUBLISH']['0']['#']);
+                    if ($publish){
+                        $tocontext = get_context_instance(CONTEXT_SYSTEM);
+                    } else {
+                        $tocontext = get_context_instance(CONTEXT_COURSE, $course);
+                    }
+                } else {
+                    $tocontext = restore_question_get_best_category_context($restore, $info['QUESTION_CATEGORY']['#']['CONTEXT']['0']['#']);
+                }
+                $question_cat->contextid = $tocontext->id;
+
+                //does cat exist ?? if it does we check if the cat and questions already exist whether we have
+                //add permission or not if we have no permission to add questions to SYSTEM or COURSECAT context
+                //AND the question does not already exist then we create questions in COURSE context.
+                if (!$fcat = get_record('question_categories','contextid', $question_cat->contextid, 'stamp', $question_cat->stamp)){
+                    //no preexisting cat
+                    if ((($tocontext->contextlevel == CONTEXT_SYSTEM) ||  ($tocontext->contextlevel == CONTEXT_COURSECAT))
+                            && !has_capability('moodle/question:add', $tocontext)){
+                        //no preexisting cat and no permission to create questions here
+                        //must restore to course.
+                        $tocontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+                    }
+                    $question_cat->contextid = $tocontext->id;
+                    if (!$fcat = get_record('question_categories','contextid', $question_cat->contextid, 'stamp', $question_cat->stamp)){
+                        $question_cat->id = insert_record ("question_categories", $question_cat);
+                    } else {
+                        $question_cat = $fcat;
+                    }
+                    //we'll be restoring all questions here.
+                    backup_putid($restore->backup_unique_code, "question_categories", $category->id, $question_cat->id);
+                } else {
+                    $question_cat = $fcat;
+                    //we found an existing best category
+                    //but later if context is above course need to check if there are questions need creating in category
+                    //if we do need to create questions and permissions don't allow it create new category in course
+                }
+
+                //Do some output
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string('category', 'quiz')." \"".$question_cat->name."\"<br />";
+                }
+
+                backup_flush(300);
+
+                //start with questions
+                if ($question_cat->id) {
+                    //We have the newid, update backup_ids
+                    //Now restore question
+                    $status = restore_questions($category->id, $question_cat, $info, $restore);
+                } else {
+                    $status = false;
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
+            } else {
+                echo 'Could not get backup info for question category'. $category->id;
+            }
+        }
+        return $status;
+    }
+
+    function restore_recode_category_parents($restore){
+        global $CFG;
+        $status = true;
+        //Now we have to recode the parent field of each restored category
+        $categories = get_records_sql("SELECT old_id, new_id
+                                       FROM {$CFG->prefix}backup_ids
+                                       WHERE backup_code = $restore->backup_unique_code AND
+                                             table_name = 'question_categories'");
+        if ($categories) {
+            //recode all parents to point at their old parent cats no matter what context the parent is now in
+            foreach ($categories as $category) {
+                $restoredcategory = get_record('question_categories','id',$category->new_id);
+                if ($restoredcategory->parent != 0) {
+                    $updateobj = new object();
+                    $updateobj->id = $restoredcategory->id;
+                    $idcat = backup_getid($restore->backup_unique_code,'question_categories',$restoredcategory->parent);
+                    if ($idcat->new_id) {
+                        $updateobj->parent = $idcat->new_id;
+                    } else {
+                        $updateobj->parent = 0;
+                    }
+                    $status = $status && update_record('question_categories', $updateobj);
+                }
+            }
+            //now we have recoded all parents, check through all parents and set parent to be
+            //grand parent / great grandparent etc where there is one in same context
+            //or else set parent to 0 (top level category).
+            $toupdate = array();
+            foreach ($categories as $category) {
+                $restoredcategory = get_record('question_categories','id',$category->new_id);
+                if ($restoredcategory->parent != 0) {
+                    $nextparentid = $restoredcategory->parent;
+                    do {
+                        if (!$parent = get_record('question_categories', 'id', $nextparentid)){
+                            if (!defined('RESTORE_SILENTLY')) {
+                                echo 'Could not find parent for question category '. $category->id.' recoding as top category item.<br />';
+                            }
+                            break;//record fetch failed finish loop
+                        } else {
+                            $nextparentid = $nextparent->parent;
+                        }
+                    } while (($nextparentid != 0) && ($parent->contextid != $restoredcategory->contextid));
+                    if (!$parent || ($parent->id != $restoredcategory->parent)){
+                        //change needs to be made to the parent field.
+                        if ($parent && ($parent->contextid == $restoredcategory->contextid)){
+                            $toupdate[$restoredcategory->id] = $parent->id;
+                        } else {
+                            //searched up the tree till we came to the top and did not find cat in same
+                            //context or there was an error getting next parent record
+                            $toupdate[$restoredcategory->id] = 0;
+                        }
+                    }
+                }
+            }
+            //now finally do the changes to parent field.
+            foreach ($toupdate as  $id => $parent){
+                $updateobj = new object();
+                $updateobj->id = $id;
+                $updateobj->parent = $parent;
+                $status = $status && update_record('question_categories', $updateobj);
+            }
+        }
+        return $status;
+    }
+
+    function restore_questions ($old_category_id, $best_question_cat, $info, $restore) {
 
         global $CFG, $QTYPES;
 
@@ -186,7 +314,6 @@
 
             //Now, build the question record structure
             $question = new object;
-            $question->category = $new_category_id;
             $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
@@ -204,6 +331,10 @@
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
             $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
+            $question->timecreated = backup_todb($que_info['#']['TIMECREATED']['0']['#']);
+            $question->timemodified = backup_todb($que_info['#']['TIMEMODIFIED']['0']['#']);
+            $question->createdby = backup_todb($que_info['#']['CREATEDBY']['0']['#']);
+            $question->modifiedby = backup_todb($que_info['#']['MODIFIEDBY']['0']['#']);
 
             if ($restore->backup_version < 2006032200) {
                 // The qtype was an integer that now needs to be converted to the name
@@ -213,36 +344,65 @@
                 $question->qtype = $qtypenames[$question->qtype];
             }
 
-            //Check if the question exists
-            //by category, stamp, and version
-            $question_exists = get_record ("question","category",$question->category,
-                                                 "stamp",$question->stamp,"version",$question->version);
-
+            //Check if the question exists by category, stamp, and version
+            //first check for the question in the context specified in backup
+            $existingquestion = get_record ("question", "category", $best_question_cat->id, "stamp", $question->stamp,"version",$question->version);
             //If the question exists, only record its id
-            if ($question_exists) {
-                $newid = $question_exists->id;
+            //always use existing question, no permissions check here
+            if ($existingquestion) {
+                $question = $existingquestion;
                 $creatingnewquestion = false;
-            //Else, create a new question
             } else {
-                //The structure is equal to the db, so insert the question
-                $newid = insert_record ("question",$question);
-                $creatingnewquestion = true;
+                //then if context above course level check permissions and if no permission
+                //to restore above course level then restore to cat in course context.
+                $bestcontext = get_context_instance_by_id($best_question_cat->contextid);
+                if (($bestcontext->contextlevel == CONTEXT_SYSTEM ||  $bestcontext->contextlevel == CONTEXT_COURSECAT)
+                        && !has_capability('moodle/question:add', $bestcontext)){
+                    if (!isset($course_question_cat)) {
+                        $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+                        $course_question_cat = clone($best_question_cat);
+                        $course_question_cat->contextid = $coursecontext->id;
+                        //create cat if it doesn't exist
+                        if (!$fcat = get_record('question_categories','contextid', $course_question_cat->contextid, 'stamp', $course_question_cat->stamp)){
+                            $course_question_cat->id = insert_record ("question_categories", $course_question_cat);
+                            backup_putid($restore->backup_unique_code, "question_categories", $old_category_id, $course_question_cat->id);
+                        } else {
+                            $course_question_cat = $fcat;
+                        }
+                        //will fix category parents after all questions and categories restored. Will set parent to 0 if
+                        //no parent in same context.
+                    }
+                    $question->category = $course_question_cat->id;
+                    //does question already exist in course cat
+                    $existingquestion = get_record ("question", "category", $question->category, "stamp", $question->stamp, "version", $question->version);
+                } else {
+                    //permissions ok, restore to best cat
+                    $question->category = $best_question_cat->id;
+                }
+                if (!$existingquestion){
+                    //The structure is equal to the db, so insert the question
+                    $question->id = insert_record ("question", $question);
+                    $creatingnewquestion = true;
+                } else {
+                    $question = $existingquestion;
+                    $creatingnewquestion = false;
+                }
             }
 
             //Save newid to backup tables
-            if ($newid) {
+            if ($question->id) {
                 //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"question",$oldid,
-                             $newid);
+                backup_putid($restore->backup_unique_code, "question", $oldid, $question->id);
             }
 
             $restored_questions[$i] = new stdClass;
-            $restored_questions[$i]->newid  = $newid;
+            $restored_questions[$i]->newid  = $question->id;
             $restored_questions[$i]->oldid  = $oldid;
             $restored_questions[$i]->qtype  = $question->qtype;
-            $restored_questions[$i]->parent  = $question->parent;
+            $restored_questions[$i]->parent = $question->parent;
             $restored_questions[$i]->is_new = $creatingnewquestion;
         }
+        backup_flush(300);
 
         // Loop again, now all the question id mappings exist, so everything can
         // be restored.
@@ -270,7 +430,7 @@
                         echo 'Could not recode parent '.$question->parent.' for question '.$oldid.'<br />';
                     }
                 }
-    
+
                 //Now, restore every question_answers in this question
                 $status = question_restore_answers($oldid,$newid,$que_info,$restore);
                 // Restore questiontype specific data
@@ -314,7 +474,7 @@
 
         $status = true;
         $qtype = backup_todb($info['#']['QTYPE']['0']['#']);
-        
+
         //Get the answers array
         if (isset($info['#']['ANSWERS']['0']['#']['ANSWER'])) {
             $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
@@ -449,20 +609,20 @@
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-            // Check to see if this until already exists in the database, which it might, for 
+            // Check to see if this until already exists in the database, which it might, for
             // Historical reasons.
             $unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
             if (!record_exists('question_numerical_units', 'question', $new_question_id, 'unit', $unit)) {
-                
+
                 //Now, build the question_numerical_UNITS record structure.
                 $numerical_unit = new stdClass;
                 $numerical_unit->question = $new_question_id;
                 $numerical_unit->multiplier = backup_todb($nu_info['#']['MULTIPLIER']['0']['#']);
                 $numerical_unit->unit = $unit;
-    
+
                 //The structure is equal to the db, so insert the question_numerical_units
                 $newid = insert_record("question_numerical_units", $numerical_unit);
-    
+
                 if (!$newid) {
                     $status = false;
                 }
@@ -701,9 +861,9 @@
             if ($res_info['#']['MANUALCOMMENT']['0']['#']) {
                 $session->manualcomment = backup_todb($res_info['#']['MANUALCOMMENT']['0']['#']);
             } else { // pre 1.7 backups
-                $session->manualcomment = backup_todb($res_info['#']['COMMENT']['0']['#']);  
+                $session->manualcomment = backup_todb($res_info['#']['COMMENT']['0']['#']);
             }
-            
+
             //We have to recode the question field
             $question = backup_getid($restore->backup_unique_code,"question",$session->questionid);
             if ($question) {
@@ -757,12 +917,23 @@
         }
         $extraprocessing = array();
 
+        $coursemodulecontexts = array();
+        $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
+        $coursemodulecontexts[] = $context->id;
+        $cms = get_records('course_modules', 'course', $restore->course_id, '', 'id');
+        if ($cms){
+            foreach ($cms as $cm){
+                $context =  get_context_instance(CONTEXT_MODULE, $cm->id);
+                $coursemodulecontexts[] = $context->id;
+            }
+        }
+        $coursemodulecontextslist = join($coursemodulecontexts, ',');
         // Decode links in questions.
-        if ($questions = get_records_sql('SELECT q.id, q.qtype, q.questiontext, q.generalfeedback
-               FROM ' . $CFG->prefix . 'question q,
-                    ' . $CFG->prefix . 'question_categories qc
-               WHERE q.category = qc.id
-                 AND qc.course = ' . $restore->course_id)) {
+        if ($questions = get_records_sql('SELECT q.id, q.qtype, q.questiontext, q.generalfeedback '.
+                 'FROM ' . $CFG->prefix . 'question q, '.
+                 $CFG->prefix . 'question_categories qc '.
+                 'WHERE q.category = qc.id '.
+                 'AND qc.contextid IN (' .$coursemodulecontextslist.')')) {
 
             foreach ($questions as $question) {
                 $questiontext = restore_decode_content_links_worker($question->questiontext, $restore);
@@ -800,8 +971,8 @@
                     ' . $CFG->prefix . 'question q,
                     ' . $CFG->prefix . 'question_categories qc
                WHERE qa.question = q.id
-                 AND q.category = qc.id
-                 AND qc.course = ' . $restore->course_id)) {
+                 AND q.category = qc.id '.
+                 'AND qc.contextid IN ('.$coursemodulecontextslist.')')) {
 
             foreach ($answers as $answer) {
                 $feedback = restore_decode_content_links_worker($answer->feedback, $restore);

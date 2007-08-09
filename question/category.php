@@ -9,13 +9,12 @@
  */
 
     require_once("../config.php");
-    require_once("editlib.php");
-    require_once("category_class.php");
+    require_once($CFG->dirroot."/question/editlib.php");
+    require_once($CFG->dirroot."/question/category_class.php");
 
 
 
-    list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
-
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('categories');
 
     // get values from form for actions on this page
     $param = new stdClass();
@@ -23,100 +22,108 @@
 
     $param->moveup = optional_param('moveup', 0, PARAM_INT);
     $param->movedown = optional_param('movedown', 0, PARAM_INT);
+    $param->moveupcontext = optional_param('moveupcontext', 0, PARAM_INT);
+    $param->movedowncontext = optional_param('movedowncontext', 0, PARAM_INT);
+    $param->tocontext = optional_param('tocontext', 0, PARAM_INT);
     $param->left = optional_param('left', 0, PARAM_INT);
     $param->right = optional_param('right', 0, PARAM_INT);
-    $param->hide = optional_param('hide', 0, PARAM_INT);
     $param->delete = optional_param('delete', 0, PARAM_INT);
     $param->confirm = optional_param('confirm', 0, PARAM_INT);
     $param->cancel = optional_param('cancel', '', PARAM_ALPHA);
     $param->move = optional_param('move', 0, PARAM_INT);
     $param->moveto = optional_param('moveto', 0, PARAM_INT);
-    $param->publish = optional_param('publish', 0, PARAM_INT);
-    $param->addcategory = optional_param('addcategory', '', PARAM_NOTAGS);
     $param->edit = optional_param('edit', 0, PARAM_INT);
-    $param->updateid = optional_param('updateid', 0, PARAM_INT);
 
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course ID is incorrect");
-    }
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    require_capability('moodle/question:managecategory', $context);
-
-    $qcobject = new question_category_object($pagevars['cpage'], $thispageurl);
+    $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
+                                $contexts->having_cap('moodle/question:add'));
 
     $streditingcategories = get_string('editcategories', 'quiz');
-    if ($qcobject->editlist->process_actions($param->left, $param->right, $param->moveup, $param->movedown)) {
-            //processing of these actions is handled in the method and page redirects.
-    } else if ($cm!==null) {
+    if ($param->left || $param->right || $param->moveup || $param->movedown|| $param->moveupcontext || $param->movedowncontext){
+        confirm_sesskey();
+        foreach ($qcobject->editlists as $list){
+            //processing of these actions is handled in the method where appropriate and page redirects.
+            $list->process_actions($param->left, $param->right, $param->moveup, $param->movedown,
+                                    $param->moveupcontext, $param->movedowncontext, $param->tocontext);
+        }
+    }
+    if ($param->delete && ($questionstomove = count_records("question", "category", $param->delete))){
+        if (!$category = get_record("question_categories", "id", $param->delete)) {  // security
+            error("No such category {$param->delete}!", $thispageurl->out());
+        }
+        $categorycontext = get_context_instance_by_id($category->contextid);
+        $qcobject->moveform = new question_move_form($thispageurl,
+                    array('contexts'=>array($categorycontext), 'currentcat'=>$param->delete));
+        if ($qcobject->moveform->is_cancelled()){
+            redirect($thispageurl->out());
+        }  elseif ($formdata = $qcobject->moveform->get_data()) {
+            /// 'confirm' is the category to move existing questions to
+            $qcobject->move_questions_and_delete_category($formdata->delete, $formdata->category);
+            redirect($thispageurl->out());
+        }
+    } else {
+        $questionstomove = 0;
+    }
+    if ($qcobject->catform->is_cancelled()){
+        redirect($thispageurl->out());
+    }elseif ($catformdata = $qcobject->catform->get_data()) {
+        if (!$catformdata->id) {//new category
+            $qcobject->add_category($catformdata->parent, $catformdata->name, $catformdata->info);
+        } else {
+            $qcobject->update_category($catformdata->id, $catformdata->parent, $catformdata->name, $catformdata->info);
+        }
+        redirect($thispageurl->out());
+    } elseif ((!empty($param->delete) and (!$questionstomove) and confirm_sesskey()))  {
+        $qcobject->delete_category($param->delete);//delete the category now no questions to move
+    }
+    $crumbs = array();
+    if ($cm!==null) {
         // Page header
-        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
-            ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
+            ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
         $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 
-                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 
+        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname),
+                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id",
                             'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 
+        $navlinks[] = array('name' => format_string($module->name),
                             'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}",
                             'type' => 'title');
+    } else {
+        // Print basic page layout.
+        $strupdatemodule = '';
+        $navlinks = array();
+    }
+
+    if (!$param->edit){
         $navlinks[] = array('name' => $streditingcategories, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-        print_header_simple($streditingcategories, '', $navigation, "", "", true, $strupdatemodule);
+    } else {
+        $navlinks[] = array('name' => $streditingcategories, 'link' => $thispageurl->out(), 'type' => 'title');
+        $navlinks[] = array('name' => get_string('editingcategory', 'question'), 'link' => '', 'type' => 'title');
+    }
 
+    $navigation = build_navigation($navlinks);
+    print_header_simple($streditingcategories, '', $navigation, "", "", true, $strupdatemodule);
 
+    // print tabs
+    if ($cm!==null) {
         $currenttab = 'edit';
         $mode = 'categories';
         ${$cm->modname} = $module;
         include($CFG->dirroot."/mod/{$cm->modname}/tabs.php");
     } else {
-        // Print basic page layout.
-        $navlinks = array();
-        $navlinks[] = array('name' => $streditingcategories, 'link' => '', 'type' => 'title');
-        $navigation = build_navigation($navlinks);
-           
-        print_header_simple($streditingcategories, '', $navigation);
-
-        // print tabs
         $currenttab = 'categories';
+        $context = $contexts->lowest();
         include('tabs.php');
     }
 
-    // Process actions.
-    if (isset($_REQUEST['sesskey']) and confirm_sesskey()) { // sesskey must be ok
-        if (!empty($param->delete) and empty($param->cancel)) {
-            if (!empty($param->confirm)) {
-                /// 'confirm' is the category to move existing questions to
-                $qcobject->delete_category($param->delete, $param->confirm);
-            } else {
-                $qcobject->delete_category($param->delete);
-            }
-        } else if (!empty($param->hide)) {
-            $qcobject->publish_category(false, $param->hide);
-        } else if (!empty($param->publish)) {
-            $qcobject->publish_category(true, $param->publish);
-        } else if (!empty($param->addcategory)) {
-            $param->newparent   = required_param('newparent',PARAM_INT);
-            $param->newcategory = required_param('newcategory',PARAM_NOTAGS);
-            $param->newinfo     = required_param('newinfo',PARAM_NOTAGS);
-            $param->newpublish  = required_param('newpublish',PARAM_INT);
-            $qcobject->add_category($param->newparent, $param->newcategory, $param->newinfo,
-                $param->newpublish, $course->id);
-        } else if (!empty($param->edit)) {
-            $qcobject->edit_single_category($param->edit, $pagevars['cpage']);
-        } else if (!empty($param->updateid)) {
-            $param->updateparent  = required_param('updateparent',PARAM_INT);
-            $param->updatename    = required_param('updatename',PARAM_NOTAGS);
-            $param->updateinfo    = required_param('updateinfo',PARAM_NOTAGS);
-            $param->updatepublish = required_param('updatepublish',PARAM_INT);
-            $qcobject->update_category($param->updateid, $param->updateparent, $param->updatename,
-                $param->updateinfo, $param->updatepublish, $course->id);
-        }
+    // display UI
+    if (!empty($param->edit)) {
+        $qcobject->edit_single_category($param->edit);
+    } else if ($questionstomove){
+        $qcobject->display_move_form($questionstomove, $category);
+    } else {
+        // display the user interface
+        $qcobject->display_user_interface();
     }
-
-    // display the user interface
-    $qcobject->display_user_interface();
-
-    print_footer($course);
+    print_footer($COURSE);
 ?>

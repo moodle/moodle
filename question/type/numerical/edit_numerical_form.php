@@ -36,7 +36,8 @@ class question_edit_numerical_form extends question_edit_form {
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeatedoptions['fraction']['default'] = 0;
 
-        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
+        $repeated[] =& $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
+                                array('course' => $this->coursefilesid));
         $mform->setType('feedback', PARAM_RAW);
 
 
@@ -45,9 +46,12 @@ class question_edit_numerical_form extends question_edit_form {
         } else {
             $countanswers = 0;
         }
-        $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + 1))?
-                            QUESTION_NUMANS_START : ($countanswers + 1);
-
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + 1))?
+                                QUESTION_NUMANS_START : ($countanswers + 1);
+        } else {
+            $repeatsatstart = $countanswers;
+        }
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 2, get_string('addmoreanswerblanks', 'qtype_numerical'));
 
 //------------------------------------------------------------------------------------------
@@ -65,7 +69,12 @@ class question_edit_numerical_form extends question_edit_form {
         } else {
             $countunits = 0;
         }
-        $repeatsatstart = $countunits + 2;
+
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = $countunits + 2;
+        } else {
+            $repeatsatstart = $countunits;
+        }
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_numerical'));
 
         $firstunit =& $mform->getElement('multiplier[0]');
@@ -99,7 +108,7 @@ class question_edit_numerical_form extends question_edit_form {
         parent::set_data($question);
     }
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
 
         // Check the answers.
         $answercount = 0;

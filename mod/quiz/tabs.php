@@ -16,12 +16,13 @@ if (!isset($currenttab)) {
 if (!isset($cm)) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 }
-if (!isset($course)) {
-    $course = get_record('course', 'id', $quiz->course);
-}
+
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+if (!isset($contexts)){
+    $contexts = new question_edit_contexts($context);
+}
 $tabs = array();
 $row  = array();
 $inactive = array();
@@ -36,7 +37,7 @@ if (has_capability('mod/quiz:viewreports', $context)) {
 if (has_capability('mod/quiz:preview', $context)) {
     $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
 }
-if (has_capability('mod/quiz:manage', $context)) {
+if ($contexts->have_one_edit_tab_cap('editq')) {
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", get_string('edit'));
 }
 
@@ -83,9 +84,12 @@ if ($currenttab == 'edit' and isset($mode)) {
     $streditingquiz = get_string("editinga", "moodle", $strquiz);
     $strupdate = get_string('updatethis', 'moodle', $strquiz);
     
-    $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?".$thispageurl->get_query_string(), $strquiz, $streditingquiz);
-    questionbank_navigation_tabs($row, $context, $thispageurl->get_query_string());
+    if ($contexts->have_one_edit_tab_cap('editq')) {
+        $row[] = new tabobject('editq', "$CFG->wwwroot/mod/quiz/edit.php?".$thispageurl->get_query_string(), $strquiz, $streditingquiz);
+    }
+    questionbank_navigation_tabs($row, $contexts, $thispageurl->get_query_string());
     $tabs[] = $row;
+    
 }
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

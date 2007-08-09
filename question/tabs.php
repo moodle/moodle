@@ -11,16 +11,17 @@
     if (!isset($currenttab)) {
         $currenttab = '';
     }
-    if (!isset($course)) {
+    if (!isset($COURSE)) {
         error('No course specified');
     }
 
     $tabs = array();
     $inactive = array();
     $row  = array();
-    questionbank_navigation_tabs($row, $context, 'courseid='.$course->id);
+    questionbank_navigation_tabs($row, $contexts, 'courseid='.$COURSE->id);
     $tabs[] = $row;
 
     print_tabs($tabs, $currenttab, array());
+    
 
 ?>

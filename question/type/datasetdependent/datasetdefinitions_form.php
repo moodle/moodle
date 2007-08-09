@@ -101,6 +101,15 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'category');
         $mform->setType('category', PARAM_INT);
         $mform->addElement('hidden', 'id');
+        
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+        $mform->setDefault('courseid', 0);
+        
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
+        $mform->setDefault('cmid', 0);
+        
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);

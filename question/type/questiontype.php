@@ -9,7 +9,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank
  * @subpackage questiontypes
- *//** */
+ */
 
 require_once($CFG->libdir . '/questionlib.php');
 
@@ -25,7 +25,7 @@ require_once($CFG->libdir . '/questionlib.php');
  * experiences of the first few question type implementors, and improve the
  * interface to meet their needs, rather the freeze the API prematurely and
  * condem everyone to working round a clunky interface for ever afterwards.
- * 
+ *
  * @package questionbank
  * @subpackage questiontypes
  */
@@ -75,7 +75,7 @@ class default_questiontype {
     }
 
     /**
-     * @return whether the question_answers.answer field needs to have 
+     * @return whether the question_answers.answer field needs to have
      * restore_decode_content_links_worker called on it.
      */
     function has_html_answers() {
@@ -114,7 +114,7 @@ class default_questiontype {
      * @param string $submiturl passed on to the constructor call.
      * @return object an instance of the form definition, or null if one could not be found.
      */
-    function create_editing_form($submiturl, $question) {
+    function create_editing_form($submiturl, $question, $category, $contexts, $formeditable) {
         global $CFG;
         require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
         $definition_file = $CFG->dirroot.'/question/type/'.$this->name().'/edit_'.$this->name().'_form.php';
@@ -126,7 +126,7 @@ class default_questiontype {
         if (!class_exists($classname)) {
             return null;
         }
-        return new $classname($submiturl, $question);
+        return new $classname($submiturl, $question, $category, $contexts, $formeditable);
     }
 
     /**
@@ -154,25 +154,51 @@ class default_questiontype {
      * @param string $wizardnow is '' for first page.
      */
     function display_question_editing_page(&$mform, $question, $wizardnow){
-        list($heading, $langmodule) = $this->get_heading();
+        list($heading, $langmodule) = $this->get_heading(empty($question->id));
         print_heading_with_help($heading, $this->name(), $langmodule);
+        $permissionstrs = array();
+        if (!empty($question->id)){
+            if ($question->formoptions->canedit){
+                $permissionstrs[] = get_string('permissionedit', 'question');
+            }
+            if ($question->formoptions->canmove){
+                $permissionstrs[] = get_string('permissionmove', 'question');
+            }
+            if ($question->formoptions->cansaveasnew){
+                $permissionstrs[] = get_string('permissionsaveasnew', 'question');
+            }
+        }
+        if (!$question->formoptions->movecontext  && count($permissionstrs)){
+            print_heading(get_string('permissionto', 'question'), 'center', 3);
+            $html = '<ul>';
+            foreach ($permissionstrs as $permissionstr){
+                $html .= '<li>'.$permissionstr.'</li>';
+            }
+            $html .= '</ul>';
+            print_box($html, 'boxwidthnarrow boxaligncenter generalbox');
+        }
         $mform->display();
     }
-    
+
     /**
      * Method called by display_question_editing_page and by question.php to get heading for breadcrumbs.
-     * 
+     *
      * @return array a string heading and the langmodule in which it was found.
      */
-    function get_heading(){
+    function get_heading($adding = false){
         $name = $this->name();
         $langmodule = 'qtype_' . $name;
-        $strheading = get_string('editing' . $name, $langmodule);
+        if (!$adding){
+            $strtoget = 'editing' . $name;
+        } else {
+            $strtoget = 'adding' . $name;
+        }
+        $strheading = get_string($strtoget, $langmodule);
         if ($strheading[0] == '[') {
             // Legacy behavior, if the string was not in the proper qtype_name
             // language file, look it up in the quiz one.
             $langmodule = 'quiz';
-            $strheading = get_string('editing' . $name, $langmodule);
+            $strheading = get_string($strtoget, $langmodule);
         }
         return array($strheading, $langmodule);
     }
@@ -204,14 +230,11 @@ class default_questiontype {
     *       is itself an object, shown next to the form fields.
     */
     function save_question($question, $form, $course) {
+        global $USER;
         // This default implementation is suitable for most
         // question types.
 
         // First, save the basic question itself
-        if (!record_exists('question_categories', 'id', $form->category)) {
-            print_error('categorydoesnotexist', 'question');
-        }
-        $question->category           = $form->category;
         $question->name               = trim($form->name);
         $question->questiontext       = trim($form->questiontext);
         $question->questiontextformat = $form->questiontextformat;
@@ -247,16 +270,28 @@ class default_questiontype {
         }
 
         if (!empty($question->id)) { // Question already exists
+            if (isset($form->categorymoveto)){
+                question_require_capability_on($question, 'move');
+                list($question->categorymoveto, $movetocontextid) = explode(',', $form->categorymoveto);
+            }
+            if (isset($question->qtype) && $question->qtype != RANDOM){
+                $question->category = $question->categorymoveto;
+            }
             // keep existing unique stamp code
             $question->stamp = get_field('question', 'stamp', 'id', $question->id);
-            if (!update_record("question", $question)) {
-                error("Could not update question!");
+            $question->modifiedby = $USER->id;
+            $question->timemodified = time();
+            if (!update_record('question', $question)) {
+                error('Could not update question!');
             }
         } else {         // Question is a new one
             // Set the unique code
+            list($question->category,$contextid) = explode(',', $form->category);
             $question->stamp = make_unique_id_code();
-            if (!$question->id = insert_record("question", $question)) {
-                error("Could not insert new question!");
+            $question->createdby = $USER->id;
+            $question->timecreated = time();
+            if (!$question->id = insert_record('question', $question)) {
+                error('Could not insert new question!');
             }
         }
 
@@ -305,7 +340,7 @@ class default_questiontype {
 
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            
+
             $function = 'update_record';
             $options = get_record($question_extension_table, 'questionid', $question->id);
             if (!$options) {
@@ -322,7 +357,7 @@ class default_questiontype {
                 }
                 $options->$field = $question->$field;
             }
-            
+
             if (!$function($question_extension_table, $options)) {
                 $result = new stdClass;
                 $result->error = 'Could not save question options for ' .
@@ -333,7 +368,7 @@ class default_questiontype {
 
         $extra_answer_fields = $this->extra_answer_fields();
         // TODO save the answers, with any extra data.
-        
+
         return null;
     }
 
@@ -687,13 +722,13 @@ class default_questiontype {
      * then this method will return an array of <link ...> tags that reference
      * those stylesheets. This function will also call require_js()
      * from ajaxlib.php, to get any necessary JavaScript linked in too.
-     * 
+     *
      * The two parameters match the first two parameters of print_question.
-     * 
+     *
      * @param object $question The question object.
      * @param object $state    The state object.
-     * 
-     * @return an array of bits of HTML to add to the head of pages where 
+     *
+     * @return an array of bits of HTML to add to the head of pages where
      * this question is print_question-ed in the body. The array should use
      * integer array keys, which have no significance.
      */
@@ -703,13 +738,14 @@ class default_questiontype {
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
 
-        // We only do this once 
+
+        // We only do this once
         // for this question type, no matter how often this method is called.
         if ($this->already_done) {
             return array();
         }
         $this->already_done = true;
-        
+
         $plugindir = $this->plugin_dir();
         $baseurl = $this->plugin_baseurl();
         $stylesheets = array();
@@ -732,7 +768,7 @@ class default_questiontype {
         }
         return $contributions;
     }
-    
+
     /**
      * Prints the question including the number, grading details, content,
      * feedback and interactions
@@ -782,7 +818,7 @@ class default_questiontype {
 
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if ($context && has_capability('moodle/question:manage', $context)) {
+        if (question_has_capability_on($question, 'edit')) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id='.$question->id, 'editquestion', $linktext, 450, 550, $stredit, '', true);
@@ -1040,7 +1076,7 @@ class default_questiontype {
 
         if (($cmoptions->optionflags & QUESTION_ADAPTIVE) and !$options->readonly) {
             echo '<input type="submit" name="', $question->name_prefix, 'submit" value="',
-                    get_string('mark', 'quiz'), '" class="submit btn" onclick="', 
+                    get_string('mark', 'quiz'), '" class="submit btn" onclick="',
                     "form.action = form.action + '#q", $question->id, "'; return true;", '" />';
         }
     }
@@ -1345,6 +1381,111 @@ class default_questiontype {
         return format_text($text, $textformat, $formatoptions, $cmoptions === NULL ? NULL : $cmoptions->course);
     }
 
+    /*
+     * Find all course / site files linked from a question.
+     *
+     * Need to check for links to files in question_answers.answer and feedback
+     * and in question table in generalfeedback and questiontext fields. Methods
+     * on child classes will also check extra question specific fields.
+     *
+     * Needs to be overriden for child classes that have extra fields containing
+     * html.
+     *
+     * @param string html the html to search
+     * @param int courseid search for files for courseid course or set to siteid for
+     *              finding site files.
+     * @return array of url, relative url is key and array with one item = question id as value
+     *                  relative url is relative to course/site files directory root.
+     */
+    function find_file_links($question, $courseid){
+        $urls = array();
+        if ($question->image != ''){
+            if (substr(strtolower($question->image), 0, 7) == 'http://') {
+                $matches = array();
+
+                //support for older questions where we have a complete url in image field
+                if (preg_match('!^'.question_file_links_base_url($courseid).'(.*)!i', $question->image, $matches)){
+                    if ($cleanedurl = question_url_check($urls[$matches[2]])){
+                        $urls[$cleanedurl] = null;
+                    }
+                }
+            } else {
+                if ($question->image != ''){
+                    if ($cleanedurl = question_url_check($question->image)){
+                        $urls[$cleanedurl] = null;//will be set later
+                    }
+                }
+
+            }
+
+        }
+        $urls += question_find_file_links_from_html($question->questiontext, $courseid);
+        $urls += question_find_file_links_from_html($question->generalfeedback, $courseid);
+        if ($this->has_html_answers() && isset($question->options->answers)){
+            foreach ($question->options->answers as $answerkey => $answer){
+                $thisurls= question_find_file_links_from_html($answer->answer, $courseid);
+                if ($thisurls){
+                    $urls += $thisurls;
+                }
+            }
+        }
+        //set all the values of the array to the question object
+        if ($urls){
+            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
+        }
+        return $urls;
+    }
+    /*
+     * Find all course / site files linked from a question.
+     *
+     * Need to check for links to files in question_answers.answer and feedback
+     * and in question table in generalfeedback and questiontext fields. Methods
+     * on child classes will also check extra question specific fields.
+     *
+     * Needs to be overriden for child classes that have extra fields containing
+     * html.
+     *
+     * @param string html the html to search
+     * @param int course search for files for courseid course or set to siteid for
+     *              finding site files.
+     * @return array of files, file name is key and array with one item = question id as value
+     */
+    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
+        global $CFG;
+        $updateqrec = false;
+        if (!empty($question->image)){
+            //support for older questions where we have a complete url in image field
+            if (substr(strtolower($question->image), 0, 7) == 'http://') {
+                $questionimage = preg_replace('!^'.question_file_links_base_url($fromcourseid).preg_quote($url, '!').'$!i', $destination, $question->image, 1);
+            } else {
+                $questionimage = preg_replace('!^'.preg_quote($url, '!').'$!i', $destination, $question->image, 1);
+            }
+            if ($questionimage != $question->image){
+                $question->image = $questionimage;
+                $updateqrec = true;
+            }
+        }
+        $question->questiontext = question_replace_file_links_in_html($question->questiontext, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
+        $question->generalfeedback = question_replace_file_links_in_html($question->generalfeedback, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
+        if ($updateqrec){
+            if (!update_record('question', addslashes_recursive($question))){
+                error ('Couldn\'t update question '.$question->name);
+            }
+        }
+
+        if ($this->has_html_answers() && isset($question->options->answers)){
+            //answers that do not need updating have been unset
+            foreach ($question->options->answers as $answer){
+                $answerchanged = false;
+                $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
+                if ($answerchanged){
+                    if (!update_record('question_answers', addslashes_recursive($answer))){
+                        error ('Couldn\'t update question ('.$question->name.') answer '.$answer->id);
+                    }
+                }
+            }
+        }
+    }
     /**
      * @return the best link to pass to print_error.
      * @param $cmoptions as passed in from outside.

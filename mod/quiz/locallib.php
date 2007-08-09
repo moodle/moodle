@@ -124,13 +124,13 @@ function quiz_delete_attempt($attempt, $quiz) {
             return;
         }
     }
-    
+
     if ($attempt->quiz != $quiz->id) {
         debugging("Trying to delete attempt $attempt->id which belongs to quiz $attempt->quiz " .
                 "but was passed quiz $quiz->id.");
         return;
     }
-    
+
     delete_records('quiz_attempts', 'id', $attempt->id);
     delete_attempt($attempt->uniqueid);
 
@@ -662,6 +662,9 @@ function quiz_upgrade_states($attempt) {
  */
 function quiz_question_preview_button($quiz, $question) {
     global $CFG;
+    if (!question_has_capability_on($question, 'use', $question->category)){
+        return '';
+    }
     $strpreview = get_string('previewquestion', 'quiz');
     return link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quiz->id, 'questionpreview',
             "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",

@@ -197,16 +197,16 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
      /**
      * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
-     * so that they can be saved 
+     * so that they can be saved
      * using the function save_dataset_definitions($form)
-     *  when creating a new calculated question or 
+     *  when creating a new calculated question or
      *  whenediting an already existing calculated question
-     * or by  function save_as_new_dataset_definitions($form, $initialid) 
+     * or by  function save_as_new_dataset_definitions($form, $initialid)
      *  when saving as new an already existing calculated question
-     * 
+     *
      * @param object $form
      * @param int $questionfromid default = '0'
-     */  
+     */
     function preparedatasets(&$form , $questionfromid='0'){
         // the dataset names present in the edit_question_form and edit_calculated_form are retrieved
         $possibledatasets = $this->find_dataset_names($form->questiontext);
@@ -215,7 +215,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 $mandatorydatasets += $this->find_dataset_names($answer);
             }
         // if there are identical datasetdefs already saved in the original question.
-        // either when editing a question or saving as new 
+        // either when editing a question or saving as new
         // they are retrieved using $questionfromid
         if ($questionfromid!='0'){
             $form->id = $questionfromid ;
@@ -237,7 +237,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // they will defined and stored with datasetdefinitions_form.php
         // the $options are not used here
         if ($questionfromid!='0'){
-        
+
         foreach ($possibledatasets as $datasetname) {
             if (!isset($datasets[$datasetname])) {
                 list($options, $selected) =
@@ -253,15 +253,15 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     /**
     * this version save the available data at the different steps of the question editing process
     * without using global $SESSION as storage between steps
-    * at the first step $wizardnow = 'question' 
+    * at the first step $wizardnow = 'question'
     *  when creating a new question
     *  when modifying a question
     *  when copying as a new question
     *  the general parameters and answers are saved using parent::save_question
-    *  then the datasets are prepared and saved 
-    * at the second step $wizardnow = 'datasetdefinitions' 
+    *  then the datasets are prepared and saved
+    * at the second step $wizardnow = 'datasetdefinitions'
     *  the datadefs final type are defined as private, category or not a datadef
-    * at the third step $wizardnow = 'datasetitems' 
+    * at the third step $wizardnow = 'datasetitems'
     *  the datadefs parameters and the data items are created or defined
     *
     * @param object question
@@ -272,11 +272,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     function save_question($question, $form, $course) {
         $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
         $id = optional_param('id', 0, PARAM_INT); // question id
-        // in case 'question' 
-        // for a new question $form->id is empty 
-        // when saving as new question 
-        //   $question->id = 0, $form is $data from question2.php 
-        //   and $data->makecopy is defined as $data->id is the initial question id 
+        // in case 'question'
+        // for a new question $form->id is empty
+        // when saving as new question
+        //   $question->id = 0, $form is $data from question2.php
+        //   and $data->makecopy is defined as $data->id is the initial question id
         // edit case. If it is a new question we don't necessarily need to
         // return a valid question object
 
@@ -290,23 +290,24 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                     $this->preparedatasets($form);
                    $form->id = $question->id;
                    $this->save_dataset_definitions($form);
-                } else if (!empty($form->makecopy)){ 
+                } else if (!empty($form->makecopy)){
                    $questionfromid =  $form->id ;
                    $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
-                    $this->preparedatasets($form,$questionfromid);                   
+                    $this->preparedatasets($form,$questionfromid);
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form,$questionfromid );
-                }  else {// editing a question 
+                }  else {// editing a question
                     $question = parent::save_question($question, $form, $course);
                     //prepare the datasets
                     $this->preparedatasets($form,$question->id);
-                    $form->id = $question->id; 
+                    $form->id = $question->id;
                     $this->save_dataset_definitions($form);
                 }
                 break;
             case 'datasetdefinitions':
-                    $this->save_dataset_definitions($form);
+
+                $this->save_dataset_definitions($form);
                 break;
             case 'datasetitems':
                 $this->save_dataset_items($question, $form);
@@ -369,7 +370,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $datasetdef = &$datasetdefinitions[$defid];
             if (isset($datasetdef->id)) {
                 if (!isset($tmpdatasets[$defid])) {
-                // This dataset is not used any more, delete it    
+                // This dataset is not used any more, delete it
                     delete_records('question_datasets',
                                'question', $form->id,
                                'datasetdefinition', $datasetdef->id);
@@ -441,12 +442,12 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
     /** This function create a copy of the datasets ( definition and dataitems)
     * from the preceding question if they remain in the new question
-    * otherwise its create the datasets that have been added as in the 
+    * otherwise its create the datasets that have been added as in the
     * save_dataset_definitions()
     */
     function save_as_new_dataset_definitions($form, $initialid) {
     global $CFG ;
-        // Get the datasets from the intial question 
+        // Get the datasets from the intial question
         $datasetdefinitions = $this->get_dataset_definitions($initialid, $form->dataset);
         // $tmpdatasets contains those of the new question
         $tmpdatasets = array_flip($form->dataset);
@@ -469,7 +470,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         'question_dataset_definitions', $datasetdef)) {
                         error("Unable to create dataset $defid");
                    }
-                   //copy the dataitems                   
+                   //copy the dataitems
                    $olditems = get_records_sql( // Use number as key!!
                         " SELECT itemnumber, value
                           FROM {$CFG->prefix}question_dataset_items
@@ -481,15 +482,15 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                         if (!insert_record('question_dataset_items', $item)) {
                             error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                         }
-                        $itemcount++; 
+                        $itemcount++;
                         }
                         //update item count
                         $datasetdef->itemcount =$itemcount;
-                        update_record('question_dataset_definitions', $datasetdef);                    
-                    } // end of  copy the dataitems                     
+                        update_record('question_dataset_definitions', $datasetdef);
+                    } // end of  copy the dataitems
                 }// end of  copy the datasetdef
-                // Create relation to the new question with this 
-                // copy as new datasetdef from the initial question 
+                // Create relation to the new question with this
+                // copy as new datasetdef from the initial question
                 $questiondataset = new stdClass;
                 $questiondataset->question = $form->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;

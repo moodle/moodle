@@ -23,10 +23,12 @@ class question_edit_truefalse_form extends question_edit_form {
         $mform->addElement('select', 'correctanswer', get_string('correctanswer', 'qtype_truefalse'),
                 array(0 => get_string('false', 'qtype_truefalse'), 1 => get_string('true', 'qtype_truefalse')));
 
-        $mform->addElement('htmleditor', 'feedbacktrue', get_string('feedbacktrue', 'qtype_truefalse'));
+        $mform->addElement('htmleditor', 'feedbacktrue', get_string('feedbacktrue', 'qtype_truefalse'),
+                                array('course' => $this->coursefilesid));;
         $mform->setType('feedbacktrue', PARAM_RAW);
 
-        $mform->addElement('htmleditor', 'feedbackfalse', get_string('feedbackfalse', 'qtype_truefalse'));
+        $mform->addElement('htmleditor', 'feedbackfalse', get_string('feedbackfalse', 'qtype_truefalse'),
+                                array('course' => $this->coursefilesid));
         $mform->setType('feedbackfalse', PARAM_RAW);
 
         // Fix penalty factor at 1.

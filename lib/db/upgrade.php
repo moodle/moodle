@@ -37,13 +37,13 @@ function xmldb_main_upgrade($oldversion=0) {
         if ($module = get_record('modules', 'name', 'exercise')) {
             if ($module->visible) {
                 // Hide/disable the module entry
-                set_field('modules', 'visible', '0', 'id', $module->id); 
+                set_field('modules', 'visible', '0', 'id', $module->id);
                 // Save existing visible state for all activities
                 set_field('course_modules', 'visibleold', '1', 'visible' ,'1', 'module', $module->id);
                 set_field('course_modules', 'visibleold', '0', 'visible' ,'0', 'module', $module->id);
                 // Hide all activities
                 set_field('course_modules', 'visible', '0', 'module', $module->id);
-    
+
                 require_once($CFG->dirroot.'/course/lib.php');
                 rebuild_course_cache();  // Rebuld cache for all modules because they might have changed
             }
@@ -55,7 +55,7 @@ function xmldb_main_upgrade($oldversion=0) {
             set_field('modules', 'visible', 0, 'name', 'lams');  // Disable it by default
         }
     }
-    
+
     if ($result && $oldversion < 2006102600) {
 
         /// Define fields to be added to user_info_field
@@ -81,7 +81,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field4);
         $result = $result && add_field($table, $field5);
     }
-    
+
     if ($result && $oldversion < 2006112000) {
 
     /// Define field attachment to be added to post
@@ -92,7 +92,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field attachment
         $result = $result && add_field($table, $field);
     }
-    
+
     if ($result && $oldversion < 2006112200) {
 
     /// Define field imagealt to be added to user
@@ -102,7 +102,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field imagealt
         $result = $result && add_field($table, $field);
-        
+
         $table = new XMLDBTable('user');
         $field = new XMLDBField('screenreader');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '0', 'imagealt');
@@ -121,7 +121,7 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($oldversion < 2006120400) {    /// Remove secureforms config setting
         execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms'", true);
     }
-    
+
     if (!empty($CFG->rolesactive) && $oldversion < 2006120700) { // add moodle/user:viewdetails to all roles!
         // note: use of assign_capability() is discouraged in upgrade script!
         if ($roles = get_records('role')) {
@@ -198,7 +198,7 @@ function xmldb_main_upgrade($oldversion=0) {
                                   XMLDB_NOTNULL, null, null, null, 0);
         $f = $table->addFieldInfo('last_log_id',  XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, null, null, null, 0);
-        // PK and indexes 
+        // PK and indexes
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         // Create the table
         $result = $result && create_table($table);
@@ -317,14 +317,14 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
 
         //
-        // Prime MNET configuration entries -- will be needed later by auth/mnet 
+        // Prime MNET configuration entries -- will be needed later by auth/mnet
         //
         include_once $CFG->dirroot . '/mnet/lib.php';
         $env = new mnet_environment();
         $env->init();
         unset($env);
 
-        // add mnethostid to user-        
+        // add mnethostid to user-
         $table = new XMLDBTable('user');
         $field = new XMLDBField('mnethostid');
         $field->setType(XMLDB_TYPE_INTEGER);
@@ -339,8 +339,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
         // The default mnethostid is zero... we need to update this for all
         // users of the local IdP service.
-        set_field('user', 
-                  'mnethostid', $CFG->mnet_localhost_id, 
+        set_field('user',
+                  'mnethostid', $CFG->mnet_localhost_id,
                   'mnethostid', '0');
 
 
@@ -353,7 +353,7 @@ function xmldb_main_upgrade($oldversion=0) {
             notify(get_string('duplicate_usernames', 'mnet', 'http://docs.moodle.org/en/DuplicateUsernames'));
         }
 
-        unset($table, $field, $index);        
+        unset($table, $field, $index);
 
         /**
          ** auth/mnet tables
@@ -458,7 +458,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $f = $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, NULL, null, null, 0);
         $f = $table->addFieldInfo('hostid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
-                                  XMLDB_NOTNULL, NULL, null, null, 0); 
+                                  XMLDB_NOTNULL, NULL, null, null, 0);
         $f = $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER,  '10', XMLDB_UNSIGNED,
                                   XMLDB_NOTNULL, NULL, null, null, 0);
         $f = $table->addFieldInfo('rolename',  XMLDB_TYPE_CHAR,  '255', null,
@@ -522,14 +522,14 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for context_rel
         $result = $result && create_table($table);
-        
+
         /// code here to fill the context_rel table
         /// use get record set to iterate slower
         build_context_rel();
     }
 
     if ($result && $oldversion < 2007011501) {
-        if (!empty($CFG->enablerecordcache) && empty($CFG->rcache) && 
+        if (!empty($CFG->enablerecordcache) && empty($CFG->rcache) &&
             // Note: won't force-load these settings into CFG
             // we don't need or want cache during the upgrade itself
             empty($CFG->cachetype) && empty($CFG->intcachemax)) {
@@ -679,30 +679,30 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch drop index text
         $result = $result && drop_index($table, $index);
-           
+
         $field = new XMLDBField('text');
         $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'userid');
 
     /// Launch change of type for field text
         $result = $result && change_field_type($table, $field);
-        
+
         $index = new XMLDBIndex('text');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('text'));
 
     /// Launch add index text
-        $result = $result && add_index($table, $index);       
+        $result = $result && add_index($table, $index);
     }
-    
+
     if ($result && $oldversion < 2007041100) {
 
     /// Define field idnumber to be added to course_modules
         $table = new XMLDBTable('course_modules');
         $field = new XMLDBField('idnumber');
         $field->setAttributes(XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null, 'section');
-    
+
     /// Launch add field idnumber
         $result = $result && add_field($table, $field);
-    
+
     /// Define index idnumber (unique) to be added to course_modules
         $table = new XMLDBTable('course_modules');
         $index = new XMLDBIndex('idnumber');
@@ -717,7 +717,7 @@ function xmldb_main_upgrade($oldversion=0) {
        We could do all this with one tricky SQL statement but it's a one-off so no
        harm in using PHP loops */
     if ($result && $oldversion < 2007041600) {
-    
+
     /// Get the menu fields
         if ($fields = get_records('user_info_field', 'datatype', 'menu')) {
             foreach ($fields as $field) {
@@ -729,7 +729,7 @@ function xmldb_main_upgrade($oldversion=0) {
                     $options = explode("\n", $this->field->param1);
                     foreach ($data as $d) {
                         $key = array_search($d->data, $options);
-                        
+
                     /// If the data is an integer and is not one of the options,
                     /// set the respective option value
                         if (is_int($d->data) and (($key === NULL) or ($key === false)) and isset($options[$d->data])) {
@@ -740,9 +740,9 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
-        
+
     }
-    
+
     /// adding new gradebook tables
     if ($result && $oldversion < 2007041800) {
 
@@ -764,7 +764,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for events_handlers
         $result = $result && create_table($table);
-    
+
     /// Define table events_queue to be created
         $table = new XMLDBTable('events_queue');
 
@@ -782,7 +782,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch create table for events_queue
         $result = $result && create_table($table);
-    
+
     /// Define table events_queue_handlers to be created
         $table = new XMLDBTable('events_queue_handlers');
 
@@ -813,7 +813,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field schedule
         $result = $result && add_field($table, $field);
-        
+
     /// Define field status to be added to events_handlers
         $table = new XMLDBTable('events_handlers');
         $field = new XMLDBField('status');
@@ -899,7 +899,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field usermodified
         $result = $result && add_field($table, $field);
-        
+
     /// Define key usermodified (foreign) to be added to post
         $table = new XMLDBTable('post');
         $key = new XMLDBKey('usermodified');
@@ -952,7 +952,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $application->xmlrpc_server_url   = '/api/xmlrpc/server.php';
         $application->sso_land_url        = '/auth/xmlrpc/land.php';
         $result = $result && insert_record('mnet_application', $application, false);
-        
+
         // New mnet_host->applicationid field
         $table = new XMLDBTable('mnet_host');
         $field = new XMLDBField('applicationid');
@@ -974,7 +974,6 @@ function xmldb_main_upgrade($oldversion=0) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_remove_rqp_qtype_config_string();
     }
-
 
     if ($result && $oldversion < 2007072200) {
 /// Remove obsoleted unit tests tables - they will be recreated automatically
@@ -1448,21 +1447,21 @@ function xmldb_main_upgrade($oldversion=0) {
 
 
     if ($result && $oldversion < 2007073100) {
-    /// Define table grade_outcomes_courses to be created   
-        $table = new XMLDBTable('grade_outcomes_courses');      
-    
-    /// Adding fields to table grade_outcomes_courses   
-        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);    
-        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);      
-        $table->addFieldInfo('outcomeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);     
-    
-    /// Adding keys to table grade_outcomes_courses     
-        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));      
-        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));    
-        $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));      
-    
-    /// Launch create table for grade_outcomes_courses      
-        $result = $result && create_table($table);      
+    /// Define table grade_outcomes_courses to be created
+        $table = new XMLDBTable('grade_outcomes_courses');
+
+    /// Adding fields to table grade_outcomes_courses
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('outcomeid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table grade_outcomes_courses
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
+
+    /// Launch create table for grade_outcomes_courses
+        $result = $result && create_table($table);
     }
 
 
@@ -1562,7 +1561,7 @@ function xmldb_main_upgrade($oldversion=0) {
             $result = $result && add_field($table, $field);
         }
     }
-    
+
     // adding unique contraint on (courseid,shortname) of an outcome
     if ($result && $oldversion < 2007080100) {
 
@@ -1581,7 +1580,7 @@ function xmldb_main_upgrade($oldversion=0) {
             set_config('supportemail',  s($firstadmin->email));
         }
     }
-    
+
     /// MDL-10679, context_rel clean up
     if ($result && $oldversion < 2007080200) {
         delete_records('context_rel');
@@ -1719,6 +1718,14 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 */
+    //need to change this when we merge with HEAD
+    if ($result && $oldversion < 2007081000) {
+        require_once($CFG->dirroot . '/question/upgrade.php');
+        $result = $result && question_upgrade_context_etc();
+    }
+
     return $result;
 }
+
+
 ?>

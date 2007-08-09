@@ -19,7 +19,7 @@ class description_qtype extends default_questiontype {
     function name() {
         return 'description';
     }
-    
+
     function is_usable_by_random() {
         return false;
     }
@@ -46,7 +46,7 @@ class description_qtype extends default_questiontype {
 
         // For editing teachers print a link to an editing popup window
         $editlink = '';
-        if (has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $cmoptions->course))) {
+        if (question_has_capability_on($question, 'edit')) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);

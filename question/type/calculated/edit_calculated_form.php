@@ -34,14 +34,14 @@ class question_edit_calculated_form extends question_edit_form {
         $addfieldsname='updatecategory';
         $addstring=get_string("updatecategory", "qtype_calculated");
                 $mform->registerNoSubmitButton($addfieldsname);
- 
+
         $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
 
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', get_string('answerhdr', 'qtype_calculated', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'answers', get_string('correctanswerformula', 'quiz').'=', array('size' => 50));
-        $repeatedoptions['answers']['type'] = PARAM_NOTAGS;        
+        $repeatedoptions['answers']['type'] = PARAM_NOTAGS;
 
         $creategrades = get_grade_options();
         $gradeoptions = $creategrades->gradeoptions;
@@ -59,7 +59,8 @@ class question_edit_calculated_form extends question_edit_form {
         $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
         $repeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
 
-        $repeated[] =&  $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'));
+        $repeated[] =&  $mform->createElement('htmleditor', 'feedback', get_string('feedback', 'quiz'),
+                                array('course' => $this->coursefilesid));
         $repeatedoptions['feedback']['type'] = PARAM_RAW;
 
         if (isset($this->question->options)){
@@ -67,10 +68,14 @@ class question_edit_calculated_form extends question_edit_form {
         } else {
             $count = 0;
         }
-        $repeatsatstart = $count + 1;
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = $count + 1;
+        } else {
+            $repeatsatstart = $count;
+        }
         $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', 1, get_string('addmoreanswerblanks', 'qtype_calculated'));
 
-       $repeated = array();
+        $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 
         $repeated[] =& $mform->createElement('text', 'unit', get_string('unit', 'quiz'));
@@ -84,7 +89,11 @@ class question_edit_calculated_form extends question_edit_form {
         } else {
             $countunits = 0;
         }
-        $repeatsatstart = $countunits + 1;
+        if ($this->question->formoptions->repeatelements){
+            $repeatsatstart = $countunits + 1;
+        } else {
+            $repeatsatstart = $countunits;
+        }
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
         $firstunit =& $mform->getElement('multiplier[0]');
@@ -117,7 +126,7 @@ class question_edit_calculated_form extends question_edit_form {
             }
             $units  = array_values($question->options->units);
             // make sure the default unit is at index 0
-            usort($units, create_function('$a, $b', 
+            usort($units, create_function('$a, $b',
             'if (1.0 === (float)$a->multiplier) { return -1; } else '.
             'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
             if (count($units)) {
@@ -131,21 +140,21 @@ class question_edit_calculated_form extends question_edit_form {
         }
         $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
         $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
-        /* set the wild cards category display given that on loading the category element is 
-        unselected when processing this function but have a valid value when processing the 
+        /* set the wild cards category display given that on loading the category element is
+        unselected when processing this function but have a valid value when processing the
         update category button. The value can be obtain by
          $qu->category =$this->_form->_elements[$this->_form->_elementIndex['category']]->_values[0];
          but is coded using existing functions
-        */        
+        */
          $qu = new stdClass;
          $el = new stdClass;
-         /* no need to call elementExists() here */ 
-         $el=$this->_form->getElement('category');  
+         /* no need to call elementExists() here */
+         $el=$this->_form->getElement('category');
          if($value =$el->getSelected()) {
             $qu->category =$value[0];
         }else {
             $qu->category=$question->category;// on load  $question->category is set by question.php
-        }    
+        }
         $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2 ;
                $question = (object)((array)$question + $default_values);
@@ -158,7 +167,7 @@ class question_edit_calculated_form extends question_edit_form {
     }
 
     function validation($data){
-        $errors = array();
+        $errors = parent::validation($data);
         //verifying for errors in {=...} in question text;
         $qtext = "";
         $qtextremaining = $data['questiontext'] ;
@@ -166,7 +175,7 @@ class question_edit_calculated_form extends question_edit_form {
             foreach ($possibledatasets as $name => $value) {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
-    //     echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets); 
+    //     echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets);
         while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
             $qtext =$qtext.$qtextsplits[0];
@@ -176,9 +185,9 @@ class question_edit_calculated_form extends question_edit_form {
                     $errors['questiontext'] = $formulaerrors.':'.$regs1[1] ;
                 }else {
                     $errors['questiontext'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
-                }                    
+                }
             }
-        }             
+        }
         $answers = $data['answers'];
         $answercount = 0;
         $maxgrade = false;
@@ -186,13 +195,13 @@ class question_edit_calculated_form extends question_edit_form {
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer){
             $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
-        }      
+        }
         if ( count($mandatorydatasets )==0){
           //  $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
             foreach ($answers as $key => $answer){
                 $errors['answers['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
-            }      
-        }  
+            }
+        }
         foreach ($answers as $key => $answer){
             //check no of choices
             // the * for everykind of answer not actually implemented

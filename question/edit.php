@@ -14,18 +14,15 @@
     require_once("../config.php");
     require_once("editlib.php");
 
-    list($thispageurl, $courseid, $cmid, $cm, $module, $pagevars) = question_edit_setup();
- 
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("This course doesn't exist");
-    }
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-  
+    list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) = question_edit_setup('questions');
 
+    question_showbank_actions($thispageurl, $cm);
+
+    $context = $contexts->lowest();
     $streditingquestions = get_string('editquestions', "quiz");
     if ($cm!==null) {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))
-            ? update_module_button($cm->id, $course->id, get_string('modulename', $cm->modname))
+        $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
+            ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id", 'type' => 'activity');
@@ -43,23 +40,23 @@
         $navlinks = array();
         $navlinks[] = array('name' => $streditingquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-           
+
         print_header_simple($streditingquestions, '', $navigation);
-        
+
         // print tabs
         $currenttab = 'questions';
         include('tabs.php');
     }
-    
- 
+
+
     echo '<table class="boxaligncenter" border="0" cellpadding="2" cellspacing="0">';
     echo '<tr><td valign="top">';
 
-    question_showbank($thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
+    question_showbank('questions', $contexts, $thispageurl, $cm, $pagevars['qpage'], $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
                     $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
 
     echo '</td></tr>';
     echo '</table>';
 
-    print_footer($course);
+    print_footer($COURSE);
 ?>

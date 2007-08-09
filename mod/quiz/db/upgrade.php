@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the quiz module
 //
 // Sometimes, changes between versions involve
@@ -19,12 +19,12 @@
 
 function xmldb_quiz_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME;
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
+/// And upgrade begins here. For each one, you'll need one
+/// block of code similar to the next one. Please, delete
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
@@ -68,7 +68,7 @@ function xmldb_quiz_upgrade($oldversion=0) {
 
     // Separate control for when overall feedback is displayed, independant of the question feedback settings.
     if ($result && $oldversion < 2007072600) {
-        
+
         // Adjust the quiz review options so that overall feedback is displayed whenever feedback is.
         $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'quiz SET review = ' .
                 sql_bitor(sql_bitand('review', sql_bitnot(QUIZ_REVIEW_OVERALLFEEDBACK)),
@@ -82,7 +82,7 @@ function xmldb_quiz_upgrade($oldversion=0) {
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN) << 14) |
                 (($CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED) << 12));
     }
-    
+
     return $result;
 }
 

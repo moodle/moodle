@@ -13,23 +13,43 @@ require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/formslib.php');
 
-$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
-$cmid = optional_param('cmid', 0, PARAM_INT);
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
-$wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
 
-if ($cmid){
-    list($module, $cm) = get_module_from_cmid($cmid); 
-} else {
-    $module = null;
-    $cm = null;
+$cmid = optional_param('cmid', 0, PARAM_INT);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
+$movecontext =  optional_param('movecontext', 0, PARAM_BOOL);//switch to make question
+                    //uneditable - form is displayed to edit question only
+$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
+
+if ($movecontext && !$id){
+    print_error('questiondoesnotexist', 'question', $returnurl);
 }
 
-// Validate the URL parameters.
+if ($cmid){
+    list($module, $cm) = get_module_from_cmid($cmid);
+    require_login($cm->course, false, $cm);
+    $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
+} elseif ($courseid) {
+    require_login($courseid, false);
+    $thiscontext = get_context_instance(CONTEXT_COURSE, $courseid);
+    $module = null;
+    $cm = null;
+} else {
+    error('Need to pass courseid or cmid to this script.');
+}
+$contexts = new question_edit_contexts($thiscontext);
+
+
+if (!$returnurl) {
+    $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
+}
+
+
+
 if ($id) {
     if (!$question = get_record('question', 'id', $id)) {
         print_error('questiondoesnotexist', 'question', $returnurl);
@@ -47,79 +67,139 @@ if ($id) {
 if (!$category = get_record('question_categories', 'id', $question->category)) {
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
-if (!$returnurl) {
-    $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$category->course}";
+
+//permissions
+$question->formoptions = new object();
+$permissionstrs = array();
+
+$categorycontext = get_context_instance_by_id($category->contextid);
+$addpermission = has_capability('moodle/question:add', $categorycontext);
+
+if ($id) {
+    $canview = question_has_capability_on($question, 'view');
+    if ($movecontext){
+        $question->formoptions->canedit = false;
+        $question->formoptions->canmove = (question_has_capability_on($question, 'move') && $contexts->have_cap('moodle/question:add'));
+        $question->formoptions->cansaveasnew = false;
+        $question->formoptions->repeatelements = false;
+        $question->formoptions->movecontext = true;
+        $formeditable = true;
+        question_require_capability_on($question, 'view');
+    } else {
+        $question->formoptions->canedit = question_has_capability_on($question, 'edit');
+        $question->formoptions->canmove = (question_has_capability_on($question, 'move') && $addpermission);
+        $question->formoptions->cansaveasnew = (($canview ||question_has_capability_on($question, 'edit')) && $addpermission);
+        $question->formoptions->repeatelements = ($question->formoptions->canedit || $question->formoptions->cansaveasnew);
+        $formeditable =  $question->formoptions->canedit || $question->formoptions->cansaveasnew || $question->formoptions->canmove;
+        $question->formoptions->movecontext = false;
+        if (!$formeditable){
+            question_require_capability_on($question, 'view');
+        }
+    }
+
+
+} else  { // creating a new question
+    require_capability('moodle/question:add', $categorycontext);
+    $formeditable = true;
+    $question->formoptions->repeatelements = true;
+    $question->formoptions->movecontext = false;
 }
 
+$question->category = "$category->id,$category->contextid";
+if ($formeditable && $id){
+    $question->categorymoveto = $question->category;
+}
 // Validate the question type.
 if (!isset($QTYPES[$question->qtype])) {
     print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
 }
 $CFG->pagepath = 'question/type/' . $question->qtype;
 
-// Check the user is logged in and has enough premissions.
-require_login($category->course, false);
-$coursecontext = get_context_instance(CONTEXT_COURSE, $category->course);
-require_capability('moodle/question:manage', $coursecontext);
 
 // Create the question editing form.
-if ($wizardnow!==''){
+if ($wizardnow!=='' && !$movecontext){
     if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
         print_error('missingimportantcode', 'question', $returnurl, 'wizard form definition');
     } else {
-        $mform = $QTYPES[$question->qtype]->next_wizard_form('question.php', $question, $wizardnow);
+        $mform = $QTYPES[$question->qtype]->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
     }
 } else {
-    $mform = $QTYPES[$question->qtype]->create_editing_form('question.php', $question);
+    $mform = $QTYPES[$question->qtype]->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
 }
-
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition for "'.$question->qtype.'"');
 }
 $toform = $question; // send the question object and a few more parameters to the form
 $toform->returnurl = $returnurl;
+$toform->movecontext = $movecontext;
 if ($cm !== null){
     $toform->cmid = $cm->id;
+    $toform->courseid = $cm->course;
+} else {
+    $toform->courseid = $COURSE->id;
 }
 $mform->set_data($toform);
 
 if ($mform->is_cancelled()){
     redirect($returnurl);
 } elseif ($data = $mform->get_data()){
+    $returnurl = new moodle_url($returnurl);
+    //select category that question has been saved in / moved to when we return to question bank
+    if (!empty($data->categorymoveto)){
+        $returnurl->param('category', $data->categorymoveto);
+    } else if (!empty($data->category)){
+        $returnurl->param('category', $data->category);
+    }
+    $returnurl = $returnurl->out();
     if (!empty($data->makecopy)) {
         $question->id = 0;  // causes a new question to be created.
         $question->hidden = 0; // Copies should not be hidden
     }
+    if ($movecontext){
+        list($tocatid, $tocontextid) = explode(',', $data->categorymoveto);
+        $tocontext = get_context_instance_by_id($tocontextid);
+        require_capability('moodle/question:add', $tocontext);
+        if (get_filesdir_from_context($categorycontext) != get_filesdir_from_context($tocontext)){
+            $movecontexturl  = new moodle_url($CFG->wwwroot.'/question/contextmoveq.php',
+                                            array('returnurl' => $returnurl,
+                                                    'ids'=>$question->id,
+                                                    'tocatid'=> $tocatid));
+            if ($cmid){
+                $movecontexturl->param('cmid', $cmid);
+            } else {
+                $movecontexturl->param('courseid', $COURSE->id);
+            }
+            redirect($movecontexturl->out());
+        }
+    }
     $question = $QTYPES[$question->qtype]->save_question($question, $data, $COURSE, $wizardnow);
-    if ($QTYPES[$qtype]->finished_edit_wizard($data)){
+    if ($QTYPES[$qtype]->finished_edit_wizard($data) || $movecontext){
+
         if (optional_param('inpopup', 0, PARAM_BOOL)) {
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
             redirect($returnurl);
         }
-        die;
     } else {
-        //useful for passing data to the next page which is not saved in the database
-        $queryappend = '';
-        if (isset($data->nextpageparam)){
-            foreach ($data->nextpageparam as $key => $param){
-                $queryappend .= "&".urlencode($key).'='.urlencode($param);
-            }
-        }
+        $nexturlparams = array('returnurl'=>$returnurl)
+                        + $data->nextpageparam;//useful for passing data to the next page which is not saved in the database
         if ($question->id) {
-            $nexturl = "question.php?id=$question->id&returnurl=" . urlencode($returnurl);
+            $nexturlparams['id'] = $question->id;
         } else { // only for creating new questions
-            $nexturl = "question.php?category=$question->category&qtype=$question->qtype&returnurl=".urlencode($returnurl);
+            $nexturlparams['category'] = $question->category;
+            $nexturlparams['qtype'] =$question->qtype;
         }
-        redirect($nexturl.'&wizardnow='.$data->wizard.$queryappend, '', 20);
+        $nexturlparams['wizardnow'] = $data->wizard;
+        $nexturl = new moodle_url('question.php', $nexturlparams);
+        redirect($nexturl);
     }
 } else {
 
     list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
     if ($cm !== null) {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $category->course))
-            ? update_module_button($cm->id, $category->course, get_string('modulename', $cm->modname))
+        $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
+            ? update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname))
             : "";
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$category->course", 'type' => 'activity');
@@ -128,7 +208,7 @@ if ($mform->is_cancelled()){
         $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation, "", "", true, $strupdatemodule);
-    
+
     } else {
         $navlinks = array();
         $navlinks[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
@@ -139,10 +219,10 @@ if ($mform->is_cancelled()){
         print_header_simple($streditingquestion, '', $navigation);
     }
 
+
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.
     $QTYPES[$question->qtype]->display_question_editing_page($mform, $question, $wizardnow);
-
     print_footer($COURSE);
 }
 ?>

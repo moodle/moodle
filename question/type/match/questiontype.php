@@ -616,7 +616,7 @@ class question_match_qtype extends default_questiontype {
     /**
      * Decode links in question type specific tables.
      * @return bool success or failure.
-     */ 
+     */
     function decode_content_links_caller($questionids, $restore, &$i) {
         $status = true;
 
@@ -645,6 +645,38 @@ class question_match_qtype extends default_questiontype {
         }
 
         return $status;
+    }
+
+    function find_file_links($question, $courseid){
+        // find links in the question_match_sub table.
+        $urls = array();
+        foreach ($question->options->subquestions as $subquestion) {
+            $urls += question_find_file_links_from_html($subquestion->questiontext, $courseid);
+        }
+
+        //set all the values of the array to the question object
+        if ($urls){
+            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
+        }
+        $urls = array_merge_recursive($urls, parent::find_file_links($question, $courseid));
+        return $urls;
+    }
+
+    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
+        parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
+        // replace links in the question_match_sub table.
+        if (isset($question->options->subquestions)){
+            foreach ($question->options->subquestions as $subquestion) {
+                $subquestionchanged = false;
+                $subquestion->questiontext = question_replace_file_links_in_html($subquestion->questiontext, $fromcourseid, $tocourseid, $url, $destination, $subquestionchanged);
+                if ($subquestionchanged){//need to update rec in db
+                    if (!update_record('question_match_sub', addslashes_recursive($subquestion))) {
+                        error('Couldn\'t update \'question_match_sub\' record '.$subquestion->id);
+                    }
+
+                }
+            }
+        }
     }
 }
 //// END OF CLASS ////
