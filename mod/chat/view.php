@@ -111,13 +111,13 @@
         }
         
         link_to_popup_window ($chattarget,
-                              "chat$course->id$chat->id$groupparam", "<p>$strenterchat</p>", 500, 700, get_string('modulename', 'chat'));
+                              "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
         
         // if user is using screen reader, then there is no need to display this link again
         if ($CFG->chat_method == 'header_js' && empty($USER->screenreader)) {
             // show frame/js-less alternative
             link_to_popup_window ("/mod/chat/gui_basic/index.php?id=$chat->id$groupparam",
-                                  "chat$course->id$chat->id$groupparam", '<p>('.get_string('noframesjs', 'message').')</p>', 500, 700, get_string('modulename', 'chat'));
+                                  "chat$course->id$chat->id$groupparam", '('.get_string('noframesjs', 'message').')', 500, 700, get_string('modulename', 'chat'));
         }
 
         print_box_end();
