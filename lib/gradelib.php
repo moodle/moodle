@@ -822,7 +822,7 @@ function grade_cron() {
     $sql = "SELECT i.*
               FROM {$CFG->prefix}grade_items i
              WHERE i.locked = 0 AND i.locktime > 0 AND i.locktime < $now AND EXISTS (
-                SELECT c.id FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+                SELECT 'x' FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
 
     // go through all courses that have proper final grades and lock them if needed
     if ($rs = get_recordset_sql($sql)) {
@@ -839,13 +839,13 @@ function grade_cron() {
     $sql = "SELECT g.*
               FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items i
              WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < $now AND g.itemid=i.id AND EXISTS (
-                SELECT c.id FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+                SELECT 'x' FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
 
     // go through all courses that have proper final grades and lock them if needed
     if ($rs = get_recordset_sql($sql)) {
         if ($rs->RecordCount() > 0) {
             while ($grade = rs_fetch_next_record($rs)) {
-                $grade_grade = new grade_grade($item, false);
+                $grade_grade = new grade_grade($grade, false);
                 $grade_grade->locked = $now;
                 $grade_grade->update('locktime');
             }
