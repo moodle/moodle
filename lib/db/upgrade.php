@@ -1634,6 +1634,24 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && change_field_precision($table, $field);
     }
 
+    if ($result && $oldversion < 2007080900) {
+    /// Add context.path & index
+        $table = new XMLDBTable('context');
+        $field = new XMLDBField('path');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '', 'instanceid');
+        $result = $result && add_field($table, $field);
+        $table = new XMLDBTable('context');
+        $index = new XMLDBIndex('path');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('path'));
+        $result = $result && add_index($table, $index);
+
+    /// Add context.depth
+        $table = new XMLDBTable('context');
+        $field = new XMLDBField('depth');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'path');
+        $result = $result && add_field($table, $field);
+    }
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
