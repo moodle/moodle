@@ -1,0 +1,172 @@
+/*******************************************************************
+ rtl.css
+
+ This CSS file contains all layout definitions that are required for
+ right-to-left languages. It overrides definitions in other fils to
+ move right-floating blocks to the left, align text to the right, 
+ swap left and right margins, etc.
+ 
+ *******************************************************************/
+
+body, td, li, div							{ direction: rtl; }			/* required for chat windows */
+
+.ltr-input									{ direction: ltr; }	/* for input that require LTR, e.g. filenames or URLs */
+.headermain, h1.headermain					{ float: right; }
+.headermenu									{ float: left; text-align: left; }
+.navbar .breadcrumb							{ float: right; }
+.breadcrumb									{ padding-left:0px; padding-right:3px; }
+.navbar .navbutton, .navbar .menu			{ float: left; }
+.navbar .navbutton							{ padding-left:3px; padding-right:0px; }
+.navbar										{ margin-left:5px;  margin-right:0px;  }
+
+/* login window */
+.loginbox.twocolumns .signuppanel 			{ float: left; }
+.loginbox.twocolumns .loginpanel 			{ float: right; }
+.loginbox .loginform .form-label 			{ float: right; text-align: left; }
+.loginbox .loginform .form-input 			{ float: left; }
+.loginbox .loginform 						{ text-align: right; }
+.loginbox .signuppanel .subcontent			{ text-align: right; }
+
+.calendar-controls .previous, .calendar-controls .current, .calendar-controls .next { float: right; }
+.coursebox .summary							{ float: left;  text-align: right; }
+.coursebox .info 							{ float: right; text-align: right; }
+.calendar-controls .previous				{ text-align: right; }
+.calendar-controls .next					{ text-align: left;  }
+.reportlink									{ text-align: left;  }
+form.mform fieldset legend					{ margin-left:0px;  margin-right:0.5em;  }
+form.mform div.felement, form.mform fieldset.felement { margin: 5px 10pt 0pt 0px; }
+form.mform .fitemtitle 						{ margin: 5px 10pt 0pt 0px; }
+form.mform fieldset .advancedbutton			{ text-align: left; }
+form.mform .fdescription.required			{ text-align: left; }
+
+/* language selectors */
+#chooselang_jump							{ direction: ltr; }
+#id_lang									{ direction: ltr; }
+
+/* admin > lang > language pack selection */
+select#pack									{ direction: ltr; }
+select#uninstalllang						{ direction: ltr; }
+
+.mod-forum .indent 							{ margin-right: 30px; margin-left: 0px; }
+.glossarypost								{ text-align: right; }
+h1, h2, h3, h4								{ text-align: right; padding-left:0px; padding-right:5px; }
+
+/* lessons */
+.mod-lesson .invisiblefieldset.fieldsetfix tr { text-align: right; }
+.mod-lesson .contents 						{ text-align: right; }
+
+.sideblock .header .hide-show 				{ float: left; }
+.sideblock .content h3, .sideblock .content h2 { text-align: right; }
+.sideblock .footer 							{ text-align: right; }
+
+/* blocks */
+h1.main, h2.main, h3.main, h4.main, h5.main, h6.main { text-align: right; }
+.entrylowersection .icons, .entrylowersection .ratings { text-align: left; padding-left:5px; padding-right:0px; }
+.block_calendar_upcoming .event .date		{ text-align: left; direction: ltr; }
+.block_admin_tree .admintree 				{ text-align: right; }
+body#admin-blocks table.generaltable th.c0, body#admin-blocks table.generaltable td.c0, body#admin-filters table.generaltable th.c0, body#admin-filters table.generaltable td.c0, body#admin-modules table.generaltable th.c0, body#admin-modules table.generaltable td.c0, body#admin-auth table.generaltable th.c0, body#admin-auth table.generaltable td.c0 {
+    text-align:right;
+}
+
+#mod-chat-gui_header_js-jsupdate
+.chat-event,
+#mod-chat-gui_header_js-jsupdate
+.fdate_time_selector						{ direction: ltr; }
+.chat-event .text, .chat-message .text 		{ text-align: right; }
+
+/* participants */
+body#user-index table#participants td, body#user-index table#participants th { text-align: right; }
+
+/* Admin > Security */
+#adminsettings label						{ float: right; text-align: left; }
+#adminsettings select, #adminsettings input	{ float: right; margin:0pt 10pt 0pt 0px; }
+#adminsettings .description 				{ margin: 0pt 160px 0pt 1em; }
+#adminsettings .form-group                  { float: right; }
+
+/* Courses backup */
+#admin-backup_sche_hour .form-group			{ direction:ltr; float:right; } /* backup_sche_hour */
+
+form.mform div.felement, form.mform fieldset.felement
+{
+	float: right;
+	text-align: right;
+	margin-right: 10px
+	margin-left: 0px;
+}
+
+.que .info									{ float: right; }
+.que .prompt 								{ float: right; }
+.que 										{ text-align: right; }	
+body#mod-quiz-report table#attempts .header { text-align: right; }
+.logtable th 								{ text-align: right; }
+form.mform .fitemtitle
+{
+	float: right;
+	text-align: left;
+	margin-right: 10px
+	margin-left: 0px;
+}
+
+#course-view .section td.right
+{
+	border-left-width: 1px; border-left-style: solid; 
+	border-right-width: 0px; border-right-style: none; 
+}
+
+/* ========================
+	for tabs support
+   ======================== */
+
+.tabrow0 {
+	overflow: auto; PADDING-BOTTOM: 2.75em;
+}
+
+.tabrow0  LI {
+	float : right; MARGIN: 0px; width : 130px;  BACKGROUND: url(pix/tab/newbg.gif) no-repeat right top;  
+}
+
+.tabrow0 A SPAN {
+	padding: 10px 0px 0.35em 0px; BACKGROUND: none;
+}
+
+.tabrow0 A {
+	PADDING-LEFT: 0px !important;  MARGIN: 0px; BACKGROUND-IMAGE: none;
+}
+
+.tabrow0 A:hover,
+.tabrow0 A:hover span,
+.tabrow0 .here A:hover,
+.tabrow0 .here A:hover span {
+	BACKGROUND-IMAGE: none
+}
+
+.tabrow0 ul a {
+	PADDING-LEFT: 0px;
+}
+
+UL.tabrow1   {
+	right: 0px;   
+	width: 800px; /* must have absolute width here, otherwise IE makes a total mess */
+	min-width: 100%; 
+}
+
+UL.tabrow1  li {
+	float: right; 
+}
+
+.tabtree * { width: auto; }
+
+/* ========================
+	overrides styles_ie6 
+   ======================== */
+
+FORM.mform INPUT 							{ margin-left: 5px !important; margin-right: -5px !important; }
+
+
+/* ========================
+	for htmlarea editor
+   ======================== */
+   
+.htmlarea		                            { direction: rtl; }
+form#adminsettings div.htmlarea             { clear: right; }
+
