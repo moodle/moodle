@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070804" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070809" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -857,7 +857,6 @@
         <INDEX NAME="contextlevel-instanceid" UNIQUE="true" FIELDS="contextlevel, instanceid" NEXT="instanceid"/>
         <INDEX NAME="instanceid" UNIQUE="false" FIELDS="instanceid" PREVIOUS="contextlevel-instanceid" NEXT="path"/>
         <INDEX NAME="path" UNIQUE="false" FIELDS="path" PREVIOUS="instanceid"/>
-
       </INDEXES>
     </TABLE>
     <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="capabilities">
@@ -1369,6 +1368,12 @@
         <KEY NAME="scaleid" TYPE="foreign" FIELDS="scaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="categoryid" NEXT="outcomeid"/>
         <KEY NAME="outcomeid" TYPE="foreign" FIELDS="outcomeid" REFTABLE="grade_outcomes" REFFIELDS="id" PREVIOUS="scaleid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="locktime" UNIQUE="false" FIELDS="locktime" COMMENT="locktime index" NEXT="locked"/>
+        <INDEX NAME="locked" UNIQUE="false" FIELDS="locked" COMMENT="locked index" PREVIOUS="locktime" NEXT="itemtype"/>
+        <INDEX NAME="itemtype" UNIQUE="false" FIELDS="itemtype" COMMENT="itemtypeindex" PREVIOUS="locked" NEXT="needsupdate"/>
+        <INDEX NAME="needsupdate" UNIQUE="false" FIELDS="needsupdate" COMMENT="needsupdate index" PREVIOUS="itemtype"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value." PREVIOUS="grade_items" NEXT="grade_grades_text">
       <FIELDS>
@@ -1397,6 +1402,10 @@
         <KEY NAME="rawscaleid" TYPE="foreign" FIELDS="rawscaleid" REFTABLE="scale" REFFIELDS="id" PREVIOUS="userid" NEXT="usermodified"/>
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="rawscaleid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="locktime" UNIQUE="false" FIELDS="locktime" COMMENT="locktiem index" NEXT="locked"/>
+        <INDEX NAME="locked" UNIQUE="false" FIELDS="locked" COMMENT="Locked index" PREVIOUS="locktime"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades_text" COMMENT="This table keeps additional textual information about each individual grade, whether it be automatically generated from the module or entered manually by the teacher. It's here separate from the all-numeric grade_grades for database efficiency reasons." PREVIOUS="grade_grades" NEXT="grade_outcomes_history">
       <FIELDS>

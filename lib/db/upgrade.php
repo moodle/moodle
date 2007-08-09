@@ -1125,6 +1125,12 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('scaleid', XMLDB_KEY_FOREIGN, array('scaleid'), 'scale', array('id'));
         $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
 
+    /// Adding indexes to table grade_grades
+        $table->addIndexInfo('locktime', XMLDB_INDEX_NOTUNIQUE, array('locktime'));
+        $table->addIndexInfo('locked', XMLDB_INDEX_NOTUNIQUE, array('locked'));
+        $table->addIndexInfo('itemtype', XMLDB_INDEX_NOTUNIQUE, array('itemtype'));
+        $table->addIndexInfo('needsupdate', XMLDB_INDEX_NOTUNIQUE, array('needsupdate'));
+
     /// Launch create table for grade_items
         $result = $result && create_table($table);
 
@@ -1157,6 +1163,10 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
         $table->addKeyInfo('rawscaleid', XMLDB_KEY_FOREIGN, array('rawscaleid'), 'scale', array('id'));
         $table->addKeyInfo('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+
+    /// Adding indexes to table grade_grades
+        $table->addIndexInfo('locktime', XMLDB_INDEX_NOTUNIQUE, array('locktime'));
+        $table->addIndexInfo('locked', XMLDB_INDEX_NOTUNIQUE, array('locked'));
 
     /// Launch create table for grade_grades
         $result = $result && create_table($table);
@@ -1650,6 +1660,70 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new XMLDBField('depth');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'path');
         $result = $result && add_field($table, $field);
+    }
+
+    if ($result && $oldversion < 2007080901) {
+    /// Define index
+        $table = new XMLDBTable('grade_grades');
+        $index = new XMLDBIndex('locktime');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locktime'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index
+        $table = new XMLDBTable('grade_grades');
+        $index = new XMLDBIndex('locked');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('locktime');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locktime'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('locked');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('locked'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('itemtype');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('itemtype'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+    /// Define index
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('needsupdate');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('needsupdate'));
+
+        if (!index_exists($table, $index)) {
+        /// Launch add index
+            $result = $result && add_index($table, $index);
+        }
+
+
     }
 
 /*
