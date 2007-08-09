@@ -308,7 +308,7 @@
             }
             if ($remote) {
                 echo '</select>';
-                echo '<br /><input type="submit" value="&larr; '.get_string('install','admin').'" />';
+                echo '<br /><input type="submit" value="'.$THEME->larrow.' '.get_string('install','admin').'" />';
             }
             echo '</fieldset>';
             echo '</form>';
