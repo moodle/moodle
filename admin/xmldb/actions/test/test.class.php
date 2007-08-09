@@ -799,7 +799,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $test->status = false;
         /// Build the record to insert
-            $rec->avatar = addslashes($fulltext);
+            $rec->avatar = $fulltext;
             $rec->name = 'binarytest';
         /// Calculate its length
             $textlen = strlen($fulltext);
@@ -830,7 +830,7 @@ class test extends XMLDBAction {
             $test->sql = array();
         /// Build the record to insert
             $rec->intro = addslashes($basetext);
-            $rec->avatar = addslashes($basetext);
+            $rec->avatar = $basetext;
             $rec->name = 'updatelobs';
         /// Calculate its length
             $textlen = $textlib->strlen($basetext);
@@ -899,7 +899,7 @@ class test extends XMLDBAction {
             $test->status = false;
             $test->sql = array();
         /// Build the record to insert
-            $rec->avatar = addslashes($fulltext);
+            $rec->avatar = $fulltext;
             $rec->name = 'updatelobs';
         /// Calculate its length
             $textlen = strlen($fulltext);
