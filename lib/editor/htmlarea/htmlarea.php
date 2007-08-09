@@ -734,7 +734,7 @@ HTMLArea.prototype.generate = function () {
         html += '<meta http-equiv="content-type" content="text/html; charset=utf-8" />\n';
         if (editor.config.baseURL)
             html += '<base href="' + editor.config.baseURL + '" />';
-        html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
+        html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; } body { direction: <?php echo get_string('thisdirection')?>; } </style>\n"; // RTL support: direction added for RTL support
         html += "</head>\n";
         html += '<body>\n';
         html += editor._textArea.value;
