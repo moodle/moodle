@@ -92,7 +92,7 @@ class test extends XMLDBAction {
         $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
         $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '');
-        $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, '');
+        $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null, null, null);
         $table->addFieldInfo('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -761,7 +761,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $test->status = false;
             $test->sql = array();
-            $basetext = '日本語 • Русский • Deutsch • English • Español • Français • Italiano • Nederlands • Polski • Português • Svenska • العربية • فارسی 한국어 • עברית • ไทย中文  Ελληνικά • Български • Српски • Українська • Bosanski • Català • Česky • Dansk • Eesti • Simple English • Esperanto • Euskara • Galego • Hrvatski • Ido • Bahasa Indonesia • Íslenska • Lëtzebuergesch • Lietuvių • Magyar • Bahasa Melayu اردو • ئۇيغۇرچه • हिन्दी • नेपाल भाषा मराठी • தமிழ் Հայերեն • Беларуская • Чăваш • Ирон æвзаг • Македонски • Сибирской говор • Afrikaans • Aragonés • Arpitan • Asturianu • Kreyòl Ayisyen • Azərbaycan • Bân-lâm-gú • Basa Banyumasan • Brezhoneg • Corsu • Cymraeg • Deitsch • Føroyskt • Frysk • Furlan • Gaeilge • Gàidhlig • Ilokano • Interlingua • Basa Jawa • Kapampangan • Kernewek • Kurdî  كوردی • Ladino  לאדינו • Latina • Latviešu • Limburgs • Lumbaart • Nedersaksisch • Nouormand • Occitan • O‘zbek • Piemontèis • Plattdüütsch • Ripoarisch • Sámegiella • Scots • Shqip • Sicilianu • Sinugboanon • Srpskohrvatski / Српскохрватски • Basa Sunda • Kiswahili • Tagalog • Tatarça • Walon • Winaray  Авар • Башҡорт • Кыргызча  Монгол • Қазақша • Тоҷикӣ • Удмурт • Armãneashce • Bamanankan • Eald Englisc • Gaelg • Interlingue • Kaszëbsczi • Kongo • Ligure • Lingála • lojban • Malagasy • Malti • Māori • Nāhuatl • Ekakairũ Naoero • Novial • Pangasinán • Tok Pisin • Romani / रोमानी • Rumantsch • Runa Simi • Sardu • Tetun • Türkmen / تركمن / Туркмен • Vèneto • Volapük • Võro • West-Vlaoms • Wollof • Zazaki • Žemaitėška';
+            $basetext = "\\ ''語 • Русский • Deutsch • English • Español • Français • Italiano • Nederlands • Polski • Português • Svenska • العربية • فارسی 한국어 • עברית • ไทย中文  Ελληνικά • Български • Српски • Українська • Bosanski • Català • Česky • Dansk • Eesti • Simple English • Esperanto • Euskara • Galego • Hrvatski • Ido • Bahasa Indonesia • Íslenska • Lëtzebuergesch • Lietuvių • Magyar • Bahasa Melayu اردو • ئۇيغۇرچه • हिन्दी • नेपाल भाषा मराठी • தமிழ் Հայերեն • Беларуская • Чăваш • Ирон æвзаг • Македонски • Сибирской говор • Afrikaans • Aragonés • Arpitan • Asturianu • Kreyòl Ayisyen • Azərbaycan • Bân-lâm-gú • Basa Banyumasan • Brezhoneg • Corsu • Cymraeg • Deitsch • Føroyskt • Frysk • Furlan • Gaeilge • Gàidhlig • Ilokano • Interlingua • Basa Jawa • Kapampangan • Kernewek • Kurdî  كوردی • Ladino  לאדינו • Latina • Latviešu • Limburgs • Lumbaart • Nedersaksisch • Nouormand • Occitan • O‘zbek • Piemontèis • Plattdüütsch • Ripoarisch • Sámegiella • Scots • Shqip • Sicilianu • Sinugboanon • Srpskohrvatski / Српскохрватски • Basa Sunda • Kiswahili • Tagalog • Tatarça • Walon • Winaray  Авар • Башҡорт • Кыргызча  Монгол • Қазақша • Тоҷикӣ • Удмурт • Armãneashce • Bamanankan • Eald Englisc • Gaelg • Interlingue • Kaszëbsczi • Kongo • Ligure • Lingála • lojban • Malagasy • Malti • Māori • Nāhuatl • Ekakairũ Naoero • Novial • Pangasinán • Tok Pisin • Romani / रोमानी • Rumantsch • Runa Simi • Sardu • Tetun • Türkmen / تركمن / Туркмен • Vèneto • Volapük • Võro • West-Vlaoms • Wollof • Zazaki • Žemaitėška";
         /// Create one big text (1.500.000 chars)
             $fulltext = '';
             for ($i=0; $i<1000; $i++) { //1500 * 1000 chars
@@ -799,7 +799,7 @@ class test extends XMLDBAction {
             $test = new stdClass;
             $test->status = false;
         /// Build the record to insert
-            $rec->avatar = addslashes($fulltext);
+            $rec->avatar = $fulltext;
             $rec->name = 'binarytest';
         /// Calculate its length
             $textlen = strlen($fulltext);
@@ -830,7 +830,7 @@ class test extends XMLDBAction {
             $test->sql = array();
         /// Build the record to insert
             $rec->intro = addslashes($basetext);
-            $rec->avatar = addslashes($basetext);
+            $rec->avatar = $basetext;
             $rec->name = 'updatelobs';
         /// Calculate its length
             $textlen = $textlib->strlen($basetext);
@@ -899,7 +899,7 @@ class test extends XMLDBAction {
             $test->status = false;
             $test->sql = array();
         /// Build the record to insert
-            $rec->avatar = addslashes($fulltext);
+            $rec->avatar = $fulltext;
             $rec->name = 'updatelobs';
         /// Calculate its length
             $textlen = strlen($fulltext);
