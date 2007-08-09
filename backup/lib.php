@@ -31,7 +31,7 @@
     //Four hours seem to be appropiate now that backup is stable
     function backup_delete_old_data() {
 
-        global $CFG; 
+        global $CFG;
 
         //Change this if you want !!
         $hours = 4;
@@ -82,11 +82,11 @@
         return $status;
     }
 
-    //Function to check and create the needed dir to 
+    //Function to check and create the needed dir to
     //save all the backup
     function check_and_create_backup_dir($backup_unique_code) {
-   
-        global $CFG; 
+
+        global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp",true);
         if ($status) {
@@ -95,7 +95,7 @@
         if ($status) {
             $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code,true);
         }
-        
+
         return $status;
     }
 
@@ -104,7 +104,7 @@
     //Copied from the web !!
     function delete_dir_contents ($dir,$excludeddir="") {
 
-        if (!is_dir($dir)) { 
+        if (!is_dir($dir)) {
             // if we've been given a directory that doesn't exist yet, return true.
             // this happens when we're trying to clear out a course that has only just
             // been created.
@@ -164,18 +164,18 @@
 
     //Function to clear (empty) the contents of the backup_dir
     function clear_backup_dir($backup_unique_code) {
-  
-        global $CFG; 
+
+        global $CFG;
 
         $rootdir = $CFG->dataroot."/temp/backup/".$backup_unique_code;
-        
+
         //Delete recursively
         $status = delete_dir_contents($rootdir);
 
         return $status;
     }
 
-    //Returns the module type of a course_module's id in a course 
+    //Returns the module type of a course_module's id in a course
     function get_module_type ($courseid,$moduleid) {
 
         global $CFG;
@@ -200,7 +200,7 @@
     function list_directories ($rootdir) {
 
         $results = null;
-  
+
         $dir = opendir($rootdir);
         while ($file=readdir($dir)) {
             if ($file=="." || $file=="..") {
@@ -210,8 +210,8 @@
                 $results[$file] = $file;
             }
         }
-        closedir($dir);  
-        return $results;       
+        closedir($dir);
+        return $results;
     }
 
     //This function return the names of all directories and files under a give directory
@@ -219,7 +219,7 @@
     function list_directories_and_files ($rootdir) {
 
         $results = "";
- 
+
         $dir = opendir($rootdir);
         while ($file=readdir($dir)) {
             if ($file=="." || $file=="..") {
@@ -227,7 +227,7 @@
             }
             $results[$file] = $file;
         }
-        closedir($dir); 
+        closedir($dir);
         return $results;
     }
 
@@ -268,7 +268,7 @@
     //mantains file perms.
     //I've copied it from: http://www.php.net/manual/en/function.copy.php
     //Little modifications done
-  
+
     function backup_copy_file ($from_file,$to_file,$log_clam=false) {
 
         global $CFG;
@@ -325,14 +325,14 @@
     function upgrade_backup_db($continueto) {
     /// This function upgrades the backup tables, if necessary
     /// It's called from admin/index.php, also backup.php and restore.php
-    
+
         global $CFG, $db;
 
         require_once ("$CFG->dirroot/backup/version.php");  // Get code versions
 
         if (empty($CFG->backup_version)) {                  // Backup has never been installed.
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, "", 
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, "",
                     upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
             upgrade_log_start();
@@ -347,7 +347,7 @@
             } else if (file_exists($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql')) {
                 $status = modify_database($CFG->dirroot . '/backup/db/' . $CFG->dbtype . '.sql'); //Old method
             }
- 
+
             $db->debug = false;
             if ($status) {
                 if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
@@ -433,7 +433,7 @@
         upgrade_log_finish();
     }
 
- 
+
     //This function is used to insert records in the backup_ids table
     //If the info field is greater than max_db_storage, then its info
     //is saved to filesystem
@@ -442,23 +442,23 @@
         global $CFG;
 
         $max_db_storage = 128;  //Max bytes to save to db, else save to file
- 
+
         $status = true;
-        
+
         //First delete to avoid PK duplicates
         $status = backup_delid($backup_unique_code, $table, $old_id);
 
         //Now, serialize info
         $info_ser = serialize($info);
 
-        //Now, if the size of $info_ser > $max_db_storage, save it to filesystem and 
+        //Now, if the size of $info_ser > $max_db_storage, save it to filesystem and
         //insert a "infile" in the info field
 
         if (strlen($info_ser) > $max_db_storage) {
             //Calculate filename (in current_backup_dir, $backup_unique_code_$table_$old_id.info)
             $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
             //Save data to file
-            $status = backup_data2file($filename,$info_ser); 
+            $status = backup_data2file($filename,$info_ser);
             //Set info_to save
             $info_to_save = "infile";
         } else {
@@ -508,7 +508,7 @@
         $status2 = true;
 
         $status = get_record ("backup_ids","backup_code",$backup_unique_code,
-                                           "table_name",$table, 
+                                           "table_name",$table,
                                            "old_id", $old_id);
 
         //If info field = "infile", get file contents
@@ -541,14 +541,14 @@
         return restore_decode_absolute_links(addslashes($data));
     }
 
-    //This function is used to check that every necessary function to 
+    //This function is used to check that every necessary function to
     //backup/restore exists in the current php installation. Thanks to
     //gregb@crowncollege.edu by the idea.
     function backup_required_functions($justcheck=false) {
 
         if(!function_exists('utf8_encode')) {
             if (empty($justcheck)) {
-                error('You need to add XML support to your PHP installation');  
+                error('You need to add XML support to your PHP installation');
             } else {
                 return false;
             }
@@ -571,14 +571,14 @@
         echo str_repeat(" ", $n) . $ti . "\n";
         flush();
     }
-    
+
     //This function creates the filename and write data to it
     //returning status as result
     function backup_data2file ($file,&$data) {
 
         $status = true;
         $status2 = true;
-    
+
         $f = fopen($file,"w");
         $status = fwrite($f,$data);
         $status2 = fclose($f);
@@ -620,7 +620,7 @@
         }
 
         define('RESTORE_SILENTLY',true); // don't output all the stuff to us.
-        
+
         $debuginfo = 'import_backup_file_silently: ';
         $cleanupafter = false;
         $errorstr = ''; // passed by reference to restore_precheck to get errors from.
@@ -668,15 +668,15 @@
             mtrace($debuginfo.'Required function check failed (see backup_required_functions)');
             return false;
         }
-        
+
         @ini_set("max_execution_time","3000");
         raise_memory_limit("192M");
-            
+
         if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
             mtrace($debuginfo.'Failed restore_precheck (error was '.$errorstr.')');
             return false;
         }
-        
+
         $SESSION->restore = new StdClass;
 
         // add on some extra stuff we need...
@@ -688,7 +688,7 @@
         $SESSION->restore->messages     = $restore->messages = (isset($preferences['restore_messages']) ? $preferences['restore_messages'] : 0);
         $SESSION->restore->course_id    = $restore->course_id = $destinationcourse;
         $SESSION->restore->restoreto    = 1;
-        $SESSION->restore->course_id    = $destinationcourse; 
+        $SESSION->restore->course_id    = $destinationcourse;
         $SESSION->restore->deleting     = $emptyfirst;
         $SESSION->restore->restore_course_files = $restore->course_files = (isset($preferences['restore_course_files']) ? $preferences['restore_course_files'] : 0);
         $SESSION->restore->backup_version = $SESSION->info->backup_backup_version;
@@ -725,20 +725,20 @@
         return true;
     }
 
-    /** 
+    /**
     * Function to backup an entire course silently and create a zipfile.
-    * 
-    * @param int $courseid the id of the course 
+    *
+    * @param int $courseid the id of the course
     * @param array $prefs see {@link backup_generate_preferences_artificially}
     */
     function backup_course_silently($courseid, $prefs, &$errorstring) {
-        global $CFG, $preferences; // global preferences here because something else wants it :( 
+        global $CFG, $preferences; // global preferences here because something else wants it :(
         define('BACKUP_SILENTLY', 1);
         if (!$course = get_record('course', 'id', $courseid)) {
             debugging("Couldn't find course with id $courseid in backup_course_silently");
             return false;
         }
-        $preferences = backup_generate_preferences_artificially($course, $prefs); 
+        $preferences = backup_generate_preferences_artificially($course, $prefs);
         if (backup_execute($preferences, $errorstring)) {
             return $CFG->dataroot . '/' . $course->id . '/backupdata/' . $preferences->backup_name;
         }
@@ -748,9 +748,9 @@
     }
 
     /**
-    * Function to generate the $preferences variable that 
+    * Function to generate the $preferences variable that
     * backup uses.  This will back up all modules and instances in a course.
-    * 
+    *
     * @param object $course course object
     * @param array $prefs can contain:
             backup_metacourse
@@ -758,6 +758,7 @@
             backup_logs
             backup_user_files
             backup_course_files
+            backup_site_files
             backup_messages
     * and if not provided, they will not be included.
     */
@@ -821,13 +822,14 @@
 
             }
         }
-        
+
         //Check other parameters
         $preferences->backup_metacourse = (isset($prefs['backup_metacourse']) ? $prefs['backup_metacourse'] : 0);
         $preferences->backup_users = (isset($prefs['backup_users']) ? $prefs['backup_users'] : 0);
         $preferences->backup_logs = (isset($prefs['backup_logs']) ? $prefs['backup_logs'] : 0);
         $preferences->backup_user_files = (isset($prefs['backup_user_files']) ? $prefs['backup_user_files'] : 0);
         $preferences->backup_course_files = (isset($prefs['backup_course_files']) ? $prefs['backup_course_files'] : 0);
+        $preferences->backup_site_files = (isset($prefs['backup_site_files']) ? $prefs['backup_site_files'] : 0);
         $preferences->backup_messages = (isset($prefs['backup_messages']) ? $prefs['backup_messages'] : 0);
         $preferences->backup_course = $course->id;
         backup_add_static_preferences($preferences);

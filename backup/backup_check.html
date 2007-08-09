@@ -1,7 +1,8 @@
 <?php //$Id$
+    require_once("$CFG->dirroot/question/backuplib.php");
     //This page prints the backup todo list to see everything
 
-    //Check login   
+    //Check login
     require_login();
 
     if (!empty($course->id)) {
@@ -20,11 +21,13 @@
         }
     }
 
-    
+
 
     $backupprefs = new StdClass;
     $count = 0;
     backup_fetch_prefs_from_request($backupprefs,$count,$course);
+
+
 
     //Check site
     if (!$site = get_site()) {
@@ -33,6 +36,11 @@
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }
+
+    if (!execute_sql("DELETE FROM {$CFG->prefix}backup_ids WHERE backup_code = '{$backupprefs->backup_unique_code}'",false)){
+        error('Couldn\'t delete previous backup ids.');
+    }
+
 ?>
 
 <form id="form" method="post" action="backup.php">
@@ -48,12 +56,12 @@
         //Add as text field
         echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backupprefs->backup_name."\" />";
         echo "</td></tr>";
-    
+
         //Line
         echo "<tr><td colspan=\"2\"><hr /></td></tr>";
-        
+
         //Now print the To Do list
-        echo "<tr>";    
+        echo "<tr>";
         echo "<td colspan=\"2\" align=\"center\"><b>";
 
     }
@@ -90,7 +98,7 @@
         echo "</b></td></tr>";
     }
 
-    //This is tha align to every ingo table                
+    //This is the alignment of every row in the table
     $table->align = array ("left","right");
 
     if ($allmods = get_records("modules") ) {
@@ -111,13 +119,10 @@
                     //Print the full tr
                     echo "<tr>";
                     echo "<td colspan=\"2\">";
-                    //Add hidden fields
-                    $var = "backup_".$modname;
-                    $var = "backup_user_info_".$modname;
                     //Print the mod name
                     echo "<b>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
                     //Now look for user-data status
-                    $backup_user_options[0] = get_string("withoutuserdata"); 
+                    $backup_user_options[0] = get_string("withoutuserdata");
                     $backup_user_options[1] = get_string("withuserdata");
                     $var = "backup_user_info_".$modname;
                     //Print the user info
@@ -139,17 +144,17 @@
                                 $obj->id = $instance->id;
                                 $instancestopass[$instance->id]= $obj;
                                 $countinstances++;
-                                
+
                             }
                         }
-                    } 
+                    }
                     $table->data = $modcheckbackup($id,$backupprefs->$var,$backupprefs->backup_unique_code,$instancestopass);
-                    print_table($table); 
+                    print_table($table);
                     echo "</td></tr>";
                 }
             }
         }
-        
+
 
         if (empty($to)) {
             //Line
@@ -163,12 +168,12 @@
             $user_options[2] = get_string("includenoneusers");
             echo $user_options[$backupprefs->backup_users].'</b>';
             //Print info
-            $table->data = user_check_backup($id,$backupprefs->backup_unique_code,$backupprefs->backup_users,$backupprefs->backup_messages);  
-            print_table($table); 
+            $table->data = user_check_backup($id,$backupprefs->backup_unique_code,$backupprefs->backup_users,$backupprefs->backup_messages);
+            print_table($table);
             echo "</td></tr>";
-            
+
         }
-        
+
         //Now print the Logs tr conditionally
         if ($backupprefs->backup_logs && empty($to)) {
             echo "<tr>";
@@ -198,6 +203,16 @@
             echo get_string("includecoursefiles").'</b>';
             //Print info
             $table->data = course_files_check_backup($id,$backupprefs->backup_unique_code);
+            print_table($table);
+            echo "</td></tr>";
+        }
+       //Now print the site Files tr conditionally
+       if ($backupprefs->backup_site_files) {
+            echo "<tr>";
+            echo "<td colspan=\"2\"><b>";
+            echo get_string("includesitefiles").'</b>';
+            //Print info
+            $table->data = site_files_check_backup($id,$backupprefs->backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }

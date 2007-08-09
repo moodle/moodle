@@ -26,6 +26,7 @@ $temp->add(new admin_setting_backupselect('backup_sche_users', get_string('users
 $temp->add(new admin_setting_backupcheckbox('backup_sche_logs', get_string('logs'), get_string('backuplogshelp'), 0));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_userfiles', get_string('userfiles'), get_string('backupuserfileshelp'), 0));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_coursefiles', get_string('coursefiles'), get_string('backupcoursefileshelp'), 0));
+$temp->add(new admin_setting_backupcheckbox('backup_sche_sitefiles', get_string('sitefiles'), get_string('backupsitefileshelp'), 0));
 $temp->add(new admin_setting_backupcheckbox('backup_sche_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
 $temp->add(new admin_setting_backupselect('backup_sche_keep', get_string('keep'), get_string('backupkeephelp'), 1, array(0 => get_string('all'),
                                                                                                                          1 => '1',

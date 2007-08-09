@@ -28,18 +28,18 @@
         }
     } else {
         if (!has_capability('moodle/site:restore', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");   
+            error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     }
 
     //Check site
     if (!$site = get_site()) {
         error("Site not found!");
-    } 
+    }
 
     //Checks for the required files/functions to restore every mod
     $count = 0;
-    if ($allmods = get_records("modules") ) { 
+    if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";
@@ -70,11 +70,11 @@
     if (!isset($restore_metacourse)) {
         $restore_metacourse = 1;
     }
-   
+
     if (!isset($restore_users)) {
         $restore_users = 1;
     }
-   
+
     if (!isset($restore_logs)) {
         $restore_logs = 1;
     }
@@ -85,6 +85,10 @@
 
     if (!isset($restore_course_files)) {
         $restore_course_files = 1;
+    }
+
+    if (!isset($restore_site_files)) {
+        $restore_site_files = 1;
     }
 
     if (!isset($restore_messages)) {
@@ -100,15 +104,15 @@
     }
 
     if(!isset($form1->startdate)) {
-        $form1->startdate = $course_header->course_startdate; //$course_header->course_startdate;    
+        $form1->startdate = $course_header->course_startdate; //$course_header->course_startdate;
     }
 
     if (empty($form1->shortname)) {
-       $form1->shortname = $course_header->course_shortname; //'_shortname'; //$course_header->course_shortname; 
+       $form1->shortname = $course_header->course_shortname; //'_shortname'; //$course_header->course_shortname;
     }
 
     if (empty($form1->fullname)) {
-      $form1->fullname = $course_header->course_fullname; // '_fullname';   //$course_header->course_fullname; 
+      $form1->fullname = $course_header->course_fullname; // '_fullname';   //$course_header->course_fullname;
     }
 
     if ($count == 0) {
@@ -169,13 +173,13 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "<td align=\"right\"><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td colspan=\"3\">";
-        
-    
+
+
     // permission should have been checked already
-    
+
     /**
-     * if user has manageactivities in any course, we show 
-     *      existingcoursedeleting 
+     * if user has manageactivities in any course, we show
+     *      existingcoursedeleting
      *      existingcourseadding
      * else we show
      *      currentcoursedeleting
@@ -183,9 +187,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
      * if user has course:create in any category, we show
      *      newcourse
      */
-    
+
     $mycourses = get_capability_courses('moodle/site:restore');
-    
+
     // if the user can manage 2 or more courses,
     // or if the only course the user can manage is not the current course
     // we show options for existing courses
@@ -196,28 +200,28 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     // else if the user can write to current course
     } else if (has_capability('moodle/site:restore', get_context_instance(CONTEXT_COURSE, $id))){
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
-        $restore_restoreto_options[1] = get_string("currentcourseadding");   
+        $restore_restoreto_options[1] = get_string("currentcourseadding");
     }
-    
+
     // if user can create any course at all, give the option
     if (user_can_create_courses()) {
-        $restore_restoreto_options[2] = get_string("newcourse"); 
+        $restore_restoreto_options[2] = get_string("newcourse");
     }
-   
+
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     if (user_can_create_courses()) {  //display these fields conditionally
-        
+
         // find the list of cates user can edit
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
         print_string('category');
         echo " :</td>";
         echo "<td>";
-        choose_from_menu(get_creatable_categories(), "restore_restorecatto", $course_header->category->id, "");        
+        choose_from_menu(get_creatable_categories(), "restore_restorecatto", $course_header->category->id, "");
         echo "</td>";
         echo "</tr>";
-        
+
         echo "<tr valign=\"top\" >";
         echo "<td align=\"right\">";
         print_string("shortname");
@@ -231,12 +235,12 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo " :</td>";
         echo "<td><input type=\"text\" name=\"fullname\" maxlength=\"254\" size=\"50\" value=\"$form1->fullname\" alt=\" ".get_string("fullname")."\"  />" ;
         helpbutton("coursefullname", get_string("fullname")) ;
-        if (isset($err["fullname"])) formerr($err["fullname"]); 
+        if (isset($err["fullname"])) formerr($err["fullname"]);
         echo"</td></tr>";
         echo "<tr valign=\"top\"> ";
         echo "<td align=\"right\"> ";
-        print_string("startdate"); 
-        echo ":</td><td>"; 
+        print_string("startdate");
+        echo ":</td><td>";
         print_date_selector("startday", "startmonth", "startyear", $form1->startdate);
         helpbutton("coursestartdate", get_string("startdate"));
         echo "</td></tr>";
@@ -282,7 +286,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         echo "<td align=\"right\">&nbsp;";
                         echo "</td><td>";
                         $restore_options[1] = get_string("yes");
-                        $restore_options[0] = get_string("no"); 
+                        $restore_options[0] = get_string("no");
                         //choose_from_menu($restore_options, $restore_var, $$restore_var, "");
                         //choose_from_radio($restore_options, $restore_var, $$restore_var);
                         //Print the checkbox
@@ -293,7 +297,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                         echo "</td><td>";
                         if ($info->mods[$modname]->userinfo == "true") {
                             $restore_user_options[1] = get_string("yes");
-                            $restore_user_options[0] = get_string("no"); 
+                            $restore_user_options[0] = get_string("no");
                             //choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
                             //choose_from_radio($restore_user_options, $user_info_var, $$user_info_var);
                             print_checkbox($user_info_var, $$user_info_var, $$user_info_var, get_string("userdata"),'','selectItemInCheckboxByName(\'form1\',\'restore_user_info_'.$modname.'\',this.checked)');
@@ -348,13 +352,13 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Metacourse tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string("metacourse").":";                                               
+        echo get_string("metacourse").":";
         echo "</b></td><td colspan=\"2\">";
         //If metacourse are in the backup file, show menu, else fixed to no
         if ($info->backup_metacourse == "true") {
             $metacourse_options[0] = get_string("no");
-            $metacourse_options[1] = get_string("yes"); 
-            choose_from_menu($metacourse_options, "restore_metacourse", $restore_metacourse, ""); 
+            $metacourse_options[1] = get_string("yes");
+            choose_from_menu($metacourse_options, "restore_metacourse", $restore_metacourse, "");
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" name=\"restore_metacourse\" value=\"0\" />";
@@ -384,13 +388,13 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         //Now print the Logs tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        echo get_string("logs").":";                                               
+        echo get_string("logs").":";
         echo "</b></td><td colspan=\"2\">";
         //If logs are in the backup file, show menu, else fixed to no
         if ($info->backup_logs == "true") {
             $log_options[0] = get_string("no");
-            $log_options[1] = get_string("yes"); 
-            choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
+            $log_options[1] = get_string("yes");
+            choose_from_menu($log_options, "restore_logs", $restore_logs, "");
         } else {
             echo get_string("no");
             echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\" />";
@@ -404,8 +408,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</b></td><td colspan=\"2\">";
         //If user files are in the backup file, show menu, else fixed to no
         if ($info->backup_user_files == "true") {
-            $user_file_options[0] = get_string("no"); 
-            $user_file_options[1] = get_string("yes"); 
+            $user_file_options[0] = get_string("no");
+            $user_file_options[1] = get_string("yes");
             choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
         } else {
             echo get_string("no");
@@ -431,10 +435,27 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
         echo "</td></tr>";
 
+
+        //Now print the Site Files tr
+        echo "<tr>";
+        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo get_string ("sitefiles").":";
+        echo "</b></td><td colspan=\"2\">";
+        //If site files are in the backup file, show menu, else fixed to no
+        if ($info->backup_site_files == "true") {
+            $site_file_options[0] = get_string("no");
+            $site_file_options[1] = get_string("yes");
+            choose_from_menu($site_file_options, "restore_site_files", $restore_site_files, "");
+        } else {
+            echo get_string("no");
+            echo "<input type=\"hidden\" name=\"restore_site_files\" value=\"0\" />";
+        }
+        echo "</td></tr>";
+
         //Now print the Messages tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
-        
+
         //This tr is slighty different. Everything becomes hidden if
         //we haven't messages is the backup, to avoid confusions to users.
         //If messages are in the backup file, show menu, else fixed to no and show nothing
@@ -470,48 +491,48 @@ echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</
 
 if ($info->backup_moodle_version < 2006092801) {
     // 1.6 and below backup
-    
+
     /// Editting teacher
     echo ('<tr><td align="right">');
     print_string('defaultcourseteacher');
     echo ('</td><td algin="left">');
-    
+
     // get the first teacheredit legacy
     $roles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     $editteacher = array_shift($roles);
     choose_from_menu ($siterolesarray, "defaultteacheredit", $editteacher->id, 'new role', '', '0');
     echo ('</td></tr>');
-    
+
     /// Non-editting teacher
     echo ('<tr><td align="right">');
     print_string('noneditingteacher');
     echo ('</td><td algin="left">');
-    
+
     // get the first teacheredit legacy
     $roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
     $teacher = array_shift($roles);
-    
+
     choose_from_menu ($siterolesarray, "defaultteacher", $teacher->id, 'new role', '', '0');
     echo ('</td></tr>');
-     
-    
+
+
     /// Student
     echo ('<tr><td align="right">');
     print_string('defaultcoursestudent');
     echo ('</td><td algin="left">');
-    
+
     // get the first teacheredit legacy
     $roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM, SITEID));
     $studentrole = array_shift($roles);
-    
+
     choose_from_menu ($siterolesarray, "defaultstudent", $studentrole->id, 'new role', '', '0');
     echo ('</td></tr>');
-  
+
 } else {
     // 1.7 and above backup
     $roles = restore_read_xml_roles($xml_file);
-    
+
     if (!empty($roles->roles)) { // possible to have course with no roles
         foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
             $siteroleschoicearray[$siteroleid] = $siterolesnamearray[$siteroleid]." (". $siterolesarray[$siteroleid].")";
@@ -521,21 +542,21 @@ if ($info->backup_moodle_version < 2006092801) {
             echo ('<tr><td align="right">');
             echo $role->name." (".($role->shortname).")";
             echo ('</td><td align="left">');
-    
+
             // see if any short name match
             $matchrole = 0;
             foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
                 if ($siteroleshortname == $role->shortname) {
                     $matchrole = $siteroleid;
-                    break;  
-                }  
+                    break;
+                }
             }
-    
+
             choose_from_menu ($siteroleschoicearray, "roles_".$roleid, $matchrole, 'new role', '', '0');
-            echo ('</td></tr>'); 
+            echo ('</td></tr>');
         }
     }
-    
+
 } // end else
 
 echo ('</table>'); // end of role mappings table

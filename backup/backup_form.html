@@ -1,7 +1,7 @@
 <?php //$Id$
     //This page prints the backup form to select everything
 
-    //Check login   
+    //Check login
     require_login();
 
     if (!empty($course->id)) {
@@ -26,7 +26,7 @@
     }
 
     //Checks for the required files/functions to backup every mod
-    //And check if there is data about it 
+    //And check if there is data about it
     $count = 0;
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
@@ -64,6 +64,7 @@
     $backup_logs = optional_param('backup_logs',0);
     $backup_user_files = optional_param('backup_user_files',1);
     $backup_course_files = optional_param('backup_course_files',1);
+    $backup_site_files = optional_param('backup_site_files',1);
     $backup_gradebook_history =  optional_param('backup_gradebook_history', 1, PARAM_INT);
     $backup_messages = optional_param('backup_messages',1);
 
@@ -145,7 +146,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 echo "<tr class=\"r".$currentrow."\">";
                 echo "  <td align=\"right\">&nbsp;";
                 echo "</td><td>\n";
-                $backup_options[0] = get_string("no"); 
+                $backup_options[0] = get_string("no");
                 $backup_options[1] = get_string("yes");
                 $var = "backup_".$modname;
                 //choose_from_menu($backup_options, $var, $$var, "");
@@ -155,14 +156,14 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 echo "</td><td>";
                 $var = "backup_user_info_".$modname;
                 if (empty($to)) {
-                    $backup_user_options[0] = get_string("withoutuserdata"); 
+                    $backup_user_options[0] = get_string("withoutuserdata");
                     $backup_user_options[1] = get_string("withuserdata");
                     //choose_from_menu($backup_user_options, $var, $$var, "");
                     print_checkbox($var, $$var, $$var, get_string("userdata"),'','selectItemInCheckboxByName(\'form1\',\'backup_user_info_'.$modname.'\',this.checked)');
                 } else {
                     echo '<input type="hidden" name="'.$var.'" value="0" />';
                 }
-                echo "</td></tr>\n"; 
+                echo "</td></tr>\n";
                 // if we have the backup_one_mod function, loop here.
                 $var = 'exists_one_'.$modname;
                 if (!empty($$var)) {
@@ -185,20 +186,20 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                     }
                     echo '</table></td></tr>';
                 }
-              
+
             }
         }
         //Line
         echo "<tr><td colspan=\"4\"><hr /></td></tr>\n";
-        
+
         if (empty($to)) {
             //Now print the Metacourse tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo get_string ("metacourse").":";
             echo "</b></td><td colspan=\"2\">";
-            $meta_options[0] = get_string("no"); 
-            $meta_options[1] = get_string("yes"); 
+            $meta_options[0] = get_string("no");
+            $meta_options[1] = get_string("yes");
             choose_from_menu($meta_options, "backup_metacourse", $backup_metacourse, "");
             echo "</td></tr>";
         }
@@ -221,30 +222,30 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         else {
             echo '<input type="hidden" name="backup_users" value="0" />';
         }
-        
+
         if (empty($to)) {
             //Now print the Logs tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
-            echo get_string("logs").":";                                               
+            echo get_string("logs").":";
             echo "</b></td><td colspan=\"2\">";
             $log_options[0] = get_string("no");
-            $log_options[1] = get_string("yes"); 
-            choose_from_menu($log_options, "backup_logs", $backup_logs, ""); 
+            $log_options[1] = get_string("yes");
+            choose_from_menu($log_options, "backup_logs", $backup_logs, "");
             echo "</td></tr>";
         }
         else {
             echo '<input type="hidden" name="backup_logs" value="0" />';
         }
- 
+
         if (empty($to)) {
             //Now print the User Files tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo get_string ("userfiles").":";
             echo "</b></td><td colspan=\"2\">";
-            $user_file_options[0] = get_string("no"); 
-            $user_file_options[1] = get_string("yes"); 
+            $user_file_options[0] = get_string("no");
+            $user_file_options[1] = get_string("yes");
             choose_from_menu($user_file_options, "backup_user_files", $backup_user_files, "");
             echo "</td></tr>";
         }
@@ -260,6 +261,19 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         $course_file_options[1] = get_string("yes");
         choose_from_menu($course_file_options, "backup_course_files", $backup_course_files, "");
         echo "</td></tr>";
+
+
+        if ($course->id != SITEID){
+            //Now print the site Files tr
+            echo "<tr>";
+            echo "<td align=\"right\" colspan=\"2\"><b>";
+            echo get_string ("sitefilesused").":";
+            echo "</b></td><td colspan=\"2\">";
+            $course_file_options[0] = get_string("no");
+            $course_file_options[1] = get_string("yes");
+            choose_from_menu($course_file_options, "backup_site_files", $backup_site_files, "");
+            echo "</td></tr>";
+        }
 
         // do you want grade histories to be backed up?
         echo "<tr>";
@@ -277,8 +291,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<td align=\"right\" colspan=\"2\"><b>";
             echo get_string ('messages','message').":";
             echo "</b></td><td colspan=\"2\">";
-            $mess_options[0] = get_string("no"); 
-            $mess_options[1] = get_string("yes"); 
+            $mess_options[0] = get_string("no");
+            $mess_options[1] = get_string("yes");
             choose_from_menu($mess_options, "backup_messages", $backup_messages, "");
             echo "</td></tr>";
         }
@@ -293,8 +307,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     //Calculate the backup unique code to allow simultaneus backups (to define
     //the temp-directory name and records in backup temp tables
     $backup_name = backup_get_zipfile_name($course, $backup_unique_code);
-    
-    
+
+
 ?>
 </table>
 

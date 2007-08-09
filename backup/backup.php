@@ -39,7 +39,7 @@
 
     //Check necessary functions exists. Thanks to gregb@crowncollege.edu
     backup_required_functions();
-    
+
     //Check backup_version
     if ($id) {
         $linkto = "backup.php?id=".$id.((!empty($to)) ? '&to='.$to : '');
@@ -101,11 +101,11 @@
                       <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
     } else {
         print_header("$course->shortname: $strcoursebackup", $course->fullname,
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
                      $strcoursebackup");
     }
 
-    //Print form     
+    //Print form
     print_heading(format_string("$strcoursebackup: $course->fullname ($course->shortname)"));
     print_simple_box_start("center");
 
@@ -129,5 +129,4 @@
 
     //Print footer
     print_footer();
-
 ?>

@@ -249,11 +249,13 @@
         return $info;
     }
 
-    //Calculate the number of course files to backup
-    //under $CFG->dataroot/$course, except $CFG->moddata, and backupdata
-    //and put them (their path) in backup_ids
-    //Return an array of info (name,value)
-    function course_files_check_backup($course,$backup_unique_code) {
+    /**
+     * Calculate the number of course files to backup
+     * under $CFG->dataroot/$course, except $CFG->moddata, and backupdata
+     * and put them (their path) in backup_ids
+     * Return an array of info (name,value)
+     */
+    function course_files_check_backup($course, $backup_unique_code) {
 
         global $CFG;
 
@@ -283,7 +285,38 @@
                                 WHERE backup_code = '$backup_unique_code' AND
                                       file_type = 'course'");
         //Gets the user data
+        $info = array();
+        $info[0] = array();
         $info[0][0] = get_string("files");
+        if ($ids) {
+            $info[0][1] = count($ids);
+        } else {
+            $info[0][1] = 0;
+        }
+
+        return $info;
+    }
+
+    /**
+     * Calculate the number of site files to backup
+     * under $CFG->dataroot/SITEID
+     * Their path is already in backup_ids, put there by modules check_backup functions.
+     * Modules only put in paths of files that are used.
+     *
+     * Return an array of info (name,value)
+     */
+    function site_files_check_backup($course, $backup_unique_code) {
+        global $CFG;
+
+        //execute the select, records have been inserted by modules during their ****_check_backup_mods function.
+        $ids = get_records_sql("SELECT DISTINCT b.path
+                                FROM {$CFG->prefix}backup_files b
+                                WHERE backup_code = '$backup_unique_code' AND
+                                      file_type = 'site'");
+        //Gets the user data
+        $info = array();
+        $info[0] = array();
+        $info[0][0] = get_string('files');
         if ($ids) {
             $info[0][1] = count($ids);
         } else {
@@ -301,7 +334,7 @@
 
         global $CFG;
 
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/moddata",true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/moddata",true);
 
         return $status;
     }
@@ -312,7 +345,7 @@
 
         global $CFG;
 
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
 
         return $status;
     }
@@ -323,7 +356,7 @@
 
         global $CFG;
 
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
 
         return $status;
     }
@@ -334,7 +367,18 @@
 
         global $CFG;
 
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/course_files",true);
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/course_files",true);
+
+        return $status;
+    }
+
+    //Function to check and create the "site_files" dir to
+    //save all the course files we need from "CFG->datadir/SITEID" dir
+    function check_and_create_site_files_dir($backup_unique_code) {
+
+        global $CFG;
+
+        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/site_files",true);
 
         return $status;
     }
@@ -539,6 +583,12 @@
             fwrite ($bf,full_tag("COURSEFILES",3,false,"true"));
         } else {
             fwrite ($bf,full_tag("COURSEFILES",3,false,"false"));
+        }
+        //The course files
+        if ($preferences->backup_site_files == 1) {
+            fwrite ($bf,full_tag("SITEFILES",3,false,"true"));
+        } else {
+            fwrite ($bf,full_tag("SITEFILES",3,false,"false"));
         }
         //The messages in backup
         if ($preferences->backup_messages == 1 && $preferences->backup_course == SITEID) {
@@ -1340,11 +1390,11 @@
         if ($backupall) {
             $status = backup_gradebook_category_info($bf,$preferences);
         }
-        
+
         $status = backup_gradebook_item_info($bf,$preferences, $backupall);
         $status = backup_gradebook_outcomes_info($bf, $preferences);
         $status = backup_gradebook_outcomes_courses_info($bf, $preferences);
-        
+
         // backup gradebook histories
         if ($preferences->backup_gradebook_history) {
             $status = backup_gradebook_categories_history_info($bf, $preferences);
@@ -1363,7 +1413,7 @@
         global $CFG;
         $status = true;
 
-        // getting grade categories, but make sure parents come before children
+       // getting grade categories, but make sure parents come before children
         // because when we do restore, we need to recover the parents first
         // we do this by getting the lowest depth first
         $grade_categories = get_records_sql("SELECT * FROM {$CFG->prefix}grade_categories
@@ -1477,7 +1527,7 @@
 
         global $CFG;
         $status = true;
-        // only back up courses already in the grade_outcomes_courses table    
+        // only back up courses already in the grade_outcomes_courses table
         $grade_outcomes = get_records_sql('SELECT go.*
                                        FROM '.$CFG->prefix.'grade_outcomes_courses goc,
                                             '.$CFG->prefix.'grade_outcomes go
@@ -1494,7 +1544,7 @@
                 //Output individual fields
 
                 fwrite ($bf,full_tag("ID",5,false,$grade_outcome->id));
-                fwrite ($bf,full_tag("COURSEID",5,false,$grade_outcome->courseid));             
+                fwrite ($bf,full_tag("COURSEID",5,false,$grade_outcome->courseid));
                 fwrite ($bf,full_tag("SHORTNAME",5,false,$grade_outcome->shortname));
                 fwrite ($bf,full_tag("FULLNAME",5,false,$grade_outcome->fullname));
                 fwrite ($bf,full_tag("SCALEID",5,false,$grade_outcome->scaleid));
@@ -1508,16 +1558,16 @@
         }
         return $status;
     }
-    
+
     // outcomes assigned to this course
     function backup_gradebook_outcomes_courses_info($bf,$preferences) {
 
         global $CFG;
 
         $status = true;
-        // get all global outcomes (used in this course) 
+        // get all global outcomes (used in this course)
         // and course specific outcomes
-        // we don't need to backup all the outcomes in this case        
+        // we don't need to backup all the outcomes in this case
         if ($outcomes_courses = get_records('grade_outcomes_courses', 'courseid', $preferences->backup_course)) {
             //Begin grade_outcomes tag
             fwrite ($bf,start_tag("GRADE_OUTCOMES_COURSES",3,true));
@@ -1592,14 +1642,14 @@
                         fwrite ($bf,end_tag("GRADE_TEXT",6,true));
                     }
                 }
-            } 
+            }
             $status = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
         }
         return $status;
     }
 
     function backup_gradebook_categories_history_info($bf, $preferences) {
-        
+
         global $CFG;
         $status = true;
 
@@ -1617,19 +1667,19 @@
                 fwrite ($bf,full_tag("PARENT",7,false,$ch->parent));
                 fwrite ($bf,full_tag("DEPTH",7,false,$ch->depth));
                 fwrite ($bf,full_tag("PATH",7,false,$ch->path));
-                fwrite ($bf,full_tag("FULLNAME",7,false,$ch->fullname));                
+                fwrite ($bf,full_tag("FULLNAME",7,false,$ch->fullname));
                 fwrite ($bf,full_tag("AGGRETGATION",7,false,$ch->aggregation));
                 fwrite ($bf,full_tag("KEEPHIGH",7,false,$ch->keephigh));
-                fwrite ($bf,full_tag("DROPLOW",7,false,$ch->droplow));              
+                fwrite ($bf,full_tag("DROPLOW",7,false,$ch->droplow));
                 fwrite ($bf,end_tag("GRADE_CATEGORIES_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_CATEGORIES_HISTORIES",5,true));
         }
-        return $status; 
+        return $status;
     }
 
     function backup_gradebook_grades_history_info($bf, $preferences) {
-        
+
         global $CFG;
         $status = true;
 
@@ -1648,27 +1698,27 @@
                 fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
                 fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
                 fwrite ($bf,full_tag("ITEMID",7,false,$ch->itemid));
-                fwrite ($bf,full_tag("USERID",7,false,$ch->userid));               
+                fwrite ($bf,full_tag("USERID",7,false,$ch->userid));
                 fwrite ($bf,full_tag("RAWGRADE",7,false,$ch->rawgrade));
-                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$ch->rawgrademax));                
+                fwrite ($bf,full_tag("RAWGRADEMAX",7,false,$ch->rawgrademax));
                 fwrite ($bf,full_tag("RAWGRADEMIN",7,false,$ch->rawgrademin));
                 fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
-                fwrite ($bf,full_tag("FINALGRADE",7,false,$ch->finalgrade));                            
+                fwrite ($bf,full_tag("FINALGRADE",7,false,$ch->finalgrade));
                 fwrite ($bf,full_tag("HIDDEN",7,false,$ch->hidden));
-                fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));                
+                fwrite ($bf,full_tag("LOCKED",7,false,$ch->locked));
                 fwrite ($bf,full_tag("LOCKTIME",7,false,$ch->locktime));
                 fwrite ($bf,full_tag("EXPORTED",7,false,$ch->exported));
-                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$ch->overridden));                
-                fwrite ($bf,full_tag("EXCLUDED",7,false,$ch->excluded));                                                
+                fwrite ($bf,full_tag("OVERRIDDEN",7,false,$ch->overridden));
+                fwrite ($bf,full_tag("EXCLUDED",7,false,$ch->excluded));
                 fwrite ($bf,end_tag("GRADE_GRADES_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_GRADES_HISTORIES",5,true));
         }
-        return $status; 
+        return $status;
     }
-   
+
     function backup_gradebook_grades_text_history_info($bf, $preferences) {
-        
+
         global $CFG;
         $status = true;
 
@@ -1695,16 +1745,16 @@
                 fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
                 fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));
                 fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$ch->feedbackformat));
-                fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));                            
+                fwrite ($bf,full_tag("USERMODIFIED",7,false,$ch->usermodified));
                 fwrite ($bf,end_tag("GRADE_TEXT_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_TEXT_HISTORIES",5,true));
         }
-        return $status; 
+        return $status;
     }
 
     function backup_gradebook_items_history_info($bf, $preferences) {
-        
+
         global $CFG;
         $status = true;
 
@@ -1745,12 +1795,12 @@
                 fwrite ($bf,end_tag("GRADE_ITEM_HISTORY",6,true));
             }
             $status = fwrite ($bf,end_tag("GRADE_ITEM_HISTORIES",5,true));
+
         }
-        return $status; 
+        return $status;
     }
-    
+
     function backup_gradebook_outcomes_history($bf, $preferences) {
-        
         global $CFG;
         $status = true;
 
@@ -1773,7 +1823,7 @@
             }
             $status = fwrite ($bf,end_tag("GRADE_OUTCOME_HISTORIES",5,true));
         }
-        return $status; 
+        return $status;
     }
 
     //Backup scales info (common and course scales)
@@ -2237,7 +2287,42 @@
         }
         return $status;
     }
+    /*
+     * This function copies all the site files under the site directory (except the moddata and backupdata
+     * directories to the "site_files" directory under temp/backup
+     */
+    function backup_copy_site_files ($preferences) {
 
+        global $CFG;
+
+        $status = true;
+
+        if ($preferences->backup_course == SITEID){
+            return $status;
+        }
+
+        //First we check to "site_files" exists and create it as necessary
+        //in temp/backup/$backup_code  dir
+        $status = $status && check_and_create_site_files_dir($preferences->backup_unique_code);
+
+        $rootdir = $CFG->dataroot."/".SITEID;
+
+
+
+        $files = get_records_select('backup_files',
+                        "backup_code = '$preferences->backup_unique_code' AND file_type = 'site'");
+        if ($files) {
+            //Iterate
+            foreach ($files as $fileobj) {
+                //check for dir structure and create recursively
+                $file = $fileobj->path;
+                $status = $status && check_dir_exists(dirname($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file), true, true);
+                $status = $status && backup_copy_file($rootdir."/".$file,
+                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/site_files/".$file);
+            }
+        }
+        return $status;
+    }
     //This function creates the zip file containing all the backup info
     //moodle.xml, moddata, user_files, course_files.
     //The zipped file is created in the backup directory and named with
@@ -2424,13 +2509,14 @@
         $preferences->backup_user_files = optional_param('backup_user_files',1,PARAM_INT);
         $preferences->backup_course_files = optional_param('backup_course_files',1,PARAM_INT);
         $preferences->backup_gradebook_history = optional_param('backup_gradebook_history', 1, PARAM_INT);
+        $preferences->backup_site_files = optional_param('backup_site_files',1,PARAM_INT);
         $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
         $preferences->backup_course = $course->id;
         $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
 
         // put it (back) in the session
-       $SESSION->backupprefs[$course->id] = $preferences;
+        $SESSION->backupprefs[$course->id] = $preferences;
     }
 
     /* Finds all related roles used in course, mod and blocks context
@@ -2727,14 +2813,14 @@
                 }
             }
 
-            //If we have selected to backup quizzes, backup categories and
-            //questions structure (step 1). See notes on mod/quiz/backuplib.php
-            if ($status and !empty($preferences->mods['quiz']->backup)) {
+            //If we have selected to backup quizzes or other modules that use questions
+            //we've already added ids of categories and questions to backup to backup_ids table
+            if ($status) {
                 if (!defined('BACKUP_SILENTLY')) {
                     echo "<li>".get_string("writingcategoriesandquestions").'</li>';
                 }
-                require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
-                if (!$status = backup_question_categories($backup_file,$preferences)) {
+                require_once($CFG->dirroot.'/question/backuplib.php');
+                if (!$status = backup_question_categories($backup_file, $preferences)) {
                     if (!defined('BACKUP_SILENTLY')) {
                         notify("An error occurred while backing up quiz categories");
                     }
@@ -2980,7 +3066,23 @@
                 }
             }
         }
-
+        //Now, if selected, copy site files
+        if ($status) {
+            if ($preferences->backup_site_files) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("copyingsitefiles").'</li>';
+                }
+                if (!$status = backup_copy_site_files ($preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while copying site files");
+                    }
+                    else {
+                        $errorstr = "An error occurred while copying site files";
+                        return false;
+                    }
+                }
+            }
+        }
         //Now, zip all the backup directory contents
         if ($status) {
             if (!defined('BACKUP_SILENTLY')) {

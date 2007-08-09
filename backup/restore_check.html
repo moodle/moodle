@@ -18,13 +18,13 @@
 
     if ($form1 = data_submitted()) {
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
-        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";    
-        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";  
-        $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);          
+        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";
+        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";
+        $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
         $currentcoursestartdate = $course_header->course_startdate;
         $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
         $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
-    } 
+    }
 
     ///Enforce SESSION->course_header rewrite (PHP 4.x needed because assigns are by value) MDL-8298
     $SESSION->course_header = $course_header;
@@ -39,7 +39,7 @@
     if (empty($info) or empty($course_header)) {
       error( 'important information missing from SESSION' );
     }
-    
+
 
     //If the restore object doesn't exist, we are going
     //to check every variable individually and create it
@@ -55,7 +55,7 @@
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
-                $$var = optional_param( $var,0); 
+                $$var = optional_param( $var,0);
                 $var = "restore_user_info_".$modname;
                 $$var = optional_param( $var,0);
                 $instances = !empty($info->mods[$mod->name]->instances) ? $info->mods[$mod->name]->instances : NULL;
@@ -82,12 +82,14 @@
         $restore_user_files = required_param('restore_user_files');
         //restore_course_files
         $restore_course_files = required_param('restore_course_files');
+        //restore_site_files
+        $restore_site_files = required_param('restore_site_files');
         //restore_messages
         $restore_messages = required_param('restore_messages');
 
         //Check we've selected a course to restore to
         $course_id = optional_param('course_id', 0, PARAM_INT);
- 
+
         //We are here, having all we need !!
         //Create the restore object and put it in the session
         $restore->backup_unique_code = $backup_unique_code;
@@ -117,12 +119,13 @@
         $restore->logs=$restore_logs;
         $restore->user_files=$restore_user_files;
         $restore->course_files=$restore_course_files;
+        $restore->site_files=$restore_site_files;
         $restore->messages=$restore_messages;
         $restore->course_id=$course_id;
-        //add new vars to restore object 
+        //add new vars to restore object
         $restore->course_startdateoffset = $coursestartdatedateoffset;
         $restore->course_shortname = $currentcourseshortname;
-   
+
         // create role mappings, not sure all should be here
         if ($data2 = data_submitted()) {
             foreach ($data2 as $tempname=>$tempdata) {
@@ -131,21 +134,21 @@
                     $oldroleid = $temprole[1];
                     $newroleid = $tempdata;
                     $restore->rolesmapping[$oldroleid] = $newroleid;
-                }                     
-            }       
+                }
+            }
         }
-        
+
         // default role mapping for moodle < 1.7
         if ($defaultteacheredit = optional_param('defaultteacheredit', 0, PARAM_INT)) {
-            $restore->rolesmapping['defaultteacheredit'] = $defaultteacheredit; 
+            $restore->rolesmapping['defaultteacheredit'] = $defaultteacheredit;
         }
         if ($defaultteacher = optional_param('defaultteacher', 0, PARAM_INT)) {
-            $restore->rolesmapping['defaultteacher'] = $defaultteacher; 
+            $restore->rolesmapping['defaultteacher'] = $defaultteacher;
         }
         if ($defaultstudent = optional_param('defaultstudent', 0, PARAM_INT)) {
-            $restore->rolesmapping['defaultstudent'] = $defaultstudent; 
+            $restore->rolesmapping['defaultstudent'] = $defaultstudent;
         }
-                
+
     } else {
         //We have the object, so check if we have a new course_id
         //passed as parammeter
@@ -154,13 +157,13 @@
             $restore->course_id=$course_id;
         }
     }
-    
+
     // pass in the course category param
     $cat_id = optional_param('restore_restorecatto', 0, PARAM_INT);
     if ($cat_id) {
         $restore->restore_restorecatto = $cat_id;
     }
-    
+
     //We have the object with data, put it in the session
     $SESSION->restore = $restore;
 
@@ -184,7 +187,7 @@
     if (!$site = get_site()) {
         error("Site not found!");
     }
- 
+
     //Depending the selected restoreto:
     // If user is a teacher (and not creator):
     //    0-Current course, deleting: Put $restore->course_id and $restore->deleting (true), create the restore object
@@ -197,10 +200,10 @@
     //    2-New course: Create the restore object and launch the execute.
 
     //If the user is a teacher and not a creator
-    
-    
+
+
     //if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-    
+
     if (!user_can_create_courses()) {
         $restore->course_id = $id;
         if ($restore->restoreto == 0) {
@@ -212,7 +215,7 @@
 
     //If the user is a creator (or admin)
     //if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-    if (user_can_create_courses()) {    
+    if (user_can_create_courses()) {
         //Set restore->deleting as needed
         if ($restore->restoreto == 0) {
             $restore->deleting = true;
@@ -253,7 +256,7 @@
             error("You need to be an edit teacher or admin to restore into selected course!");
         }
         $show_continue_button = true;
-        //Check if we've selected any mod's user info and restore->users 
+        //Check if we've selected any mod's user info and restore->users
         //is set to none. Change it to course and inform.
         if ($restore->users == 2) {
             $changed = false;
@@ -284,7 +287,7 @@
             $hidden["id"]                 =  $id;
             print_string('longtimewarning','admin');
 
-            if ($restore->users && !empty($info->mnet_externalusers) 
+            if ($restore->users && !empty($info->mnet_externalusers)
                 && $info->mnet_externalusers === 'true') {
                 if ($info->original_wwwroot === $CFG->wwwroot) {
                     print '<p>'.get_string('mnetrestore_extusers','admin').'</p>';
@@ -297,7 +300,7 @@
         } else {
             //Show error
             error ("Something was wrong checking restore preferences");
-        } 
+        }
 
     //If we are here. Something must be wrong. Debug !!!
     } else {

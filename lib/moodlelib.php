@@ -3017,6 +3017,7 @@ function delete_course($courseid, $showfeedback = true) {
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
+    include_once($CFG->libdir.'/questionlib.php');
     global $CFG;
 
     $result = true;
@@ -3042,6 +3043,8 @@ function remove_course_contents($courseid, $showfeedback=true) {
                     if ($instances = get_records($modname, 'course', $course->id)) {
                         foreach ($instances as $instance) {
                             if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
+                                /// Delete activity context questions and question categories
+                                question_delete_activity($cm,  $showfeedback);
                                 delete_context(CONTEXT_MODULE, $cm->id);
                             }
                             if ($moddelete($instance->id)) {
@@ -3187,7 +3190,6 @@ function remove_course_contents($courseid, $showfeedback=true) {
     }
 
 /// Delete questions and question categories
-    include_once($CFG->libdir.'/questionlib.php');
     question_delete_course($course, $showfeedback);
 
 /// Delete all roles and overiddes in the course context (but keep the course context)

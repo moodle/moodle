@@ -1,6 +1,7 @@
 <?PHP // $Id$
       // qtype_multichoice.php - created with Moodle 1.7 beta + (2006101003)
 
+$string['addingmultichoice'] = 'Adding a Multiple Choice question';
 $string['answerhowmany'] = 'One or multiple answers?';
 $string['addmorechoiceblanks'] = 'Blanks for {no} More Choices';
 $string['answerhowmany'] = 'One or multiple answers?';

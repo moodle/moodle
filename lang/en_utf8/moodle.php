@@ -159,6 +159,7 @@ $string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode ver
 $string['backuporiginalname'] = 'Backup Name';
 $string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
 $string['backupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
+$string['backupsitefileshelp'] = 'If enabled then site files used in courses will be included in automated backups';
 $string['backuptakealook'] = 'Please take a look at your backup logs in:
   $a';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
@@ -239,6 +240,7 @@ $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled
 $string['copy'] = 'copy';
 $string['copyasnoun'] = 'copy';
 $string['copyingcoursefiles'] = 'Copying course files';
+$string['copyingsitefiles'] = 'Copying site files used in course';
 $string['copyinguserfiles'] = 'Copying user files';
 $string['copyingzipfile'] = 'Copying zip file';
 $string['copyrightnotice'] = 'Copyright notice';
@@ -508,7 +510,7 @@ $string['emailpasswordchangeinfodisabled'] = 'Hi $a->firstname,
 Someone (probably you) has requested a new password for your
 account on \'$a->sitename\'.
 
-Unfortunately your account on this site is disabled and can not be reset, 
+Unfortunately your account on this site is disabled and can not be reset,
 please contact the site administrator,
 $a->admin';
 $string['emailpasswordchangeinfofail'] = 'Hi $a->firstname,
@@ -516,7 +518,7 @@ $string['emailpasswordchangeinfofail'] = 'Hi $a->firstname,
 Someone (probably you) has requested a new password for your
 account on \'$a->sitename\'.
 
-Unfortunately passwords can not be reset on this site, 
+Unfortunately passwords can not be reset on this site,
 please contact the site administrator,
 $a->admin';
 $string['emailpasswordchangeinfosubject'] = '$a: Change password information';
@@ -775,6 +777,7 @@ $string['includemodules'] = 'Include Modules';
 $string['includemoduleuserdata'] = 'Include module user data';
 $string['includeneededusers'] = 'Include Needed Users';
 $string['includenoneusers'] = 'Include No Users';
+$string['includesitefiles'] = 'Include Site Files Used in This Course';
 $string['includeuserfiles'] = 'Include User Files';
 $string['info'] = 'Information';
 $string['institution'] = 'Institution';
@@ -1299,6 +1302,7 @@ $string['site'] = 'Site';
 $string['sitedefault'] = 'Site Default';
 $string['siteerrors'] = 'Site errors';
 $string['sitefiles'] = 'Site files';
+$string['sitefilesused'] = 'Site files used in this course';
 $string['sitelogs'] = 'Site logs';
 $string['sitenews'] = 'Site news';
 $string['sitepartlist'] = 'You do not have the required permissions to view the participants list';

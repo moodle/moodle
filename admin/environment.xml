@@ -175,6 +175,11 @@
           <ON_OK message="qtyperqpwillberemoved" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_random_check" level="optional">
+        <FEEDBACK>
+          <ON_OK message="questioncwqpfsok" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="2.0">
