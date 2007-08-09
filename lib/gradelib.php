@@ -815,18 +815,44 @@ function build_percentages_array($steps=1, $order='desc', $lowest=0, $highest=10
  * Grading cron job
  */
 function grade_cron() {
+    global $CFG;
+
+    $now = time();
+
+    $sql = "SELECT i.*
+              FROM {$CFG->prefix}grade_items i
+             WHERE i.locked = 0 AND i.locktime > 0 AND i.locktime < $now AND EXISTS (
+                SELECT c.id FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+
     // go through all courses that have proper final grades and lock them if needed
-    if ($rs = get_recordset_select('grade_items', "itemtype='course' AND needsupdate=0", '', 'courseid')) {
+    if ($rs = get_recordset_sql($sql)) {
         if ($rs->RecordCount() > 0) {
-            while ($courseitem = rs_fetch_next_record($rs)) {
-                $courseid = $courseitem->courseid;
-                grade_grade::check_locktime_all($courseid);
-                grade_item::check_locktime_all($courseid);
+            while ($item = rs_fetch_next_record($rs)) {
+                $grade_item = new grade_item($item, false);
+                $grade_item->locked = $now;
+                $grade_item->update('locktime');
             }
         }
         rs_close($rs);
     }
-    
+
+    $sql = "SELECT g.*
+              FROM {$CFG->prefix}grade_grades g, {$CFG->prefix}grade_items i
+             WHERE g.locked = 0 AND g.locktime > 0 AND g.locktime < $now AND g.itemid=i.id AND EXISTS (
+                SELECT c.id FROM {$CFG->prefix}grade_items c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
+
+    // go through all courses that have proper final grades and lock them if needed
+    if ($rs = get_recordset_sql($sql)) {
+        if ($rs->RecordCount() > 0) {
+            while ($grade = rs_fetch_next_record($rs)) {
+                $grade_grade = new grade_grade($item, false);
+                $grade_grade->locked = $now;
+                $grade_grade->update('locktime');
+            }
+        }
+        rs_close($rs);
+    }
+
 }
 
 ?>
