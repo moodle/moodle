@@ -229,7 +229,7 @@
             $a->maxgrade = $quiz->grade;
             $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
             echo '<tr><th scope="row" class="cell">', $strscore, '</th><td class="cell">',
-                "$rawscore/$quiz->sumgrades ($percentage %)", '</td></tr>';
+                "$rawscore/$quiz->sumgrades ($percentage%)", '</td></tr>';
             echo '<tr><th scope="row" class="cell">', $strgrade, '</th><td class="cell">',
                 get_string('outof', 'quiz', $a), '</td></tr>';
         }
