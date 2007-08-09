@@ -399,7 +399,6 @@
     function full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
 
         global $CFG;
-
         //Here we encode absolute links
         $content = backup_encode_absolute_links($content);
 
@@ -1579,9 +1578,9 @@
 
         // find all grade texts belonging to this item
         if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
+            fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
             foreach ($grades as $grade) {
                 if ($texts = get_records('grade_grades_text', 'gradeid', $grade->id)) {
-                    fwrite ($bf,start_tag("GRADE_GRADES_TEXT",5,true));
                     foreach ($texts as $text) {
                         fwrite ($bf,start_tag("GRADE_TEXT",6,true));
                         fwrite ($bf,full_tag("ID",7,false,$text->id));
@@ -1592,9 +1591,9 @@
                         fwrite ($bf,full_tag("FEEDBACKFORMAT",7,false,$text->feedbackformat));
                         fwrite ($bf,end_tag("GRADE_TEXT",6,true));
                     }
-                    $status = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
                 }
-            }
+            } 
+            $status = fwrite ($bf,end_tag("GRADE_GRADES_TEXT",5,true));
         }
         return $status;
     }
@@ -1635,7 +1634,7 @@
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records_sql("SELECT * FROM {$CFG->prefix}grade_grades_history ggh,
+        if ($chs = get_records_sql("SELECT ggh.* FROM {$CFG->prefix}grade_grades_history ggh,
                                                   {$CFG->prefix}grade_items gi
                                              WHERE gi.courseid = $preferences->backup_course
                                              AND ggh.itemid = gi.id")) {
@@ -1674,12 +1673,13 @@
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records_sql("SELECT * FROM {$CFG->prefix}grade_grades_text_history ggth,
+        if ($chs = get_records_sql("SELECT ggth.* FROM {$CFG->prefix}grade_grades_text_history ggth,
                                                   {$CFG->prefix}grade_grades gg,
                                                   {$CFG->prefix}grade_items gi
                                              WHERE gi.courseid = $preferences->backup_course
                                              AND ggth.gradeid = gg.id
                                              AND gg.itemid = gi.id")) {
+
             fwrite ($bf,start_tag("GRADE_TEXT_HISTORIES",5,true));
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_TEXT_HISTORY",6,true));
