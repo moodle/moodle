@@ -2319,18 +2319,27 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $move = '';  
     }
 
-    $leftright = "";
+    $leftright = '';
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
+
+	    if (get_string('thisdirection') == 'rtl') {   // Exchange arrows on RTL
+		    $rightarrow = 'left.gif';
+		    $leftarrow  = 'right.gif';
+	    } else {
+	        $rightarrow = 'right.gif';
+	        $leftarrow  = 'left.gif';
+        }
+    
         if ($indent > 0) {
             $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/left.gif" class="iconsmall" '.
+                        ' src="'.$CFG->pixpath.'/t/'.$leftarrow.'" class="iconsmall" '.
                         ' alt="'.$str->moveleft.'" /></a>'."\n";
         }
         if ($indent >= 0) {
             $leftright .= '<a class="editing_moveright" title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$CFG->pixpath.'/t/right.gif" class="iconsmall" '.
+                        ' src="'.$CFG->pixpath.'/t/'.$rightarrow.'" class="iconsmall" '.
                         ' alt="'.$str->moveright.'" /></a>'."\n";
         }
     }
