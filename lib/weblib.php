@@ -3039,6 +3039,10 @@ function theme_setup($theme = '', $params=NULL) {
         }
     }
 
+// RTL support - only for RTL languages, add RTL CSS
+    if (get_string('thisdirection') == 'rtl') {
+    	$CFG->stylesheets[] = $CFG->themewww.'/standard/rtl.css'.$paramstring;
+	}
 }
 
 
@@ -3147,8 +3151,16 @@ function check_theme_arrows() {
             $THEME->rarrow = '&gt;';
             $THEME->larrow = '&lt;';
         }
+		
+    /// RTL support - in RTL languages, swap r and l arrows
+	    if (right_to_left()) {
+			$t = $THEME->rarrow;
+			$THEME->rarrow = $THEME->larrow;
+			$THEME->larrow = $t;
+		}
     }
 }
+
 
 /**
  * Return the right arrow with text ('next'), and optionally embedded in a link.
@@ -3919,7 +3931,7 @@ function print_table($table, $return=false) {
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
-                $align[$key] = ' text-align:'. $aa.';';
+                $align[$key] = ' text-align:'. fix_align_rtl($aa) .';';  // Fix for RTL languages
             } else {
                 $align[$key] = '';
             }
@@ -6250,6 +6262,7 @@ function doc_link($path='', $text='', $iconpath='') {
     return $str;
 }
 
+
 /**
  * Returns true if the current site debugging settings are equal or above specified level.
  * If passed a parameter it will emit a debugging notice similar to trigger_error(). The
@@ -6408,6 +6421,37 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
         echo $return;
     }
 }
+
+/** 
+ * Returns boolean true if the current language is right-to-left (Hebrew, Arabic etc)
+ *
+ */
+function right_to_left() {
+    static $result;
+
+    if (isset($result)) {
+        return $result;
+    }
+	return $result = (get_string('thisdirection') == 'rtl');
+}
+
+
+/**
+ * Returns swapped left<=>right if in RTL environment.
+ * part of RTL support
+ *
+ * @param string $align align to check
+ * @return string
+ */
+function fix_align_rtl($align) {
+	if (!right_to_left()) { 
+        return $align; 
+    }
+	if ($align=='left')  { return 'right'; }
+	if ($align=='right') { return 'left'; }
+	return $align;
+}
+
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
