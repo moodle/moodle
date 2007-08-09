@@ -2322,7 +2322,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     $leftright = '';
     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
 
-	    if (get_string('thisdirection') == 'rtl') {   // Exchange arrows on RTL
+	    if (right_to_left()) {   // Exchange arrows on RTL
 		    $rightarrow = 'left.gif';
 		    $leftarrow  = 'right.gif';
 	    } else {
