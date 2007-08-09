@@ -2788,7 +2788,7 @@ function current_category_theme($categoryid=0) {
  * @param int $lifetime ?
  * @param string $thename ?
  */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='', $langdir='ltr') {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
 
     global $CFG, $THEME;
 
@@ -2896,15 +2896,12 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         }
     }
 
-    $oppositlangdir = ($langdir == 'rtl') ? '_ltr' : '_rtl';
-
     if ($files) {
     /// Produce a list of all the files first
         echo '/**************************************'."\n";
         echo ' * THEME NAME: '.$themename."\n *\n";
         echo ' * Files included in this sheet:'."\n *\n";
         foreach ($files as $file) {
-            if (strstr($file[1], $oppositlangdir)) continue;
             echo ' *   '.$file[1]."\n";
         }
         echo ' **************************************/'."\n\n";
@@ -2916,7 +2913,6 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
             /// Actually collect all the files in order.
             $css = '';
             foreach ($files as $file) {
-                if (strstr($file[1], $oppositlangdir)) continue;
                 $css .= '/***** '.$file[1].' start *****/'."\n\n";
                 $css .= file_get_contents($file[0].'/'.$file[1]);
                 $ccs .= '/***** '.$file[1].' end *****/'."\n\n";
@@ -2927,14 +2923,12 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         /// Actually output all the files in order.
             if (empty($CFG->CSSEdit) && empty($THEME->CSSEdit)) {
                 foreach ($files as $file) {
-                    if (strstr($file[1], $oppositlangdir)) continue;
                     echo '/***** '.$file[1].' start *****/'."\n\n";
                     @include_once($file[0].'/'.$file[1]);
                     echo '/***** '.$file[1].' end *****/'."\n\n";
                 }
             } else {
                 foreach ($files as $file) {
-                    if (strstr($file[1], $oppositlangdir)) continue;
                     echo '/* @group '.$file[1].' */'."\n\n";
                     if (strstr($file[1], '.css') !== FALSE) {
                         echo '@import url("'.$CFG->themewww.'/'.$file[1].'");'."\n\n";
@@ -2972,12 +2966,6 @@ function theme_setup($theme = '', $params=NULL) {
 /// Put together the parameters
     if (!$params) {
         $params = array();
-    }
-
-/// Add parameter for the language direction
-    $langdir = get_string('thisdirection');
-    if ($langdir == 'rtl') {
-        $params[] = 'langdir='.get_string('thisdirection');
     }
 
     if ($theme != $CFG->theme) {
@@ -3042,6 +3030,7 @@ function theme_setup($theme = '', $params=NULL) {
 // RTL support - only for RTL languages, add RTL CSS
     if (get_string('thisdirection') == 'rtl') {
     	$CFG->stylesheets[] = $CFG->themewww.'/standard/rtl.css'.$paramstring;
+    	$CFG->stylesheets[] = $CFG->themewww.'/'.$theme.'/rtl.css'.$paramstring;
 	}
 }
 
