@@ -1744,7 +1744,6 @@
                 fwrite ($bf,full_tag("TIMEMODIFIED",7,false,$ch->timemodified));
                 fwrite ($bf,full_tag("LOGGEDUSER",7,false,$ch->loggeduser));
                 fwrite ($bf,full_tag("GRADEID",7,false,$ch->gradeid));
-                fwrite ($bf,full_tag("USERID",7,false,$ch->userid));
                 fwrite ($bf,full_tag("INFORMATION",7,false,$ch->information));
                 fwrite ($bf,full_tag("INFORMATIONFORMAT",7,false,$ch->informationformat));
                 fwrite ($bf,full_tag("FEEDBACK",7,false,$ch->feedback));

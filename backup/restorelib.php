@@ -1857,7 +1857,6 @@
                                 continue; // grade not being restore, possibly because grade item is not restored
                             }
                             $oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_TEXT_HISTORY']['#']['USERID']['0']['#']));
-                            $dbrec->userid = $oldobj->new_id;
                             $dbrec->information = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATION']['0']['#']);
                             $dbrec->informationformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATIONFORMAT']['0']['#']);
                             $dbrec->feedback = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACK']['0']['#']);
