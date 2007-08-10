@@ -101,7 +101,7 @@ require_once($CFG->libdir . '/grade/grade_grade_text.php');
  * @param string $itemmodule more specific then $itemtype - assignment, forum, etc.; maybe NULL for some item types
  * @param int $iteminstance instance it of graded subject
  * @param int $itemnumber most probably 0, modules can use other numbers when having more than one grades for each user
- * @param mixed $grades grade (object, array) or several grades (arrays of arrays or objects), NULL if updating rgade_item definition only\
+ * @param mixed $grades grade (object, array) or several grades (arrays of arrays or objects), NULL if updating grade_item definition only
  * @param mixed $itemdetails object or array describing the grading item, NULL if no change
  */
 function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance, $itemnumber, $grades=NULL, $itemdetails=NULL) {
