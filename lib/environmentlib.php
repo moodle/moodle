@@ -431,11 +431,17 @@ function get_environment_for_version($version) {
  */
 function environment_check($version) {
 
+    global $CFG;
+
 /// Normalize the version requested
     $version = normalize_version($version);
 
     $results = array(); //To store all the results
 
+/// Only run the moodle versions checker on upgrade, not on install
+    if (empty($CFG->running_installer)) {
+        $results[] = environment_check_moodle($version);
+    }
     $results[] = environment_check_unicode($version);
     $results[] = environment_check_database($version);
     $results[] = environment_check_php($version);
@@ -573,6 +579,47 @@ function environment_custom_checks($version) {
 }
 
 /**
+ * This function will check if Moodle requirements are satisfied
+ * @param string $version xml version we are going to use to test this server
+ * @return object results encapsulated in one environment_result object
+ */
+function environment_check_moodle($version) {
+
+    $result = new environment_results('moodle');
+
+/// Get the enviroment version we need
+    if (!$data = get_environment_for_version($version)) {
+    /// Error. No version data found
+        $result->setStatus(false);
+        $result->setErrorCode(NO_VERSION_DATA_FOUND);
+        return $result;
+    }
+
+/// Extract the moodle part
+    if (!isset($data['@']['requires'])) {
+        $needed_version = '1.0'; /// Default to 1.0 if no moodle requires is found
+    } else {
+    /// Extract required moodle version
+        $needed_version = $data['@']['requires'];
+    }
+
+/// Now search the version we are using
+    $current_version = normalize_version(get_config('', 'release'));
+
+/// And finally compare them, saving results
+    if (version_compare($current_version, $needed_version, '>=')) {
+        $result->setStatus(true);
+    } else {
+        $result->setStatus(false);
+    }
+    $result->setLevel('required');
+    $result->setCurrentVersion($current_version);
+    $result->setNeededVersion($needed_version);
+
+    return $result;
+}
+
+/**
  * This function will check if php requirements are satisfied
  * @param string $version xml version we are going to use to test this server
  * @return object results encapsulated in one environment_result object
@@ -648,7 +695,7 @@ function environment_check_unicode($version) {
     /// Extract the unicode part
 
     if (!isset($data['#']['UNICODE'])) {
-    /// Error. No DATABASE section found
+    /// Error. No UNICODE section found
         $result->setStatus(false);
         $result->setErrorCode(NO_UNICODE_SECTION_FOUND);
         return $result;
@@ -1104,7 +1151,7 @@ function get_level($element) {
     if (isset($element['@']['level'])) {
         $level = $element['@']['level'];
         if (!in_array($level, array('required', 'optional'))) {
-            debugging('The level of a check in the environment.xml file must be "required" or level="optional".', DEBUG_DEVELOPER);
+            debugging('The level of a check in the environment.xml file must be "required" or "optional".', DEBUG_DEVELOPER);
             $level = 'required';
         }
     } else {
