@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
 
 $string['1day'] = '1 Day';
 $string['1hour'] = '1 Hour';
@@ -416,7 +416,7 @@ $string['quiz:deleteattempts'] = 'Delete quiz attempts';
 $string['quiz:emailconfirmsubmission'] = 'Get email confirmation when submitting';
 $string['quiz:emailnotifysubmission'] = 'Get email notification of submissions';
 $string['quiz:grade'] = 'Grade quizzes manually';
-$string['quiz:ignoretimelimits'] = 'Ignores time limit on quizs';
+$string['quiz:ignoretimelimits'] = 'Ignores time limit on quizzes';
 $string['quiz:manage'] = 'Manage quizzes';
 $string['quiz:preview'] = 'Preview quizzes';
 $string['quiz:view'] = 'View quiz information';
