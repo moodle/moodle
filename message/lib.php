@@ -991,12 +991,11 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         return false;
     }
 
-
 /// Check to see if anything else needs to be done with it
 
     $preference = (object)get_user_preferences(NULL, NULL, $userto->id);
 
-    if (!isset($preference->message_emailmessages) or $preference->message_emailmessages) {  // Receiver wants mail forwarding
+    if (!isset($preference->message_emailmessages) || $preference->message_emailmessages) {  // Receiver wants mail forwarding
         if (!isset($preference->message_emailtimenosee)) {
             $preference->message_emailtimenosee = 10;
         }
@@ -1024,6 +1023,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
                 $userto->email = $preference->message_emailaddress;   // Use custom messaging address
             }
             email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml);
+            debugging('Mail was sent', DEBUG_NORMAL);
+            echo "mail was sent"; 
+            sleep(3);
         }
     }
 
