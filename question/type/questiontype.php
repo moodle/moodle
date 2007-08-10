@@ -938,7 +938,16 @@ class default_questiontype {
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
 
-        return $state->responses === $teststate->responses;
+        // In php neither == nor === compare arrays the way you want. The following 
+        // ensures that the arrays have the same keys, with the same values.
+        $result = false;
+        $diff1 = array_diff_assoc($state->responses, $teststate->responses);
+        if (empty($diff1)) {
+            $diff2 = array_diff_assoc($teststate->responses, $state->responses);
+            $result =  empty($diff2);
+        }
+
+        return $result;
     }
 
     /**
