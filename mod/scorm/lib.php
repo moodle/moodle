@@ -57,6 +57,8 @@ function scorm_add_instance($scorm) {
             set_field('scorm','launch',$scorm->launch,'id',$scorm->id);
         }
 
+        scorm_grade_item_update(stripslashes_recursive($scorm));
+
         return $id;
     } else {
         error(get_string('badpackage','scorm'));
@@ -121,7 +123,11 @@ function scorm_update_instance($scorm) {
         $scorm->reference = $oldscorm->reference; // This fix a problem with Firefox when the teacher choose Cancel on overwrite question
     }
     
-    return update_record('scorm', $scorm);
+    if ($result = update_record('scorm', $scorm)) {
+        scorm_grade_item_update(stripslashes_recursive($scorm));
+    }
+
+    return $result;
 }
 
 /**
@@ -187,7 +193,10 @@ function scorm_delete_instance($id) {
     }
     if (! delete_records('scorm_sequencing_ruleconditions', 'scormid', $scorm->id)) {
         $result = false;
-    }*/       
+    }*/     
+
+    scorm_grade_item_delete(stripslashes_recursive($scorm));
+  
     return $result;
 }
 
@@ -203,9 +212,7 @@ function scorm_delete_instance($id) {
 * @return mixed
 */
 function scorm_user_outline($course, $user, $mod, $scorm) { 
-
-    $return = NULL;
-
+    global $CFG;
     require_once('locallib.php');
 
     $return = scorm_grade_user($scorm, $user->id, true);
@@ -404,35 +411,123 @@ function scorm_cron () {
 }
 
 /**
-* Given a scorm id return all the grades of that activity
-*
-* @param int $scormid Scorm instance id
-* @return mixed
-*/
-function scorm_grades($scormid) {
-
+ * Return grade for given user or all users.
+ *
+ * @param int $scormid id of scorm
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function scorm_get_user_grades($scorm, $userid=0) {
     global $CFG;
+    require_once('locallib.php');
 
-    if (!$scorm = get_record('scorm', 'id', $scormid)) {
-        return NULL;
+    $grades = array();
+    if (empty($userid)) {
+        if ($scousers = get_records_select('scorm_scoes_track', "scormid='$scorm->id' GROUP BY userid", "", "userid,null")) {
+            foreach ($scousers as $scouser) {
+                $grades[$scouser->userid] = new object();
+                $grades[$scouser->userid]->id         = $scouser->userid;
+                $grades[$scouser->userid]->userid     = $scouser->userid;
+                $grades[$scouser->userid]->rawgrade = scorm_grade_user($scorm, $scouser->userid);
+            }
+        } else {
+            return false;
+        }
+
+    } else {
+        if (!get_records_select('scorm_scoes_track', "scormid='$scorm->id' AND userid='$userid' GROUP BY userid", "", "userid,null")) {
+            return false; //no attempt yet
+        }
+        $grades[$userid] = new object();
+        $grades[$userid]->id         = $userid;
+        $grades[$userid]->userid     = $userid;
+        $grades[$userid]->rawgrade = scorm_grade_user($scorm, $userid);
     }
+
+    return $grades;
+}
+
+/**
+ * Update grades in central gradebook
+ *
+ * @param object $scorm null means all scormbases
+ * @param int $userid specific user only, 0 mean all
+ */
+function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    if ($scorm != null) {
+        if ($grades = scorm_get_user_grades($scorm, $userid)) {
+            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades);
+
+        } else if ($userid and $nullifnone) {
+            $grade = new object();
+            $grade->userid   = $userid;
+            $grade->rawgrade = NULL;
+            grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grade);
+        }
+
+    } else {
+        $sql = "SELECT s.*, cm.idnumber as cmidnumber
+                  FROM {$CFG->prefix}scorm s, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                 WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
+        if ($rs = get_recordset_sql($sql)) {
+            if ($rs->RecordCount() > 0) {
+                while ($scorm = rs_fetch_next_record($rs)) {
+                    scorm_grade_item_update($scorm);
+                    scorm_update_grades($scorm, 0, false);
+                }
+            }
+            rs_close($rs);
+        }
+    }
+}
+
+/**
+ * Update/create grade item for given scorm
+ *
+ * @param object $scorm object with extra cmidnumber
+ * @return object grade_item
+ */
+function scorm_grade_item_update($scorm) {
+    global $CFG;
+    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+        require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    $params = array('itemname'=>$scorm->name, 'idnumber'=>$scorm->cmidnumber);
 
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
-        if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
-            return NULL;
+        if ($maxgrade = count_records_select('scorm_scoes',"scorm='$scorm->id' AND launch<>''")) {
+            $params['gradetype'] = GRADE_TYPE_VALUE;
+            $params['grademax']  = $maxgrade;
+            $params['grademin']  = 0;
+        } else {
+            $params['gradetype'] = GRADE_TYPE_NONE;
         }
     } else {
-        $return->maxgrade = $scorm->maxgrade;
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $scorm->maxgrade;
+        $params['grademin']  = 0;
     }
 
-    $return->grades = NULL;
-    if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid", "", "userid,null")) {
-        require_once('locallib.php');
-        foreach ($scousers as $scouser) {
-            $return->grades[$scouser->userid] = scorm_grade_user($scorm, $scouser->userid);
-        }
-    }
-    return $return;
+    return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, NULL, $params);
+}
+
+/**
+ * Delete grade item for given scorm
+ *
+ * @param object $scorm object
+ * @return object grade_item
+ */
+function scorm_grade_item_delete($scorm) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, NULL, array('deleted'=>1));
 }
 
 function scorm_get_view_actions() {

@@ -354,14 +354,18 @@ function scorm_seq_is($what, $scoid, $userid, $attempt=0) {
 }
 
 function scorm_seq_set($what, $scoid, $userid, $attempt=0, $value='true') {
+    $sco = scorm_get_sco($scoid);
 
     /// set passed activity to active or not
     if ($value == false) {
         delete_record('scorm_scoes_track','scoid',$scoid,'userid',$userid,'attempt',$attempt,'element',$what);
     } else {
-        $sco = scorm_get_sco($scoid);
         scorm_insert_track($userid, $sco->scorm, $sco->id, 0, $what, $value);
     }
+
+    // update grades in gradebook
+    $scorm = get_record('scorm', 'id', $sco->scorm);
+    scorm_update_grades($scorm, $userid, true);
 }
 
 function scorm_seq_exit_action_rules($seq,$userid) {

@@ -193,7 +193,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
-            unset($sco);
+            $sco = new object();
             $sco->identifier = $course->id;
             $sco->scorm = $scormid;
             $sco->organization = '';

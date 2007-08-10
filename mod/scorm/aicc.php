@@ -317,8 +317,10 @@
                                 $value = scorm_add_time($track->value, $SESSION->scorm_session_time);
                                 $track->value = $value;
                                 $track->timemodified = time();
-                                $id = update_record('scorm_scoes_track',$track);
+                                update_record('scorm_scoes_track',$track);
+                                $id = $track->id;
                             } else {
+                                $track = new object();
                                 $track->userid = $USER->id;
                                 $track->scormid = $scorm->id;
                                 $track->scoid = $sco->id;
@@ -327,6 +329,7 @@
                                 $track->timemodified = time();
                                 $id = insert_record('scorm_scoes_track',$track);
                             }
+                            scorm_update_grades($scorm, $USER->id);
                         }
                         
                         $SESSION->scorm_status = 'Terminated';

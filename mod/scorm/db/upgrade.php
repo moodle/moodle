@@ -274,6 +274,14 @@ function xmldb_scorm_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2007081001) {
+        require_once($CFG->dirroot.'/mod/scorm/lib.php');
+        // too much debug output
+        $db->debug = false;
+        scorm_update_grades();
+        $db->debug = true;
+    }  
+
     return $result;
 }
 
