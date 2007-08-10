@@ -687,28 +687,25 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
                 }
                 // Restore the state so that the responses will be restored
                 restore_question_state($questions[$i], $laststate);
-                $states[$i] = clone ($laststate);
+                $states[$i] = clone($laststate);
             } else {
-               // create a new empty state
-               $states[$i] = new object;
+                // create a new empty state
+                $states[$i] = new object;
+                $states[$i]->question = $i;
+                $states[$i]->responses = array('' => '');
+                $states[$i]->raw_grade = 0;
             }
 
             // now fill/overide initial values
             $states[$i]->attempt = $attempt->uniqueid;
-            $states[$i]->question = (int) $i;
             $states[$i]->seq_number = 0;
             $states[$i]->timestamp = $attempt->timestart;
             $states[$i]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
             $states[$i]->grade = 0;
-            $states[$i]->raw_grade = 0;
             $states[$i]->penalty = 0;
             $states[$i]->sumpenalty = 0;
             $states[$i]->manualcomment = '';
 
-            // if building on last attempt we want to preserve responses
-            if (!$lastattemptid) {
-              $states[$i]->responses = array('' => '');
-            }
             // Prevent further changes to the session from incrementing the
             // sequence number
             $states[$i]->changed = true;
