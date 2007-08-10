@@ -32,23 +32,40 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
         $url = $CFG->wwwroot.'/grade/edit/tree/outcomeitem.php?id='.$id.'&amp;courseid='.$courseid;
         redirect($gpr->add_url_params($url));
     }
-
-    if ($item->hidden > 1) {
-        $item->hiddenuntil = $item->hidden;
-        $item->hidden = 0;
-    } else {
-        $item->hiddenuntil = 0;
-    }
-
-    $item->locked = !empty($item->locked);
-
     // Get Item preferences
-    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $id);
-    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $id);
+    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype', $item->id);
+    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints', $item->id);
 
     $item->calculation = grade_item::denormalize_formula($item->calculation, $course->id);
-    $mform->set_data($item);
+
+    $decimalpoints = grade_report::get_pref('decimalpoints', $item->id);
+
+} else {
+    $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
+    // Get Item preferences
+    $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype');
+    $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints');
+
+    $decimalpoints = grade_report::get_pref('decimalpoints');
 }
+
+if ($item->hidden > 1) {
+    $item->hiddenuntil = $item->hidden;
+    $item->hidden = 0;
+} else {
+    $item->hiddenuntil = 0;
+}
+
+$item->locked = !empty($item->locked);
+
+$item->grademax        = format_float($item->grademax, $decimalpoints);
+$item->grademin        = format_float($item->grademin, $decimalpoints);
+$item->gradepass       = format_float($item->gradepass, $decimalpoints);
+$item->multfactor      = format_float($item->multfactor, 4);
+$item->plusfactor      = format_float($item->plusfactor, 4);
+$item->aggregationcoef = format_float($item->aggregationcoef, 4);
+
+$mform->set_data($item);
 
 if ($data = $mform->get_data(false)) {
     if (array_key_exists('calculation', $data)) {
@@ -64,6 +81,13 @@ if ($data = $mform->get_data(false)) {
     $locktime = empty($data->locktime) ? 0: $data->locktime;
     unset($data->locked);
     unset($data->locktime);
+
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
+    foreach ($convert as $param) {
+        if (array_key_exists($param, $data)) {
+            $data->$param = unformat_float($data->$param);
+        }
+    }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
     grade_item::set_properties($grade_item, $data);

@@ -26,7 +26,7 @@ if (isset($CFG->an_cutoff)) {
     $frm->an_cutoff_hour = $hrs; $frm->an_cutoff_min = $mins;
 }
 if (!isset($frm->an_cutoff_hour)) {
-    $timezone = format_float(get_user_timezone_offset(), 1);
+    $timezone = round(get_user_timezone_offset(), 1);
     $frm->an_cutoff_hour = intval($timezone);
     $frm->an_cutoff_min = (intval(round($timezone)) != intval($timezone)) ? 35 : 5;
 }

@@ -22,8 +22,6 @@ function print_entry($course) {
     } else {
         $cost = (float) $course->cost;
     }
-    $cost = format_float($cost, 2);
-
 
     if (abs($cost) < 0.01) { // no cost, default to base class entry to course
 

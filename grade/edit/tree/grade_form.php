@@ -78,6 +78,8 @@ class edit_grade_form extends moodleform {
         $mform->setHelpButton('feedbackformat', array('textformat', get_string('helpformatting')));
 
         // hidden params
+        $mform->addElement('hidden', 'oldgrade');
+
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
 

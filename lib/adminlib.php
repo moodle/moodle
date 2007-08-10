@@ -480,7 +480,7 @@ function print_progress($done, $total, $updatetime=5, $sleeptime=1, $donetext=''
     if ($done && (($now - $lasttime) >= $updatetime)) {
         $elapsedtime = $now - $starttime;
         $projectedtime = (int)(((float)$total / (float)$done) * $elapsedtime) - $elapsedtime;
-        $percentage = format_float((float)$done / (float)$total, 2);
+        $percentage = round((float)$done / (float)$total, 2);
         $width = (int)(500 * $percentage);
 
         if ($projectedtime > 10) {

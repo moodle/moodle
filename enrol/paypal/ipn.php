@@ -147,9 +147,9 @@
             } else {
                 $cost = (float) $course->cost;
             }
-            $cost = format_float($cost, 2);
 
             if ($data->payment_gross < $cost) {
+                $cost = format_float($cost, 2);
                 email_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
                 die;
 

@@ -2,6 +2,7 @@
 
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
+require_once $CFG->libdir.'/mathslib.php';
 require_once 'calculation_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
@@ -36,11 +37,13 @@ if ($mform->is_cancelled()) {
 
 }
 
-$calculation = grade_item::denormalize_formula($grade_item->calculation, $grade_item->courseid);
+$calculation = calc_formula::localize($grade_item->calculation);
+$calculation = grade_item::denormalize_formula($calculation, $grade_item->courseid);
 $mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname));
 
 if ($data = $mform->get_data(false)) {
-    $grade_item->set_calculation($data->calculation);
+    $calculation = calc_formula::unlocalize($data->calculation);
+    $grade_item->set_calculation($calculation);
     redirect($returnurl);
 }
 

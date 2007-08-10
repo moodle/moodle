@@ -4,8 +4,9 @@
 
 $string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['decpoint'] = '.'; // decimal point, for some languages it is ',' if this is changed, must set thousandsep
+$string['decsep'] = '.'; // decimal point separator, for some languages it is ','
 $string['firstdayofweek'] = '0';
+$string['listsep'] = ','; // if decsep is ',', then usually ';' is used instead here; these two can not be the same
 $string['locale'] = 'en_AU.UTF-8';
 $string['localewin'] = 'English_Australia.1252';
 $string['localewincharset'] = '';
@@ -24,6 +25,5 @@ $string['strftimetime'] = '%%I:%%M %%p';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'English';
-$string['thousandsep'] = ','; // thousand separator, set to '' if none, if this is set, must set decpoint
 
 ?>

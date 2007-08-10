@@ -82,6 +82,31 @@ class calc_formula {
     function get_error() {
         return $this->_error;
     }
+
+    /**
+     * Similar to format_float, formats the numbers and list separators
+     * according to locale specifics.
+     * @param string $formula
+     * @return string localised formula
+     */
+    function localize($formula) {
+        $formula = str_replace('.', '$', $formula); // temp placeholder
+        $formula = str_replace(',', get_string('listsep'), $formula);
+        $formula = str_replace('$', get_string('decsep'), $formula);
+        return $formula;
+    }
+
+    /**
+     * Similar to unformat_float, converts floats and lists to PHP standards.
+     * @param string $formula localised formula
+     * @return string 
+     */
+    function unlocalize($formula) {
+        $formula = str_replace(get_string('decsep'), '$', $formula);
+        $formula = str_replace(get_string('listsep'), ',', $formula);
+        $formula = str_replace('$', '.', $formula); // temp placeholder
+        return $formula;
+    }
 }
 
 ?>

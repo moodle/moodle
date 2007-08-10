@@ -48,8 +48,13 @@ class edit_outcomeitem_form extends moodleform {
 
         //$mform->addElement('text', 'calculation', get_string('calculation', 'grades'));
 
+        /*$mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+        $mform->setHelpButton('gradepass', array(false, get_string('gradepass', 'grades'),
+                false, true, false, get_string('gradepasshelp', 'grades')));*/
+
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
-        $mform->setDefault('aggregationcoef', 0.0);
+        $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'),
+                false, true, false, get_string('aggregationcoefhelp', 'grades')));
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!

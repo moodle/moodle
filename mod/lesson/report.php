@@ -266,12 +266,12 @@
         if ($numofattempts == 0) {
             $avescore = get_string("notcompleted", "lesson");
         } else {
-            $avescore = format_float($avescore/$numofattempts, 2, ".", ",");
+            $avescore = format_float($avescore/$numofattempts, 2);
         }
         if ($avetime == NULL) {
             $avetime = get_string("notcompleted", "lesson");
         } else {
-            $avetime = format_float($avetime/$numofattempts, 0, ".", ",");
+            $avetime = format_float($avetime/$numofattempts, 0);
             $avetime = format_time($avetime);
         }
         if ($hightime == NULL) {

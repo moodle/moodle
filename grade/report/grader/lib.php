@@ -154,12 +154,7 @@ class grade_report_grader extends grade_report {
                         $finalgrade = $postedvalue;
                     }
                 } else {
-                    $trimmed = trim($postedvalue);
-                    if (empty($trimmed)) { // empty string means no grade
-                        $finalgrade = null;
-                    } else {
-                        $finalgrade = $this->format_grade($postedvalue);
-                    }
+                    $finalgrade = unformat_float($postedvalue);
                 }
 
             } else if ($data_type == 'feedback') {
@@ -654,13 +649,13 @@ class grade_report_grader extends grade_report {
 
                     } else if ($item->gradetype != GRADE_TYPE_TEXT) { // Value type
                         if ($this->get_pref('quickgrading') and $grade->is_editable()) {
-                            $value = $this->get_grade_clean($gradeval, $decimalpoints);
+                            $value = format_float($gradeval, $decimalpoints);
                             $studentshtml .= '<input type="hidden" name="oldgrade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                             $studentshtml .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade']
                                           . '" type="text" title="'. $strgrade .'" name="grade_'
                                           .$userid.'_' .$item->id.'" value="'.$value.'" />';
                         } else {
-                            $studentshtml .= $this->get_grade_clean($gradeval, $decimalpoints);
+                            $studentshtml .= format_float($gradeval, $decimalpoints);
                         }
                     }
 
@@ -726,7 +721,7 @@ class grade_report_grader extends grade_report {
                         if (is_null($gradeval)) {
                             $studentshtml .= '-';
                         } else {
-                            $studentshtml .=  $this->get_grade_clean($gradeval, $decimalpoints). $percentsign;
+                            $studentshtml .=  format_float($gradeval, $decimalpoints). $percentsign;
                         }
                     }
                     if (!empty($grade->feedback)) {
@@ -851,12 +846,12 @@ class grade_report_grader extends grade_report {
                             $finalavg = $sum/$count_array[$item->id];
                         }
 
-                        $scaleval = round($this->get_grade_clean($finalavg, $decimalpoints));
+                        $scaleval = round($finalavg);
                         $scale_object = new grade_scale(array('id' => $item->scaleid), false);
                         $gradehtml = $scale_object->get_nearest_item($scaleval);
                         $rawvalue = $scaleval;
                     } else {
-                        $gradeval = $this->get_grade_clean($sum/$count_array[$item->id], $decimalpoints);
+                        $gradeval = format_float($sum/$count_array[$item->id], $decimalpoints);
 
                         $gradehtml = round($gradeval, $decimalpoints);
                         $rawvalue = $gradeval;
@@ -909,8 +904,8 @@ class grade_report_grader extends grade_report {
                 }
 
                 if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL) {
-                    $grademin = $this->get_grade_clean($item->grademin, $decimalpoints);
-                    $grademax = $this->get_grade_clean($item->grademax, $decimalpoints);
+                    $grademin = format_float($item->grademin, $decimalpoints);
+                    $grademax = format_float($item->grademax, $decimalpoints);
                 } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                     $grademin = 0;
                     $grademax = 100;

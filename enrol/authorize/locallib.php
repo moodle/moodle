@@ -315,12 +315,12 @@ function authorize_print_order_details($orderno)
         if ($refund = get_record_sql($sql)) {
             $extra->sum = floatval($refund->refunded);
         }
-        $upto = format_float($order->amount - $extra->sum, 2);
+        $upto = round($order->amount - $extra->sum, 2);
         if ($upto <= 0) {
             error("Refunded to original amount.");
         }
         else {
-            $amount = format_float(optional_param('amount', $upto), 2);
+            $amount = round(optional_param('amount', $upto), 2);
             if (($amount > $upto) or empty($confirm)) {
                 $a = new stdClass;
                 $a->upto = $upto;

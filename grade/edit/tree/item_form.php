@@ -49,39 +49,33 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('grademax', array(false, get_string('grademax', 'grades'),
                 false, true, false, get_string('grademaxhelp', 'grades')));
         $mform->disabledIf('grademax', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setDefault('grademax', 100.0);
 
         $mform->addElement('text', 'grademin', get_string('grademin', 'grades'));
         $mform->setHelpButton('grademin', array(false, get_string('grademin', 'grades'),
                 false, true, false, get_string('grademinhelp', 'grades')));
         $mform->disabledIf('grademin', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->setDefault('grademin', 0.0);
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->setHelpButton('gradepass', array(false, get_string('gradepass', 'grades'),
                 false, true, false, get_string('gradepasshelp', 'grades')));
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('gradepass', 0.0);
 
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
         $mform->setHelpButton('multfactor', array(false, get_string('multfactor', 'grades'),
                 false, true, false, get_string('multfactorhelp', 'grades')));
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('multfactor', 1.0);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->setHelpButton('plusfactor', array(false, get_string('plusfactor', 'grades'),
                 false, true, false, get_string('plusfactorhelp', 'grades')));
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
-        $mform->setDefault('plusfactor', 0.0);
 
         $mform->addElement('text', 'aggregationcoef', get_string('aggregationcoef', 'grades'));
         $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'),
                 false, true, false, get_string('aggregationcoefhelp', 'grades')));
-        $mform->setDefault('aggregationcoef', 0.0);
 
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!

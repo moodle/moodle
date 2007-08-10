@@ -2,6 +2,7 @@
 
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
+require_once $CFG->dirroot.'/grade/report/lib.php';
 require_once 'grade_form.php';
 
 $courseid = required_param('courseid', PARAM_INT);
@@ -103,6 +104,20 @@ if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $us
         $grade->locked = 1;
     }
 
+    // normalize the final grade value
+    if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+        if (empty($grade->finalgrade)) {
+            $grade->finalgrade = -1;
+        } else {
+            $grade->finalgrade = (int)$grade->finalgrade;
+        }
+    } else if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
+        $decimalpoints = grade_report::get_pref('decimalpoints', $grade_item->id);
+        $grade->finalgrade = format_float($grade->finalgrade, $decimalpoints);
+    }
+
+    $grade->oldgrade = $grade->finalgrade;
+
     $mform->set_data($grade);
 
 } else {
@@ -117,11 +132,14 @@ if ($mform->is_cancelled()) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
 
     // fix no grade for scales
-    if (!isset($data->finalgrade)) {
+    if (!isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
         $data->finalgrade = $old_grade_grade->finalgrade;
 
     } else if ($grade_item->gradetype == GRADE_TYPE_SCALE and $data->finalgrade < 1) {
         $data->finalgrade = NULL;
+
+    } else if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
+        $data->finalgrade = unformat_float($data->finalgrade);
     }
 
     if (!isset($data->feedback)) {

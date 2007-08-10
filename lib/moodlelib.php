@@ -4445,7 +4445,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     global $CFG;
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale',
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'decsep', 'firstdayofweek', 'listsep', 'locale',
                             'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
@@ -5912,14 +5912,36 @@ function generate_password($maxlen=10) {
 }
 
 /**
- * Given a float, prints it nicely
+ * Given a float, prints it nicely.
+ * Do NOT use the result in any calculation later!
  *
- * @param float $num The float to print
+ * @param float $flaot The float to print
  * @param int $places The number of decimal places to print.
- * @return string
+ * @return string locale float
  */
-function format_float($num, $places=1) {
-    return sprintf("%.$places"."f", $num);
+function format_float($float, $decimalpoints=1) {
+    if (is_null($float)) {
+        return '';
+    }
+    return number_format($float, $decimalpoints, get_string('decsep'), '');
+}
+
+/**
+ * Convers locale specific floating point/comma number back to standard PHP float value
+ * Do NOT try to do any math operations before this conversion on any user submitted floats!
+ *
+ * @param  string $locale_float locale aware flaot represenation
+ */
+function unformat_float($locale_float) {
+    $locale_float = trim($locale_float);
+
+    if ($locale_float == '') {
+        return null;
+    }
+
+    $locale_float = str_replace(' ', '', $locale_float); // no spaces - those might be used as thousand separators
+
+    return (float)str_replace(get_string('decsep'), '.', $locale_float);
 }
 
 /**
