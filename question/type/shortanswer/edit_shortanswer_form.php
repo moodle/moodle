@@ -70,7 +70,7 @@ class question_edit_shortanswer_form extends question_edit_form {
         $maxgrade = false;
         foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if (!empty($trimmedanswer)){
+            if ($trimmedanswer !== ''){
                 $answercount++;
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
