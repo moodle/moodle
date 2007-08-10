@@ -58,14 +58,6 @@
         }
     }
 
-/// Make sure the receiving user has preferences
-    if (!isset($userpreferences['message_showmessagewindow'])) {  // User has not used messaging before
-        set_user_preference('message_showmessagewindow', 1, $user->id);
-        set_user_preference('message_emailmessages', 1, $user->id);
-        set_user_preference('message_emailtimenosee', 10, $user->id);
-        set_user_preference('message_emailaddress', $user->email, $user->id);
-    }
-
 
     if ($message!='' and confirm_sesskey()) {   /// Current user has just sent a message
 
