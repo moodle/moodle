@@ -182,7 +182,7 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="2.0">
+  <MOODLE version="2.0" requires="1.9">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
