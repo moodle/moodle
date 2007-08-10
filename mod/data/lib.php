@@ -771,8 +771,7 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
-            $grade->itemid     = $data->id;
-            $grade->userid     = $userid;
+            $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             grade_update('mod/data', $data->course, 'mod', 'data', $data->id, 0, $grade);
         }

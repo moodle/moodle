@@ -348,8 +348,7 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
-            $grade->itemid     = $glossary->id;
-            $grade->userid     = $userid;
+            $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             grade_update('mod/glossary', $glossary->course, 'mod', 'glossary', $glossary->id, 0, $grade);
         }
