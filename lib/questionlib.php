@@ -1230,8 +1230,8 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
     
     // deal with penalty
     if ($cmoptions->penaltyscheme) {
-            $state->grade = $state->raw_grade - $state->sumpenalty;
-            $state->sumpenalty += (float) $state->penalty;
+        $state->grade = $state->raw_grade - $state->sumpenalty;
+        $state->sumpenalty += (float) $state->penalty;
     } else {
         $state->grade = $state->raw_grade;
     }
