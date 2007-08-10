@@ -271,8 +271,7 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
-            $grade->itemid     = $quiz->id;
-            $grade->userid     = $userid;
+            $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grade);
         }
