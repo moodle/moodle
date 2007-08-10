@@ -2200,8 +2200,8 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
 
-        /// Oracle BLOBs doesn't like quoted strings (are inserted via prepared statemets)
-            if ($CFG->dbfamily == 'oracle') {
+        /// Oracle and MSSQL BLOBs doesn't like quoted strings (are inserted via prepared statemets)
+            if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
                 $value = stripslashes_safe($value);
             }
 
