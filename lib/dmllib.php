@@ -1212,26 +1212,26 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
 
     $dataobject = new StdClass;
     $dataobject->{$newfield} = $newvalue;
-    // Oracle DIRTY HACK - 
+    // Oracle DIRTY HACK -
     if ($CFG->dbfamily == 'oracle') {
         oracle_dirty_hack($table, $dataobject); // Convert object to the correct "empty" values for Oracle DB
         $newvalue = $dataobject->{$newfield};
     }
     // End DIRTY HACK
 
-/// Under Oracle and MSSQL we have our own set field process
+/// Under Oracle, MSSQL and PostgreSQL we have our own set field process
 /// If the field being updated is clob/blob, we use our alternate update here
 /// They will be updated later
-    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') && !empty($select)) {
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') && !empty($select)) {
     /// Detect lobs
         $foundclobs = array();
         $foundblobs = array();
         db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
     }
 
-/// Under Oracle and MSSQL, finally, Update all the Clobs and Blobs present in the record
+/// Under Oracle, MSSQL and PostgreSQL, finally, update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') && !empty($select) &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') && !empty($select) &&
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $select, $foundclobs, $foundblobs)) {
             return false; //Some error happened while updating LOBs
@@ -1386,11 +1386,11 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     }
 /// End DIRTY HACK
 
-/// Under Oracle and MSSQL we have our own insert record process
+/// Under Oracle, MSSQL and PostgreSQL we have our own insert record process
 /// detect all the clob/blob fields and change their contents to @#CLOB#@ and @#BLOB#@
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// Same for mssql (only processing blobs - image fields)
-    if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
+    if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') {
         $foundclobs = array();
         $foundblobs = array();
         db_detect_lobs($table, $dataobject, $foundclobs, $foundblobs);
@@ -1425,9 +1425,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
-/// Under Oracle and MSSQL, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to proper default values
+/// Under Oracle, MSSQL and PostgreSQL, replace all the '@#CLOB#@' and '@#BLOB#@' ocurrences to proper default values
 /// if we know we have some of them in the query
-    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') &&
       (!empty($foundclobs) || !empty($foundblobs))) {
     /// Initial configuration, based on DB
         switch ($CFG->dbfamily) {
@@ -1436,6 +1436,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
                 $blobdefault = 'empty_blob()'; //Value of empty default blobs for this DB
                 break;
             case 'mssql':
+            case 'postgres':
                 $clobdefault = 'null'; //Value of empty default clobs for this DB (under mssql this won't be executed
                 $blobdefault = 'null'; //Value of empty default blobs for this DB
                 break;
@@ -1454,9 +1455,9 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         return false;
     }
 
-/// Under Oracle, finally, Update all the Clobs and Blobs present in the record
+/// Under Oracle and PostgreSQL, finally, update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if ($CFG->dbfamily == 'oracle' &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'postgres') &&
       !empty($dataobject->{$primarykey}) &&
       (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->{$primarykey}, $foundclobs, $foundblobs)) {
@@ -1551,11 +1552,11 @@ function update_record($table, $dataobject) {
     }
 /// End DIRTY HACK
 
-/// Under Oracle and MSSQL we have our own update record process
+/// Under Oracle, MSSQL and PostgreSQL we have our own update record process
 /// detect all the clob/blob fields and delete them from the record being updated
 /// saving them into $foundclobs and $foundblobs [$fieldname]->contents
 /// They will be updated later
-    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql')
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres')
       && !empty($dataobject->id)) {
     /// Detect lobs
         $foundclobs = array();
@@ -1576,10 +1577,6 @@ function update_record($table, $dataobject) {
     foreach ($columns as $column) {
         if ($column->name <> 'id' and array_key_exists($column->name, $data)) {
             $ddd[$column->name] = $data[$column->name];
-            // PostgreSQL bytea support
-            if ($CFG->dbfamily == 'postgres' && $column->type == 'bytea') {
-                $ddd[$column->name] = $db->BlobEncode($ddd[$column->name]);
-            }
         }
     }
 
@@ -1613,9 +1610,9 @@ function update_record($table, $dataobject) {
         }
     }
 
-/// Under Oracle AND MSSQL, finally, Update all the Clobs and Blobs present in the record
+/// Under Oracle, MSSQL and PostgreSQL, finally, update all the Clobs and Blobs present in the record
 /// if we know we have some of them in the query
-    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') &&
+    if (($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') &&
         !empty($dataobject->id) &&
         (!empty($foundclobs) || !empty($foundblobs))) {
         if (!db_update_lobs($table, $dataobject->id, $foundclobs, $foundblobs)) {
@@ -2207,6 +2204,10 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
             $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
             $blobdbtype = 'IMAGE'; //Name of blobs for this DB
             break;
+        case 'postgres':
+            $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under postgres flavours we don't process CLOBS)
+            $blobdbtype = 'BYTEA'; //Name of blobs for this DB
+            break;
         default:
             return; //Other DB doesn't need this two step to happen, prevent continue
     }
@@ -2242,7 +2243,7 @@ function db_detect_lobs ($table, &$dataobject, &$clobs, &$blobs, $unset = false,
             continue;
         }
 
-    /// If the field is BLOB OR IMAGE, update its value to '@#BLOB#@' and store it in the $blobs array
+    /// If the field is BLOB OR IMAGE OR BYTEA, update its value to '@#BLOB#@' and store it in the $blobs array
         if (strtoupper($columns[strtolower($fieldname)]->type) == $blobdbtype) {
             $blobs[$fieldname] = $dataobject->$fieldname;
             if ($unset) {
@@ -2286,6 +2287,10 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
             $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under mssql flavours we don't process CLOBS)
             $blobdbtype = 'IMAGE'; //Name of blobs for this DB
             break;
+        case 'postgres':
+            $clobdbtype = 'NOTPROCESSES'; //Name of clobs for this DB (under postgres flavours we don't process CLOBS)
+            $blobdbtype = 'BYTEA'; //Name of blobs for this DB
+            break;
         default:
             return; //Other DB doesn't need this two step to happen, prevent continue
     }
@@ -2325,8 +2330,8 @@ function db_update_lobs ($table, $sqlcondition, &$clobs, &$blobs) {
 
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; }; /// Count the extra updates in PERF
 
-        /// Oracle and MSSQL BLOBs doesn't like quoted strings (are inserted via prepared statemets)
-            if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
+        /// Oracle, MSSQL and PostgreSQL BLOBs doesn't like quoted strings (are inserted via prepared statemets)
+            if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql' || $CFG->dbfamily == 'postgres') {
                 $value = stripslashes_safe($value);
             }
 
