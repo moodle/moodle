@@ -202,7 +202,7 @@ if ($mform->is_cancelled()){
             ? update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname))
             : "";
         $navlinks = array();
-        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$category->course", 'type' => 'activity');
+        $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$cm->course", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
         $navlinks[] = array('name' => get_string('editingquiz', 'quiz'), 'link' => $returnurl, 'type' => 'title');
         $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
