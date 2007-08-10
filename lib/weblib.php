@@ -4913,7 +4913,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         $section = $mod->section;
 
         //Only add visible or teacher mods to jumpmenu
-        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->id))) {
+        if ($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $mod->cm))) {
             $url = $mod->mod .'/view.php?id='. $mod->cm;
             if ($flag) { // the current mod is the "next" mod
                 $nextmod = $mod;
