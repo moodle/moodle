@@ -1138,8 +1138,7 @@ function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
-            $grade->itemid     = $forum->id;
-            $grade->userid     = $userid;
+            $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             grade_update('mod/forum', $data->course, 'mod', 'forum', $forum->id, 0, $grade);
         }
