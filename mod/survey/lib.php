@@ -224,14 +224,13 @@ function survey_get_responses($surveyid, $groupid) {
         $groupsql = "";
     }
 
-    return get_records_sql("SELECT MAX(a.time) as time, 
-                                   u.id, u.firstname, u.lastname, u.picture
-                              FROM {$CFG->prefix}survey_answers a, 
-                                   {$CFG->prefix}user u   $groupsdb
-                             WHERE a.survey = $surveyid 
-                                   AND a.userid = u.id $groupsql
-                          GROUP BY u.id, u.firstname, u.lastname, u.picture
-                          ORDER BY time ASC");
+    return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, MAX(a.time) as time
+                            FROM {$CFG->prefix}survey_answers a,
+                                 {$CFG->prefix}user u   $groupsdb
+                            WHERE a.survey = $surveyid
+                              AND a.userid = u.id $groupsql
+                            GROUP BY u.id, u.firstname, u.lastname, u.picture
+                            ORDER BY time ASC");
 }
 
 function survey_get_analysis($survey, $user) {
