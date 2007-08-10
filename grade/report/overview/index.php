@@ -27,10 +27,11 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/overview/lib.php';
 
+$courseid = optional_param('id', $COURSE->id, PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
-if (!$course = get_record('course', 'id', $COURSE->id)) {
+if (!$course = get_record('course', 'id', $courseid)) {
     print_error('nocourseid');
 }
 require_login($course);
@@ -58,13 +59,13 @@ if (has_capability('moodle/grade:viewall', $context)) {
 }
 
 /// return tracking object
-$gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$userid));
+$gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'overview', 'courseid'=>$course->id, 'userid'=>$userid));
 
 /// last selected report session tracking
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = array();
 }
-$USER->grade_last_report[$course->id] = 'user';
+$USER->grade_last_report[$course->id] = 'overview';
 
 /// Build navigation
 $strgrades  = get_string('grades');
@@ -77,7 +78,7 @@ print_header_simple($strgrades.': '.$reportname, ': '.$strgrades, $navigation,
                     '', '', true, '', navmenu($course));
 
 /// Print the plugin selector at the top
-print_grade_plugin_selector($course->id, 'report', 'user');
+print_grade_plugin_selector($course->id, 'report', 'overview');
 
 if ($access) {
 
@@ -91,7 +92,7 @@ if ($access) {
     $gradesum = 0;
 
     // print the page
-    print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+    print_heading(get_string('modulename', 'gradereport_overview'). ' - '.fullname($report->user));
 
     if ($report->fill_table()) {
         echo $report->print_table(true);

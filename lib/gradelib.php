@@ -264,7 +264,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
 /**
  * Tells a module whether a grade (or grade_item if $userid is not given) is currently locked or not.
- * If it's locked to the current use then the module can print a nice message or prevent editing in the module.
+ * If it's locked to the current user then the module can print a nice message or prevent editing in the module.
  * If no $userid is given, the method will always return the grade_item's locked state.
  * If a $userid is given, the method will first check the grade_item's locked state (the column). If it is locked,
  * the method will return true no matter the locked state of the specific grade being checked. If unlocked, it will

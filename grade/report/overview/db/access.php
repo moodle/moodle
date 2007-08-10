@@ -2,7 +2,7 @@
 
 $gradereport_overview_capabilities = array(
 
-    'gradereport/outcomes:view' => array(
+    'gradereport/overview:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,

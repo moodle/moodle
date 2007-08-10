@@ -117,7 +117,12 @@ foreach ($report_info as $outcomeid => $outcomedata) {
 
     // Calculate outcome average
     if (is_array($outcomedata['items'])) {
-        $avg = $outcomedata['outcome']->sum / count($outcomedata['items']);
+        $count = count($outcomedata['items']);
+        if ($count > 0) {
+            $avg = $outcomedata['outcome']->sum / $count;
+        } else {
+            $avg = $outcomedata['outcome']->sum;
+        }
         $avg_html = $scale->get_nearest_item($avg) . " (" . round($avg, 2) . ")\n";
     } else {
         $avg_html = ' - ';
