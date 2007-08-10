@@ -4,9 +4,6 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('pagelib.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
-if (!empty($THEME->customcorners)) {
-    require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
-}
 
 require_login();
 
@@ -46,10 +43,8 @@ echo '<tr valign="top">';
 $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
-if(blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
-   // if (!empty($THEME->customcorners)) print_custom_corners_start();
+if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-   // if (!empty($THEME->customcorners)) print_custom_corners_end();
 }
 echo '</td>';
 
@@ -58,8 +53,6 @@ echo '</td>';
 //----------------- middle column -----------------
 
 echo '<td valign="top" id="middle-column">';
-
-//if (!empty($THEME->customcorners)) print_custom_corners_start(TRUE);
 
 
 $tagname  = tag_display_name($tag);
@@ -89,7 +82,6 @@ if ($usercount > 0) {
 
 }
 
-//if (!empty($THEME->customcorners)) print_custom_corners_end();
 echo '</td>';
 
 
@@ -100,9 +92,7 @@ $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks
 
 echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
 if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
-  //  if (!empty($THEME->customcorners)) print_custom_corners_start();
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-  //  if (!empty($THEME->customcorners)) print_custom_corners_end();
 }
 echo '</td>';
 

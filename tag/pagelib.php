@@ -58,7 +58,7 @@ class page_tag extends page_base {
     }
 
     function get_format_name() {
-        return MY_MOODLE_FORMAT;
+        return 'tag';
     }
     
     //-----------  printing funtions -----------

@@ -204,7 +204,7 @@ function tag_display_name($tag_object){
     
     global $CFG;
     
-    if( !empty($CFG->keeptagnamecase) ) {
+    if( empty($CFG->keeptagnamecase) ) {
         //this is the normalized tag name
         return mb_convert_case($tag_object->name, MB_CASE_TITLE,"UTF-8"); 
     }
