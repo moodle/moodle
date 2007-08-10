@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 /// $Id $
 
@@ -71,7 +71,7 @@ class ADODB_mssql_n extends ADODB_mssql {
      * the "N" notation when working against MSSQL.
      *
      * Note that this hack only must be used if ALL the char-based columns in your DB are of type nchar,
-     * nvarchar and ntext 
+     * nvarchar and ntext
      */
     function _appendN($sql) {
 
@@ -127,6 +127,7 @@ class ADODB_mssql_n extends ADODB_mssql {
             }
         }
 
+
     /// Analyse literals to prepend the N char to them if their contents aren't numeric
         if (!empty($literals)) {
             foreach ($literals as $key=>$value) {
@@ -141,6 +142,10 @@ class ADODB_mssql_n extends ADODB_mssql {
         if (!empty($literals)) {
             $result = str_replace(array_keys($literals), $literals, $result);
         }
+
+    /// Any pairs followed by N' must be switched to N' followed by those pairs
+    /// (or strings beginning with single quotes will fail)
+        $result = preg_replace("/((<@#@#@PAIR-(\d+)@#@#@>)+)N'/", "N'$1", $result);
 
     /// Re-apply pairs of single-quotes to the text
         if (!empty($pairs)) {
