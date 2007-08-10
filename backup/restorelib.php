@@ -593,7 +593,7 @@
             $course->shortname = addslashes($course_header->course_shortname);
             $course->idnumber = addslashes($course_header->course_idnumber);
             $course->idnumber = ''; //addslashes($course_header->course_idnumber); // we don't want this at all.
-            $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
+            $course->summary = backup_todb($course_header->course_summary);
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
             $course->newsitems = addslashes($course_header->course_newsitems);
@@ -882,7 +882,7 @@
                 $sequence = "";
                 $section->course = $restore->course_id;
                 $section->section = $sect->number;
-                $section->summary = restore_decode_absolute_links(addslashes($sect->summary));
+                $section->summary = backup_todb($sect->summary);
                 $section->visible = $sect->visible;
                 $section->sequence = "";
                 //Now calculate the section's newid
@@ -1205,7 +1205,7 @@
                         }
                     }
                 }
-             }
+            }
         }
 
         // return if nothing to restore
@@ -2215,7 +2215,7 @@
                     $user->address = addslashes($user->address);
                     $user->city = addslashes($user->city);
                     $user->url = addslashes($user->url);
-                    $user->description = restore_decode_absolute_links(addslashes($user->description));
+                    $user->description = backup_todb($user->description);
 
                     //We need to analyse the AUTH field to recode it:
                     //   - if the field isn't set, we are in a pre 1.4 backup and we'll
@@ -3160,6 +3160,15 @@
 
         global $CFG,$restore;
 
+        // MDL-10770
+        // This function was replacing null with empty string
+        // Nullity check is added in backup_todb(), this function will no longer not be called from backup_todb() if content is null
+        // I noticed some parts of the restore code is calling this directly instead of calling backup_todb(), so just in case
+        // 3rd party mod etc are doing the same
+        if ($content === NULL) {
+            return NULL; 
+        }
+           
         //Now decode wwwroot and file.php calls
         $search = array ("$@FILEPHP@$");
 

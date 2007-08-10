@@ -444,8 +444,12 @@
 
         global $CFG;
         //Here we encode absolute links
-        $content = backup_encode_absolute_links($content);
-
+        // MDL-10770
+        if (is_null($content)) {
+            $content = '_NULL_'; 
+        } else {
+            $content = backup_encode_absolute_links($content);
+        }
         $st = start_tag($tag,$level,$endline,$attributes);
 
         $co = xml_tag_safe_content($content);
