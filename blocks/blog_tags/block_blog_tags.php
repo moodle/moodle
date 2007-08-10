@@ -21,7 +21,7 @@ class block_blog_tags extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true, 'my' => false);
+        return array('all' => true, 'my' => false, 'tag' => false);
     }
 
     function instance_allow_config() {
