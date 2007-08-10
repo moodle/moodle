@@ -1718,7 +1718,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 */
-    //need to change this when we merge with HEAD
     if ($result && $oldversion < 2007081000) {
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_upgrade_context_etc();
