@@ -189,8 +189,7 @@ class question_multichoice_qtype extends default_questiontype {
         if (false === $pos) { // No order of answers is given, so use the default
             $state->options->order = array_keys($question->options->answers);
         } else { // Restore the order of the answers
-            $state->options->order = explode(',', substr($state->responses[''], 0,
-             $pos));
+            $state->options->order = explode(',', substr($state->responses[''], 0, $pos));
             $state->responses[''] = substr($state->responses[''], $pos + 1);
         }
         // Restore the responses
@@ -200,11 +199,7 @@ class question_multichoice_qtype extends default_questiontype {
         // the $state->responses array is indexed by the answer ids and the
         // values are also the answer ids (i.e. key = value).
         if (empty($state->responses[''])) { // No previous responses
-            if ($question->options->single) {
-                $state->responses = array('' => '');
-            } else {
-                $state->responses = array();
-            }
+            $state->responses = array('' => '');
         } else {
             if ($question->options->single) {
                 $state->responses = array('' => $state->responses['']);
