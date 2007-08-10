@@ -94,7 +94,7 @@ class qformat_xml extends qformat_default {
      */
     function getpath( $xml, $path, $default, $istext=false, $error='' ) {
         foreach ($path as $index) {
-            if (empty($xml[$index])) {
+            if (!isset($xml[$index])) {
                 if (!empty($error)) {
                     $this->error( $error );
                     return false;
