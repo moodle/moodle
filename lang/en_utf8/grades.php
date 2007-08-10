@@ -86,6 +86,7 @@ $string['configshowuserimage'] = 'Whether to show the user\'s profile image next
 $string['configstudentsperpage'] = 'The number of students to display per page in the grader report.';
 $string['configstudentsperpagedefault'] = 'The number of students to display per page in the grader report. Leave this field empty to use the site default (currently $a).';
 $string['contract'] = 'Contract Category';
+$string['coursename'] = 'Course name';
 $string['coursetotal'] = 'Course total';
 $string['createcategory'] = 'Create Category';
 $string['createcategoryerror'] = 'Could not create a new category';

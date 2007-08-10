@@ -139,7 +139,7 @@ class grade_report_user extends grade_report {
                 /// prints the grade
 
                 if ($grade_grade->is_excluded()) {
-                    $excluded = get_tring('excluded', 'grades').' ';
+                    $excluded = get_string('excluded', 'grades').' ';
                 } else {
                     $excluded = '';
                 }
