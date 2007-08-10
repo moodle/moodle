@@ -382,8 +382,7 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
 
         } else if ($userid and $nullifnone) {
             $grade = new object();
-            $grade->itemid     = $lesson->id;
-            $grade->userid     = $userid;
+            $grade->userid   = $userid;
             $grade->rawgrade = NULL;
             grade_update('mod/lesson', $lesson->course, 'mod', 'lesson', $lesson->id, 0, $grade);
         }
