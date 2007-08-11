@@ -295,6 +295,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $olddefault = empty($metac->has_default) ? null : strtok($metac->default_value, ':');
 
         $typechanged = true;  //By default, assume that the column type has changed
+        $lengthchanged = true;  //By default, assume that the column length has changed
 
     /// Detect if we are changing the type of the column
         if (($xmldb_field->getType() == XMLDB_TYPE_INTEGER && substr($oldmetatype, 0, 1) == 'I') ||
@@ -306,8 +307,14 @@ class XMLDBmssql extends XMLDBgenerator {
             $typechanged = false;
         }
 
-    /// If type has changed drop the default if exists
-        if ($typechanged) {
+    /// Detect if we are changing the length of the column, not always necessary to drop defaults
+    /// if only the length changes, but it's safe to do it always
+        if ($xmldb_field->getLength() == $oldlength) {
+            $lengthchanged = false;
+        }
+
+    /// If type or length have changed drop the default if exists
+        if ($typechanged || $lengthchanged) {
             $results = $this->getDropDefaultSQL($xmldb_table, $xmldb_field);
         }
 
@@ -316,7 +323,7 @@ class XMLDBmssql extends XMLDBgenerator {
         $results = array_merge($results, parent::getAlterFieldSQL($xmldb_table, $xmldb_field)); // Call parent
 
     /// Finally, process the default clause to add it back if necessary
-        if ($typechanged) {
+        if ($typechanged || $lengthchanged) {
             $results = array_merge($results, $this->getCreateDefaultSQL($xmldb_table, $xmldb_field));
         }
 
