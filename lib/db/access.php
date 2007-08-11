@@ -1131,12 +1131,22 @@ $moodle_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
+    'moodle/tag:editblocks' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
     )
 );
+
 
 ?>

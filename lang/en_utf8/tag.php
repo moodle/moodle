@@ -31,5 +31,6 @@ $string['thistaghasnodesc'] = 'This tag currently has no description.';
 $string['timemodified'] = 'Modified';
 $string['userstaggedwith'] = 'Users tagged with \"$a\"';
 $string['updatetag'] = 'Update';
+$string['withselectedtags'] = 'With selected tags...';
 
 ?>

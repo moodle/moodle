@@ -132,6 +132,7 @@ $string['site:viewreports'] = 'View reports';
 $string['tag:manage'] = 'Manage all tags';
 $string['tag:create'] = 'Create new tags';
 $string['tag:edit'] = 'Edit existing tags';
+$string['tag:editblocks'] = 'Edit blocks in tags pages';
 $string['user:changeownpassword'] = 'Change own password';
 $string['user:create'] = 'Create users';
 $string['user:delete'] = 'Delete users';
