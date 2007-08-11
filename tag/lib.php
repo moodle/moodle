@@ -1524,7 +1524,7 @@ function print_tag_management_list($perpage='100') {
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
         echo '<br/><br/>';
         echo '<select id="menuformaction" name="action">
-                    <option value="" selected="selected">With selected tags...</option>
+                    <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
                     <option value="reset">'. get_string('resetflag', 'tag') .'</option>
                     <option value="delete">'. get_string('delete', 'tag') .'</option>
                 </select>';

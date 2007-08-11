@@ -4,6 +4,7 @@ require_once($CFG->libdir.'/pagelib.php');
 require_once('lib.php');
 
 define('PAGE_TAG_INDEX',   'tag-index');
+define('TAG_FORMAT', 'tag');
 
 class page_tag extends page_base {
 
@@ -17,7 +18,7 @@ class page_tag extends page_base {
     function user_allowed_editing() {
 
     $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    return has_capability('moodle/tag:edit', $systemcontext);        
+    return has_capability('moodle/tag:editblocks', $systemcontext);        
 
     }
 
@@ -58,7 +59,8 @@ class page_tag extends page_base {
     }
 
     function get_format_name() {
-        return 'tag';
+
+        return TAG_FORMAT;
     }
     
     //-----------  printing funtions -----------
@@ -97,5 +99,6 @@ class page_tag extends page_base {
 }
 
 page_map_class(PAGE_TAG_INDEX, 'page_tag');
+
 
 ?>
