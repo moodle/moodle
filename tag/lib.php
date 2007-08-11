@@ -2,6 +2,7 @@
 
 require_once('../config.php');
 
+define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
 /**
  * Creates tags
 
@@ -82,10 +83,10 @@ function tag_delete($tag_names_or_ids_csv) {
  * @param string $tag_types_csv (optional, default value is "default". If '*' is passed, tags of any type will be returned).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
  * @param string $fields a comma separated list of fields to return 
- *   (optional, by default 'id, tagtype, name'). The first field will be used as key for the
+ *   (optional, by default 'id, tagtype, name, rawname, flag'). The first field will be used as key for the
  *   array so must be a unique field such as 'id'. 
  */
-function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields='id, tagtype, name, rawname') {
+function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields=DEFAULT_TAG_TABLE_FIELDS) {
     
     if ($tag_types_csv == '*'){
         return get_records('tag', '', '', $sort, $fields);
@@ -292,8 +293,8 @@ function tag_id_from_string($tag_names_or_ids_csv) {
  * 
  * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
  * 
- * @param string $tag_names_or_ids_csv comma separated **normalized** names or ids of tags
- * @return int comma separated ids of the tags 
+ * @param string $tag_names_or_ids_csv comma separated names or ids of tags
+ * @return int comma separated names of the tags 
  */
 function tag_name_from_string($tag_names_or_ids_csv) {
     
@@ -456,13 +457,13 @@ function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
  * 
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item beeing queried
- * @param string $fields tag fields to be selected (optional, default is 'id, name, tagtype')
+ * @param string $fields tag fields to be selected (optional, default is 'id, name, rawname, tagtype, flag')
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 
-function get_item_tags($item_type, $item_id, $fields='id, name, rawname, tagtype, flag', $limitfrom='', $limitnum='') {
+function get_item_tags($item_type, $item_id, $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='') {
     
     global $CFG;
     
@@ -698,7 +699,7 @@ function related_tags($tag_name_or_id, $limitnum=10) {
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     //gets the manually added related tags
-    $manual_related_tags = get_item_tags('tag',$tag_id, 'id, name, rawname, tagtype, flag');
+    $manual_related_tags = get_item_tags('tag',$tag_id, DEFAULT_TAG_TABLE_FIELDS);
     if ($manual_related_tags == false) $manual_related_tags = array();
 
     //gets the correlated tags
@@ -729,7 +730,7 @@ function correlated_tags($tag_name_or_id) {
 
     $tags_id_csv_with_apos = stripcslashes($tag_correlation->correlatedtags);
 
-    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', 'id, name, rawname, tagtype, flag');
+    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', DEFAULT_TAG_TABLE_FIELDS);
 }
 
 /**
