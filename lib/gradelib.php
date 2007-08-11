@@ -365,7 +365,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 
 
 /**
- * Verify nwe value of idnumber - checks for uniqueness of new idnubmers, old are kept intact
+ * Verify new value of idnumber - checks for uniqueness of new idnumbers, old are kept intact
  * @param string idnumber string (with magic quotes)
  * @param object $cm used for course module idnumbers and items attached to modules
  * @param object $gradeitem is item idnumber
