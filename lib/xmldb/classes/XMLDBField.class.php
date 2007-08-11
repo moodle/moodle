@@ -93,7 +93,7 @@ class XMLDBField extends XMLDBObject {
                 $this->enumvalues[] = $value;
             }
         }
-        $this->default = $default;
+        $this->setDefault($default);
 
         $this->previous = $previous;
     }
@@ -230,6 +230,13 @@ class XMLDBField extends XMLDBObject {
      * Set the field default
      */
     function setDefault($default) {
+    /// Check, warn and auto-fix '' (empty) defaults for CHAR NOT NULL columns, changing them
+    /// to NULL so XMLDB will apply the proper default
+        if ($this->type == XMLDB_TYPE_CHAR && $this->notnull && $default === '') {
+            $this->errormsg = 'XMLDB has detected one CHAR NOT NULL column (' . $this->name . ") with '' (empty string) as DEFAULT value. This type of columns must have one meaningful DEFAULT declared or none (NULL). XMLDB have fixed it automatically changing it to none (NULL). The process will continue ok and proper defaults will be created accordingly with each DB requirements. Please fix it in source (XML and/or upgrade script) to avoid this message to be displayed.";
+            $this->debug($this->errormsg);
+            $default = NULL;
+        }
         $this->default = $default;
     }
 
@@ -346,7 +353,7 @@ class XMLDBField extends XMLDBObject {
         }
 
         if (isset($xmlarr['@']['DEFAULT'])) {
-            $this->default = trim($xmlarr['@']['DEFAULT']);
+            $this->setDefault(trim($xmlarr['@']['DEFAULT']));
         }
 
         if (isset($xmlarr['@']['ENUM'])) {
