@@ -103,8 +103,8 @@ function question_delete_unused_random(){
     $result = true;
     //delete all 'random' questions that are not been used in a quiz.
     if ($qqis = get_records_sql("SELECT q.* FROM {$CFG->prefix}question q LEFT JOIN ".
-                                    "({$CFG->prefix}quiz_question_instances qqi) ".
-                                    "ON (q.id = qqi.question) WHERE q.qtype='random' AND qqi.question IS NULL")){
+                                    "{$CFG->prefix}quiz_question_instances qqi ".
+                                    "ON q.id = qqi.question WHERE q.qtype='random' AND qqi.question IS NULL")){
         $qqilist = join(array_keys($qqis), ',');
         $result = $result && delete_records_select('question', "id IN ($qqilist)");
     }
