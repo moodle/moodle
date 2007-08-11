@@ -102,8 +102,8 @@ function question_delete_unused_random(){
     $tofix = array();
     $result = true;
     //delete all 'random' questions that are not been used in a quiz.
-    if ($qqis = get_records_sql("SELECT q.* FROM {$CFG->prefix}question as q LEFT JOIN ".
-                                    "({$CFG->prefix}quiz_question_instances as qqi) ".
+    if ($qqis = get_records_sql("SELECT q.* FROM {$CFG->prefix}question q LEFT JOIN ".
+                                    "({$CFG->prefix}quiz_question_instances qqi) ".
                                     "ON (q.id = qqi.question) WHERE q.qtype='random' AND qqi.question IS NULL")){
         $qqilist = join(array_keys($qqis), ',');
         $result = $result && delete_records_select('question', "id IN ($qqilist)");
@@ -118,7 +118,7 @@ function question_cwqpfs_to_update($categories = null){
 
     //any cats with questions picking from subcats?
     if (!$cwqpfs = get_records_sql_menu("SELECT DISTINCT qc.id, 1 ".
-                                    "FROM {$CFG->prefix}question as q, {$CFG->prefix}question_categories as qc ".
+                                    "FROM {$CFG->prefix}question q, {$CFG->prefix}question_categories qc ".
                                     "WHERE q.qtype='random' AND qc.id = q.category AND q.questiontext = 1")){
         return array();
     } else {

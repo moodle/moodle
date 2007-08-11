@@ -114,8 +114,8 @@ function question_make_default_categories($contexts) {
 
 function question_can_delete_cat($todelete){
     global $CFG;
-    $record = get_record_sql("SELECT count(*) as count, c1.contextid as contextid FROM {$CFG->prefix}question_categories as c1,
-                {$CFG->prefix}question_categories as c2 WHERE c2.id = $todelete
+    $record = get_record_sql("SELECT count(*) as count, c1.contextid as contextid FROM {$CFG->prefix}question_categories c1,
+                {$CFG->prefix}question_categories c2 WHERE c2.id = $todelete
                 AND c1.contextid = c2.contextid GROUP BY c1.contextid");
     $contextid = $record->contextid;
     $count = $record->count;

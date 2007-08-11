@@ -17,7 +17,7 @@ class question_category_edit_form extends moodleform {
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parent', 'quiz'),
                     array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
-        if (1 == count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories as c1, {$CFG->prefix}question_categories as c2 WHERE c2.id = $currentcat AND c1.contextid = c2.contextid")){
+        if (1 == count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories c1, {$CFG->prefix}question_categories c2 WHERE c2.id = $currentcat AND c1.contextid = c2.contextid")){
             $mform->hardFreeze('parent');
         }
 

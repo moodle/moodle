@@ -416,7 +416,7 @@ class question_category_object {
         $cat->name = $newname;
         $cat->info = $newinfo;
         //never move category where it is the default
-        if (1 != count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories as c1, {$CFG->prefix}question_categories as c2 WHERE c2.id = $updateid AND c1.contextid = c2.contextid")){
+        if (1 != count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories c1, {$CFG->prefix}question_categories c2 WHERE c2.id = $updateid AND c1.contextid = c2.contextid")){
             if ($oldcat->contextid == $tocontextid){ // not moving contexts
                 $cat->parent = $parentid;
                 if (!update_record("question_categories", $cat)) {
