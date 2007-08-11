@@ -119,7 +119,8 @@ function question_cwqpfs_to_update($categories = null){
     //any cats with questions picking from subcats?
     if (!$cwqpfs = get_records_sql_menu("SELECT DISTINCT qc.id, 1 ".
                                     "FROM {$CFG->prefix}question q, {$CFG->prefix}question_categories qc ".
-                                    "WHERE q.qtype='random' AND qc.id = q.category AND q.questiontext = 1")){
+                                    "WHERE q.qtype='random' AND qc.id = q.category AND ".
+                                     sql_compare_text('q.questiontext'). " = '1'")){
         return array();
     } else {
         if ($categories === null){
