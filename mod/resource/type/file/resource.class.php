@@ -246,6 +246,11 @@ function display() {
 
         } else if ($mimetype == "text/html") {    // It's a web page
             $resourcetype = "html";
+
+        } else if ($mimetype == "application/zip") {    // It's a zip archive
+            $resourcetype = "zip";
+            $embedded = true;
+
         } else if ($mimetype == 'application/pdf' || $mimetype == 'application/x-pdf') {
             $resourcetype = "pdf";
             $embedded = true;
@@ -579,6 +584,12 @@ function display() {
             echo '<!--<![endif]-->';
             echo '</object>';
             echo '</div>';
+
+        } elseif ($resourcetype == 'zip') {
+            echo '<div class="resourcepdf">';
+            echo get_string('clicktoopen', 'resource') . '<a href="' . $fullurl . '">' . format_string($resource->name) . '</a>';
+            echo '</div>';
+
         } elseif ($resourcetype == 'pdf') {
             echo '<div class="resourcepdf">';
             echo '<object data="' . $fullurl . '" type="application/pdf">';
