@@ -1645,7 +1645,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Add context.path & index
         $table = new XMLDBTable('context');
         $field = new XMLDBField('path');
-        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, '', 'instanceid');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'instanceid');
         $result = $result && add_field($table, $field);
         $table = new XMLDBTable('context');
         $index = new XMLDBIndex('path');
