@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/search/db" VERSION="20080801" COMMENT="XMLDB file for Moodle search engine">
+<XMLDB PATH="blocks/search/db" VERSION="20070811" COMMENT="XMLDB file for Moodle search engine"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
-    <TABLE NAME="search_documents" COMMENT="table to store search index backups">
+    <TABLE NAME="block_search_documents" COMMENT="table to store search index backups">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="docid"/>
         <FIELD NAME="docid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="doctype"/>
-        <FIELD NAME="doctype" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="'none'" SEQUENCE="false" ENUM="false" PREVIOUS="docid" NEXT="itemtype"/>
-        <FIELD NAME="itemtype" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="'standard'" SEQUENCE="false" ENUM="false" PREVIOUS="doctype" NEXT="title"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="''" SEQUENCE="false" ENUM="false" PREVIOUS="itemtype" NEXT="url"/>
-        <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="''" SEQUENCE="false" ENUM="false" PREVIOUS="title" NEXT="docdate"/>
+        <FIELD NAME="doctype" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="none" SEQUENCE="false" ENUM="false" PREVIOUS="docid" NEXT="itemtype"/>
+        <FIELD NAME="itemtype" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="standard" SEQUENCE="false" ENUM="false" PREVIOUS="doctype" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="itemtype" NEXT="url"/>
+        <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="title" NEXT="docdate"/>
         <FIELD NAME="docdate" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="url" NEXT="updated"/>
-
         <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="docdate" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="updated" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="updated" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for block"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="mdl_search_docid" UNIQUE="false" FIELDS="docid" NEXT="mdl_search_doctype"/>
-
         <INDEX NAME="mdl_search_doctype" UNIQUE="false" FIELDS="doctype" PREVIOUS="mdl_search_docid" NEXT="mdl_search_itemtype"/>
         <INDEX NAME="mdl_search_itemtype" UNIQUE="false" FIELDS="itemtype" PREVIOUS="mdl_search_doctype"/>
       </INDEXES>
