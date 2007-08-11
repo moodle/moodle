@@ -35,7 +35,7 @@ $indexinfo = new IndexInfo();
 
 if ($indexinfo->valid()) {
     mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
-          ."there are ".$indexinfo->dbcount." records in the <em>search_documents</em> table.\n"
+          ."there are ".$indexinfo->dbcount." records in the <em>block_search_documents</em> table.\n"
           ."\n"
           ."This indicates that you have already succesfully indexed this site. Follow the link\n"
           ."if you are sure that you want to continue indexing - this will replace any existing\n"

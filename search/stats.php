@@ -122,7 +122,7 @@ $table->cellpadding = 5;
 $table->cellspacing = 0;
 $table->width = '500';
 
-$table->data[] = array("<strong>{$databasestr}</strong>", "<em><strong>{$CFG->prefix}search_documents</strong></em>");
+$table->data[] = array("<strong>{$databasestr}</strong>", "<em><strong>{$CFG->prefix}block_search_documents</strong></em>");
 
 //add extra fields if we're admin
 if (isadmin()) {
