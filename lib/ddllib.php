@@ -319,7 +319,7 @@ function field_exists($table, $field) {
         $exists = false;
     }
 
-/// Re-set original debug 
+/// Re-set original debug
     $db->debug = $olddbdebug;
 
     return $exists;
@@ -348,7 +348,7 @@ function index_exists($table, $index) {
         $exists = false;
     }
 
-/// Re-set original debug 
+/// Re-set original debug
     $db->debug = $olddbdebug;
 
     return $exists;
@@ -746,14 +746,20 @@ function add_field($table, $field, $continue=true, $feedback=true) {
         return false;
     }
 
+/// Load the needed generator
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+
 /// Check the field doesn't exist
     if (field_exists($table, $field)) {
         debugging('Field ' . $field->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
         return true;
     }
 
-/// If NOT NULL and no default given, check the table is empty
-    if ($field->getNotNull() && $field->getDefault() === NULL && count_records($table->getName())) {
+/// If NOT NULL and no default given (we ask the generator about the
+/// *real* default that will be used) check the table is empty
+    if ($field->getNotNull() && $generator->getDefaultValue($field) === NULL && count_records($table->getName())) {
         debugging('Field ' . $field->getName() . ' cannot be added. Not null fields added to non empty tables require default value. Create skipped', DEBUG_DEVELOPER);
          return true;
     }
