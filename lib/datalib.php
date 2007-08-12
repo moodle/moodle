@@ -1734,7 +1734,7 @@ function category_parent_visible($parent = 0) {
  */
 function xmldb_debug($message, $object) {
 
-    error_log($message);
+    debugging($message, DEBUG_DEVELOPER);
 }
 
 /**
