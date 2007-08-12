@@ -69,7 +69,7 @@ class block_tag_flickr extends block_base {
             
             $search = unserialize($response);
 
-            foreach ($search['photoset']['photo'] as &$p){
+            foreach ($search['photoset']['photo'] as $p){
                 $p['owner'] = $search['photoset']['owner'];
             }
             
