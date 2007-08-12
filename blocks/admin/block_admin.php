@@ -77,12 +77,12 @@ class block_admin extends block_list {
         }
 
     /// Course outcomes (to help give it more prominence because it's important)
-        if (!empty($CFG->enableoutcomes)) {     
-            if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {   
-                $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';    
-                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';   
-            }   
-        }   
+        if (!empty($CFG->enableoutcomes)) {
+            if (has_capability('moodle/course:update', $context) && ($course->id!==SITEID)) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$this->instance->pageid.'">'.get_string('outcomes', 'grades').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="" />';
+            }
+        }
 
     /// Manage metacourses
         if ($course->metacourse) {
@@ -138,9 +138,26 @@ class block_admin extends block_list {
         }
 
     /// Manage questions
-        if (has_capability('moodle/question:manage', $context) && ($course->id!==SITEID)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'&amp;clean=true">'.get_string('questions', 'quiz').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" class="icon" alt="" />';
+        if ($course->id!==SITEID){
+            $questioncaps = array(
+                                    'moodle/question:add',
+                                    'moodle/question:editmine',
+                                    'moodle/question:editall',
+                                    'moodle/question:viewmine',
+                                    'moodle/question:viewall',
+                                    'moodle/question:movemine',
+                                    'moodle/question:moveall');
+            $questionpermission = false;
+            foreach ($questioncaps as $questioncap){
+                if (has_capability($questioncap, $context)){
+                    $questionpermission = true;
+                    break;
+                }
+            }
+            if ($questionpermission) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/question/edit.php?courseid='.$this->instance->pageid.'">'.get_string('questions', 'quiz').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/questions.gif" class="icon" alt="" />';
+            }
         }
 
 
