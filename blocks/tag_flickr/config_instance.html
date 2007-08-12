@@ -1,0 +1,58 @@
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right"><?php print_string('configtitle', 'block_tag_flickr'); ?>:</td>
+    <td><input type="text" name="title" size="30" value="<?php echo isset($this->config->title)?p($this->config->title):''; ?>" /></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('numberofphotos', 'block_tag_flickr'); ?>:</td>
+    <td>
+        <input type="text" name="numberofphotos" size="5" value="<?php echo isset($this->config->numberofphotos)?p($this->config->numberofphotos):''; ?>" />    
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('includerelatedtags', 'block_tag_flickr'); ?>:</td>
+    <td>
+        <?php 
+                if (isset($this->config) && isset($this->config->includerelatedtags)) {
+                        $selected = $this->config->includerelatedtags;
+                } else {
+                       $selected = '0';
+                }
+                $options = array ( '0'  => get_string('no'),
+                                   '1' => get_string('yes') );
+
+                choose_from_menu ($options, 'includerelatedtags', $selected);
+        ?>       
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('sortby', 'block_tag_flickr'); ?>:</td>
+    <td>
+        <?php 
+                if (isset($this->config) && isset($this->config->sortby)) {
+                        $selected = $this->config->sortby;
+                } else {
+                       $selected = 'relevance';
+                }
+                $options = array ( 'date-posted-asc'  => get_string('date-posted-asc', 'block_tag_flickr'),
+                                   'date-posted-desc' => get_string('date-posted-desc', 'block_tag_flickr'),
+                                   'date-taken-asc' => get_string('date-taken-asc', 'block_tag_flickr'),
+                                   'date-taken-desc' => get_string('date-taken-desc', 'block_tag_flickr'),
+                                   'interestingness-asc' => get_string('interestingness-asc', 'block_tag_flickr'),
+                                   'interestingness-desc' => get_string('interestingness-desc', 'block_tag_flickr'),
+                                   'relevance' => get_string('relevance', 'block_tag_flickr'),
+                                   );
+
+                choose_from_menu ($options, 'sortby', $selected);
+        ?>    
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('getfromphotoset', 'block_tag_flickr'); ?>:</td>
+    <td><input type="text" name="photoset" size="20" value="<?php echo isset($this->config->photoset)?p($this->config->photoset):''; ?>" /></td>
+</tr>
+<tr>
+    <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string('savechanges') ?>" /></td>
+</tr>
+</table>

@@ -1,0 +1,51 @@
+<table cellpadding="9" cellspacing="0">
+<tr valign="top">
+    <td align="right"><?php print_string('configtitle', 'block_tag_youtube'); ?>:</td>
+    <td><input type="text" name="title" size="30" value="<?php echo isset($this->config->title)?p($this->config->title):''; ?>" /></td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('numberofvideos', 'block_tag_youtube'); ?>:</td>
+    <td>
+        <input type="text" name="numberofvideos" size="5" value="<?php echo isset($this->config->numberofvideos)?p($this->config->numberofvideos):''; ?>" />    
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php print_string('category', 'block_tag_youtube'); ?>:</td>
+    <td>
+        <?php 
+                if (isset($this->config) && isset($this->config->category)) {
+                        $selected = $this->config->category;
+                } else {
+                       $selected = 0;
+                }
+    /* http://youtube.com/dev_api_ref?m=youtube.videos.list_by_category_and_tag */
+                $options = array ( 0 => get_string('anycategory', 'block_tag_youtube'),
+                                   1  => get_string('filmsanimation', 'block_tag_youtube'),
+                                   2 => get_string('autosvehicles', 'block_tag_youtube'),
+                                   23 => get_string('comedy', 'block_tag_youtube'),
+                                   24 => get_string('entertainment', 'block_tag_youtube'),
+                                   10 => get_string('music', 'block_tag_youtube'),
+                                   25 => get_string('newspolitics', 'block_tag_youtube'),
+                                   22 => get_string('peopleblogs', 'block_tag_youtube'),
+                                   15 => get_string('petsanimals', 'block_tag_youtube'),
+                                   26 => get_string('howtodiy', 'block_tag_youtube'),
+                                   17 => get_string('sports', 'block_tag_youtube'),
+                                   19 => get_string('travel', 'block_tag_youtube'),
+                                   20 => get_string('gadgetsgames', 'block_tag_youtube'),
+                                   );
+
+                choose_from_menu ($options, 'category', $selected);
+        ?>    
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+    <?php print_string('includeonlyvideosfromplaylist', 'block_tag_youtube'); ?>
+    </td>
+    <td><input type="text" name="playlist" size="20" value="<?php echo isset($this->config->playlist)?p($this->config->playlist):''; ?>" /></td>
+</tr>
+<tr>
+    <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string('savechanges') ?>" /></td>
+</tr>
+</table>
