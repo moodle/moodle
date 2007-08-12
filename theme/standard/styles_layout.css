@@ -3248,16 +3248,21 @@ body#question-preview .quemodname, body#question-preview .controls {
   width: 100%;
   padding-top: 15px;
   text-align: center
-  }
+}
+
+#mod-resource-view .boxaligncenter table.files {
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .resourcecontent object {
-    height:480px; 
-    width:600px;
+  height:480px; 
+  width:600px;
 }
 
 .resourcepdf object{
-    height: 800px;
-    width: 800px;
+  height: 800px;
+  width: 800px;
 }
 
 .mod-resource .modified {
