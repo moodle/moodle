@@ -255,6 +255,10 @@ table.formtable tbody th {
  *** Admin
  ***/
 
+.admin .generalboxcontent {
+  background-color:#EEEEEE;
+}
+
 .admin .generalbox {
   border-color:#BBBBBB;
   background-color:#EEEEEE;
@@ -371,8 +375,9 @@ table.flexible .r1 {
 }
 
 .environmenttable .ok {
-    background-color : lightgreen;
+    background-color : lime;
 }
+
 /***
  *** Blocks
  ***/
@@ -772,6 +777,9 @@ table.message_search_results td {
   border-color: #DDD;
 }
 .que .incorrect {
+}
+
+.que.multianswer .incorrect {
     background-color: #faa;
 }
 .que .partiallycorrect {

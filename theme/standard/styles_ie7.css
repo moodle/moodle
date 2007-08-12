@@ -42,11 +42,17 @@
   word-wrap: break-word;
 }
 
+/*fix for misalignment of text fields in ie */
 form.mform input[type=text],
 form.mform input[type=file],
 form.mform input[type=password] {
  margin-left: -10px;
 }
+
 form.mform textarea {
  margin-left: -10px;
+}
+
+form.mform .fcheckbox input {
+  margin-left: -3px;
 }

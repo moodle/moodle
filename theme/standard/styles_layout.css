@@ -582,7 +582,7 @@ form#adminsettings div.htmlarea {
 
 /* form frozen */
 div.mform div.fitem div.fstatic{
-	border-color : lightgrey;
+	border-color : lime;
 	border-style : dashed;
 	border-width : thin;
 }
@@ -2912,7 +2912,7 @@ form#tag-management-form {
 /* autocomplete start*/		
 #relatedtags-autocomplete-container
 {
-	margin-left::auto;
+	margin-left:auto;
 	margin-right:auto;
 	min-height:4.6em;
 	width:100%;
@@ -2922,7 +2922,7 @@ form#tag-management-form {
 	position:relative;
 	display:block;
 	width:60%;
-	margin-left::auto;
+	margin-left:auto;
 	margin-right:auto;	
 }
 #relatedtags-autocomplete .yui-ac-content
