@@ -51,9 +51,9 @@
         // then, all categories from this course's modules' contexts.
         // using 'dummykeyname' in sql because otherwise get_records_sql_menu returns an error
         // if two key names are the same.
-        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM `{$CFG->prefix}modules` AS `mod`,
-                                                        `{$CFG->prefix}course_modules` AS `cm`,
-                                                        `{$CFG->prefix}context` as `c`
+        $cmcontexts = get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM `{$CFG->prefix}modules` `mod`,
+                                                        `{$CFG->prefix}course_modules` `cm`,
+                                                        `{$CFG->prefix}context` `c`
                                WHERE mod.name = 'quiz' AND mod.id = cm.module AND cm.id = c.instanceid
                                     AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = $course");
         if ($cmcontexts){
@@ -67,7 +67,7 @@
         $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                        (backup_code, table_name, old_id, info)
                                        SELECT '$backup_unique_code', 'question', q.id, ''
-                                       FROM {$CFG->prefix}question AS q, {$CFG->prefix}backup_ids AS bk
+                                       FROM {$CFG->prefix}question q, {$CFG->prefix}backup_ids bk
                                        WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' AND
                                         bk.backup_code = '$backup_unique_code'", false);
 
@@ -85,7 +85,7 @@
             $questionselectsqlwhere = "AND quiz.course = '$course'
                          AND qqi.quiz = quiz.id";
         }
-        $categoriesinothercourses = get_records_sql("
+        $categories = get_records_sql("
                 SELECT id, parent, 0 AS childrendone
                 FROM {$CFG->prefix}question_categories
                 WHERE contextid IN (".join($parentcontexts, ', ').")

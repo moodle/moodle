@@ -389,7 +389,7 @@ class quiz_report extends quiz_default_report {
         if ($hasfeedback) {
             $factor = $quiz->grade/$quiz->sumgrades;
             $select .= ', qf.feedbacktext ';
-            $from .= " JOIN {$CFG->prefix}quiz_feedback AS qf ON " .
+            $from .= " JOIN {$CFG->prefix}quiz_feedback qf ON " .
                     "qf.quizid = $quiz->id AND qf.mingrade <= qa.sumgrades * $factor AND qa.sumgrades * $factor < qf.maxgrade";
         }
 
