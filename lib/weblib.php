@@ -4262,6 +4262,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  * @param string $name Form element to replace with HTMl editor by name
  */
 function use_html_editor($name='', $editorhidebuttons='', $id='') {
+    global $THEME;
+    
     $editor = 'editor_'.md5($name); //name might contain illegal characters
     if ($id === '') {
         $id = 'edit-'.$name;
@@ -4272,11 +4274,20 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
     echo "var config = $editor.config;\n";
 
     echo print_editor_config($editorhidebuttons);
-
-    if (empty($name)) {
-        echo "\nHTMLArea.replaceAll($editor.config);\n";
+    
+    if (empty($THEME->htmleditorpostprocess)) {
+        if (empty($name)) {
+            echo "\nHTMLArea.replaceAll($editor.config);\n";
+        } else {
+            echo "\n$editor.generate();\n";
+        }
     } else {
-        echo "\n$editor.generate();\n";
+        if (empty($name)) {
+            echo "\nvar HTML_name = '';";
+        } else {
+            echo "\nvar HTML_name = \"$name;\"";
+        }
+        echo "\nvar HTML_editor = $editor;";
     }
     echo '//]]>'."\n";
     echo '</script>'."\n";
