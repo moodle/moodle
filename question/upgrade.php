@@ -77,8 +77,9 @@ function question_remove_rqp_qtype_config_string() {
  */
 function question_random_check($result){
     global $CFG;
-    if ($CFG->version >= 2007081000){
-        return null;//no test after upgrade seperates question cats into contexts.
+    if (!empty($CFG->running_installer) //no test on first installation, no questions to test yet
+            || $CFG->version >= 2007081000){//no test after upgrade seperates question cats into contexts.
+        return null;
     }
     if (!$toupdate = question_cwqpfs_to_update()){
         $result->setStatus(true);//pass test
