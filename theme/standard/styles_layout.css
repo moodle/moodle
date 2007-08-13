@@ -384,7 +384,7 @@ img.emoticon {
 
 form.popupform,
 form.popupform div {
-  display: inline;
+    display: inline;
 }
 
 form.popupform label {
@@ -582,9 +582,9 @@ form#adminsettings div.htmlarea {
 
 /* form frozen */
 div.mform div.fitem div.fstatic{
-  border-color : lime;
-  border-style : dashed;
-  border-width : thin;
+ border-color : lightgrey;
+ border-style : dashed;
+ border-width : thin;
 }
 
 #admin-register .mform .fsubmit {
@@ -723,7 +723,7 @@ table.navbar {
 
 .navigation ul li form fieldset,
 .navigation ul li form div select {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
 .navigation optgroup {
@@ -914,7 +914,7 @@ body#admin-modules table.generaltable td.c0
 
 #admin-roles-manage .selector,
 #admin-roles-override .selector {
-  text-align:center;
+    text-align:center;
 }
 
 #admin-roles-manage table.roledesc,
@@ -1052,7 +1052,7 @@ body#admin-modules table.generaltable td.c0
 }
 
 .environmentbox {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 .form-buttons {
@@ -1289,17 +1289,17 @@ a.skip-block, .skip-block {
 }
 
 .blockconfigtable td.label {
-  text-align: right;
-  width: 50%;
+    text-align: right;
+    width: 50%;
 }
 
 .blockconfigtable td.value {
-  text-align: left;
-  width: 50%;
+    text-align: left;
+    width: 50%;
 }
 
 .blockconfigtable td.submit {
-  text-align: center;
+    text-align: center;
 }
 
 .blockconfiginstancecontent .tabs {
@@ -1346,16 +1346,16 @@ a.skip-block, .skip-block {
 }
 
 .block_tag_youtube .youtube-thumb {
-  width:75px;
-  height:50px;
+ width:75px;
+ height:50px;
 }
 .block_tag_youtube .yt-video-entry{
-  font-size:10px;
-  line-height:11px;
+ font-size:10px;
+ line-height:11px;
 }
 
 .block_tag_flickr .flickr-photos {
-  padding:3px;
+ padding:3px;
 }
 
 /***
@@ -1677,9 +1677,9 @@ border-width:0px;
 }
 
 .sideblock .content h3.eventskey {
-  margin-top:0.5em;
-  margin-bottom:0;
-  margin-left:0.5em;
+    margin-top:0.5em;
+    margin-bottom:0;
+    margin-left:0.5em;
 }
 
 /***
@@ -2444,8 +2444,8 @@ body#message-messages {
  *** Notes
  ***/
 .notepost {
-  margin-bottom: 1em;
-  background-color: #EEE;
+    margin-bottom: 1em;
+    background-color: #EEE;
 }
 .sitenotepost {
 }
@@ -2455,33 +2455,33 @@ body#message-messages {
 }
 
 .ownnotepost .info {
-  font-weight: bolder;
+    font-weight: bolder;
 }
 
 .notepost .header {
-  background: #DDD;
-  padding: 5px;
+    background: #DDD;
+    padding: 5px;
 }
 
 .notepost .user {
-  font-weight: bolder;
+    font-weight: bolder;
 }
 
 .notepost .userpicture {
-  float: left;
-  margin-right: 5px;
+    float: left;
+    margin-right: 5px;
 }
 
 .notepost .info {
-  font-size: smaller;
+    font-size: smaller;
 }
 
 .notepost .content {
-  clear: both;
+    clear: both;
 }
 
 .notepost .footer {
-  clear: both;
+    clear: both;
 }
 
 /***
@@ -2772,208 +2772,223 @@ ul.tabrow1 li.here.selected a {
  ***/
 
 h2.tag-heading {
-  text-align:center;
-  margin-left:auto;
-  margin-right:auto;
-  display:block;	
-  width:95%;
-  padding: 5px 5px 5px 5px;
-  
+ text-align:center;
+ margin-left:auto;
+ margin-right:auto;
+ display:block; 
+ width:95%;
+ padding: 5px 5px 5px 5px;
+ 
 }
 
 div#tag-description {
-  width:95%;
-  padding: 5px 5px 5px 5px;
-  margin-left:auto;
-  margin-right:auto;
-  display:block;
+ width:95%;
+ padding: 5px 5px 5px 5px;
+ margin-left:auto;
+ margin-right:auto;
+ display:block;
 }
 
 div#tag-management-box {
-  margin-bottom:10px;
-  text-align:center;
-  line-height:20px;
-  display:block;
-  font-size:12px;
+ margin-bottom:10px;
+ text-align:center;
+ line-height:20px;
+ display:block;
+ font-size:12px;
 }
-  
+ 
 div#tag-user-table {
-  padding:3px;
-  width:95%;
-  margin-left:auto;
-  margin-right:auto;	
-  display:table;
+ padding:3px;
+ width:95%;
+ clear: both;
+ margin-left:auto;
+ margin-right:auto; 
+ display:block;
 }
 
+/* small css hack for firefox*/
+div#tag-user-table:after{
+ content:".";
+ display:block;
+ clear:both;
+ visibility:hidden;
+ height:0;
+ overflow:hidden;
+}
+/* end hack*/
+
 div.user-box {
-  margin-left:8px;
-  margin-right:8px;
-  margin-top:8px;
-  margin-bottom:8px;			
-  width:115px;
-  height:160px;	
-  text-align:center;
-  display:block;
-  float:left;
+ margin-left:8px;
+ margin-right:8px;
+ margin-top:8px;
+ margin-bottom:8px;   
+ width:115px;
+ height:160px; 
+ text-align:center;
+ display:block;
+ float:left;
 }
 
 img.user-image {
-  border:0px;
-  height:100px;
-  width:100px;
+ border:0px;
+ height:100px;
+ width:100px;
 }
 
 div#small-tag-cloud-box {
-  width:300px;
-  margin-left:auto;
-  margin-right:auto;
-  margin-bottom:0px;
-  margin-top:0px;
+ width:300px;
+ margin-left:auto;
+ margin-right:auto;
+ margin-bottom:0px;
+ margin-top:0px;
 }
 
 div#big-tag-cloud-box {
-  width:600px;
-  margin-left:auto;
-  margin-right:auto;
-  margin-bottom:0px;
-  margin-top:0px;
-  display:block;
-  float:none;
+ width:600px;
+ margin-left:auto;
+ margin-right:auto;
+ margin-bottom:0px;
+ margin-top:0px;
+ display:block;
+ float:none;
 }
 
 ul#tag-cloud-list {
-  list-style:none;
-  padding:5px;
-  margin:0px;
-  list-style-type:none;
+ list-style:none;
+ padding:5px;
+ margin:0px;
+ list-style-type:none;
 }
 ul#tag-cloud-list li {
-  margin:0px;
-  display:inline;
+ margin:0px;
+ display:inline;
 }
 
-/* search start*/		
+/* search start*/  
 
 div#tag-search-box {
-  text-align:center;
-  margin-left:auto;
-  margin-right:auto;
-  margin-top:10px;
-  margin-bottom:10px;	
+ text-align:center;
+ margin-left:auto;
+ margin-right:auto;
+ margin-top:10px;
+ margin-bottom:10px; 
 }
 
 div#tag-search-results-container {
-  padding:0px;
-  width:100%;
+ padding:0px;
+ width:100%;
 }
 
 ul#tag-search-results {
-  padding:0px;
-  margin-left:20%;
-  margin-right:20%;
-  margin-top:15px;
-  margin-bottom:0px;	
-  float:left;
-  width:60%;
-  display:block;
-  list-style:none;
+ padding:0px;
+ margin-left:20%;
+ margin-right:20%;
+ margin-top:15px;
+ margin-bottom:0px; 
+ float:left;
+ width:60%;
+ display:block;
+ list-style:none;
 }
 
 ul#tag-search-results li{
 
-  width:30%;
-  float:left;
-  padding-left:1%;
-  text-align:left;
-  line-height:20px;
-  padding-right:1%;
+ width:30%;
+ float:left;
+ padding-left:1%;
+ text-align:left;
+ line-height:20px;
+ padding-right:1%;
 
 }
 
 div#tags-management-links {
-  text-align:right;
-  display:block;
-  font-size:12px;
-  
+ text-align:right;
+ display:block;
+ font-size:12px;
+ 
 }
-/* search end*/		
+/* search end*/  
 
-/* tag management start*/	
+/* tag management start*/ 
 span.flagged-tag {
-  color:#FF0000;
+ color:#FF0000;
 }
 span.flagged-tag a{
-  color:#FF0000;
+ color:#FF0000;
 }
 
 table#tag-management-list {
-  text-align:left;
-  margin-left:auto;
-  margin-right:auto;
+ text-align:left;
+ margin-left:auto;
+ margin-right:auto;
 }
 
 table#tag-management-list tr td{
-  padding-left:4px;
-  padding-right	:4px;	
+ padding-left:4px;
+ padding-right :4px; 
 }
 
 form#tag-management-form {
-  text-align:center;
+ text-align:center;
 }
-/* tag management end*/	
+/* tag management end*/ 
 
-/* autocomplete start*/		
-#relatedtags-autocomplete-container {
-  margin-left:auto;
-  margin-right:auto;
-  min-height:4.6em;
-  width:100%;
+/* autocomplete start*/  
+#relatedtags-autocomplete-container
+{
+ margin-left::auto;
+ margin-right:auto;
+ min-height:4.6em;
+ width:100%;
 }
 
 #relatedtags-autocomplete {
-  position:relative;
-  display:block;
-  width:60%;
-  margin-left:auto;
-  margin-right:auto;	
+ position:relative;
+ display:block;
+ width:60%;
+ margin-left::auto;
+ margin-right:auto; 
 }
-#relatedtags-autocomplete .yui-ac-content {
-  position:absolute;	
-  width:420px;
-  left:53%;
-  border:1px solid #404040;
-  background:#fff;
-  overflow:hidden;
-  z-index:9050;
+#relatedtags-autocomplete .yui-ac-content
+{
+ position:absolute; 
+ width:420px;
+ left:53%;
+ border:1px solid #404040;
+ background:#fff;
+ overflow:hidden;
+ z-index:9050;
 }
-#relatedtags-autocomplete .ysearchquery {
-  position:absolute;
-  right:10px;
-  color:#808080;
-  z-index:10;
+#relatedtags-autocomplete .ysearchquery
+{
+ position:absolute;
+ right:10px;
+ color:#808080;
+ z-index:10;
 }
 #relatedtags-autocomplete .yui-ac-shadow {
-  position:absolute;
-  margin:.3em;
-  width:100%;
-  background:#a0a0a0;
-  z-index:9049;
+ position:absolute;
+ margin:.3em;
+ width:100%;
+ background:#a0a0a0;
+ z-index:9049;
 }
 #relatedtags-autocomplete ul {
-  padding:0;width:100%;
-  margin:0;
-  list-style-type:none;
+ padding:0;width:100%;
+ margin:0;
+ list-style-type:none;
 }
 
 #relatedtags-autocomplete li {
-  padding:0 5px;
-  cursor:default;
-  white-space:
-  nowrap;
+ padding:0 5px;
+ cursor:default;
+ white-space:
+ nowrap;
 }
 #relatedtags-autocomplete li.yui-ac-highlight
 {
-  background:#FFFFCC;
+ background:#FFFFCC;
 }
 /* autocomplete end*/
 
@@ -3709,26 +3724,26 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-mod #reviewoptionshdr .fitem {
-  float: left;
-  width: 30%;
-  margin-left: 10px;
-  clear: none;
+    float: left;
+    width: 30%;
+    margin-left: 10px;
+    clear: none;
 }
 #mod-quiz-mod #reviewoptionshdr .fitemtitle {
-  width: 100%;
-  font-weight: bold;
-  text-align: left;
-  height: 2.5em;
-  margin-left: 0;
+    width: 100%;
+    font-weight: bold;
+    text-align: left;
+    height: 2.5em;
+ margin-left: 0;
 }
 #mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
-  width: 100%;
-  text-align: left;
-  margin-left: 0;
+    width: 100%;
+    text-align: left;
+ margin-left: 0;
 }
 #mod-quiz-mod #reviewoptionshdr fieldset.fgroup span {
-  float: left;
-  clear: left;
+    float: left;
+    clear: left;
 }
 
 #mod-quiz-edit #page .controls,
@@ -3801,21 +3816,16 @@ body#mod-quiz-report .controls {
   width: 100%;
   padding-top: 15px;
   text-align: center
-}
-
-#mod-resource-view .boxaligncenter table.files {
-  margin-left: auto;
-  margin-right: auto;
-}
+  }
 
 .resourcecontent object {
-  height:480px; 
-  width:600px;
+    height:480px;
+    width:600px;
 }
 
 .resourcepdf object{
-  height: 800px;
-  width: 800px;
+    height: 800px;
+    width: 800px;
 }
 
 .mod-resource .modified {
