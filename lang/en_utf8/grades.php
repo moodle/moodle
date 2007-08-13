@@ -147,6 +147,7 @@ $string['fullmode'] = 'Full view';
 $string['grade'] = 'Grade';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
+$string['gradebookhistories'] = 'Grade histories';
 $string['gradeboundary'] = 'Letter grade boundary';
 $string['gradecategory'] = 'Grade Category';
 $string['gradecategoryhelp'] = 'Grade Category Help';
