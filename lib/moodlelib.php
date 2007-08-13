@@ -3017,8 +3017,8 @@ function delete_course($courseid, $showfeedback = true) {
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
-    include_once($CFG->libdir.'/questionlib.php');
     global $CFG;
+    include_once($CFG->libdir.'/questionlib.php');
 
     $result = true;
 
