@@ -6,7 +6,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('langedit');    
+    admin_externalpage_setup('langedit');
 
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
@@ -32,20 +32,20 @@
     } else {
         $SESSION->langtranslateintolocal = $uselocal;
     }
-    
+
     if (!has_capability('moodle/site:langeditmaster', $context, $USER->id, false)) {
         // Force using _local
         $uselocal = 1;
     }
-        
+
     if (!has_capability('moodle/site:langeditmaster', $context, $USER->id, false) && (!$uselocal)) {
         print_error('cannoteditmasterlang');
-    } 
-    
+    }
+
     if ((!has_capability('moodle/site:langeditlocal', $context, $USER->id, false)) && ($uselocal)) {
         print_error('cannotcustomizelocallang');
     }
- 
+
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
@@ -61,20 +61,9 @@
     $strfilecreated = get_string('filecreated', 'admin');
     $strprev = get_string('previous');
     $strnext = get_string('next');
-    $strlocalstringcustomization = 'Local string customization';            // TODO / FIXME
-    $strlangpackmaintaining = 'Language pack maintaining';                  // TODO / FIXME
-    $strnomissingstrings = 'No missing strings';                            // TODO / FIXME
-
-    // TODO / FIXME add into en_utf8/error.php
-    $string['cannoteditmasterlang'] = 'You do not have permission to edit master language package. This
-        permission is controlled by the capability "moodle/site:langeditmaster". Set this capability
-        to allow you to edit master language packages in case you are the maintainer of a package.';
-    $string['cannotcustomizelocallang'] = 'You do not have permission to customize the strings translation.
-        This permission is controlled by the capability "moodle/site:langeditlocal". Set this capability
-        to allow you to edit local language packages in case you want to modify translations for your site.';
-
-    // TODO/FIXME add into en_utf8/admin.php:
-    // $string['numberofmissingstrings'] = 'Number of missing strings: $a';
+    $strlocalstringcustomization = get_string('localstringcustomization', 'admin');
+    $strlangpackmaintaining = get_string('langpackmaintaining', 'admin');
+    $strnomissingstrings = get_string('nomissingstrings', 'admin');
 
     $currentlang = current_language();
 
@@ -112,13 +101,13 @@
         $activated = array('usemaster');
     }
     if (has_capability('moodle/site:langeditlocal', $context, $USER->id, false)) {
-        $firstrow[] = new tabobject('uselocal', 
-            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1", 
+        $firstrow[] = new tabobject('uselocal',
+            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=1",
             $strlocalstringcustomization );
     }
     if (has_capability('moodle/site:langeditmaster', $context, $USER->id, false)) {
         $firstrow[] = new tabobject('usemaster',
-            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0", 
+            $CFG->wwwroot."/admin/lang.php?mode=$mode&amp;currentfile=$currentfile&amp;uselocal=0",
             $strlangpackmaintaining );
     }
     $secondrow[] = new tabobject('missing', $CFG->wwwroot.'/admin/lang.php?mode=missing', $strmissingstrings );
@@ -128,7 +117,7 @@
     $secondrow[] = new tabobject('langdoc', $CFG->wwwroot.'/admin/langdoc.php', $stredithelpdocs );
     $tabs = array($firstrow, $secondrow);
     print_tabs($tabs, $currenttab, $inactive, $activated);
-    
+
 
     if (!$mode) {
         print_box_start();
@@ -177,10 +166,10 @@
         foreach ($stringfiles as $file) {
             unset($string);
             include("$enlangdir/$file");
-            $enstring = $string;  
+            $enstring = $string;
 
             ksort($enstring);
-            
+
             unset($string);
 
             if (file_exists("$langdir/$file")) {
@@ -194,7 +183,7 @@
             }
 
             $missingcounter = 0;
-    
+
             $first = true;
             foreach ($enstring as $key => $value) {
                 if (empty($string[$key]) and $string[$key] != "0") {    //bug fix 4735 mits
@@ -227,7 +216,7 @@
                 $o .= '</pre><hr />';
             }
         }
-  
+
         if ($m <> '') {
             print_box($m, 'filenames');
         }
@@ -236,7 +225,7 @@
         if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
             error("Could not find English language help files!");
         }
-    
+
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
                 echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
@@ -244,7 +233,7 @@
                 continue;
             }
         }
-    
+
         if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/docs", "CVS")) {
             error("Could not find English language docs files!");
         }
@@ -255,7 +244,7 @@
                 continue;
             }
         }
-    
+
         if (!empty($somethingfound)) {
             print_continue("lang.php");
         } else {
@@ -263,7 +252,7 @@
         }
 
     } else if ($mode == "compare") {
-   
+
         if (!file_exists($langbase) ){
             if (!lang_make_directory($langbase) ){
                 error('ERROR: Could not create base lang directory ' . $langbase);
@@ -271,7 +260,7 @@
                 echo '<div class="notifysuccess">Created directory '.
                                                      $langbase .'</div>'."<br />\n";
             }
-        } 
+        }
         if (!$uselocal && !file_exists($langdir)) {
             if (!lang_make_directory($langdir)) {
                 error('ERROR: Could not create directory '.$langdir);
@@ -290,19 +279,19 @@
                                                      $locallangdir .'</div>'."<br />\n";
             }
         }
-        
+
         if (isset($_POST['currentfile'])){   // Save a file
             if (!confirm_sesskey()) {
                 error(get_string('confirmsesskeybad', 'error'));
             }
-            
+
             $newstrings = array();
-            
+
             foreach ($_POST as $postkey => $postval) {
                 $stringkey = lang_file_string_key($postkey);
                 $newstrings[$stringkey] = $postval;
             }
-            
+
             unset($newstrings['currentfile']);
 
             if ($uselocal) {
@@ -315,17 +304,17 @@
                 unset($string);
                 $saveinto = $locallangdir;
             } else {
-                $packstring = array();  
+                $packstring = array();
                 $saveinto = $langdir;
             }
-            
+
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
                 notify(get_string("changessaved")." ($saveinto/$currentfile)", "green");
             } else {
                 error("Could not save the file '$saveinto/$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
             }
             unset($packstring);
-        } 
+        }
 
         print_box_start('generalbox editstrings');
         $menufiles = array();
@@ -343,7 +332,7 @@
         helpbutton('langswitchstorage', $strfilestoredinhelp, 'moodle');
         echo '</div>';
         print_box_end();
-       
+
         if ($currentfile <> '') {
             $saveto = $uselocal ? $locallangdir : $langdir;
             error_reporting(0);
@@ -365,11 +354,11 @@
                 echo "<p><font size=\"1\">".get_string("makeeditable", "", "$saveto/$currentfile")."</font></p>";
             }
             error_reporting($CFG->debug);
-            
+
             $o = '';    // stores the HTML output to be echo-ed
             unset($string);
             include("$enlangdir/$currentfile");
-            $enstring = $string;  
+            $enstring = $string;
             if ($currentlang != 'en' and $currentfile == 'moodle.php') {
                 $enstring['thislanguage'] = "<< TRANSLATORS: Specify the name of your language here.  If possible use Unicode Numeric Character References >>";
                 $enstring['thischarset'] = "<< TRANSLATORS:  Charset encoding - always use utf-8 >>";
@@ -383,7 +372,7 @@
             @include("$locallangdir/$currentfile");
             $localstring = isset($string) ? $string : array();
             unset($string);
-            
+
             @include("$langdir/$currentfile");
 
             if ($editable) {
@@ -401,7 +390,7 @@
                     $o .= '<br />&nbsp;</td></tr>';
                 }
                 $envalue = nl2br(htmlspecialchars($envalue));
-                $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
+                $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold.
                 $envalue = str_replace("%%","%",$envalue);
                 $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
@@ -502,7 +491,7 @@
             }
             $o .= '</table>';
             if ($editable) {
-                $o .= '</div>'; 
+                $o .= '</div>';
                 $o .= '</form>';
             }
 
@@ -531,7 +520,7 @@
 /**
  * Save language translation file.
  *
- * Thanks to Petri Asikainen for the original version of code 
+ * Thanks to Petri Asikainen for the original version of code
  * used to save language files.
  *
  * @uses $CFG
@@ -542,7 +531,7 @@
  * @param bool $local Should *_local version be saved?
  * @param array $packstrings Array of default langpack strings (needed if $local)
  * @return bool Created successfully?
- */ 
+ */
 function lang_save_file($path, $file, $strings, $local, $packstrings) {
     global $CFG, $USER;
     if (LANG_KEEP_ORPHANS) {
@@ -598,7 +587,7 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
  *
  * These modifications are typically necessary to work with the same string coming from two sources.
  * We need to compare the content of these sources and we want to have e.g. "This string\r\n"
- * to be the same as " This string\n". 
+ * to be the same as " This string\n".
  *
  * @param string $value Original string from the file
  * @return string Fixed value
@@ -698,7 +687,7 @@ function lang_file_string_key($keyfromform) {
  * @todo Seems the function does not work with negative $start together with $length being set
  */
 function lang_xhtml_save_substr($str, $start, $length = NULL) {
-    if ($length === 0) { 
+    if ($length === 0) {
         //stop wasting our time ;)
         return "";
     }
@@ -728,7 +717,7 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
     //calculate start position
     if ($start >= 0) {
         $real_start = $chars[$start][1];
-    } else { 
+    } else {
         //start'th character from the end of string
         $start = max($start,-$html_length);
         $real_start = $chars[$html_length+$start][1];
@@ -737,16 +726,16 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
     if (!isset($length)) {
         // no $length argument passed, return all remaining characters
         return substr($str, $real_start);
-    } elseif ($length > 0) { 
+    } elseif ($length > 0) {
         // copy $length chars
-        if ($start+$length >= $html_length) { 
+        if ($start+$length >= $html_length) {
             // return all remaining characters
             return substr($str, $real_start);
-        } else { 
+        } else {
             //return $length characters
             return substr($str, $real_start, $chars[max($start,0)+$length][1] - $real_start);
         }
-    } else { 
+    } else {
         //negative $length. Omit $length characters from end
         return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start);
     }
@@ -755,10 +744,10 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
 /**
 * Finds all English string files in the standard lang/en_utf8 location.
 *
-* The English version of the file may be found in 
+* The English version of the file may be found in
 *  $CFG->dirroot/lang/en_utf8/filename
-* The localised version of the found file should be saved into 
-*  $CFG->dataroot/lang/current_lang[_local]/filename 
+* The localised version of the found file should be saved into
+*  $CFG->dataroot/lang/current_lang[_local]/filename
 * where "filename" is returned as a part of the file record.
 *
 * @return array Array of a file information. Compatible format with {@link lang_extra_locations()}
@@ -787,13 +776,13 @@ function lang_standard_locations() {
 /**
 * Finds all English string files in non-standard location.
 *
-* Searches for lang/en_utf8/*.php in various types of plugins (blocks, database presets, question types, 
+* Searches for lang/en_utf8/*.php in various types of plugins (blocks, database presets, question types,
 * 3rd party modules etc.) and returns an array of found files details.
 *
-* The English version of the file may be found in 
+* The English version of the file may be found in
 *  $CFG->dirroot/location/plugin/lang/en_utf8/filename
-* The localised version of the found file should be saved into 
-*  $CFG->dataroot/lang/current_lang[_local]/prefix_plugin.php 
+* The localised version of the found file should be saved into
+*  $CFG->dataroot/lang/current_lang[_local]/prefix_plugin.php
 * where "location", "plugin", "prefix" and "filename" are returned as a part of the file record.
 *
 * @return array Array of a file information. Compatible format with {@link lang_standard_locations()}

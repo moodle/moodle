@@ -576,5 +576,4 @@ class grade_grade extends grade_object {
     }
 
 }
-
 ?>

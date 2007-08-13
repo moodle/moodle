@@ -5,8 +5,10 @@
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
 $string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
+$string['cannotcustomizelocallang'] = 'You do not have permission to customize the strings translation.  This permission is controlled by the capability "moodle/site:langeditlocal". Set this capability to allow you to edit local language packages in case you want to modify translations for your site.';
 $string['cannotdownloadcomponents'] = 'Cannot download components.';
 $string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
+$string['cannoteditmasterlang'] = 'You do not have permission to edit master language package. This permission is controlled by the capability "moodle/site:langeditmaster". Set this capability to allow you to edit master language packages in case you are the maintainer of a package.';
 $string['cannotfindcomponent'] = 'Cannot find component.';
 $string['cannotsavemd5file'] = 'Cannot save md5 file.';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file.';
