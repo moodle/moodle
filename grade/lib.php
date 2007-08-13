@@ -419,7 +419,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
         case 4:
 
             if ($path_elements[2] == 'grader' AND $path_elements[3] != 'index.php') {
-                $navlinks[] = array('name' => get_string('grader', 'grades'),
+                $navlinks[] = array('name' => get_string('modulename', 'gradereport_grader'),
                                     'link' => "$CFG->wwwroot/grade/report/grader/index.php$id_string",
                                     'type' => 'misc');
             }
