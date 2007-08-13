@@ -7,6 +7,12 @@ class grade_export_form extends moodleform {
         include_once($CFG->libdir.'/pear/HTML/QuickForm/advcheckbox.php');
         $mform =& $this->_form;
         $mform->addElement('header', 'general', get_string('gradeitemsinc', 'grades')); // TODO: localize
+
+        $mform->addElement('checkbox', 'export_letters', get_string('exportletters', 'grades'));
+        $mform->setDefault('export_letters', 0);
+        $mform->setHelpButton('export_letters', array(false, get_string('exportletters', 'grades'),
+                          false, true, false, get_string("exportlettershelp", 'grades')));
+
         $id = $this->_customdata['id']; // course id
         $mform->addElement('hidden', 'id', $id);
         if ($grade_items = grade_item::fetch_all(array('courseid'=>$id))) {

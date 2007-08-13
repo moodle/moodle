@@ -30,7 +30,7 @@ function grade_import_commit($courseid, $importcode) {
 
             if ($grades = get_records('grade_import_values', 'newgradeitem', $newitem->id)) {
 
-                // make the grardes array for update_grade
+                // make the grades array for update_grade
 
                 // find the max instance number of 'manual' grade item
                 // and increment that number by 1 by hand
@@ -49,6 +49,8 @@ function grade_import_commit($courseid, $importcode) {
                 }
 
                 $instances[] = $instance;
+
+                // TODO clean up following comment?
                 // if fails, deletes all the created grade_items and grades
 
                 /// create a new grade item for this
@@ -66,7 +68,7 @@ function grade_import_commit($courseid, $importcode) {
                 if ($failed) {
                     foreach ($instances as $instance) {
                         $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'iteminstance'=>$instance));
-                        // this method does not seem to delete all the raw grades and the item itself
+                        // TODO this method does not seem to delete all the raw grades and the item itself
                         // which I think should be deleted in this case, can I use sql directly here?
                         $gradeitem->delete();
                     }
@@ -96,7 +98,7 @@ function grade_import_commit($courseid, $importcode) {
             // get all grades with this item
             if ($grades = get_records('grade_import_values', 'itemid', $itemid)) {
 
-                // make the grardes array for update_grade
+                // make the grades array for update_grade
                 foreach ($grades as $grade) {
                     if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, NULL, NULL, $grade->feedback)) {
                         $failed = 1;

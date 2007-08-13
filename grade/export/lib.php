@@ -25,6 +25,7 @@
 
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
+
 /**
  * Prints all grade items for selection
  * @input int id - course id
@@ -62,10 +63,18 @@ class grade_export {
 
     /**
      * Constructor should set up all the private variables ready to be pulled
-     * @input int id - course id
-     * @input string itemids - comma separated value of itemids to process for this export
+     * @param int $id course id
+     * @param string $itemids comma separated value of itemids to process for this export
+     * @param boolean $export_letters Whether to export letter grade_items as literal letters, or as numerical values
+     * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($id, $itemids = '') {
+    function grade_export($id, $itemids = '', $export_letters=false) {
+
+        if ($export_letters) {
+            require_once($CFG->dirroot . '/grade/report/lib.php');
+            $report = new grade_report();
+            $letters = $report->get_grade_letters();
+        }
 
         $this->strgrades = get_string("grades");
         $this->strgrade = get_string("grade");
@@ -127,14 +136,15 @@ class grade_export {
             }
         } else {
             // else we get all items for this course
-            $gradeitems = grade_grade::fetch_all(array('courseid'=>$this->id));
+            $gradeitems = grade_item::fetch_all(array('courseid'=>$this->id));
         }
 
         if ($gradeitems) {
             foreach ($gradeitems as $gradeitem) {
+                $grade_item_displaytype = $report->get_pref('gradedisplaytype', $gradeitem->id);
 
                 // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem -> get_final()) {
+                if ($itemgrades = $gradeitem->get_final()) {
 
                     $this->columns[$gradeitem->id] = "$gradeitem->itemmodule: ".$gradeitem->get_name()." - $gradeitem->grademax";
 
@@ -149,10 +159,15 @@ class grade_export {
                     if (!empty($this->students)) {
                         foreach ($this->students as $student) {
                             unset($studentgrade);
-                            // add support for comment here MDL-9634
+                            // TODO add support for comment here MDL-9634
 
                             if (!empty($itemgrades[$student->id])) {
                                 $studentgrade = $itemgrades[$student->id];
+                            }
+
+                            // TODO Convert final grade to letter if export option is on, and grade_item is set to letter type MDL-10490
+                            if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER && $export_letters) {
+                                $studentgrade->finalgrade = $studentgrade->get_letter($letters);
                             }
 
                             if (!empty($studentgrade->finalgrade)) {
@@ -162,10 +177,15 @@ class grade_export {
                                 $this->gradeshtml[$student->id][$gradeitem->id] = "";
                             }
                             if (!empty($maxgrade)) {
-                                $this->totals[$student->id] = (float)($this->totals[$student->id]) + (float)($currentstudentgrade);
+                                $total = (float)($this->totals[$student->id]) + (float)($currentstudentgrade);
                             } else {
-                                $this->totals[$student->id] = (float)($this->totals[$student->id]) + 0;
+                                $total = (float)($this->totals[$student->id]) + 0;
                             }
+
+                            if ($export_letters) {
+                                $total = grade_grade::get_letter($letters, $total, $gradeitem->grademin, $gradeitem->grademax);
+                            }
+                            $this->totals[$student->id] = $total;
 
                             if (!empty($comment)) {
                                 // load comments here
@@ -186,12 +206,14 @@ class grade_export {
     }
 
     /**
-     * To be implemented by child classes
+     * To be implemented by child classe
+     * TODO finish PHPdocs
      */
     function print_grades() { }
 
     /**
      * Displays all the grades on screen as a feedback mechanism
+     * TODO finish PHPdoc
      */
     function display_grades($feedback=false) {
         echo '<table>';
