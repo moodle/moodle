@@ -195,10 +195,18 @@ class block_base {
 
     /**
      * Returns true or false, depending on whether this block has any content to display
+     * and whether the user has permission to view the block
      *
      * @return boolean
      */
     function is_empty() {
+
+        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        
+        if ( !has_capability('moodle/block:view', $context) ) {
+            return true;
+        }
+
         $this->get_content();
         return(empty($this->content->text) && empty($this->content->footer));
     }

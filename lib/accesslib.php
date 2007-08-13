@@ -2917,7 +2917,7 @@ function fetch_context_capabilities($context) {
             $block = get_record('block', 'id', $cb->blockid);
 
             $SQL = "select * from {$CFG->prefix}capabilities where contextlevel = ".CONTEXT_BLOCK."
-                    and component = 'block/$block->name'";
+                    and ( component = 'block/$block->name' or component = 'moodle')";
         break;
 
         default:
@@ -3396,7 +3396,11 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_BLOCK:
-            $string = get_string('blockname', 'block_'.basename($component));
+            if( $component == 'moodle' ){
+                $string = get_string('block');
+            }else{
+                $string = get_string('blockname', 'block_'.basename($component));
+            }
         break;
 
         default:

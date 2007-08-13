@@ -1145,6 +1145,15 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
+    ),
+
+    'moodle/block:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW
+        )
     )
 );
 
