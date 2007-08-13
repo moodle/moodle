@@ -66,6 +66,6 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     exit;
 }
 
-print_gradeitem_selections($id);
+print_gradeitem_selections($id, array('plugin'=>'xmlexport'));
 print_footer();
 ?>

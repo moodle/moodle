@@ -30,12 +30,12 @@ require_once($CFG->dirroot.'/grade/lib.php');
  * Prints all grade items for selection
  * @input int id - course id
  */
-function print_gradeitem_selections($id, $params = NULL) {
+function print_gradeitem_selections($id, $params = array()) {
     global $CFG;
     // print all items for selections
     // make this a standard function in lib maybe
     include_once('grade_export_form.php');
-    $mform = new grade_export_form(qualified_me(), array('id'=>$id));
+    $mform = new grade_export_form(qualified_me(), array('id'=>$id)+$params);
     $mform->display();
 
 }
