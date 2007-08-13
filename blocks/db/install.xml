@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/db" VERSION="20060809" COMMENT="XMLDB file for Moodle block tables">
+<XMLDB PATH="blocks/db" VERSION="20070813" COMMENT="XMLDB file for Moodle block tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="block" COMMENT="to store installed blocks" NEXT="block_instance">
       <FIELDS>
@@ -24,7 +27,7 @@
         <FIELD NAME="position" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="pagetype" NEXT="weight"/>
         <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="position" NEXT="visible"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="weight" NEXT="configdata"/>
-        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="visible"/>
+        <FIELD NAME="configdata" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="visible"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="blockid"/>
