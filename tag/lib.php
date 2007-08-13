@@ -1,6 +1,6 @@
 <?php // $Id$
 
-require_once('../config.php');
+require_once(dirname(__FILE__) . '/../config.php');
 
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
 /**
