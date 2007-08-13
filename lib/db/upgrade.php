@@ -1459,9 +1459,10 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
         $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
-
+        $table->addKeyInfo('courseid-outcomeid', XMLDB_KEY_UNIQUE, array('courseid', 'outcomeid'));
     /// Launch create table for grade_outcomes_courses
-        $result = $result && create_table($table);
+        $result = $result && create_table($table);        
+    
     }
 
 
