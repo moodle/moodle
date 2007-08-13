@@ -4125,10 +4125,12 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 function forum_role_assign($userid, $context, $roleid) {
     // check to see if this role comes with mod/forum:initialsubscriptions
     $cap = role_context_capabilities($roleid, $context, 'mod/forum:initialsubscriptions');
-    
+    $cap1 = role_context_capabilities($roleid, $context, 'moodle/course:view');
     // we are checking the role because has_capability() will pull this capability out
     // from other roles this user might have and resolve them, which is no good
-    if (isset($cap['mod/forum:initialsubscriptions']) && $cap['mod/forum:initialsubscriptions'] == CAP_ALLOW) {
+    // the role needs course view to 
+    if (isset($cap['mod/forum:initialsubscriptions']) && $cap['mod/forum:initialsubscriptions'] == CAP_ALLOW &&
+        isset($cap1['moodle/course:view']) && $cap1['moodle/course:view'] == CAP_ALLOW) {
         return forum_add_user_default_subscriptions($userid, $context);
     } else {
         // MDL-8981, do not subscribe to forum
@@ -4224,7 +4226,9 @@ function forum_add_user_default_subscriptions($userid, $context) {
  * Remove subscriptions for a user in a context
  */
 function forum_remove_user_subscriptions($userid, $context) {
-
+    
+    global $CFG;
+    
     if (empty($context->contextlevel)) {
         return false;
     }
@@ -4232,7 +4236,16 @@ function forum_remove_user_subscriptions($userid, $context) {
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM:   // For the whole site
-            if ($courses = get_records('course')) {
+            //if ($courses = get_my_courses($userid)) {
+            // find all courses in which this user has a forum subscription
+            if ($courses = get_records_sql("SELECT c.* 
+                                            FROM {$CFG->prefix}course c,
+                                                 {$CFG->prefix}forum_subscriptions fs,
+                                                 {$CFG->prefix}forum f                                               
+                                            WHERE c.id = f.course
+                                            AND   f.id = fs.forum
+                                            AND   fs.userid = $userid")) {
+                    
                 foreach ($courses as $course) {
                     $subcontext = get_context_instance(CONTEXT_COURSE, $course->id);
                     forum_remove_user_subscriptions($userid, $subcontext);
@@ -4257,7 +4270,20 @@ function forum_remove_user_subscriptions($userid, $context) {
 
         case CONTEXT_COURSE:   // For a whole course
              if ($course = get_record('course', 'id', $context->instanceid)) {
-                 if ($forums = get_all_instances_in_course('forum', $course, $userid, true)) {
+                // find all forums in which this user has a subscription, and its coursemodule id
+                if ($forums = get_records_sql("SELECT f.id, cm.id as coursemodule
+                                                FROM {$CFG->prefix}forum f,
+                                                     {$CFG->prefix}modules m,
+                                                     {$CFG->prefix}course_modules cm,
+                                                     {$CFG->prefix}forum_subscriptions fs
+                                                WHERE fs.userid = $userid
+                                                AND   fs.forum = f.id
+                                                AND   f.course = $context->instanceid
+                                                AND   cm.instance = f.id
+                                                AND   cm.module = m.id
+                                                AND   m.name = 'forum'")) {                                                   
+                 
+                 //if ($forums = get_all_instances_in_course('forum', $course, $userid, true)) {
                      foreach ($forums as $forum) {
                          if ($modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule)) {
                              if (!has_capability('mod/forum:viewdiscussion', $modcontext, $userid)) {
