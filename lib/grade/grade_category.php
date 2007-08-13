@@ -940,6 +940,16 @@ class grade_category extends grade_object {
     }
 
     /**
+     * Returns the idnumber of the associated grade_item. This method is also available in
+     * grade_item, for cases where the object type is not known.
+     * @return string idnumber
+     */
+    function get_idnumber() {
+        $this->load_grade_item();
+        return $this->grade_item->get_idnumber();
+    }
+
+    /**
      * Sets sortorder variable for this category.
      * This method is also available in grade_item, for cases where the object type is not know.
      * @param int $sortorder
