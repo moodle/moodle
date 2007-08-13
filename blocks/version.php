@@ -6,3 +6,4 @@
 // be performed (see db/backup_*.php)
 
 $blocks_version = 2007081300;   // The current version is a date (YYYYMMDDXX)
+?>
