@@ -160,9 +160,6 @@ echo '</div>';
 print_footer($course);
 die;
 
-
-
-
 function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedlast=false) {
     global $CFG, $COURSE;
 
@@ -178,15 +175,19 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $actions = $gtree->get_edit_icon($element, $gpr);
 
     if ($element['type'] == 'item' or ($element['type'] == 'category' and $element['depth'] > 1)) {
-        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$strdelete.'" title="'.$strdelete.'"/></a>';
-        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='.$eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'.$strmove.'" title="'.$strmove.'"/></a>';
+        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=delete&amp;eid='
+                 . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'
+                 . $strdelete.'" title="'.$strdelete.'"/></a>';
+        $actions .= '<a href="index.php?id='.$COURSE->id.'&amp;action=moveselect&amp;eid='
+                 . $eid.'&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/t/move.gif" class="iconsmall" alt="'
+                 . $strmove.'" title="'.$strmove.'"/></a>';
     }
 
     $actions .= $gtree->get_locking_icon($element, $gpr);
 
     $name = $object->get_name();
 
-    //TODO: improve outcome visulisation
+    //TODO: improve outcome visualisation
     if ($element['type'] == 'item' and !empty($object->outcomeid)) {
         $name = $name.' ('.get_string('outcome', 'grades').')';
     }
@@ -203,13 +204,16 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     switch ($element['type']) {
         case 'item':
             if ($object->itemtype == 'mod') {
-                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'.get_string('modulename', $object->itemmodule).'"/>';
+                $icon = '<img src="'.$CFG->modpixpath.'/'.$object->itemmodule.'/icon.gif" class="icon" alt="'
+                      . get_string('modulename', $object->itemmodule).'"/>';
             } else if ($object->itemtype == 'manual') {
                 //TODO: add manual grading icon
                 if (empty($object->outcomeid)) {
-                    $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'.get_string('manualgrade', 'grades').'"/>'; // TODO: localize
+                    $icon = '<img src="'.$CFG->pixpath.'/t/edit.gif" class="icon" alt="'
+                          . get_string('manualgrade', 'grades').'"/>'; // TODO: localize
                 } else {
-                    $icon = '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'.get_string('outcome', 'grades').'"/>';
+                    $icon = '<img src="'.$CFG->pixpath.'/i/outcomes.gif" class="icon" alt="'
+                          . get_string('outcome', 'grades').'"/>';
 
                 }
             }
@@ -228,7 +232,9 @@ function print_grade_tree(&$gtree, $element, $moving, &$gpr, $switch, $switchedl
     $moveto = '';
     if ($moving) {
         $actions = ''; // no action icons when moving
-        $moveto = '<li><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='.$eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'.$strmovehere.'" title="'.$strmovehere.'" /></a></li>';
+        $moveto = '<li><a href="index.php?id='.$COURSE->id.'&amp;action=move&amp;eid='.$moving.'&amp;moveafter='
+                . $eid.'&amp;sesskey='.sesskey().'"><img class="movetarget" src="'.$CFG->wwwroot.'/pix/movehere.gif" alt="'
+                . $strmovehere.'" title="'.$strmovehere.'" /></a></li>';
     }
 
 /// print the list items now
