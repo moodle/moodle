@@ -83,7 +83,7 @@
             : "";
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname),
-                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$course->id",
+                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id",
                             'type' => 'activity');
         $navlinks[] = array('name' => format_string($module->name),
                             'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}",
