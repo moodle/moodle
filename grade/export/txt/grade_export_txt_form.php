@@ -16,7 +16,9 @@ class grade_export_txt_form extends moodleform {
                 $mform->addElement($element);
             }
         }
-
+        $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
+        $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
+        $mform->setType('previewrows', PARAM_INT);
         include_once($CFG->libdir.'/pear/HTML/QuickForm/radio.php');
         $radio = array();
         $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');

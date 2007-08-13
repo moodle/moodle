@@ -219,7 +219,7 @@ class grade_export {
      * Displays all the grades on screen as a feedback mechanism
      * TODO finish PHPdoc
      */
-    function display_grades($feedback=false) {
+    function display_grades($feedback=false, $rows=10) {
         echo '<table>';
         echo '<tr>';
         echo '<th>'.get_string("firstname")."</th>".
@@ -241,9 +241,13 @@ class grade_export {
         echo '</tr>';
         /// Print all the lines of data.
 
-
+        $i = 0;
         foreach ($this->grades as $studentid => $studentgrades) {
-
+            
+            // number of preview rows
+            if ($i++ == $rows) {
+                break; 
+            }
             echo '<tr>';
             $student = $this->students[$studentid];
             if (empty($this->totals[$student->id])) {

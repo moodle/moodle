@@ -51,8 +51,8 @@ class grade_export_xml extends grade_export {
         /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");
 
-        header("Content-type: text/xml; charset=UTF-8");
-        header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
+        //header("Content-type: text/xml; charset=UTF-8");
+        //header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
 
         /// time stamp to ensure uniqueness of batch export
         echo '<results batch="xml_export_'.time().'">';

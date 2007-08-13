@@ -59,7 +59,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     // print the grades on screen for feedbacks
 
     $export = new grade_export($id, $data->itemids, $data->export_letters);
-    $export->display_grades($feedback);
+    $export->display_grades($feedback, $data->previewrows);
 
     // this redirect should trigger a download prompt
     redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
