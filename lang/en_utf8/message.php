@@ -55,6 +55,7 @@ $string['searchforperson'] = 'Search for a person';
 $string['searchmessages'] = 'Search messages';
 $string['sendmessage'] = 'Send message';
 $string['sendmessageto'] = 'Send message to $a';
+$string['sendmessagetopopup'] = "Send message to \$a - new window";
 $string['settings'] = 'Settings';
 $string['settingssaved'] = 'Your settings have been saved';
 $string['showmessagewindow'] = 'Automatically show Message window when I get new messages (your browser needs to be set so that it doesn\'t block popups on this site)';
