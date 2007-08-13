@@ -161,7 +161,7 @@ class block_tag_youtube extends block_base {
             $text .= '<tr>';
             $text .= '<td>';
             $text .= '<a href="'. $video['url'] . '">';
-            $text .= '<img class="youtube-thumb" title="'.$video['title'].'" style="padding:3px;" src="' . $video['thumbnail_url'] . '"/>' ;
+            $text .= '<img alt="'.s($video['title']).'" class="youtube-thumb" title="'.$video['title'].'" style="padding:3px;" src="' . $video['thumbnail_url'] . '"/>' ;
             $text .= "</a>";
             $text .= "</td>";
             $text .= '<td>';
