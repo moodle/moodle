@@ -100,8 +100,8 @@ class block_tag_flickr extends block_base {
         //render the list of photos
         $text = '';
         foreach ($photos as $photo) {
-            $text .= "<a href='http://www.flickr.com/photos/" . $photo['owner'] . "/" . $photo['id'] . "/'>";
-            $text .= '<img title="'.$photo['title'].'" class="flickr-photos" src="' . $this->build_photo_url($photo, 'square') . '"/>' ;
+            $text .= '<a href="http://www.flickr.com/photos/' . $photo['owner'] . '/' . $photo['id'] . '/">';
+            $text .= '<img title="'.$photo['title'].'" alt="'.$photo['title'].'" class="flickr-photos" src="' . $this->build_photo_url($photo, 'square') . '" /></a>' ;
         }
 
 
@@ -142,29 +142,28 @@ class block_tag_flickr extends block_base {
         return $response;        
     }
         
-    function build_photo_url ($photo, $size = "Medium")
-    {
+    function build_photo_url ($photo, $size='medium') {
         //receives an array (can use the individual photo data returned
         //from an API call) and returns a URL (doesn't mean that the
         //file size exists)
         $sizes = array(
-            "square" => "_s",
-            "thumbnail" => "_t",
-            "small" => "_m",
-            "medium" => "",
-            "large" => "_b",
-            "original" => "_o"
+            'square' => '_s',
+            'thumbnail' => '_t',
+            'small' => '_m',
+            'medium' => '',
+            'large' => '_b',
+            'original' => '_o'
         );
         
         $size = strtolower($size);
         if (!array_key_exists($size, $sizes)) {
-            $size = "medium";
+            $size = 'medium';
         }
         
-        if ($size == "original") {
-            $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['originalsecret'] . "_o" . "." . $photo['originalformat'];
+        if ($size == 'original') {
+            $url = 'http://farm' . $photo['farm'] . '.static.flickr.com/' . $photo['server'] . '/' . $photo['id'] . '_' . $photo['originalsecret'] . '_o' . '.' . $photo['originalformat'];
         } else {
-            $url = "http://farm" . $photo['farm'] . ".static.flickr.com/" . $photo['server'] . "/" . $photo['id'] . "_" . $photo['secret'] . $sizes[$size] . ".jpg";
+            $url = 'http://farm' . $photo['farm'] . '.static.flickr.com/' . $photo['server'] . '/' . $photo['id'] . '_' . $photo['secret'] . $sizes[$size] . '.jpg';
         }
         return $url;
     }    
