@@ -38,7 +38,7 @@
         }
     }
 
-    require_login();
+    require_login($course->id);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     
     if (!has_capability('moodle/site:viewreports', $context)) {

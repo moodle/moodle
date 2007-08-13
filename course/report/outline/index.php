@@ -11,11 +11,11 @@
     $page    = optional_param('page', 0, PARAM_INT);
     $perpage = optional_param('perpage', 100, PARAM_INT);
 
-    require_login();
-
     if (! $course = get_record("course", "id", $id)) {
         error("Course id is incorrect.");
     }
+
+    require_login($course->id);
 
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 

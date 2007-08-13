@@ -9,7 +9,9 @@
         error("That's an invalid course id");
     }
 
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $id));
+    require_login($course->id);
+
+    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 
     $strreports = get_string('reports');
 
