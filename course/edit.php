@@ -10,23 +10,25 @@
     $id         = optional_param('id', 0, PARAM_INT);       // course id
     $categoryid = optional_param('category', 0, PARAM_INT); // course category - can be changed in edit form
 
-    require_login();
 
 /// basic access control checks
     if ($id) { // editing course
         if (!$course = get_record('course', 'id', $id)) {
             error('Course ID was incorrect');
         }
+        require_login($course->id);
         $category = get_record('course_categories', 'id', $course->category);
         require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
     } else if ($categoryid) { // creating new course in this category
         $course = null;
+        require_login();
         if (!$category = get_record('course_categories', 'id', $categoryid)) {
             error('Category ID was incorrect');
         }
         require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id));
     } else {
+        require_login();
         error('Either course id or category must be specified');
     }
 
