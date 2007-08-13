@@ -539,7 +539,7 @@
     //It's used intensivelly when restoring modules and saving them in db
     function backup_todb ($data) {
         // MDL-10770
-        if ($data === '_NULL_') {
+        if ($data === '$@NULL@$') {
             return null; 
         } else {
             return restore_decode_absolute_links(addslashes($data));

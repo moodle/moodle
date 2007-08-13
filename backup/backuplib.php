@@ -446,7 +446,7 @@
         //Here we encode absolute links
         // MDL-10770
         if (is_null($content)) {
-            $content = '_NULL_'; 
+            $content = '$@NULL@$'; 
         } else {
             $content = backup_encode_absolute_links($content);
         }
