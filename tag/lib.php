@@ -1217,7 +1217,7 @@ function print_user_list($userlist) {
  * @param $user user object (contains the following fields: id, firstname, lastname and picture)
  */
 function print_user_box($user) {
-    
+
     global $CFG;
 
     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
@@ -1227,27 +1227,30 @@ function print_user_box($user) {
         $profilelink = $CFG->wwwroot.'/user/view.php?id='.$user->id;
     }
 
-    print_box_start('user-box', $user->id);
+    print_box_start('user-box', 'user'.$user->id);
 
-        if (!empty($profilelink)) echo '<a href="'.$profilelink.'">';
-    
-        //print user image
-        if ($user->picture) {
-            echo '<img class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg"'.'/>';
-        }
-        else {
-            echo '<img class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png"'.'/>';           
-        }
-    
-        echo '<br/>';
-        
-        if (!empty($profilelink)) echo '</a>';
-    
-        $fullname = fullname($user);
-        //truncate name if it's too big
-        if (strlen($fullname) > 26) $fullname = substr($fullname,0,26) . '...';
-    
-        echo '<strong>' . $fullname . '</strong>';
+    if (!empty($profilelink)) {
+        echo '<a href="'.$profilelink.'">';
+    }
+
+    //print user image
+    if ($user->picture) {
+        echo '<img alt="" class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg"'.'/>';
+    } else {
+        echo '<img alt="" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png"'.'/>';           
+    }
+
+    echo '<br />';
+
+    if (!empty($profilelink)) {
+        echo '</a>';
+    }
+
+    $fullname = fullname($user);
+    //truncate name if it's too big
+    if (strlen($fullname) > 26) $fullname = substr($fullname,0,26) . '...';
+
+    echo '<strong>' . $fullname . '</strong>';
 
     print_box_end();
 
