@@ -2,6 +2,7 @@
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/magpie/rss_cache.inc');
+require_once($CFG->libdir . '/phpxml/xml.php');
 
 define('YOUTUBE_DEV_KEY', 'PGm8FdJXS8Q');
 define('DEFAULT_NUMBER_OF_VIDEOS', 5);
@@ -115,21 +116,22 @@ class block_tag_youtube extends block_base {
         $request .= "&page=1";
         $request .= "&per_page={$numberofvideos}";
 
-        return $this->fetch_request($request); 
+        return $this->fetch_request($request);
     }
 
-   function fetch_request($request){
-        
+    function fetch_request($request){
+
         global $CFG;
-        
+
         $cache = new RSSCache($CFG->dataroot . '/cache',YOUTUBE_CACHE_EXPIRATION);
         $cache_status = $cache->check_cache( $request);
 
         if ( $cache_status == 'HIT' ) {
             $cached_response = $cache->get( $request );
 
-            $simplexmlobj = new SimpleXMLElement($cached_response);
-            return $this->render_video_list($simplexmlobj);
+            $xmlobj = XML_unserialize($cached_response);
+            return $this->render_video_list($xmlobj);
+
         }
 
         if ( $cache_status == 'STALE' ) {
@@ -142,30 +144,32 @@ class block_tag_youtube extends block_base {
             $response = $cached_response;
         }
         else{
-            $cache->set($request, $response);    
+            $cache->set($request, $response);
         }
 
-        $simplexmlobj = new SimpleXMLElement($response);
-        return $this->render_video_list($simplexmlobj);        
+        $xmlobj = XML_unserialize($response);
+        return $this->render_video_list($xmlobj);
     }
-        
-    function render_video_list($simplexmlobj){
+
+    function render_video_list($xmlobj){
 
         $text = '';
         $text .= '<table class="yt-video-entry">';
-        foreach($simplexmlobj->video_list->video as $video){
+        $videos = $xmlobj['ut_response']['video_list']['video'];
+
+        foreach($videos as $video){
             $text .= '<tr>';
             $text .= '<td>';
-            $text .= '<a href="'. $video->url . '">';
-            $text .= '<img class="youtube-thumb" title="'.$video->title.'" style="padding:3px;" src="' . $video->thumbnail_url . '"/>' ;
+            $text .= '<a href="'. $video['url'] . '">';
+            $text .= '<img class="youtube-thumb" title="'.$video['title'].'" style="padding:3px;" src="' . $video['thumbnail_url'] . '"/>' ;
             $text .= "</a>";
             $text .= "</td>";
             $text .= '<td>';
-            $text .= '<a href="'. $video->url . '">'.$video->title. '</a>';
+            $text .= '<a href="'. $video['url'] . '">'.$video['title']. '</a>';
             $text .= '<br/>';
-            $text .= format_time($video->length_seconds);
+            $text .= format_time($video['length_seconds']);
             $text .= '<br/>';
-            $text .= 'views: ' . $video->view_count ;
+            $text .= 'views: ' . $video['view_count'] ;
             $text .= '</td>';
             $text .= '</tr>';
         }
