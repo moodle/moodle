@@ -570,8 +570,10 @@ function quiz_process_options(&$quiz) {
         $quiz->preventlate = 0;
     }
 
-    // Quiz name (now a required field).
-    $quiz->name = trim($quiz->name);
+    // Quiz name.
+    if (!empty($quiz->name)) {
+        $quiz->name = trim($quiz->name);
+    }
 
     // Time limit. (Get rid of it if the checkbox was not ticked.)
     if (empty($quiz->timelimitenable)) {
