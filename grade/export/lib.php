@@ -69,10 +69,11 @@ class grade_export {
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
     function grade_export($id, $itemids = '', $export_letters=false) {
+        global $CFG, $COURSE;
 
         if ($export_letters) {
             require_once($CFG->dirroot . '/grade/report/lib.php');
-            $report = new grade_report();
+            $report = new grade_report($COURSE->id, null, null);
             $letters = $report->get_grade_letters();
         }
 
@@ -141,7 +142,6 @@ class grade_export {
 
         if ($gradeitems) {
             foreach ($gradeitems as $gradeitem) {
-                $grade_item_displaytype = $report->get_pref('gradedisplaytype', $gradeitem->id);
 
                 // load as an array of grade_final objects
                 if ($itemgrades = $gradeitem->get_final()) {
@@ -165,9 +165,13 @@ class grade_export {
                                 $studentgrade = $itemgrades[$student->id];
                             }
 
-                            // TODO Convert final grade to letter if export option is on, and grade_item is set to letter type MDL-10490
-                            if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER && $export_letters) {
-                                $studentgrade->finalgrade = $studentgrade->get_letter($letters);
+                            if ($export_letters) {
+                                $grade_item_displaytype = $report->get_pref('gradedisplaytype', $gradeitem->id);
+                                // TODO Convert final grade to letter if export option is on, and grade_item is set to letter type MDL-10490
+                                if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER && !empty($studentgrade)) {
+                                    $studentgrade->finalgrade = grade_grade::get_letter($letters, $studentgrade->finalgrade,
+                                                $gradeitem->grademin, $gradeitem->grademax);
+                                }
                             }
 
                             if (!empty($studentgrade->finalgrade)) {

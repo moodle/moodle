@@ -29,6 +29,7 @@ require_once 'grade_export_ods.php';
 
 $id       = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
+$export_letters = optional_param('export_letters', '', PARAM_INT);
 $itemids  = explode(",", required_param('itemids', PARAM_RAW));
 
 if (!$course = get_record('course', 'id', $id)) {
@@ -43,7 +44,7 @@ require_capability('gradeexport/ods:view', $context);
 
 
 // print all the exported data here
-$export = new grade_export_ods($id, $itemids);
+$export = new grade_export_ods($id, $itemids, $export_letters);
 $export->print_grades($feedback);
 
 ?>

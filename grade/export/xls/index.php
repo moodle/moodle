@@ -62,7 +62,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     $export->display_grades($feedback);
 
     // this redirect should trigger a download prompt
-    redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl);
+    redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
     exit;
 }
 
