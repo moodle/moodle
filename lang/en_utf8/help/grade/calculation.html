@@ -1,0 +1,56 @@
+<h1>Calculations</h1>
+<!-- TRANSLATORS BEWARE!! The comma (,) sign used in the calculations may be a semi-colon (;)
+in your language. Please use whichever is used in your spreadsheet application. -->
+
+<p>Calculations for the gradebook follow the pattern of formulas/functions in popular
+spreadsheet programs. They start with an equal (=) sign, and use common mathematical
+operators and functions to produce a single numerical output. This output is then
+used as the computed value for the grade item you are editing.</p>
+
+<p>Following is a list of the functions supported by the calculation. The comma (,)
+character is used to separate arguments within function brackets.</p>
+
+<ul>
+    <li><strong>average</strong>([[item1]], [[item2]]...): Returns the average of a sample</li>
+    <li><strong>max</strong>([[item1]], [[item2]]...): Returns the maximum value in a list of arguments</li>
+    <li><strong>min</strong>([[item1]], [[item2]]...): Returns the minimum value in a list of arguments</li>
+    <li><strong>mod</strong>(dividend, divisor): Calculates the remainder of a division</li>
+    <li><strong>pi</strong>(): Returns the value of the number Pi</li>
+    <li><strong>power</strong>(base, power): Raises a number to the power of another</li>
+    <li><strong>round</strong>(number, count): Rounds a number to a predefined accuracy</li>
+    <li><strong>sum</strong>([[item1]], [[item2]]...): Returns the sum of all arguments</li>
+</ul>
+
+<p>A number of mathematical functions is also supported:</p>
+<ul>
+    <li>sin</li><li>sinh</li><li>arcsin</li><li>asin</li><li>arcsinh</li><li>asinh</li>
+    <li>cos</li><li>cosh</li><li>arccos</li><li>acos</li><li>arccosh</li><li>acosh</li>
+    <li>tan</li><li>tanh</li><li>arctan</li><li>atan</li><li>arctanh</li><li>atanh</li>
+    <li>sqrt</li><li>abs</li><li>ln</li><li>log</li><li>exp</li>
+</ul>
+
+<p>You can include the values of other grade items by using their idnumber as references
+in your formulas. The idnumber is surrounded by two matching pairs of angle brackets,
+to avoid confusing the calculation parser when the idnumber contains uncommon characters.
+For example, if you have a grade item with Quiz.3 as idnumber, you will refer to this
+item as [[Quiz.3]] in your calculation. </p>
+
+<p>Below the calculation field is an arborescence of your course with its grade categories
+and grade items. Next to each item or category's total is displayed the idnumber you can
+use in your calculation (already surrounded with angle brackets). However, since the
+idnumber is optional, some items may not yet have one. These items without an idnumber
+have instead a form field which lets you enter the idnumber directly, so that you can use
+it in your calculation without having to leave the page. This form doesn't let you edit
+existing idnumbers though, you will have to go and edit the grade item directly if you
+want to do that.</p>
+
+<p>As soon as you have assigned the idnumbers you need, you can press "add idnumbers", and
+the page will reload and show you the same arborescence with the idnumbers you have just
+assigned. You are then free to use these references in your calculation.</p>
+
+<p>Here is a list of practical examples of calculations you may use in your gradebook:</p>
+
+<ul>
+    <li>=average([[Quiz.1]], [[Quiz.4]], [[Assignment.1]])</li>
+    <li>=average(max([[Quiz.1]], [[Quiz.4]], [[Assignment.1]]), min([[Quiz.1]], [[Quiz.4]], [[Assignment.1]]))</li>
+</ul>
