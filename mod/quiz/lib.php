@@ -336,12 +336,14 @@ function quiz_refresh_events($courseid = 0) {
                 $event2->id = $event2old->id;
                 update_event($event2);
             }
-        } else if (!empty($event2->id)) {
-            delete_event($event2->id);
+        } else if (!empty($event2old->id)) {
+            delete_event($event2old->id);
         }
 
         if (empty($event->id)) {
-            add_event($event);
+            if (!empty($event->timestart)) {
+                add_event($event);
+            }
         } else {
             update_event($event);
         }
