@@ -62,7 +62,7 @@
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?quizid=' . $quiz->id);
+        redirect('edit.php?cmid='.$cm->id);
     }
 
     // Get number for the next or unfinished attempt
@@ -412,9 +412,9 @@
         $navlinks[] = array('name' => $strquizzes, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($quiz->name), 'link' => "view.php?id=$cm->id", 'type' => 'activityinstance');
         $navlinks[] = array('name' => $strattemptnum, 'link' => '', 'type' => 'title');
-        
+
         $navigation = build_navigation($navlinks);
-        
+
         print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
     }
 

@@ -41,10 +41,10 @@
 
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and has_capability('mod/quiz:manage', $context)) {
-        redirect('edit.php?quizid='.$quiz->id);
+        redirect('edit.php?cmid='.$cm->id);
     }
 
-    // Upgrade any attempts that have not yet been upgraded to the 
+    // Upgrade any attempts that have not yet been upgraded to the
     // Moodle 1.5 model (they will not yet have the timestamp set)
     if ($attempts = get_records_sql("SELECT a.*".
            "  FROM {$CFG->prefix}quiz_attempts a, {$CFG->prefix}question_states s".
