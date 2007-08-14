@@ -1028,6 +1028,15 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Returns this grade_item. This method is also available in
+     * grade_category, for cases where the object type is not know.
+     * @return string idnumber
+     */
+    function get_grade_item() {
+        return $this;
+    }
+
+    /**
      * Sets the sortorder of this grade_item. This method is also available in
      * grade_category, for cases where the object type is not know.
      * @param int $sortorder

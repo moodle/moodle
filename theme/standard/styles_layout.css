@@ -2207,6 +2207,10 @@ body#doc-contents ul {
   text-align:center;
 }
 
+.grade-edit-tree .idnumber {
+    margin-left: 15px;
+}
+
 .grade-edit-tree .buttons .singlebutton {
   display: inline;
   padding: 5px;
@@ -2775,10 +2779,10 @@ h2.tag-heading {
  text-align:center;
  margin-left:auto;
  margin-right:auto;
- display:block; 
+ display:block;
  width:95%;
  padding: 5px 5px 5px 5px;
- 
+
 }
 
 div#tag-description {
@@ -2796,13 +2800,13 @@ div#tag-management-box {
  display:block;
  font-size:12px;
 }
- 
+
 div#tag-user-table {
  padding:3px;
  width:95%;
  clear: both;
  margin-left:auto;
- margin-right:auto; 
+ margin-right:auto;
  display:block;
 }
 
@@ -2821,9 +2825,9 @@ div.user-box {
  margin-left:8px;
  margin-right:8px;
  margin-top:8px;
- margin-bottom:8px;   
+ margin-bottom:8px;
  width:115px;
- height:160px; 
+ height:160px;
  text-align:center;
  display:block;
  float:left;
@@ -2864,14 +2868,14 @@ ul#tag-cloud-list li {
  display:inline;
 }
 
-/* search start*/  
+/* search start*/
 
 div#tag-search-box {
  text-align:center;
  margin-left:auto;
  margin-right:auto;
  margin-top:10px;
- margin-bottom:10px; 
+ margin-bottom:10px;
 }
 
 div#tag-search-results-container {
@@ -2884,7 +2888,7 @@ ul#tag-search-results {
  margin-left:20%;
  margin-right:20%;
  margin-top:15px;
- margin-bottom:0px; 
+ margin-bottom:0px;
  float:left;
  width:60%;
  display:block;
@@ -2906,11 +2910,11 @@ div#tags-management-links {
  text-align:right;
  display:block;
  font-size:12px;
- 
-}
-/* search end*/  
 
-/* tag management start*/ 
+}
+/* search end*/
+
+/* tag management start*/
 span.flagged-tag {
  color:#FF0000;
 }
@@ -2926,15 +2930,15 @@ table#tag-management-list {
 
 table#tag-management-list tr td{
  padding-left:4px;
- padding-right :4px; 
+ padding-right :4px;
 }
 
 form#tag-management-form {
  text-align:center;
 }
-/* tag management end*/ 
+/* tag management end*/
 
-/* autocomplete start*/  
+/* autocomplete start*/
 #relatedtags-autocomplete-container
 {
  margin-left::auto;
@@ -2948,11 +2952,11 @@ form#tag-management-form {
  display:block;
  width:60%;
  margin-left::auto;
- margin-right:auto; 
+ margin-right:auto;
 }
 #relatedtags-autocomplete .yui-ac-content
 {
- position:absolute; 
+ position:absolute;
  width:420px;
  left:53%;
  border:1px solid #404040;
