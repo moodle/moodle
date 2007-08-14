@@ -213,7 +213,7 @@ if ($mform->is_cancelled()){
         $navlinks = array();
         $navlinks[] = array('name' => get_string('editquestions', "quiz"), 'link' => $returnurl, 'type' => 'title');
         $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
-        $strediting = '<a href="edit.php?courseid='.$category->course.'">'.
+        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.
                 get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
         $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation);
