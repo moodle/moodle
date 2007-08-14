@@ -83,8 +83,8 @@ class grader_report_preferences_form extends moodleform {
 
 
         for ($i = 1; $i <= 10; $i++) {
-            $preferences['prefletters']['gradeboundary' . $i] = $percentages;
             $preferences['prefletters']['gradeletter' . $i] = 'text';
+            $preferences['prefletters']['gradeboundary' . $i] = $percentages;
         }
 
         foreach ($preferences as $group => $prefs) {
