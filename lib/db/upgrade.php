@@ -853,15 +853,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
-    if ($result && $oldversion < 2007051101) {
-        if (empty($CFG->enablegroupings) and !empty($CFG->group_version)) {
-            // delete all groupings - they do not work yet :-(
-            // while keeping all existing groups
-            require_once("$CFG->dirroot/group/db/upgrade.php");
-            undo_groupings();
-        }
-    }
-
     if (!empty($CFG->rolesactive) && $result && $oldversion < 2007051801) {
         // Get the role id of the "Auth. User" role and check if the default role id is different
         // note: use of assign_capability() is discouraged in upgrade script!
@@ -1702,6 +1693,63 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007081000) {
+        require_once($CFG->dirroot . '/question/upgrade.php');
+        $result = $result && question_upgrade_context_etc();
+    }
+
+    if ($result && $oldversion < 2007081302) {
+        require_once($CFG->libdir.'/db/upgradelib.php');
+
+        if (table_exists(new XMLDBTable('groups_groupings'))) {
+    /// IF 'groups_groupings' table exists, this is for 1.8.* only.
+            $result = $result && upgrade_18_groups();
+
+        } else {
+    /// ELSE, 1.7.*/1.6.*/1.5.* - create 'groupings' and 'groupings_groups' + rename password to enrolmentkey
+            $result = $result && upgrade_17_groups();
+        }
+
+    /// For both 1.8.* and 1.7.*/1.6.*..
+
+        // delete not used fields
+        $table = new XMLDBTable('groups');
+        $field = new XMLDBField('theme');
+        if (field_exists($table, $field)) {
+            drop_field($table, $field);
+        }
+        $table = new XMLDBTable('groups');
+        $field = new XMLDBField('lang');
+        if (field_exists($table, $field)) {
+            drop_field($table, $field);
+        }
+
+    /// Add groupingid field/f.key to 'course' table.
+        $table = new XMLDBTable('course');
+        $field = new XMLDBField('defaultgroupingid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', $prev='groupmodeforce');
+        $result = $result && add_field($table, $field);
+
+
+    /// Add grouping ID, grouponly field/f.key to 'course_modules' table.
+        $table = new XMLDBTable('course_modules');
+        $field = new XMLDBField('groupingid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', $prev='groupmode');
+        $result = $result && add_field($table, $field);
+
+        $table = new XMLDBTable('course_modules');
+        $field = new XMLDBField('groupmembersonly');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', $prev='groupingid');
+        $result = $result && add_field($table, $field);
+
+        $table = new XMLDBTable('course_modules');
+        $key = new XMLDBKey('groupingid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
+        $result = $result && add_key($table, $key);
+
+    }
+
+
 /*
     /// drop old gradebook tables
     if ($result && $oldversion < 2007072209) {
@@ -1719,10 +1767,6 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 */
-    if ($result && $oldversion < 2007081000) {
-        require_once($CFG->dirroot . '/question/upgrade.php');
-        $result = $result && question_upgrade_context_etc();
-    }
 
     return $result;
 }

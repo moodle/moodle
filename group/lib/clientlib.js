@@ -66,51 +66,6 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
     YAHOO.util.Dom.setStyle("updategroups", "display", "none");
 }
 
-/**
- * When a grouping is selected, we need to update the groups.
- */
-UpdatableGroupsCombo.prototype.refreshGroups = function (groupingId) {
-    // Add the loader gif image.
-    createLoaderImg("groupsloader", "groupslabel", this.wwwRoot);
- 
-    // Update the label.
-    var selectEl = document.getElementById("groupings");
-    var spanEl = document.getElementById("thegrouping");
-    if (selectEl && selectEl.selectedIndex >= 0) {
-        spanEl.innerHTML = selectEl.options[selectEl.selectedIndex].title;
-    }
-
-    // Clear the groups combo box.
-    selectEl = document.getElementById("groups");
-    if (selectEl) {
-        while (selectEl.firstChild) {
-            selectEl.removeChild(selectEl.firstChild);
-        }
-    }
-    
-    if (groupingId > -1) {
-        document.getElementById("showaddmembersform").disabled = true;
-        document.getElementById("showeditgroupingsettingsform").disabled = false;
-        document.getElementById("deletegrouping").disabled = false;
-        document.getElementById("printerfriendly").disabled = false;
-        document.getElementById("showeditgroupsettingsform").disabled = true;
-        document.getElementById("deletegroup").disabled = true;
-        document.getElementById("showcreategroupform").disabled = false;
-    } else {
-        document.getElementById("showeditgroupingsettingsform").disabled = true;
-        document.getElementById("deletegrouping").disabled = true;
-        document.getElementById("showcreategroupform").disabled = true;
-        document.getElementById("showeditgroupsettingsform").disabled = true;
-        document.getElementById("deletegroup").disabled = true;
-        document.getElementById("showaddmembersform").disabled = true;
-
-    }
-
-    var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&grouping="+groupingId+"&act_ajax_getgroupsingrouping";
-    YAHOO.util.Connect.asyncRequest('GET', sUrl, this.connectCallback, null);
-};
-
-
 
 /**
  * Class UpdatableMembersCombo

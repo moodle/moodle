@@ -2,7 +2,7 @@
 /**
  * Functions to make changes to groups in the database i.e. functions that 
  * access tables:
- *     groups_courses_groups, groups and groups_members.
+ *     groups and groups_members.
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
@@ -46,15 +46,15 @@ function groups_db_get_user($userid) {
     if (! $courseid) {
         return false;
     }
-    $records = get_records('groups_courses_groups', 'courseid', $courseid, 
-                           '', $fields='id, groupid');
+    $records = get_records('groups', 'courseid', $courseid, 
+                           '', $fields='id');
     if (! $records) {
         return false;
     }
     // Put the results into an array, note these are NOT 'group' objects.
     $groupids = array();
     foreach ($records as $record) {
-        array_push($groupids, $record->groupid);
+        array_push($groupids, $record->id);
     }
 
     return $groupids;
@@ -103,9 +103,7 @@ function groups_db_get_groups_for_user($userid, $courseid) {
                 FROM {$CFG->prefix}groups_members gm 
                 INNER JOIN {$CFG->prefix}groups g
                 ON gm.groupid = g.id
-                INNER JOIN {$CFG->prefix}groups_courses_groups cg
-                ON g.id = cg.groupid
-                WHERE cg.courseid  = '$courseid' AND gm.userid = '$userid'";
+                WHERE g.courseid  = '$courseid' AND gm.userid = '$userid'";
                 
         $groups = get_records_sql($sql);
         $groupids = groups_groups_to_groupids($groups);
@@ -118,7 +116,7 @@ function groups_db_get_groups_for_user($userid, $courseid) {
 /**
  * Get the group settings object for a group - this contains the following 
  * properties:
- * name, description, lang, theme, picture, hidepicture
+ * name, description, picture, hidepicture
  * @param int $groupid The id of the group
  * @param $courseid Optionally add the course ID, for backwards compatibility.
  * @return object The group settings object 
@@ -128,7 +126,7 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
         $groupsettings = false;
     } else {
         global $CFG;
-        $select = ($alldata) ? '*' : 'id, name, description, lang, theme, picture, hidepicture';
+        $select = ($alldata) ? '*' : 'id, name, description, picture, hidepicture';
         $sql = "SELECT $select
                 FROM {$CFG->prefix}groups
                 WHERE id = $groupid";
@@ -198,10 +196,9 @@ function groups_db_group_matches($courseid, $grp_name, $grp_description) {
     global $CFG;
     $sql = "SELECT g.id, g.name, g.description
         FROM {$CFG->prefix}groups g
-        INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid
         WHERE g.name = '$grp_name'
         AND g.description = '$grp_description'
-        AND cg.courseid = '$courseid'";
+        AND g.courseid = '$courseid'";
     $records = get_records_sql($sql);
     $group = false;
     if ($records) {
@@ -218,9 +215,8 @@ function groups_db_group_name_exists($courseid, $grp_name) {
     global $CFG;
     $sql = "SELECT g.id, g.name
         FROM {$CFG->prefix}groups g
-        INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid
         WHERE g.name = '$grp_name'
-        AND cg.courseid = '$courseid'";
+        AND g.courseid = '$courseid'";
     $records = get_records_sql($sql);
     $group = false;
     if ($records) {
@@ -257,8 +253,8 @@ function groups_db_group_belongs_to_course($groupid, $courseid) {
     if (!$groupid or !$courseid) {
         $ismember = false;
     } else {
-        $ismember = record_exists($table = 'groups_courses_groups', 
-                                  'groupid', $groupid, 
+        $ismember = record_exists($table = 'groups', 
+                                  'id', $groupid, 
                                   'courseid', $courseid);
     }
 
@@ -291,21 +287,7 @@ function groups_db_create_group($courseid, $groupsettings=false, $copytime=false
         }
         //print_r($record);
         $groupid = insert_record('groups', $record);
-
-        if ($groupid != false) {
-            $record2 = new Object();
-            $record2->courseid = $courseid;
-            $record2->groupid = $groupid;
-            if ($copytime) {
-                $record2->timeadded = $record->timemodified;
-            } else {
-                $record2->timeadded = $now;
-            }
-            $groupadded = insert_record('groups_courses_groups', $record2);
-            if (!$groupadded) {
-                $groupid = false;
-            }
-        }
+        
     }
     return $groupid;
 }
@@ -324,21 +306,11 @@ function groups_db_upgrade_group($courseid, $group) {
 
     $r = addslashes_object($group);
     $sql = "INSERT INTO {$CFG->prefix}groups
-        (id,name,description, enrolmentkey,lang,theme,picture,hidepicture, timecreated,timemodified)
-        VALUES ('$r->id','$r->name','$r->description', '$r->enrolmentkey','$r->lang',
-        '$r->theme','$r->picture','$r->hidepicture', '$r->timecreated','$r->timemodified')";
+        (id,courseid,name,description, enrolmentkey,picture,hidepicture, timecreated,timemodified)
+        VALUES ('$r->id','$r->courseid','$r->name','$r->description', '$r->enrolmentkey','$r->picture',
+                '$r->hidepicture', '$r->timecreated','$r->timemodified')";
 
-    if ($result = execute_sql($sql)) {
-        $record2 = new Object();
-        $record2->courseid = $courseid;
-        $record2->groupid = $group->id;
-        $record2->timeadded = $group->timemodified;
-
-        $groupadded = insert_record('groups_courses_groups', $record2);
-        if (! $groupadded) {
-            $groupid = false;
-        }
-    }
+    $result = execute_sql($sql);
     return $group->id;
 }
 
@@ -377,7 +349,7 @@ function groups_db_add_member($groupid, $userid, $copytime=false) {
  * Sets the information about a group
  * @param object $groupsettings An object containing some or all of the 
  * following properties:
- * name, description, lang, theme, picture, hidepicture
+ * name, description, picture, hidepicture
  * @return boolean True if info was added successfully, false otherwise. 
  */
 function groups_db_set_group_settings($groupid, $groupsettings) {
@@ -461,13 +433,7 @@ function groups_db_delete_group($groupid) {
                 }
             }
         }
-
-        // Remove links with courses.
-        $results = delete_records('groups_courses_groups', 'groupid', $groupid);
-        if ($results == false) {
-            $success = false;
-        }
-
+        
         // Delete the group itself
         $results = delete_records($table = 'groups', $field1 = 'id', 
             $value1 = $groupid);

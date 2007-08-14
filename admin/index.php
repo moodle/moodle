@@ -189,9 +189,8 @@
     /// Continue with the instalation
         $db->debug = false;
         if ($status) {
-            //ugly hack - install new groups: MDL-9217
-            require_once("$CFG->dirroot/group/db/upgrade.php");
-            install_group_db();
+
+            /// Groups install is now in core above.
 
             // Install the roles system.
             moodle_install_roles();
@@ -327,9 +326,9 @@
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
                     if (empty($CFG->rolesactive)) {
-                        //ugly hack - upgrade to new groups (from 1.6) : MDL-9217
-                        require_once("$CFG->dirroot/group/db/upgrade.php");
-                        install_group_db();
+
+                        /// Groups upgrade is now in core above.
+
                         // Upgrade to the roles system.
                         moodle_install_roles();
                         set_config('rolesactive', 1);
@@ -380,9 +379,7 @@
         }
     }
 
-/// ugly hack - convert to new groups if upgrading from 1.7; must be reworked
-    require_once("$CFG->dirroot/group/db/upgrade.php");
-    upgrade_group_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+/// Groups install/upgrade is now in core above.
 
 
 /// Find and check all main modules and load them up or upgrade them if necessary

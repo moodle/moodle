@@ -692,6 +692,7 @@
             fwrite ($bf,full_tag("SHOWREPORTS",3,false,$course->showreports));
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
             fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
+            fwrite ($bf,full_tag("DEFAULTGROUPINGID",3,false,$course->defaultgroupingid));
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
             fwrite ($bf,full_tag("THEME",3,false,$course->theme));
             fwrite ($bf,full_tag("COST",3,false,$course->cost));
@@ -1103,6 +1104,8 @@
                fwrite ($bf,full_tag("INDENT",6,false,$course_module[$tok]->indent));
                fwrite ($bf,full_tag("VISIBLE",6,false,$course_module[$tok]->visible));
                fwrite ($bf,full_tag("GROUPMODE",6,false,$course_module[$tok]->groupmode));
+               fwrite ($bf,full_tag("GROUPINGID",6,false,$course_module[$tok]->groupingid));
+               fwrite ($bf,full_tag("GROUPMEMBERSONLY",6,false,$course_module[$tok]->groupmembersonly));
                // get all the role_capabilities overrides in this mod
                write_role_overrides_xml($bf, $context, 6);
                 /// write role_assign code here
@@ -1932,7 +1935,7 @@
         $status2 = true;
 
         //Get groups
-        $groups = get_groups($preferences->backup_course); //TODO:check.
+        $groups = get_records("groups","courseid",$preferences->backup_course);
 
         //Pring groups header
         if ($groups) {
@@ -1944,12 +1947,10 @@
                 fwrite ($bf,start_tag("GROUP",3,true));
                 //Output group contents
                 fwrite ($bf,full_tag("ID",4,false,$group->id));
-                ///fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
+                //fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
                 fwrite ($bf,full_tag("NAME",4,false,$group->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
-                fwrite ($bf,full_tag("ENROLMENTKEY",4,false,$group->enrolmentkey)); //TODO:
-                fwrite ($bf,full_tag("LANG",4,false,$group->lang));
-                fwrite ($bf,full_tag("THEME",4,false,$group->theme));
+                fwrite ($bf,full_tag("ENROLMENTKEY",4,false,$group->enrolmentkey));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
                 fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
@@ -1982,7 +1983,7 @@
         $status = true;
 
         //Get groups_members
-        $groups_members = groups_get_member_records($groupid);
+        $groups_members = get_records("groups_members","groupid",$groupid);
 
         //Pring groups_members header
         if ($groups_members) {
@@ -1993,6 +1994,7 @@
                 //Begin group_member tag
                 fwrite ($bf,start_tag("MEMBER",5,true));
                 //Output group_member contents
+                fwrite ($bf,full_tag("GROUPID",6,false,$group_member->groupid));
                 fwrite ($bf,full_tag("USERID",6,false,$group_member->userid));
                 fwrite ($bf,full_tag("TIMEADDED",6,false,$group_member->timeadded));
                 //End group_member tag
@@ -2010,10 +2012,9 @@
         global $CFG;
 
         $status = true;
-        $status2 = true;
 
         //Get groups
-        $groupings = groups_get_grouping_records($preferences->backup_course);
+        $groupings = get_records("groupings","courseid",$preferences->backup_course);
 
         //Pring groups header
         if ($groupings) {
@@ -2025,11 +2026,12 @@
                 fwrite ($bf,start_tag("GROUPING",3,true));
                 //Output group contents
                 fwrite ($bf,full_tag("ID",4,false,$grouping->id));
+                //fwrite ($bf,full_tag("COURSEID",4,false,$grouping->courseid));
                 fwrite ($bf,full_tag("NAME",4,false,$grouping->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$grouping->description));
+                fwrite ($bf,full_tag("CONFIGDATA",4,false,$grouping->configdata));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$grouping->timecreated));
-
-                $status2 = backup_groupids_info($bf,$preferences,$grouping->id);
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$grouping->timemodified));
 
                 //End group tag
                 fwrite ($bf,end_tag("GROUPING",3,true));
@@ -2039,35 +2041,39 @@
 
             //(Now save grouping_files)
         }
-        return ($status && $status2);
+        return $status;
     }
 
     //Backup groupings-groups info
-    function backup_groupids_info($bf,$preferences,$groupingid) {
+    function backup_groupings_groups_info($bf,$preferences) {
 
         global $CFG;
 
         $status = true;
 
-        //Get groups_members
-        $grouping_groups = groups_get_groups_in_grouping_records($groupingid) ;
+        //Get grouping_groups
+        $courseid = $preferences->backup_course;
+        $sql = "SELECT gg.* FROM {$CFG->prefix}groupings g, {$CFG->prefix}groupings_groups g
+                 WHERE g.courseid=$courseid AND g.id=gg.groupingid";
+        $grouping_groups = get_records_sql($sql);
 
-        //Pring groups_members header
+        //Pring grouping_groups header
         if ($grouping_groups) {
-            //Pring groups_members header
-            fwrite ($bf,start_tag("GROUPS",4,true));
+            //Pring grouping_groups header
+            fwrite ($bf,start_tag("GROUPINGSGROUPS",4,true));
             //Iterate
             foreach ($grouping_groups as $group2) {
-                //Begin group tag
-                fwrite ($bf,start_tag("GROUP",5,true));
+                //Begin grouping_group tag
+                fwrite ($bf,start_tag("GROUPINGSGROUP",5,true));
                 //Output group_member contents
+                fwrite ($bf,full_tag("GROUPINGID",6,false,$group2->groupingid));
                 fwrite ($bf,full_tag("GROUPID",6,false,$group2->groupid));
-                fwrite ($bf,full_tag("TIMEADDED",6,false,$group2->timeadded)); //TODO:
-                //End group tag
-                fwrite ($bf,end_tag("GROUP",5,true));
+                fwrite ($bf,full_tag("TIMEADDED",6,false,$group2->timeadded));
+                //End grouping_group tag
+                fwrite ($bf,end_tag("GROUPINGSGROUP",5,true));
             }
-            //End groups_members tag
-            $status = fwrite ($bf,end_tag("GROUPS",4,true));
+            //End grouping_groups tag
+            $status = fwrite ($bf,end_tag("GROUPINGSGROUPS",4,true));
         }
         return $status;
     }
@@ -2243,8 +2249,8 @@
                 //Iterate
                 foreach ($list as $dir) {
                     //Look for dir like group in groups table
-                    $data = groups_group_belongs_to_course($dir, $preferences->backup_course);
-                    //TODO:check. get_record ('groups', 'courseid', $preferences->backup_course,'id',$dir);
+                    $data = get_record ('groups', 'courseid', $preferences->backup_course,
+                                                  'id',$dir);
                     //If exists, copy it
                     if ($data) {
                         $status = backup_copy_file($rootdir."/".$dir,
@@ -2868,6 +2874,22 @@
                 }
             }
 
+            //Print groups info
+            if ($status) {
+                if (!defined('BACKUP_SILENTLY')) {
+                    echo "<li>".get_string("writinggroupsinfo").'</li>';
+                }
+                if (!$status = backup_groups_info($backup_file,$preferences)) {
+                    if (!defined('BACKUP_SILENTLY')) {
+                        notify("An error occurred while backing up groups");
+                    }
+                    else {
+                        $errostr = "An error occurred while backing up groups";
+                        return false;
+                    }
+                }
+            }
+
             //Print groupings info
             if ($status) {
                 if (!defined('BACKUP_SILENTLY')) {
@@ -2884,17 +2906,17 @@
                 }
             }
 
-            //Print groups info
+            //Print groupings_groups info
             if ($status) {
                 if (!defined('BACKUP_SILENTLY')) {
-                    echo "<li>".get_string("writinggroupsinfo").'</li>';
+                    echo "<li>".get_string("writinggroupingsgroupsinfo").'</li>';
                 }
-                if (!$status = backup_groups_info($backup_file,$preferences)) {
+                if (!$status = backup_groupings_groups_info($backup_file,$preferences)) {
                     if (!defined('BACKUP_SILENTLY')) {
-                        notify("An error occurred while backing up groups");
+                        notify("An error occurred while backing up groupings groups");
                     }
                     else {
-                        $errostr = "An error occurred while backing up groups";
+                        $errorstr = "An error occurred while backing up groupings groups";
                         return false;
                     }
                 }

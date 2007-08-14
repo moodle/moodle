@@ -4,79 +4,67 @@
  *
  * @copyright &copy; 2006 The Open University
  * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk 
+ * @author J.White AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
 require_once('../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/moodlelib.php');
 
-$success = true;
+$groupid = required_param('group', PARAM_INT);
 
-$courseid   = required_param('courseid', PARAM_INT);         
-$groupingid = required_param('grouping', PARAM_INT);
-$groupid    = required_param('group', PARAM_INT);
+require_login();
+if (!$group = get_record('groups', 'id', $groupid)) {
+    error('Incorrect group id');
+}
 
-// Get the course information so we can print the header and
-// check the course id is valid
-$course = groups_get_course_info($courseid);
-if (! $course) {
-    $success = false;
+if (! $course = get_record('course', 'id', $group->courseid)) {
     print_error('invalidcourse');
 }
-if (empty($groupid)) {
-    $success = false;
-    print_error('errorinvalidgroup', 'group', groups_home_url($courseid));
-}
 
-if ($success) {
-    // Make sure that the user has permissions to manage groups.
-    require_login($courseid);
+require_login($course);
+$courseid = $course->id;
 
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    if (! has_capability('moodle/course:managegroups', $context)) {
-        redirect();
-    }
-    
-    if ($frm = data_submitted() and confirm_sesskey()) { 
+$returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid.'&group='.$groupid;
+
+$context = get_context_instance(CONTEXT_COURSE, $courseid);
+require_capability('moodle/course:managegroups', $context);
+
+    if ($frm = data_submitted() and confirm_sesskey()) {
 
         if (isset($frm->cancel)) {
-            redirect('index.php?id='. $courseid
-                .'&grouping='. $groupingid .'&group='. $groupid);
-        }
-        elseif (isset($frm->add) and !empty($frm->addselect)) {
+            redirect($returnurl);
+
+        } else if (isset($frm->add) and !empty($frm->addselect)) {
 
             foreach ($frm->addselect as $userid) {
                 if (! $userid = clean_param($userid, PARAM_INT)) {
                     continue;
                 }
-                $success = groups_add_member($groupid, $userid);
-                if (! $success) {
-                    print_error('erroraddremoveuser', 'group', groups_home_url($courseid));
+                if (!groups_add_member($groupid, $userid)) {
+                    print_error('erroraddremoveuser', 'group', $returnurl);
                 }
             }
-        }
-        elseif (isset($frm->remove) and !empty($frm->removeselect)) {
+
+        } else if (isset($frm->remove) and !empty($frm->removeselect)) {
 
             foreach ($frm->removeselect as $userid) {
                 if (! $userid = clean_param($userid, PARAM_INT)) {
                     continue;
                 }
-                $success = groups_remove_member($groupid, $userid);
-                if (! $success) {
-                    print_error('erroraddremoveuser', 'group', groups_home_url($courseid));
+                if (!groups_remove_member($groupid, $userid)) {
+                    print_error('erroraddremoveuser', 'group', $returnurl);
                 }
-                
+
                 // MDL-9983
                 $eventdata = new object();
                 $eventdata -> groupid = $groupid;
                 $eventdata -> userid = $userid;
-                events_trigger('group_user_removed', $eventdata);           
+                events_trigger('group_user_removed', $eventdata);
             }
         }
     }
-    
+
     $groupmembers = groups_get_members($groupid);
     $groupmembersoptions = '';
     $groupmemberscount = 0;
@@ -95,23 +83,16 @@ if ($success) {
     } else {
         $groupmembersoptions .= '<option>&nbsp;</option>';
     }
-    
-    //TODO: If no 'showall' button, then set true.
-    $showall = true;
-    
-    $potentialmembers = array(); 
+
+    $potentialmembers = array();
     $potentialmembersoptions = '';
     $potentialmemberscount = 0;
-    if (!$showall && $groupingid != GROUP_NOT_IN_GROUPING) {
-        $potentialmembers = groups_get_users_not_in_any_group_in_grouping($courseid, $groupingid, $groupid);
-    } else {
-        $potentialmembers = groups_get_users_not_in_group($courseid, $groupid);
-    }
-    
+    $potentialmembers = groups_get_users_not_in_group($courseid, $groupid);
+
     if ($potentialmembers != false) {
         // Put the groupings into a hash and sorts them
         foreach ($potentialmembers as $userid) {
-            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);       
+            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);
             $potentialmemberscount++;
         }
         natcasesort($nonmembers);
@@ -130,11 +111,11 @@ if ($success) {
 
     $groupname = groups_get_group_displayname($groupid);
 
-    print_header("$course->shortname: $strgroups", 
-                 $course->fullname, 
+    print_header("$course->shortname: $strgroups",
+                 $course->fullname,
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-                 '-> <a href="' .format_string(groups_home_url($courseid, $groupid, $groupingid, false)) . "\">$strgroups</a>".
+                 "-> <a href=\"$CFG->wwwroot/group/index.php?id=$courseid\">$strgroups</a>".
                  '-> '. get_string('adduserstogroup', 'group'), '', '', true, '', user_login_string($course, $USER));
 
 ?>
@@ -144,8 +125,6 @@ if ($success) {
     <form id="assignform" method="post" action="">
     <div>
     <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-    <input type="hidden" name="courseid" value="<?php p($courseid); ?>" />
-    <input type="hidden" name="grouping" value="<?php echo $groupingid; ?>" />
     <input type="hidden" name="group" value="<?php echo $groupid; ?>" />
 
     <table summary="" cellpadding="5" cellspacing="0">
@@ -180,7 +159,7 @@ if ($success) {
          </select>
          <br />
          <?php //TODO: Search box?
-         
+
               /*if (!empty($searchtext)) {
                   echo '<input name="showall" type="submit" value="'.get_string('showall').'" />'."\n";
               }*/
@@ -188,7 +167,7 @@ if ($success) {
        </td>
     </tr>
     <tr><td>
-        <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />    
+        <input type="submit" name="cancel" value="<?php print_string('backtogroups', 'group'); ?>" />
     </td></tr>
     </table>
     </div>
@@ -197,6 +176,6 @@ if ($success) {
 
 <?php
     print_footer($course);
-}
+
 
 ?>

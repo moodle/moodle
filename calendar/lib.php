@@ -1315,8 +1315,8 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
             }
             
             if (!empty($groupids)) {
-                $sql = "SELECT id, groupid 
-                        FROM {$CFG->prefix}groups_courses_groups
+                $sql = "SELECT id 
+                        FROM {$CFG->prefix}groups
                         WHERE courseid IN (".implode(',', $groupids).')';
     
                 if ($grouprecords= get_records_sql($sql)) {

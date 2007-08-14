@@ -174,4 +174,263 @@ function upgrade_18_gradebook($courseid) {
     return true;
 }
 
+
+
+/**
+ * Create new groupings tables for upgrade from 1.7.*|1.6.* and so on.
+ */
+function upgrade_17_groups() {
+    global $CFG;
+
+    $result = true;
+
+/// Define table groupings to be created
+    $table = new XMLDBTable('groupings');
+
+/// Adding fields to table groupings
+    $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+    $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+    $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+    $table->addFieldInfo('configdata', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null);
+    $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+    $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+
+/// Adding keys to table groupings
+    $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+    $table->addKeyInfo('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+
+/// Launch create table for groupings
+    $result = $result && create_table($table);
+
+// ==========================================
+
+/// Define table groupings_groups to be created
+    $table = new XMLDBTable('groupings_groups');
+
+/// Adding fields to table groupings_groups
+    $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+    $table->addFieldInfo('groupingid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+    $table->addFieldInfo('groupid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+    $table->addFieldInfo('timeadded', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+
+/// Adding keys to table groupings_groups
+    $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+    $table->addKeyInfo('groupingid', XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
+    $table->addKeyInfo('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+
+/// Launch create table for groupings_groups
+    $result = $result && create_table($table);
+
+/// fix not null constrain
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('password');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '50', null, null, null, null, null, null, 'description');
+    $result = $result && change_field_notnull($table, $field);
+
+/// Rename field password in table groups to enrolmentkey
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('password');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '50', null, null, null, null, null, null, 'description');
+    $result = $result && rename_field($table, $field, 'enrolmentkey');
+
+    return $result;
+}
+
+/**
+ * Drop, add fields and rename tables for groups upgrade from 1.8.*
+ * @param XMLDBTable $table 'groups_groupings' table object.
+ */
+function upgrade_18_groups() {
+    global $db;
+
+    $result = upgrade_18_groups_drop_keys_indexes();
+
+/// Delete not used columns
+    $fields_r = array('viewowngroup', 'viewallgroupsmembers', 'viewallgroupsactivities',
+                      'teachersgroupmark', 'teachersgroupview', 'teachersoverride', 'teacherdeletable');
+    foreach ($fields_r as $fname) {
+        $table = new XMLDBTable('groups_groupings');
+        $field = new XMLDBField($fname);
+        if (field_exists($table, $field)) {
+            $result = $result && drop_field($table, $field);
+        }
+    }
+
+/// Rename 'groups_groupings' to 'groupings'
+    $table = new XMLDBTable('groups_groupings');
+    $result = $result && rename_table($table, 'groupings');
+
+/// Add columns/key 'courseid', exclusivegroups, maxgroupsize, timemodified.
+    $table = new XMLDBTable('groupings');
+    $field = new XMLDBField('courseid');
+    $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'id');
+    $result = $result && add_field($table, $field);
+
+    $table = new XMLDBTable('groupings');
+    $key = new XMLDBKey('courseid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+    $result = $result && add_key($table, $key);
+
+    $table = new XMLDBTable('groupings');
+    $field = new XMLDBField('configdata');
+    $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'description');
+    $result = $result && add_field($table, $field);
+
+    $table = new XMLDBTable('groupings');
+    $field = new XMLDBField('timemodified');
+    $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timecreated');
+    $result = $result && add_field($table, $field);
+
+//==================
+
+/// Add columns/key 'courseid' into groups table
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('courseid');
+    $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'id');
+    $result = $result && add_field($table, $field);
+
+    $table = new XMLDBTable('groups');
+    $key = new XMLDBKey('courseid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+    $result = $result && add_key($table, $key);
+
+    /// Changing nullability of field enrolmentkey on table groups to null
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('enrolmentkey');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '50', null, null, null, null, null, null, 'description');
+    $result = $result && change_field_notnull($table, $field);
+//==================
+
+/// Now, rename 'groups_groupings_groups' to 'groupings_groups' and add keys
+    $table = new XMLDBTable('groups_groupings_groups');
+    $result = $result && rename_table($table, 'groupings_groups');
+
+    $table = new XMLDBTable('groupings_groups');
+    $key = new XMLDBKey('groupingid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
+    $result = $result && add_key($table, $key);
+
+    $table = new XMLDBTable('groupings_groups');
+    $key = new XMLDBKey('groupid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+    $result = $result && add_key($table, $key);
+
+///=================
+
+/// Transfer course ID from 'mdl_groups_courses_groups' to 'mdl_groups'.
+    if ($result) {
+        if ($rs = get_recordset('groups_courses_groups')) {
+            $db->debug = false;
+            if ($rs->RecordCount() > 0) {
+                while ($group = rs_fetch_next_record($rs)) {
+                    //Update record, overwrite the 'id' (not useful) with group ID.
+                    $group->id = $group->groupid;
+                    unset($group->groupid);
+                    $result = $result && update_record('groups', $group);
+                }
+            }
+            rs_close($rs);
+            $db->debug = true;
+        }
+    }
+
+/// Transfer course ID from 'groups_courses_groupings' to 'mdl_groupings'.
+    if ($result) {
+        if ($rs = get_recordset('groups_courses_groupings')) {
+            if ($rs->RecordCount() > 0) {
+                while ($course_grouping = rs_fetch_next_record($rs)) {
+                    //Update record, overwrite the 'id' (not useful) with grouping ID.
+                    $course_grouping->id = $course_grouping->groupingid;
+                    unset($course_grouping->groupingid);
+                    $result = $result && update_record('groupings', $course_grouping);
+                }
+            }
+            rs_close($rs);
+            $db->debug = true;
+        }
+    }
+
+/// Drop the old tables
+    if ($result) {
+        drop_table(new XMLDBTable('groups_courses_groups'));
+        drop_table(new XMLDBTable('groups_courses_groupings'));
+        drop_table(new XMLDBTable('groups_temp'));
+        drop_table(new XMLDBTable('groups_members_temp'));
+        unset_config('group_version');
+    }
+
+    return $result;
+}
+
+/**
+ * Drop keys & indexes for groups upgrade from 1.8.*
+ */
+function upgrade_18_groups_drop_keys_indexes() {
+    $result = true;
+
+/// Define index groupid-courseid (unique) to be added to groups_members
+    $table = new XMLDBTable('groups_members');
+    $index = new XMLDBIndex('groupid-courseid');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupid', 'userid'));
+    $result = $result && drop_index($table, $index);
+
+/// Define key courseid (foreign) to be added to groups_courses_groups
+    $table = new XMLDBTable('groups_courses_groups');
+    $key = new XMLDBKey('courseid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define key groupid (foreign) to be added to groups_courses_groups
+    $table = new XMLDBTable('groups_courses_groups');
+    $key = new XMLDBKey('groupid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define index courseid-groupid (unique) to be added to groups_courses_groups
+    $table = new XMLDBTable('groups_courses_groups');
+    $index = new XMLDBIndex('courseid-groupid');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupid'));
+    $result = $result && drop_index($table, $index);
+
+/// Define key courseid (foreign) to be added to groups_courses_groupings
+    $table = new XMLDBTable('groups_courses_groupings');
+    $key = new XMLDBKey('courseid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define key groupingid (foreign) to be added to groups_courses_groupings
+    $table = new XMLDBTable('groups_courses_groupings');
+    $key = new XMLDBKey('groupingid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define index courseid-groupingid (unique) to be added to groups_courses_groupings
+    $table = new XMLDBTable('groups_courses_groupings');
+    $index = new XMLDBIndex('courseid-groupingid');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, array('courseid', 'groupingid'));
+    $result = $result && drop_index($table, $index);
+
+
+/// Define key groupingid (foreign) to be added to groups_groupings_groups
+    $table = new XMLDBTable('groups_groupings_groups');
+    $key = new XMLDBKey('groupingid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groups_groupings', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define key groupid (foreign) to be added to groups_groupings_groups
+    $table = new XMLDBTable('groups_groupings_groups');
+    $key = new XMLDBKey('groupid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+    $result = $result && drop_key($table, $key);
+
+/// Define index groupingid-groupid (unique) to be added to groups_groupings_groups
+    $table = new XMLDBTable('groups_groupings_groups');
+    $index = new XMLDBIndex('groupingid-groupid');
+    $index->setAttributes(XMLDB_INDEX_UNIQUE, array('groupingid', 'groupid'));
+    $result = $result && drop_index($table, $index);
+
+    return $result;
+}
+
 ?>

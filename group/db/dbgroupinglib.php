@@ -2,7 +2,7 @@
 /**
  * Functions to make changes to groupings in the database. In general these 
  * access the tables:
- *     groups_groupings, groups_courses_groupings and groups_groupings_groups
+ *     groups_groupings, groups_courses_groupings and groupings_groups
  * although some access all the tables that store information about groups.
  *
  * @copyright &copy; 2006 The Open University
@@ -54,7 +54,7 @@ function groups_db_get_groups_in_grouping($groupingid) {
         $groupid = false;
     } else {
 
-        $groups = get_records('groups_groupings_groups', 'groupingid ', 
+        $groups = get_records('groupings_groups', 'groupingid ', 
                               $groupingid, '', $fields='id, groupid');
         if (!$groups) {
             $groupids = false;
@@ -81,7 +81,7 @@ function groups_db_get_groupings_for_group($groupid) {
     if (!$groupid) {
         $groupingids = false;
     } else {
-        $groupings = get_records('groups_groupings_groups', 'groupid ', 
+        $groupings = get_records('groupings_groups', 'groupid ', 
             $groupid, '', $fields='id, groupingid');
         if (!$groupings) {
             $groupingids = false;
@@ -173,7 +173,7 @@ function groups_db_grouping_exists($groupingid) {
     if (!$groupid) {
         $isingrouping = false;
     } else {
-        $isingrouping = record_exists('groups_groupings_groups', 'groupid', 
+        $isingrouping = record_exists('groupings_groups', 'groupid', 
                                   $groupid);
     }
     
@@ -192,7 +192,7 @@ function groups_db_grouping_exists($groupingid) {
     if (!$groupid or !$groupingid) {
         $isingrouping = false;
     } else {
-        $isingrouping = record_exists('groups_groupings_groups', 'groupid', 
+        $isingrouping = record_exists('groupings_groups', 'groupid', 
                                   $groupid, 'groupingid', $groupingid);
     }
     
@@ -213,7 +213,7 @@ function groups_db_grouping_exists($groupingid) {
     } else {
         global $CFG;
         $sql = "SELECT gm.id
-        FROM {$CFG->prefix}groups_groupings_groups gg
+        FROM {$CFG->prefix}groupings_groups gg
         INNER JOIN {$CFG->prefix}groups_members gm
         ON gg.groupid = gm.groupid
         WHERE gm.userid = '$userid' AND gg.groupingid = '$groupingid'";
@@ -304,7 +304,7 @@ function groups_db_add_group_to_grouping($groupid, $groupingid) {
         $record->groupid = $groupid;
         $record->timeadded = time();
 
-        $results = insert_record('groups_groupings_groups', $record);
+        $results = insert_record('groupings_groups', $record);
         if (!$results) {
             $success = false;
         }
@@ -379,7 +379,7 @@ function groups_db_remove_group_from_grouping($groupid, $groupingid) {
     if (!$groupingid or !$groupid) {
         $success = false;
     } else {
-        $results = delete_records('groups_groupings_groups', 'groupid', 
+        $results = delete_records('groupings_groups', 'groupid', 
             $groupid, 'groupingid', $groupingid);
         // delete_records returns an array of the results from the sql call, 
         // not a boolean, so we have to set our return variable
@@ -410,7 +410,7 @@ function groups_db_delete_grouping($groupingid) {
             $success = false;
         }                           
                
-        $results = delete_records('groups_groupings_groups', 'groupingid', 
+        $results = delete_records('groupings_groups', 'groupingid', 
                                   $groupingid);
         if ($results == false) {
             $success = false;

@@ -311,6 +311,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the groupings in
+    //backup_ids->info db (and grouping's id in $info)
+    function restore_read_xml_groupings_groups ($restore,$xml_file) {
+
+        //We call the main read_xml function, with todo = GROUPINGS
+        $info = restore_read_xml ($xml_file,"GROUPINGSGROUPS",$restore);
+
+        return $info;
+    }
+
     //This function read the xml file and store its data from the events (course) in
     //backup_ids->info db (and event's id in $info)
     function restore_read_xml_events ($restore,$xml_file) {
@@ -614,6 +624,7 @@
             if (isset($course_header->course_groupmodeforce)) {
                 $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             }
+            $course->defaultgroupingid = 0; // TODO: add proper handling of ddefaultgroupingid
             $course->lang = addslashes($course_header->course_lang);
             $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
@@ -2778,8 +2789,6 @@
                 foreach ($groups as $group) {
                     //Get record from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"groups",$group->id);
-                    //Init variables
-                    $create_group = false;
 
                     if ($data) {
                         //Now get completed xmlized object
@@ -2789,54 +2798,38 @@
                         //$GLOBALS['traverse_array']="";                                                              //Debug
                         //Now build the GROUP record structure
                         $gro = new Object();
-                        ///$gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
-                        $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
-                        $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
+                        $gro->courseid         = $restore->course_id;
+                        $gro->name             = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
+                        $gro->description      = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
                         if (isset($info['GROUP']['#']['ENROLMENTKEY']['0']['#'])) {
                             $gro->enrolmentkey = backup_todb($info['GROUP']['#']['ENROLMENTKEY']['0']['#']);
-                        } else { //if (! isset($gro->enrolment)) {
+                        } else {
                             $gro->enrolmentkey = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
                         }
-                        $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
-                        $gro->theme = backup_todb($info['GROUP']['#']['THEME']['0']['#']);
-                        $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
-                        $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
-                        $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
-                        $gro->timemodified = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
+                        $gro->picture          = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
+                        $gro->hidepicture      = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
+                        $gro->timecreated      = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
+                        $gro->timemodified     = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
 
                         //Now search if that group exists (by name and description field) in
-                        //restore->course_id course
-                        $gro_db = groups_group_matches($restore->course_id, $gro->name, $gro->description);
-                        //If it doesn't exist, create
-                        if (!$gro_db) {
-                            $create_group = true;
-                        }
-                        //If we must create the group
-                        if ($create_group) {
-                            //Me must recode the courseid to the restore->course_id
-                            $gro->courseid = $restore->course_id;
+                        if (!$gro_db = get_record('groups', 'courseid', $restore->course_id, 'name', $gro->name, 'description', $gro->description)) {
+                            //If it doesn't exist, create
+                            $newid = insert_record ('groups', $gro);
 
-                            //Check if the theme exists in destination server
-                            $themes = get_list_of_themes();
-                            if (!in_array($gro->theme, $themes)) {
-                                $gro->theme = '';
-                            }
-
-                            //The structure is equal to the db, so insert the group
-                            $newid = groups_restore_group($restore->course_id, $gro);
                         } else {
                             //get current group id
                             $newid = $gro_db->id;
                         }
+
                         if ($newid) {
                             //We have the newid, update backup_ids
-                            backup_putid($restore->backup_unique_code,"groups",
-                                         $group->id, $newid);
+                            backup_putid($restore->backup_unique_code,"groups", $group->id, $newid);
                         }
+
                         //Now restore members in the groups_members, only if
                         //users are included
                         if ($restore->users != 2) {
-                            $status2 = restore_create_groups_members($newid,$info,$restore);
+                           $status2 = restore_create_groups_members($newid,$info,$restore);
                         }
                     }
                 }
@@ -2878,14 +2871,19 @@
             $group_member->userid = backup_todb($mem_info['#']['USERID']['0']['#']);
             $group_member->timeadded = backup_todb($mem_info['#']['TIMEADDED']['0']['#']);
 
+            $newid = false;
+
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$group_member->userid);
             if ($user) {
                 $group_member->userid = $user->new_id;
+
+                //The structure is equal to the db, so insert the groups_members
+                $newid = insert_record ("groups_members", $group_member);
+            } else {
+                echo "grrr";
             }
 
-            //The structure is equal to the db, so insert the groups_members
-            $newid = groups_restore_member($group_member);
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -2911,7 +2909,7 @@
         global $CFG, $db;
 
         $status = true;
-        $status2 = true;
+
         //Check it exists
         if (!file_exists($xml_file)) {
             $status = false;
@@ -2938,33 +2936,27 @@
                         //Now build the GROUPING record structure
                         $gro = new Object();
                         ///$gro->id = backup_todb($info['GROUPING']['#']['ID']['0']['#']);
-                        $gro->name = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
+                        $gro->courseid    = $restore->course_id;
+                        $gro->name        = backup_todb($info['GROUPING']['#']['NAME']['0']['#']);
                         $gro->description = backup_todb($info['GROUPING']['#']['DESCRIPTION']['0']['#']);
+                        $gro->configdata  = backup_todb($info['GROUPING']['#']['CONFIGDATA']['0']['#']);
                         $gro->timecreated = backup_todb($info['GROUPING']['#']['TIMECREATED']['0']['#']);
 
                         //Now search if that group exists (by name and description field) in
-                        //restore->course_id course
-                        $gro_db = groups_grouping_matches($restore->course_id, $gro->name, $gro->description);
-                        //If it doesn't exist, create
-                        if (!$gro_db) {
-                            $create_grouping = true;
-                        }
-                        //If we must create the group
-                        if ($create_grouping) {
+                        if (!$gro_db = get_record('groupings', 'courseid', $restore->course_id, 'name', $gro->name, 'description', $gro->description)) {
+                            //The structure is equal to the db, so insert the grouping
+                            $newid = insert_record($restore->course_id, $gro);
 
-                            //The structure is equal to the db, so insert the grouping TODO: RESTORE.
-                            $newid = groups_create_grouping($restore->course_id, $gro);
                         } else {
                             //get current group id
                             $newid = $gro_db->id;
                         }
+
                         if ($newid) {
                             //We have the newid, update backup_ids
                             backup_putid($restore->backup_unique_code,"groupings",
                                          $grouping->id, $newid);
                         }
-                        //Now restore links from groupings to groups
-                        $status2 = restore_create_groupings_groups($newid,$info,$restore);
                     }
                 }
                 //(Now, restore grouping_files)
@@ -2972,11 +2964,15 @@
         } else {
             $status = false;
         }
-        return ($status && $status2);
+
+        return $status;
     }
 
     //This function restores the groups_members
-    function restore_create_groupings_groups($grouping_id,$info,$restore) {
+    function restore_create_groupings_groups($restore,$xml_file) {
+
+//TODO: fix me
+return true;
 
         global $CFG;
 
@@ -4937,8 +4933,14 @@
                         case "GROUPMODE":
                             $this->info->tempmod->groupmode = $this->getContents();
                             break;
+                        case "GROUPINGID":
+                            $this->info->tempmod->groupingid = $this->getContents();
+                            break;
+                        case "GROUPMEMBERSONLY":
+                            $this->info->tempmod->groupmembersonly = $this->getContents();
+                            break;
                         default:
-                        break;
+                            break;
                     }
                 }
 
@@ -6982,6 +6984,24 @@
                     notify("Could not restore groupings!");
                 } else {
                     $errorstr = "Could not restore groupings!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
+        //Now create groupings as needed
+        if ($status) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatinggroupingsgroups");
+            }
+            if (!$status = restore_create_groupings_groups($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore groupings groups!");
+                } else {
+                    $errorstr = "Could not restore groupings groups!";
                     return false;
                 }
             }

@@ -117,7 +117,7 @@ function groups_get_groups_for_current_user($courseid) {
 /**
  * Get the group settings object for a group - this contains the following 
  * properties:
- * name, description, lang, theme, picture, hidepicture
+ * name, description, picture, hidepicture
  * @param int $groupid The group ID.
  * @return object The group settings object 
  */
@@ -260,14 +260,6 @@ function groups_set_default_group_settings($groupinfo = null) {
         $groupinfo->description = '';
     }
 
-    if (!isset($groupinfo->lang)) {
-        $groupinfo->lang = current_language();
-    }
-
-    if (!isset($groupinfo->theme)) {
-        $groupinfo->theme = '';
-    }
-
     if (!isset($groupinfo->picture)) {
         $groupinfo->picture = 0;
     }
@@ -318,7 +310,7 @@ function groups_restore_group($courseid, $groupsettings) {
  * Sets the information about a group
  * Only sets the string for the picture - does not upload the picture! 
  * @param object $groupsettings An object containing some or all of the 
- * following properties: name, description, lang, theme, picture, hidepicture
+ * following properties: name, description, picture, hidepicture
  * @return boolean True if info was added successfully, false otherwise. 
  */
 function groups_set_group_settings($groupid, $groupsettings) {

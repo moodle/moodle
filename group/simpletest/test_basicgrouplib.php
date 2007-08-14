@@ -19,7 +19,8 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
 require_once($CFG->dirroot . '/group/lib/utillib.php');
 
-class basicgrouplib_test extends UnitTestCase {
+//TODO: rewrite me
+class basicgrouplib_test /*extends UnitTestCase*/ {
 
     var $courseid= 0;
     var $userid  = 0;

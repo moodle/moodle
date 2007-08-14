@@ -8,6 +8,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
+
+//TODO: reimplement
+die;die;die;
+
 require_once('../config.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/moodlelib.php');

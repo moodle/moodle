@@ -10,6 +10,8 @@
 require_once('../config.php');
 require_once('lib.php');
 
+//TODO: fix me
+die;die;die;
 $success = true;
 
 $courseid   = required_param('courseid', PARAM_INT);

@@ -63,7 +63,7 @@ function groups_get_groups_in_grouping_records($groupingid) {
     if (! $groupingid) {
         return false;
     }
-    $grouping_groups = get_records('groups_groupings_groups', 'groupingid ', 
+    $grouping_groups = get_records('groupings_groups', 'groupingid ', 
                               $groupingid, '', $fields='id, groupid, timeadded');
 
     return $grouping_groups;
@@ -129,7 +129,7 @@ function groups_get_grouping_name($groupingid) {
 function groups_get_groups_for_user_in_grouping($userid, $groupingid) {
     global $CFG;
     $sql = "SELECT gg.groupid
-        FROM {$CFG->prefix}groups_groupings_groups gg
+        FROM {$CFG->prefix}groupings_groups gg
         INNER JOIN {$CFG->prefix}groups_members gm ON gm.groupid = gg.groupid
         WHERE gm.userid = '$userid'
         AND gg.groupingid = '$groupingid'";
@@ -167,14 +167,13 @@ function groups_get_groups_not_in_any_grouping($courseid) {
     $join = '';
     $where= '';
     if ($courseid) {
-        $join = "INNER JOIN {$CFG->prefix}groups_courses_groups cg ON g.id = cg.groupid";
-        $where= "AND cg.courseid = '$courseid'";
+        $where= "AND g.courseid = '$courseid'";
     }
     $sql = "SELECT g.id
         FROM {$CFG->prefix}groups g
         $join
         WHERE g.id NOT IN 
-        (SELECT groupid FROM {$CFG->prefix}groups_groupings_groups)
+        (SELECT groupid FROM {$CFG->prefix}groupings_groups)
         $where";
 
     $records = get_records_sql($sql);

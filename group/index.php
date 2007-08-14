@@ -4,13 +4,12 @@
  *
  * @copyright &copy; 2006 The Open University
  * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk 
+ * @author J.White AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
 require_once('../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/json/JSON.php');
 
 require_js('yui_yahoo');
@@ -19,69 +18,32 @@ require_js('yui_utilities');
 require_js('yui_connection');
 require_js($CFG->wwwroot.'/group/lib/clientlib.js');
 
-$success = true;
+$courseid = required_param('id', PARAM_INT);
+$groupid  = optional_param('group', false, PARAM_INT);
+$userid   = optional_param('user', false, PARAM_INT);
+$action   = groups_param_action();
 
-$courseid   = required_param('id', PARAM_INT);
-$groupingid = optional_param('grouping', GROUP_NOT_IN_GROUPING, PARAM_INT);
-$groupid    = optional_param('group', false, PARAM_INT);
-$userid     = optional_param('user', false, PARAM_INT);
-$action = groups_param_action();
-
-if (empty($CFG->enablegroupings)) {
-    // NO GROUPINGS YET!
-    $groupingid = GROUP_NOT_IN_GROUPING;
-}
-
-if ($groupid) {
-    $groupingsforgroup = groups_get_groupings_for_group($groupid);
-    if ($groupingsforgroup) {
-        // NOTE
-        //   We currently assume that a group can only belong to one grouping.
-        // FIXME
-        //   The UI will have to be fixed if we want to support more than one
-        //   groupings per group in the future.
-        //
-        // vy-shane AT moodle DOT com
-        $groupingid = array_shift($groupingsforgroup);
-    }
-}
-
+$returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 
 // Get the course information so we can print the header and
 // check the course id is valid
-$course = groups_get_course_info($courseid);
-if (! $course) {
+
+if (!$course = groups_get_course_info($courseid)) {
     $success = false;
     print_error('invalidcourse'); //'The course ID is invalid'
 }
 
-if ($success) {
     // Make sure that the user has permissions to manage groups.
-    require_login($courseid);
+    require_login($course);
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     if (! has_capability('moodle/course:managegroups', $context)) {
         redirect(); //"group.php?id=$course->id");   // Not allowed to see all groups
     }
 
-    // Set the session key so we can check this later
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
-
     switch ($action) {
         case false: //OK, display form.
             break;
-
-        case 'ajax_getgroupsingrouping':
-            if (GROUP_NOT_IN_GROUPING == $groupingid) {
-                $groupids = groups_get_groups_not_in_any_grouping($courseid);
-            } else {
-                $groupids = groups_get_groups_in_grouping($groupingid);
-            }
-            $group_names = groups_groupids_to_group_names($groupids);
-            $json = new Services_JSON();
-            echo $json->encode($group_names);
-            die;  // Client side JavaScript takes it from here.
 
         case 'ajax_getmembersingroup':
             $members = array();
@@ -93,57 +55,34 @@ if ($success) {
             }
             die;  // Client side JavaScript takes it from here.
 
-        case 'showgroupingsettingsform':
-            redirect(groups_grouping_edit_url($courseid, $groupingid, false));
+        case 'deletegroup':
+            redirect('edit.php?delete=1&amp;courseid='.$courseid.'&amp;id='.$groupid);
             break;
-        case 'showgroupingpermsform':
-            break;
-        case 'deletegrouping':
-            redirect(groups_grouping_edit_url($courseid, $groupingid, $html=false, $param='delete=1'));
-            break;
-        case 'showcreategroupingform':
-            redirect(groups_grouping_edit_url($courseid, null, false));
-            break;
-        case 'printerfriendly':
-            redirect('printgrouping.php?courseid='. $courseid .'&groupingid='. $groupingid);
+
+        case 'showcreateorphangroupform':
+            redirect('edit.php?courseid='.$courseid);
             break;
 
         case 'showgroupsettingsform':
-            redirect(groups_group_edit_url($courseid, $groupid, $groupingid, false));
+            redirect('edit.php?courseid='.$courseid.'&amp;id='.$groupid);
             break;
-        case 'deletegroup':
-            redirect(groups_group_edit_url($courseid, $groupid, $groupingid, $html=false, $param='delete=1'));
-            break;
-        case 'removegroup':
-            break;
-        case 'showcreategroupform':
-            // Allow groups to be created outside of groupings
-            /*
-            if (GROUP_NOT_IN_GROUPING == $groupingid) {
-                print_error('errornotingrouping', 'group', groups_home_url($courseid), get_string('notingrouping', 'group'));
-            }
-            */
-            redirect(groups_group_edit_url($courseid, null, $groupingid, false));
-            break;
-        case 'showcreateorphangroupform':
-            redirect(groups_group_edit_url($courseid, null, null, false));
-            break;
-        case 'addgroupstogroupingform':
-            break;
+
         case 'updategroups': //Currently reloading.
             break;
 
         case 'removemembers':
             break;
+
         case 'showaddmembersform':
-            redirect(groups_members_add_url($courseid, $groupid, $groupingid, false));
+            redirect('assign.php?group='.$groupid);
             break;
+
         case 'updatemembers': //Currently reloading.
             break;
 
         default: //ERROR.
             if (debugging()) {
-                error('Error, unknown button/action. Probably a user-interface bug!', groups_home_url($courseid));
+                error('Error, unknown button/action. Probably a user-interface bug!', $returnurl);
             break;
         }
     }
@@ -152,150 +91,56 @@ if ($success) {
     $strgroups = get_string('groups');
     $strparticipants = get_string('participants');
 
-    print_header("$course->shortname: $strgroups home", //TODO: home
-                 $course->fullname, 
+    print_header("$course->shortname: $strgroups",
+                 $course->fullname,
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
-    $usehtmleditor = false;
-    //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finished.
-    $shownotdone  = false; 
     $disabled = 'disabled="disabled"';
-    
-    // Pre-disable buttons based on URL variables
-    if (!empty($groupingid) && $groupingid > -1) {
-        $showeditgroupsettingsform_disabled = '';
-        $showeditgroupingsettingsform_disabled = '';
-        $deletegroup_disabled = '';
-        $deletegrouping_disabled = '';
-        $printerfriendly_disabled = '';
-        $showcreategroupform_disabled = '';
-    } else {
-        $showeditgroupsettingsform_disabled = $disabled; 
-        $showeditgroupingsettingsform_disabled = $disabled; 
-        $deletegroup_disabled = $disabled;
-        $deletegrouping_disabled = $disabled;
-        $printerfriendly_disabled = $disabled;
-        $showcreategroupform_disabled = $disabled;
-    }
-    
-    if ($groupingid == -1 && groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
-        $printerfriendly_disabled = '';
-    }
+
+    $showeditgroupsettingsform_disabled = $disabled;
+    $deletegroup_disabled = $disabled;
+    $showcreategroupform_disabled = $disabled;
 
     if (!empty($groupid)) {
         $showaddmembersform_disabled = '';
-        $showeditgroupsettingsform_disabled = ''; 
+        $showeditgroupsettingsform_disabled = '';
         $deletegroup_disabled = '';
     } else {
         $deletegroup_disabled = $disabled;
-        $showeditgroupsettingsform_disabled = $disabled; 
-        $showaddmembersform_disabled = $disabled; 
+        $showeditgroupsettingsform_disabled = $disabled;
+        $showaddmembersform_disabled = $disabled;
     }
-    
+
     print_heading(format_string($course->shortname) .' '.$strgroups, 'center', 3);
     echo '<form id="groupeditform" action="index.php" method="post">'."\n";
     echo '<div>'."\n";
     echo '<input type="hidden" name="id" value="' . $courseid . '" />'."\n";
 
-/*    
-<input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
-<input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
-<input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
-*/ 
     echo '<table cellpadding="6" class="generaltable generalbox groupmanagementtable boxaligncenter" summary="">'."\n";
     echo '<tr>'."\n";
 
-if (empty($CFG->enablegroupings)) {
-// NO GROUPIGS YET!
-    $sel_groupingid = -1;
-} else {
-    echo '<td class="generalboxcontent">'."\n";
-    echo '<p><label for="groupings">' .  get_string('groupings', 'group') . '<span id="dummygrouping">&nbsp;</span></label></p>'."\n";
-    echo '<select name="grouping" id="groupings" size="15" class="select"';
-    echo ' onchange="groupsCombo.refreshGroups(this.options[this.selectedIndex].value);"';
-    //NOTE: onclick/onmouseout is for long names in IE6 (Firefox/IE7 display OPTION title).
-    echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
-    $groupingids = groups_get_groupings($courseid);
-    if (groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
-        //NOTE, only show the pseudo-grouping if it has groups.
-        $groupingids[] = GROUP_NOT_IN_GROUPING;
-    }
-    
-    $sel_groupingid = -1;
-
-    if ($groupingids) {    
-        // Put the groupings into a hash and sort them
-        foreach($groupingids as $id) {
-            $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
-        }
-        natcasesort($listgroupings);
-        
-        // Print out the HTML
-        $count = 1;
-        foreach($listgroupings as $id => $name) {
-            $select = '';
-            if ($groupingid == $id) { //|| $count <= 1) ??
-                $select = ' selected="selected"';
-                $sel_groupingid = $id;
-            }
-            echo "<option value=\"$id\"$select title=\"$name\">$name</option>\n";
-            $count++;
-        }
-    } else {
-        echo '<option>&nbsp;</option>';
-    }
-
-    echo '</select>'."\n";
-
-    
-    echo '<p><input type="submit" name="act_updategroups" id="updategroups" value="'
-            . get_string('showgroupsingrouping', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" ' . $showeditgroupingsettingsform_disabled . ' name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="'
-            . get_string('editgroupingsettings', 'group') . '" /></p>'."\n";
-    
-    if ($shownotdone) {
-        echo '<p><input type="submit" '.$disabled.' name="act_showgroupingpermsform" '
-                . 'id="showeditgroupingpermissionsform" value="'
-                . get_string('editgroupingpermissions', 'group') . '" /></p>'."\n";
-    } 
-    
-    echo '<p><input type="submit" ' . $deletegrouping_disabled . ' name="act_deletegrouping" id="deletegrouping" value="'
-            . get_string('deletegrouping', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" name="act_showcreategroupingform" id="showcreategroupingform" value="'
-            . get_string('creategrouping', 'group') . '" /></p>'."\n";
-    
-    if ($shownotdone) {
-    echo '<p><input type="submit" '.$disabled.' name="act_createautomaticgroupingform" '
-            . 'id="showcreateautomaticgroupingform" value="' 
-            . get_string('createautomaticgrouping', 'group') . '" /></p>'."\n";
-    }
-    
-    echo '<p><input type="submit" ' . $printerfriendly_disabled . ' name="act_printerfriendly" id="printerfriendly" value="'
-            . get_string('printerfriendly', 'group') . '" /></p>'."\n";
-    echo "</td>\n";
-}
     echo "<td>\n";
-if (empty($CFG->enablegroupings)) {
     // NO GROUPINGS YET!
     echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
-} else {
-    echo '<p><label for="groups"><span id="groupslabel">'.get_string('groupsinselectedgrouping', 'group').' </span><span id="thegrouping">'.get_string('grouping', 'group').'</span></label></p>'."\n";
-}
+
     echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
-    if (GROUP_NOT_IN_GROUPING == $sel_groupingid) {
-        $groupids = groups_get_groups_not_in_any_grouping($courseid); //$sel_groupingid
+    if ($groups_records = get_groups($courseid)) {
+        $groupids = groups_groups_to_groupids($groups_records, $courseid);
     } else {
-        $groupids = groups_get_groups_in_grouping($sel_groupingid);
+        $groupids = false;
     }
+
+    $sel_groupid = 0;
+
     if ($groupids) {
         // Put the groups into a hash and sort them
         $group_names = groups_groupids_to_group_names($groupids);
-        
+
         // Print out the HTML
         $count = 1;
         foreach ($group_names as $group) {
@@ -307,11 +152,11 @@ if (empty($CFG->enablegroupings)) {
             echo "<option value=\"{$group->id}\"$select title=\"{$group->name}\">{$group->name}</option>\n";
             $count++;
         }
-    } else { 
+    } else {
         // Print an empty option to avoid the XHTML error of having an empty select element
         echo '<option>&nbsp;</option>';
     }
-    
+
     echo '</select>'."\n";
     echo '<p><input type="submit" name="act_updatemembers" id="updatemembers" value="'
             . get_string('showmembersforgroup', 'group') . '" /></p>'."\n";
@@ -320,29 +165,8 @@ if (empty($CFG->enablegroupings)) {
     echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="'
             . get_string('deleteselectedgroup', 'group') . '" /></p>'."\n";
 
-    if ($shownotdone) {
-        echo '<p><input type="submit" '.$disabled.' name="act_removegroup" '
-                . 'id="removegroup" value="' . get_string('removegroupfromselectedgrouping', 'group') . '" /></p>'."\n";
-    }
-
-if (empty($CFG->enablegroupings)) {
-// NO GROUPIGS YET!
     echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
             . get_string('creategroup', 'group') . '" /></p>'."\n";
-    echo '<p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="'
-            . get_string('printerfriendly', 'group') . '" /></p>'."\n";
-} else {    
-    echo '<p><input type="submit" ' . $showcreategroupform_disabled . ' name="act_showcreategroupform" id="showcreategroupform" value="'
-            . get_string('creategroupinselectedgrouping', 'group') . '" /></p>'."\n";
-    
-    echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
-            . get_string('createorphangroup', 'group') . '" /></p>'."\n";
-        
-    if ($shownotdone) {
-        echo '<p><input type="submit" '.$disabled.' name="act_addgroupstogroupingform" '
-                . 'id="showaddgroupstogroupingform" value="' . get_string('addgroupstogrouping', 'group') . '" /></p>'."\n";
-    }
-}
 
     echo '</td>'."\n";
     echo '<td>'."\n";
@@ -350,11 +174,13 @@ if (empty($CFG->enablegroupings)) {
     //NOTE: the SELECT was, multiple="multiple" name="user[]" - not used and breaks onclick.
     echo '<select name="user" id="members" size="15" class="select"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
-    
-    if (isset($sel_groupid)) {
+
+    $userids = false;
+    if ($sel_groupid) {
         $userids = groups_get_members($sel_groupid);
     }
-    if (isset($userids)) { //&& is_array($userids)        
+
+    if ($userids) {
         // Put the groupings into a hash and sort them
         $user_names = groups_userids_to_user_names($userids, $courseid);
         if(empty($user_names)) {
@@ -364,18 +190,13 @@ if (empty($CFG->enablegroupings)) {
                 echo "<option value=\"{$user->id}\" title=\"{$user->name}\">{$user->name}</option>\n";
             }
         }
-    } else { 
+    } else {
         // Print an empty option to avoid the XHTML error of having an empty select element
         echo '<option>&nbsp;</option>';
     }
-    
+
     echo '</select>'."\n";
 
-    if ($shownotdone) {
-        echo '<p><input type="submit" '.$disabled.' name="act_removemembers" '
-                . 'id="removemembers" value="' . get_string('removeselectedusers', 'group') . '"/></p>'."\n";
-    }
-    
     echo '<p><input type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
             . 'id="showaddmembersform" value="' . get_string('adduserstogroup', 'group'). '" /></p>'."\n";
     echo '</td>'."\n";
@@ -385,7 +206,7 @@ if (empty($CFG->enablegroupings)) {
     //<input type="hidden" name="rand" value="om" />
     echo '</div>'."\n";
     echo '</form>'."\n";
-    
+
     echo '<script type="text/javascript">'."\n";
     echo '//<![CDATA['."\n";
     echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
@@ -394,6 +215,6 @@ if (empty($CFG->enablegroupings)) {
     echo '</script>'."\n";
 
     print_footer($course);
-}
+
 
 ?>

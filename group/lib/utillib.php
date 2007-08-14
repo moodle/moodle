@@ -46,9 +46,9 @@ function groups_count_groups_in_grouping($groupingid, $courseid) {
         
         return count($groupids);
     } elseif (GROUP_ANY_GROUPING == $groupingid) {
-        return count_records('groups_courses_groups', 'courseid', $courseid);
+        return count_records('groups', 'courseid', $courseid);
     } else {
-        return count_records('groups_groupings_groups', 'groupingid ', $groupingid);
+        return count_records('groupings_groups', 'groupingid ', $groupingid);
     }
 }
 
@@ -294,7 +294,7 @@ function groups_get_course_info($courseid){
  * Gets the course ID for a given group.
  */
 function groups_get_course($groupid) {
-    $course_group = get_record('groups_courses_groups', 'groupid', $groupid);
+    $course_group = get_record('groups', 'id', $groupid);
     if ($course_group) {
         return $course_group->courseid;
     }
