@@ -11,7 +11,16 @@
 require_once('../config.php');
 require_once('lib.php');
 
-$groupid = required_param('group', PARAM_INT);
+define("MAX_USERS_PER_PAGE", 5000);
+
+$groupid    = required_param('group', PARAM_INT);
+$searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
+$showall    = optional_param('showall', 0, PARAM_BOOL);
+
+if ($showall) {
+    $searchtext = '';
+}
+
 
 require_login();
 if (!$group = get_record('groups', 'id', $groupid)) {
@@ -25,6 +34,8 @@ if (! $course = get_record('course', 'id', $group->courseid)) {
 require_login($course);
 $courseid = $course->id;
 
+$strsearch = get_string('search');
+$strshowall = get_string('showall');
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid.'&group='.$groupid;
 
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -87,22 +98,30 @@ require_capability('moodle/course:managegroups', $context);
     $potentialmembers = array();
     $potentialmembersoptions = '';
     $potentialmemberscount = 0;
-    $potentialmembers = groups_get_users_not_in_group($courseid, $groupid);
 
-    if ($potentialmembers != false) {
-        // Put the groupings into a hash and sorts them
-        foreach ($potentialmembers as $userid) {
-            $nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);
-            $potentialmemberscount++;
-        }
-        natcasesort($nonmembers);
-
-        // Print out the HTML
-        foreach($nonmembers as $id => $name) {
-            $potentialmembersoptions .= "<option value=\"$id\">$name</option>\n";
-        }
+    $potentialmembers = groups_get_users_not_in_group($courseid, $groupid, $searchtext);
+    if (!empty($potentialmembers)) {
+        $potentialmemberscount = count($potentialmembers);
     } else {
-        $potentialmembersoptions .= '<option>&nbsp;</option>';
+        $potentialmemberscount = 0;
+    }
+    if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
+
+        if ($potentialmembers != false) {
+            // Put the groupings into a hash and sorts them
+            foreach ($potentialmembers as $userid => $user) {
+                $nonmembers[$userid] = fullname($user);
+                //$nonmembers[$userid] = groups_get_user_displayname($userid, $courseid);
+            }
+            natcasesort($nonmembers);
+
+            // Print out the HTML
+            foreach($nonmembers as $id => $name) {
+                $potentialmembersoptions .= "<option value=\"$id\">$name</option>\n";
+            }
+        } else {
+            $potentialmembersoptions .= '<option>&nbsp;</option>';
+        }
     }
 
     // Print the page and form
@@ -155,14 +174,32 @@ require_capability('moodle/course:managegroups', $context);
                   onfocus="document.getElementById('assignform').add.disabled=false;
                            document.getElementById('assignform').remove.disabled=true;
                            document.getElementById('assignform').removeselect.selectedIndex=-1;">
-         <?php echo $potentialmembersoptions ?>
+          <?php
+            if ($potentialmemberscount > MAX_USERS_PER_PAGE) {
+                echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
+                        .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
+            } else {                           
+                echo $potentialmembersoptions;
+            }              
+          ?>
          </select>
          <br />
-         <?php //TODO: Search box?
-
-              /*if (!empty($searchtext)) {
-                  echo '<input name="showall" type="submit" value="'.get_string('showall').'" />'."\n";
-              }*/
+         <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
+         <input type="text" name="searchtext" id="searchtext" size="30" value="<?php p($searchtext, true) ?>"
+                  onfocus ="getElementById('assignform').add.disabled=true;
+                            getElementById('assignform').remove.disabled=true;
+                            getElementById('assignform').removeselect.selectedIndex=-1;
+                            getElementById('assignform').addselect.selectedIndex=-1;"
+                  onkeydown = "var keyCode = event.which ? event.which : event.keyCode;
+                               if (keyCode == 13) {
+                                    getElementById('assignform').previoussearch.value=1;
+                                    getElementById('assignform').submit();
+                               } " />
+         <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
+         <?php
+              if (!empty($searchtext)) {
+                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+              }
          ?>
        </td>
     </tr>
@@ -176,6 +213,4 @@ require_capability('moodle/course:managegroups', $context);
 
 <?php
     print_footer($course);
-
-
 ?>

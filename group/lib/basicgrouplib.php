@@ -152,21 +152,73 @@ function groups_get_group_name($groupid) {
 /**
  * Gets the users for a course who are not in a specified group
  * @param int $groupid The id of the group
+ * @param string searchtext similar to searchtext in role assign, search
  * @return array An array of the userids of the non-group members,  or false if 
- * an error occurred. 
+ * an error occurred.  
+ * This function was changed to get_users_by_capability style
+ * mostly because of the searchtext requirement
  */
-function groups_get_users_not_in_group($courseid, $groupid) {
-    $users = get_course_users($courseid);
-    $userids = groups_users_to_userids($users);   
-    $nongroupmembers = array();
+function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
     
-    foreach($userids as $userid) {
-        if (!groups_is_member($groupid, $userid)) {
-            array_push($nongroupmembers, $userid);
+    global $CFG;
+
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+    if ($searchtext !== '') {   // Search for a subset of remaining users
+        $LIKE      = sql_ilike();
+        $FULLNAME  = sql_fullname();
+        $wheresearch = " AND u.id IN (SELECT id FROM {$CFG->prefix}user WHERE $FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%' )";
+    } else {
+        $wheresearch = ''; 
+    }
+    
+    $capability = 'moodle/course:view';
+    $doanything = false;
+
+    // find all possible "student" roles
+    if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
+        if (!$doanything) {
+            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
+                return false;    // Something is seriously wrong
+            }
+            $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
         }
+
+        $validroleids = array();
+        foreach ($possibleroles as $possiblerole) {
+            if (!$doanything) {
+                if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
+                    continue;
+                }
+            }
+            if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
+                if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
+                    $validroleids[] = $possiblerole->id;
+                }
+            }
+        }
+        if (empty($validroleids)) {
+            return false;
+        }
+        $roleids =  '('.implode(',', $validroleids).')';
+    } else {
+        return false;  // No need to continue, since no roles have this capability set
     }
 
-    return $nongroupmembers;
+/// Construct the main SQL
+    $select = " SELECT u.id, u.firstname, u.lastname";
+    $from   = " FROM {$CFG->prefix}user u
+                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
+    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
+                  AND u.deleted = 0
+                  AND ra.roleid in $roleids
+                  AND u.id NOT IN (SELECT userid 
+                                   FROM {$CFG->prefix}groups_members 
+                                   WHERE groupid = $groupid)
+                  $wheresearch";
+
+    return get_records_sql($select.$from.$where);;
 }
 
 /**
