@@ -2053,27 +2053,28 @@
 
         //Get grouping_groups
         $courseid = $preferences->backup_course;
-        $sql = "SELECT gg.* FROM {$CFG->prefix}groupings g, {$CFG->prefix}groupings_groups g
+        $sql = "SELECT gg.* FROM {$CFG->prefix}groupings g, {$CFG->prefix}groupings_groups gg
                  WHERE g.courseid=$courseid AND g.id=gg.groupingid";
         $grouping_groups = get_records_sql($sql);
 
         //Pring grouping_groups header
         if ($grouping_groups) {
             //Pring grouping_groups header
-            fwrite ($bf,start_tag("GROUPINGSGROUPS",4,true));
+            fwrite ($bf,start_tag("GROUPINGSGROUPS",2,true));
             //Iterate
-            foreach ($grouping_groups as $group2) {
+            foreach ($grouping_groups as $members) {
                 //Begin grouping_group tag
-                fwrite ($bf,start_tag("GROUPINGSGROUP",5,true));
+                fwrite ($bf,start_tag("GROUPINGGROUP",3,true));
                 //Output group_member contents
-                fwrite ($bf,full_tag("GROUPINGID",6,false,$group2->groupingid));
-                fwrite ($bf,full_tag("GROUPID",6,false,$group2->groupid));
-                fwrite ($bf,full_tag("TIMEADDED",6,false,$group2->timeadded));
+                fwrite ($bf,full_tag("ID",4,false,$members->id));
+                fwrite ($bf,full_tag("GROUPINGID",4,false,$members->groupingid));
+                fwrite ($bf,full_tag("GROUPID",4,false,$members->groupid));
+                fwrite ($bf,full_tag("TIMEADDED",4,false,$members->timeadded));
                 //End grouping_group tag
-                fwrite ($bf,end_tag("GROUPINGSGROUP",5,true));
+                fwrite ($bf,end_tag("GROUPINGGROUP",3,true));
             }
             //End grouping_groups tag
-            $status = fwrite ($bf,end_tag("GROUPINGSGROUPS",4,true));
+            $status = fwrite ($bf,end_tag("GROUPINGSGROUPS",2,true));
         }
         return $status;
     }

@@ -305,6 +305,7 @@ $string['creatingevents'] = 'Creating events';
 $string['creatinggradebook'] = 'Creating gradebook';
 $string['creatinggroups'] = 'Creating groups';
 $string['creatinggroupings'] = 'Creating groupings';
+$string['creatinggroupingsgroups'] = 'Adding groups into groupings';
 $string['creatinglogentries'] = 'Creating log entries';
 $string['creatingmessagesinfo'] = 'Creating messages info';
 $string['creatingmetacoursedata'] = 'Creating metacourse info';
