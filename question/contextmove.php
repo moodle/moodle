@@ -92,7 +92,7 @@
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');
         redirect($CFG->wwwroot."/question/category.php?".$thispageurl->get_query_string());
     }elseif ($moveformdata = $contextmoveform->get_data()) {
-        if (is_array($moveformdata->urls)){
+        if (isset($moveformdata->urls) && is_array($moveformdata->urls)){
             check_dir_exists($CFG->dataroot."/$tocoursefilesid/", true);
             $flipurls = array_keys($urls);
             foreach ($moveformdata->urls as $key => $urlaction){
