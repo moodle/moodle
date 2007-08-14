@@ -22,6 +22,11 @@
     $id = required_param('id', PARAM_INT);        // question id
     // if no quiz id is specified then a dummy quiz with default options is used
     $quizid = optional_param('quizid', 0, PARAM_INT);
+    // if no quiz id is specified then tell us the course
+    if (empty($quizid)) {
+        $courseid = required_param('courseid', PARAM_INT);
+    }
+
     // Test if we are continuing an attempt at a question
     $continue = optional_param('continue', 0, PARAM_BOOL);
     // Check for any of the submit buttons
@@ -48,6 +53,8 @@
         $url = $CFG->wwwroot . '/question/preview.php?id=' . $id;
         if ($quizid) {
             $url .= '&amp;quizid=' . $quizid;
+        } else {
+            $url .= '&amp;courseid=' . $courseid;
         }
         $url .= '&amp;continue=1';
         redirect($url);
@@ -60,7 +67,8 @@
         $quiz = new cmoptions;
         $quiz->id = 0;
         $quiz->review = $CFG->quiz_review;
-        require_login_in_context($questions[$id]->contextid);
+        require_login($courseid, false);
+        $quiz->course = $courseid;
     } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
         error("Quiz id $quizid does not exist");
     } else {
@@ -201,6 +209,7 @@
     echo '<div class="controls">';
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
+    echo "<input type=\"hidden\" name=\"courseid\" value=\"$courseid\" />\n";
     echo "<input type=\"hidden\" name=\"continue\" value=\"1\" />\n";
 
     // Print the mark and finish attempt buttons

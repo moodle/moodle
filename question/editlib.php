@@ -336,7 +336,8 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
 
         // preview
         if ($canuseq) {
-            link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quizid, 'questionpreview',
+            $quizorcourseid = $quizid?('&amp;quizid=' . $quizid):('&amp;courseid=' .$COURSE->id);
+            link_to_popup_window('/question/preview.php?id=' . $question->id . $quizorcourseid, 'questionpreview',
                     "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
                     0, 0, $strpreview, QUESTION_PREVIEW_POPUP_OPTIONS);
         }

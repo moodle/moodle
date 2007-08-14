@@ -44,12 +44,21 @@ class description_qtype extends default_questiontype {
     function print_question(&$question, &$state, $number, $cmoptions, $options) {
         global $CFG;
 
+        if (!empty($cmoptions->id)) {
+            $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
+            $cmorcourseid = '&amp;cmid='.$cm->id;
+        } else if (!empty($cmoptions->course)) {
+            $cmorcourseid = '&amp;courseid='.$cmoptions->course;
+        } else {
+            error('Need to provide courseid or cmid to print_question.');
+        }
+
         // For editing teachers print a link to an editing popup window
-        $editlink = '';
         if (question_has_capability_on($question, 'edit')) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/question/question.php?id='.$question->id, $stredit, $linktext, 450, 550, $stredit, '', true);
+            $editlink = link_to_popup_window('/question/question.php?id='.$question->id.$cmorcourseid,
+                                             $stredit, $linktext, 450, 550, $stredit, '', true);
         }
 
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);

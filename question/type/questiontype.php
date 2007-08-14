@@ -804,16 +804,17 @@ class default_questiontype {
         global $CFG;
         $isgraded = question_state_is_graded($state->last_graded);
 
-        // If this question is being shown in the context of a quiz
         // get the context so we can determine whether some extra links
-        // should be shown. (Don't show these links during question preview.)
-        $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
-        if (!empty($cm->id)) {
+        // should be shown.
+        if (!empty($cmoptions->id)) {
+            $cm = get_coursemodule_from_instance('quiz', $cmoptions->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        } else if (!empty($cm->course)) {
-            $context = get_context_instance(CONTEXT_COURSE, $cm->course);
+            $cmorcourseid = '&amp;cmid='.$cm->id;
+        } else if (!empty($cmoptions->course)) {
+            $context = get_context_instance(CONTEXT_COURSE, $cmoptions->course);
+            $cmorcourseid = '&amp;courseid='.$cmoptions->course;
         } else {
-            $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+            error('Need to provide courseid or cmid to print_question.');
         }
 
         // For editing teachers print a link to an editing popup window
@@ -821,7 +822,8 @@ class default_questiontype {
         if (question_has_capability_on($question, 'edit')) {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
-            $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id='.$question->id, 'editquestion', $linktext, 450, 550, $stredit, '', true);
+            $editlink = link_to_popup_window('/question/question.php?inpopup=1&amp;id='.$question->id.$cmorcourseid,
+                                             'editquestion', $linktext, 450, 550, $stredit, '', true);
         }
 
         $generalfeedback = '';
@@ -1157,7 +1159,7 @@ class default_questiontype {
         // Question types may wish to override this (eg. to ignore trailing
         // white space or to make "7.0" and "7" compare equal).
 
-        // In php neither == nor === compare arrays the way you want. The following 
+        // In php neither == nor === compare arrays the way you want. The following
         // ensures that the arrays have the same keys, with the same values.
         $result = false;
         $diff1 = array_diff_assoc($state->responses, $teststate->responses);

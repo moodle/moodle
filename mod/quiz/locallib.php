@@ -661,12 +661,13 @@ function quiz_upgrade_states($attempt) {
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question) {
-    global $CFG;
+    global $CFG, $COURSE;
     if (!question_has_capability_on($question, 'use', $question->category)){
         return '';
     }
     $strpreview = get_string('previewquestion', 'quiz');
-    return link_to_popup_window('/question/preview.php?id=' . $question->id . '&amp;quizid=' . $quiz->id, 'questionpreview',
+    $quizorcourseid = $quiz->id?('&amp;quizid=' . $quiz->id):('&amp;courseid=' .$COURSE->id);
+    return link_to_popup_window('/question/preview.php?id=' . $question->id . $quizorcourseid, 'questionpreview',
             "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strpreview\" />",
             0, 0, $strpreview, QUESTION_PREVIEW_POPUP_OPTIONS, true);
 }
