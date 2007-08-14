@@ -203,6 +203,7 @@ $string['highgradeascending'] = 'Sort by high grade ascending';
 $string['highgradedescending'] = 'Sort by high grade descending';
 $string['highgradeletter'] = 'High';
 $string['idnumberhelp'] = 'Arbitrary idnumber provided by the module responsible (must be defined and unique).';
+$string['idnumbers'] = 'Id numbers';
 $string['identifier'] = 'Identify user by';
 $string['import'] = 'Import';
 $string['importcsv'] = 'Import CSV';
