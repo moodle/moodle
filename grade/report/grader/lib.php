@@ -807,13 +807,14 @@ class grade_report_grader extends grade_report {
 
             $sum_array = array();
             $count_array = array();
-            $sums = get_records_sql($SQL);
-            foreach ($sums as $itemid => $csum) {
-                $sum_array[$itemid] = $csum->sum;
-                if ($totalcount) {
-                    $count_array[$itemid] = $totalcount;
-                } else {
-                    $count_array[$itemid] = $csum->count;
+            if ($sums = get_records_sql($SQL)) {
+                foreach ($sums as $itemid => $csum) {
+                    $sum_array[$itemid] = $csum->sum;
+                    if ($totalcount) {
+                        $count_array[$itemid] = $totalcount;
+                    } else {
+                        $count_array[$itemid] = $csum->count;
+                    }
                 }
             }
             $avghtml = '<tr><th>'.$straverage.'</th>';
