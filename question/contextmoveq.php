@@ -96,7 +96,7 @@ $contextmoveform = new question_context_move_question_form($thispageurl,
 if ($contextmoveform->is_cancelled()){
     redirect($returnurl);
 }elseif ($moveformdata = $contextmoveform->get_data()) {
-    if (is_array($moveformdata->urls)){
+    if (isset($moveformdata->urls) && is_array($moveformdata->urls)){
         check_dir_exists($CFG->dataroot."/$tocoursefilesid/", true);
         $flipurls = array_keys($urls);
         //actions on files
