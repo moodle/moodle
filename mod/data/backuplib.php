@@ -98,6 +98,10 @@ function data_backup_one_mod($bf,$preferences,$data) {
     fwrite ($bf,full_tag("APPROVAL",4,false,$data->approval));
     fwrite ($bf,full_tag("SCALE",4,false,$data->scale));
     fwrite ($bf,full_tag("ASSESSED",4,false,$data->assessed));
+    fwrite ($bf,full_tag("DEFAULTSORT",4,false,$data->defaultsort));
+    fwrite ($bf,full_tag("DEFAULTSORTDIR",4,false,$data->defaultsortdir));
+    fwrite ($bf,full_tag("EDITANY",4,false,$data->editany));
+    fwrite ($bf,full_tag("NOTIFICATION",4,false,$data->notification));
 
     // if we've selected to backup users info, then call any other functions we need
     // including backing up individual files

@@ -92,6 +92,10 @@ function data_restore_mods($mod,$restore) {
         if (isset($info['MOD']['#']['ASSESSPUBLIC']['0']['#'])) {
             $database->assesspublic = backup_todb($info['MOD']['#']['ASSESSPUBLIC']['0']['#']);
         }
+        $database->defaultsort = backup_todb($info['MOD']['#']['DEFAULTSORT']['0']['#']);
+        $database->defaultsortdir = backup_todb($info['MOD']['#']['DEFAULTSORTDIR']['0']['#']);
+        $database->editany = backup_todb($info['MOD']['#']['EDITANY']['0']['#']);
+        $database->notification = backup_todb($info['MOD']['#']['NOTIFICATION']['0']['#']);
 
         $newid = insert_record ('data', $database);
 
