@@ -63,6 +63,17 @@ function xmldb_data_upgrade($oldversion=0) {
         $db->debug = true;
     }  
 
+    if ($result && $oldversion < 2007081400) {
+
+    /// Define field notification to be added to data
+        $table = new XMLDBTable('data');
+        $field = new XMLDBField('notification');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'editany');
+
+    /// Launch add field notification
+        $result = $result && add_field($table, $field);
+    }
+
 
     return $result;
 }
