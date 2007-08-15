@@ -38,6 +38,10 @@ class profile_define_base {
 
         $form->addElement('selectyesno', 'locked', get_string('profilelocked', 'admin'));
 
+        $form->addElement('selectyesno', 'forceunique', get_string('profileforceunique', 'admin'));
+        
+        $form->addElement('selectyesno', 'signup', get_string('profilesignup', 'admin'));
+
         $choices = array();
         $choices[PROFILE_VISIBLE_NONE]    = get_string('profilevisiblenone', 'admin');
         $choices[PROFILE_VISIBLE_PRIVATE] = get_string('profilevisibleprivate', 'admin');

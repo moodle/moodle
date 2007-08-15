@@ -247,6 +247,23 @@ class profile_field_base {
         return (boolean)$this->field->locked;
     }
 
+    /**
+     * Check if the field data should be unique
+     * @return   boolean
+     */
+    function is_unique() {
+        return (boolean)$tihs->field->forceunique;
+    }
+
+    /**
+     * Check if the field should appear on the signup page
+     * @return   boolean
+     */
+    function is_signup_field() {
+        return (boolean)$this->field->signup;
+    }
+     
+
 } /// End of class definition
 
 
