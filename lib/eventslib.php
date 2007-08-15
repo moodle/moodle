@@ -1,6 +1,8 @@
 <?php
 /**
  * Library of functions for events manipulation.
+ * 
+ * The public API is all at the end of this file.
  *
  * @author Martin Dougiamas and many others
  * @version $Id$
