@@ -219,8 +219,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('static', 'gradeboundarystatic1', get_string('gradeboundary', 'quiz'), '100%');
 
         $repeatarray=array();
-        $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbacktext', get_string('feedback', 'quiz'));
-        $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'));
+        $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbacktext', get_string('feedback', 'quiz'), array('size' => 50));
+        $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'), array('size' => 10));
 
         if (!empty($this->_instance)) {
             $this->_feedbacks = get_records('quiz_feedback', 'quizid', $this->_instance, 'mingrade DESC');
@@ -236,7 +236,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                     array(), 'boundary_repeats', 'boundary_add_fields', 3);
 
         //put some extra elements in before the button
-        $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'));
+        $insertEl = &MoodleQuickForm::createElement('text', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), array('size' => 50));
         $mform->insertElementBefore($insertEl, 'boundary_add_fields');
 
         $insertEl = &MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
