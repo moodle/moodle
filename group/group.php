@@ -8,60 +8,51 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
-/// include libraries
+
 require_once('../config.php');
-require_once($CFG->libdir.'/moodlelib.php');
-require_once($CFG->libdir.'/uploadlib.php');
 require_once('lib.php');
-require_once('edit_form.php');
+require_once('group_form.php');
 
 /// get url variables
-$courseid    = required_param('courseid', PARAM_INT);
+$courseid    = optional_param('courseid', PARAM_INT);
 $id          = optional_param('id', 0, PARAM_INT);
 $delete      = optional_param('delete', 0, PARAM_BOOL);
 $confirm     = optional_param('confirm', 0, PARAM_BOOL);
-
-/// Course must be valid
-if (!$course = get_record('course', 'id', $courseid)) {
-    error('Course ID was incorrect');
-}
-
-/// Delete action should not be called without a group id
-if ($delete && !$id) {
-    error(get_string('errorinvalidgroup'));
-}
-
-/// basic access control checks
-if (! $course = get_record('course', 'id', $courseid)) {
-    error("Incorrect course id ");
-}
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
-require_capability('moodle/course:managegroups', $context);
-
-$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
 
 if ($id) {
     if (!$group = get_record('groups', 'id', $id)) {
         error('Group ID was incorrect');
     }
-    if ($group->courseid != $courseid) {
-        error('incorrect courseid');
+    if (empty($courseid)) {
+        $courseid = $group->courseid;
+
+    } else if ($courseid != $group->courseid) {
+        error('Course ID was incorrect');
     }
+
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Course ID was incorrect');
+    }
+
 } else {
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Course ID was incorrect');
+    }
     $group = new object();
-    $group->courseid = $courseid;
+    $group->courseid = $course->id;
 }
 
-if ($id and $delete) {
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+require_capability('moodle/course:managegroups', $context);
 
+$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
+
+if ($id and $delete) {
     if (!$confirm) {
         print_header(get_string('deleteselectedgroup', 'group'), get_string('deleteselectedgroup', 'group'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        if (!$group = get_record('groups', 'id', $id)) {
-            error('Group ID was incorrect');
-        }
-        notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'edit.php', 'index.php', $optionsyes, $optionsno, 'post', 'get');
+        notice_yesno(get_string('deletegroupconfirm', 'group', $group->name), 'group.php', 'index.php', $optionsyes, $optionsno, 'get', 'get');
         print_footer();
         die;
 
@@ -74,7 +65,7 @@ if ($id and $delete) {
             events_trigger('group_deleted', $eventdata);
             redirect('index.php?id='.$course->id);
         } else {
-            print_error('erroreditgroup', 'group', groups_home_url($course->id));
+            print_error('erroreditgroup', 'group', $returnurl);
         }
     }
 }

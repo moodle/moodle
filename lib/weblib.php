@@ -4607,30 +4607,6 @@ function update_categories_search_button($search,$page,$perpage) {
     }
 }
 
-/**
- * Prints the editing button on group page
- *
- * @uses $CFG
- * @uses $USER
- * @param int $courseid The course group is associated with
- * @param int $groupid The group to update
- * @return string
- */
-function update_group_button($courseid, $groupid) {
-    global $CFG, $USER;
-
-    if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_GROUP, $groupid))) {
-        $string = get_string('editgroupprofile');
-
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/group/edit.php\">".
-               '<div>'.
-               '<input type="hidden" name="courseid" value="'. $courseid .'" />'.
-               '<input type="hidden" name="id" value="'. $groupid .'" />'.
-               '<input type="hidden" name="grouping" value="-1" />'.
-               '<input type="hidden" name="edit" value="on" />'.
-               '<input type="submit" value="'. $string .'" /></div></form>';
-    }
-}
 
 /**
  * Prints the editing button on groups page

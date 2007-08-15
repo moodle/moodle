@@ -56,14 +56,14 @@ class group_edit_form extends moodleform {
         $name = $data['name'];
         if ($data['id'] and $group = get_record('groups', 'id', $data['id'])) {
             if ($group->name != stripslashes($name)) {
-                if (groups_group_name_exists($COURSE->id, name)) {
+                if (groups_get_group_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupnameexists', 'group', stripslashes($name));
                 }
             }
 
         } else {
-            if (groups_group_name_exists($COURSE->id, $name)) {
-                $errors['name'] = get_string('groupnameexists', 'group', $name);
+            if (groups_get_group_by_name($COURSE->id, $name)) {
+                $errors['name'] = get_string('groupnameexists', 'group', stripslashes($name));
             }
         }
 

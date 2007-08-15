@@ -56,15 +56,15 @@ if (!$course = groups_get_course_info($courseid)) {
             die;  // Client side JavaScript takes it from here.
 
         case 'deletegroup':
-            redirect('edit.php?delete=1&amp;courseid='.$courseid.'&amp;id='.$groupid);
+            redirect('group.php?delete=1&amp;courseid='.$courseid.'&amp;id='.$groupid);
             break;
 
         case 'showcreateorphangroupform':
-            redirect('edit.php?courseid='.$courseid);
+            redirect('group.php?courseid='.$courseid);
             break;
 
         case 'showgroupsettingsform':
-            redirect('edit.php?courseid='.$courseid.'&amp;id='.$groupid);
+            redirect('group.php?courseid='.$courseid.'&amp;id='.$groupid);
             break;
 
         case 'updategroups': //Currently reloading.

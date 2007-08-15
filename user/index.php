@@ -252,7 +252,7 @@
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
                 if (has_capability('moodle/course:managegroups', $context)) {
-                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.groups_group_edit_url($course->id, $group->id).'">';
+                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="'.$CFG->wwwroot.'/group/group.php?id='.$group->id.'&amp;courseid='.$group->courseid.'">';
                     echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('editgroupprofile').'" />';
                     echo '</a>';
                 }
