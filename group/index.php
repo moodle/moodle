@@ -28,7 +28,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 // Get the course information so we can print the header and
 // check the course id is valid
 
-if (!$course = groups_get_course_info($courseid)) {
+if (!$course = get_record('course', 'id',$courseid)) {
     $success = false;
     print_error('invalidcourse'); //'The course ID is invalid'
 }
@@ -231,7 +231,7 @@ function groups_param_action($prefix = 'act_') {
         $form_vars = $_POST;
     }
     elseif ($_GET) {
-        $form_vars = $_GET; 
+        $form_vars = $_GET;
     }
     if ($form_vars) {
         foreach ($form_vars as $key => $value) {

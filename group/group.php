@@ -42,6 +42,7 @@ if ($id) {
     $group->courseid = $course->id;
 }
 
+require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
 
@@ -71,7 +72,7 @@ if ($id and $delete) {
 }
 
 /// First create the form
-$editform = new group_edit_form();
+$editform = new group_form();
 $editform->set_data($group);
 
 if ($editform->is_cancelled()) {
@@ -79,22 +80,14 @@ if ($editform->is_cancelled()) {
 
 } elseif ($data = $editform->get_data()) {
 
-    $result = false;
     if ($data->id) {
-        if (!update_record('groups', $data)) {
+        if (!groups_update_group($data, $editform->_upload_manager)) {
             error('Error updating group');
         }
     } else {
-        if (!$data->id = insert_record('groups', $data)) {
+        if (!groups_create_group($data, $editform->_upload_manager)) {
             error('Error updating group');
         }
-    }
-
-    //update image
-    require_once("$CFG->libdir/gdlib.php");
-    if (save_profile_image($data->id, $editform->_upload_manager, 'groups')) {
-        $data->picture = 1;
-        update_record('groups', $data);
     }
 
     redirect($returnurl);

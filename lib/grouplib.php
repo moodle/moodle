@@ -2,7 +2,6 @@
 
 // folowing files will be removed soon
 require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
-require_once($CFG->dirroot.'/group/lib/groupinglib.php');
 require_once($CFG->dirroot.'/group/lib/utillib.php');
 require_once($CFG->dirroot.'/group/lib/legacylib.php');
 
@@ -14,11 +13,24 @@ require_once($CFG->dirroot.'/group/lib/legacylib.php');
  * @return int $groupid
  */
 function groups_get_group_by_name($courseid, $name) {
-    if (!$group = get_record('groups', 'courseid', $courseid, 'name', addslashes($name))) {
-        return false;
+    if ($groups = get_records_select('groups', "courseid=$courseid AND name='".addslashes($name)."'")) {
+        return key($groups);
     }
+    return false;
+}
 
-    return $group->id;
+/**
+ * Returns the groupingid of a grouping with the name specified for the course.
+ * Grouping names should be unique in course
+ * @param int $courseid The id of the course
+ * @param string $name name of group (without magic quotes)
+ * @return int $groupid
+ */
+function groups_get_grouping_by_name($courseid, $name) {
+    if ($groupings = get_records_select('groupings', "courseid=$courseid AND name='".addslashes($name)."'")) {
+        return key($groupings);
+    }
+    return false;
 }
 
 /**

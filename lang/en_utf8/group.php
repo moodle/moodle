@@ -71,6 +71,7 @@ $string['createorphangroup'] = 'Create orphan group';
 
 $string['groupname'] = 'Group name';
 $string['groupnameexists'] = 'The group name \'$a\' already exists in this course, please choose another one.';
+$string['groupingnameexists'] = 'The grouping name \'$a\' already exists in this course, please choose another one.';
 $string['defaultgroupname'] = 'Group';
 $string['groupdescription'] = 'Group description';
 $string['enrolmentkey'] = 'Enrolment key';

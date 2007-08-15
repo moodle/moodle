@@ -201,43 +201,6 @@ function groups_set_default_group_settings($groupinfo = null) {
  *****************************/
 
 /**
- * Creates a group for a specified course
- * All groups should really belong to a grouping (though there is nothing in 
- * this API that stops them not doing
- * so, to allow plenty of flexibility) so you should be using this in 
- * conjunction with the function to add a group to
- *  a grouping. 
- * @param int $courseid The course to create the group for
- * @return int | false The id of the group created or false if the group was
- * not created successfully. 
- * See comment above on web service autoupdating. 
- */
-function groups_create_group($courseid, $groupsettings = false) {
-    return groups_db_create_group($courseid, $groupsettings);
-}
-
-/**
- * Restore a group for a specified course.
- *   For backup/restorelib.php 
- */
-function groups_restore_group($courseid, $groupsettings) {
-    return groups_db_create_group($courseid, $groupsettings, $copytime=true);
-}
-
-
-/**
- * Sets the information about a group
- * Only sets the string for the picture - does not upload the picture! 
- * @param object $groupsettings An object containing some or all of the 
- * following properties: name, description, picture, hidepicture
- * @return boolean True if info was added successfully, false otherwise. 
- */
-function groups_set_group_settings($groupid, $groupsettings) {
-    return groups_db_set_group_settings($groupid, $groupsettings);
-}
-
-
-/**
  * Adds a specified user to a group
  * @param int $userid   The user id
  * @param int $groupid  The group id
@@ -268,23 +231,6 @@ function groups_add_member($groupid, $userid) {
     return $useradded;
 }
 
-/**
- * Restore a user to the group specified in $member.
- *   For backup/restorelib.php
- * @param $member object Group member object.
- */
-function groups_restore_member($member) {
-    $alreadymember = groups_is_member($member->groupid, $member->userid);
-    if (! groups_group_exists($member->groupid)) {
-        return false;
-    } elseif ($alreadymember) {
-        return true;
-    } else {
-        $useradded = groups_db_add_member($member->groupid, $member->userid, $member->timeadded);
-    }
-    return $useradded;
-}
-
 
 /*****************************
         Deletion functions  
@@ -306,47 +252,4 @@ function groups_remove_member($groupid, $userid) {
     return $success;
 }
 
-/**
- * Removes all users from the specified group.
- * @param int $groupid The ID of the group.
- * @return boolean True for success, false otherwise.
- */
-function groups_remove_all_members($groupid) {
-    if (! groups_group_exists($groupid)) {
-        //Woops, delete group last!
-        return false;
-    }
-    $userids = groups_get_members($groupid);
-    if (! $userids) {
-        return false;
-    }
-    $success = true;
-    foreach ($userids as $id) {
-        $success = $success && groups_db_remove_member($groupid, $id);
-    }
-    $success = $success && groups_db_set_group_modified($groupid);
-    return $success;
-}
-
-/* 
- * Update a group and return true or false
- *
- * @param object $data  - all the data needed for an entry in the 'groups' table
- */
-function groups_update_group($data, $courseid) {
-    $oldgroup = get_record('groups', 'id', $data->id); // should not fail, already tested above
-
-    // Update with the new data
-    if (update_record('groups', $data)) {
-
-        $group = get_record('groups', 'id', $data->id);
-
-        add_to_log($group->id, "groups", "update", "edit.php?id=$courseid&amp;group=$group->id", "");
-
-        return true;
-
-    }
-
-    return false;
-}
 ?>

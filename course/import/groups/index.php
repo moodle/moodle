@@ -3,8 +3,8 @@
 /// Bulk group creation registration script from a comma separated file
 
     require_once('../../../config.php');
-    require_once('../../lib.php');
-    require_once($CFG->dirroot . '/group/lib/basicgrouplib.php');
+    require_once($CFG->dirroot.'/course/lib.php');
+    require_once($CFG->dirroot.'/group/lib.php');
     
     $id = required_param('id', PARAM_INT);    // Course id
     
@@ -156,7 +156,8 @@
                 
                 //if courseid is set
                 if (isset($newgroup->courseid)){
-                                                            
+
+                    $newgroup->courseid = (int)$newgroup->courseid;
                     $newgroup->timecreated = time();
                     $linenum++;
                     $groupname = $newgroup->name;
@@ -164,20 +165,21 @@
                     
                     ///Users cannot upload groups in courses they cannot update.
                     if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
-                        notify( get_string('nopermissionforcreation','group',$newgroup->name) );
+                        notify(get_string('nopermissionforcreation','group',$groupname));
+
                     } else {
-                        if ( $group = groups_group_name_exists($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup->courseid, $newgroup)) ) {
+                        if ( $groupid = groups_get_group_by_name($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup)) ) {
     
                             //Record not added - probably because group is already registered
                             //In this case, output groupname from previous registration
-                            if ($group) {
-                                notify("$newgroup->name :".get_string('groupexistforcourse', 'error', $groupname));
+                            if ($groupid) {
+                                notify("$groupname :".get_string('groupexistforcourse', 'error', $groupname));
                             } else {
                                 notify(get_string('groupnotaddederror', 'error', $groupname));
                             } 
                         }  
                         else {
-                            notify( get_string('groupaddedsuccesfully', 'group', $newgroup->name) );
+                            notify(get_string('groupaddedsuccesfully', 'group', $groupname));
                         }
                     }
                 } //close courseid validity check

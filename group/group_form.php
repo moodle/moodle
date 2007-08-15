@@ -3,18 +3,16 @@
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /// get url variables
-class group_edit_form extends moodleform {
+class group_form extends moodleform {
 
     // Define the form
     function definition () {
         global $USER, $CFG, $COURSE;
 
-        $strrequired = get_string('required');
-
         $mform =& $this->_form;
 
         $mform->addElement('text','name', get_string('groupname', 'group'),'maxlength="254" size="50"');
-        $mform->addRule('name', $strrequired, 'required', null, 'client');
+        $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_MULTILANG);
 
         $mform->addElement('htmleditor', 'description', get_string('groupdescription', 'group'), array('rows'=> '15', 'course' => $COURSE->id, 'cols'=>'45'));
@@ -41,11 +39,7 @@ class group_edit_form extends moodleform {
         $mform->addElement('hidden','courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        $this->add_action_buttons(true);
-    }
-
-    function definition_after_data() {
-        global $USER, $CFG;
+        $this->add_action_buttons();
     }
 
     function validation($data) {
@@ -53,18 +47,16 @@ class group_edit_form extends moodleform {
 
         $errors = array();
 
-        $name = $data['name'];
+        $name = stripslashes($data['name']);
         if ($data['id'] and $group = get_record('groups', 'id', $data['id'])) {
-            if ($group->name != stripslashes($name)) {
+            if ($group->name != $name) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {
-                    $errors['name'] = get_string('groupnameexists', 'group', stripslashes($name));
+                    $errors['name'] = get_string('groupnameexists', 'group', $name);
                 }
             }
 
-        } else {
-            if (groups_get_group_by_name($COURSE->id, $name)) {
-                $errors['name'] = get_string('groupnameexists', 'group', stripslashes($name));
-            }
+        } if (groups_get_group_by_name($COURSE->id, $name)) {
+            $errors['name'] = get_string('groupnameexists', 'group', $name);
         }
 
         if (count($errors) > 0) {
