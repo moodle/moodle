@@ -1701,7 +1701,7 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
             if ($category->contextid == $pcontext){
                 $cid = $category->id;
                 if ($currentcat!= $cid || $currentcat==0) {
-                    $countstring = (!empty($category->questioncount))?"($category->questioncount)":'';
+                    $countstring = (!empty($category->questioncount))?" ($category->questioncount)":'';
                     $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
                 }
             }
