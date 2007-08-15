@@ -1,5 +1,5 @@
 <?php  //$Id$
-    require_once('../config.php');
+    require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/dmllib.php');
 
@@ -10,7 +10,7 @@
     require_once($CFG->dirroot.'/user/filters/profilefield.php');
     require_once($CFG->dirroot.'/user/filters/yesno.php');
 
-    require_once($CFG->dirroot.'/admin/user_bulk_form.php');
+    require_once($CFG->dirroot.'/admin/user/user_bulk_form.php');
     define("MAX_USERS_PER_PAGE", 5000);
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -28,13 +28,13 @@
     // check if an action should be performed and do so
     switch ($user_bulk_form->getAction()) {
     case 1:
-        include($CFG->dirroot . '/admin/user_bulk_confirm.php');
+        include($CFG->dirroot . '/admin/user/user_bulk_confirm.php');
         return;
     case 2:
-        include($CFG->dirroot . '/admin/user_bulk_message.php');
+        include($CFG->dirroot . '/admin/user/user_bulk_message.php');
         return;
     case 3:
-        include($CFG->dirroot . '/admin/user_bulk_delete.php');
+        include($CFG->dirroot . '/admin/user/user_bulk_delete.php');
         return;
     }
 

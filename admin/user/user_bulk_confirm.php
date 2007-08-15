@@ -3,7 +3,7 @@
 * script for bulk user delete operations
 */
 
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $confirm     = optional_param('confirm', 0, PARAM_BOOL);
@@ -44,6 +44,6 @@ if (empty($confirm)) {
             notify(get_string('usernotconfirmed', '', fullname($user, true)));
         }
     }
-    redirect($CFG->wwwroot . '/admin/user_bulk.php', get_string('changessaved'));
+    redirect($CFG->wwwroot . '/admin/user/user_bulk.php', get_string('changessaved'));
 }
 admin_externalpage_print_footer();

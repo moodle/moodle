@@ -1,5 +1,5 @@
 <?php //$Id$
-require_once('../config.php');
+require_once('../../config.php');
 require_once($CFG->dirroot.'/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
@@ -18,7 +18,7 @@ $extradata['userlist'] =& $users;
 $noteform =& new user_message_form('user_bulk_message.php', $extradata);
 // if no users or action canceled, return to users page
 if (empty($users) || $noteform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/admin/user_bulk.php');
+    redirect($CFG->wwwroot . '/admin/user/user_bulk.php');
 }
 
 $formdata =& $noteform->get_data();
@@ -32,7 +32,7 @@ if ($noteform->is_submitted() && !empty($formdata->send)) {
                 message_post_message($USER, $user, addslashes($formdata->messagebody), $formdata->format, 'direct');
             }
         }
-        redirect($CFG->wwwroot . '/admin/user_bulk.php');
+        redirect($CFG->wwwroot . '/admin/user/user_bulk.php');
     }
 }
 
