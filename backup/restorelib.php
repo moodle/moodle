@@ -495,7 +495,7 @@
 
         $status = true;
         if ($course_header) {
-            $table = new table();
+            $table = new object();
             //This is tha align to every ingo table
             $table->align = array ("right","left");
             //The width
