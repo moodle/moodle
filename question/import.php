@@ -60,7 +60,7 @@
             : "";
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id", 'type' => 'activity');
-        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}", 'type' => 'title');
+        $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
         $navlinks[] = array('name' => $txt->importquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
         print_header_simple($txt->importquestions, '', $navigation, "", "", true, $strupdatemodule);

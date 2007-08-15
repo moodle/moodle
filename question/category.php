@@ -75,23 +75,21 @@
     } elseif ((!empty($param->delete) and (!$questionstomove) and confirm_sesskey()))  {
         $qcobject->delete_category($param->delete);//delete the category now no questions to move
     }
-    $crumbs = array();
+    $navlinks = array();
     if ($cm!==null) {
         // Page header
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
             ? update_module_button($cm->id, $COURSE->id, get_string('modulename', $cm->modname))
             : "";
-        $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname),
                             'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id",
                             'type' => 'activity');
         $navlinks[] = array('name' => format_string($module->name),
-                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?cmid={$cm->id}",
+                            'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}",
                             'type' => 'title');
     } else {
         // Print basic page layout.
         $strupdatemodule = '';
-        $navlinks = array();
     }
 
     if (!$param->edit){
