@@ -81,10 +81,10 @@ class grade_report_overview extends grade_report {
         if ($courses = get_courses('all', null, 'c.id, c.shortname')) {
             foreach ($courses as $course) {
                 // Get course grade_item
-                $grade_item_id = get_field('grade_items', 'id', 'itemtype', 'course', 'courseid', $course->id);
+                $grade_item = grade_item::fetch(array('itemtype' => 'course', 'courseid' => $course->id));
 
                 // Get the grade
-                $finalgrade = get_field('grade_grades', 'finalgrade', 'itemid', $grade_item_id, 'userid', $this->user->id);
+                $finalgrade = get_field('grade_grades', 'finalgrade', 'itemid', $grade_item->id, 'userid', $this->user->id);
 
                 /// prints rank
                 if ($finalgrade) {
@@ -92,7 +92,7 @@ class grade_report_overview extends grade_report {
                     $sql = "SELECT COUNT(DISTINCT(userid))
                             FROM {$CFG->prefix}grade_grades
                             WHERE finalgrade > $finalgrade
-                            AND itemid = $grade_item_id";
+                            AND itemid = $grade_item->id";
                     $rank = count_records_sql($sql) + 1;
 
                     $rankdata = "$rank/$numusers";
@@ -101,7 +101,11 @@ class grade_report_overview extends grade_report {
                     $rankdata = "-";
                 }
 
-                $this->table->add_data(array($course->shortname, $finalgrade, $rankdata));
+                $courselink = '<a href="' . $CFG->wwwroot . '/grade/report/user/index.php?id=' . $course->id . '">' . $course->shortname . '</a>';
+
+                $this->table->add_data(array($courselink,
+                                             round(grade_to_percentage($finalgrade, $grade_item->grademin, $grade_item->grademax), 1) . '%',
+                                             $rankdata));
             }
 
             return true;
