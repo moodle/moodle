@@ -1,5 +1,5 @@
 <?php //$Id$
-$string['actfilterhdr'] = 'Active filters';
+$string['actfilterhdr'] = 'Active filters (ORed together)';
 $string['addfilter'] = 'Add filter';
 $string['anyvalue'] = 'any value';
 $string['anyrole'] = 'any role';

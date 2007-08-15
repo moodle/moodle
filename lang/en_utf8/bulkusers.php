@@ -2,8 +2,8 @@
 $string['usersinlist'] = 'Users in list';
 $string['addall'] = 'Add all to selection';
 $string['addsel'] = 'Add to selection';
-$string['removeall'] = 'Remove all from selection';
+$string['removeall'] = 'Clear selection';
 $string['removesel'] = 'Remove from selection';
-$string['filtered'] = 'Filtered';
+$string['available'] = 'Available';
 $string['selected'] = 'Selected';
-$string['action'] = 'Action';
+$string['usersfound'] = '$a user(s) found';

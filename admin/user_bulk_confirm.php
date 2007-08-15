@@ -24,7 +24,7 @@ if (empty($userlist)) {
     redirect($CFG->wwwroot . '/admin/user_bulk.php');
 }
 
-admin_externalpage_setup('editusers');
+admin_externalpage_setup('userbulk');
 admin_externalpage_print_header();
 if (empty($confirm)) {
     $usernames = array();

@@ -616,6 +616,7 @@ $string['upgradinglogs'] = 'Upgrading logs';
 $string['upwards'] = 'upwards';
 $string['usehtmleditor'] = 'Use HTML editor';
 $string['useraccountupdated'] = 'User updated';
+$string['userbulk'] = 'Bulk user actions';
 $string['userlist'] = 'Browse list of users';
 $string['userpolicies'] = 'User policies';
 $string['userrenamed'] = 'User renamed';

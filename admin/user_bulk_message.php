@@ -36,7 +36,7 @@ if ($noteform->is_submitted() && !empty($formdata->send)) {
     }
 }
 
-admin_externalpage_setup('editusers');
+admin_externalpage_setup('userbulk');
 admin_externalpage_print_header();
 if ($noteform->is_submitted() && !empty($formdata->preview)) {
     echo '<h3>'.get_string('previewhtml').'</h3>';

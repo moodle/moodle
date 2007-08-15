@@ -46,14 +46,14 @@
     $filters[] = new user_filter_select('country', get_string('country'), 'country', get_list_of_countries());
     $filters[] = new user_filter_yesno('confirmed', get_string('confirm'), 'confirmed');
     $filters[] = new user_filter_profilefield('profile', get_string('profile'));
-	$filters[] = new user_filter_courserole('course', get_string('courserole', 'filters'));
-	$filters[] = new user_filter_globalrole('system', get_string('globalrole', 'role'));
+    $filters[] = new user_filter_courserole('course', get_string('courserole', 'filters'));
+    $filters[] = new user_filter_globalrole('system', get_string('globalrole', 'role'));
     
     // create the user filter form
     $user_filter_form =& new user_filter_form(null, $filters);
     
     // do output
-    admin_externalpage_setup('editusers');
+    admin_externalpage_setup('userbulk');
     admin_externalpage_print_header();
     
     // put the user filter form first
@@ -62,11 +62,13 @@
     $where =& $user_filter_form->getSQLFilter('id<>1 AND NOT deleted');
     $ausercount = count_records_select('user', $where);
     // limit the number of options 
+    $comment = null;
     if($ausercount <= MAX_USERS_PER_PAGE) {
         $user_bulk_form->setAvailableUsersSQL($where);
     } else {
-        echo get_string('toomanytoshow');
+        $comment = get_string('toomanytoshow');
     }
+    $user_bulk_form->setUserCount($ausercount, $comment);
     // display the bulk user form
     $user_bulk_form->display();
     admin_externalpage_print_footer();

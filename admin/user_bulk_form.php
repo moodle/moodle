@@ -17,7 +17,7 @@ class user_bulk_form extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('header', 'users', get_string('usersinlist', 'bulkusers'));
 
-        $this->ausers =& $mform->createElement('select', 'ausers', get_string('filtered', 'bulkusers'), null, 'size="15"');
+        $this->ausers =& $mform->createElement('select', 'ausers', get_string('available', 'bulkusers'), null, 'size="15"');
         $this->ausers->setMultiple(true);
         $this->susers =& $mform->createElement('select', 'susers', get_string('selected', 'bulkusers'), null, 'size="15"');
         $this->susers->setMultiple(true);
@@ -27,6 +27,7 @@ class user_bulk_form extends moodleform {
         $objs[] = &$this->susers;
 
         $mform->addElement('group', 'usersgrp', get_string('users'), $objs, ' ', false);
+        $mform->addElement('static', 'comment');
 
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addone', get_string('addsel', 'bulkusers'));
@@ -38,13 +39,23 @@ class user_bulk_form extends moodleform {
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', get_string('withselected'), @$this->_customdata);
         $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));;
-        $mform->addElement('group', 'actionsgrp', get_string('actions'), $objs, ' ', false);
+        $mform->addElement('group', 'actionsgrp', get_string('withselectedusers'), $objs, ' ', false);
 
         $renderer =& $mform->defaultRenderer();
         $template = '<label class="qflabel" style="vertical-align:top">{label}</label> {element}';
         $renderer->setGroupElementTemplate($template, 'usersgrp');
     }
 
+    function setUserCount($count=-1, $comment=null) {
+        global $SESSION;
+        if($count < 0) {
+            $count = count($SESSION->bulk_ausers);
+        }
+        $obj =& $this->_form->getElement('comment');
+        $obj->setLabel($comment);
+        $obj->setText(get_string('usersfound', 'bulkusers', $count));
+    }
+    
     function definition_after_data() {
         global $SESSION;
         $this->_updateSelection($this->get_data());
@@ -52,6 +63,7 @@ class user_bulk_form extends moodleform {
         if(empty($SESSION->bulk_susers)) {
             $this->_form->removeElement('actionsgrp');
         }
+        //$this->setUserCount();
     }
 
     /**
