@@ -26,7 +26,7 @@
     if (!has_capability('mod/survey:readresponses', $context)) {
         if ($type != "student.png" or $sid != $USER->id ) {
             error("Sorry, you aren't allowed to see this.");
-        } else if ($groupmode and !ismember($group)) {
+        } else if ($groupmode and !groups_is_member($group)) {
             error("Sorry, you aren't allowed to see this.");
         }
     }

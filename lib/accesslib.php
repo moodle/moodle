@@ -2348,7 +2348,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                     // this may be slow, but this is the proper way of doing it
                     if (!has_capability('moodle/course:view', $context, $ra->userid)) {
                         // remove from groups
-                        if ($groups = get_groups($context->instanceid, $ra->userid)) {
+                        if ($groups = groups_get_all_groups($context->instanceid)) {
                             foreach ($groups as $group) {
                                 delete_records('groups_members', 'groupid', $group->id, 'userid', $ra->userid);
                             }
@@ -3193,7 +3193,7 @@ function get_child_contexts($context) {
                 }
             }
             // Find all module instances for the course.
-            if ($modules = get_records('course_modules', 'course', $context->instanceid)) {
+            if ($modules = get_records('course_modules', 'course', $context->instanceid, '', 'id')) {
                 foreach ($modules as $module) {
                     if ($child = get_context_instance(CONTEXT_MODULE, $module->id)) {
                         array_push($children, $child->id);
@@ -3201,9 +3201,9 @@ function get_child_contexts($context) {
                 }
             }
             // Find all group instances for the course.
-            if ($groupids = groups_get_groups($context->instanceid)) {
-                foreach ($groupids as $groupid) {
-                    if ($child = get_context_instance(CONTEXT_GROUP, $groupid)) {
+            if ($groups = get_records('groups', 'courseid', $context->instanceid, '', 'id')) {
+                foreach ($groups as $group) {
+                    if ($child = get_context_instance(CONTEXT_GROUP, $group->id)) {
                         array_push($children, $child->id);
                     }
                 }
@@ -3232,7 +3232,7 @@ function get_child_contexts($context) {
 
             foreach ($categories as $catid) {
                 // Find all courses for the category.
-                if ($courses = get_records('course', 'category', $catid)) {
+                if ($courses = get_records('course', 'category', $catid, '', 'id')) {
                     foreach ($courses as $course) {
                         if ($courseci = get_context_instance(CONTEXT_COURSE, $course->id)) {
                             array_push($children, $courseci->id);

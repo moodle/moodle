@@ -233,7 +233,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     }
 
     if ($showgroups) {
-        if ($cgroups = get_groups($course->id)) {
+        if ($cgroups = groups_get_all_groups($course->id)) {
             foreach ($cgroups as $cgroup) {
                 $groups[$cgroup->id] = $cgroup->name;
             }
@@ -448,7 +448,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     }
 
     if ($showgroups) {
-        if ($cgroups = get_groups($course->id)) {
+        if ($cgroups = groups_get_all_groups($course->id)) {
             foreach ($cgroups as $cgroup) {
                 $groups[$cgroup->id] = $cgroup->name;
             }

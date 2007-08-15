@@ -452,9 +452,9 @@
                       or groupmode($courseid) != SEPARATEGROUPS) {
                         return true;
                     } else {
-                        if ($usergroups = user_group($courseid, $targetuserid)) {
+                        if ($usergroups = groups_get_all_groups($courseid, $targetuserid)) {
                             foreach ($usergroups as $usergroup) {
-                                if (ismember($usergroup->id)) {
+                                if (groups_is_member($usergroup->id)) {
                                     return true;
                                 }
                             }

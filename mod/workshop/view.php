@@ -375,7 +375,7 @@
         foreach ($users as $user) {
             // skip if student not in group
             if ($currentgroup) {
-                if (!ismember($currentgroup, $user->id)) {
+                if (!groups_is_member($currentgroup, $user->id)) {
                     continue;
                 }
             }

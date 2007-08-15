@@ -1513,7 +1513,7 @@ class assignment_base {
 
         $graders = array();
         if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
-            if ($groups = user_group($this->course->id, $user->id)) {  // Try to find all groups
+            if ($groups = groups_get_all_groups($this->course->id, $user->id)) {  // Try to find all groups
                 foreach ($groups as $group) {
                     foreach ($potgraders as $t) {
                         if ($t->id == $user->id) {
@@ -1530,7 +1530,7 @@ class assignment_base {
                     if ($t->id == $user->id) {
                         continue; // do not send self
                     }
-                    if (!user_group($this->course->id, $t->id)) { //ugly hack
+                    if (!groups_get_all_groups($this->course->id, $t->id)) { //ugly hack
                         $graders[$t->id] = $t;
                     }
                 }
@@ -2349,7 +2349,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $
       return;
 
     foreach ($assignments as $assignment) {
-        if (empty($groupid) || ismember($groupid, $assignment->userid)) {
+        if (empty($groupid) || groups_is_member($groupid, $assignment->userid)) {
 
           $tmpactivity = new Object;
 

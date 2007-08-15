@@ -28,18 +28,6 @@ require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
  *****************************/
 
 /**
- * Gets a list of the group IDs for a specified course.
- * @param int $courseid The id of the course.
- * @return array | false Returns an array of the group IDs or false if no records
- * or an error occurred.
- */
-function groups_get_groups($courseid) {
-    $groupids = groups_db_get_groups($courseid);
-    return $groupids;
-}
-
-
-/**
  * Returns the ids of the users in the specified group.
  * @param int $groupid The groupid to get the users for
  * @param string $membertype Either 'student', 'teacher' or false. The function 
@@ -149,90 +137,6 @@ function groups_get_group_name($groupid) {
     return false;
 }
 
-/**
- * Gets the users for a course who are not in a specified group
- * @param int $groupid The id of the group
- * @param string searchtext similar to searchtext in role assign, search
- * @return array An array of the userids of the non-group members,  or false if 
- * an error occurred.  
- * This function was changed to get_users_by_capability style
- * mostly because of the searchtext requirement
- */
-function groups_get_users_not_in_group($courseid, $groupid, $searchtext='') {
-    
-    global $CFG;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    if ($searchtext !== '') {   // Search for a subset of remaining users
-        $LIKE      = sql_ilike();
-        $FULLNAME  = sql_fullname();
-        $wheresearch = " AND u.id IN (SELECT id FROM {$CFG->prefix}user WHERE $FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%' )";
-    } else {
-        $wheresearch = ''; 
-    }
-    
-    $capability = 'moodle/course:view';
-    $doanything = false;
-
-    // find all possible "student" roles
-    if ($possibleroles = get_roles_with_capability($capability, CAP_ALLOW, $context)) {
-        if (!$doanything) {
-            if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-                return false;    // Something is seriously wrong
-            }
-            $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
-        }
-
-        $validroleids = array();
-        foreach ($possibleroles as $possiblerole) {
-            if (!$doanything) {
-                if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
-                    continue;
-                }
-            }
-            if ($caps = role_context_capabilities($possiblerole->id, $context, $capability)) { // resolved list
-                if (isset($caps[$capability]) && $caps[$capability] > 0) { // resolved capability > 0
-                    $validroleids[] = $possiblerole->id;
-                }
-            }
-        }
-        if (empty($validroleids)) {
-            return false;
-        }
-        $roleids =  '('.implode(',', $validroleids).')';
-    } else {
-        return false;  // No need to continue, since no roles have this capability set
-    }
-
-/// Construct the main SQL
-    $select = " SELECT u.id, u.firstname, u.lastname";
-    $from   = " FROM {$CFG->prefix}user u
-                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
-    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
-                  AND u.deleted = 0
-                  AND ra.roleid in $roleids
-                  AND u.id NOT IN (SELECT userid 
-                                   FROM {$CFG->prefix}groups_members 
-                                   WHERE groupid = $groupid)
-                  $wheresearch";
-
-    return get_records_sql($select.$from.$where);;
-}
-
-/**
- * Given two users, determines if there exists a group to which they both belong
- * @param int $userid1 The id of the first user
- * @param int $userid2 The id of the second user
- * @return boolean True if the users are in a common group, false otherwise or 
- * if an error occurred. 
- */
-function groups_users_in_common_group($userid1, $userid2) {
-    return groups_db_users_in_common_group($userid1, $userid2); 
-}
-
-
 /*****************************
    Membership functions 
  *****************************/
@@ -247,43 +151,6 @@ function groups_users_in_common_group($userid1, $userid2) {
 function groups_group_exists($groupid) {
     return groups_db_group_exists($groupid);
 }
-
-
-/**
- * Determine if a course ID, group name and description match a group in the database.
- *   For backup/restorelib.php
- * @return mixed A group-like object with $group->id, or false.
- */
-function groups_group_matches($courseid, $grp_name, $grp_description) {
-    return groups_db_group_matches($courseid, $grp_name, $grp_description);
-}
-
-/**
- * Determine if a course ID, and group name match a group in the database.
- * @return mixed A group-like object with $group->id, or false.
- */
-function groups_group_name_exists($courseid, $grp_name) {
-    return groups_db_group_name_exists($courseid, $grp_name);
-}
-
-/**
- * Determines if the user is a member of the given group.
- *
- * @uses $USER If $userid is null, use the global object.
- * @param int $groupid The group to check for membership.
- * @param int $userid The user to check against the group.
- * @return boolean True if the user is a member, false otherwise.
- */
-function groups_is_member($groupid, $userid = null) { 
-    if (! $userid) {
-        global $USER;
-        $userid = $USER->id;
-    }
-    $ismember = groups_db_is_member($groupid, $userid);
-    
-    return $ismember;
-}
-
 
 /**
  * Determines if a specified group is a group for a specified course
@@ -422,19 +289,6 @@ function groups_restore_member($member) {
 /*****************************
         Deletion functions  
  *****************************/
-
-
-/**
- * Delete a group best effort, first removing members and links with courses and groupings. 
- * @param int $groupid The group to delete
- * @return boolean True if deletion was successful, false otherwise
- * See comment above on web service autoupdating. 
- */
-function groups_delete_group($groupid) {
-    $groupdeleted = groups_db_delete_group($groupid);
-
-    return $groupdeleted;
-}
 
 
 /**

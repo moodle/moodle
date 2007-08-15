@@ -82,7 +82,7 @@
                     /// If its a group discussion, make sure the user is in the group.
                     if ($discussion->groupid) {
                         if (!isset($groups[$discussion->groupid][$user->id])) {
-                            $groups[$discussion->groupid][$user->id] = ismember($discussion->groupid, $user->id);
+                            $groups[$discussion->groupid][$user->id] = groups_is_member($discussion->groupid, $user->id);
                         }
                     }
                     if (!$discussion->groupid || !empty($groups[$discussion->groupid][$user->id])) {

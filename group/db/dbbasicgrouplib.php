@@ -9,9 +9,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
-require_once($CFG->libdir.'/datalib.php');
-require_once($CFG->dirroot.'/group/lib.php');
-
 
 /*******************************************************************************
  * Utility functions
@@ -140,30 +137,6 @@ function groups_db_get_group_settings($groupid, $courseid=false, $alldata=false)
 
 }
 
-/**
- * Given two users, determines if there exists a group to which they both belong
- * @param int $userid1 The id of the first user
- * @param int $userid2 The id of the second user
- * @return boolean True if the users are in a common group, false otherwise or 
- * if an error occurred. 
- */
-function groups_db_users_in_common_group($userid1, $userid2) {
-    global $CFG;
-    $havecommongroup = false;
-    $sql = "SELECT gm1.groupid, 1 FROM {$CFG->prefix}groups_members gm1 " .
-        "INNER JOIN {$CFG->prefix}groups_members gm2 " .
-        "ON gm1.groupid = gm2.groupid" .
-        "WHERE gm1.userid = '$userid1' AND gm2.userid = '$userid2'";
-    $commongroups = get_record_sql($sql);
-    if ($commongroups) {
-        $havecommongroup = true;
-    }
-
-    return $havecommongroup;           
-}
-
-
-
 /******************************************************************************* 
    Membership functions  
  ******************************************************************************/
@@ -184,64 +157,6 @@ function groups_db_group_exists($groupid) {
 
     return $exists;
 }
-
-
-/**
- * Determine if a course ID, group name and description match a group in the database.
- *   For backup/restorelib.php
- * @return mixed A group-like object with $group->id, or false.
- */
-function groups_db_group_matches($courseid, $grp_name, $grp_description) {
-//$gro_db->id; $gro_db = get_record("groups","courseid",$restore->course_id,"name",$gro->name,"description",$gro->description);    
-    global $CFG;
-    $sql = "SELECT g.id, g.name, g.description
-        FROM {$CFG->prefix}groups g
-        WHERE g.name = '$grp_name'
-        AND g.description = '$grp_description'
-        AND g.courseid = '$courseid'";
-    $records = get_records_sql($sql);
-    $group = false;
-    if ($records) {
-        $group = array_shift($records);
-    } 
-    return $group;
-}
-
-/**
- * Determine if a course ID, and group name match a group in the database.
- * @return mixed A group-like object with $group->id, or false.
- */
-function groups_db_group_name_exists($courseid, $grp_name) {
-    global $CFG;
-    $sql = "SELECT g.id, g.name
-        FROM {$CFG->prefix}groups g
-        WHERE g.name = '$grp_name'
-        AND g.courseid = '$courseid'";
-    $records = get_records_sql($sql);
-    $group = false;
-    if ($records) {
-        $group = current($records);
-    } 
-    return $group;
-}
-
-/**
- * Determines if a specified user is a member of a specified group
- * @param int $groupid The group about which the request has been made
- * @param int $userid The user about which the request has been made
- * @return boolean True if the user is a member of the group, false otherwise
- */
-function groups_db_is_member($groupid, $userid) {
-    if (!$groupid or !$userid) {
-        $ismember = false;
-    } else {
-        $ismember = record_exists($table = 'groups_members', 'groupid', 
-                                  $groupid, 'userid', $userid);
-    }
-    
-    return $ismember;
-}
-
 
 /**
  * Determines if a specified group is a group for a specified course
@@ -399,54 +314,6 @@ function groups_db_remove_member($groupid, $userid) {
 }
 
 
-/** 
- * Delete a specified group, first removing members and links with courses and groupings. 
- * @param int $groupid The group to delete
- * @return boolean True if deletion was successful, false otherwise
- */
-function groups_db_delete_group($groupid) {
-    if (!$groupid) {
-        $success = false;
-    } else {
-        $success = true;
-        // Get a list of users for the group and remove them all.
-
-        $userids = groups_db_get_members($groupid);
-        if ($userids != false) {
-            foreach($userids as $userid) {
-                $userdeleted = groups_db_remove_member($userid, $groupid);
-                if (!$userdeleted) {
-                    $success = false;
-                }
-            }
-        }
-
-        // Remove any links with groupings to which the group belongs.
-        //TODO: dbgroupinglib also seems to delete these links - duplication?
-        $groupingids = groups_get_groupings_for_group($groupid); 
-        if ($groupingids != false) {
-            foreach($groupingids as $groupingid) {
-                $groupremoved = groups_remove_group_from_grouping($groupid, 
-                    $groupingid);
-                if(!$groupremoved) {
-                    $success = false; 
-                }
-            }
-        }
-        
-        // Delete the group itself
-        $results = delete_records($table = 'groups', $field1 = 'id', 
-            $value1 = $groupid);
-        // delete_records returns an array of the results from the sql call, 
-        // not a boolean, so we have to set our return variable
-        if ($results == false) {
-            $success = false;
-        }
-    }
-
-    return $success;
-}
-
 /**
  * Internal function to set the time a group was modified.
  */
@@ -454,50 +321,5 @@ function groups_db_set_group_modified($groupid) {
     return set_field('groups', 'timemodified', time(), 'id', $groupid);
 }
 
-
-/******************************************************************************
- * Groups SQL clauses for modules and core.
- */
-
-/**
- * Returns the table in which group members are stored, with a prefix 'gm'.
- * @return SQL string.
- */
-function groups_members_from_sql() {
-    global $CFG;
-    return " {$CFG->prefix}groups_members gm ";
-}
-
-/**
- * Returns a join testing user.id against member's user ID.
- * Relies on 'user' table being included as 'user u'.
- * Used in Quiz module reports.
- * @param group ID, optional to include a test for this in the SQL.
- * @return SQL string.
- */
-function groups_members_join_sql($groupid=false) {    
-    $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
-    if ($groupid) {
-        $sql = "AND gm.groupid = '$groupid' ";
-    }
-    return $sql;
-    //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
-    //       ' INNER JOIN '.$CFG->prefix.'context c ON ra.contextid=c.id AND c.contextlevel='.CONTEXT_GROUP.' AND c.instanceid='.$groupid;
-}
-
-/**
- * Returns SQL for a WHERE clause testing the group ID.
- * Optionally test the member's ID against another table's user ID column. 
- * @param groupid
- * @param userid_sql Optional user ID column selector, example "mdl_user.id", or false.
- * @return SQL string.
- */
-function groups_members_where_sql($groupid, $userid_sql=false) {
-    $sql = " gm.groupid = '$groupid' ";
-    if ($userid_sql) {
-        $sql .= "AND $userid_sql = gm.userid ";
-    }
-    return $sql;
-}
 
 ?>

@@ -834,7 +834,7 @@ function get_group_teachers($courseid, $groupid) {
             if ($teacher->editall) {             // These can access anything
                 continue;
             }
-            if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) {  // Specific group teachers
+            if (($teacher->authority > 0) and groups_is_member($groupid, $teacher->id)) {  // Specific group teachers
                 continue;
             }
             unset($teachers[$key]);
@@ -1103,5 +1103,45 @@ function groups_members_where_sql($groupid, $userid_sql=false) {
     return $sql;
 }
 
+
+/**
+ * Returns an array of group objects that the user is a member of
+ * in the given course.  If userid isn't specified, then return a
+ * list of all groups in the course.
+ *
+ * @uses $CFG
+ * @param int $courseid The id of the course in question.
+ * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
+ * @return object
+ */
+function get_groups($courseid, $userid=0) {
+    return groups_get_all_groups($courseid, $userid);
+}
+
+/**
+ * Returns the user's groups in a particular course
+ * note: this function originally returned only one group
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $groupid The id of the group the user is in.
+ * @return aray of groups
+ */
+function user_group($courseid, $userid) {
+    return groups_get_all_groups($courseid, $userid);
+}
+
+
+/**
+ * Determines if the user is a member of the given group.
+ *
+ * @param int $groupid The group to check for membership.
+ * @param int $userid The user to check against the group.
+ * @return boolean True if the user is a member, false otherwise.
+ */
+function ismember($groupid, $userid = null) {
+    return groups_is_member($groupid, $userid);
+}
 
 ?>

@@ -1395,7 +1395,7 @@ function data_print_comment($data, $comment, $page=0) {
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($groups = user_group($data->course, $comment->userid)) {
+    if ($groups = groups_get_all_groups($data->course, $comment->userid)) {
         print_group_picture($groups, $data->course, false, false, true);
     } else {
         echo '&nbsp;';
@@ -1735,7 +1735,7 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     }
 
     if ($currentgroup) {
-        return ismember($currentgroup);
+        return groups_is_member($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){

@@ -794,7 +794,7 @@ function exercise_list_submissions_for_admin($exercise) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $user->id)) {
+                if (!groups_is_member($groupid, $user->id)) {
                     continue; // skip this user
                 }
             }
@@ -890,7 +890,7 @@ function exercise_list_submissions_for_admin($exercise) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $user->id)) {
+                if (!groups_is_member($groupid, $user->id)) {
                     continue; // skip this user
                 }
             }

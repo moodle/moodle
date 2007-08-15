@@ -157,12 +157,12 @@
          
         if ($groupmode && !has_capability('moodle/site:accessallgroups', $modcontext)) {   
             // Groups must be kept separate
-            //change this to ismember
+            //change this to groups_is_member
             $mygroupid = mygroupid($course->id); //only useful if 0, otherwise it's an array now
             if ($groupmode == SEPARATEGROUPS) {
                 require_login();
 
-                if ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid)) {
+                if ((empty($mygroupid) and $discussion->groupid == -1) || (groups_is_member($discussion->groupid) || $mygroupid == $discussion->groupid)) {
                     // $canreply = true;
                 } elseif ($discussion->groupid == -1) {
                     $canreply = false;
@@ -174,7 +174,7 @@
 
             } else if ($groupmode == VISIBLEGROUPS) {
                 $canreply = ( (empty($mygroupid) && $discussion->groupid == -1) ||
-                    (ismember($discussion->groupid) || $mygroupid == $discussion->groupid) );
+                    (groups_is_member($discussion->groupid) || $mygroupid == $discussion->groupid) );
             }
         }
     } else { // allow guests to see the link

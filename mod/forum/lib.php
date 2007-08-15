@@ -396,7 +396,7 @@ function forum_cron() {
                         continue;                           // Be safe and don't send it to anyone
                     }
 
-                    if (!ismember($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $modcontext)) {
+                    if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $modcontext)) {
                         // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
                         continue;
                     }
@@ -1377,7 +1377,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
         if ($forums = get_records_sql($selectforums)) {
 
-            $group = user_group($course->id, $userid);
+            $group = groups_get_all_groups($course->id, $userid);
 
             foreach ($forums as $forum) {
                 $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cmid);
@@ -2036,7 +2036,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     $output .= '</td></tr>';
 
     $output .= '<tr><td class="left side" valign="top">';
-    if ($group = user_group($course->id, $user->id)) {
+    if ($group = groups_get_all_groups($course->id, $user->id)) {
         $output .= print_group_picture($group, $course->id, false, true, true);
     } else {
         $output .= '&nbsp;';
@@ -2211,7 +2211,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($group = user_group($courseid, $post->userid)) {
+    if ($group = groups_get_all_groups($courseid, $post->userid)) {
         print_group_picture($group, $courseid, false, false, true);
     } else {
         echo '&nbsp;';
@@ -3341,7 +3341,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
     }
 
     if ($currentgroup) {
-        return ismember($currentgroup);
+        return groups_is_member($currentgroup);
     } else {
         //else it might be group 0 in visible mode
         if ($groupmode == VISIBLEGROUPS){
@@ -3406,7 +3406,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
     if ($discussion->groupid > 0) {
         $groupmode = groupmode($course, $cm);
         if ($groupmode == SEPARATEGROUPS) {
-            return ismember($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
+            return groups_is_member($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
         }
     }
     return true;
@@ -3560,7 +3560,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
-    } else if (!isguestuser() and isloggedin() and $forum->type != 'news' and $groupmode == SEPARATEGROUPS and !ismember($currentgroup)) {
+    } else if (!isguestuser() and isloggedin() and $forum->type != 'news' and $groupmode == SEPARATEGROUPS and !groups_is_member($currentgroup)) {
         notify(get_string('cannotadddiscussion', 'forum'));
     }
 

@@ -110,7 +110,7 @@
             /*TODO: $gtrue = false;
             if ($mygroups = mygroupid($course->id)){
                 foreach ($mygroups as $group){
-                    if (ismember($group, $user->id)){
+                    if (groups_is_member($group, $user->id)){
                         $gtrue = true;
                     }
                 }
@@ -368,7 +368,7 @@
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
                              !has_capability('moodle/site:accessallgroups', $coursecontext));
     if (!$isseparategroups){
-        if ($usergroups = user_group($course->id, $user->id)){
+        if ($usergroups = groups_get_all_groups($course->id, $user->id)){
             $groupstr = '';
             foreach ($usergroups as $group){
                 $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.$group->name.'</a>,';

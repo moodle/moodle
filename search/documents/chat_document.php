@@ -249,7 +249,7 @@ function chat_check_text_access($path, $itemtype, $this_id, $user, $group_id, $c
     //group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
-    if ((groupmode($course) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $module_context)) return false;
+    if ((groupmode($course) == SEPARATEGROUPS) && !groups_is_member($group_id) && !has_capability('moodle/site:accessallgroups', $module_context)) return false;
 
     //ownership check : checks the following situations about user
     // trap if user is not owner and has cannot see other's entries

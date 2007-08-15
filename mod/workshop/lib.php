@@ -1141,7 +1141,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $co
 
     foreach ($posts as $post) {
 
-        if (empty($groupid) || ismember($groupid, $post->userid)) {
+        if (empty($groupid) || groups_is_member($groupid, $post->userid)) {
 
             $tmpactivity = new Object;
 

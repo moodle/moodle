@@ -129,8 +129,8 @@ if (!$course = groups_get_course_info($courseid)) {
     echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
-    if ($groups_records = get_groups($courseid)) {
-        $groupids = groups_groups_to_groupids($groups_records, $courseid);
+    if ($groups = groups_get_all_groups($courseid)) {
+        $groupids = array_keys($groups);
     } else {
         $groupids = false;
     }
@@ -216,5 +216,37 @@ if (!$course = groups_get_course_info($courseid)) {
 
     print_footer($course);
 
+/**
+ * Returns the first button action with the given prefix, taken from
+ * POST or GET, otherwise returns false.
+ * See /lib/moodlelib.php function optional_param.
+ * @param $prefix 'act_' as in 'action'.
+ * @return string The action without the prefix, or false if no action found.
+ */
+function groups_param_action($prefix = 'act_') {
+    $action = false;
+//($_SERVER['QUERY_STRING'] && preg_match("/$prefix(.+?)=(.+)/", $_SERVER['QUERY_STRING'], $matches)) { //b_(.*?)[&;]{0,1}/
+
+    if ($_POST) {
+        $form_vars = $_POST;
+    }
+    elseif ($_GET) {
+        $form_vars = $_GET; 
+    }
+    if ($form_vars) {
+        foreach ($form_vars as $key => $value) {
+            if (preg_match("/$prefix(.+)/", $key, $matches)) {
+                $action = $matches[1];
+                break;
+            }
+        }
+    }
+    if ($action && !preg_match('/^\w+$/', $action)) {
+        $action = false;
+        error('Action had wrong type.');
+    }
+    ///if (debugging()) echo 'Debug: '.$action;
+    return $action;
+}
 
 ?>

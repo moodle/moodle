@@ -290,7 +290,7 @@ function choice_show_reportlink($choice, $courseid, $cmid, $groupmode) {
         $responsecount = 0;
         foreach ($allanswers as $aa) {
             if ($groupmode and $currentgroup) {
-                if (ismember($currentgroup, $aa->userid)) {
+                if (groups_is_member($currentgroup, $aa->userid)) {
                     $responsecount++;
                 }
             } else {
@@ -335,7 +335,7 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         foreach ($allresponses as $aa) {
             //TODO: rewrite with SQL
             if ($groupmode and $currentgroup) {
-                if (ismember($currentgroup, $aa->userid)) {
+                if (groups_is_member($currentgroup, $aa->userid)) {
                     $answers[$aa->userid] = $aa;
                 }
             } else {

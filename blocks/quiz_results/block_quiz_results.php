@@ -112,7 +112,7 @@ class block_quiz_results extends block_base {
         switch($groupmode) {
             case VISIBLEGROUPS:
             // Display group-mode results
-            $groups = get_groups($courseid);
+            $groups = groups_get_all_groups($courseid);
 
             if(empty($groups)) {
                 // No groups exist, sorry
@@ -262,7 +262,7 @@ class block_quiz_results extends block_base {
                 return $this->content;
             }
 
-            $mygroups = get_groups($courseid, $USER->id);
+            $mygroups = groups_get_all_groups($courseid, $USER->id);
             if(empty($mygroups)) {
                 // Not member of a group, show nothing
                 return $this->content;

@@ -52,7 +52,7 @@ if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid)
 
 // now verify grading user has access to all groups or is member of the same group when separate groups used in course
 if (groupmode($COURSE) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-    if ($groups = user_group($COURSE->id, $userid)) {
+    if ($groups = groups_get_all_groups($COURSE->id, $userid)) {
         $ok = false;
         foreach ($groups as $group) {
             if (groups_is_member($group->id, $USER->id)) {

@@ -100,7 +100,7 @@ switch ($filtertype) {
         }
         if (groupmode($course) == SEPARATEGROUPS
           and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
-            if (!ismember($filterselect)) {
+            if (!groups_is_member($filterselect)) {
                 error ('You are not a member of this course group');
             }
         }

@@ -332,7 +332,7 @@ function workshop_count_student_submissions_for_assessment($workshop, $user) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $submission->userid)) {
+                if (!groups_is_member($groupid, $submission->userid)) {
                     continue; // skip this user
                 }
             }
@@ -1217,7 +1217,7 @@ function workshop_list_student_submissions($workshop, $user) {
                 // check group membership, if necessary
                 if ($groupid) {
                     // check user's group
-                    if (!ismember($groupid, $submission->userid)) {
+                    if (!groups_is_member($groupid, $submission->userid)) {
                         continue; // skip this submission
                   }
                 }
@@ -1393,7 +1393,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $user->id)) {
+                if (!groups_is_member($groupid, $user->id)) {
                     continue; // skip this user
                 }
             }
@@ -1502,7 +1502,7 @@ function workshop_list_submissions_for_admin($workshop, $order) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $user->id)) {
+                if (!groups_is_member($groupid, $user->id)) {
                     continue; // skip this user
                 }
             }
@@ -1737,7 +1737,7 @@ function workshop_list_unassessed_student_submissions($workshop, $user) {
             // check group membership, if necessary
             if ($groupid) {
                 // check user's group
-                if (!ismember($groupid, $submission->userid)) {
+                if (!groups_is_member($groupid, $submission->userid)) {
                     continue; // skip this user
                 }
             }
@@ -2805,7 +2805,7 @@ function workshop_print_league_table($workshop) {
         foreach ($submissions as $submission) {
             if ($groupid) {
                 // check submission's group
-                if (!ismember($groupid, $submission->userid)) {
+                if (!groups_is_member($groupid, $submission->userid)) {
                     continue; // skip this submission
                 }
             }

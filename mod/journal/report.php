@@ -111,7 +111,7 @@
         $grades = make_grades_menu($journal->assessed);
         $teachers = get_course_teachers($course->id);
 
-        $allowedtograde = ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or ismember($currentgroup));
+        $allowedtograde = ($groupmode != VISIBLEGROUPS or isteacheredit($course->id) or groups_is_member($currentgroup));
 
         if ($allowedtograde) {
             echo '<form action="report.php" method="post">';
@@ -120,7 +120,7 @@
         if ($usersdone = journal_get_users_done($journal)) {
             foreach ($usersdone as $user) {
                 if ($currentgroup) {
-                    if (!ismember($currentgroup, $user->id)) {    /// Yes, it's inefficient, but this module will die
+                    if (!groups_is_member($currentgroup, $user->id)) {    /// Yes, it's inefficient, but this module will die
                         continue;
                     }
                 }

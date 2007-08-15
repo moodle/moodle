@@ -1032,7 +1032,7 @@ function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $cour
 
     if (!empty($records)) {
         foreach ($records as $record) {
-            if (empty($groupid) || ismember($groupid, $record->userid)) {
+            if (empty($groupid) || groups_is_member($groupid, $record->userid)) {
 
                 unset($activity);
 

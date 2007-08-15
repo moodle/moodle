@@ -159,7 +159,7 @@
             if (groupmode($course, $cm)) {   // Make sure user can post here
                 $mygroupid = mygroupid($course->id);
                 if (!((empty($mygroupid) and $discussion->groupid == -1)
-                        || (ismember($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
+                        || (groups_is_member($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
                         || has_capability('moodle/site:accessallgroups', $modcontext, NULL, false) )) {
                     print_error('nopostdiscussion', 'forum');
                 }

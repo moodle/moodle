@@ -1557,7 +1557,7 @@ function calendar_get_allowed_types(&$allowed) {
         $allowed->courses = array($course->id => 1);
 
         if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-            $allowed->groups = get_groups($SESSION->cal_course_referer);
+            $allowed->groups = (boolean)groups_get_all_groups($SESSION->cal_course_referer);
         }
     }
 }

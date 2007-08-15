@@ -16,56 +16,6 @@
 
 
 
-
-/**
- * Returns an array of group objects that the user is a member of
- * in the given course.  If userid isn't specified, then return a
- * list of all groups in the course.
- *
- * @uses $CFG
- * @param int $courseid The id of the course in question.
- * @param int $userid The id of the user in question as found in the 'user' 
- * table 'id' field.
- * @return object
- */
-function get_groups($courseid, $userid=0) {
-    if ($userid) {
-        $groupids = groups_get_groups_for_user($userid, $courseid);
-    } else {
-        $groupids = array_keys(groups_get_all_groups($courseid));
-    }
-
-    return groups_groupids_to_groups($groupids, $courseid, $alldata=true);
-}
-
-
-/**
- * Returns the user's group in a particular course
- *
- * @uses $CFG
- * @param int $courseid The course in question.
- * @param int $userid The id of the user as found in the 'user' table.
- * @param int $groupid The id of the group the user is in.
- * @return object
- */
-function user_group($courseid, $userid) {
-    $groupids = groups_get_groups_for_user($userid, $courseid);
-    return groups_groupids_to_groups($groupids);
-}
-
-
-/**
- * Determines if the user is a member of the given group.
- * TODO: replace all calls with 'groups_is_member'.
- *
- * @param int $groupid The group to check for membership.
- * @param int $userid The user to check against the group.
- * @return boolean True if the user is a member, false otherwise.
- */
-function ismember($groupid, $userid = null) {
-    return groups_is_member($groupid, $userid);
-}
-
 /**
  * Returns an array of user objects
  *
@@ -140,13 +90,6 @@ function groupmode($course, $cm=null) {
         return $cm->groupmode;
     }
     return $course->groupmode;
-    
-    /*if ($cm and !$course->groupingid) {
-        //TODO: was $coursemodule
-        return groups_has_groups_setup_for_instance($cm);
-    } else {
-        return groups_has_groups_setup($course->id);
-    }*/
 }
 
 
@@ -243,12 +186,12 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
             } elseif ($groupmode == VISIBLEGROUPS) {
                   // All groups are visible
-                //if (ismember($group->id)){
+                //if (groups_is_member($group->id)){
                     $currentgroupid = set_current_group($course->id, $groupid); //set this since he might post
                 /*)}else {
                     $currentgroupid = $group->id;*/
             } elseif ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (ismember($groupid)) { //check if is a member
+                if (groups_is_member($groupid)) { //check if is a member
                     $currentgroupid = set_current_group($course->id, $groupid); //might need to set_current_group?
                 }
                 else {
@@ -304,7 +247,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
         //this can mean that either, this guy has no group
         //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
 
-        if ($usergroups = user_group($course->id, $USER->id)){
+        if ($usergroups = groups_get_all_groups($course->id, $USER->id)){
             //for the second situation, we need to perform the trick and get him a group.
             $first = reset($usergroups);
             $currentgroup = get_and_set_current_group($course, $groupmode, $first->id);
@@ -319,7 +262,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/site:accessallgroups', $context))) {
 
-        if ($groups = get_groups($course->id)) {
+        if ($groups = groups_get_all_groups($course->id)) {
 
             echo '<div class="groupselector">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot, 1);
@@ -328,7 +271,7 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     } else if ($groupmode == SEPARATEGROUPS and has_capability('moodle/course:view', $context)) {
         //get all the groups this guy is in in this course
-        if ($usergroups = user_group($course->id, $USER->id)){
+        if ($usergroups = groups_get_all_groups($course->id, $USER->id)){
             echo '<div class="groupselector">';
             //print them in the menu
             print_group_menu($usergroups, $groupmode, $currentgroup, $urlroot, 0);

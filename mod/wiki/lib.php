@@ -403,7 +403,7 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
             $groupid=$mygroupids[0];
         } else {
             // Whatever groups are in the course, pick one
-            $coursegroups = get_groups($course->id);
+            $coursegroups = groups_get_all_groups($course->id);
             if(!$coursegroups || count($coursegroups)==0) {
                 error("Can't access wiki in group mode when no groups are configured for the course");
             }
@@ -459,7 +459,7 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
                     $groupid=$mygroupids[0];
                 } else {
                     // Whatever groups are in the course, pick one
-                    $coursegroups = get_groups($course->id);
+                    $coursegroups = groups_get_all_groups($course->id);
                     if(!$coursegroups || count($coursegroups)==0) {
                         error("Can't access wiki in group mode when no groups are configured for the course");
                     }
@@ -635,7 +635,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
                 $wiki_entries = get_records_sql($sql);
                 $wiki_entries=is_array($wiki_entries)?$wiki_entries:array();
                 foreach ($wiki_entries as $wiki_entry) {
-                    if (($viewall === true) or ismember($viewall, $wiki_entry->userid)) {
+                    if (($viewall === true) or groups_is_member($viewall, $wiki_entry->userid)) {
                         $key = 'view.php?id='.$id.'&userid='.$wiki_entry->userid.'&page='.$wiki_entry->pagename;
                         $wikis[$key] = fullname($wiki_entry).':'.$wiki_entry->pagename;
                         if ($currentid == $wiki_entry->id) {
@@ -657,7 +657,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         $wiki_entries = wiki_get_entries($wiki, 'group');
 
         if ($groupmode and ($isteacheredit or ($isteacher and !$mygroupid))) {
-            if ($groups = get_groups($course->id)) {
+            if ($groups = groups_get_all_groups($course->id)) {
                 $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
                 foreach ($groups as $group) {
 
@@ -676,7 +676,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
         }
         //if a studnet with multiple groups in SPG
         else if ($groupmode == SEPARATEGROUPS){
-            if ($groups = get_groups($course->id, $user->id)){
+            if ($groups = groups_get_all_groups($course->id, $user->id)){
 
                 $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
                 foreach ($groups as $group) {
@@ -717,7 +717,7 @@ function wiki_get_other_wikis(&$wiki, &$user, &$course, $currentid=0) {
             /// If the user is an editing teacher, or a non-editing teacher not assigned to a group, show all
             /// teacher wikis, regardless of creation.
             if ($groupmode and ($isteacheredit or ($isteacher and !$mygroupid))) {
-                if ($groups = get_groups($course->id)) {
+                if ($groups = groups_get_all_groups($course->id)) {
                     $defpagename = empty($wiki->pagename) ? get_string('wikidefaultpagename', 'wiki') : $wiki->pagename;
 
                     foreach ($groups as $group) {
@@ -876,7 +876,7 @@ function wiki_can_add_entry(&$wiki, &$user, &$course, $userid=0, $groupid=0) {
 ///     create any student wiki in their group.
         else {
             return ((($userid == $user->id) and wiki_is_student($wiki, $user->id)) or wiki_is_teacheredit($wiki) or
-                    (wiki_is_teacher($wiki) and (!$groupmode or $mygroupid == 0 or (ismember($mygroupid, $userid)))));
+                    (wiki_is_teacher($wiki) and (!$groupmode or $mygroupid == 0 or (groups_is_member($mygroupid, $userid)))));
         }
         break;
 
@@ -944,14 +944,14 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
         case 'student':
             $can_edit = (($user->id == $wiki_entry->userid) or
                          ($groupmode and wiki_is_teacher($wiki, $user->id) and
-                          ismember($mygroupid, $wiki_entry->userid)));
+                          groups_is_member($mygroupid, $wiki_entry->userid)));
             break;
 
         case 'group':
             /// If there is a groupmode, determine the user's group status.
             if ($groupmode) {
                 /// If the user is a member of the wiki group, they can edit the wiki.
-                $can_edit = ismember($wiki_entry->groupid, $user->id);
+                $can_edit = groups_is_member($wiki_entry->groupid, $user->id);
             }
             /// If mode is 'nogroups', then all participants can edit the wiki.
             else {
@@ -963,7 +963,7 @@ function wiki_can_edit_entry(&$wiki_entry, &$wiki, &$user, &$course) {
             /// If there is a groupmode, determine the user's group status.
             if ($groupmode) {
                 /// If the user is a member of the wiki group, they can edit the wiki.
-                $can_edit = (wiki_is_teacher($wiki, $user->id) and ismember($wiki_entry->groupid, $user->id));
+                $can_edit = (wiki_is_teacher($wiki, $user->id) and groups_is_member($wiki_entry->groupid, $user->id));
             }
             else {
                 $can_edit = wiki_is_teacher($wiki, $user->id);
@@ -993,7 +993,7 @@ function wiki_user_can_access_student_wiki(&$wiki, $userid, &$course) {
     ///     - they are a non-editing teacher and group mode is NOGROUPS.
     ///     - they are an administrator (mostly for site-level wikis).
     if (($userid and ($USER->id == $userid)) or ($groupmode == VISIBLEGROUPS) or
-        (($groupmode == SEPARATEGROUPS) and ismember($usersgroup, $userid)) or
+        (($groupmode == SEPARATEGROUPS) and groups_is_member($usersgroup, $userid)) or
         (wiki_is_teacheredit($wiki, $USER->id)) or
         (wiki_is_teacher($wiki, $USER->id) and (!$usersgroup or $groupmode == NOGROUPS))) {
         $can_access = true;
