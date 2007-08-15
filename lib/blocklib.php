@@ -228,7 +228,7 @@ function blocks_have_content(&$pageblocks, $position) {
     // foreach() cannot fetch references in PHP v4.x
     for ($n=0; $n<count($pageblocks[$position]);$n++) {
         $instance = &$pageblocks[$position][$n];
-        if(!$instance->visible) {
+        if (empty($instance->visible)) {
             continue;
         }
         if(!$record = blocks_get_record($instance->blockid)) {
@@ -254,27 +254,34 @@ function blocks_have_content(&$pageblocks, $position) {
 function blocks_print_group(&$page, &$pageblocks, $position) {
     global $COURSE, $CFG, $USER;
 
-    if(empty($pageblocks[$position])) {
-        $pageblocks[$position] = array();
+    if (empty($pageblocks[$position])) {
+        $groupblocks = array();
         $maxweight = 0;
-    }
-    else {
-        $maxweight = max(array_keys($pageblocks[$position]));
+    } else {
+        $groupblocks = $pageblocks[$position];
+        $maxweight = max(array_keys($groupblocks));
     }
 
-    foreach ($pageblocks[$position] as $instance) {
+
+    foreach ($groupblocks as $instance) {
         if (!empty($instance->pinned)) {
             $maxweight--;
         }
     }
 
     $isediting = $page->user_is_editing();
-    foreach($pageblocks[$position] as $instance) {
+
+
+    foreach($groupblocks as $instance) {
+
 
         // $instance may have ->rec and ->obj
         // cached from when we walked $pageblocks
         // in blocks_have_content()
         if (empty($instance->rec)) {
+            if (empty($instance->blockid)) {
+                continue;   // Can't do anything
+            }
             $block = blocks_get_record($instance->blockid);
         } else {
             $block = $instance->rec;
@@ -285,7 +292,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
             continue;
         }
 
-        if(!$block->visible) {
+        if (empty($block->visible)) {
             // Disabled by the admin
             continue;
         }
@@ -300,6 +307,7 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
         }
 
         $editalways = $page->edit_always();
+
 
         if (($isediting  && empty($instance->pinned)) || !empty($editalways)) {
             $options = 0;
