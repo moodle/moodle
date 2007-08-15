@@ -153,7 +153,7 @@ echo '<div class="clearer"></div>';
 echo $report->get_toggles_html();
 print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
 
-$reporthtml = '<table class="gradestable">';
+$reporthtml = '<table class="gradestable flexible boxaligncenter generaltable">';
 $reporthtml .= $report->get_headerhtml();
 $reporthtml .= $report->get_rangehtml();
 $reporthtml .= $report->get_studentshtml();

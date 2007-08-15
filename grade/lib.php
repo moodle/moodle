@@ -432,6 +432,24 @@ function grade_build_nav($path, $pagename=null, $id=null) {
 }
 
 /**
+ * Computes then returns the percentage value of the grade value within the given range.
+ * @param float $gradeval
+ * @param float $grademin
+ * @param float $grademx
+ * @return float $percentage
+ */
+function grade_to_percentage($gradeval, $grademin, $grademax) {
+    if ($grademin >= $grademax) {
+        debugging("The minimum grade ($grademin) was higher than or equal to the maximum grade ($grademax)!!! Cannot proceed with computation.");
+    }
+    $offset_value = $gradeval - $grademin;
+    $offset_max = $grademax - $grademin;
+    $factor = 100 / $offset_max;
+    $percentage = $offset_value * $factor;
+    return $percentage;
+}
+
+/**
  * This class represents a complete tree of categories, grade_items and final grades,
  * organises as an array primarily, but which can also be converted to other formats.
  * It has simple method calls with complex implementations, allowing for easy insertion,

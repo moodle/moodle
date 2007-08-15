@@ -58,6 +58,12 @@ class grade_report_grader extends grade_report {
     var $collapsed;
 
     /**
+     * A count of the rows, used for css classes.
+     * @var int $rowcount
+     */
+    var $rowcount = 0;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $courseid
      * @param object $gpr grade plugin return tracking object
@@ -261,19 +267,24 @@ class grade_report_grader extends grade_report {
 
     /**
      * Fetches and returns a count of all the users that will be shown on this page.
+     * @param bool $groups Whether to apply groupsql
      * @return int Count of users
      */
-    function get_numusers() {
+    function get_numusers($groups=true) {
         global $CFG;
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
                     FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
                          {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
-                         LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                         $this->groupsql
-                    WHERE ra.roleid in ($this->gradebookroles)
-                         $this->groupwheresql
-                    AND ra.contextid ".get_related_contexts_string($this->context);
+                         LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid ";
+        if ($groups) {
+            $countsql .= $this->groupsql;
+        }
+        $countsql .= " WHERE ra.roleid in ($this->gradebookroles) ";
+        if ($groups) {
+            $countsql .= $this->groupwheresql;
+        }
+        $countsql .= " AND ra.contextid ".get_related_contexts_string($this->context);
         return count_records_sql($countsql);
     }
 
@@ -423,19 +434,22 @@ class grade_report_grader extends grade_report {
 
         $columns_to_unset = array();
 
+
         foreach ($this->gtree->levels as $key=>$row) {
+            $columncount = 0;
             if ($key == 0) {
                 // do not display course grade category
                 // continue;
             }
 
-            $headerhtml .= '<tr class="heading">';
+            $headerhtml .= '<tr class="heading r'.$this->rowcount++.'">';
 
             if ($key == $numrows - 1) {
-                $headerhtml .= '<th class="user"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">' . $strfirstname . '</a> ' //TODO: localize
+                $headerhtml .= '<th class="header c'.$columncount++.' user" scope="col"><a href="'.$this->baseurl.'&amp;sortitemid=firstname">'
+                            . $strfirstname . '</a> ' //TODO: localize
                             . $firstarrow. '/ <a href="'.$this->baseurl.'&amp;sortitemid=lastname">' . $strlastname . '</a>'. $lastarrow .'</th>';
             } else {
-                $headerhtml .= '<td class="topleft">&nbsp;</td>';
+                $headerhtml .= '<td class="cell c'.$columncount++.' topleft">&nbsp;</td>';
             }
 
             foreach ($row as $columnkey => $element) {
@@ -451,8 +465,10 @@ class grade_report_grader extends grade_report {
                 $itemmodule = null;
                 $iteminstance = null;
 
+                $columnclass = 'c' . $columncount++;
                 if (!empty($element['colspan'])) {
                     $colspan = 'colspan="'.$element['colspan'].'"';
+                    $columnclass = '';
                 } else {
                     $colspan = '';
                 }
@@ -465,11 +481,12 @@ class grade_report_grader extends grade_report {
 
 // Element is a filler
                 if ($type == 'filler' or $type == 'fillerfirst' or $type == 'fillerlast') {
-                    $headerhtml .= '<th class="'.$type.$catlevel.'" '.$colspan.'>&nbsp;</th>';
+                    $headerhtml .= '<th class="'.$columnclass.' '.$type.$catlevel.'" '.$colspan.' scope="col">&nbsp;</th>';
                 }
 // Element is a category
                 else if ($type == 'category') {
-                    $headerhtml .= '<th class="category'.$catlevel.'" '.$colspan.'>'.$element['object']->get_name();
+                    $headerhtml .= '<th class="header '. $columnclass.' category'.$catlevel.'" '.$colspan.' scope="col">'
+                                . $element['object']->get_name();
                     $headerhtml .= $this->get_collapsing_icon($element);
 
                     // Print icons
@@ -509,7 +526,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $headerlink = $this->get_module_link($element['object']->get_name(), $itemmodule, $iteminstance);
-                    $headerhtml .= '<th class="'.$type.$catlevel.$dimmed.'">'. $headerlink . $arrow;
+                    $headerhtml .= '<th class="header '.$columnclass.' '.$type.$catlevel.$dimmed.'" scope="col">'. $headerlink . $arrow;
                     $headerhtml .= $this->get_icons($element) . '</th>';
 
                     $this->items[$element['object']->sortorder] =& $element['object'];
@@ -554,13 +571,15 @@ class grade_report_grader extends grade_report {
         }
 
         foreach ($this->users as $userid => $user) {
+            $columncount = 0;
             // Student name and link
             $user_pic = null;
             if ($showuserimage) {
                 $user_pic = '<div class="userpic">' . print_user_picture($user->id, $this->courseid, true, 0, true) . '</div>';
             }
 
-            $studentshtml .= '<tr><th class="user">' . $user_pic . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
+            $studentshtml .= '<tr class="r'.$this->rowcount++.'"><th class="header c'.$columncount++.' user" scope="row">' . $user_pic
+                          . '<a href="' . $CFG->wwwroot . '/user/view.php?id='
                           . $user->id . '">' . fullname($user) . '</a></th>';
 
             foreach ($this->items as $itemid=>$item) {
@@ -587,9 +606,9 @@ class grade_report_grader extends grade_report {
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
                 if ($grade->is_overridden()) {
-                    $studentshtml .= '<td class="overridden">';
+                    $studentshtml .= '<td class="overridden cell c'.$columncount++.'">';
                 } else {
-                    $studentshtml .= '<td>';
+                    $studentshtml .= '<td class="cell c'.$columncount++.'">';
                 }
 
                 if ($grade->is_excluded()) {
@@ -768,7 +787,7 @@ class grade_report_grader extends grade_report {
         if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
             $totalcount = 0;
         } else {
-            $totalcount = $this->get_numusers();
+            $totalcount = $this->get_numusers(false);
         }
 
         if ($showaverages) {
@@ -804,7 +823,6 @@ class grade_report_grader extends grade_report {
                              AND ra.contextid ".get_related_contexts_string($this->context)."
                      )
                 GROUP BY g.itemid";
-
             $sum_array = array();
             $count_array = array();
             if ($sums = get_records_sql($SQL)) {
@@ -817,7 +835,10 @@ class grade_report_grader extends grade_report {
                     }
                 }
             }
-            $avghtml = '<tr><th>'.$straverage.'</th>';
+
+            $avghtml = '<tr class="r'.$this->rowcount++.'"><th class="header c0" scope="row">'.$straverage.'</th>';
+
+            $columncount=1;
             foreach ($this->items as $item) {
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this average
@@ -835,7 +856,7 @@ class grade_report_grader extends grade_report {
                 }
 
                 if (empty($count_array[$item->id]) || !isset($sum_array[$item->id])) {
-                    $avghtml .= '<td>-</td>';
+                    $avghtml .= '<td class="cell c' . $columncount++.'">-</td>';
                 } else {
                     $sum = $sum_array[$item->id];
 
@@ -866,7 +887,7 @@ class grade_report_grader extends grade_report {
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
-                    $avghtml .= '<td>'.$gradehtml.'</td>';
+                    $avghtml .= '<td class="cell c' . $columncount++.'">'.$gradehtml.'</td>';
                 }
             }
             $avghtml .= '</tr>';
@@ -885,9 +906,12 @@ class grade_report_grader extends grade_report {
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype = $this->get_pref('rangesdisplaytype');
             $rangesdecimalpoints = $this->get_pref('rangesdecimalpoints');
-            $scalehtml = '<tr><th class="range">'.$this->get_lang_string('range','grades').'</th>';
+            $scalehtml = '<tr class="r'.$this->rowcount++.'">'
+                       . '<th class="header c0 range" scope="row">'.$this->get_lang_string('range','grades').'</th>';
 
+            $columncount = 1;
             foreach ($this->items as $item) {
+
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this range
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
@@ -916,7 +940,7 @@ class grade_report_grader extends grade_report {
                     $grademax = reset($letters);
                 }
 
-                $scalehtml .= '<th class="range">'. $grademin.'-'. $grademax.'</th>';
+                $scalehtml .= '<th class="header c'.$columncount++.' range">'. $grademin.'-'. $grademax.'</th>';
             }
             $scalehtml .= '</tr>';
         }
