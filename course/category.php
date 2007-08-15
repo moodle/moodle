@@ -5,6 +5,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once('category_add_form.php');
 
     $id           = required_param('id', PARAM_INT);          // Category id
     $page         = optional_param('page', 0, PARAM_INT);     // which page to show
@@ -18,7 +19,6 @@
     $rename       = optional_param('rename', '', PARAM_NOTAGS);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
-    $addsubcategory=optional_param('addsubcategory', '', PARAM_NOTAGS);
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -51,11 +51,12 @@
         $creatorediting = false;
     }
 
-
+    $mform = new sub_category_add_form();
     if (has_capability('moodle/category:create', $context)) {
-        if (!empty($addsubcategory) and confirm_sesskey()) {
+        if ($form = $mform->get_data()) {
             $subcategory = new stdClass;
-            $subcategory->name = $addsubcategory;
+            $subcategory->name = $form->addcategory;
+            $subcategory->description = $form->description;
             $subcategory->sortorder = 999;
             $subcategory->parent = $id;
             if (!insert_record('course_categories', $subcategory )) {
@@ -152,6 +153,13 @@
     popup_form('category.php?id=', $displaylist, 'switchcategory', $category->id, '', '', '', false, 'self', $strcategories.':');
     echo '</div>';
 
+/// Print current category description
+    if ($category->description) {
+        print_box_start();
+        print_heading(get_string('description'));
+        echo $category->description;
+        print_box_end();
+    }
 
 /// Editing functions
 
@@ -264,19 +272,10 @@
     }
 
 /// print option to add a subcategory
-    if (has_capability('moodle/category:create', $context)) {
-        $straddsubcategory = get_string('addsubcategory');
-        echo '<div class="addcategory">';
-        echo '<form id="addform" action="category.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
-        echo '<input type="text" size="30" alt="'.$straddsubcategory.'" name="addsubcategory" />';
-        echo '<input type="submit" value="'.$straddsubcategory.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '<input type="hidden" name="id" value="'.$id.'" />';
-        // echo '<input type="hidden" name="categoryedit" value="'.$categoryedit.'" />';
-        echo '</fieldset>';
-        echo '</form>';
-        echo '</div>';
+    if (has_capability('moodle/category:create', $context)) {        
+        $cat->id = $id;
+        $mform->set_data($cat);        
+        $mform->display();
     }
 
 /// Print out all the courses

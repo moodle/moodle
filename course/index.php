@@ -4,6 +4,7 @@
 
     require_once("../config.php");
     require_once("lib.php");
+    require_once('category_add_form.php');
 
     $categoryedit = optional_param('categoryedit', -1,PARAM_BOOL);
     $delete   = optional_param('delete',0,PARAM_INT);
@@ -44,10 +45,12 @@
 
 
 /// If data for a new category was submitted, then add it
-    if ($form = data_submitted() and confirm_sesskey() and has_capability('moodle/category:create', $context)) {
+    $mform = new category_add_form();
+    if ($form = $mform->get_data() and has_capability('moodle/category:create', $context)) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
             $newcategory->name = stripslashes_safe($form->addcategory);
+            $newcategory->description = $form->description;
             $newcategory->sortorder = 999;
             if (!insert_record('course_categories', $newcategory)) {
                 notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
@@ -284,7 +287,10 @@
     fix_course_sortorder();
 
 /// Print form for creating new categories
-    print_category_create_form();
+    
+    if (has_capability('moodle/category:create', get_context_instance(CONTEXT_SYSTEM))) {
+        $mform->display();
+    }
 
 /// Print out the categories with all the knobs
 
@@ -419,24 +425,6 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
             print_category_edit($cat, $displaylist, $parentslist, $depth+1, $up, $down);         
         }
-    }
-}
-
-/** prints the add new category text input field and form */
-function print_category_create_form() {
-    
-    $straddnewcategory = get_string('addnewcategory');
-    
-    if (has_capability('moodle/category:create', get_context_instance(CONTEXT_SYSTEM))) {
-        echo '<div class="addcategory">';
-        echo '<form id="addform" action="index.php" method="post">';
-        echo '<fieldset class="invisiblefieldset">';
-        echo '<input type="text" size="30" alt="'.$straddnewcategory.'" name="addcategory" />';
-        echo '<input type="submit" value="'.$straddnewcategory.'" />';
-        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        echo '</fieldset>';
-        echo '</form>';
-        echo '</div>';
     }
 }
 ?>
