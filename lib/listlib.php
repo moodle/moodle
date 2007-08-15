@@ -217,7 +217,6 @@ class moodle_list{
         $records = $this->records;
         $page = $this->page;
         if (!empty($page)) {
-
             $this->firstitem = ($page-1) * $this->itemsperpage + 1;
             $this->lastitem = $this->firstitem + $this->itemsperpage - 1;
         }
@@ -243,9 +242,9 @@ class moodle_list{
                 }
                 $newlistitem =& new $this->listitemclassname($record, $this, $newattributes, $inpage);
                 if ($inpage){
-                    //but don't recurse down the tree for items that are not on this page
                     $newlistitem->create_children($records, $this->childparent, $record->id);
                 } else {
+                    //don't recurse down the tree for items that are not on this page
                     $this->paged = true;
                 }
                 $itemiter++;
