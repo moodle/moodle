@@ -280,8 +280,8 @@ class grade_report {
         $this->group_selector = ob_get_clean();
 
         // update paging after group
-        $this->baseurl .= 'group='.$this->currentgroup;
-        $this->pbarurl .= 'group='.$this->currentgroup;
+        $this->baseurl .= 'group='.$this->currentgroup.'&amp;';
+        $this->pbarurl .= 'group='.$this->currentgroup.'&amp;';
 
         if ($this->currentgroup) {
             $this->groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
