@@ -191,7 +191,7 @@ class question_category_object {
         $count = 1;
         $paged = false;
         foreach ($this->editlists as $key => $list){
-            list($paged, $count) = $list->list_from_records($paged, $count);
+            list($paged, $count) = $this->editlists[$key]->list_from_records($paged, $count);
         }
         $this->catform = new question_category_edit_form($this->pageurl, compact('contexts', 'currentcat'));
         if (!$currentcat){
