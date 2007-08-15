@@ -6,6 +6,12 @@ class grade_export_txt_form extends moodleform {
         global $CFG;
         include_once($CFG->libdir.'/pear/HTML/QuickForm/advcheckbox.php');
         $mform =& $this->_form;
+
+        $mform->addElement('advcheckbox', 'export_letters', get_string('exportletters', 'grades'));
+        $mform->setDefault('export_letters', 0);
+        $mform->setHelpButton('export_letters', array(false, get_string('exportletters', 'grades'),
+                          false, true, false, get_string("exportlettershelp", 'grades')));
+
         $mform->addElement('header', 'general', 'Gradeitems to be included'); // TODO: localize
         $id = $this->_customdata['id']; // course id
         $mform->addElement('hidden', 'id', $id);
