@@ -1885,8 +1885,9 @@ function forum_subscribed_users($course, $forum, $groupid=0, $cache=false) {
     }
 
     if ($groupid) {
-        $grouptables = ', '. groups_members_from_sql();
-        $groupselect = 'AND'.groups_members_where_sql($groupid, 'u.id');
+        $grouptables = ", {$CFG->prefix}groups_members gm ";
+        $groupselect = "AND gm.groupid = '$groupid' AND u.id = gm.userid";
+
     } else  {
         $grouptables = '';
         $groupselect = '';

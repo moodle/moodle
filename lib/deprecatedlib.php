@@ -1059,6 +1059,49 @@ function print_richedit_javascript($form, $name, $source='no') {
     use_html_editor($name);
 }
 
+/** various deprecated groups function **/
+
+
+/**
+ * Returns the table in which group members are stored, with a prefix 'gm'.
+ * @return SQL string.
+ */
+function groups_members_from_sql() {
+    global $CFG;
+    return " {$CFG->prefix}groups_members gm ";
+}
+
+/**
+ * Returns a join testing user.id against member's user ID.
+ * Relies on 'user' table being included as 'user u'.
+ * Used in Quiz module reports.
+ * @param group ID, optional to include a test for this in the SQL.
+ * @return SQL string.
+ */
+function groups_members_join_sql($groupid=false) {    
+    $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
+    if ($groupid) {
+        $sql = "AND gm.groupid = '$groupid' ";
+    }
+    return $sql;
+    //return ' INNER JOIN '.$CFG->prefix.'role_assignments ra ON u.id=ra.userid'.
+    //       ' INNER JOIN '.$CFG->prefix.'context c ON ra.contextid=c.id AND c.contextlevel='.CONTEXT_GROUP.' AND c.instanceid='.$groupid;
+}
+
+/**
+ * Returns SQL for a WHERE clause testing the group ID.
+ * Optionally test the member's ID against another table's user ID column. 
+ * @param groupid
+ * @param userid_sql Optional user ID column selector, example "mdl_user.id", or false.
+ * @return SQL string.
+ */
+function groups_members_where_sql($groupid, $userid_sql=false) {
+    $sql = " gm.groupid = '$groupid' ";
+    if ($userid_sql) {
+        $sql .= "AND $userid_sql = gm.userid ";
+    }
+    return $sql;
+}
 
 
 ?>

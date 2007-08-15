@@ -160,8 +160,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
 //TODO:check. Remove group DB dependencies.
             return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
                           FROM {$CFG->prefix}user u,
-                               ".groups_members_from_sql()."
-                          WHERE $select AND ".groups_members_where_sql($groupid, 'u.id')."
+                               {$CFG->prefix}groups_members gm
+                          WHERE $select AND gm.groupid = '$groupid' AND gm.userid = u.id
                               AND ($fullname $LIKE '%$searchtext%' OR u.email $LIKE '%$searchtext%')
                               $except $order");
         } else {

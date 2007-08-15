@@ -2481,10 +2481,11 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
     if ($groupid) {     /// How many in a particular group?
         return count_records_sql("SELECT COUNT(DISTINCT gm.userid, gm.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
-                                          ".groups_members_from_sql()."
-                                    WHERE a.assignment = $assignment->id
+                                          {$CFG->prefix}groups_members g
+                                    WHERE a.assignment = $assignment->id 
                                       AND a.timemodified > 0
-                                      AND ".groups_members_where_sql($groupid, 'a.userid'));
+                                      AND g.groupid = '$groupid' 
+                                      AND a.userid = g.userid ");
     } else {
         $cm = get_coursemodule_from_instance('assignment', $assignment->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);

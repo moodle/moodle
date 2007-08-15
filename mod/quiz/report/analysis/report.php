@@ -79,8 +79,8 @@ class quiz_report extends quiz_default_report {
 
         //Add this to the SQL to show only group users
         if ($currentgroup) {
-            $groupmembers = ', '.groups_members_from_sql();
-            $groupwhere = ' AND '.groups_members_where_sql($currentgroup, 'u.id');
+            $groupmembers = ", {$CFG->prefix}groups_members gm ";
+            $groupwhere = "AND gm.groupid = '$currentgroup' AND u.id = gm.userid";
         }
 
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'quiz_attempts qa, '.$CFG->prefix.'user u '.$groupmembers.

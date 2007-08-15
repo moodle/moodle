@@ -15,28 +15,7 @@
  */
 
 
-/**
- * Returns the groupid of a group with the name specified for the course 
- * specified. If there's more than one with the name specified it returns the 
- * first one it finds it the database, so you need to be careful how you use it! 
- * This is needed to support upload of users into the database
- * @param int $courseid The id of the course
- * @param string $groupname
- * @return int $groupid
- */
-function groups_get_group_by_name($courseid, $groupname) {
-    //uploaduser.php, get_record("groups","courseid",$course[$i]->id,"name",$addgroup[$i])
-    $groupids = groups_db_get_groups($courseid);
-    if (! $groupids) {
-        return false;
-    }
-    foreach ($groupids as $id) {
-        if (groups_get_group_name($id) == $groupname) {
-            return $id;
-        }
-    }
-    return false;
-}
+
 
 /**
  * Returns an array of group objects that the user is a member of
@@ -53,7 +32,7 @@ function get_groups($courseid, $userid=0) {
     if ($userid) {
         $groupids = groups_get_groups_for_user($userid, $courseid);
     } else {
-        $groupids = groups_get_groups($courseid);
+        $groupids = array_keys(groups_get_all_groups($courseid));
     }
 
     return groups_groupids_to_groups($groupids, $courseid, $alldata=true);
@@ -359,45 +338,6 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
 
     return $currentgroup;
 
-}
-
-
-function oldgroups_print_user_group_info($currentgroup, $isseparategroups, $courseid) {
-    global $CFG;
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    
-    if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
-        if ($group = get_record('groups', 'id', $currentgroup)) {              
-            if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) { 
-                echo '<table class="groupinfobox"><tr><td class="left side picture">';
-                print_group_picture($group, $course->id, true, false, false);
-                echo '</td><td class="content">';
-                echo '<h3>'.$group->name;
-                if (has_capability('moodle/site:accessallgroups', $context)) {
-                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
-                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
-                    echo '</a>';
-                }
-                echo '</h3>';
-                echo format_text($group->description);
-                echo '</td></tr></table>';
-            }
-        }
-    }
-}
-
-/**
- * Get the group object, including the course ID by default.
- * @param groupid ID of the group.
- * @param getcourse (default true), include the course ID in the return.
- * @return group object, optionally including 'courseid'.
- */
-function groups_get_group($groupid, $getcourse=true) {
-    $group = groups_db_get_group_settings($groupid);
-    if ($group && $getcourse) {
-        $group->courseid = groups_get_course($groupid);
-    }
-    return $group;
 }
 
 

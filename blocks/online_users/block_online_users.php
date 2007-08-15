@@ -50,8 +50,8 @@ class block_online_users extends block_base {
 
         //Add this to the SQL to show only group users
         if ($currentgroup !== NULL) {
-            $groupmembers = ', '.groups_members_from_sql(); //TODO: ", {$CFG->prefix}groups_members gm ";
-            $groupselect = ' AND '.groups_members_where_sql($currentgroup, 'u.id'); //" AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+            $groupmembers = ",  {$CFG->prefix}groups_members gm ";
+            $groupselect = " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
         }
 
         if ($COURSE->id == SITEID) {  // Site-level

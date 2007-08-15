@@ -340,9 +340,10 @@ function journal_count_entries($journal, $groupid=0) {
     if ($groupid) {     /// How many in a particular group?
         return count_records_sql("SELECT COUNT(*) 
                                      FROM {$CFG->prefix}journal_entries j,
-                                          ".groups_members_from_sql()."
+                                          {$CFG->prefix}groups_members g
                                     WHERE j.journal = $journal->id 
-                                      AND ".groups_members_where_sql($groupid, 'j.userid'));
+                                      AND g.groupid = '$groupid' 
+                                      AND j.userid = g.userid");
 
     } else { /// Count all the entries from the whole course
     
