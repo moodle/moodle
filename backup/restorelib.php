@@ -365,6 +365,7 @@
 
         $status = true;
         if ($info) {
+            $table = new object();
             //This is tha align to every ingo table
             $table->align = array ("right","left");
             //This is the nowrap clause
@@ -494,6 +495,7 @@
 
         $status = true;
         if ($course_header) {
+            $table = new table();
             //This is tha align to every ingo table
             $table->align = array ("right","left");
             //The width
@@ -574,6 +576,7 @@
 
         //If category 1 doesn'exists, lets create the course category (get it from backup file)
         if (!$category) {
+            $ins_category = new object();
             $ins_category->name = addslashes($course_header->category->name);
             $ins_category->parent = 0;
             $ins_category->sortorder = 0;
@@ -895,6 +898,7 @@
             //For each, section, save it to db
             foreach ($info->sections as $key => $sect) {
                 $sequence = "";
+                $section = new object();
                 $section->course = $restore->course_id;
                 $section->section = $sect->number;
                 $section->summary = backup_todb($sect->summary);
@@ -919,6 +923,7 @@
                     //Teorically this never should happen but, in practice, some users
                     //have reported this issue.
                     if(!$rec) {
+                        $zero_sec = new object();
                         $zero_sec->course = $restore->course_id;
                         $zero_sec->section = 0;
                         $zero_sec->summary = "";
@@ -969,7 +974,7 @@
                                     //Get the module id from modules
                                     $module = get_record("modules","name",$mod->type);
                                     if ($module) {
-                                        $coursemodule = new object();
+                                        $course_module = new object();
                                         $course_module->course = $restore->course_id;
                                         $course_module->module = $module->id;
                                         $course_module->section = $newid;
@@ -978,7 +983,11 @@
                                         $course_module->indent = $mod->indent;
                                         $course_module->visible = $mod->visible;
                                         $course_module->groupmode = $mod->groupmode;
-                                        $course_module->groupingid = $mod->groupingid;
+                                        if ($mod->groupingid and $grouping = backup_getid($restore->backup_unique_code,"groupings",$mod->groupingid)) {
+                                            $course_module->groupingid = $grouping->new_id;
+                                        } else {
+                                            $course_module->groupingid = 0;
+                                        }
                                         $course_module->groupmembersonly = $mod->groupmembersonly;
                                         $course_module->instance = 0;
                                         //NOTE: The instance (new) is calculated and updated in db in the
@@ -1017,6 +1026,7 @@
                 //If all is OK, update sequence field in course_sections
                 if ($status) {
                     if (isset($sequence)) {
+                        $update_rec = new object();
                         $update_rec->id = $newid;
                         $update_rec->sequence = $sequence;
                         $status = update_record("course_sections",$update_rec);
@@ -1624,6 +1634,7 @@
                                     //$GLOBALS['traverse_array']="";                                                              //Debug
                                     $grade = backup_getid($restore->backup_unique_code,"grade_grades", backup_todb($ite_info['#']['GRADEID']['0']['#']));
 
+                                    $text = new object();
                                     $text->gradeid = $grade->new_id;
                                     $text->information = backup_todb($ite_info['#']['INFORMATION']['0']['#']);
                                     $text->informationformat = backup_todb($ite_info['#']['INFORMATIONFORMAT']['0']['#']);
@@ -2460,6 +2471,7 @@
                                         //print_object ($GLOBALS['traverse_array']);         //Debug
                                         //$GLOBALS['traverse_array']="";                     //Debug
                                         //Now build the MESSAGE record structure
+                                        $dbrec = new object();
                                         $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
                                         $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
                                         $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
@@ -3518,6 +3530,7 @@
                             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                             //$GLOBALS['traverse_array']="";                                                              //Debug
                             //Now build the LOG record structure
+                            $dblog = new object();
                             $dblog->time = backup_todb($info['LOG']['#']['TIME']['0']['#']);
                             $dblog->userid = backup_todb($info['LOG']['#']['USERID']['0']['#']);
                             $dblog->ip = backup_todb($info['LOG']['#']['IP']['0']['#']);
@@ -4924,13 +4937,13 @@
                 if ($this->level == 6) {
                     switch ($tagName) {
                         case "MOD":
-                            if (isset($this->info->tempmod->groupmode)) {
+                            if (!isset($this->info->tempmod->groupmode)) {
                                 $this->info->tempmod->groupmode = 0;
                             }
-                            if (isset($this->info->tempmod->groupingid)) {
+                            if (!isset($this->info->tempmod->groupingid)) {
                                 $this->info->tempmod->groupingid = 0;
                             }
-                            if (isset($this->info->tempmod->groupmembersonly)) {
+                            if (!isset($this->info->tempmod->groupmembersonly)) {
                                 $this->info->tempmod->groupmembersonly = 0;
                             }
 
@@ -5903,6 +5916,7 @@
                     $status = backup_putid($this->preferences->backup_unique_code,"question_categories",$category_id,
                                      null,$data);
                     //Create returning info
+                    $ret_info = new object();
                     $ret_info->id = $category_id;
                     $this->info[] = $ret_info;
                     //Reset temp
@@ -5954,6 +5968,7 @@
                     $status = backup_putid($this->preferences->backup_unique_code,"scale",$scale_id,
                                      null,$data);
                     //Create returning info
+                    $ret_info = new object();
                     $ret_info->id = $scale_id;
                     $this->info[] = $ret_info;
                     //Reset temp
@@ -6027,7 +6042,7 @@
         }
 
         //This is the endTag handler we use where we are reading the groupings zone (todo="GROUPINGS")
-        function endElementGroupings($parser, $tagName) { //TODO:
+        function endElementGroupings($parser, $tagName) {
             //Check if we are into GROUPINGS zone
             if ($this->tree[3] == "GROUPINGS") {
                 //Acumulate data to info (content + close tag)
@@ -6071,7 +6086,7 @@
         }
 
         //This is the endTag handler we use where we are reading the groupingsgroups zone (todo="GROUPINGGROUPS")
-        function endElementGroupingsGroups($parser, $tagName) { //TODO:
+        function endElementGroupingsGroups($parser, $tagName) {
             //Check if we are into GROUPINGSGROUPS zone
             if ($this->tree[3] == "GROUPINGSGROUPS") {
                 //Acumulate data to info (content + close tag)
@@ -6145,6 +6160,7 @@
                     $status = backup_putid($this->preferences->backup_unique_code,"event",$event_id,
                                      null,$data);
                     //Create returning info
+                    $ret_info = new object();
                     $ret_info->id = $event_id;
                     $this->info[] = $ret_info;
                     //Reset temp
@@ -6200,6 +6216,7 @@
                                      null,$data);
                         //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
                         //Create returning info
+                        $ret_info = new object();
                         $ret_info->id = $mod_id;
                         $ret_info->modtype = $mod_type;
                         $this->info[] = $ret_info;
@@ -6545,6 +6562,7 @@
 
         //We compare Moodle's versions
         if ($CFG->version < $info->backup_moodle_version && $status) {
+            $message = new message();
             $message->serverversion = $CFG->version;
             $message->serverrelease = $CFG->release;
             $message->backupversion = $info->backup_moodle_version;
@@ -6774,52 +6792,6 @@
             }
         }
 
-        //Now create the course_sections and their associated course_modules
-        if ($status) {
-            //Into new course
-            if ($restore->restoreto == 2) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("creatingsections");
-                }
-                if (!$status = restore_create_sections($restore,$xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
-                    } else {
-                        $errorstr = "Error creating sections in the existing course.";
-                        return false;
-                    }
-                }
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo '</li>';
-                }
-                //Into existing course
-            } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("checkingsections");
-                }
-                if (!$status = restore_create_sections($restore,$xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
-                    } else {
-                        $errorstr = "Error creating sections in the existing course.";
-                        return false;
-                    }
-                }
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo '</li>';
-                }
-                //Error
-            } else {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Neither a new course or an existing one was specified.");
-                    $status = false;
-                } else {
-                    $errorstr = "Neither a new course or an existing one was specified.";
-                    return false;
-                }
-            }
-        }
-
         //Now create users as needed
         if ($status and ($restore->users == 0 or $restore->users == 1)) {
             if (!defined('RESTORE_SILENTLY')) {
@@ -6890,6 +6862,109 @@
 
             if (!defined('RESTORE_SILENTLY')) {
                 echo "</li>";
+            }
+        }
+
+
+        //Now create groups as needed
+        if ($status) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatinggroups");
+            }
+            if (!$status = restore_create_groups($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore groups!");
+                } else {
+                    $errorstr = "Could not restore groups!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
+        //Now create groupings as needed
+        if ($status) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatinggroupings");
+            }
+            if (!$status = restore_create_groupings($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore groupings!");
+                } else {
+                    $errorstr = "Could not restore groupings!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
+        //Now create groupingsgroups as needed
+        if ($status) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("creatinggroupingsgroups");
+            }
+            if (!$status = restore_create_groupings_groups($restore,$xml_file)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Could not restore groups in groupings!");
+                } else {
+                    $errorstr = "Could not restore groups in groupings!";
+                    return false;
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
+
+        //Now create the course_sections and their associated course_modules
+        //we have to do this after groups and groupings are restored, because we need the new groupings id
+        if ($status) {
+            //Into new course
+            if ($restore->restoreto == 2) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string("creatingsections");
+                }
+                if (!$status = restore_create_sections($restore,$xml_file)) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        notify("Error creating sections in the existing course.");
+                    } else {
+                        $errorstr = "Error creating sections in the existing course.";
+                        return false;
+                    }
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
+                //Into existing course
+            } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li>".get_string("checkingsections");
+                }
+                if (!$status = restore_create_sections($restore,$xml_file)) {
+                    if (!defined('RESTORE_SILENTLY')) {
+                        notify("Error creating sections in the existing course.");
+                    } else {
+                        $errorstr = "Error creating sections in the existing course.";
+                        return false;
+                    }
+                }
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo '</li>';
+                }
+                //Error
+            } else {
+                if (!defined('RESTORE_SILENTLY')) {
+                    notify("Neither a new course or an existing one was specified.");
+                    $status = false;
+                } else {
+                    $errorstr = "Neither a new course or an existing one was specified.";
+                    return false;
+                }
             }
         }
 
@@ -7045,60 +7120,6 @@
                     notify("Could not restore custom scales!");
                 } else {
                     $errorstr = "Could not restore custom scales!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        }
-
-        //Now create groups as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggroups");
-            }
-            if (!$status = restore_create_groups($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groups!");
-                } else {
-                    $errorstr = "Could not restore groups!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        }
-
-        //Now create groupings as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggroupings");
-            }
-            if (!$status = restore_create_groupings($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groupings!");
-                } else {
-                    $errorstr = "Could not restore groupings!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
-        }
-
-        //Now create groupings as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggroupingsgroups");
-            }
-            if (!$status = restore_create_groupings_groups($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groups in groupings!");
-                } else {
-                    $errorstr = "Could not restore groups in groupings!";
                     return false;
                 }
             }

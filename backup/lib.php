@@ -469,6 +469,7 @@
         //Now, insert the record
         if ($status) {
             //Build the record
+            $rec = new object();
             $rec->backup_code = $backup_unique_code;
             $rec->table_name = $table;
             $rec->old_id = $old_id;
