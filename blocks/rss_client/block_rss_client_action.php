@@ -57,7 +57,7 @@ if (!defined('MAGPIE_OUTPUT_ENCODING')) {
 
 
 if (!empty($id)) {
-    // we get the complete $course object here because print_header assumes this is 
+    // we get the complete $course object here because print_header assumes this is
     // a complete object (needed for proper course theme settings)
     if ($course = get_record('course', 'id', $id)) {
         $context = get_context_instance(CONTEXT_COURSE, $id);
@@ -68,13 +68,12 @@ if (!empty($id)) {
 
 
 $straddedit = get_string('feedsaddedit', 'block_rss_client');
-
-if (!empty($course)) {
-    $navigation = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$id.'">'.$course->shortname.'</a> -> '.$straddedit;
-} else {
-    $navigation = $straddedit;
+$link = $CFG->wwwroot.'/course/view.php?id='.$id;
+if (empty($course)) {
+    $link = '';
 }
-
+// $navlinks = array(array('name' => $course->shortname, 'link' => $link, 'type' => 'misc'));
+$navigation = build_navigation($navlinks);
 print_header($straddedit, $straddedit, $navigation);
 
 

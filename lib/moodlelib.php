@@ -7090,14 +7090,18 @@ function build_navigation($extranavlinks) {
 
     //Site name
     if ($site = get_site()) {
-        $navlinks[] = array('name' => format_string($site->shortname), 'link' => "$CFG->wwwroot/", 'type' => 'home');
+        $navlinks[] = array('name' => format_string($site->shortname),
+                            'link' => "$CFG->wwwroot/",
+                            'type' => 'home');
     }
 
 
     if ($COURSE) {
         if ($COURSE->id != SITEID) {
             //Course
-            $navlinks[] = array('name' => format_string($COURSE->shortname), 'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",'type' => 'course');
+            $navlinks[] = array('name' => format_string($COURSE->shortname),
+                                'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",
+                                'type' => 'course');
         }
     }
 
@@ -7108,26 +7112,35 @@ function build_navigation($extranavlinks) {
     //Accessibility: heading hidden from visual browsers by default.
     $navigation = '<h2 class="accesshide">'.get_string('youarehere','access')."</h2> <ul>\n";
     $countlinks = count($navlinks);
-
-    for($i=0;$i<$countlinks;$i++) {
-
+    $i = 0;
+    foreach ($navlinks as $navlink) {
+        if ($i >= $countlinks || !is_array($navlink)) {
+            continue;
+        }
         // Check the link type to see if this link should appear in the trail
-        if ($navlinks[$i]['type'] == 'activity' && $i+1 < $countlinks  && ($CFG->hideactivitytypenavlink == 2 || ($CFG->hideactivitytypenavlink == 1 && !has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $course->id))))) {
+        $cap = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id));
+        $hidetype_is2 = $CFG->hideactivitytypenavlink == 2;
+        $hidetype_is1 = $CFG->hideactivitytypenavlink == 1;
+
+        if ($navlink['type'] == 'activity' &&
+            $i+1 < $countlinks  &&
+            ($hidetype_is2 || ($hidetype_is1 && !$cap))) {
             continue;
         }
         $navigation .= '<li class="first">';
         if ($i > 0) {
             $navigation .= get_separator();
         }
-        if ($navlinks[$i]['link'] && $i+1 < $countlinks) {
-            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlinks[$i]['link']}\">";
+        if ($navlink['link'] && $i+1 < $countlinks) {
+            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
         }
-        $navigation .= "{$navlinks[$i]['name']}";
-        if ($navlinks[$i]['link'] && $i+1 < $countlinks) {
+        $navigation .= "{$navlink['name']}";
+        if ($navlink['link'] && $i+1 < $countlinks) {
             $navigation .= "</a>";
         }
 
         $navigation .= "</li>";
+        $i++;
     }
 
     $navigation .= "</ul>";
@@ -7150,8 +7163,7 @@ function is_newnav($navigation) {
  * @param object $object The object to check
  * @return boolean
  */
-function in_object_vars($var, $object)
-{
+function in_object_vars($var, $object) {
     $class_vars = get_class_vars(get_class($object));
     $class_vars = array_keys($class_vars);
     return in_array($var, $class_vars);

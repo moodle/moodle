@@ -46,11 +46,11 @@
                 } // it'll be greyed out but we want these by default anyway.
             }
             $course->allowedmods = $allowedmods;
-    
+
             if ($course->enrolstartdate){
                 $course->enrolstartdisabled = 0;
             }
-    
+
             if ($course->enrolenddate) {
                 $course->enrolenddisabled = 0;
             }
@@ -98,7 +98,7 @@
             // assign default role to creator if not already having permission to manage course assignments
             if (!has_capability('moodle/course:view', $context) or !has_capability('moodle/role:assign', $context)) {
                 role_assign($CFG->creatornewroleid, $USER->id, 0, $context->id);
-            }        
+            }
 
             if ($data->metacourse and has_capability('moodle/course:managemetacourse', $context)) {
                 // Redirect users with metacourse capability to student import
@@ -107,8 +107,8 @@
                 // Redirect to roles assignment
                 redirect($CFG->wwwroot."/$CFG->admin/roles/assign.php?contextid=$context->id");
             }
-            
-        } else {            
+
+        } else {
             if (!update_course($data)) {
                 print_error('coursenotupdated');
             }
@@ -127,17 +127,30 @@
     $straddnewcourse = get_string("addnewcourse");
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");
+    $navlinks = array();
 
     if (!empty($course)) {
-        print_header($streditcoursesettings, $course->fullname,
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                      -> $streditcoursesettings", $editform->focus());
+        $navlinks[] = array('name' => $streditcoursesettings,
+                            'link' => null,
+                            'type' => 'misc');
+        $title = $streditcoursesettings;
+        $fullname = $course->fullname;
     } else {
-        print_header("$site->shortname: $straddnewcourse", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                     "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse", $editform->focus());
+        $navlinks[] = array('name' => $stradministration,
+                            'link' => "$CFG->wwwroot/$CFG->admin/index.php",
+                            'type' => 'misc');
+        $navlinks[] = array('name' => $strcategories,
+                            'link' => 'index.php',
+                            'type' => 'misc');
+        $navlinks[] = array('name' => $straddnewcourse,
+                            'link' => null,
+                            'type' => 'misc');
+        $title = "$site->shortname: $straddnewcourse";
+        $fullname = $site->fullname;
     }
 
+    $navigation = build_navigation($navlinks);
+    print_header($title, $fullname, $navigation, $editform->focus());
     print_heading($streditcoursesettings);
 
     $editform->display();

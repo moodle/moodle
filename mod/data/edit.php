@@ -64,16 +64,15 @@
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-/// If it's hidden then it's don't show anything.  :)
+/// If it's hidden then it doesn't show anything.  :)
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
         $strdatabases = get_string("modulenameplural", "data");
-        $navigation = "<a href=\"index.php?id=$course->id\">$strdatabases</a> ->";
-        
+
         $navlinks = array();
         $navlinks[] = array('name' => $strdatabases, 'link' => "index.php?id=$course->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($data->name), 'link' => '', 'type' => 'activityinstance');
         $navigation = build_navigation($navlinks);
-        
+
         print_header_simple(format_string($data->name), "", $navigation, "", "", true, '', navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -161,7 +160,7 @@
             if (!has_capability('mod/data:approve', $context)) {
                 $record->approved = 0;
             }
-            
+
             $record->groupid = $currentgroup;
             $record->timemodified = time();
             update_record('data_records',$record);

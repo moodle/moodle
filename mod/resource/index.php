@@ -12,11 +12,7 @@
 
     if ($course->id != SITEID) {
         require_login($course->id);
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } else {
-        $navigation = '';
     }
-
     add_to_log($course->id, "resource", "view all", "index.php?id=$course->id", "");
 
     $strresource = get_string("modulename", "resource");
@@ -26,12 +22,12 @@
     $strname = get_string("name");
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strresources, 'link' => '', 'type' => 'activityinstance');
     $navigation = build_navigation($navlinks);
 
-    print_header("$course->shortname: $strresources", $course->fullname, $navigation, 
+    print_header("$course->shortname: $strresources", $course->fullname, $navigation,
                  "", "", true, "", navmenu($course));
 
     if (! $resources = get_all_instances_in_course("resource", $course)) {
@@ -73,12 +69,12 @@
             $extra = "";
         }
         if (!$resource->visible) {      // Show dimmed if the mod is hidden
-            $table->data[] = array ($printsection, 
+            $table->data[] = array ($printsection,
                     "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
                     format_text($resource->summary, FORMAT_MOODLE, $options) );
 
         } else {                        //Show normal if the mod is visible
-            $table->data[] = array ($printsection, 
+            $table->data[] = array ($printsection,
                     "<a $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
                     format_text($resource->summary, FORMAT_MOODLE, $options) );
         }
@@ -89,6 +85,6 @@
     print_table($table);
 
     print_footer($course);
- 
+
 ?>
 

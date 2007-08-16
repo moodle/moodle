@@ -49,6 +49,9 @@
     function html_header($course, $wdir, $formfield=""){
         global $CFG, $ME, $choose;
 
+        $navlinks = array();
+        // $navlinks[] = array('name' => $course->shortname, 'link' => "../course/view.php?id=$course->id", 'type' => 'misc');
+
         if ($course->id == SITEID) {
             $strfiles = get_string("sitefiles");
         } else {
@@ -56,18 +59,22 @@
         }
 
         if ($wdir == "/") {
-            $fullnav = "$strfiles";
+            $navlinks[] = array('name' => $strfiles, 'link' => null, 'type' => 'misc');
         } else {
             $dirs = explode("/", $wdir);
             $numdirs = count($dirs);
             $link = "";
-            $navigation = "";
+            $navlinks[] = array('name' => $strfiles,
+                                'link' => $ME."?id=$course->id&amp;wdir=/&amp;choose=$choose",
+                                'type' => 'misc');
+
             for ($i=1; $i<$numdirs-1; $i++) {
-               $navigation .= " -> ";
-               $link .= "/".urlencode($dirs[$i]);
-               $navigation .= "<a href=\"".$ME."?id=$course->id&amp;wdir=$link&amp;choose=$choose\">".$dirs[$i]."</a>";
+                $link .= "/".urlencode($dirs[$i]);
+                $navlinks[] = array('name' => $dirs[$i],
+                                    'link' => $ME."?id=$course->id&amp;wdir=$link&amp;choose=$choose",
+                                    'type' => 'misc');
             }
-            $fullnav = "<a href=\"".$ME."?id=$course->id&amp;wdir=/&amp;choose=$choose\">$strfiles</a> $navigation -> ".$dirs[$numdirs-1];
+            $navlinks[] = array('name' => $dirs[$numdirs-1], 'link' => null, 'type' => 'misc');
         }
 
 
@@ -120,13 +127,12 @@
                     admin_externalpage_print_header();
 
                     print_heading(get_string("publicsitefileswarning"), "center", 2);
-                    
+
                 }
 
             } else {
-                print_header("$course->shortname: $strfiles", $course->fullname,
-                             "<a href=\"../course/view.php?id=$course->id\">$course->shortname".
-                             "</a> -> $fullnav", $formfield);
+                $navigation = build_navigation($navlinks);
+                print_header("$course->shortname: $strfiles", $course->fullname, $navigation,  $formfield);
             }
         }
 
@@ -192,7 +198,7 @@
 
                 echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b></p>";
                 echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"index.php\">";
-                echo "<div>";             
+                echo "<div>";
                 echo "<table><tr><td colspan=\"2\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
@@ -205,7 +211,7 @@
                 echo "</div>";
                 echo "</form>";
                 echo "<form action=\"index.php\" method=\"get\">";
-                echo "<div>";             
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";

@@ -80,8 +80,6 @@
             $title = $strlanguage;
             break;
     }
-    $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $title";
-
     $crumbs[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/admin/lang.php");
     $navigation = build_navigation($crumbs);
 

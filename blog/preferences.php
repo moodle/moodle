@@ -42,8 +42,9 @@
 
     $strpreferences = get_string('preferences');
     $strblogs       = get_string('blogs', 'blog');
-
-    $navigation = "<a href='".$CFG->wwwroot."/blog/'>$strblogs</a> -> $strpreferences";
+    $navlinks = array(array('name' => $strblogs, 'link' => "$CFG->wwwroot/blog/", 'type' => 'misc'));
+    $navlinks[] = array('name' => $strpreferences, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
     print_header("$site->shortname: $strblogs : $strpreferences", $strblogs, $navigation);
     print_heading($strpreferences);

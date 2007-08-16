@@ -37,8 +37,8 @@ if (!isset($form->create_sequence_url)) {
 <center>
 <span id="message"><p>Please wait .......</p></span>
 <table cellpadding="5">
-<tr valign=top>
-<td align=right><b><?php print_string("workspace", "lams") ?>:</b></td>
+<tr valign="top">
+<td align="right"><b><?php print_string("workspace", "lams") ?>:</b></td>
 <td>
 <select id="workspace" name="workspace"></select>
 </td>
@@ -55,7 +55,8 @@ if (!isset($form->create_sequence_url)) {
 <input type="text" id="name" name="name" size="30" />
 </td>
 </tr>
-<td align=right><p><b><?php print_string("introduction", "lams") ?>:</b></p>
+<tr>
+<td align="right"><p><b><?php print_string("introduction", "lams") ?>:</b></p>
 <br />
 <font size="1">
 <?php
@@ -87,8 +88,10 @@ print_textarea($usehtmleditor, 20, 50, 680, 400, "introduction", $form->introduc
 <input type="hidden" name="learning_session_id"/>
 <input type="hidden" name="create_sequence_url" id="create_sequence_url"/>
 <input type="submit" id="save" name="save" value="<?php print_string("useSequence","lams") ?>" onClick="return validate();">
-<input type="button" id="edit" name"edit" value="<?php print_string("editSequence","lams") ?>" onClick="openAuthor(<?php echo "'".$form->create_sequence_url."&".$LAMSCONSTANTS->param_ldid."=".$form->sequence."'";?>);">
-<input type="button" id="create" name="create" value="<?php print_string("createSequence","lams") ?>" onClick="openAuthor(<?php echo "'".$form->create_sequence_url."'";?>);">
+<input type="button" id="edit" name="edit" value="<?php print_string("editSequence","lams") ?>" onClick="openAuthor(<?php
+    echo "'".$form->create_sequence_url."&".$LAMSCONSTANTS->param_ldid."=".$form->sequence."'";?>);">
+<input type="button" id="create" name="create" value="<?php print_string("createSequence","lams") ?>" onClick="openAuthor(<?php
+    echo "'".$form->create_sequence_url."'";?>);">
 <input type="button" id="refresh" name="refresh" value="<?php print_string("refreshSequenceList","lams")?>" onclick="refreshLists();">
 <input type="submit" id="cancel" name=cancel value="<?php  print_string("cancel") ?>">
 

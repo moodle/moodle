@@ -7,6 +7,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
+$navlinks = array();
 if ($currenttab != 'update') {
     switch ($context->contextlevel) {
 
@@ -27,8 +28,16 @@ if ($currenttab != 'update') {
             $strcategories = get_string("categories");
             $strcategory = get_string("category");
             $strcourses = get_string("courses");
-            print_header("$SITE->shortname: $category->name", "$SITE->fullname: $strcourses",
-                    "<a href=\"$CFG->wwwroot/course/index.php\">$strcategories</a> -> <a href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a> -> $straction", "", "", true);
+
+            $navlinks[] = array('name' => $strcategories,
+                                'link' => "$CFG->wwwroot/course/index.php",
+                                'type' => 'misc');
+            $navlinks[] = array('name' => $category->name,
+                                'link' => "$CFG->wwwroot/course/category.php?id=$category->id",
+                                'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header("$SITE->shortname: $category->name", "$SITE->fullname: $strcourses", $navigation, "", "", true);
             break;
 
         case CONTEXT_COURSE:
@@ -38,9 +47,11 @@ if ($currenttab != 'update') {
                 $course = get_record('course', 'id', $context->instanceid);
 
                 require_login($course);
-
-                print_header($streditcoursesettings, $course->fullname,
-                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $straction");
+                $navlinks[] = array('name' => $course->shortname,
+                                    'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                                    'type' => 'misc');
+                $navigation = build_navigation($navlinks);
+                print_header($streditcoursesettings, $course->fullname, $navigation);
             }
             break;
 
@@ -64,9 +75,8 @@ if ($currenttab != 'update') {
 
             require_login($course);
 
-            $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$instance->name</a> ->";
-            $fullmodulename = get_string("modulename", $module->name);
-            $streditinga = get_string("editinga", "moodle", $fullmodulename);
+            $fullmodulename      = get_string("modulename", $module->name);
+            $streditinga         = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
 
             if ($module->name == "label") {
@@ -75,9 +85,21 @@ if ($currenttab != 'update') {
                 $focuscursor = "form.name";
             }
 
-            print_header_simple($streditinga, '',
-                    "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
-                    $strnav <a href=\"$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=".sesskey()."\">$streditinga</a> -> $straction", $focuscursor, "", false);
+            $navlinks[] = array('name' => $strmodulenameplural,
+                                'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id",
+                                'type' => 'misc');
+
+            $navlinks[] = array('name' => $instance->name,
+                                'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
+                                'type' => 'misc');
+
+            $navlinks[] = array('name' => $streditinga,
+                                'link' => "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=".sesskey(),
+                                'type' => 'misc');
+
+            $navigation = build_navigation($navlinks);
+
+            print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
 
             break;
 
@@ -85,7 +107,10 @@ if ($currenttab != 'update') {
             if ($blockinstance = get_record('block_instance', 'id', $context->instanceid)) {
                 if ($block = get_record('block', 'id', $blockinstance->blockid)) {
                     $blockname = print_context_name($context);
-                    $navigation = $blockname. ' -> '.$straction;
+
+                    // Prepare the last part of the breadcrumbs first
+                    $navlinks[98] = array('name' => $blockname, 'link' => null, 'type' => 'misc');
+                    $navlinks[99] = array('name' => $straction, 'link' => null, 'type' => 'misc');
 
                     switch ($blockinstance->pagetype) {
                         case 'course-view':
@@ -94,16 +119,21 @@ if ($currenttab != 'update') {
                                 require_login($course);
 
                                 if ($course->id != SITEID) {
-                                    $navigation = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $navigation";
+                                    $navlinks[0] = array('name' => $course->shortname,
+                                                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                                                        'type' => 'misc');
                                 }
+                                $navigation = build_navigation($navlinks);
                                 print_header("$straction: $blockname", $course->fullname, $navigation);
                             }
                             break;
 
                         case 'blog-view':
                             $strblogs = get_string('blogs','blog');
-                            $navigation = '<a href="'.$CFG->wwwroot.'/blog/index.php">'.
-                                $strblogs.'</a> -> '.$navigation;
+                            $navlinks[0] = array('name' => $strblogs,
+                                                 'link' => $CFG->wwwroot.'/blog/index.php',
+                                                 'type' => 'misc');
+                            $navigation = build_navigation($navlinks);
                             print_header("$straction: $strblogs", $SITE->fullname, $navigation);
                             break;
 
