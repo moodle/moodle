@@ -274,6 +274,9 @@ class default_questiontype {
                 question_require_capability_on($question, 'move');
                 list($question->categorymoveto, $movetocontextid) = explode(',', $form->categorymoveto);
             }
+            //don't need to test add permission of category we are moving question to.
+            //Only categories that we have permission to add
+            //a question to will get through the form cleaning code for the select box.
             if (isset($question->qtype) && $question->qtype != RANDOM){
                 $question->category = $question->categorymoveto;
             }
