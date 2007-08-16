@@ -180,7 +180,6 @@ if ($mform->is_cancelled()){
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
-            die;
             redirect($returnurl);
         }
     } else {
