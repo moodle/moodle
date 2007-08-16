@@ -3248,7 +3248,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
     } else {
         if (forum_is_subscribed($USER->id, $forum->id)) {
             $linktext = $messages['subscribed'];
-            $linktitle = get_string('subscribestopt', 'forum');
+            $linktitle = get_string('subscribestop', 'forum');
         } else {
             $linktext = $messages['unsubscribed'];
             $linktitle = get_string('subscribestart', 'forum');
