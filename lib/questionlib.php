@@ -1910,11 +1910,10 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
     $question_questioncaps = array('edit', 'view', 'use', 'move');
-
     static $questions = array();
     static $categories = array();
     static $cachedcat = array();
-    if ($cachecat != -1 && (array_search($cachecat, $cachedcat)!==FALSE)){
+    if ($cachecat != -1 && (array_search($cachecat, $cachedcat)===FALSE)){
         $questions += get_records('question', 'category', $cachecat);
         $cachedcat[] = $cachecat;
     }
