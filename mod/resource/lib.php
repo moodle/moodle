@@ -78,188 +78,189 @@ if (!empty($THEME->customcorners)) {
 
 class resource_base {
 
-var $cm;
-var $course;
-var $resource;
+    var $cm;
+    var $course;
+    var $resource;
+    var $navigation;
+    var $navlinks;
 
+    /**
+    * Constructor for the base resource class
+    *
+    * Constructor for the base resource class.
+    * If cmid is set create the cm, course, resource objects.
+    * and do some checks to make sure people can be here, and so on.
+    *
+    * @param cmid   integer, the current course module id - not set for new resources
+    */
+    function resource_base($cmid=0) {
 
-/**
-* Constructor for the base resource class
-*
-* Constructor for the base resource class.
-* If cmid is set create the cm, course, resource objects.
-* and do some checks to make sure people can be here, and so on.
-*
-* @param cmid   integer, the current course module id - not set for new resources
-*/
-function resource_base($cmid=0) {
+        global $CFG, $COURSE;
 
-    global $CFG, $COURSE;
+        if ($cmid) {
+            if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
+                error("Course Module ID was incorrect");
+            }
 
-    if ($cmid) {
-        if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
-            error("Course Module ID was incorrect");
+            if (! $this->course = get_record("course", "id", $this->cm->course)) {
+                error("Course is misconfigured");
+            }
+
+            if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
+                error("Resource ID was incorrect");
+            }
+
+            $this->strresource  = get_string("modulename", "resource");
+            $this->strresources = get_string("modulenameplural", "resource");
+
+            $this->navlinks[] = array('name' => $this->strresources, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
+
+            if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
+                $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
+                $this->navlinks[] = array('name' => $this->strresource, 'link' => '', 'type' => 'activityinstance');
+                $this->navigation = build_navigation($this->navlinks);
+
+                print_header($pagetitle, $this->course->fullname, $this->navigation, "", "", true, '', navmenu($this->course, $this->cm));
+                notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
+            }
+
+        } else {
+            $this->course = $COURSE;
         }
-
-        if (! $this->course = get_record("course", "id", $this->cm->course)) {
-            error("Course is misconfigured");
-        }
-
-        if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
-            error("Resource ID was incorrect");
-        }
-
-        $this->strresource  = get_string("modulename", "resource");
-        $this->strresources = get_string("modulenameplural", "resource");
-
-        $this->navlinks[] = array('name' => $this->strresources, 'link' => "index.php?id={$this->course->id}", 'type' => 'activity');
-
-        if (!$this->cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
-            $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
-            $this->navlinks[] = array('name' => $this->strresource, 'link' => '', 'type' => 'activityinstance');
-            $this->navigation = build_navigation($this->navlinks);
-            
-            print_header($pagetitle, $this->course->fullname, $this->navigation, "", "", true, '', navmenu($this->course, $this->cm));
-            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
-        }
-        
-    } else {
-        $this->course = $COURSE;
-    }
-}
-
-
-/**
-* Display function does nothing in the base class
-*/
-function display() {
-
-}
-
-
-/**
-* Display the resource with the course blocks.
-*/
-function display_course_blocks_start() {
-
-    global $CFG;
-    global $USER;
-
-    require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->libdir.'/pagelib.php');
-    require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
-
-    $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
-    $this->PAGE = $PAGE;
-    $pageblocks = blocks_setup($PAGE);
-
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
-/// Print the page header
-
-    $edit = optional_param('edit', -1, PARAM_BOOL);
-
-    if (($edit != -1) and $PAGE->user_allowed_editing()) {
-        $USER->editing = $edit;
     }
 
-    $morenavlinks = array($this->strresources   => 'index.php?id='.$this->course->id,
-                             $this->resource->name => '');
 
-    $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks);
+    /**
+    * Display function does nothing in the base class
+    */
+    function display() {
 
-    echo '<table id="layout-table"><tr>';
+    }
 
-    if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+
+    /**
+    * Display the resource with the course blocks.
+    */
+    function display_course_blocks_start() {
+
+        global $CFG;
+        global $USER;
+
+        require_once($CFG->libdir.'/blocklib.php');
+        require_once($CFG->libdir.'/pagelib.php');
+        require_once($CFG->dirroot.'/course/lib.php'); //required by some blocks
+
+        $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
+        $this->PAGE = $PAGE;
+        $pageblocks = blocks_setup($PAGE);
+
+        $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
+
+    /// Print the page header
+
+        $edit = optional_param('edit', -1, PARAM_BOOL);
+
+        if (($edit != -1) and $PAGE->user_allowed_editing()) {
+            $USER->editing = $edit;
+        }
+
+        $morenavlinks = array($this->strresources   => 'index.php?id='.$this->course->id,
+                                 $this->resource->name => '');
+
+        $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks);
+
+        echo '<table id="layout-table"><tr>';
+
+        if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
+            echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
+            echo '</td>';
+        }
+
+        echo '<td id="middle-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+        echo '<div id="resource">';
+
+    }
+
+
+    /**
+     * Finish displaying the resource with the course blocks
+     */
+    function display_course_blocks_end() {
+
+        global $CFG;
+
+        $PAGE = $this->PAGE;
+        $pageblocks = blocks_setup($PAGE);
+        $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
+
+        echo '</div>';
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
+
+        if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
+            echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
+            if (!empty($THEME->customcorners)) print_custom_corners_start();
+            blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+            if (!empty($THEME->customcorners)) print_custom_corners_end();
+            echo '</td>';
+        }
+
+        echo '</tr></table>';
+
+        print_footer($this->course);
+
     }
 
-    echo '<td id="middle-column">';
-    if (!empty($THEME->customcorners)) print_custom_corners_start();
-    echo '<div id="resource">';
 
-}
+    function add_instance($resource) {
+    // Given an object containing all the necessary data,
+    // (defined by the form in mod.html) this function
+    // will create a new instance and return the id number
+    // of the new instance.
 
+        $resource->timemodified = time();
 
-/**
- * Finish displaying the resource with the course blocks
- */
-function display_course_blocks_end() {
-
-    global $CFG;
-
-    $PAGE = $this->PAGE;
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
-
-    echo '</div>';
-    if (!empty($THEME->customcorners)) print_custom_corners_end();
-    echo '</td>';
-
-    if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-        if (!empty($THEME->customcorners)) print_custom_corners_start();
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        if (!empty($THEME->customcorners)) print_custom_corners_end();
-        echo '</td>';
+        return insert_record("resource", $resource);
     }
 
-    echo '</tr></table>';
 
-    print_footer($this->course);
+    function update_instance($resource) {
+    // Given an object containing all the necessary data,
+    // (defined by the form in mod.html) this function
+    // will update an existing instance with new data.
 
-}
+        $resource->id = $resource->instance;
+        $resource->timemodified = time();
 
-
-function add_instance($resource) {
-// Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
-// will create a new instance and return the id number
-// of the new instance.
-
-    $resource->timemodified = time();
-
-    return insert_record("resource", $resource);
-}
-
-
-function update_instance($resource) {
-// Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
-// will update an existing instance with new data.
-
-    $resource->id = $resource->instance;
-    $resource->timemodified = time();
-
-    return update_record("resource", $resource);
-}
-
-
-function delete_instance($resource) {
-// Given an object containing the resource data
-// this function will permanently delete the instance
-// and any data that depends on it.
-
-    $result = true;
-
-    if (! delete_records("resource", "id", "$resource->id")) {
-        $result = false;
+        return update_record("resource", $resource);
     }
 
-    return $result;
-}
 
-function setup_elements(&$mform) {
-    //override to add your own options
-}
+    function delete_instance($resource) {
+    // Given an object containing the resource data
+    // this function will permanently delete the instance
+    // and any data that depends on it.
 
-function setup_preprocessing(&$default_values){
-    //override to add your own options
-}
+        $result = true;
+
+        if (! delete_records("resource", "id", "$resource->id")) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    function setup_elements(&$mform) {
+        //override to add your own options
+    }
+
+    function setup_preprocessing(&$default_values){
+        //override to add your own options
+    }
 
 } /// end of class definition
 
