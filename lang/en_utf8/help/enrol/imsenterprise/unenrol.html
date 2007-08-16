@@ -6,12 +6,14 @@
 
 <ul><li>A &lt;member&gt; element which specifies the given student and course, and with the "recstatus" attribute of the &lt;role&gt; element set to 3 (which means "delete"). THIS IS NOT YET IMPLEMENTED IN THE MOODLE PLUGIN.</li>
 
-<li> A &lt;member&gt; element which specifies the given student and course, and with the &lt;status&gt; element set to 0 (which means "inactive").</li></ul>
-
+<li> A &lt;member&gt; element which specifies the given student and course, and with the &lt;status&gt; element set to 0 (which means "inactive").</li>
+</ul>
 
 <p>The third method is slightly different. It does not require this config setting to be activated, and can be specified well in advance of the unenrolment date:</p>
 
-<ul><li>A <member> element which specifies a <timeframe> for the enrolment can specify the begin and/or end dates for enrolment of this particular student. These dates are loaded into Moodle's enrolment data table if present, and so after the end-date, a student will no longer be able to access that particular course.</li></ul>
+<ul>
+  <li>A &lt;member> element which specifies a &lt;timeframe> for the enrolment can specify the begin and/or end dates for enrolment of this particular student. These dates are loaded into Moodle's enrolment data table if present, and so after the end-date, a student will no longer be able to access that particular course.</li>
+</ul>
 
 
 

@@ -4009,3 +4009,36 @@ wikiadminactions {
 }
 
 
+/***
+ *** Help files (/lang/-/help)
+ ***/
+#help hr {
+  border: none;
+  height: 1px;
+  background: #ccc;
+}
+#help .example1 {
+  color: #a00;
+}
+#help .success {
+  color: #080;
+}
+#help .center {
+  text-align: center;
+}
+#help .moreinfo {
+  text-align: right;
+}
+/* Equivalent to 1 and 5 nested blockquotes respectively. */
+#help .indent, #help pre {
+  margin-left: 40px;
+}
+#help .indent-big {
+  margin-left: 160px;
+  margin-right:160px;
+}
+#help pre, #help code {
+  background: #eee;
+  border: 1px dashed #ddd;
+  padding: 3px;
+}

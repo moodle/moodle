@@ -18,7 +18,7 @@
 <p>A number of file formats are supported:</p>
 
 <h2>GIFT format</h2>
-<ul>
+<div class="indent">
 <p>GIFT is the most comprehensive import format available for importing 
    Moodle quiz questions from a text file.  It was designed to be an easy 
    method for teachers writing questions as a text file. It supports Multiple-Choice, 
@@ -38,27 +38,27 @@ Who's buried in Grant's tomb?{=no one =nobody}
 When was Ulysses S. Grant born?{#1822}
 </pre>
 
-<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
+</div>
 
 <h2>Aiken Format</h2>
-<ul>
+<div class="indent">
 <p>This is a simple format for importing multiple choice questions from a text file.</p>
-<p align="right"><a href="help.php?file=formataiken.html&amp;module=quiz">More info about the "Aiken" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formataiken.html&amp;module=quiz">More info about the "Aiken" format</a></p>
+</div>
 
 <h2>Moodle XML format</h2>
-<ul>
+<div class="indent">
 <p>This Moodle specific format imports quiz questions that have previously been
 exported in the same format. The format is straightforward and is best demonstrated
 by exporting a category in the Moodle XML format. The XML format is capabable of 
 importing image files.
 </p>
-<p align="right"><a href="help.php?file=formatxml.html&amp;module=quiz">More info about the "Moodle XML" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatxml.html&amp;module=quiz">More info about the "Moodle XML" format</a></p>
+</div>
 
 <h2>Missing Word</h2>
-<ul>
+<div class="indent">
 <p>This format only supports multiple choice questions and
 short answer question, depending on the number of answers. One
 answer generates a short answer question, two or more answers
@@ -67,50 +67,50 @@ Each answer is separated with a tilde (~), and the correct answer is
 prefixed with an equals sign (=).  Here is an example of a multiple
 choice question:</p>
 
-<blockquote>As soon as we begin to explore our body parts as infants
+<blockquote><p>As soon as we begin to explore our body parts as infants
 we become students of {=anatomy and physiology ~reflexology 
 ~science ~experiment}, and in a sense we remain students for life.
-</blockquote>
+</p></blockquote>
 
 <p>Here is an example of a short answer question:</p>
 
-<blockquote>As soon as we begin to explore our body parts as infants
+<blockquote><p>As soon as we begin to explore our body parts as infants
  we become students of {=anatomy and physiology},
  and in a sense we remain students for life.
-</blockquote>
+</p></blockquote>
 
-<p align="right"><a href="help.php?file=formatmissingword.html&amp;module=quiz">More info about the "Missing Word" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatmissingword.html&amp;module=quiz">More info about the "Missing Word" format</a></p>
+</div>
 
 <h2>Blackboard</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in Blackboard's "POOL" type export 
 format.  It relies on XML functions being compiled into your PHP.
 Note that you must first unpack the exported zip file and provide Moodle 
 with the appropriate .dat file.
 Note that this version <strong>does not</strong> work with Blackboard
 Version 6 and newer.</p>
-</ul>
+</div>
 
 <h2>Blackboard V6+</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in Blackboard's export
 format. It provides limited support for Blackboard Version 6 and
 7. It relies on XML functions being compiled into your PHP. You
 must upload the zip file exported from Blackboard.</p>
-</ul>
+</div>
 
 
 <h2>WebCT</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in WebCT's text-based format.</p>
 
-<p align="right"><a href="help.php?file=formatwebct.html&amp;module=quiz">More info about the "WebCT" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatwebct.html&amp;module=quiz">More info about the "WebCT" format</a></p>
+</div>
 
 
 <h2>Course Test Manager</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in a Course Test Manager test bank.
 It relies on different ways of accessing the test bank, which is in a Microsoft Access 
 database, depending on whether Moodle is running on a Windows or Linux web server.</p>
@@ -122,31 +122,31 @@ to transfer data to moodle on the Linux server.</p>
 using this import class.</p>
 
 
-<p align="right"><a href="help.php?file=formatctm.html&amp;module=quiz">More info about the "CTM" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatctm.html&amp;module=quiz">More info about the "CTM" format</a></p>
+</div>
 
 
 
 <h2>Embedded answers (Cloze)</h2>
-<ul>
+<div class="indent">
 <p>This special purpose format imports just one type of question, the 
 Embedded Answers (also known as Cloze) format.
 </p>
 
-<p align="right"><a href="help.php?file=multianswer.html&amp;module=quiz">More info about the "Cloze" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=multianswer.html&amp;module=quiz">More info about the "Cloze" format</a></p>
+</div>
 
 <h2>Learnwise format</h2>
-<ul>
+<div class="indent">
 <p>This format can import multiple choice questions saved in Learnwise's XML
 format.</p>
-</ul>
+</div>
 
 <h2>Examview format</h2>
-<ul>
+<div class="indent">
 <p>This format can import from Examview 4 XML files. Note that the older
 versions of Examview are not supported.</p>
-</ul>
+</div>
 
 <p>Import and Export formats are a pluggable resource. Other optional formats may be available in the
    Modules and Plugins database.</p>
