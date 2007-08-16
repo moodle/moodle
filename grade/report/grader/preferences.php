@@ -41,14 +41,15 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/grader:manage', $context);
 
 // If data submitted, then process and store.
-if ($form = data_submitted()) {
-    foreach ($form as $preference => $value) {
+if ($data = data_submitted()) {
+
+    foreach ($data as $preference => $value) {
         switch ($preference) {
             case 'persistflt':
                 set_user_preference('calendar_persistflt', intval($value));
                 break;
             default:
-                if ($value == GRADE_REPORT_PREFERENCE_DEFAULT) {
+                if ($value == GRADE_REPORT_PREFERENCE_DEFAULT || empty($value)) {
                     unset_user_preference($preference);
                 } else {
                     set_user_preference($preference, $value);
@@ -77,7 +78,7 @@ print_grade_plugin_selector($course->id, 'report', 'grader');
 if (has_capability('moodle/site:config')) {
     echo '<div id="siteconfiglink"><a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereportgrader">';
     echo get_string('changesitedefaults', 'grades');
-    echo "</div>\n";
+    echo "</a></div>\n";
 }
 
 // Add tabs
