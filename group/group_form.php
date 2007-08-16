@@ -55,7 +55,7 @@ class group_form extends moodleform {
                 }
             }
 
-        } if (groups_get_group_by_name($COURSE->id, $name)) {
+        } else if (groups_get_group_by_name($COURSE->id, $name)) {
             $errors['name'] = get_string('groupnameexists', 'group', $name);
         }
 
