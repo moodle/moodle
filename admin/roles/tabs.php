@@ -90,7 +90,7 @@ if ($currenttab != 'update') {
                                 'type' => 'misc');
 
             $navlinks[] = array('name' => $instance->name,
-                                'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
+                                'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id",
                                 'type' => 'misc');
 
             $navlinks[] = array('name' => $streditinga,
