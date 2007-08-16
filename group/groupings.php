@@ -24,15 +24,18 @@ $strgroups       = get_string('groups');
 $strgroupings    = get_string('groupings', 'group');
 $struses         = get_string('activities');
 $strparticipants = get_string('participants');
-$strmanagegrping = get_String('addgroupstogrouping', 'group');
+$strmanagegrping = get_String('showgroupsingrouping', 'group');
 
 $navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
-                  array('name'=>$strgroups, 'link'=>$CFG->wwwroot.'/group/index.php?id='.$courseid, 'type'=>'misc'),
                   array('name'=>$strgroupings, 'link'=>'', 'type'=>'misc'));
 $navigation = build_navigation($navlinks);
 
 /// Print header
 print_header_simple($strgroupings, ': '.$strgroupings, $navigation, '', '', true, '', navmenu($course));
+
+// Add tabs
+$currenttab = 'groupings';
+require('tabs.php');
 
 print_heading($strgroupings);
 
@@ -58,7 +61,7 @@ if ($groupings = get_records('groupings', 'courseid', $course->id)) {
         $buttons .= "<a title=\"$strdelete\" href=\"grouping.php?id=$grouping->id&amp;delete=1\"><img".
                     " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         $buttons .= "<a title=\"$strmanagegrping\" href=\"assign.php?id=$grouping->id\"><img".
-                    " src=\"$CFG->pixpath/i/group.gif\" class=\"iconsmall\" alt=\"$strmanagegrping\" /></a> ";
+                    " src=\"$CFG->pixpath/i/group.gif\" class=\"icon\" alt=\"$strmanagegrping\" /></a> ";
 
         $line[3] = $buttons;
         $data[] = $line;

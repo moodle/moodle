@@ -1170,6 +1170,9 @@ function mygroupid($courseid) {
  * @return bool
  */
 function add_user_to_group($groupid, $userid) {
+    global $CFG;
+    require_once($CFG->dirroot.'/group/lib.php');
+
     return groups_add_member($groupid, $userid);
 }
 

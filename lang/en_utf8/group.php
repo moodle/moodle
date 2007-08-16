@@ -1,6 +1,6 @@
 <?php
 /**
- * Language strings for new Moodle Groups (cvs:/group/) 
+ * Language strings for Moodle Groups (cvs:/group/) 
  *
  * @copyright &copy; 2006 The Open University
  * @author J.White AT open.ac.uk
@@ -13,15 +13,10 @@ $string['groupmemberdesc'] = 'Standard role for a member of a group.';
 $string['notingrouping'] = '[Not in a grouping]';
 $string['anygrouping'] = '[Any grouping]';
 
-$string['errornotingrouping'] = 'Sorry, you can\'t create a group in $a';
-$string['errornotingroupingedit'] = 'Sorry, you can\'t edit grouping $a';
-$string['errorinvalidgrouping'] = 'Error, invalid grouping $a';
 $string['errorinvalidgroup'] = 'Error, invalid group $a';
 $string['erroreditgrouping'] = 'Error creating/updating grouping $a';
 $string['erroreditgroup'] = 'Error creating/updating group $a';
 $string['erroraddremoveuser'] = 'Error adding/removing user $a to group';
-
-$string['upgradeconfirm'] = 'Sorry, groups tables created in Moodle 1.8 DEV have to be deleted for this upgrade. Do you want to continue?';
 
 $string['groupings'] = 'Groupings';
 $string['grouping'] = 'Grouping';
@@ -81,16 +76,11 @@ $string['newpicture'] = 'New picture';
 $string['defaultgroupdescription'] = 'Default group description';
 
 $string['displaygrouping'] = 'Display grouping';
-$string['showusersalreadyingroup'] = 'Show users already in a group in the grouping';
 
-$string['save'] = 'Save';
-$string['cancel'] = 'Cancel';
-$string['return'] = 'Return';
 $string['backtogroups'] = 'Back to groups';
 $string['backtogroupings'] = 'Back to groupings';
 $string['existingmembers'] = 'Existing members: $a'; 
 $string['potentialmembers'] = 'Potential members: $a';
-$string['groupfor'] = 'for group';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';
@@ -98,15 +88,7 @@ $string['groupmembers'] = 'Group members';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 
-
 $string['javascriptrequired'] = 'This page requires Javascript to be enabled.';
-
-$string['viewowngroup'] = 'Students may view the members of any groups to which they belong';
-$string['viewallgroupsmembers'] = 'Students may view the members of all groups';
-$string['viewallgroupsactivities'] = 'Students may view but not contribute to activities for all groups';
-$string['teachersgroupmark'] = 'Teachers may not mark activities for groups to which they do not belong';
-$string['teachersgroupview'] = 'Teachers may not view activities for groups to which they do not belong';
-$string['teachersoverride'] = 'Teachers not in any group may view and mark activities for all groups (overrides the above)';
 
 $string['groupmode'] = 'Group mode';
 $string['groupmodeforce'] = 'Force group mode';

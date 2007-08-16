@@ -85,9 +85,10 @@ if ($editform->is_cancelled()) {
             error('Error updating group');
         }
     } else {
-        if (!groups_create_group($data, $editform->_upload_manager)) {
+        if (!$id = groups_create_group($data, $editform->_upload_manager)) {
             error('Error updating group');
         }
+        $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
     }
 
     redirect($returnurl);
@@ -101,14 +102,15 @@ if ($id) {
 } else {
     $strheading = get_string('creategroup', 'group');
 }
-print_header("$course->shortname: ". $strheading,
-             $course->fullname,
-             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-             "-> <a href=\"$CFG->wwwroot/group/index.php?id=$courseid\">$strgroups</a>".
-             "-> $strheading", '', '', true, '', user_login_string($course, $USER));
 
-print_heading($strheading);
+
+$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
+                  array('name'=>$strgroups, 'link'=>$CFG->wwwroot.'/group/index.php?id='.$courseid, 'type'=>'misc'),
+                  array('name'=>$strheading, 'link'=>'', 'type'=>'misc'));
+$navigation = build_navigation($navlinks);
+
+/// Print header
+print_header_simple($strgroups, ': '.$strgroups, $navigation, '', '', true, '', navmenu($course));
 
 echo '<div id="grouppicture">';
 if ($id) {

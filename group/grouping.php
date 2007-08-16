@@ -99,7 +99,6 @@ if ($editform->is_cancelled()) {
 
 }
 
-$strgroups        = get_string('groups');
 $strgroupings     = get_string('groupings', 'group');
 $strparticipants = get_string('participants');
 
@@ -109,12 +108,15 @@ if ($id) {
     $strheading = get_string('creategrouping', 'group');
 }
 
-print_header("$course->shortname: ". $strheading,
-             $course->fullname,
-             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-             "-> <a href=\"$returnurl\">$strgroupings</a>".
-             "-> $strheading", '', '', true, '', user_login_string($course, $USER));
+$navlinks = array(array('name'=>$strparticipants, 'link'=>$CFG->wwwroot.'/user/index.php?id='.$courseid, 'type'=>'misc'),
+                  array('name'=>$strgroupings, 'link'=>$CFG->wwwroot.'/group/groupings.php?id='.$courseid, 'type'=>'misc'),
+                  array('name'=>$strheading, 'link'=>'', 'type'=>'misc'));
+$navigation = build_navigation($navlinks);
+
+/// Print header
+print_header_simple($strgroupings, ': '.$strgroupings, $navigation, '', '', true, '', navmenu($course));
+
+
 print_heading($strheading);
 $editform->display();
 print_footer($course);

@@ -5,6 +5,7 @@
 * @package enrol_imsenterprise
 */
 require_once("$CFG->libdir/blocklib.php");
+require_once($CFG->dirroot.'/group/lib.php');
 
 // The following flags are set in the configuration
 // $CFG->enrol_imsfilelocation:        where is the file we are looking for?

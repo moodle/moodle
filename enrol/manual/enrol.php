@@ -22,6 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+require_once($CFG->dirroot.'/group/lib.php');
 
 /**
 * enrolment_plugin_manual is the default enrolment plugin
