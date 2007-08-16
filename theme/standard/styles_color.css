@@ -1024,17 +1024,3 @@ form.mform .fdescription.required {
   color:#a00;
 }
 
-#help hr {
-  border: none;
-  height: 1px;
-  background: #ccc;
-}
-#help .example1 {
-  color: #a00;
-}
-#help .success {
-  color: #080;
-}
-#help .center {
-  text-align: center;
-}

@@ -6,7 +6,7 @@
 <p>A number of file formats are supported:</p>
 
 <h2>GIFT format</h2>
-<ul>
+<div class="indent">
 <p>GIFT is the most comprehensive import format available for importing 
    Moodle quiz questions from a text file.  It was designed to be an easy 
    method for teachers writing questions as a text file. It supports Multiple-Choice, 
@@ -26,11 +26,11 @@ Who's buried in Grant's tomb?{=no one =nobody}
 When was Ulysses S. Grant born?{#1822}
 </pre>
 
-<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
+</div>
 
 <h2>Aiken format</h2>
-<ul>
+<div class="indent">
 <p>The Aiken format is a very simple way of creating multiple choice questions using a very clear human-readable format. Here is an example of the format:</p>
 <pre>
 What is the purpose of first aid?
@@ -41,27 +41,27 @@ D. To aid victims who may be seeking help
 ANSWER: A
 </pre>
 
-<p align="right"><a href="help.php?file=formataiken.html&amp;module=quiz">More info about the "Aiken" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formataiken.html&amp;module=quiz">More info about the "Aiken" format</a></p>
+</div>
 
 
 <h2>Missing Word</h2>
-<ul>
+<div class="indent">
 <p>This format only supports multiple choice questions.
 Each answer is separated with a tilde (~), and the correct answer is 
 prefixed with an equals sign (=).  Here is an example:</p>
 
-<blockquote>As soon as we begin to explore our body parts as infants
+<blockquote><p>As soon as we begin to explore our body parts as infants
 we become students of {=anatomy and physiology ~reflexology 
-~science ~experiment}, and in a sense we remain students for life.
+~science ~experiment}, and in a sense we remain students for life.</p>
 </blockquote>
 
-<p align="right"><a href="help.php?file=formatmissingword.html&amp;module=quiz">More info about the "Missing Word" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatmissingword.html&amp;module=quiz">More info about the "Missing Word" format</a></p>
+</div>
 
 
 <h2>AON</h2>
-<ul>
+<div class="indent">
 <p>This is the same as Missing Word Format, except that after importing 
    the questions all Short-Answer questions are converted four at a time
    into Matching Questions.</p>
@@ -69,19 +69,19 @@ we become students of {=anatomy and physiology ~reflexology
    shuffled during the import.</p>
 <p>It's named after an organisation that sponsored the development of many 
    quiz features</p>
-</ul>
+</div>
 
 
 <h2>Blackboard</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in Blackboard's export 
 format.  It relies on XML functions being compiled into your PHP.</p>
 
-<p align="right"><a href="help.php?file=formatblackboard.html&amp;module=quiz">More info about the "Blackboard" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatblackboard.html&amp;module=quiz">More info about the "Blackboard" format</a></p>
+</div>
 
 <h2>Course Test Manager</h2>
-<ul>
+<div class="indent">
 <p>This module can import questions saved in a Course Test Manager test bank.
 It relies on different ways of accessing the test bank, which is in a Microsoft Access 
 database, depending on whether Moodle is running on a Windows or Linux web server.</p>
@@ -94,19 +94,19 @@ to transfer data to moodle on the Linux server.</p>
 using this import class.</p>
 
 
-<p align="right"><a href="help.php?file=formatctm.html&amp;module=quiz">More info about the "CTM" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatctm.html&amp;module=quiz">More info about the "CTM" format</a></p>
+</div>
 
 <h2>Custom</h2>
-<ul>
+<div class="indent">
 <p>If you have your own format that you need to import, you can 
    implement it yourself by editing mod/quiz/format/custom.php</p>
 
 <p>The amount of new code needed is quite small - just enough
    to parse a single question from given text.</p>
 
-<p align="right"><a href="help.php?file=formatcustom.html&amp;module=quiz">More info about the "Custom" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatcustom.html&amp;module=quiz">More info about the "Custom" format</a></p>
+</div>
 
 
 <p>More formats are yet to come, including WebCT, IMS QTI and whatever else

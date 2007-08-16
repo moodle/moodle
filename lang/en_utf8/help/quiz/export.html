@@ -14,7 +14,7 @@
 <p>The format(s) currently supported are:</p>
 
 <h2>GIFT format</h2>
-<ul>
+<div class="indent">
 <p>GIFT is the most comprehensive import/export format available for exporting 
    Moodle quiz questions to a text file.  It was designed to be an easy 
    method for teachers writing questions as a text file. It supports Multiple-Choice, 
@@ -35,32 +35,32 @@ Who's buried in Grant's tomb?{=no one =nobody}
 When was Ulysses S. Grant born?{#1822}
 </pre>
 
-<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
-</ul>
+<p class="moreinfo"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
+</div>
 
 
 <h2>Moodle XML format</h2>
-<ul>
+<div class="indent">
 <p>This Moodle specific format exports quiz questions in a simple XML format. They
 can then be imported into another quiz category or used in some other process such as
 an XSLT transformation. The XML format will export images attached to questions (encoded
 base64).</p>
-</ul>
+</div>
 
 <h2>IMS QTI 2.0</h2>
-<ul>
+<div class="indent">
 <p>Exports in the standard IMS QTI (version 2.0) format. Note that this generates a group of files within
   a single 'zip' file.</p>
-<p align="right"><a href="http://www.imsglobal.org/question/" target="_qti">More information on the IMS QTI site</a>
+<p class="moreinfo"><a href="http://www.imsglobal.org/question/" target="_qti">More information on the IMS QTI site</a>
  (external site in new window)</p>
-</ul>
+</div>
 
 <h2>XHTML</h2>
-<ul>
+<div class="indent">
 <p>Exports the category as a single page of 'strict' XHTML. Each question is clearly placed in its own
 &lt;div&gt; tag. If you want to use this page as-is, you will need to at least edit the &lt;form&gt; tag at the
 start of the &lt;body&gt; section to provide a suitable action (eg, a 'mailto').</p>
-</ul>
+</div>
 
 <p>Import and Export formats are a pluggable resource. Other optional formats may be available in the
    Modules and Plugins database.</p>

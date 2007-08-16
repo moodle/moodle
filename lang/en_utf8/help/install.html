@@ -1,15 +1,15 @@
 <h1>Installing Moodle</h1>
 <h2>Don't panic! <img src="http://moodle.org/pix/s/smiley.gif" alt="" /></h2>
-<blockquote>
+<div class="indent">
   <p>This guide explains how to install Moodle for the first time.  For some of these steps it goes into a lot of detail to try and cover the majority of possible
      web server setups, so this document may look long and complicated.  Don't panic, once you know how to do it you can install Moodle in minutes!</p>
-  <p>If you have problems please read this document carefully - most common issues are answered in here.
+  <p>If you have problems please read this document carefully &ndash; most common issues are answered in here.
      If you still have trouble, you can seek help from 
    <a href="http://moodle.org/help">Moodle Help</a></p>
   <p>Another option is to contact a <a href="http://moodle.com/hosting/">web hosting company</a>
      who can completely maintain Moodle for you, so that you can ignore all this and get straight into educating!
 </p>
-  <p>&nbsp;  </p>
+
   <p>Sections in this document:</p>
   <ol>
     <li><a href="#requirements">Requirements</a></li>
@@ -26,9 +26,10 @@
     <li><a href="#course">Create a new course</a></li>
      </ol>
   <p>&nbsp;</p>
-</blockquote>
+</div>
+
 <h3 class="sectionheading" id="requirements">1. Requirements</h3>
-<blockquote> 
+<div class="indent"> 
   <p>Moodle is primarily developed in Linux using Apache, MySQL and PHP (also 
     sometimes known as the LAMP platform), but is also regularly tested with PostgreSQL 
     and on Windows XP, Mac OS X and Netware 6 operating systems</p>
@@ -49,9 +50,10 @@
   <p>If you want to run Moodle on your own computer and all this looks a bit daunting, 
     then please take a look at <a href="http://docs.moodle.org/en/Administrator_documentation">the administrator documentation</a>.</p>
   <p>&nbsp;</p>
-</blockquote>
+</div>
+
 <h3 class="sectionheading" id="downloading">2. Download and copy files into place </h3>
-<blockquote>
+<div class="indent">
   <p>There are two ways to get Moodle, as a compressed package and via CVS. These 
     are explained in detail on the download page: <a href="http://moodle.org/download/">http://moodle.org/download/</a></p>
   <p>After downloading and unpacking the archive, or checking out the files via 
@@ -62,14 +64,15 @@
     or you can copy all the contents straight into the main web server documents 
     directory, in which case the site will be simply <b>http://yourwebserver.com</b>.</p>
   <p>If you are downloading Moodle to your local computer and then uploading it to your web site, it is usually better to upload the whole archive as one file, and then do the unpacking on the server. Even web hosting interfaces like Cpanel allow you to uncompress archives in the &quot;File Manager&quot;. </p>
-</blockquote>
+</div>
 <p>&nbsp;</p>
+
 <h3 class="sectionheading" id="site">3. Site structure</h3>
-<blockquote>
+<div class="indent">
   <p>You can safely skip this section, but here is a quick summary of the contents of the Moodle folder, to help get 
     you oriented:</p>
-  <blockquote>
-    <table><tr>
+  <div class="indent">
+    <table class="indent"><tr>
       <td valign="top">config.php</td>
       <td valign="top">-</td>
       <td valign="top">
@@ -107,27 +110,27 @@
       <li>user/ - code to display and manage users</li>
     </ul>
     <p>&nbsp;</p>
-  </blockquote>
-</blockquote>
+  </div>
+</div>
+
 <h3 class="sectionheading" id="installer">4. Run the Installer script to create config.php </h3>
-<blockquote>
+<div class="indent">
   <p>To run the installer script (install.php), just try to access your Moodle main URL using a web browser, or access <strong>http://yourserver/install.php</strong> directly. </p>
   <p>(The Installer will try to set a session cookie. If you get a popup warning in your browser make sure you accept that cookie!) </p>
   <p>Moodle will detect that configuration is necessary and will lead you through some screens to help you create a new configuration file called <strong>config.php. </strong>At the end of the process Moodle will try and write the file into the right location, otherwise you can press a button to download it from the installer and then upload config.php into the main Moodle directory on the server. </p>
   <p>Along the way the installer will test your server environment and give you suggestions about how to fix any problems. For most common issues these suggestions should be sufficient, but if you get stuck, look below for more information about some of common things that might be holding you up. <br />
   </p>
-</blockquote>
-<blockquote>
 
-<h3 class="sectionheading" id="webserver">4.1 General web server settings </h3>
-  <blockquote>
+
+<h4 class="sectionheading" id="webserver">4.1 General web server settings </h4>
+  <div class="indent">
     <p>Firstly, make sure that your web server is set up to use index.php as a default 
       page (perhaps in addition to index.html, default.htm and so on).</p>
     <p>In Apache, this is done using a DirectoryIndex parameter in your httpd.conf 
       file. Mine usually looks like this:</p>
-    <blockquote>
+
       <pre><strong>DirectoryIndex</strong> index.php index.html index.htm </pre>
-    </blockquote>
+
     <p>Just make sure index.php is in the list (and preferably towards the start 
       of the list, for efficiency).</p>
     <p>Secondly, <b>if you are using Apache 2</b>, then you should turn on the <i>AcceptPathInfo</i>
@@ -135,22 +138,21 @@
        This is essential to allow relative links between your resources, and also 
        provides a performance boost for people using your Moodle web site.  You can 
        turn this on by adding these lines to your httpd.conf file.</p>
-    <blockquote>
+
       <pre><strong>AcceptPathInfo</strong> on </pre>
-    </blockquote>
+
     <p>Thirdly, Moodle requires a number of PHP settings to be active for it to 
        work.  <b>On most servers these will already be the default settings.</b>
        However, some PHP servers (and some of the more recent PHP versions) may 
        have things set differently.  These are defined in PHP's configuration
        file (usually called php.ini):</p>
-    <blockquote>
+
       <pre>magic_quotes_gpc = 1    (preferred but not necessary)
 magic_quotes_runtime = 0    (necessary)
 file_uploads = 1
 session.auto_start = 0
-session.bug_compat_warn = 0
-  </pre>
-    </blockquote>
+session.bug_compat_warn = 0</pre>
+
     <p>If you don't have access to httpd.conf or php.ini on your server, or you 
       have Moodle on a server with other applications that require different settings, 
       then don't worry, you can often still OVERRIDE the default settings. 
@@ -158,7 +160,7 @@ session.bug_compat_warn = 0
     <p>To do this, you need to create a file called <b>.htaccess</b> in Moodle's
        main directory that contains lines like the following.
        This only works on Apache servers and only when Overrides have been allowed in the main configuration. </p>
-    <blockquote>
+
       <pre>
 DirectoryIndex index.php index.html index.htm
 
@@ -170,29 +172,30 @@ php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
 php_flag file_uploads 1
 php_flag session.auto_start 0
-php_flag session.bug_compat_warn 0</pre>
-    </blockquote>
+php_flag session.bug_compat_warn 0
+</pre>
+
     <p>You can also do things like define the maximum size for uploaded files:
          
 </p>
-    <blockquote>
+
       <pre>
 LimitRequestBody 0
 php_value upload_max_filesize 2M
-php_value post_max_size 2M
-     </pre>
-    </blockquote>
+php_value post_max_size 2M</pre>
+
     <p>The easiest thing to do is just copy the sample file from <strong>lib/htaccess</strong>      and edit it to suit your needs.  It contains further instructions.  For 
       example, in a Unix shell:
    </p>
-    <blockquote>
-      <pre>cp lib/htaccess .htaccess</pre>
-    </blockquote>
-  </blockquote>
-<p>&nbsp;</p>
-<h3 class="sectionheading" id="database">4.2 Creating a database</h3>
 
-  <blockquote>
+      <pre>cp lib/htaccess .htaccess</pre>
+
+  </div>
+<p>&nbsp;</p>
+
+<h4 class="sectionheading" id="database">4.2 Creating a database</h4>
+
+  <div class="indent">
     <p>You need to create an empty database (eg "<em>moodle</em>") in your database system 
       along with a special user (eg "moodleuser") that has access to that database 
       (and that database only). You could use the "root" user if you wanted to for a test server, but 
@@ -211,42 +214,42 @@ php_value post_max_size 2M
     <p>If you have access to Unix command lines then you can do the same sort of thing by typing commands. </p>
     <p>Here are some example Unix command lines for MySQL: </p>
     <pre>
-   # mysql -u root -p
-   > CREATE DATABASE moodle; 
-   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
-           TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
-   > quit 
-   # mysqladmin -p reload
-    </pre>
+# mysql -u root -p
+> CREATE DATABASE moodle; 
+> GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+        TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
+> quit 
+# mysqladmin -p reload</pre>
+
     <p>And some example command lines for PostgreSQL: </p>
     <pre>
-   # su - postgres
-   > psql -c "create user moodleuser createdb;" template1
-   > psql -c "create database moodle;" -U moodleuser template1
-   > psql -c "alter user moodleuser nocreatedb;" template1</pre>
-  </blockquote>
+# su - postgres
+> psql -c "create user moodleuser createdb;" template1
+> psql -c "create database moodle;" -U moodleuser template1
+> psql -c "alter user moodleuser nocreatedb;" template1</pre>
+  </div>
   <p>&nbsp;</p>
   
-<h3 class="sectionheading" id="data">4.3 Creating a data directory </h3>
+<h4 class="sectionheading" id="data">4.3 Creating a data directory </h4>
 
-  <blockquote>
+  <div class="indent">
     <p>Moodle will also need some space on your server's hard disk to store uploaded files, such as course documents and user pictures. </p>
     <p>The Moodle installer tries hard to create this directory for you but if it fails then you will have to create a directory for this purpose manually. </p>
     <p>For security, it's best that this directory is NOT accessible directly via the web. The easiest way to do this is to simply locate it OUTSIDE the web directory, but if you must have it in the web directory then  protect it by creating a file in the data directory called .htaccess, containing this line: </p>
-    <blockquote>
+
       <pre>deny from all<br />AllowOverride None</pre>
-    </blockquote>
+
     <p>To make sure that Moodle can save uploaded files in this directory, check that the web server software (eg Apache) has permission to read, write and execute in  this directory. </p>
     <p>On Unix machines, this means setting the owner of the directory to be something like &quot;nobody&quot; or &quot;apache&quot;, and then giving that user read, write and execute permissions.</p>
     <p>On Cpanel systems you can use the &quot;File Manager&quot; to find the folder, click on it, then choose &quot;Change Permissions&quot;. On many shared hosting servers, you will probably need to restrict all file access to your "group" (to prevent other webhost customers from looking at or changing your files), but provide full read/write access to everyone else (which will allow the web server to access your files). </p>
     <p>Speak to your server administrator if you are having trouble setting this up securely. In particular some sites that use a PHP feature known as &quot;Safe Mode&quot; may <em>require</em> the administrator to create this directory properly for you. </p>
-  </blockquote>
+  </div>
 
-</blockquote>
+</div>
 
 
 <h3 class="sectionheading" id="admin">5. Go to the admin page to continue configuration </h3>
-<blockquote> 
+<div class="indent"> 
   <p>Once the basic <strong>config.php</strong> has been correctly created in the previous step, trying to access the front page of your site will take you the &quot;admin&quot; page for the rest of the configuration.</p>
   <p>The first time you access this admin page, you will be presented with 
     a GPL &quot;shrinkwrap&quot; agreement with which you <strong>must</strong> agree before you 
@@ -255,7 +258,7 @@ php_value post_max_size 2M
     data. Firstly, the main database tables are created. You should see a number 
     of SQL statements followed by status messages (in green or red) that look 
     like this:</p>
-  <blockquote> 
+  <div class="indent"> 
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
       int(10) unsigned NOT NULL default '0', password varchar(50) NOT NULL default 
       '', fullname varchar(254) NOT NULL default '', shortname varchar(15) NOT 
@@ -265,16 +268,16 @@ php_value post_max_size 2M
       '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
       TYPE=MyISAM</p>
     <p class="success">SUCCESS</p>
-  </blockquote>
+  </div>
   <p>...and so on, followed by: <span class="success">Main databases set up 
       successfully.</span> </p>
-  <blockquote>
-    <p class="style3">If you don't see these, then there must have been some problem with the database 
+
+    <p class="style3 indent">If you don't see these, then there must have been some problem with the database 
         or the configuration settings you defined in config.php. Check that PHP isn't 
         in a restricted "Safe Mode" (commercial web hosts sometimes have safe mode 
         turned on). You can check PHP variables by creating a little file containing <strong>&lt;?php phpinfo() ?&gt;</strong> and looking at it through a browser. Check all these and 
       try this page again.</p>
-  </blockquote>
+
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; 
     link.</p>
   <p>You should now see a form where you can define more configuration variables 
@@ -282,12 +285,12 @@ php_value post_max_size 2M
     Don't worry too much about getting everything right just now - you can always 
     come back and edit these later on using the admin interface. The defaults are designed to be useful and secure for most sites. Scroll down to 
     the bottom and click &quot;Save changes&quot;.</p>
-  <blockquote>
-    <p class="style3">If (and only if) you find yourself getting stuck on this page, unable to 
+
+    <p class="style3 indent">If (and only if) you find yourself getting stuck on this page, unable to 
       continue, then your server probably has what I call the "buggy referrer" problem. 
       This is easy to fix: just turn off the &quot;secureforms&quot; setting, then 
       try to continue again.</p>
-  </blockquote>
+
   <p>Next you will see more  pages that print lots of status messages as they set up all the tables required by the various Moodle module. As before, they should all be <span style="color:#006600">green</span>.</p>
   <p>Scroll down the very bottom of the page and press the &quot;Continue&quot; link.</p>
   <p>The next page is a form where you can define parameters for your Moodle site 
@@ -299,23 +302,17 @@ php_value post_max_size 2M
     email etc and then click &quot;Save changes&quot;. Not all the fields are 
     required, but if you miss any important fields you'll be re-prompted for them. 
   </p>
-  <blockquote>
-    <blockquote>
-      <blockquote>
-        <blockquote>
-          <blockquote>
-            <p><strong>Make sure you remember the username and password you chose 
+  <div class="indent">
+
+            <p class="indent-big"><strong>Make sure you remember the username and password you chose 
               for the administration user account, as they will be necessary to 
               access the administration page in future.</strong></p>
-          </blockquote>
-        </blockquote>
-      </blockquote>
-    </blockquote>
+
     <p class="style3">(If for any reason your install is interrupted, or there is a system error 
       of some kind that prevents you from logging in using the admin account, you 
       can usually log in using the default username of &quot;<strong>admin</strong>&quot;, 
       with password &quot;<strong>admin</strong>&quot;.)</p>
-  </blockquote>
+  </div>
   <p>Once successful, you will be returned to the home page of your new site! Note the 
     administration links that appear down the left hand side of the page (these 
     items also appear on a separate Admin page) - these items are only visible 
@@ -328,11 +325,11 @@ php_value post_max_size 2M
     <li>changing site-wide settings like themes etc</li>
   </ul>
   <p>But you are not done installing yet! There is one very important thing still to do (see the next section on cron). </p>
-</blockquote>
+</div>
 <p>&nbsp;</p>
 
-<h3 class="sectionheading" id="cron">6. Set up cron -- IMPORTANT! </h3>
-<blockquote> 
+<h3 class="sectionheading" id="cron">6. Set up cron &ndash; IMPORTANT! </h3>
+<div class="indent"> 
   <p>Some of Moodle's modules require continual checks to perform tasks. For example, 
     Moodle needs to check the discussion forums so it can mail out copies of posts 
     to people who have subscribed.</p>
@@ -351,63 +348,61 @@ php_value post_max_size 2M
     like 15 minutes or even 30 minutes. It's best not to make the time period 
     too long, as delaying mail-outs can slow down activity within the course.</p>
   <p>First, test that the script works by running it directly from your browser:</p>
-  <blockquote> 
+
     <pre>http://example.com/moodle/admin/cron.php</pre>
-  </blockquote>
+
   <p>Now, you need to set up some of way of running the script automatically and 
     regularly.</p>
 
   <h4>On Windows systems</h4>
-  <blockquote>
-    <p>The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
-  </blockquote>
-  <p><strong>On web hosting services</strong></p>
-  <blockquote>
-    <p> Your web-based control panel may have a web page that allows you to set up this cron process. For example, on Cpanel system, look for a button called &quot;Cron jobs&quot;. In there you can put the same sort of Unix commands as listed below. </p>
-  </blockquote>
+
+    <p class="indent">The simplest way is to use this little package <a href="http://moodle.org/download/modules/moodle-cron-for-windows.zip" title="Click to download this package (150k)"><strong>moodle-cron-for-windows.zip</strong></a> which makes this whole thing very easy by installing a small Windows service. Run it and forget about it!</p>
+
+  <h4>On web hosting services</h4>
+
+    <p class="indent"> Your web-based control panel may have a web page that allows you to set up this cron process. For example, on Cpanel system, look for a button called &quot;Cron jobs&quot;. In there you can put the same sort of Unix commands as listed below. </p>
+
 
   <h4> Using the command line on Unix </h4>
-  <blockquote>
+  <div class="indent">
     <p>There are different command line programs you can use to call the page from the command line. Not all of them may be available on a given server.</p>
     <p>For example, you can use a Unix utility like 'wget':</p>
-    <blockquote>
+
       <pre>wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
-    </blockquote>
+
     <p>Note in this example that the output is thrown away (to /dev/null).</p>
     <p>The same thing using lynx:</p>
-    <blockquote>
+
       <pre>lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null</pre>
-    </blockquote>
+
     <p>Alternatively you could use a standalone version of PHP, compiled to be run 
       on the command line. The advantage with doing this is that your web server 
       logs aren't filled with constant requests to cron.php. The disadvantage is 
       that you need to have access to a command-line version of php.</p>
-    <blockquote>
-      <pre>/opt/bin/php /web/moodle/admin/cron.php
 
-    </pre>
-    </blockquote>
-  </blockquote>
+      <pre>/opt/bin/php /web/moodle/admin/cron.php</pre>
+
+  </div>
 
   <h4>Using the crontab program on Unix </h4>
-  <blockquote>
+  <div class="indent">
     <p> All that Cpanel does is provide a web interface to a Unix utility known as crontab. If you have a command line, you can set up crontab yourself using the command:</p>
-    <blockquote>
+
       <pre>crontab -e</pre>
-   </blockquote>
+
    <p>and then adding one of the above commands like:</p>
-    <blockquote>
+
       <pre>*/5 * * * * wget -q -O /dev/null http://example.com/moodle/admin/cron.php</pre>
-    </blockquote>
+
     <p>Usually, the "crontab" command will put you into the 'vi' editor. You enter 
      "insert mode" by pressing "i", then type in the line as above, then exit insert mode by 
          pressing ESC.  You save and exit by typing ":wq", or quit without saving using ":q!" (without the quotes).</p>
-  </blockquote>
+  </div>
   <p>&nbsp;</p>
-</blockquote>
+</div>
 
 <h3 class="sectionheading" id="course">7. Create a new course</h3>
-<blockquote>
+<div class="indent">
   <p>Now that Moodle is running properly, you can try creating a new course to play with. </p>
   <p>Select &quot;Create a new course&quot; from the Admin page (or the admin 
     links on the home page).</p>
@@ -426,4 +421,4 @@ php_value post_max_size 2M
   <p>&nbsp;</p>
   <p class="center"><strong>Happy exploring and happy Moodling!</strong></p>
   <p class="center"><strong>If you like Moodle, please consider <a href="http://moodle.org/donations/">donating</a> to help us cover our costs! </strong></p>
-</blockquote>
+</div>
