@@ -40,7 +40,8 @@
             }
 
         // prints a breaker if component or name or context level
-            if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
+            //if ($capability->component != $component or $capability->contextlevel != $contextlevel) {
+            if (component_level_changed($capability, $component, $contextlevel)) {
                 echo ('<tr class="rolecapheading header"><td colspan="10" class="header"><strong>'.get_component_string($capability->component, $capability->contextlevel).'</strong></td></tr>');
             }
 

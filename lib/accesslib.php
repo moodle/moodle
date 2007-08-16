@@ -3384,7 +3384,13 @@ function get_component_string($component, $contextlevel) {
         break;
 
         case CONTEXT_COURSE:
-            $string = get_string('course');
+            if (preg_match('|^gradeimport/|', $component) 
+                || preg_match('|^gradeexport/|', $component) 
+                || preg_match('|^gradereport/|', $component)) {
+                $string = get_string('gradebook', 'admin');  
+            } else {
+                $string = get_string('course');
+            }
         break;
 
         case CONTEXT_GROUP:
@@ -4177,6 +4183,38 @@ function rebuild_context_rel($context) {
     }
     
     return $i;
+}
+
+/**
+ * This function helps admin/roles/manage.php etc to detect if a new line should be printed
+ * when we read in a new capability
+ * most of the time, if the 2 components are different we should print a new line, (e.g. course system->rss client)
+ * but when we are in grade, all reports/import/export capabilites should be together
+ * @param string a - component string a
+ * @param string b - component string b
+ * @return bool - whether 2 component are in different "sections"
+ */
+function component_level_changed($cap, $comp, $contextlevel) {
+
+    if ($cap->component == 'enrol/authorize' && $comp =='enrol/authorize') {
+        return false; 
+    }
+
+    if (strstr($cap->component, '/') && strstr($comp, '/')) {
+        $compsa = explode('/', $cap->component);
+        $compsb = explode('/', $comp);
+
+        
+
+        // we are in gradebook, still
+        if (($compsa[0] == 'gradeexport' || $compsa[0] == 'gradeimport' || $compsa[0] == 'gradereport') &&
+            ($compsb[0] == 'gradeexport' || $compsb[0] == 'gradeimport' || $compsb[0] == 'gradereport')) {
+            return false;
+        }    
+    }
+
+    return ($cap->component != $comp || $cap->contextlevel != $contextlevel);
+ 
 }
 
 ?>
