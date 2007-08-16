@@ -47,9 +47,14 @@ if (!$course = get_record('course', 'id',$courseid)) {
 
         case 'ajax_getmembersingroup':
             $members = array();
-
-            if ($memberids = groups_get_members($groupid)) {
-                $member_names = groups_userids_to_user_names($memberids, $courseid);
+            if ($members = groups_get_members($groupid)) {
+                $member_names = array();
+                foreach($members as $member) {
+                    $user = new object();
+                    $user->id   = $member->id;
+                    $user->name = fullname($member, true);
+                    $member_names[] = $user;
+                }
                 $json = new Services_JSON();
                 echo $json->encode($member_names);
             }
@@ -74,7 +79,7 @@ if (!$course = get_record('course', 'id',$courseid)) {
             break;
 
         case 'showaddmembersform':
-            redirect('assign.php?group='.$groupid);
+            redirect('members.php?group='.$groupid);
             break;
 
         case 'updatemembers': //Currently reloading.
@@ -175,21 +180,22 @@ if (!$course = get_record('course', 'id',$courseid)) {
     echo '<select name="user" id="members" size="15" class="select"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
-    $userids = false;
-    if ($sel_groupid) {
-        $userids = groups_get_members($sel_groupid);
-    }
+    $member_names = array();
 
-    if ($userids) {
-        // Put the groupings into a hash and sort them
-        $user_names = groups_userids_to_user_names($userids, $courseid);
-        if(empty($user_names)) {
-            echo '<option>&nbsp;</option>';
-        } else {
-            foreach ($user_names as $user) {
-                echo "<option value=\"{$user->id}\" title=\"{$user->name}\">{$user->name}</option>\n";
+    if ($sel_groupid) {
+        if ($members = groups_get_members($groupid)) {
+            foreach($members as $member) {
+                $member_names[$member->id] = fullname($member, true);
             }
         }
+    }
+
+    if ($member_names) {
+        // Put the groupings into a hash and sort them
+        foreach ($member_names as $userid=>$username) {
+            echo "<option value=\"{$userid}\" title=\"{$username}\">{$username}</option>\n";
+        }
+
     } else {
         // Print an empty option to avoid the XHTML error of having an empty select element
         echo '<option>&nbsp;</option>';

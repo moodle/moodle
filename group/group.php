@@ -14,10 +14,10 @@ require_once('lib.php');
 require_once('group_form.php');
 
 /// get url variables
-$courseid    = optional_param('courseid', PARAM_INT);
-$id          = optional_param('id', 0, PARAM_INT);
-$delete      = optional_param('delete', 0, PARAM_BOOL);
-$confirm     = optional_param('confirm', 0, PARAM_BOOL);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$id       = optional_param('id', 0, PARAM_INT);
+$delete   = optional_param('delete', 0, PARAM_BOOL);
+$confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$group = get_record('groups', 'id', $id)) {

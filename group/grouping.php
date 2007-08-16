@@ -13,19 +13,19 @@ require_once('lib.php');
 require_once('grouping_form.php');
 
 /// get url variables
-$courseid    = optional_param('courseid', PARAM_INT);
-$id          = optional_param('id', 0, PARAM_INT);
-$delete      = optional_param('delete', 0, PARAM_BOOL);
-$confirm     = optional_param('confirm', 0, PARAM_BOOL);
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$id       = optional_param('id', 0, PARAM_INT);
+$delete   = optional_param('delete', 0, PARAM_BOOL);
+$confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
     if (!$grouping = get_record('groupings', 'id', $id)) {
         error('Group ID was incorrect');
     }
     if (empty($courseid)) {
-        $courseid = $group->courseid;
+        $courseid = $grouping->courseid;
 
-    } else if ($courseid != $group->courseid) {
+    } else if ($courseid != $grouping->courseid) {
         error('Course ID was incorrect');
     }
 
@@ -45,7 +45,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/course:managegroups', $context);
 
-$returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id;
+$returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;
 
 
 if ($id and $delete) {
@@ -53,7 +53,7 @@ if ($id and $delete) {
         print_header(get_string('deleteselectedgrouping', 'group'), get_string('deleteselectedgroup', 'group'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        notice_yesno(get_string('deletegroupingconfirm', 'group', $group->name), 'grouping.php', 'index.php', $optionsyes, $optionsno, 'get', 'get');
+        notice_yesno(get_string('deletegroupingconfirm', 'group', $grouping->name), 'grouping.php', 'groupings.php', $optionsyes, $optionsno, 'get', 'get');
         print_footer();
         die;
 
@@ -64,7 +64,7 @@ if ($id and $delete) {
             $eventdata->group = $id;
             $eventdata->course = $courseid;
             events_trigger('grouping_deleted', $eventdata);
-            redirect('index.php?id='.$course->id);
+            redirect($returnurl);
         } else {
             print_error('erroreditgrouping', 'group', $returnurl);
         }
@@ -99,7 +99,8 @@ if ($editform->is_cancelled()) {
 
 }
 
-$strgroups = get_string('groups');
+$strgroups        = get_string('groups');
+$strgroupings     = get_string('groupings', 'group');
 $strparticipants = get_string('participants');
 
 if ($id) {
@@ -112,7 +113,7 @@ print_header("$course->shortname: ". $strheading,
              $course->fullname,
              "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
              "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-             "-> <a href=\"$returnurl\">$strgroups</a>".
+             "-> <a href=\"$returnurl\">$strgroupings</a>".
              "-> $strheading", '', '', true, '', user_login_string($course, $USER));
 print_heading($strheading);
 $editform->display();

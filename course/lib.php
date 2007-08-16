@@ -398,8 +398,8 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
 
     /// Getting all members of a group.
     if ($groupid and !$user) {
-        $gusers = groups_get_members($groupid);
-        if (!empty($gusers)) {
+        if ($gusers = groups_get_members($groupid)) {
+            $gusers = array_keys($gusers);
             $joins[] = 'l.userid IN (' . implode(',', $gusers) . ')';
         } else {
             $joins[] = 'l.userid = 0'; // No users in groups, so we want something that will always by false.

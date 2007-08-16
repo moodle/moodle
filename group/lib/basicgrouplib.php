@@ -28,21 +28,6 @@ require_once($CFG->dirroot.'/group/db/dbbasicgrouplib.php');
  *****************************/
 
 /**
- * Returns the ids of the users in the specified group.
- * @param int $groupid The groupid to get the users for
- * @param string $membertype Either 'student', 'teacher' or false. The function 
- * only returns these
- * types of group members. If set to false, returns all group members. 
- * @return array | false Returns an array of the user ids for the specified
- * group or false if no users or an error returned.
- */
-function groups_get_members($groupid, $membertype = false) {
-    $userids = groups_db_get_members($groupid);
-
-    return $userids;
-}
-
-/**
  * Get the user ID and time added for each member of a group, for backup4.
  * @return array An array of member records.
  */

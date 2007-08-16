@@ -38,7 +38,6 @@ $string['deletegroupingconfirm'] = 'Are you sure you want to delete grouping \'$
 $string['deletegroupconfirm'] = 'Are you sure you want to delete group \'$a\'?';
 
 $string['editgroupingsettings'] = 'Edit grouping settings';
-$string['editgroupingpermissions'] = 'Edit grouping permissions';
 $string['deletegrouping'] = 'Delete grouping';
 $string['creategrouping'] = 'Create grouping';
 $string['createautomaticgrouping'] = 'Create automatic grouping';
@@ -52,6 +51,7 @@ $string['addgroupstogrouping'] = 'Add group to grouping'; //'groupS'
 
 $string['removeselectedusers'] = 'Remove selected users';
 $string['adduserstogroup'] = 'Add/remove users';  //'from group'
+$string['addgroupstogroupings'] = 'Add/remove groups';  //'from group'
 
 $string['groupingname'] = 'Grouping name';
 $string['defaultgroupingname'] = 'Grouping';
@@ -87,9 +87,10 @@ $string['save'] = 'Save';
 $string['cancel'] = 'Cancel';
 $string['return'] = 'Return';
 $string['backtogroups'] = 'Back to groups';
+$string['backtogroupings'] = 'Back to groupings';
 $string['existingmembers'] = 'Existing members: $a'; 
 $string['potentialmembers'] = 'Potential members: $a';
-$string['groupfor'] = "for group";
+$string['groupfor'] = 'for group';
 $string['groupinfo'] = 'Info about selected group';
 $string['groupinfomembers'] = 'Info about selected members';
 $string['groupinfopeople'] = 'Info about selected people';

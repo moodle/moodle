@@ -110,8 +110,8 @@
 
         case 'group':
             // group members
-            if ($memberids = groups_get_members($formdata['reportgroupid'])) { //TODO:check.
-                foreach ($memberids as $memberid) {
+            if ($members = groups_get_members($formdata['reportgroupid'])) {
+                foreach ($members as $memberid=>$unused) {
                     $users[$memberid] = 1; // "1" signifies currently recognized participant
                 }
             }
