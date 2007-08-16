@@ -64,6 +64,8 @@ if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
 
 print_heading($tagname, '', 2, 'headingblock header tag-heading');
 
+print_tag_management_box($tag);
+
 print_tag_description_box($tag);
 
 

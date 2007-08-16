@@ -1146,17 +1146,17 @@ function print_tag_description_box($tag_object) {
     $tagname  = tag_display_name($tag_object);
     $related_tags =  related_tags($tag_object->id); //get_item_tags('tags',$tag_object->id);
 
-    print_box_start('generalbox', 'tag-description');
 
-    print_tag_management_box($tag_object);
+    print_box_start('generalbox', 'tag-description');
     
     if (!empty($tag_object->description)) {
-        echo format_text($tag_object->description, $tag_object->descriptionformat );
+        $options = new object;
+        $options->para=false;
+        echo format_text($tag_object->description, $tag_object->descriptionformat, $options );
     }
     else {
         echo format_text(get_string('thistaghasnodesc','tag'));
     }
-
 
     if ($related_tags) {
         echo '<br/><br/><b>'.get_string('relatedtags','tag').': </b>' . tag_links_csv($related_tags);
