@@ -147,7 +147,7 @@ function check_entry($form, $course) {
         } else {  /// Update or add new enrolment
             if (enrol_into_course($course, $USER, 'manual')) {
                 if ($groupid !== false) {
-                    if (!add_user_to_group($groupid, $USER->id)) {
+                    if (!groups_add_member($groupid, $USER->id)) {
                         print_error('couldnotassigngroup');
                     }
                 }

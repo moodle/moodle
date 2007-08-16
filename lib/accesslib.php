@@ -549,7 +549,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
             case CONTEXT_GROUP:
                 // Find course.
-                $courseid = groups_get_course($context->instanceid);
+                $courseid = get_field('groups', 'courseid', 'id', $context->instanceid);
                 $courseinstance = get_context_instance(CONTEXT_COURSE, $courseid);
 
                 $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
@@ -708,7 +708,7 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
-            $courseid = groups_get_course($context->instanceid);
+            $courseid = get_field('groups', 'courseid', 'id', $context->instanceid);
             $parentcontext = get_context_instance(CONTEXT_COURSE, $courseid);
             $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
@@ -1340,7 +1340,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
 
         case CONTEXT_GROUP:
             // 1 to 1 to course.
-            if (!$courseid = groups_get_course($context->instanceid)) {
+            if (!$courseid = get_field('groups', 'courseid', 'id', $context->instanceid)) {
                 $prohibits[$capability][$context->id] = false;
                 return false;
             }

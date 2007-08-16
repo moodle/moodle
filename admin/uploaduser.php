@@ -339,7 +339,7 @@ if ( $formdata = $mform->get_data() ) {
                         if ($course[$i] && $groupid[$i]) {
                             $coursecontext = get_context_instance(CONTEXT_COURSE, $course[$i]->id);
                             if (count(get_user_roles($coursecontext, $user->id))) {
-                                if (add_user_to_group($groupid[$i], $user->id)) {
+                                if (groups_add_member($groupid[$i], $user->id)) {
                                     notify('-->' . get_string('addedtogroup','',$addgroup[$i]));
                                 } else {
                                     notify('-->' . get_string('addedtogroupnot','',$addgroup[$i]));

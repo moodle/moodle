@@ -2871,11 +2871,18 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         }
     }
 
-    if ($groupids = groups_get_all_groups_for_user($user->id)) { //TODO:check.
-        foreach ($groupids as $groupid) {
-            $courseid = groups_get_course($groupid);
-            //change this to 2D array so we can put multiple groups in a course
-            $user->groupmember[$courseid][] = $groupid;
+    $sql = "SELECT g.id, g.courseid
+              FROM {$CFG->prefix}groups g, {$CFG->prefix}groups_members gm
+             WHERE gm.groupid=g.id AND gm.userid={$user->id}";
+
+    // this is a special hack to speedup calendar display
+    $user->groupmember = array();
+    if ($groups = get_records_sql($sql)) {
+        foreach ($groups as $group) {
+            if (!array_key_exists($group->courseid, $user->groupmember)) {
+                $user->groupmember[$group->courseid] = array();
+            }
+            $user->groupmember[$group->courseid][$group->id] = $group->id;
         }
     }
 
@@ -3119,33 +3126,9 @@ function remove_course_contents($courseid, $showfeedback=true) {
     }
 
 /// Delete any groups, removing members and grouping/course links first.
-    //TODO: If groups or groupings are to be shared between courses, think again!
-    if ($groupids = groups_get_groups($course->id)) {
-        foreach ($groupids as $groupid) {
-            if (groups_remove_all_members($groupid)) {
-                if ($showfeedback) {
-                    notify($strdeleted .' groups_members');
-                }
-            } else {
-                $result = false;
-            }
-            /// Delete any associated context for this group ??
-            delete_context(CONTEXT_GROUP, $groupid);
-
-            if (groups_delete_group($groupid)) {
-                if ($showfeedback) {
-                    notify($strdeleted .' groups');
-                }
-            } else {
-                $result = false;
-            }
-        }
-    }
-/// Delete any groupings.
-    $result = groups_delete_all_groupings($course->id);
-    if ($result && $showfeedback) {
-        notify($strdeleted .' groupings');
-    }
+    require_once($CFG->dirroot.'/group/lib.php');
+    groups_delete_groupings($courseid, true);
+    groups_delete_groups($courseid, true);
 
 /// Delete all related records in other tables that may have a courseid
 /// This array stores the tables that need to be cleared, as
@@ -3222,6 +3205,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 function reset_course_userdata($data, $showfeedback=true) {
 
     global $CFG, $USER, $SESSION;
+    require_once($CFG->dirroot.'/group/lib.php');
 
     $result = true;
 
@@ -3261,18 +3245,8 @@ function reset_course_userdata($data, $showfeedback=true) {
                 notify($strdeleted .' '.get_string('students'), 'notifysuccess');
             }
 
-            /// Delete group members (but keep the groups) TODO:check.
-            if ($groupids = groups_get_groups($data->courseid)) {
-                foreach ($groupids as $groupid) {
-                    if (groups_remove_all_group_members($groupid)) {
-                        if ($showfeedback) {
-                            notify($strdeleted .' groups_members', 'notifysuccess');
-                        }
-                    } else {
-                        $result = false;
-                    }
-                }
-            }
+            /// Delete group members (but keep the groups)
+            $result = groups_delete_group_members($data->courseid, $showfeedback) && $result;
         }
 
         if (!empty($data->reset_teachers)) {
@@ -3286,17 +3260,8 @@ function reset_course_userdata($data, $showfeedback=true) {
     }
 
     if (!empty($data->reset_groups)) {
-        if ($groupids = groups_get_groups($data->courseid)) {
-            foreach ($groupids as $groupid) {
-                if (groups_delete_group($groupid)) {
-                    if ($showfeedback) {
-                        notify($strdeleted .' groups', 'notifysuccess');
-                    }
-                } else {
-                    $result = false;
-                }
-            }
-        }
+            $result = groups_delete_groupings($data->courseid, $showfeedback) && $result;
+            $result = groups_delete_groups($data->courseid, $showfeedback) && $result;
     }
 
     if (!empty($data->reset_events)) {
@@ -3325,18 +3290,6 @@ function reset_course_userdata($data, $showfeedback=true) {
 
     return $result;
 }
-
-
-require_once($CFG->dirroot.'/group/lib.php');
-/*TODO: functions moved to /group/lib/legacylib.php
-
-ismember
-add_user_to_group
-mygroupid
-groupmode
-set_current_group
-... */
-
 
 function generate_email_processing_address($modid,$modargs) {
     global $CFG;

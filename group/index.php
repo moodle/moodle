@@ -16,7 +16,7 @@ require_js('yui_yahoo');
 require_js('yui_dom');
 require_js('yui_utilities');
 require_js('yui_connection');
-require_js($CFG->wwwroot.'/group/lib/clientlib.js');
+require_js($CFG->wwwroot.'/group/clientlib.js');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);
@@ -134,28 +134,22 @@ if (!$course = get_record('course', 'id',$courseid)) {
     echo '<select name="group" id="groups" size="15" class="select" onchange="membersCombo.refreshMembers(this.options[this.selectedIndex].value);"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
 
-    if ($groups = groups_get_all_groups($courseid)) {
-        $groupids = array_keys($groups);
-    } else {
-        $groupids = false;
-    }
+    $groups = groups_get_all_groups($courseid);
 
     $sel_groupid = 0;
 
-    if ($groupids) {
-        // Put the groups into a hash and sort them
-        $group_names = groups_groupids_to_group_names($groupids);
-
+    if ($groups) {
         // Print out the HTML
-        $count = 1;
-        foreach ($group_names as $group) {
+        foreach ($groups as $group) {
             $select = '';
-            if ($groupid == $group->id) { //|| $count <= 1) ??
+            if ($groupid == $group->id) {
                 $select = ' selected="selected"';
                 $sel_groupid = $group->id;
             }
-            echo "<option value=\"{$group->id}\"$select title=\"{$group->name}\">{$group->name}</option>\n";
-            $count++;
+            $usercount = (int)count_records('groups_members', 'groupid', $group->id);
+            $groupname = format_string($group->name).' ('.$usercount.')';
+
+            echo "<option value=\"{$group->id}\"$select title=\"$groupname\">$groupname</option>\n";
         }
     } else {
         // Print an empty option to avoid the XHTML error of having an empty select element

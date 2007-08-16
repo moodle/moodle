@@ -177,15 +177,19 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         $groupmode =  groupmode($course);
 
         if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-            if ($groups_names = groups_get_groups_names($course->id)) { //TODO:check.
-            echo '<td><b>';
+            if ($groups = groups_get_all_groups($course->id)) {
+                $group_names = array();
+                foreach($groups as $group) {
+                    $group_names[$group->id] = format_string($group->name);
+                }
+                echo '<td><b>';
                 if ($groupmode == VISIBLEGROUPS) {
                     print_string('groupsvisible');
                 } else {
                     print_string('groupsseparate');
                 }
                 echo ':</b></td><td>';
-                choose_from_menu($groups_names, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
+                choose_from_menu($group_names, "selectedgroup", $selectedgroup, get_string("allgroups"), "", "");
                 echo '</td>';
             }
         }

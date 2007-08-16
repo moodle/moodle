@@ -86,7 +86,7 @@
         $formdata['reportusers'] = 'group';
         $formdata['reportgroupid'] = 0;
         // validate groupid
-        if ($groups = groups_get_groups_names($course->id)) {
+        if ($groups = groups_get_all_groups($course->id)) {
             if (isset($groups[$matches[1]])) {
                 $formdata['reportgroupid'] = $matches[1];
             }
@@ -460,9 +460,9 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     );
 
     // groups
-    if ($groups = groups_get_groups_names($course->id)) { //TODO:check.
-        foreach ($groups as $gid => $gname) {
-            $menus['reportusers']["group$gid"] = get_string('group').': '.$gname;
+    if ($groups = groups_get_all_groups($course->id)) {
+        foreach ($groups as $gid => $group) {
+            $menus['reportusers']["group$gid"] = get_string('group').': '.format_string($group->name);
         }
     }
 

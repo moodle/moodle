@@ -1,9 +1,86 @@
 <?php  //$Id$
 
-// folowing files will be removed soon
-require_once($CFG->dirroot.'/group/lib/basicgrouplib.php');
-require_once($CFG->dirroot.'/group/lib/utillib.php');
-require_once($CFG->dirroot.'/group/lib/legacylib.php');
+
+/**
+ * Adds a specified user to a group
+ * @param int $userid   The user id
+ * @param int $groupid  The group id
+ * @return boolean True if user added successfully or the user is already a 
+ * member of the group, false otherwise. 
+ */
+function groups_add_member($groupid, $userid) {
+    if (!groups_group_exists($groupid)) {
+        return false;
+    }
+
+    if (groups_is_member($groupid, $userid)) {
+        return true;
+    }
+
+    $member = new object();
+    $member->groupid   = $groupid;
+    $member->userid    = $userid;
+    $member->timeadded = time();
+
+    if (!insert_record('groups_members', $member)) {
+        return false;
+    }
+
+    //update group info
+    set_field('groups', 'timemodified', $member->timeadded, 'id', $groupid);
+
+    // MDL-9983
+    $eventdata = new object();
+    $eventdata -> groupid = $groupid;
+    $eventdata -> userid = $userid;
+    events_trigger('group_user_added', $eventdata);      
+
+    return true;
+}
+
+/**
+ * Deletes the link between the specified user and group.
+ * @param int $groupid The group to delete the user from
+ * @param int $userid The user to delete
+ * @return boolean True if deletion was successful, false otherwise
+ */
+function groups_remove_member($groupid, $userid) {
+    if (!groups_group_exists($groupid)) {
+        return false;
+    }
+
+    if (!groups_is_member($groupid, $userid)) {
+        return true;
+    }
+
+    if (!delete_records('groups_members', 'groupid', $groupid, 'userid', $userid)) {
+        return false;
+    }    
+    //update group info
+    set_field('groups', 'timemodified', time(), 'id', $groupid);
+
+    return true;
+}
+
+
+/**
+ * Determines if a group with a given groupid exists. 
+ * @param int $groupid The groupid to check for
+ * @return boolean True if the group exists, false otherwise or if an error 
+ * occurred. 
+ */
+function groups_group_exists($groupid) {
+    return record_exists('groups', 'id', $groupid);
+}
+
+/**
+ * Gets the name of a group with a specified id
+ * @param int $groupid The id of the group
+ * @return string The name of the group
+ */
+function groups_get_group_name($groupid) {
+    return get_field('groups', 'name', 'id', $groupid);
+}
 
 /**
  * Returns the groupid of a group with the name specified for the course.

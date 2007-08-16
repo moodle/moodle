@@ -127,10 +127,10 @@ class block_quiz_results extends block_base {
             }
 
             // Now find which groups these users belong in
-            $groupofuser = groups_get_groups_users($userids, $courseid); /*TODO: get_records_sql(
+            $groupofuser = get_records_sql(
             'SELECT m.userid, m.groupid, g.name FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'groups_members m ON g.id = m.groupid '.
             'WHERE g.courseid = '.$courseid.' AND m.userid IN ('.implode(',', $userids).')'
-            );*/
+            );
 
             $groupgrades = array();
 

@@ -795,7 +795,7 @@ function process_membership_tag($tagcontents){
                             }
                             // Add the user-to-group association if it doesn't already exist
                             if($member->groupid) {
-                                add_user_to_group ($member->groupid, $memberstoreobj->userid);
+                                groups_add_member($member->groupid, $memberstoreobj->userid);
                             }
                         } // End of group-enrolment (from member.role.extension.cohort tag)
                         

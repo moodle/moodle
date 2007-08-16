@@ -106,15 +106,7 @@
             require_login();
     
             ///this is changed because of mygroupid
-            $gtrue = (bool)groups_get_groups_for_user($user->id, $course->id);
-            /*TODO: $gtrue = false;
-            if ($mygroups = mygroupid($course->id)){
-                foreach ($mygroups as $group){
-                    if (groups_is_member($group, $user->id)){
-                        $gtrue = true;
-                    }
-                }
-            }*/
+            $gtrue = (bool)groups_get_all_groups($course->id, $user->id);
             if (!$gtrue) {
                 print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
                              "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
