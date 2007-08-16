@@ -94,10 +94,17 @@ class grade_report_grader extends grade_report {
         $this->sortitemid = $sortitemid;
 
         // base url for sorting by first/last name
-        $this->baseurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage')
-                        .'&amp;page='.$this->page.'&amp;';
-        //
-        $this->pbarurl = 'index.php?id='.$this->courseid.'&amp;perpage='.$this->get_pref('studentsperpage').'&amp;';
+        $studentsperpage = $this->get_pref('studentsperpage');
+        $perpage = '';
+        $curpage = '';
+
+        if (!empty($studentsperpage)) {
+            $perpage = '&amp;perpage='.$studentsperpage;
+            $curpage = '&amp;page='.$this->page;
+        }
+        $this->baseurl = 'index.php?id='.$this->courseid. $perpage.$curpage.'&amp;';
+
+        $this->pbarurl = 'index.php?id='.$this->courseid.$perpage.'&amp;';
 
         // Setup groups if requested
         if ($this->get_pref('showgroups')) {

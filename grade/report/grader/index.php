@@ -151,7 +151,11 @@ echo $report->group_selector;
 echo '<div class="clearer"></div>';
 
 echo $report->get_toggles_html();
-print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
+$studentsperpage = $report->get_pref('studentsperpage');
+// Don't use paging if studentsperpage is empty or 0 at course AND site levels
+if (!empty($studentsperpage)) {
+    print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
+}
 
 $reporthtml = '<table class="gradestable flexible boxaligncenter generaltable">';
 $reporthtml .= $report->get_headerhtml();
@@ -179,8 +183,8 @@ if ($USER->gradeediting[$course->id] && ($report->get_pref('quickfeedback') || $
 }
 
 // prints paging bar at bottom for large pages
-if ($report->get_pref('studentsperpage') >= 20) {
-    print_paging_bar($numusers, $report->page, $report->get_pref('studentsperpage'), $report->pbarurl);
+if (!empty($studentsperpage) && $studentsperpage >= 20) {
+    print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
 print_footer($course);
