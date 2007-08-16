@@ -77,6 +77,7 @@
             $navlinks[] = array('name' => $dirs[$numdirs-1], 'link' => null, 'type' => 'misc');
         }
 
+        $navigation = build_navigation($navlinks);
 
         if ($choose) {
             print_header();
@@ -108,7 +109,20 @@
             <?php
 
             }
-            $fullnav = str_replace('->', '&raquo;', format_string($course->shortname) . " -> $fullnav");
+            $fullnav = '';
+            $i = 0;
+            foreach ($navlinks as $navlink) {
+                // If this is the last link do not link
+                if ($i == count($navlinks) - 1) {
+                    $fullnav .= $navlink['name'];
+                } else {
+                    $fullnav .= '<a href="'.$navlink['link'].'">'.$navlink['name'].'</a>';
+                }
+                $fullnav .= ' -> ';
+                $i++;
+            }
+            $fullnav = substr($fullnav, 0, -4);
+            $fullnav = str_replace('->', '&raquo;', format_string($course->shortname) . " -> " . $fullnav);
             echo '<div id="nav-bar">'.$fullnav.'</div>';
 
             if ($course->id == SITEID and $wdir != "/backupdata") {
@@ -131,7 +145,6 @@
                 }
 
             } else {
-                $navigation = build_navigation($navlinks);
                 print_header("$course->shortname: $strfiles", $course->fullname, $navigation,  $formfield);
             }
         }
