@@ -22,7 +22,7 @@ $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
 $movecontext =  optional_param('movecontext', 0, PARAM_BOOL);//switch to make question
-                    //uneditable - form is displayed to edit question only
+                    //uneditable - form is displayed to edit category only
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
 if ($movecontext && !$id){
@@ -70,7 +70,6 @@ if (!$category = get_record('question_categories', 'id', $question->category)) {
 
 //permissions
 $question->formoptions = new object();
-$permissionstrs = array();
 
 $categorycontext = get_context_instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);
@@ -105,10 +104,7 @@ if ($id) {
     $question->formoptions->movecontext = false;
 }
 
-$question->category = "$category->id,$category->contextid";
-if ($formeditable && $id){
-    $question->categorymoveto = $question->category;
-}
+
 // Validate the question type.
 if (!isset($QTYPES[$question->qtype])) {
     print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
@@ -129,7 +125,11 @@ if ($wizardnow!=='' && !$movecontext){
 if ($mform === null) {
     print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition for "'.$question->qtype.'"');
 }
-$toform = $question; // send the question object and a few more parameters to the form
+$toform = fullclone($question); // send the question object and a few more parameters to the form
+$toform->category = "$category->id,$category->contextid";
+if ($formeditable && $id){
+    $toform->categorymoveto = $toform->category;
+}
 $toform->returnurl = $returnurl;
 $toform->movecontext = $movecontext;
 if ($cm !== null){
@@ -142,21 +142,21 @@ $mform->set_data($toform);
 
 if ($mform->is_cancelled()){
     redirect($returnurl);
-} elseif ($data = $mform->get_data()){
+} elseif ($fromform = $mform->get_data()){
     $returnurl = new moodle_url($returnurl);
     //select category that question has been saved in / moved to when we return to question bank
-    if (!empty($data->categorymoveto)){
-        $returnurl->param('category', $data->categorymoveto);
-    } else if (!empty($data->category)){
-        $returnurl->param('category', $data->category);
+    if (!empty($fromform->categorymoveto)){
+        $returnurl->param('category', $fromform->categorymoveto);
+    } else if (!empty($fromform->category)){
+        $returnurl->param('category', $fromform->category);
     }
     $returnurl = $returnurl->out();
-    if (!empty($data->makecopy)) {
+    if (!empty($fromform->makecopy)) {
         $question->id = 0;  // causes a new question to be created.
         $question->hidden = 0; // Copies should not be hidden
     }
     if ($movecontext){
-        list($tocatid, $tocontextid) = explode(',', $data->categorymoveto);
+        list($tocatid, $tocontextid) = explode(',', $fromform->categorymoveto);
         $tocontext = get_context_instance_by_id($tocontextid);
         require_capability('moodle/question:add', $tocontext);
         if (get_filesdir_from_context($categorycontext) != get_filesdir_from_context($tocontext)){
@@ -172,25 +172,27 @@ if ($mform->is_cancelled()){
             redirect($movecontexturl->out());
         }
     }
-    $question = $QTYPES[$question->qtype]->save_question($question, $data, $COURSE, $wizardnow);
-    if ($QTYPES[$qtype]->finished_edit_wizard($data) || $movecontext){
+
+    $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow);
+    if ($QTYPES[$qtype]->finished_edit_wizard($fromform) || $movecontext){
 
         if (optional_param('inpopup', 0, PARAM_BOOL)) {
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
+            die;
             redirect($returnurl);
         }
     } else {
         $nexturlparams = array('returnurl'=>$returnurl)
-                        + $data->nextpageparam;//useful for passing data to the next page which is not saved in the database
+                        + $fromform->nextpageparam;//useful for passing data to the next page which is not saved in the database
         if ($question->id) {
             $nexturlparams['id'] = $question->id;
         } else { // only for creating new questions
             $nexturlparams['category'] = $question->category;
             $nexturlparams['qtype'] =$question->qtype;
         }
-        $nexturlparams['wizardnow'] = $data->wizard;
+        $nexturlparams['wizardnow'] = $fromform->wizard;
         $nexturl = new moodle_url('question.php', $nexturlparams);
         redirect($nexturl);
     }
