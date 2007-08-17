@@ -866,14 +866,13 @@ class grade_report_grader extends grade_report {
                         $rawvalue = $scaleval;
                     } else {
                         $gradeval = format_float($sum/$count_array[$item->id], $decimalpoints);
-
-                        $gradehtml = round($gradeval, $decimalpoints);
+                        $gradehtml = $gradeval;
                         $rawvalue = $gradeval;
                     }
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         $gradeval = grade_grade::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
-                        $gradehtml = round($gradeval, $decimalpoints) . '%';
+                        $gradehtml = number_format($gradeval, $decimalpoints) . '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
