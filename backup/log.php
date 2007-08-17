@@ -36,11 +36,14 @@
     //Decide when to show last execution logs or detailed logs
     //Lastlog view
     if (!$courseid) {
-        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
-                      "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
-                      "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
-                      $strlogs);
+        $navlinks = array();
+        $navlinks[] = array('name' => $stradmin, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strconfiguration, 'link' => "../$CFG->admin/configure.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strbackup, 'link' => "../$CFG->admin/backup.php?sesskey=$USER->sesskey", 'type' => 'misc');
+        $navlinks[] = array('name' => $strlogs, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+
+        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname, $navigation);
 
         print_heading($backuploglaststatus);
         print_simple_box_start('center');
@@ -84,12 +87,15 @@
         print_simple_box_end();
     //Detailed View !!
     } else {
-        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
-                      "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
-                      "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
-                      "<a href=\"log.php\">$strlogs</a> -> ".
-                      $strbackupdetails);
+        $navlinks = array();
+        $navlinks[] = array('name' => $stradmin, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strconfiguration, 'link' => "../$CFG->admin/configure.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strbackup, 'link' => "../$CFG->admin/backup.php?sesskey=$USER->sesskey", 'type' => 'misc');
+        $navlinks[] = array('name' => $strlogs, 'link' => 'log.php', 'type' => 'misc');
+        $navlinks[] = array('name' => $strbackupdetails, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+
+        print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname, $navigation);
 
         print_heading($backuplogdetailed);
 
@@ -97,7 +103,7 @@
         print_heading("$strcourse: $coursename");
 
         print_simple_box_start('center');
-        
+
         //First, me get all the distinct backups for that course in backup_log
         $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
                                        FROM {$CFG->prefix}backup_log
@@ -115,7 +121,7 @@
                 print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
                 echo "</td>";
                 echo "</tr>";
-                $logs = get_records_sql("SELECT * 
+                $logs = get_records_sql("SELECT *
                                          FROM {$CFG->prefix}backup_log
                                          WHERE courseid = '$courseid'  AND
                                                laststarttime = '$execution->laststarttime'

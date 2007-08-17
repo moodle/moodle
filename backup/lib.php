@@ -332,7 +332,11 @@
 
         if (empty($CFG->backup_version)) {                  // Backup has never been installed.
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, "",
+            $navlinks = array();
+            $navlinks[] = array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, $navigation, "",
                     upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
             upgrade_log_start();
@@ -541,7 +545,7 @@
     function backup_todb ($data) {
         // MDL-10770
         if ($data === '$@NULL@$') {
-            return null; 
+            return null;
         } else {
             return restore_decode_absolute_links(addslashes($data));
         }

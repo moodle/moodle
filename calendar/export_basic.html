@@ -1,12 +1,12 @@
 <fieldset>
 <legend><?php print_string('commontasks', 'calendar'); ?></legend>
 <form method="get" action="export_execute.php">
-<?php print_string('iwanttoexport', 'calendar'); ?>:
+<div><?php print_string('iwanttoexport', 'calendar'); ?>:</div>
 <div class="indent">
     <input type="radio" name="preset_what" id="pw_all" value="all" checked="checked"/><label for="pw_all"><?php print_string('eventsall', 'calendar'); ?></label><br />
     <input type="radio" name="preset_what" id="pw_course" value="courses" /><label for="pw_course"><?php print_string('eventsrelatedtocourses', 'calendar'); ?></label><br />
 </div>
-<?php print_string('for', 'calendar'); ?>:
+<div><?php print_string('for', 'calendar'); ?>:</div>
 <div class="indent">
     <?php if($allowthisweek) { ?>
     <input type="radio" name="preset_time" id="pt_wknow" value="weeknow" checked="checked"/><label for="pt_wknow"><?php print_string('weekthis', 'calendar'); ?></label><br />
@@ -34,7 +34,7 @@ function generate_url() {
     } else {
         preset_what = "all";
     }
-    
+
     if (<?php echo (int) $allowthisweek; ?> && document.getElementById("pt_wknow").checked) {
         preset_time = "weeknow";
     } else if (<?php echo (int) $allownextweek; ?> && document.getElementById("pt_wknext").checked) {
@@ -46,11 +46,11 @@ function generate_url() {
     } else {
         preset_time = "recentupcoming";
     }
-    
+
     url = "<?php echo $CFG->wwwroot; ?>/calendar/export_execute.php?preset_what=" + preset_what + "&amp;preset_time=" + preset_time + "&amp;username=<?php echo $usernameencoded; ?>&amp;authtoken=<?php echo $authtoken; ?>";
     document.getElementById("url").innerText = url;
     document.getElementById("url").innerHTML = url; //Need this as well, for Firefox
-    
+
     document.getElementById("urlbox").style.display = "block";
 }
 //]]>

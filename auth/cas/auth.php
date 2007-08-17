@@ -48,7 +48,7 @@ class auth_plugin_cas extends auth_plugin_base {
         }
     }
     /**
-     * Authenticates user againt CAS 
+     * Authenticates user againt CAS
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
@@ -94,7 +94,7 @@ class auth_plugin_cas extends auth_plugin_base {
       if (!empty($username)) {
 		  if (strstr($SESSION->wantsurl,'ticket') || strstr($SESSION->wantsurl,'NOCAS'))
 			  unset($SESSION->wantsurl);
-          return;		  
+          return;		
         }
 
 		// Test si cas activé et paramêtres non remplis
@@ -105,25 +105,29 @@ class auth_plugin_cas extends auth_plugin_base {
 // Connection to CAS server
 	 $this->connectCAS();
 
-	  // Gestion de la connection CAS si accès direct d'un ent ou autre	 
+	  // Gestion de la connection CAS si accès direct d'un ent ou autre	
 	 if (phpCAS::checkAuthentication()) {
 		$frm->username=phpCAS::getUser();
 //		if (phpCAS::getUser()=='esup9992')
 //			$frm->username='erhar0062';
-		$frm->password="passwdCas";		  
+		$frm->password="passwdCas";		
 		return;
 	 }	 	
-	 
+	
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS");
-          if ($authCAS=="NOCAS") 
+          if ($authCAS=="NOCAS")
             return;
-            
+
 // choice authentication form for multi-authentication
 // test pgtIou parameter for proxy mode (https connection
 // in background from CAS server to the php server)
       if ($authCAS!="CAS" && !isset($_GET["pgtIou"])) {
-            print_header("$site->fullname: $CASform", $site->fullname, $CASform);
+            $navlinks = array();
+            $navlinks[] = array('name' => $CASform, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header("$site->fullname: $CASform", $site->fullname, $navigation);
             include($CFG->dirroot."/auth/cas/cas_form.html");
             print_footer();
             exit();
@@ -134,7 +138,7 @@ class auth_plugin_cas extends auth_plugin_base {
         {phpCAS::forceAuthentication();}
 }
     /**
-     * logout from the cas 
+     * logout from the cas
      *
      * This function is called from admin/auth.php
      *
@@ -144,11 +148,11 @@ class auth_plugin_cas extends auth_plugin_base {
 	  if ($this->config->logoutcas ) {
 	        $backurl = $CFG->wwwroot;
 		  $this->connectCAS();
-	        phpCAS::logout($backurl);        
+	        phpCAS::logout($backurl);
 	     }
     }
     /**
-     * Connect to the cas (clientcas connection or proxycas connection 
+     * Connect to the cas (clientcas connection or proxycas connection
      *
      * This function is called from admin/auth.php
      *
@@ -209,19 +213,19 @@ if ( !is_object($PHPCAS_CLIENT) ) {
     function process_config($config) {
         // set to defaults if undefined
         // CAS settings
-        if (!isset ($config->hostname)) 
+        if (!isset ($config->hostname))
             $config->hostname = '';
-        if (!isset ($config->port)) 
+        if (!isset ($config->port))
             $config->port = '';
-        if (!isset ($config->casversion)) 
+        if (!isset ($config->casversion))
             $config->casversion = '';
-        if (!isset ($config->baseuri)) 
+        if (!isset ($config->baseuri))
             $config->baseuri = '';
-        if (!isset ($config->language)) 
+        if (!isset ($config->language))
             $config->language = '';
-        if (!isset ($config->proxycas)) 
+        if (!isset ($config->proxycas))
             $config->proxycas = '';
-        if (!isset ($config->logoutcas)) 
+        if (!isset ($config->logoutcas))
             $config->logoutcas = '';
         if (!isset ($config->multiauth))
             $config->multiauth = '';

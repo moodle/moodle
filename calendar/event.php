@@ -70,7 +70,12 @@
     calendar_session_vars();
 
     $now = usergetdate(time());
-    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;', $now['mday'], $now['mon'], $now['year']);
+    $navlinks = array();
+    $calendar_navlink = array('name' => $strcalendar,
+                          'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$urlcourse.'&amp;',
+                                                          $now['mday'], $now['mon'], $now['year']),
+                          'type' => 'misc');
+
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -158,7 +163,7 @@
                             'timestart = '.$timestartoffset.','.
                             'timeduration = '.$form->timeduration.','.
                             'timemodified = '.time().' WHERE repeatid = '.$event->repeatid);
-                            
+
                         /// Log the event update.
                         $form->name = stripslashes($form->name);  //To avoid double-slashes
                         add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);
@@ -168,7 +173,7 @@
                         // Update this
                         $form->timemodified = time();
                         update_record('event', $form);
-    
+
                         /// Log the event update.
                         $form->name = stripslashes($form->name);  //To avoid double-slashes
                         add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
@@ -255,13 +260,6 @@
         break;
     }
 
-    // Let's see if we are supposed to provide a referring course link
-    // but NOT for the "main page" course
-    if($SESSION->cal_course_referer != SITEID &&
-      ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
-        // If we know about the referring course, show a return link
-        $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
-    }
 
     if (!empty($SESSION->cal_course_referer)) {
         // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
@@ -271,7 +269,10 @@
     }
     require_login($course, false);
 
-    print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
+    $navlinks[] = $calendar_navlink;
+    $navlinks[] = array('name' => $title, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $navigation,
                  'eventform.name', '', true, '', user_login_string($site));
 
     echo calendar_overlib_html();
@@ -313,7 +314,7 @@
                 else {
                     $repeatcount = 0;
                 }
-                
+
                 // Display confirmation form
                 echo '<div class="header">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
                 echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
@@ -533,7 +534,7 @@
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    
+
     echo '<td class="sidecalendar">';
     echo '<div class="sideblock">';
     echo '<div class="header">'.get_string('eventskey', 'calendar').'</div>';
@@ -541,7 +542,7 @@
     echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
     echo '</div>';
     echo '</div>';
-    
+
     echo '<div class="sideblock">';
     echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
     echo '<div class="minicalendarblock minicalendartop">';
@@ -604,7 +605,7 @@ function calendar_add_event_allowed($event) {
 
     // can not be using guest account
     if (empty($USER->id) or $USER->username == 'guest') {
-        return false;  
+        return false;
     }
 
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -620,8 +621,8 @@ function calendar_add_event_allowed($event) {
         case 'group':
             if (! groups_group_exists($event->groupid)) { //TODO:check.
                 return false;
-            } 
-            // this is ok because if you have this capability at course level, you should be able 
+            }
+            // this is ok because if you have this capability at course level, you should be able
             // to edit group calendar too
             // there is no need to check membership, because if you have this capability
             // you will have a role in this group context

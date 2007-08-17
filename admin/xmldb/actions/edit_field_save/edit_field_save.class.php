@@ -283,12 +283,15 @@ class edit_field_save extends XMLDBAction {
             $tempfield->setDefault($default);
         /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB",
-                         "$site->fullname",
-                         "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
+            $navlinks = array();
+            $navlinks[] = array('name' => $this->str['administration'], 'link' => '../index.php', 'type' => 'misc');
+            $navlinks[] = array('name' => 'XMLDB', 'link' => 'index.php', 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $tempfield->readableInfo(),
-                    'index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
+                    'index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName()
+                    . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));
             die; /// re-die :-P
         }
 

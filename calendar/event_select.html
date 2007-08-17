@@ -1,36 +1,58 @@
 <form method="post" action="event.php">
-<table class="formtable">
-  <tr>
-  <td>
-  <?php if(!empty($allowed->user)) { ?><div><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></div>
-  <?php } ?>
-  <?php if(!empty($allowed->groups)) { ?><div><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php echo get_string('typegroup', 'calendar').' '.get_string('groupfor'); ?></label>
-    <select name='groupid'>
-      <option value=''></option>
+    <table class="formtable">
+        <tr>
+            <td>
+
+<?php if(!empty($allowed->user)) { ?>
+                <div>
+                    <input type='radio' name='type' value='user' id='type_user' checked='checked' />
+                    <label for='type_user'><?php print_string('typeuser', 'calendar') ?></label>
+                </div>
+<?php } ?>
+
+<?php if(!empty($allowed->groups) && is_array($allowed->groups)) { ?>
+                <div>
+                    <input type='radio' name='type' value='group' id='type_group' />
+                    <label for='type_group'><?php echo get_string('typegroup', 'calendar').' '.get_string('groupfor'); ?></label>
+                    <select name='groupid'>
+                        <option value=''></option>
     <?php foreach($allowed->groups as $group) {?>
-      <option value='<?php echo $group->id; ?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name; ?></option>
+                        <option value='<?php echo $group->id; ?>'
+        <?php if($group->id == $groupid) {
+            echo 'selected="selected"';
+        }
+        echo '>' . $group->name; ?></option>
     <?php }?>
-    </select>
-    </div>
-  <?php } ?>
-  <?php if(!empty($allowed->courses)) { ?>
-    <div><input type='radio' name='type' value='course' id='type_course' /><input type="hidden" name="courseid" value="<?php echo($courseid) ?>" /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></div>
-  <?php } ?>
-  <?php if(!empty($allowed->site)) { ?>
-    <div><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></div>
-  <?php } ?>
-  </td>
-  </tr>
-  <tr>
-  <td style="text-align: center;">
-    <input type="submit" value=" <?php print_string('ok') ?> " />
-    <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> " />
-  </td>
-  </tr>
-</table>
-<p>
-<input type="hidden" name="action" value="new" />
-<input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
-<input type="hidden" name="course" value="<?php p($urlcourse); ?>" />
-</p>
+                    </select>
+                </div>
+<?php } ?>
+
+<?php if(!empty($allowed->courses)) { ?>
+                <div>
+                    <input type='radio' name='type' value='course' id='type_course' />
+                    <input type="hidden" name="courseid" value="<?php echo($courseid) ?>" />
+                    <label for='type_course'><?php print_string('typecourse', 'calendar') ?></label>
+                </div>
+<?php } ?>
+
+<?php if(!empty($allowed->site)) { ?>
+                <div>
+                    <input type='radio' name='type' value='site' id='type_site' />
+                    <label for='type_site'><?php print_string('typesite', 'calendar') ?></label>
+                </div>
+<?php } ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                <input type="submit" value=" <?php print_string('ok') ?> " />
+                <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> " />
+            </td>
+        </tr>
+    </table>
+    <p>
+        <input type="hidden" name="action" value="new" />
+        <input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
+        <input type="hidden" name="course" value="<?php p($urlcourse); ?>" />
+    </p>
 </form>

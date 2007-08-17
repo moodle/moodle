@@ -67,9 +67,14 @@
     $now = usergetdate(time());
     $pagetitle = '';
 
-    $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;', $now['mday'], $now['mon'], $now['year']);
+    $strcalendar = get_string('calendar', 'calendar');
+    $navlinks = array();
+    $navlinks[] = array('name' => $strcalendar,
+                        'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
+                                                        $now['mday'], $now['mon'], $now['year']),
+                        'type' => 'misc');
 
-    
+
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
         $mon = intval($now['mon']);
@@ -79,11 +84,11 @@
 
     switch($view) {
         case 'day':
-            $nav .= ' -> '.userdate($time, get_string('strftimedate'));
+            $navlinks[] = array('name' => userdate($time, get_string('strftimedate')), 'link' => null, 'type' => 'misc');
             $pagetitle = get_string('dayview', 'calendar');
         break;
         case 'month':
-            $nav .= ' -> '.userdate($time, get_string('strftimemonthyear'));
+            $navlinks[] = array('name' => userdate($time, get_string('strftimemonthyear')), 'link' => null, 'type' => 'misc');
             $pagetitle = get_string('detailedmonthview', 'calendar');
         break;
         case 'upcoming':
@@ -121,9 +126,7 @@
     // but NOT for the "main page" course
     if ($SESSION->cal_course_referer != SITEID &&
        ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
-        // If we know about the referring course, show a return link and ALSO require login!
         require_login();
-        $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
         if (empty($course)) {
             $course = get_record('course', 'id', $SESSION->cal_course_referer); // Useful to have around
         }
@@ -133,7 +136,8 @@
     $prefsbutton = calendar_preferences_button();
 
     // Print title and header
-    print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $nav,
+    $navigation = build_navigation($navlinks);
+    print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $navigation,
                  '', '', true, $prefsbutton, user_login_string($site));
 
     echo calendar_overlib_html();

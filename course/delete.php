@@ -25,21 +25,23 @@
     }
 
     $category = get_record("course_categories", "id", $course->category);
+    $navlinks = array();
 
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
 
-        
-        print_header("$site->shortname: $strdeletecheck", $site->fullname, 
-                     "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                     "<a href=\"index.php\">$strcategories</a> -> ".
-                     "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
-                     "$strdeletecheck");
+        $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strcategories, 'link' => "index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $category->name, 'link' => "category.php?id=$course->category", 'type' => 'misc');
+        $navlinks[] = array('name' => $strdeletecheck, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
 
-        notice_yesno("$strdeletecoursecheck<br /><br />" . format_string($course->fullname) . 
-                     " (" . format_string($course->shortname) . ")", 
-                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=$USER->sesskey", 
+        print_header("$site->shortname: $strdeletecheck", $site->fullname, $navigation);
+
+        notice_yesno("$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .
+                     " (" . format_string($course->shortname) . ")",
+                     "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=$USER->sesskey",
                      "category.php?id=$course->category");
 
         print_footer($course);
@@ -60,11 +62,13 @@
 
     $strdeletingcourse = get_string("deletingcourse", "", format_string($course->shortname));
 
-    print_header("$site->shortname: $strdeletingcourse", $site->fullname, 
-                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"index.php\">$strcategories</a> -> ".
-                 "<a href=\"category.php?id=$course->category\">$category->name</a> -> ".
-                 "$strdeletingcourse");
+    $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
+    $navlinks[] = array('name' => $strcategories, 'link' => "index.php", 'type' => 'misc');
+    $navlinks[] = array('name' => $category->name, 'link' => "category.php?id=$course->category", 'type' => 'misc');
+    $navlinks[] = array('name' => $strdeletingcourse, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header("$site->shortname: $strdeletingcourse", $site->fullname, $navigation);
 
     print_heading($strdeletingcourse);
 

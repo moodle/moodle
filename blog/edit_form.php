@@ -66,7 +66,7 @@ class blog_edit_form extends moodleform {
             $mform->setAdvanced('otagsgrp');
         }
 
-        $mform->addElement('textarea', 'ptags', get_string('ptags', 'blog'), array('wrap'=>'soft'));
+        $mform->addElement('textarea', 'ptags', get_string('ptags', 'blog'), array('cols'=>'40', 'rows'=>'5'));
         $mform->setType('ptagsadd', PARAM_NOTAGS);
 
         $this->add_action_buttons();
@@ -96,6 +96,8 @@ class blog_edit_form extends moodleform {
         $otagsselect->removeOptions();
         if ($otags = get_records_sql_menu('SELECT id, text from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC')){
             $otagsselect->loadArray($otags);
+        } else {
+            $mform->removeElement('otags');
         }
     }
 

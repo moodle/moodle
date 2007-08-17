@@ -102,9 +102,11 @@ class edit_table_save extends XMLDBAction {
             $temptable = new XMLDBTable($name);
                                                                                                                                       /// Prepare the output
             $site = get_site();
-            print_header("$site->shortname: XMLDB",
-                         "$site->fullname",
-                         "<a href=\"../index.php\">" . $this->str['administration'] . "</a> -> <a href=\"index.php\">XMLDB</a>");
+            $navlinks = array();
+            $navlinks[] = array('name' => $this->str['administration'], 'link' => '../index.php', 'type' => 'misc');
+            $navlinks[] = array('name' => 'XMLDB', 'link' => 'index.php', 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$site->shortname: XMLDB", "$site->fullname", $navigation);
             notice ('<p>' .implode(', ', $errors) . '</p>
                      <p>' . $temptable->readableInfo(),
                      'index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)));

@@ -286,25 +286,25 @@ class auth_plugin_ldap extends auth_plugin_base {
                 // create the user object, then you set the password. If you try
                 // to set the password while creating the user, the operation
                 // fails.
-    
+
                 // Passwords in Active Directory must be encoded as Unicode
                 // strings (UCS-2 Little Endian format) and surrounded with
                 // double quotes. See http://support.microsoft.com/?kbid=269190
                 if (!function_exists('mb_convert_encoding')) {
                     print_error ('auth_ldap_no_mbstring', 'auth');
                 }
-    
+
                 // First create the user account, and mark it as disabled.
                 $newuser['objectClass'] = array('top','person','user','organizationalPerson');
                 $newuser['sAMAccountName'] = $extusername;
-                $newuser['userAccountControl'] = AUTH_AD_NORMAL_ACCOUNT | 
+                $newuser['userAccountControl'] = AUTH_AD_NORMAL_ACCOUNT |
                                                  AUTH_AD_ACCOUNTDISABLE;
                 $userdn = 'cn=' .  $this->ldap_addslashes($extusername) .
                           ',' . $this->config->create_context;
                 if (!ldap_add($ldapconnection, $userdn, $newuser)) {
                     print_error ('auth_ldap_ad_create_req', 'auth');
                 }
-    
+
                 // Now set the password
                 unset($newuser);
                 $newuser['unicodePwd'] = mb_convert_encoding('"' . $extpassword . '"',
@@ -365,7 +365,11 @@ class auth_plugin_ldap extends auth_plugin_base {
         if ($notify) {
             global $CFG;
             $emailconfirm = get_string('emailconfirm');
-            print_header($emailconfirm, $emailconfirm, $emailconfirm);
+            $navlinks = array();
+            $navlinks[] = array('name' => $emailconfirm, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header($emailconfirm, $emailconfirm, $navigation);
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
         } else {
             return true;
@@ -1211,7 +1215,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $extpassword = mb_convert_encoding('"'.$extpassword.'"', "UCS-2LE", $this->config->ldapencoding);
                 $result = ldap_modify($ldapconnection, $user_dn, array('unicodePwd' => $extpassword));
                 if (!$result) {
-                    error_log('LDAP Error in user_update_password(). Error code: ' 
+                    error_log('LDAP Error in user_update_password(). Error code: '
                               . ldap_errno($ldapconnection) . '; Error string : '
                               . ldap_err2str(ldap_errno($ldapconnection)));
                 }
@@ -1871,7 +1875,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         define ('ROOTDSE', '');
         // UF_DONT_EXPIRE_PASSWD value taken from MSDN directly
         define ('UF_DONT_EXPIRE_PASSWD', 0x00010000);
-    
+
         global $CFG;
 
         if (!function_exists('bcsub')) {
@@ -1889,14 +1893,14 @@ class auth_plugin_ldap extends auth_plugin_base {
             // expired or not.
             return 0;
         }
-            
+
         $info = $this->ldap_get_entries($ldapconn, $sr);
         $useraccountcontrol = $info[0]['userAccountControl'][0];
         if ($useraccountcontrol & UF_DONT_EXPIRE_PASSWD) {
             // password doesn't expire.
             return 0;
         }
-    
+
         // If pwdLastSet is zero, the user must change his/her password now
         // (unless UF_DONT_EXPIRE_PASSWD flag is set, but we already
         // tested this above)
@@ -1904,7 +1908,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             // password has expired
             return -1;
         }
-    
+
         // ----------------------------------------------------------------
         // Password expiration time in Active Directory is the composition of
         // two values:
@@ -1926,17 +1930,17 @@ class auth_plugin_ldap extends auth_plugin_base {
         // So we need to convert the values to Unix timestamps (see
         // details below).
         // ----------------------------------------------------------------
-    
+
         $sr = ldap_read($ldapconn, ROOTDSE, 'objectclass=*',
                         array('defaultNamingContext'));
         if (!$sr) {
             error_log("ldap: error querying rootDSE for Active Directory");
             return 0;
         }
-    
+
         $info = $this->ldap_get_entries($ldapconn, $sr);
         $domaindn = $info[0]['defaultNamingContext'][0];
-    
+
         $sr = ldap_read ($ldapconn, $domaindn, 'objectclass=*',
                          array('maxPwdAge'));
         $info = $this->ldap_get_entries($ldapconn, $sr);
@@ -1970,14 +1974,14 @@ class auth_plugin_ldap extends auth_plugin_base {
         //
         // As a last remark, if the low 32 bits of maxPwdAge are equal to 0,
         // the maximum password age in the domain is set to 0, which means
-        // passwords do not expire (see 
+        // passwords do not expire (see
         // http://msdn2.microsoft.com/en-us/library/ms974598.aspx)
         //
         // As the quantities involved are too big for PHP integers, we
         // need to use BCMath functions to work with arbitrary precision
         // numbers.
         // ----------------------------------------------------------------
-    
+
 
         // If the low order 32 bits are 0, then passwords do not expire in
         // the domain. Just do '$maxpwdage mod 2^32' and check the result
@@ -1990,7 +1994,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // time, in MS time units. Remember maxPwdAge is stored as a
         // _negative_ quantity, so we need to substract it in fact.
         $pwdexpire = bcsub ($pwdlastset, $maxpwdage);
-    
+
         // Scale the result to convert it to Unix time units and return
         // that value.
         return bcsub( bcdiv($pwdexpire, '10000000'), '11644473600');

@@ -86,7 +86,11 @@ class auth_plugin_email extends auth_plugin_base {
         if ($notify) {
             global $CFG;
             $emailconfirm = get_string('emailconfirm');
-            print_header($emailconfirm, $emailconfirm, $emailconfirm);
+            $navlinks = array();
+            $navlinks[] = array('name' => $emailconfirm, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header($emailconfirm, $emailconfirm, $navigation);
             notice(get_string('emailconfirmsent', '', $user->email), "$CFG->wwwroot/index.php");
         } else {
             return true;

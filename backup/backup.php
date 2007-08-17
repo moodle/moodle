@@ -71,9 +71,13 @@
 
     //If no course has been selected, show a list of available courses
 
+    $navlinks = array();
     if (!$id) {
-        print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
+        $navlinks[] = array('name' => $stradministration, 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strcoursebackup, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+
+        print_header("$site->shortname: $strcoursebackup", $site->fullname, $navigation);
 
         if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
             print_heading(get_string("choosecourse"));
@@ -97,13 +101,17 @@
 
     //Print header
     if (has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-        print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> ->
-                      <a href=\"backup.php\">$strcoursebackup</a> -> $course->fullname ($course->shortname)");
+        $navlinks[] = array('name' => $stradministration, 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc');
+        $navlinks[] = array('name' => $strcoursebackup, 'link' => 'backup.php', 'type' => 'misc');
+        $navlinks[] = array('name' => "$course->fullname ($course->shortname)", 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+
+        print_header("$site->shortname: $strcoursebackup", $site->fullname, $navigation);
     } else {
-        print_header("$course->shortname: $strcoursebackup", $course->fullname,
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                     $strcoursebackup");
+        $navlinks[] = array('name' => $course->fullname, 'link' => "$CFG->wwwroot/course/view.php?id=$course->id", 'type' => 'misc');
+        $navlinks[] = array('name' => $strcoursebackup, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        print_header("$course->shortname: $strcoursebackup", $course->fullname, $navigation);
     }
 
     //Print form

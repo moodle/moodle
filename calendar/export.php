@@ -21,8 +21,15 @@ if(!$site = get_site()) {
 calendar_session_vars();
 
 $pagetitle = get_string('export', 'calendar');
+$navlinks = array();
 $now = usergetdate(time());
-$nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;course='.$course.'&amp;', $now['mday'], $now['mon'], $now['year']).' -> '.$pagetitle;
+
+$navlinks[] = array('name' => get_string('calendar', 'calendar'),
+                    'link' =>calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$course.'&amp;',
+                                                    $now['mday'], $now['mon'], $now['year']),
+                    'type' => 'misc');
+$navlinks[] = array('name' => $pagetitle, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
 
 if(!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
@@ -46,7 +53,7 @@ $strcalendar = get_string('calendar', 'calendar');
 $prefsbutton = calendar_preferences_button();
 
 // Print title and header
-print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $nav,
+print_header("$site->shortname: $strcalendar: $pagetitle", $strcalendar, $navigation,
              '', '', true, $prefsbutton, user_login_string($site));
 
 echo calendar_overlib_html();

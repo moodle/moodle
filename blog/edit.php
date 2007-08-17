@@ -148,10 +148,13 @@ switch ($action) {
 if (!$user = get_record('user', 'id', $userid)) {
     error('Incorrect user id');
 }
+$navlinks = array();
+$navlinks[] = array('name' => fullname($user), 'link' => "$CFG->wwwroot/user/view.php?id=$userid", 'type' => 'misc');
+$navlinks[] = array('name' => $strblogs, 'link' => "$CFG->wwwroot/blog/index.php?userid=$userid", 'type' => 'misc');
+$navlinks[] = array('name' => $strformheading, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
 
-print_header("$SITE->shortname: $strblogs", $SITE->fullname,
-                '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'">'.fullname($user).'</a> ->
-                <a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$userid.'">'.$strblogs.'</a> -> '.$strformheading,'','',true);
+print_header("$SITE->shortname: $strblogs", $SITE->fullname, $navigation,'','',true);
 $blogeditform->set_data($post);
 $blogeditform->display();
 
@@ -244,9 +247,9 @@ function do_delete($post) {
 
     $status = delete_records('post', 'id', $post->id);
     $status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
-    
+
     blog_delete_old_attachments($post);
-    
+
     add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $post->userid, 'deleted blog entry with entry id# '. $post->id);
 
     if (!$status) {
