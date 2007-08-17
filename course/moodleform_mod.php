@@ -70,6 +70,13 @@ class moodleform_mod extends moodleform {
                 $mform->hardFreeze('groupmode'); // groupmode can not be changed if forced from course settings
             }
         }
+
+        // groupings have no use without groupmode or groupmembersonly
+        if (!$mform->elementExists('groupmode') and !$mform->elementExists('groupmembersonly')) {
+            if ($mform->elementExists('groupingid')) {
+                $mform->removeElement('groupingid');
+            }
+        }
     }
 
     // form verification
@@ -117,8 +124,9 @@ class moodleform_mod extends moodleform {
      * Adds all the standard elements to a form to edit the settings for an activity module.
      *
      * @param bool $supportsgroups does this module support groups?
+     * @param bool $supportgroupmembersonly does this module support groupmembersonly access?
      */
-    function standard_coursemodule_elements($supportsgroups=true){
+    function standard_coursemodule_elements($supportsgroups=true, $supportgroupmembersonly=false){
         global $COURSE, $CFG;
         $mform =& $this->_form;
 
@@ -146,7 +154,12 @@ class moodleform_mod extends moodleform {
                 }
             }
             $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
-            $mform->addElement('advcheckbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+            $mform->setAdvanced('groupingid');
+            
+            if ($supportgroupmembersonly) {
+                $mform->addElement('advcheckbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+                $mform->setAdvanced('groupmembersonly');
+            }
         }
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
