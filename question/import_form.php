@@ -11,6 +11,18 @@ class question_import_form extends moodleform {
 
         $defaultcategory   = $this->_customdata['defaultcategory'];
         $contexts   = $this->_customdata['contexts'];
+
+//--------------------------------------------------------------------------------
+        $mform->addElement('header','fileformat', get_string('fileformat','quiz'));
+        $fileformatnames = get_import_export_formats('import');
+        $radioarray = array();
+        foreach ($fileformatnames as $id => $fileformatname) {
+            $radioarray[] = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id );
+        }
+        $mform->addGroup($radioarray,'format', '', array('<br />'), false);
+        $mform->addRule('format', null, 'required', null, 'client' );
+        $mform->setHelpButton('format', array('import', get_string('importquestions', 'quiz'), 'quiz'));
+
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
@@ -26,9 +38,6 @@ class question_import_form extends moodleform {
         $mform->setDefault('catfromfile', 1);
         $mform->setDefault('contextfromfile', 1);
 
-        $fileformatnames = get_import_export_formats('import');
-        $mform->addElement('select', 'format', get_string('fileformat','quiz'), $fileformatnames);
-        $mform->setDefault('format', 'gift');
 
         $matchgrades = array();
         $matchgrades['error'] = get_string('matchgradeserror','quiz');
