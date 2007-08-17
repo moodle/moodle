@@ -101,7 +101,6 @@ function mediaplugin_filter_mp3_callback($link) {
 
     return $link[0].
 '<span class="mediaplugin mediaplugin_mp3" id="'.$id.'">('.get_string('mp3audio', 'mediaplugin').')</span>
-<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/ufo.js"></script>
 <script type="text/javascript">
 //<![CDATA[
   var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/mp3player.swf?src='.$url.'",
