@@ -69,6 +69,8 @@ httpsrequired();
     }
 
     $loginsite = get_string("loginsite");
+    $navlinks = array(array('name' => $loginsite, 'link' => null, 'type' => 'misc'));
+    $navigation = build_navigation($navlinks);
 
     if ($user !== false or $frm !== false) {
         // some auth plugin already supplied these
@@ -141,7 +143,7 @@ httpsrequired();
             }
 
             if (empty($user->confirmed)) {       // This account was never confirmed
-                print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
+                print_header(get_string("mustconfirm"), get_string("mustconfirm") );
                 print_heading(get_string("mustconfirm"));
                 print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
                 print_footer();
@@ -212,18 +214,18 @@ httpsrequired();
         /// check if user password has expired
         /// Currently supported only for ldap-authentication module
             if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
-                    $days2expire = $userauth->password_expire($USER->username);
-                        if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 
-                        notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo); 
-                        print_footer();
-                        exit;
-                    } elseif (intval($days2expire) < 0 ) {
-                        print_header("$site->fullname: $loginsite", "$site->fullname", $loginsite, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>"); 
-                        notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
-                        print_footer();
-                        exit;
-                    }    
+                $days2expire = $userauth->password_expire($USER->username);
+                if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    notice_yesno(get_string('auth_passwordwillexpire', 'auth', $days2expire), $passwordchangeurl, $urltogo);
+                    print_footer();
+                    exit;
+                } elseif (intval($days2expire) < 0 ) {
+                    print_header("$site->fullname: $loginsite", "$site->fullname", $navigation, $focus, "", true, "<div class=\"langmenu\">$langmenu</div>");
+                    notice_yesno(get_string('auth_passwordisexpired', 'auth'), $passwordchangeurl, $urltogo);
+                    print_footer();
+                    exit;
+                }
             }
 
             reset_login_count();
@@ -231,7 +233,7 @@ httpsrequired();
             redirect($urltogo);
 
             exit;
-    
+
         } else {
             if (empty($errormsg)) {
                 $errormsg = get_string("invalidlogin");
@@ -239,7 +241,7 @@ httpsrequired();
             }
 
             // TODO: if the user failed to authenticate, check if the username corresponds to a remote mnet user
-            if ( !empty($CFG->mnet_dispatcher_mode) 
+            if ( !empty($CFG->mnet_dispatcher_mode)
                  && $CFG->mnet_dispatcher_mode === 'strict'
                  && is_enabled_auth('mnet')) {
                 $errormsg .= get_string('loginlinkmnetuser', 'mnet', "mnet_email.php?u=$frm->username");
@@ -256,8 +258,8 @@ httpsrequired();
 /// First, let's remember where the user was trying to get to before they got here
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) && 
-                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot && 
+        $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) &&
+                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot &&
                               $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/' &&
                               $_SERVER["HTTP_REFERER"] != $CFG->httpswwwroot.'/login/' &&
                               $_SERVER["HTTP_REFERER"] != $CFG->httpswwwroot.'/login/index.php')
@@ -279,24 +281,24 @@ httpsrequired();
             } else {
                 $loginurl .= '&';
             }
-            $loginurl .= 'errorcode='.$errorcode; 
+            $loginurl .= 'errorcode='.$errorcode;
         }
 
         redirect($loginurl);
     }
-    
+
 
 /// Generate the login page with forms
 
-    if (get_moodle_cookie() == '') {   
+    if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies
     }
-    
+
     if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
         $frm->username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
         $frm->password = "";
     }
-    
+
     if (!empty($frm->username)) {
         $focus = "password";
     } else {
@@ -309,8 +311,8 @@ httpsrequired();
         $show_instructions = false;
     }
 
-    print_header("$site->fullname: $loginsite", $site->fullname, $loginsite, $focus, 
-                 '', true, '<div class="langmenu">'.$langmenu.'</div>'); 
+    print_header("$site->fullname: $loginsite", $site->fullname, $navigation, $focus,
+                 '', true, '<div class="langmenu">'.$langmenu.'</div>');
 
     include("index_form.html");
 
