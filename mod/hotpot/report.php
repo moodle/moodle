@@ -38,7 +38,7 @@
     // set homeurl of couse (for error messages)
     $course_homeurl = "$CFG->wwwroot/course/view.php?id=$course->id";
 
-    require_login($course->id);
+    require_login($course, true, $cm);
 
     // get report mode
     if (has_capability('mod/hotpot:viewreport',$modulecontext)) {

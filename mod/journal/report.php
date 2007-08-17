@@ -13,7 +13,7 @@
         error("Course module is misconfigured");
     }
 
-    require_login($course->id, false);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");

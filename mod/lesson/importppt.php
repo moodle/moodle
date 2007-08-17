@@ -37,7 +37,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id, false);
+    require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/lesson:edit', $context);
 

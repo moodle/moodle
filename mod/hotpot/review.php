@@ -31,9 +31,10 @@
     if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
         error("Attempt ID was incorrect");
     }
+
+    require_login($course, true, $cm);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    require_login($course->id);
     if (!has_capability('mod/hotpot:viewreport',$context)) {
         if (!$hotpot->review) {
             error(get_string("noreview", "quiz"));

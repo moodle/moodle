@@ -57,6 +57,8 @@
         }
     }
 
+    require_login($course, false, $cm);
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:uploadentries', $context);
 

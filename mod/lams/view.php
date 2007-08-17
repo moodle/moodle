@@ -21,7 +21,7 @@ if (! $lams = get_record("lams", "id", $cm->instance)) {
     error("Course module is incorrect");
 }
 
-require_login($course->id);
+require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, "lams", "view", "view.php?id=$cm->id", "$lams->id");

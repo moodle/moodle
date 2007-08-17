@@ -23,7 +23,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false);
+    require_login($course->id, false, $cm);
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 

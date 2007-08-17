@@ -22,7 +22,7 @@
     }
 
     // make sure this user is enrolled in this course
-    require_login($course->id);
+    require_login($course, true, $cm);
 
     $next_url = "$CFG->wwwroot/course/view.php?id=$course->id";
     $time = time();

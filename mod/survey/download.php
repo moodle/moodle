@@ -16,7 +16,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false);
+    require_login($course->id, false, $cm);
     require_capability('mod/survey:download', get_context_instance(CONTEXT_MODULE, $cm->id)) ;
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {

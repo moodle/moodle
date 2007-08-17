@@ -28,9 +28,9 @@
         error('Attempt has not closed yet');
     }
 
-    require_login($course->id);
-
     $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+    require_login($course, true, $cm);
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
     require_capability('mod/quiz:grade', $context);

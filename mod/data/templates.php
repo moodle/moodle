@@ -26,8 +26,6 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
 
-    require_login();
-
     $id    = optional_param('id', 0, PARAM_INT);  // course module id
     $d     = optional_param('d', 0, PARAM_INT);   // database id
     $mode  = optional_param('mode', 'singletemplate', PARAM_ALPHA);
