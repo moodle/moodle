@@ -30,7 +30,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course, true, $cm);
 
     require ("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";

@@ -109,6 +109,35 @@ function groups_is_member($groupid, $userid=null) {
 }
 
 /**
+ * Determines if current or specified is member of any active group in activity
+ * @param object $cm coruse module object
+ * @param int $userid id of user, null menas $USER->id
+ * @return booelan true if user member of at least one group used in activity
+ */
+function groups_has_membership($cm, $userid=null) {
+    global $CFG, $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    if ($cm->groupingid) {
+        // find out if member of any group in selected activity grouping
+        $sql = "SELECT 'x'
+                  FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groupings_groups gg
+                 WHERE gm.userid = $userid AND gm.groupid = gg.groupid AND gg.groupingid = {$cm->groupingid}";
+
+    } else {
+        // no grouping used - check all groups in course
+        $sql = "SELECT 'x'
+                  FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groups g
+                 WHERE gm.userid = $userid AND gm.groupid = g.id AND g.courseid = {$cm->course}";
+    }
+
+    return record_exists_sql($sql);
+}
+
+/**
  * Returns the users in the specified group.
  * @param int $groupid The groupid to get the users for
  * @param int $sort optional sorting of returned users

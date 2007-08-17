@@ -1707,18 +1707,24 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
     }
 
 /// If the site is currently under maintenance, then print a message
-    if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
         if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
             print_maintenance_message();
             exit;
         }
     }
 
+/// groupmembersonly access control
+    if (!empty($CFG->enablegroupings) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+        if (isguestuser() or !groups_has_membership($cm)) {
+            error(get_string('groupmembersonlyerror', 'group'), $CFG->wwwroot.'/course/view.php?id='.$cm->course);
+        }
+    }
 
     if ($COURSE->id == SITEID) {
 /// We can eliminate hidden site activities straight away
         if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities',
-                                                      get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+                                                      get_context_instance(CONTEXT_SYSTEM))) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         return;

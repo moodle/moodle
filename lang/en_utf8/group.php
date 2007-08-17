@@ -99,6 +99,7 @@ $string['groupsnone'] = 'No groups';
 $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
 $string['groupmembersonly'] = 'Available for group members only';
+$string['groupmembersonlyerror'] = 'Sorry, you must be member of at least one group that is used in this activity.';
 
 $string['groupaddedsuccesfully'] = 'Group $a added succesfully';
 $string['nopermissionforcreation'] = 'Can\'t create group \"$a\" as you dont have the required permissions';
