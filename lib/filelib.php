@@ -379,6 +379,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
             $text = $pathisstring ? $path : implode('', file($path));
+            $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 //cookieless mode - rewrite links
@@ -642,4 +643,55 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
     }
 }
 
+/**
+ * add includes (js and css) into uploaded files
+ * before returning them, useful for themes and utf.js includes
+ * @param string text - text to search and replace
+ * @return string - text with added head includes
+ */
+function file_modify_html_header($text) {
+    // first look for <head> tag
+    global $CFG;
+    
+    $stylesheetshtml = '';
+    foreach ($CFG->stylesheets as $stylesheet) {
+        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
+    }    
+    
+    $filters = explode(",", $CFG->textfilters);
+    if (in_array('filter/mediaplugin', $filters)) {
+        // this script is needed by most media filter plugins. 
+        $ufo = "\n".'<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/ufo.js"></script>'."\n";    
+    } else {
+        $ufo = ''; 
+    }
+  
+    preg_match('/\<head\>|\<HEAD\>/', $text, $matches);
+    if ($matches) {
+        $replacement = '<head>'.$ufo.$stylesheetshtml;
+        $text = preg_replace('/\<head\>|\<HEAD\>/', $replacement, $text, 1);
+        return $text; 
+    }
+    
+    // if not, look for <html> tag, and stick <head> right after
+    preg_match('/\<html\>|\<HTML\>/', $text, $matches);
+    if ($matches) {
+        // replace <html> tag with <html><head>includes</head>
+        $replacement = '<html>."\n".<head>'.$ufo.$stylesheetshtml.'</head>';
+        $text = preg_replace('/\<html\>|\<HTML\>/', $replacement, $text, 1);
+        return $text;  
+    }
+    
+    // if not, look for <body> tag, and stick <head> before body
+    preg_match('/\<body\>|\<BODY\>/', $text, $matches);
+    if ($matches) {
+        $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>."\n".<body>';
+        $text = preg_replace('/\<body\>|\<BODY\>/', $replacement, $text, 1);
+        return $text;  
+    }    
+    
+    // if not, just stick a <head> tag at the beginning
+    $text = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".$text;
+    return $text;
+}
 ?>
