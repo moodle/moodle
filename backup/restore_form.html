@@ -270,6 +270,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</tr>";
         echo "<tr><td colspan=\"4\"><hr /></td></tr>";
         $currentrow = 0;
+        $nonrestmod = '';
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
@@ -442,7 +443,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo get_string ("sitefiles").":";
         echo "</b></td><td colspan=\"2\">";
         //If site files are in the backup file, show menu, else fixed to no
-        if ($info->backup_site_files == "true") {
+        if (isset($info->backup_site_files) && $info->backup_site_files == "true") {
             $site_file_options[0] = get_string("no");
             $site_file_options[1] = get_string("yes");
             choose_from_menu($site_file_options, "restore_site_files", $restore_site_files, "");
