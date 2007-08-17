@@ -25,6 +25,8 @@ $movecontext =  optional_param('movecontext', 0, PARAM_BOOL);//switch to make qu
                     //uneditable - form is displayed to edit category only
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
+$inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+
 if ($movecontext && !$id){
     print_error('questiondoesnotexist', 'question', $returnurl);
 }
@@ -174,26 +176,27 @@ if ($mform->is_cancelled()){
     }
 
     $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow);
-    if ($QTYPES[$qtype]->finished_edit_wizard($fromform) || $movecontext){
-
-        if (optional_param('inpopup', 0, PARAM_BOOL)) {
+    if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext){
+        if ($inpopup) {
             notify(get_string('changessaved'), '');
             close_window(3);
         } else {
             redirect($returnurl);
         }
     } else {
-        $nexturlparams = array('returnurl'=>$returnurl)
-                        + $fromform->nextpageparam;//useful for passing data to the next page which is not saved in the database
-        if ($question->id) {
-            $nexturlparams['id'] = $question->id;
-        } else { // only for creating new questions
-            $nexturlparams['category'] = $question->category;
-            $nexturlparams['qtype'] =$question->qtype;
+        $nexturlparams = array('returnurl'=>$returnurl);
+        if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)){
+            $nexturlparams += $fromform->nextpageparam;//useful for passing data to the next page which is not saved in the database
         }
+        $nexturlparams['id'] = $question->id;
         $nexturlparams['wizardnow'] = $fromform->wizard;
         $nexturl = new moodle_url('question.php', $nexturlparams);
-        redirect($nexturl);
+        if ($cmid){
+            $nexturl->param('cmid', $cmid);
+        } else {
+            $nexturl->param('courseid', $COURSE->id);
+        }
+        redirect($nexturl->out());
     }
 } else {
 

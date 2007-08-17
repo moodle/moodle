@@ -51,7 +51,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
         $label = "<div align=\"center\">".get_string('datasetrole', 'qtype_datasetdependent','numerical')."</div>";
-        $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened 
+        $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
         $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', $stringfile));
         $labelsharedwildcard = get_string("sharedwildcard", "qtype_datasetdependent");
 
@@ -71,7 +71,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
             }
         }
                         $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', $stringfile));
-              
+
 
         foreach ($possibledatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
@@ -83,8 +83,8 @@ class question_dataset_dependent_definitions_form extends moodleform {
              if (isset($datadefscat[$datasetname])){
                   $mform->addElement('static', "there is a category", $labelsharedwildcard." <strong>$datasetname </strong>", get_string('dataitemdefined',"qtype_datasetdependent", $datadefscat[$datasetname]));
             }
- 
-              //   $selected ="0";   
+
+              //   $selected ="0";
                 $mform->setDefault("dataset[$key]", $selected);
                 $datasetmenus[$datasetname]='';
                 $key++;
@@ -96,20 +96,17 @@ class question_dataset_dependent_definitions_form extends moodleform {
         //hidden elements
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_URL);
-        $mform->addElement('hidden', 'qtype');
-        $mform->setType('qtype', PARAM_ALPHA);
-        $mform->addElement('hidden', 'category');
-        $mform->setType('category', PARAM_INT);
         $mform->addElement('hidden', 'id');
-        
+        $mform->setType('id', PARAM_INT);
+
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
-        
+
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', 0);
-        
+
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);

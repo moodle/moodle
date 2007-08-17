@@ -96,11 +96,12 @@ class question_edit_calculated_form extends question_edit_form {
         }
         $this->repeat_elements($repeated, $repeatsatstart, array(), 'nounits', 'addunits', 2, get_string('addmoreunitblanks', 'qtype_calculated', '{no}'));
 
-        $firstunit =& $mform->getElement('multiplier[0]');
-        $firstunit->freeze();
-        $firstunit->setValue('1.0');
-        $firstunit->setPersistantFreeze(true);
-
+        if ($mform->elementExists('multiplier[0]')){
+            $firstunit =& $mform->getElement('multiplier[0]');
+            $firstunit->freeze();
+            $firstunit->setValue('1.0');
+            $firstunit->setPersistantFreeze(true);
+        }
         //hidden elements
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
         $mform->setType('wizard', PARAM_ALPHA);
@@ -149,15 +150,19 @@ class question_edit_calculated_form extends question_edit_form {
          $qu = new stdClass;
          $el = new stdClass;
          /* no need to call elementExists() here */
-         $el=$this->_form->getElement('category');
+         if ($this->_form->elementExists('category')){
+            $el=$this->_form->getElement('category');
+         } else {
+            $el=$this->_form->getElement('categorymoveto');
+         }
          if($value =$el->getSelected()) {
             $qu->category =$value[0];
         }else {
             $qu->category=$question->category;// on load  $question->category is set by question.php
         }
         $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
-       $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2 ;
-               $question = (object)((array)$question + $default_values);
+        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2 ;
+        $question = (object)((array)$question + $default_values);
 
         parent::set_data($question);
     }

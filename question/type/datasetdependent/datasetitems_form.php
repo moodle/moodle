@@ -87,7 +87,7 @@ class question_dataset_dependent_items_form extends moodleform {
         }
         $addremoveoptions = Array();
         $addremoveoptions['1']='1';
-        for ($i=10; $i<=100 ; $i+=10){               
+        for ($i=10; $i<=100 ; $i+=10){
              $addremoveoptions["$i"]="$i";
         }
                     $mform->addElement('header', 'additemhdr', get_string('add', 'moodle'));
@@ -150,23 +150,17 @@ class question_dataset_dependent_items_form extends moodleform {
         $mform->closeHeaderBefore('backtoquiz');
 
         //hidden elements
-        $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_URL);
-        $mform->addElement('hidden', 'qtype');
-        $mform->setType('qtype', PARAM_ALPHA);
-        $mform->addElement('hidden', 'category');
-        $mform->setType('category', PARAM_INT);
-        
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', 0);
-        
+
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', 0);
-        
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
     }
