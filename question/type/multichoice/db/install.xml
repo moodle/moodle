@@ -15,7 +15,7 @@
         <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="shuffleanswers" NEXT="partiallycorrectfeedback"/>
         <FIELD NAME="partiallycorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="correctfeedback" NEXT="incorrectfeedback"/>
         <FIELD NAME="incorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="partiallycorrectfeedback" NEXT="answernumbering"/>
-        <FIELD NAME="answernumbering" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="abc" SEQUENCE="false" ENUM="true" ENUMVALUES="'abc', 'ABC', '123', 'none'" COMMENT="Indicates how and whether the choices should be numbered." PREVIOUS="incorrectfeedback"/>
+        <FIELD NAME="answernumbering" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="abc" SEQUENCE="false" ENUM="false" COMMENT="Indicates how and whether the choices should be numbered." PREVIOUS="incorrectfeedback"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for question_multichoice" NEXT="question"/>

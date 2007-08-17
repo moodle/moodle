@@ -594,7 +594,7 @@ class question_multichoice_qtype extends default_questiontype {
      *      and it should be listed in the definition of this column in install.xml.
      */
     function get_numbering_styles() {
-        return array('abc', 'ABC', '123', 'none');
+        return array('abc', 'ABCD', '123', 'none');
     }
 
     function number_html($qnum) {
@@ -610,7 +610,7 @@ class question_multichoice_qtype extends default_questiontype {
         switch($style) {
             case 'abc':
                 return $this->number_html(chr(ord('a') + $num));
-            case 'ABC':
+            case 'ABCD':
                 return $this->number_html(chr(ord('A') + $num));
             case '123':
                 return $this->number_html(($num + 1));
