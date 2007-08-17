@@ -464,7 +464,7 @@
             $elem++;
             //site Files info
             $tab[$elem][0] = "<b>".get_string("sitefiles").":</b>";
-            if ($info->backup_site_files == "true") {
+            if (isset($info->backup_site_files) && $info->backup_site_files == "true") {
                 $tab[$elem][1] = get_string("yes");
             } else {
                 $tab[$elem][1] = get_string("no");
