@@ -361,20 +361,24 @@ class block_base {
         }
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
-         // place holder for roles button
-         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
+        // place holder for roles button
+        $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
                         '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
      
-        $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                        '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
+        if ($this->user_can_edit()) {
+            $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
+                            '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
+        }
 
         if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
             $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
                             '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
 
-        $movebuttons .= '<a class="icon delete" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                        '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a>';
+        if ($this->user_can_addto($page)) {
+            $movebuttons .= '<a class="icon delete" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
+                            '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a>';
+        }
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a class="icon left" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
