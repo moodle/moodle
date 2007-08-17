@@ -31,9 +31,11 @@
     }
 
     $strimport = get_string('import');
+    $navlinks = array();
+    $navlinks[] = array('name' => $strimport, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-    print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, 
-                 '<a href="view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$strimport);
+    print_header($course->fullname.': '.$strimport, $course->fullname.': '.$strimport, $navigation);
 
     $directories = get_list_of_plugins('course/import');
 

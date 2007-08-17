@@ -33,7 +33,7 @@
     $strpolicyagreement = get_string('policyagreement');
     $strpolicyagreementclick = get_string('policyagreementclick');
 
-    print_header($strpolicyagreement, $SITE->fullname, $strpolicyagreement);
+    print_header($strpolicyagreement, $SITE->fullname, build_navigation(array(array('name'=>$strpolicyagreement, 'link'=>null, 'type'=>'misc'))));
 
     print_heading($strpolicyagreement);
 

@@ -45,8 +45,7 @@
 
     print_header("$course->shortname: $strassigncourses",
                  $site->fullname,
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassigncourses",
-                 "searchtext");
+                 build_navigation(array(array('name' => $strassigncourses, 'link' => null, 'type' => 'misc'))), "searchtext");
 
 
 /// Print a help notice about the need to use this page

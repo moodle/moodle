@@ -2,10 +2,10 @@
 
     require_once('../../../config.php');
     require_once($CFG->libdir.'/statslib.php');
-    
+
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
-    
+
     $id         = required_param('id', PARAM_INT); // course id.
     $moduleid   = optional_param('moduleid', 0, PARAM_INT); // module id.
     $oldmod     = optional_param('oldmod', 0, PARAM_INT);
@@ -16,7 +16,7 @@
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
 
-    if ($action != 'view' && $action != 'post') { 
+    if ($action != 'view' && $action != 'post') {
         $action = ''; // default to all (don't restrict)
     }
 
@@ -35,14 +35,14 @@
 
     require_login($course->id);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+
     if (!has_capability('moodle/site:viewreports', $context)) {
         print_error('mustbeteacher', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
-    
 
-    add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id); 
-    
+
+    add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id);
+
     $strparticipation = get_string('participationreport');
     $strviews         = get_string('views');
     $strposts         = get_string('posts');
@@ -51,15 +51,11 @@
     $strallactions    = get_string('allactions');
     $strreports       = get_string('reports');
 
-    $strnav = "<a href=\"../../view.php?id=$course->id\">" . format_string($course->shortname) . "</a> -> 
-               <a href=\"../../report.php?id=$course->id\">$strreports</a> -> ". $strparticipation;
-    
-    print_header("$course->shortname: $strparticipation", $course->fullname,
-                 "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
-                  $strparticipation");
-
-//    print_header($course->fullname.' '.$strparticipation,$strparticipation,$strnav);
+    $navlinks = array();
+    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $strparticipation, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header("$course->shortname: $strparticipation", $course->fullname, $navigation);
 
     $allowedmodules = array('assignment','book','chat','choice','exercise','forum','glossary','hotpot',
                             'journal','lesson','questionnaire','quiz','resource','scorm',
@@ -96,7 +92,7 @@
             $timeoptions[strtotime('-'.$i.' weeks',$now)] = get_string('numweeks','moodle',$i);
         }
     }
-    // months 
+    // months
     for ($i = 2; $i < 12; $i++) {
         if (strtotime('-'.$i.' months',$now) >= $minlog) {
             $timeoptions[strtotime('-'.$i.' months',$now)] = get_string('nummonths','moodle',$i);
@@ -121,8 +117,8 @@
                            'view' => $strview,
                            'post' => $strpost,
                            );
-    
-    
+
+
     // print first controls.
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
          '<input type="hidden" name="id" value="'.$course->id.'" />'."\n".
@@ -144,7 +140,7 @@
         print_footer();
         exit;
     }
-    
+
     $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
         .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;moduleid='
         .$moduleid.'&amp;action='.$action.'&amp;perpage='.$perpage;
@@ -170,13 +166,13 @@
     if (!$instances = get_all_instances_in_course($module->name,$course)) {
         error(get_string('noinstances','error',$modulename));
     }
-    
+
     $instanceoptions = array();
-    
+
     foreach ($instances as $instance) {
         $instanceoptions[$instance->id] = $instance->name;
     }
-    
+
     if (count($instanceoptions) == 1) { // just display it if there's only one.
         $instanceid = array_pop(array_keys($instanceoptions));
     }
@@ -193,7 +189,7 @@
     echo '<input type="submit" value="'.get_string('go').'" />'."\n".
         '</div>'."\n".
         "</form>\n";
-        
+
     if (!empty($instanceid) && !empty($roleid)) {
         if (!$cm = get_coursemodule_from_instance($module->name,$instanceid,$course->id)) {
             print_error('cmunknown');
@@ -211,7 +207,7 @@
         $table->set_attribute('class', 'generaltable generalbox reporttable');
 
         $table->sortable(true,'lastname','ASC');
-        
+
         $table->set_control_variables(array(
                                             TABLE_VAR_SORT    => 'ssort',
                                             TABLE_VAR_HIDE    => 'shide',
@@ -221,7 +217,7 @@
                                             TABLE_VAR_PAGE    => 'spage'
                                             ));
         $table->setup();
-        
+
 
         $primary_roles = sql_primary_role_subselect();   // In dmllib.php
         $sql = 'SELECT DISTINCT prs.userid, u.firstname,u.lastname,u.idnumber,count(l.action) as count FROM ('.$primary_roles.') prs'
@@ -237,14 +233,14 @@
                 break;
             default:
                 // some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-                $sql .= ' AND action IN (\''.implode('\',\'',array_merge($viewnames,$postnames)).'\' )'; 
+                $sql .= ' AND action IN (\''.implode('\',\'',array_merge($viewnames,$postnames)).'\' )';
 
         }
-        
+
         $sql .= ' WHERE prs.courseid = '.$course->id.' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE.' AND prs.courseid = '.$course->id;
-        
+
         if ($table->get_sql_where()) {
-            $sql .= ' AND '.$table->get_sql_where(); //initial bar 
+            $sql .= ' AND '.$table->get_sql_where(); //initial bar
         }
 
         $sql .= ' GROUP BY prs.userid,u.firstname,u.lastname,u.idnumber,l.userid';
@@ -254,9 +250,9 @@
         }
 
         $countsql = 'SELECT COUNT(DISTINCT(prs.userid)) FROM ('.$primary_roles.') prs '
-            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid WHERE prs.courseid = '.$course->id 
+            .' JOIN '.$CFG->prefix.'user u ON u.id = prs.userid WHERE prs.courseid = '.$course->id
             .' AND prs.primary_roleid = '.$roleid.' AND prs.contextlevel = '.CONTEXT_COURSE;
-        
+
         $totalcount = count_records_sql($countsql);
 
         if ($table->get_sql_where()) {
@@ -264,11 +260,11 @@
         } else {
             $matchcount = $totalcount;
         }
-        
+
         echo '<div id="participationreport">' . "\n";
         echo '<p class="modulename">'.$modulename . ' ' . $strviews.': '.implode(', ',$viewnames).'<br />'."\n"
             . $modulename . ' ' . $strposts.': '.implode(', ',$postnames).'</p>'."\n";
- 
+
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
 
@@ -277,14 +273,14 @@
         }
 
         $data = array();
-        
+
         $a->count = $totalcount;
         $a->items = $role->name;
-        
+
         if ($matchcount != $totalcount) {
             $a->items .= ' ('.get_string('matched').' '.$matchcount.')';
         }
-        
+
         echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
         echo '
 <script type="text/javascript">
@@ -346,7 +342,7 @@ function checknos() {
         else if ($matchcount > 0 && $perpage < $matchcount) {
             echo '<div id="showall"><a href="'.$baseurl.'&amp;perpage='.SHOW_ALL_PAGE_SIZE.'">'.get_string('showall', '', $matchcount).'</a></div>'."\n";
         }
-    
+
         echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> '."\n";
         echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> '."\n";
         if ($perpage >= $matchcount) {
@@ -361,7 +357,7 @@ function checknos() {
         echo '</div>'."\n";
 
     }
-    
+
     print_footer();
 
 ?>

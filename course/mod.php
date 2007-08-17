@@ -477,7 +477,7 @@
 
         $CFG->pagepath = 'mod/'.$module->name.'/delete';
 
-        print_header_simple($strdeletecheck, '', $strdeletecheck);
+        print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck,'link'=>'','type'=>'misc'))));
 
         print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
         print_heading($strdeletecheckfull);
@@ -646,7 +646,7 @@
         } else {
             $pageheading = get_string("addinganew", "moodle", $fullmodulename);
         }
-        
+
         $CFG->pagepath = 'mod/'.$module->name;
         if (!empty($type)) {
             $CFG->pagepath .= '/' . $type;
@@ -671,12 +671,12 @@
     } else {
         $focuscursor = "form.name";
     }
-    
+
     $navlinks = array();
     $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
     $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'action');
     $navigation = build_navigation($navlinks);
-    
+
     print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
 
     if (!empty($cm->id)) {

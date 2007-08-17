@@ -1,10 +1,10 @@
 <?php // $Id$
 
-//  Remove oneself or someone else from a course, unassigning all 
+//  Remove oneself or someone else from a course, unassigning all
 //  roles one might have
 //
-//  This will not delete any of their data from the course, 
-//  but will remove them from the participant list and prevent 
+//  This will not delete any of their data from the course,
+//  but will remove them from the participant list and prevent
 //  any course email being sent to them.
 
     require_once("../config.php");
@@ -59,20 +59,22 @@
 
 
     $strunenrol = get_string('unenrol');
+    $navlinks = array();
+    $navlinks[] = array('name' => $strunenrol, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-    print_header("$course->shortname: $strunenrol", $course->fullname, 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strunenrol"); 
+    print_header("$course->shortname: $strunenrol", $course->fullname, $navigation);
 
     if ($userid) {
         if (!$user = get_record('user', 'id', $userid)) {
             error('That user does not exist!');
         }
         $strunenrolsure  = get_string('unenrolsure', '', fullname($user, true));
-        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=".sesskey(), 
+        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=".sesskey(),
                                       $_SERVER['HTTP_REFERER']);
     } else {
         $strunenrolsure  = get_string('unenrolsure', '', get_string("yourself"));
-        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;confirm=yes&amp;sesskey=".sesskey(), 
+        notice_yesno($strunenrolsure, "unenrol.php?id=$id&amp;confirm=yes&amp;sesskey=".sesskey(),
                                       $_SERVER['HTTP_REFERER']);
     }
 

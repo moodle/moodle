@@ -52,9 +52,9 @@
     $avoidroles = array();
 
     if ($roles = get_roles_used_in_context($context, true)) {
-        // We should ONLY allow roles with moodle/course:view because otherwise we get little niggly issues 
+        // We should ONLY allow roles with moodle/course:view because otherwise we get little niggly issues
         // like MDL-8093
-        // We should further exclude "admin" users (those with "doanything" at site level) because 
+        // We should further exclude "admin" users (those with "doanything" at site level) because
         // Otherwise they appear in every participant list
 
         $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
@@ -76,7 +76,7 @@
     }
 
     // no roles to display yet?
-    if (empty($rolenames)) {    
+    if (empty($rolenames)) {
         if (has_capability('moodle/user:assign', $context)) {
             redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
@@ -124,10 +124,12 @@
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and $course->groupmodeforce and
                          !has_capability('moodle/site:accessallgroups', $context));
 
-    if ($isseparategroups and (!$currentgroup) ) { 
-        print_header("$course->shortname: ".get_string('participants'), $course->fullname,
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
-                     get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
+    if ($isseparategroups and (!$currentgroup) ) {
+        $navlinks = array();
+        $navlinks[] = array('name' => get_string('participants'), 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+
+        print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
         exit;
@@ -138,16 +140,11 @@
 
 /// Print headers
 
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: ".get_string('participants'), $course->fullname,
-                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
-                     get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-    } else {
-        print_header("$course->shortname: ".get_string('participants'), $course->fullname,
-                     get_string('participants'), "", "", true, "&nbsp;", navmenu($course));
-    }
+    $navlinks = array();
+    $navlinks[] = array('name' => get_string('participants'), 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-
+    print_header("$course->shortname: ".get_string('participants'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 /// setting up tags
     if ($course->id == SITEID) {
@@ -296,7 +293,7 @@
     $table->define_columns($tablecolumns);
     $table->define_headers($tableheaders);
     $table->define_baseurl($baseurl);
-    
+
     $table->sortable(true, 'lastaccess', SORT_DESC);
 
     $table->set_attribute('cellspacing', '0');
@@ -330,9 +327,9 @@
 
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
     {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
-    {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)"; 
-    
-    $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';   
+    {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)";
+
+    $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
 
     // exclude users with roles we are avoiding
     if ($avoidroles) {
@@ -342,7 +339,7 @@
     } else {
         $adminroles = '';
     }
-    
+
     // join on 2 conditions
     // otherwise we run into the problem of having records in ul table, but not relevant course
     // and user record is not pulled out
@@ -524,13 +521,13 @@
 
         if (!empty($userlist))  {
             foreach ($userlist as $user) {
-                if ($user->hidden) {        
+                if ($user->hidden) {
                 // if the assignment is hidden, display icon
                     $hidden = "<img src=\"{$CFG->pixpath}/t/hide.gif\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                 } else {
-                    $hidden = '';  
+                    $hidden = '';
                 }
-                
+
                 if ($user->lastaccess) {
                     $lastaccess = format_time(time() - $user->lastaccess, $datestring);
                 } else {
@@ -548,15 +545,15 @@
                         $country = $countries[$user->country];
                     }
                 }
-                
+
                 $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-                
+
                 if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) ||has_capability('moodle/user:viewdetails', $context))) {
                     $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
                 } else {
-                    $profilelink = '<strong>'.fullname($user).'</strong>';   
+                    $profilelink = '<strong>'.fullname($user).'</strong>';
                 }
-                               
+
                 $data = array (
                         print_user_picture($user->id, $course->id, $user->picture, false, true, $piclink),
                         $profilelink);
@@ -604,7 +601,7 @@
         }
         $displaylist['extendenrol.php'] = get_string('extendenrol');
         $displaylist['groupextendenrol.php'] = get_string('groupextendenrol');
-        
+
         helpbutton("participantswithselectedusers", get_string("withselectedusers"));
         choose_from_menu ($displaylist, "formaction", "", get_string("withselectedusers"), "if(checksubmit(this.form))this.form.submit();", "");
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';

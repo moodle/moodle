@@ -15,8 +15,10 @@
 
     $strreports = get_string('reports');
 
-    print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, 
-                 '<a href="view.php?id='.$course->id.'">'.$course->shortname.'</a> -> '.$strreports);
+    $navlinks = array();
+    $navlinks[] = array('name' => $strreports, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header($course->fullname.': '.$strreports, $course->fullname.': '.$strreports, $navigation);
 
     $directories = get_list_of_plugins('course/report');
 
@@ -29,6 +31,6 @@
             echo '</div>';
         }
     }
-    
+
     print_footer();
 ?>

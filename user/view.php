@@ -1,11 +1,11 @@
 <?PHP // $Id$
 
 //  Display profile for a particular user
-    
+
     require_once("../config.php");
     require_once($CFG->dirroot.'/user/profile/lib.php');
     require_once($CFG->dirroot.'/tag/lib.php');
-    
+
     $id      = optional_param('id',     0,      PARAM_INT);   // user id
     $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
     $enable  = optional_param('enable', '');                  // enable email
@@ -39,17 +39,17 @@
     }
     $usercontext   = get_context_instance(CONTEXT_USER, $user->id);       // User context
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);   // SYSTEM context
-    
+
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         // do not force parents to enrol
         if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
             require_login($course->id);
         }
     }
-    
+
     // make sure user can view this student's profile
-    if ($USER->id != $user->id 
-        && !has_capability('moodle/user:viewdetails', $coursecontext) 
+    if ($USER->id != $user->id
+        && !has_capability('moodle/user:viewdetails', $coursecontext)
         && !has_capability('moodle/user:viewdetails', $usercontext)) {
         error('You can not view the profile of this user');
     }
@@ -67,14 +67,21 @@
 
     $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursecontext));
 
+    $navlinks = array();
+    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+
 /// If the user being shown is not ourselves, then make sure we are allowed to see them!
 
     if (!$currentuser) {
         if ($course->id == SITEID) {  // Reduce possibility of "browsing" userbase at site level
-            if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id) and !has_capability('moodle/user:viewdetails', $usercontext)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
-                print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
-                              "<a href=\"index.php?id=$course->id\">$strparticipants</a> -> $struser",
-                              "", "", true, "&nbsp;", navmenu($course));
+            if ($CFG->forceloginforprofiles and !isteacherinanycourse()
+                    and !isteacherinanycourse($user->id)
+                    and !has_capability('moodle/user:viewdetails', $usercontext)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
+
+                $navlinks[] = array('name' => $struser, 'link' => null, 'type' => 'misc');
+                $navigation = build_navigation($navlinks);
+
+                print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                 print_heading(get_string('usernotavailable', 'error'));
                 print_footer($course);
                 exit;
@@ -82,16 +89,14 @@
         } else {   // Normal course
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
                 if (has_capability('moodle/course:view', $coursecontext)) {
-                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
-                                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                                  <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
-                                  "", "", true, "&nbsp;", navmenu($course));
+                    $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
+                    $navigation = build_navigation($navlinks);
+                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                     print_heading(get_string('notenrolled', '', $fullname));
                 } else {
-                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
-                                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                                  <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $struser",
-                                  "", "", true, "&nbsp;", navmenu($course));
+                    $navlinks[] = array('name' => $struser, 'link' => null, 'type' => 'misc');
+                    $navigation = build_navigation($navlinks);
+                    print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                     print_heading(get_string('notenrolledprofile'));
                 }
                 print_continue($_SERVER['HTTP_REFERER']);
@@ -104,31 +109,26 @@
         // If groups are in use, make sure we can see that group
         if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
             require_login();
-    
+
             ///this is changed because of mygroupid
             $gtrue = (bool)groups_get_all_groups($course->id, $user->id);
             if (!$gtrue) {
-                print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
-                             "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                              <a href=\"index.php?id=$course->id\">$strparticipants</a>",
-                              "", "", true, "&nbsp;", navmenu($course));
+                $navigation = build_navigation($navlinks);
+                print_header("$strpersonalprofile: ", "$strpersonalprofile: ", $navigation, "", "", true, "&nbsp;", navmenu($course));
                 error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
             }
         }
     }
-  
+
 
 /// We've established they can see the user's name at least, so what about the rest?
 
-    if ($course->id != SITEID) {
-        print_header("$strpersonalprofile: $fullname", "$strpersonalprofile: $fullname",
-                     "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"index.php?id=$course->id\">$strparticipants</a> -> $fullname",
-                      "", "", true, "&nbsp;", navmenu($course));
-    } else {
-        print_header("$course->fullname: $strpersonalprofile: $fullname", $course->fullname,
-                     "$fullname", "", "", true, "&nbsp;", navmenu($course));
-    }
+    $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
+
+    $navigation = build_navigation($navlinks);
+
+    print_header("$course->fullname: $strpersonalprofile: $fullname", $course->fullname,
+                 $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 
     if (($course->id != SITEID) and ! isguest() ) {   // Need to have access to a course to see that info
@@ -173,13 +173,13 @@
 
     if (is_mnet_remote_user($user)) {
         $sql = "
-             SELECT DISTINCT 
-                 h.id, 
+             SELECT DISTINCT
+                 h.id,
                  h.name,
                  h.wwwroot,
                  a.name as application,
                  a.display_name
-             FROM 
+             FROM
                  {$CFG->prefix}mnet_host h,
                  {$CFG->prefix}mnet_application a
              WHERE
@@ -190,7 +190,7 @@
                  h.name";
 
         $remotehost = get_record_sql($sql);
-        
+
         echo '<p class="errorboxcontent">'.get_string('remote'.$remotehost->application.'user')." <br />\n";
         if ($USER->id == $user->id) {
             if ($remotehost->application =='moodle') {
@@ -302,7 +302,7 @@
     }
 
     if ($user->skype && !isset($hiddenfields['skypeid'])) {
-        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype). 
+        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).
             ' <img src="http://mystatus.skype.com/smallicon/'.urlencode($user->skype).'" alt="'.get_string('status').'" '.
             ' /></a>');
     }
@@ -351,7 +351,7 @@
         print_row(get_string("lastaccess").":", $datestring);
     }
 /// printing roles
-    
+
     if ($rolestring = get_user_roles_in_context($id, $coursecontext->id)) {
         print_row(get_string('roles').':', format_string($rolestring, false));
     }
@@ -373,14 +373,14 @@
 /// Printing Interests
 	if( !empty($CFG->usetags)) {
 	    $interests = get_item_tags('user', $user->id);
-    
+
         $instereststr = tag_links_csv($interests);
-    
+
         if ($interests) {
             print_row(get_string('interests').": ",rtrim($instereststr));
         }
     }
-/// End of Printing Interests    
+/// End of Printing Interests
 
     echo "</table>";
 

@@ -1,21 +1,21 @@
-<?php // $Id: uploadgroups.php, 2005/10/31 19:09:31 
+<?php // $Id: uploadgroups.php, 2005/10/31 19:09:31
 
 /// Bulk group creation registration script from a comma separated file
 
     require_once('../../../config.php');
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    
+
     $id = required_param('id', PARAM_INT);    // Course id
-    
+
     if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
     }
-    
+
     require_login($course->id);
     $context = get_context_instance(CONTEXT_COURSE, $id);
-    
-    
+
+
     if (!has_capability('moodle/course:managegroups', $context)) {
         error("You do not have the required permissions to manage groups.");
     }
@@ -27,7 +27,7 @@
       $strimportgroups = get_string("importgroups");
 
     $csv_encode = '/\&\#44/';
-    if (isset($CFG->CSV_DELIMITER)) {        
+    if (isset($CFG->CSV_DELIMITER)) {
         $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
         $csv_delimiter2 = $CFG->CSV_DELIMITER;
 
@@ -40,11 +40,17 @@
     }
 
 /// Print the header
+    $navlinks = array();
+    $navlinks[] = array('name' => $course->shortname,
+                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => get_string('import'),
+                        'link' => "$CFG->wwwroot/course/import.php?id=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => $strimportgroups, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-    print_header("$course->shortname: $strimportgroups", $course->fullname, 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
-                 "-> $strimportgroups");
+    print_header("$course->shortname: $strimportgroups", $course->fullname, $navigation);
 
 /// If a file has been uploaded, then process it
 
@@ -65,12 +71,12 @@
         // make arrays of valid fields for error checking
         $required = array("groupname" => 1, );
         $optionalDefaults = array("lang" => 1, );
-        $optional = array("coursename" => 1, 
+        $optional = array("coursename" => 1,
                           "idnumber" =>1,
                           "description" => 1,
                           "enrolmentkey" => 1,
                           "theme" => 1,
-                          "picture" => 1, 
+                          "picture" => 1,
                           "hidepicture" => 1, );
 
         // --- get header (field names) ---
@@ -78,8 +84,8 @@
         // check for valid field names
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
-            if ( !(isset($required[$h]) or 
-                isset($optionalDefaults[$h]) or 
+            if ( !(isset($required[$h]) or
+                isset($optionalDefaults[$h]) or
                 isset($optional[$h])) ) {
                 error(get_string('invalidfieldname', 'error', $h), 'index.php?id='.$id.'&amp;sesskey='.$USER->sesskey);
             }
@@ -96,7 +102,7 @@
         $linenum = 2; // since header is line 1
 
         while (!feof ($fp)) {
-            
+
             $newgroup = new object();//to make Martin happy
             foreach ($optionalDefaults as $key => $value) {
                 $newgroup->$key = current_language(); //defaults to current language
@@ -117,7 +123,7 @@
                     if (isset($required[$name]) and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
                               get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'), 
+                              get_string('processingstops', 'error'),
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     else if ($name == "groupname") {
@@ -129,7 +135,7 @@
                     }
                 }
                 ///Find the courseid of the course with the given shortname
-                
+
                 //if idnumber is set, we use that.
                 //unset invalid courseid
                 if (isset($newgroup->idnumber)){
@@ -137,23 +143,23 @@
                         notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }
-                    $newgroup->courseid = $mycourse->id;        
+                    $newgroup->courseid = $mycourse->id;
                 }
                 //else use course short name to look up
                 //unset invalid coursename (if no id)
-                            
+
                 else if (isset($newgroup->coursename)){
                     if (!$mycourse = get_record('course', 'shortname',$newgroup->coursename)){
                         notify(get_string('unknowncourse', 'error', $newgroup->coursename));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }
-                    $newgroup->courseid = $mycourse->id;    
+                    $newgroup->courseid = $mycourse->id;
                 }
                 //else juse use current id
                 else{
                     $newgroup->courseid = $id;
                 }
-                
+
                 //if courseid is set
                 if (isset($newgroup->courseid)){
 
@@ -162,22 +168,22 @@
                     $linenum++;
                     $groupname = $newgroup->name;
                     $newgrpcoursecontext = get_context_instance(CONTEXT_COURSE, $newgroup->courseid);
-                    
+
                     ///Users cannot upload groups in courses they cannot update.
                     if (!has_capability('moodle/course:managegroups', $newgrpcoursecontext)){
                         notify(get_string('nopermissionforcreation','group',$groupname));
 
                     } else {
                         if ( $groupid = groups_get_group_by_name($newgroup->courseid, $groupname) || !($newgroup->id = groups_create_group($newgroup)) ) {
-    
+
                             //Record not added - probably because group is already registered
                             //In this case, output groupname from previous registration
                             if ($groupid) {
                                 notify("$groupname :".get_string('groupexistforcourse', 'error', $groupname));
                             } else {
                                 notify(get_string('groupnotaddederror', 'error', $groupname));
-                            } 
-                        }  
+                            }
+                        }
                         else {
                             notify(get_string('groupaddedsuccesfully', 'group', $groupname));
                         }

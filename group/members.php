@@ -118,15 +118,17 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
 // Print the page and form
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
+$stradduserstogroup = get_string('adduserstogroup', 'group');
 
 $groupname = format_string($group->name);
 
-print_header("$course->shortname: $strgroups",
-             $course->fullname,
-             "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
-             "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
-             "-> <a href=\"$CFG->wwwroot/group/index.php?id=$courseid\">$strgroups</a>".
-             '-> '. get_string('adduserstogroup', 'group'), '', '', true, '', user_login_string($course, $USER));
+$navlinks = array();
+$navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$courseid", 'type' => 'misc');
+$navlinks[] = array('name' => $strgroups, 'link' => "$CFG->wwwroot/group/index.php?id=$courseid", 'type' => 'misc');
+$navlinks[] = array('name' => $stradduserstogroup, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+
+print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '', '', true, '', user_login_string($course, $USER));
 
 ?>
 <div id="addmembersform">

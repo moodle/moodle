@@ -71,7 +71,7 @@
     //Load custom profile fields data
     profile_load_data($user);
 
-  
+
     //create form
     $userform = new user_edit_form();
     $userform->set_data($user);
@@ -98,12 +98,12 @@
 
         //update preferences
         useredit_update_user_preference($usernew);
-        
+
         //update interests
         if (!empty($CFG->usetags)) {
             useredit_update_interests($usernew, $usernew->interests);
         }
-        
+
         //update user picture
         if (!empty($CFG->gdversion) and empty($CFG->disableuserimages)) {
             useredit_update_picture($usernew, $userform);
@@ -134,17 +134,16 @@
     $streditmyprofile = get_string('editmyprofile');
     $strparticipants  = get_string('participants');
     $userfullname     = fullname($user, true);
-    if ($course->id != SITEID) {
-        print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                      -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
-                      -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
-                      -> $streditmyprofile", "");
-    } else {
-        print_header("$course->shortname: $streditmyprofile", $course->fullname,
-                     "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
-                      -> $streditmyprofile", "");
-    }
+
+    $navlinks = array();
+    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $userfullname,
+                        'link' => "view.php?id=$user->id&amp;course=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => $streditmyprofile, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header("$course->shortname: $streditmyprofile", $course->fullname, $navigation, "");
+
     /// Print tabs at the top
     $showroles = 1;
     $currenttab = 'editprofile';

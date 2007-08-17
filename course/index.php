@@ -15,7 +15,7 @@
     $moveto   = optional_param('moveto',-1,PARAM_INT);
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
-    
+
     $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     if (!$site = get_site()) {
@@ -71,17 +71,18 @@
         if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
             $strcourses = get_string('courses');
             $strcategories = get_string('categories');
-            print_header("$site->shortname: $strcategories", $strcourses, 
+            print_header("$site->shortname: $strcategories", build_navigation(array(array('name'=>$strcourses,'link'=>'','type'=>'misc'))),
                           $strcategories, '', '', true, update_categories_button());
             print_heading($strcategories);
             print_box_start('categorybox');
-            print_category_create_form();            
+            print_category_create_form();
             print_whole_category_list();
             print_box_end();
             print_course_search();
         } else {
             $strfulllistofcourses = get_string('fulllistofcourses');
-            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
+            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses,
+                    build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
                          '', '', true, update_categories_button());
             print_box_start('courseboxes');
             print_category_create_form();
@@ -89,7 +90,7 @@
             print_box_end();
         }
 
-        /// I am not sure this context in the next has_capability call is correct. 
+        /// I am not sure this context in the next has_capability call is correct.
         if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $CFG->enablecourserequests) {  // Print link to request a new course
             print_single_button('request.php', NULL, get_string('courserequest'), 'get');
         }
@@ -108,24 +109,24 @@
 /// From now on is all the admin/course creator functions
 
 /// Print headings
-    
+
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         require_once($CFG->libdir.'/adminlib.php');
-        admin_externalpage_setup('coursemgmt');    
+        admin_externalpage_setup('coursemgmt');
         admin_externalpage_print_header();
     } else {
-        print_header("$site->shortname: $strcategories", $strcourses, 
-                  $strcategories, '', '', true, update_categories_button());    
-    }      
-    
+        print_header("$site->shortname: $strcategories", build_navigation(array(array('name'=>$strcourses,'link'=>'','type'=>'misc'))),
+                  $strcategories, '', '', true, update_categories_button());
+    }
+
     print_heading($strcategories);
 
 /// Delete a category if necessary
 
     if (!empty($delete) and confirm_sesskey()) {
-          
+
           // context is coursecat, if not present admins should have it set in site level
-         $context = get_context_instance(CONTEXT_COURSECAT, $delete);        
+         $context = get_context_instance(CONTEXT_COURSECAT, $delete);
         if ($deletecat = get_record('course_categories', 'id', $delete) and has_capability('moodle/category:delete', $context)) {
             if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
                 /// Send the children categories to live with their grandparent
@@ -136,8 +137,8 @@
                         }
                     }
                 }
-                
-                ///  If the grandparent is a valid (non-zero) category, then 
+
+                ///  If the grandparent is a valid (non-zero) category, then
                 ///  send the children courses to live with their grandparent as well
                 if ($deletecat->parent) {
                     if ($childcourses = get_records('course', 'category', $deletecat->id)) {
@@ -148,13 +149,13 @@
                         }
                     }
                 }
-                
+
                 /// Finally delete the category itself
                 if (delete_records('course_categories', 'id', $deletecat->id)) {
                     notify(get_string('categorydeleted', '', format_string($deletecat->name)));
                     // MLD-9983
                     events_trigger('category_deleted', $deletecat);
-                }             
+                }
             }
             else {
                 $strdeletecategorycheck = get_string('deletecategorycheck','', format_string($deletecat->name));
@@ -162,7 +163,7 @@
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
 
-                print_footer();  
+                print_footer();
                 exit();
             }
         }
@@ -188,14 +189,14 @@
                 if (! set_field('course_categories', 'parent', $moveto, 'id', $tempcat->id)) {
                     notify('Could not update that category!');
                 } else {
-                    rebuild_context_rel(get_context_instance(CONTEXT_COURSECAT, $move)); 
-                }            
+                    rebuild_context_rel(get_context_instance(CONTEXT_COURSECAT, $move));
+                }
             }
         }
     }
 
 
-/// Hide or show a category 
+/// Hide or show a category
     if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
         if (!empty($hide)) {
             $tempcat = get_record('course_categories', 'id', $hide);
@@ -218,7 +219,7 @@
 /// Move a category up or down
 
     if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
-        
+
         $swapcategory = NULL;
         $movecategory = NULL;
 
@@ -283,11 +284,11 @@
             }
         }
     }
-    
+
     fix_course_sortorder();
 
 /// Print form for creating new categories
-    
+
     if (has_capability('moodle/category:create', get_context_instance(CONTEXT_SYSTEM))) {
         $mform->display();
     }
@@ -323,7 +324,7 @@
         $options['category'] = $category->id;
         print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
     }
-    
+
     if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
         print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
     }
@@ -341,7 +342,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
     global $CFG, $USER;
 
     static $str = '';
-    
+
     if (empty($str)) {
         $str->delete   = get_string('delete');
         $str->moveup   = get_string('moveup');
@@ -350,11 +351,11 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->hide     = get_string('hide');
         $str->show     = get_string('show');
     }
-    
+
     if ($category) {
 
         $context  = get_context_instance(CONTEXT_COURSECAT, $category->id);
-          
+
         echo '<tr><td align="left" class="name">';
         for ($i=0; $i<$depth;$i++) {
             echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -373,7 +374,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             echo '<a title="'.$str->delete.'" href="index.php?delete='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                  ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$str->delete.'" /></a> ';
         }
-        
+
         if (has_capability('moodle/category:visibility', $context)) {
             if (!empty($category->visible)) {
                 echo '<a title="'.$str->hide.'" href="index.php?hide='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
@@ -423,7 +424,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
             $down = $last ? false : true;
             $first = false;
 
-            print_category_edit($cat, $displaylist, $parentslist, $depth+1, $up, $down);         
+            print_category_edit($cat, $displaylist, $parentslist, $depth+1, $up, $down);
         }
     }
 }

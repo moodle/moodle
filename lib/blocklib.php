@@ -16,7 +16,7 @@ define('BLOCKS_PINNED_FALSE',1);
 define('BLOCKS_PINNED_BOTH',2);
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->dirroot.'/course/lib.php'); // needed to solve all those: Call to undefined function: print_recent_activity() when adding Recent Activity 
+require_once($CFG->dirroot.'/course/lib.php'); // needed to solve all those: Call to undefined function: print_recent_activity() when adding Recent Activity
 
 // Returns false if this block is incompatible with the current version of Moodle.
 function block_is_compatible($blockname) {
@@ -360,8 +360,8 @@ function blocks_print_group(&$page, &$pageblocks, $position) {
     $managecourseblocks = has_capability('moodle/site:manageblocks', $coursecontext);
     $editmymoodle = $page->type == PAGE_MY_MOODLE && has_capability('moodle/my:manageblocks', $coursecontext);
 
-    if ($page->blocks_default_position() == $position && 
-        $page->user_is_editing() && 
+    if ($page->blocks_default_position() == $position &&
+        $page->user_is_editing() &&
         ($managecourseblocks || $editmymoodle || $myownblogpage)) {
 
         blocks_print_adminblock($page, $pageblocks);
@@ -522,7 +522,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 $page->print_header(get_string('pageheaderconfigablock', 'moodle'), array($strheading => ''));
 
                 echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
- 
+
                 print_heading($strheading);
                 echo '<form method="post" action="'. $page->url_get_path() .'">';
                 echo '<p>';
@@ -1042,7 +1042,8 @@ function upgrade_blocks_db($continueto) {
 
     if (empty($CFG->blocks_version)) {                  // Blocks have never been installed.
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '',
+        print_header($strdatabaseupgrades, $strdatabaseupgrades,
+                build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '',
                 upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
 
         upgrade_log_start();
@@ -1088,7 +1089,8 @@ function upgrade_blocks_db($continueto) {
 
     if ($blocks_version > $CFG->blocks_version) {       // Upgrade tables
         $strdatabaseupgrades = get_string('databaseupgrades');
-        print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
+        print_header($strdatabaseupgrades, $strdatabaseupgrades,
+                build_navigation(array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'))), '', upgrade_get_javascript());
 
         upgrade_log_start();
         print_heading('blocks');
@@ -1253,7 +1255,8 @@ function upgrade_blocks_plugins($continueto) {
             } else if ($currblock->version < $block->version) {
                 if (empty($updated_blocks)) {
                     $strblocksetup    = get_string('blocksetup');
-                    print_header($strblocksetup, $strblocksetup, $strblocksetup, '',
+                    print_header($strblocksetup, $strblocksetup,
+                            build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 $updated_blocks = true;
@@ -1331,7 +1334,8 @@ function upgrade_blocks_plugins($continueto) {
             }
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');
-                print_header($strblocksetup, $strblocksetup, $strblocksetup, '',
+                print_header($strblocksetup, $strblocksetup,
+                        build_navigation(array(array('name' => $strblocksetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             $updated_blocks = true;

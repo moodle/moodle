@@ -375,8 +375,9 @@ class resource_ims extends resource_base {
 
                 $this->navlinks[] = array('name' => format_string($resource->name), 'link' => '', 'type' => 'activityinstance');
                 $this->navigation = build_navigation($this->navlinks);
-                 
-                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+
+                print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                        update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
             }
             print_simple_box_start('center', '60%');
             echo '<p align="center">'.$errortext.'</p>';
@@ -425,8 +426,11 @@ class resource_ims extends resource_base {
     /// Check whether this is supposed to be a popup, but was called directly
 
         if (empty($frameset) && $resource->popup && !$inpopup) {    /// Make a page and a pop-up window
+            $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
+            $this->navigation = build_navigation($this->navlinks);
 
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
             echo "\n<script type=\"text/javascript\">";
             echo "\n<!--\n";
@@ -612,7 +616,7 @@ class resource_ims extends resource_base {
 
         if (!isset($defaults['popup'])) {
             // use form defaults
-    
+
         } else if (!empty($defaults['popup'])) {
             $defaults['windowpopup'] = 1;
             if (array_key_exists('popup', $defaults)) {
@@ -676,7 +680,7 @@ class resource_ims extends resource_base {
         $mform->addElement('selectyesno', 'param_skipsubmenus', get_string('skipsubmenus', 'resource'));
         $mform->setDefault('param_skipsubmenus', 1);
         $mform->disabledIf('param_skipsubmenus', 'param_navigationmenu', 'eq', 1);
-        
+
         $mform->addElement('selectyesno', 'param_navigationupbutton', get_string('navigationup', 'resource'));
         $mform->setDefault('param_navigationupbutton', 1);
         $mform->disabledIf('param_navigationupbutton', 'param_navigationmenu', 'eq', 1);

@@ -11,7 +11,7 @@
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad');
         }
-        
+
         $USER = get_complete_user_data('id', $USER->realuser);
         load_all_capabilities();   // load all this user's normal capabilities
 
@@ -40,7 +40,7 @@
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad');
     }
-    
+
     if (! $course = get_record('course', 'id', $id)) {
         error("Course ID was incorrect");
     }
@@ -97,7 +97,8 @@
     $strloginas    = get_string('loginas');
     $strloggedinas = get_string('loggedinas', '', $newfullname);
 
-    print_header_simple($strloggedinas, '', $strloggedinas, '', '', true, '&nbsp;', navmenu($course));
+    print_header_simple($strloggedinas, '', build_navigation(array(array('name'=>$strloggedinas, 'link'=>'','type'=>'misc'))),
+            '', '', true, '&nbsp;', navmenu($course));
     notice($strloggedinas, "$CFG->wwwroot/course/view.php?id=$course->id");
 
 

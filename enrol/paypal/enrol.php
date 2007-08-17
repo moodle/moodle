@@ -29,9 +29,12 @@ function print_entry($course) {
         $manual->print_entry($course);
 
     } else {
+        $navlinks = array();
+        $navlinks[] = array('name' => $strcourses, 'link' => "$CFG->wwwroot/course", 'type' => 'misc');
+        $navlinks[] = array('name' => $strloginto, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
 
-        print_header($strloginto, $course->fullname,
-                     "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
+        print_header($strloginto, $course->fullname, $navigation);
         print_course($course, "80%");
 
         if ($course->password) {  // Presenting two options

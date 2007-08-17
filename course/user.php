@@ -31,7 +31,7 @@
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
+    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id");
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");
@@ -42,17 +42,17 @@
     $strmode           = get_string($mode);
     $fullname          = fullname($user, true);
 
+    $navlinks = array();
     if ($course->id != SITEID) {
-        print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname,
-                 "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../user/index.php?id=$course->id\">$strparticipants</a> ->
-                  <a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
-                  $stractivityreport -> $strmode");
-    } else {
-        print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname,
-                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
-                  $stractivityreport -> $strmode");
+        $navlinks[] = array('name' => $strparticipants, 'link' => "../user/index.php?id=$course->id", 'type' => 'misc');
     }
+
+    $navlinks[] = array('name' => $fullname, 'link' => "../user/view.php?id=$user->id&amp;course=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $stractivityreport, 'link' => null, 'type' => 'misc');
+    $navlinks[] = array('name' => $strmode, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header("$course->shortname: $stractivityreport ($mode)", $course->fullname, $navigation);
 
 
 /// Print tabs at top
@@ -90,12 +90,12 @@
                 // print_student_grade($user, $course);
             }
             break;
-      
+
         case "todaylogs" :
             echo '<div class="graph">';
             print_log_graph($course, $user->id, "userday.png");
             echo '</div>';
-            print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage, 
+            print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage,
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
 
@@ -103,7 +103,7 @@
             echo '<div class="graph">';
             print_log_graph($course, $user->id, "usercourse.png");
             echo '</div>';
-            print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
+            print_log($course, $user->id, 0, "l.time DESC", $page, $perpage,
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
         case 'stats':
@@ -122,24 +122,24 @@
             $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend');
             $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend');
             $earliestmonth = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_monthly ORDER BY timeend');
-    
+
             if (empty($earliestday)) $earliestday = time();
             if (empty($earliestweek)) $earliestweek = time();
             if (empty($earliestmonth)) $earliestmonth = time();
-            
+
             $now = stats_get_base_daily();
             $lastweekend = stats_get_base_weekly();
             $lastmonthend = stats_get_base_monthly();
 
             $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
 
-            if (empty($timeoptions)) { 
+            if (empty($timeoptions)) {
                 error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
             }
 
             // use the earliest.
             $time = array_pop(array_keys($timeoptions));
-            
+
             $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
 
             $param->table = 'user_'.$param->table;
@@ -155,7 +155,7 @@
             if (empty($stats)) {
                 error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
             }
-    
+
             // MDL-10818, do not display broken graph when user has no permission to view graph
             if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $id))) {
                 echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
@@ -202,7 +202,7 @@
                                 default: print_string("section"); break;
                             }
                             echo " $i</h2>";
-    
+
                             echo '<div class="content">';
 
                             if ($mode == "outline") {
@@ -215,7 +215,7 @@
                                     continue;
                                 }
                                 $mod = $mods[$sectionmod];
-    
+
                                 if (empty($mod->visible)) {
                                     continue;
                                 }
@@ -242,7 +242,7 @@
                                                 echo "<h4>$image $mod->modfullname: ".
                                                      "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
                                                      format_string($instance->name,true)."</a></h4>";
-                                                
+
                                                 ob_start();
 
                                                 echo "<ul>";
@@ -251,7 +251,7 @@
 
                                                 $output = ob_get_contents();
                                                 ob_end_clean();
-                                                
+
                                                 if (str_replace(' ', '', $output) != '<ul></ul>') {
                                                     echo $output;
                                                 }
@@ -260,7 +260,7 @@
                                         }
                                     }
                                 }
-    
+
                             if ($mode == "outline") {
                                 echo "</table>";
                             }

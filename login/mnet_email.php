@@ -10,8 +10,9 @@ $sesskey = sesskey();
 if (isloggedin() and !isguestuser()) {
     redirect( $CFG->wwwroot.'/', get_string('loginalready'), 5);
 }
+$navigation = build_navigation(array(array('name' => 'MNET ID Provider', 'link' => null, 'type' => 'misc')));
 
-print_header('MNET ID Provider', 'MNET ID Provider', 'MNET ID Provider', 'form.email' );
+print_header('MNET ID Provider', 'MNET ID Provider', $navigation, 'form.email' );
 
 if ($form = data_submitted() and confirm_sesskey()) {
     if ($user = get_record('user', 'username', $username, 'email', $form->email)) {

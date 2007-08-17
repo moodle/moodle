@@ -42,14 +42,12 @@ if (!empty($users) && confirm_sesskey()) {
 /// Print headers
 
 $straddnote = get_string('addnewnote', 'notes');
-if ($course->id != SITEID) {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
-    $straddnote, "", "", true, "&nbsp;", navmenu($course));
-} else {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    $straddnote, "", "", true, "&nbsp;", navmenu($course));
-}
+
+$navlinks = array();
+$navlinks[] = array('name' => $straddnote, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+
+print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 
@@ -57,9 +55,9 @@ print_heading($straddnote);
 echo '<form method="post" action="addnote.php">';
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-$table->head  = array (get_string('fullname'), 
-    get_string('content', 'notes') . helpbutton('writing', get_string('helpwriting'), 'moodle', true, false, '', true), 
-    get_string('publishstate', 'notes') . helpbutton('status', get_string('publishstate', 'notes'), 'notes', true, false, '', true), 
+$table->head  = array (get_string('fullname'),
+    get_string('content', 'notes') . helpbutton('writing', get_string('helpwriting'), 'moodle', true, false, '', true),
+    get_string('publishstate', 'notes') . helpbutton('status', get_string('publishstate', 'notes'), 'notes', true, false, '', true),
     );
 $table->align = array ('left', 'center', 'center');
 $state_names = note_get_state_names();

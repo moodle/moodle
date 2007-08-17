@@ -60,7 +60,8 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
                 if (!$updated_plugins) {
-                    print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
+                    print_header($strpluginsetup, $strpluginsetup,
+                        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
@@ -82,7 +83,8 @@ function upgrade_plugins($type, $dir, $return) {
             // do nothing
         } else if ($CFG->$pluginversion < $plugin->version) {
             if (!$updated_plugins) {
-                print_header($strpluginsetup, $strpluginsetup, $strpluginsetup, '',
+                print_header($strpluginsetup, $strpluginsetup,
+                        build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             $updated_plugins = true;
@@ -245,7 +247,8 @@ function upgrade_activity_modules($return) {
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $module->requires;
                 if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
+                    print_header($strmodulesetup, $strmodulesetup,
+                            build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
@@ -270,7 +273,8 @@ function upgrade_activity_modules($return) {
                     continue;
                 }
                 if (!$updated_modules) {
-                    print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
+                    print_header($strmodulesetup, $strmodulesetup,
+                            build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                             upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
                 }
                 upgrade_log_start();
@@ -330,7 +334,8 @@ function upgrade_activity_modules($return) {
 
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
-                print_header($strmodulesetup, $strmodulesetup, $strmodulesetup, '',
+                print_header($strmodulesetup, $strmodulesetup,
+                        build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
             }
             upgrade_log_start();

@@ -28,7 +28,11 @@
     $strtheme = get_string("theme");
     $strthemesaved = get_string("themesaved");
 
-    print_header("$site->shortname: $strpreview", $site->fullname, "$strthemes -> $strpreview");
+    $navlinks = array();
+    $navlinks[] = array('name' => $strthemes, 'link' => null, 'type' => 'misc');
+    $navlinks[] = array('name' => $strpreview, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header("$site->shortname: $strpreview", $site->fullname, $navigation);
 
     print_simple_box_start('center', '80%');
     print_heading($preview);

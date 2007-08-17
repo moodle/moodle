@@ -3,7 +3,7 @@
     require_once('../../../config.php');
     require_once('../../lib.php');
     require_once($CFG->dirroot.'/backup/restorelib.php');
-    
+
     $id               = required_param('id', PARAM_INT);   // course id to import TO
     $fromcourse       = optional_param('fromcourse', 0, PARAM_INT);
     $fromcoursesearch = optional_param('fromcoursesearch', '', PARAM_RAW);
@@ -16,7 +16,7 @@
         error("That's an invalid course id");
     }
 
-    if (!$site = get_site()){ 
+    if (!$site = get_site()){
         error("Couldn't get site course");
     }
 
@@ -45,7 +45,7 @@
             $restore->restoreto = 1;
             $restore->course_id = $id;
             $restore->importing = 1; // magic variable so we know that we're importing rather than just restoring.
-            
+
             $SESSION->restore = $restore;
             redirect($CFG->wwwroot.'/backup/restore.php?file='.$filename.'&id='.$fromcourse.'&to='.$id);
         }
@@ -53,11 +53,18 @@
             redirect($CFG->wwwroot.'/backup/backup.php?id='.$from->id.'&to='.$course->id);
         }
     }
-    
-    print_header("$course->shortname: $strimportactivities", $course->fullname, 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/course/import.php?id=$course->id\">".get_string('import')."</a> ".
-                 "-> $strimportactivities");
+
+    $navlinks = array();
+    $navlinks[] = array('name' => $course->shortname,
+                        'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => get_string('import'),
+                        'link' => "$CFG->wwwroot/course/import.php?id=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => $strimportactivities, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header("$course->shortname: $strimportactivities", $course->fullname, $navigation);
     require_once('mod.php');
 
     print_footer();

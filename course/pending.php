@@ -3,7 +3,7 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/pagelib.php');
-    require_once($CFG->libdir.'/blocklib.php'); 
+    require_once($CFG->libdir.'/blocklib.php');
     require_once('lib.php');
 
     require_login();
@@ -69,12 +69,12 @@
             }
         }
     }
- 
+
     $strtitle = get_string('coursespending');
     $strheading = get_string(((!empty($reject)) ? 'coursereject' : 'coursespending'));
 
-    print_header($strtitle,$strheading,$strheading);
- 
+    print_header($strtitle,$strheading,build_navigation(array(array('name'=>$strheading,'link'=>'','type'=>'misc'))));
+
     if (!empty($reject) and confirm_sesskey()) {
         if ($reject = get_record("course_request","id",$reject)) {
             if (empty($rejectnotice)) {
@@ -107,7 +107,7 @@
                 $collision = 1;
             }
             //do not output raw html from request, quote html entities using s()!!
-            $table->data[] = array(((!empty($course->password)) ? 
+            $table->data[] = array(((!empty($course->password)) ?
                                     '<img hspace="1" alt="'.$strrequireskey.'" class="icon" src="'.$CFG->pixpath.'/i/key.gif" />' : ''),
                                    format_string($course->shortname),format_string($course->fullname),fullname($requester),
                                    format_string($course->summary),format_string($course->reason),

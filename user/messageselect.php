@@ -18,10 +18,10 @@
 
     require_login();
     require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_COURSE, $id));
-    
+
     // fix for MDL-10112
     if (empty($CFG->messaging)) {
-        error("Messaging is disabled on this site");  
+        error("Messaging is disabled on this site");
     }
 
     if (empty($SESSION->emailto)) {
@@ -65,7 +65,12 @@
         $formstart = "";
     }
 
-    print_header($strtitle,$strtitle,"<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> <a href=\"index.php?id=$course->id\">".get_string("participants")."</a> -> ".$strtitle,$formstart);
+    $navlinks = array();
+    $navlinks[] = array('name' => get_string('participants'), 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header($strtitle,$strtitle,$navigation,$formstart);
 
 
     if ($count) {

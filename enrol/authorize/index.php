@@ -31,7 +31,11 @@
 
 /// Print header
     $strpaymentmanagement = get_string('paymentmanagement', 'enrol_authorize');
-    print_header_simple($strpaymentmanagement, "", "<a href=\"index.php\">$strpaymentmanagement</a>");
+    $navlinks = array();
+    $navlinks[] = array('name' => $strpaymentmanagement, 'link' => 'index.php', 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header_simple($strpaymentmanagement, "", $navigation);
 
 /// If orderid is empty, user wants to see all orders
     if (empty($orderid)) {

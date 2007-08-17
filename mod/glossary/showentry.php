@@ -48,18 +48,13 @@
         $strsearch = get_string("search");
 
         $CFG->framename = "newwindow";
-        if ($course->id != SITEID) {
-            $navlinks = array();
-            $navlinks[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
-            $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
-            
-            $navigation = build_navigation($navlinks);
-            
-            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname, $navigation, "", "", true, "&nbsp;", "&nbsp;");
-        } else {
-            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname,
-            "$strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
-        }
+        $navlinks = array();
+        $navlinks[] = array('name' => $strglossaries, 'link' => '', 'type' => 'activity');
+        $navlinks[] = array('name' => $strsearch, 'link' => '', 'type' => 'title');
+
+        $navigation = build_navigation($navlinks);
+
+        print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), $course->fullname, $navigation, "", "", true, "&nbsp;", "&nbsp;");
 
     } else {
         print_header();    // Needs to be something here to allow linking back to the whole glossary

@@ -12,7 +12,11 @@
 
 /// Print header
     $struploadcsv = get_string('uploadcsv', 'enrol_authorize');
-    print_header_simple($struploadcsv, "", "<a href=\"uploadcsv.php\">$struploadcsv</a>");
+    $navlinks = array();
+    $navlinks[] = array('name' => $struploadcsv, 'link' => "uploadcsv.php", 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header_simple($struploadcsv, "", $navigation);
     print_heading_with_help($struploadcsv, 'uploadcsv', 'enrol/authorize');
 
 /// Handle CSV file

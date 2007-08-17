@@ -40,30 +40,30 @@
 
     require_login($course->id);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    
+
     if (!has_capability('moodle/site:viewreports', $context)) {
         error('You need do not have the required permission to view reports for this course');
     }
 
-    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id); 
+    add_to_log($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id);
     stats_check_uptodate($course->id);
-    
-    
+
+
     $strreports = get_string("reports");
     $strstats = get_string('stats');
 
     $menu = report_stats_mode_menu($course, $mode, $time, "$CFG->wwwroot/course/report/stats/index.php");
 
-    $crumb = "<a href=\"../../view.php?id=$course->id\">" . format_string($course->shortname) . "</a> ->
-              <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
-              $strstats";
+    $navlinks = array();
+    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $strstats, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-    print_header("$course->shortname: $strstats", $course->fullname, 
-                  $crumb, '', '', true, '&nbsp;', $menu);
-    
-    
+    print_header("$course->shortname: $strstats", $course->fullname, $navigation, '', '', true, '&nbsp;', $menu);
+
+
     require_once($CFG->dirroot.'/course/report/stats/report.php');
-    
+
     print_footer();
 
 ?>

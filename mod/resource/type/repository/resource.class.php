@@ -246,6 +246,8 @@ function display() {
     }
 
 
+    $this->navlinks[] = array('name' => format_string($resource->name), 'link' => null, 'type' => 'misc');
+    $this->navigation = build_navigation($this->navlinks);
 
 /// Form the parse string
     if (!empty($resource->alltext)) {
@@ -263,7 +265,7 @@ function display() {
 
     $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
-       $fullurl =  $resource->reference. '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
+   $fullurl =  $resource->reference. '&amp;HIVE_SESSION='.$SESSION->HIVE_SESSION;
     if (!empty($querystring)) {
         $urlpieces = parse_url($resource->reference);
         if (empty($urlpieces['query'])) {
@@ -278,7 +280,8 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle, $course->fullname);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
         }
         notify('You do not have access to HarvestRoad Hive. This resource is unavailable.');
         if ($inpopup) {
@@ -296,7 +299,8 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle, $course->fullname);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
         }
         notify(get_string('notallowedlocalfileaccess', 'resource', ''));
         if ($inpopup) {
@@ -310,8 +314,8 @@ function display() {
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
-
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+        print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
 
 
         echo "\n<script type=\"text/javascript\">";
@@ -369,7 +373,8 @@ function display() {
     /// If we are in a frameset, just print the top of it
 
     if (!empty($frameset) and $frameset == "top") {
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+        print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $formatoptions).'</div>';
         if (!empty($localpath)) {  // Show some help
@@ -390,7 +395,8 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation <a $CFG->frametarget title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            print_header($pagetitle, $course->fullname, $this->navigation, "", "", true,
+                    update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }
 

@@ -18,6 +18,9 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $strforgotten = get_string('passwordforgotten');
 $strlogin     = get_string('login');
 
+$navigation = build_navigation(array(array('name' => $strlogin, 'link' => "$CFG->wwwroot/login/index.php", 'type' => 'misc'),
+                                     array('name' => $strforgotten, 'link' => null, 'type' => 'misc')));
+
 // if you are logged in then you shouldn't be here!
 if (isloggedin() and !isguestuser()) {
     redirect($CFG->wwwroot.'/index.php', get_string('loginalready'), 5);
@@ -31,10 +34,8 @@ if ($p_secret !== false) {
     update_login_count();
 
     $user = get_complete_user_data('username', $p_username);
-
     if (!empty($user) and $user->secret === '') {
-        print_header($strforgotten, $strforgotten,
-            "<a href=\"{$CFG->wwwroot}/login/index.php\">{$strlogin}</a>->{$strforgotten}");
+        print_header($strforgotten, $strforgotten, $navigation);
         error(get_string('secretalreadyused'));
 
     } else if (!empty($user) and $user->secret == stripslashes($p_secret)) {
@@ -67,13 +68,11 @@ if ($p_secret !== false) {
         $a->email = $user->email;
         $a->link = $changepasswordurl;
 
-        print_header($strforgotten, $strforgotten,
-            "<a href=\"{$CFG->wwwroot}/login/index.php\">{$strlogin}</a>->{$strforgotten}");
+        print_header($strforgotten, $strforgotten, $navigation);
         notice(get_string('emailpasswordsent', '', $a), $changepasswordurl);
 
     } else {
-        print_header($strforgotten, $strforgotten,
-            "<a href=\"{$CFG->wwwroot}/login/index.php\">{$strlogin}</a>->{$strforgotten}");
+        print_header($strforgotten, $strforgotten, $navigation);
         error(get_string('forgotteninvalidurl'));
     }
 
@@ -125,8 +124,7 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    print_header($strforgotten, $strforgotten,
-        "<a href=\"{$CFG->wwwroot}/login/index.php\">{$strlogin}</a>->{$strforgotten}");
+    print_header($strforgotten, $strforgotten, $navigation
 
     if (empty($user->email) or !empty($CFG->protectusernames)) {
         // Print general confirmation message
@@ -144,8 +142,7 @@ if ($mform->is_cancelled()) {
 
 
 /// DISPLAY FORM
-print_header($strforgotten, $strforgotten,
-    "<a href=\"{$CFG->wwwroot}/login/index.php\">{$strlogin}</a>->{$strforgotten}", 'id_email');
+print_header($strforgotten, $strforgotten, $navigation, 'id_email');
 
 print_box(get_string('passwordforgotteninstructions'), 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();

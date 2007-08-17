@@ -31,7 +31,7 @@
 
         if ($confirmed == AUTH_CONFIRM_ALREADY) {
             $user = get_complete_user_data('username', $username);
-            print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), "", "");
+            print_header(get_string("alreadyconfirmed"), get_string("alreadyconfirmed"), array(), "");
             print_box_start('generalbox centerpara boxwidthnormal boxaligncenter');
             echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
             echo "<p>".get_string("alreadyconfirmed")."</p>\n";
@@ -56,7 +56,7 @@
                 redirect($goto);
             }
 
-            print_header(get_string("confirmed"), get_string("confirmed"), "", "");
+            print_header(get_string("confirmed"), get_string("confirmed"), array(), "");
             print_box_start('generalbox centerpara boxwidthnormal boxaligncenter');
             echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
             echo "<p>".get_string("confirmed")."</p>\n";

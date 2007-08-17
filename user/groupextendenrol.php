@@ -19,7 +19,7 @@ $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today),
 if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
     foreach ($form->userid as $k => $v) {
-        // find all roles this student have in this course  
+        // find all roles this student have in this course
         if ($students = get_records_sql("SELECT ra.id, ra.roleid, ra.timestart, ra.timeend
                                        FROM {$CFG->prefix}role_assignments ra
                                        WHERE userid = $v
@@ -67,7 +67,7 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
                                     }
                                     break;
                             }
-                    } 
+                    }
                     role_assign($student->roleid, $v, 0, $context->id, $student->timestart, $student->timeend, 0);
                 }
             }
@@ -79,14 +79,11 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
 /// Print headers
 
-if ($course->id != SITEID) {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
-    get_string('extendenrol'), "", "", true, "&nbsp;", navmenu($course));
-} else {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    get_string('extendenrol'), "", "", true, "&nbsp;", navmenu($course));
-}
+$navlinks = array();
+$navlinks[] = array('name' => get_string('extendenrol'), 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+
+print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 $timeformat = get_string('strftimedate');
 $unlimited = get_string('unlimited');
@@ -124,9 +121,9 @@ $notavailable = get_string('notavailable');
 
 foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
-        
-        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u 
-                                    INNER JOIN {$CFG->prefix}role_assignments ra ON u.id=ra.userid 
+
+        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u
+                                    INNER JOIN {$CFG->prefix}role_assignments ra ON u.id=ra.userid
                                     WHERE u.id={$m[1]} AND ra.contextid = $context->id"))) {
             continue;
         }

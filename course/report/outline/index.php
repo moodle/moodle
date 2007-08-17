@@ -19,7 +19,7 @@
 
     require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
 
-    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id); 
+    add_to_log($course->id, "course", "report outline", "report/outline/index.php?id=$course->id", $course->id);
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");
@@ -29,10 +29,12 @@
     $strtodaylogs      = get_string("todaylogs");
     $strreports        = get_string("reports");
 
-    print_header("$course->shortname: $stractivityreport", $course->fullname,
-                 "<a href=\"../../view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../../report.php?id=$course->id\">$strreports</a> ->
-                  $stractivityreport");
+    $navlinks = array();
+    $navlinks[] = array('name' => $strreports, 'link' => "../../report.php?id=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $stractivityreport, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header("$course->shortname: $stractivityreport", $course->fullname, $navigation);
 
     print_heading(format_string($course->fullname));
 

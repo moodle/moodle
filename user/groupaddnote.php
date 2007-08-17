@@ -33,21 +33,19 @@ if (!empty($users) && !empty($content) && confirm_sesskey()) {
             add_to_log($note->courseid, 'notes', 'add', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'add note');
         }
     }
-    
+
     redirect("$CFG->wwwroot/user/index.php?id=$id");
 }
 
 /// Print headers
 
 $straddnote = get_string('groupaddnewnote', 'notes');
-if ($course->id != SITEID) {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> -> ".
-    $straddnote, "", "", true, "&nbsp;", navmenu($course));
-} else {
-    print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname,
-    $straddnote, "", "", true, "&nbsp;", navmenu($course));
-}
+
+$navlinks = array();
+$navlinks[] = array('name' => $straddnote, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+
+print_header("$course->shortname: ".get_string('extendenrol'), $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
 
 // this will contain all available the based On select options, but we'll disable some on them on a per user basis
 

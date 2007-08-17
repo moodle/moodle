@@ -18,7 +18,11 @@
     $requestform = new course_request_form();
 
     $strtitle = get_string('courserequest');
-    print_header($strtitle, $strtitle, $strtitle, $requestform->focus());
+    $navlinks = array();
+    $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+
+    print_header($strtitle, $strtitle, $navigation, $requestform->focus());
 
     print_simple_box_start('center');
     print_string('courserequestintro');

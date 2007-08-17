@@ -28,7 +28,7 @@
     $meta = '<meta name="robots" content="none" />'; // prevent duplicate content in search engines MDL-7299
 
     $loggedinas = user_login_string($course, $USER);
-
+    $navlinks = array();
 
     if (!empty($chooserecent)) {
         $userinfo = get_string("allparticipants");
@@ -43,14 +43,10 @@
         if ($date)
             $dateinfo = userdate($date, get_string("strftimedaydate"));
 
-        if ($course->id != SITEID) {
-            print_header("$course->shortname: $strrecentactivity", $course->fullname,
-                         "<a href=\"view.php?id=$course->id\">$course->shortname</a> ->
-                          <a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
-        } else {
-            print_header("$course->shortname: $strrecentactivity", $course->fullname,
-                         "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "", $meta);
-        }
+        $navlinks[] = array('name' => $strrecentactivity, 'link' => "recent.php?id=$course->id", 'type' => 'misc');
+        $navlinks[] = array('name' => "$userinfo, $dateinfo", 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        print_header("$course->shortname: $strrecentactivity", $course->fullname, $navigation, "", $meta);
 
         print_heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")", '', 3);
         $advancedfilter = 1;
@@ -67,14 +63,9 @@
                 }
             }
         }
-
-        if ($course->id != SITEID) {
-            print_header("$course->shortname: $strrecentactivity", $course->fullname,
-                     "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strrecentactivity", "", $meta);
-        } else {
-            print_header("$course->shortname: $strrecentactivity", $course->fullname,
-                     "$strrecentactivity", "", $meta);
-        }
+        $navlinks[] = array('name' => $strrecentactivity, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        print_header("$course->shortname: $strrecentactivity", $course->fullname, $navigation, "", $meta);
 
         print_heading(get_string("activitysince", "", userdate($date)));
 

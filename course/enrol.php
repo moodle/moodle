@@ -1,6 +1,6 @@
 <?php // $Id$
-      // Depending on the current enrolment method, this page 
-      // presents the user with whatever they need to know when 
+      // Depending on the current enrolment method, this page
+      // presents the user with whatever they need to know when
       // they try to enrol in a course.
 
     require_once("../config.php");
@@ -15,7 +15,7 @@
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http:','https:', $wwwroot);
         }
-        // do not use require_login here because we are usually comming from it 
+        // do not use require_login here because we are usually comming from it
         redirect($wwwroot.'/login/index.php');
     }
 
@@ -32,14 +32,14 @@
         print_error('loginasnoenrol', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
     }
 
-    $enrol = enrolment_factory::factory($course->enrol); // do not use if (!$enrol... here, it can not work in PHP4 - see MDL-7529 
+    $enrol = enrolment_factory::factory($course->enrol); // do not use if (!$enrol... here, it can not work in PHP4 - see MDL-7529
 
 /// Refreshing all current role assignments for the current user
 
     load_all_capabilities();
 
-/// Double check just in case they are actually enrolled already and 
-/// thus got to this script by mistake.  This might occur if enrolments 
+/// Double check just in case they are actually enrolled already and
+/// thus got to this script by mistake.  This might occur if enrolments
 /// changed during this session or something
 
     if (has_capability('moodle/course:view', $context) and !has_capability('moodle/legacy:guest', $context, NULL, false)) {
@@ -57,14 +57,14 @@
         print_header_simple();
         notice(get_string('coursenotaccessible'), "$CFG->wwwroot/index.php");
     }
-    
+
 /// Users can't enroll to site course
     if ($course->id == SITEID) {
         print_header_simple();
         notice(get_string('enrollfirst'), "$CFG->wwwroot/index.php");
     }
 
-/// Double check just in case they are enrolled to start in the future 
+/// Double check just in case they are enrolled to start in the future
 
     if ($course->enrolperiod) {   // Only active if the course has an enrolment period in effect
         if ($roles = get_user_roles($context, $USER->id)) {
@@ -88,7 +88,7 @@
             ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
             ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
             ) {
-        print_header($course->shortname, $course->fullname, $course->shortname );
+        print_header($course->shortname, $course->fullname, build_navigation(array(array('name'=>$course->shortname,'link'=>'','type'=>'misc'))) );
         notice(get_string('notenrollable'), "$CFG->wwwroot/index.php");
     }
 

@@ -1,6 +1,6 @@
 <?php // $Id$
       // This simple script displays all the users with pictures on one page.
-      // By default it is not linked anywhere on the site.  If you want to 
+      // By default it is not linked anywhere on the site.  If you want to
       // make it available you should link it in yourself from somewhere.
       // Remember also to comment or delete the lines restricting access
       // to administrators only (see below)
@@ -16,11 +16,11 @@
     if (!$users = get_records("user", "picture", "1", "lastaccess DESC", "id,firstname,lastname")) {
         error("no users!");
     }
-    
+
     $title = get_string("users");
-    
-    print_header($title, $title, $title);
-    
+
+    print_header($title, $title, build_navigation(array(array('name' => $title, 'link' => null, 'type' => 'misc'))));
+
     foreach ($users as $user) {
         $fullname = fullname($user);
         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\"".
@@ -34,7 +34,7 @@
         }
         echo "</a> \n";
     }
-    
+
     print_footer();
 
 ?>

@@ -31,8 +31,11 @@ add_to_log($course->id, "lams", "view", "view.php?id=$cm->id", "$lams->id");
 //if ($course->id != SITEID) {
 //    $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
 //}
-print_header_simple(format_string($lams->name), "",
-        "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($lams->name), "", "", true,
+$navlinks = array();
+$navlinks[] = array('name' => $strchoices, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+$navlinks[] = array('name' => format_string($lams->name), 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+print_header_simple(format_string($lams->name), "", $navigation, "", "", true,
         update_module_button($cm->id, $course->id, get_string("lesson","lams")), navmenu($course, $cm));
 
 echo '<table id="layout-table"><tr>';
@@ -63,7 +66,7 @@ if(has_capability('mod/lams:manage', $context)){
     print_simple_box_start('center');
     echo '<a target="LAMS Monitor" title="LAMS Monitor" href="'.$url.'">'.get_string("openmonitor", "lams").'</a>';
     print_simple_box_end();
-    
+
     $plaintext = trim($datetime).trim($USER->username).trim($LAMSCONSTANTS->learner_method).trim($CFG->lams_serverid).trim($CFG->lams_serverkey);
     $hash = sha1(strtolower($plaintext));
     $url = $CFG->lams_serverurl.$LAMSCONSTANTS->login_request.

@@ -5,6 +5,8 @@
 
     $id = optional_param('id', SITEID, PARAM_INT); // current course
 
+    $strparticipants = get_string('participants');
+
     //HTTPS is potentially required in this page
     httpsrequired();
 
@@ -55,6 +57,9 @@
     $mform = new login_change_password_form();
     $mform->set_data(array('id'=>$course->id));
 
+    $navlinks = array();
+    $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+
     if ($mform->is_cancelled()) {
         redirect($CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id);
     } else if ($data = $mform->get_data()) {
@@ -78,14 +83,13 @@
 
         $fullname = fullname($USER, true);
 
-        if ($course->id != SITEID) {
-            $navstr = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ";
-        } else {
-            $navstr = '';
-        }
-        $navstr .= "<a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strpasswordchanged";
+        $navlinks[] = array('name' => $fullname,
+                            'link' => "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id",
+                            'type' => 'misc');
+        $navlinks[] = array('name' => $strpasswordchanged, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
 
-        print_header($strpasswordchanged, $strpasswordchanged, $navstr);
+        print_header($strpasswordchanged, $strpasswordchanged, $navigation);
 
         if (empty($SESSION->wantsurl) or $SESSION->wantsurl == $CFG->httpswwwroot.'/login/change_password.php') {
             $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$id";
@@ -104,15 +108,11 @@
 
     $fullname = fullname($USER, true);
 
-    if ($course->id != SITEID) {
-        $navstr = "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ";
-    } else {
-        $navstr = '';
-    }
-    $navstr .= "<a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string('participants')."</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strchangepassword";
+    $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id", 'type' => 'misc');
+    $navlinks[] = array('name' => $strchangepassword, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-
-    print_header($strchangepassword, $strchangepassword, $navstr);
+    print_header($strchangepassword, $strchangepassword, $navigation);
     if (get_user_preferences('auth_forcepasswordchange')) {
         notify(get_string('forcepasswordchangenotice'));
     }
