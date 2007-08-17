@@ -8,11 +8,10 @@
 
     require_login();
 
-    $add           = optional_param('add', '', PARAM_ALPHA);
-    $update        = optional_param('update', 0, PARAM_INT);
-    //return to course/view.php if false or mod/modname/view.php if true
-    $return        = optional_param('return', 0, PARAM_BOOL);
-    $type          = optional_param('type', '', PARAM_ALPHANUM);
+    $add    = optional_param('add', 0, PARAM_ALPHA);
+    $update = optional_param('update', 0, PARAM_INT);
+    $return = optional_param('return', 0, PARAM_BOOL); //return to course/view.php if false or mod/modname/view.php if true
+    $type   = optional_param('type', '', PARAM_ALPHANUM);
 
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
@@ -22,27 +21,37 @@
             error("This course doesn't exist");
         }
 
+        require_login($course);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        require_capability('moodle/course:manageactivities', $context);
+
         if (! $module = get_record("modules", "name", $add)) {
             error("This module type doesn't exist");
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:manageactivities', $context);
+        if (! $cw = get_record("course_sections", "section", $section, "course", $course->id)) {
+            error("This course section doesn't exist");
+        }
 
         if (!course_allowed_module($course, $module->id)) {
             error("This module has been disabled for this particular course");
         }
 
-        require_login($course->id); // needed to setup proper $COURSE
+        $cm = null;
 
-        $form->section    = $section;         // The section number itself
-        $form->course     = $course->id;
-        $form->module     = $module->id;
-        $form->modulename = $module->name;
-        $form->instance   = "";
-        $form->coursemodule = "";
-        $form->add=$add;
-        $form->return=0;//must be false if this is an add, go back to course view on cancel
+        $form->section          = $section;  // The section number itself - relative!!! (section column in course_sections)
+        $form->visible          = $cw->visible;
+        $form->course           = $course->id;
+        $form->module           = $module->id;
+        $form->modulename       = $module->name;
+        $form->groupmode        = $course->groupmode;
+        $form->groupingid       = $course->defaultgroupingid;
+        $form->groupmembersonly = 0;
+        $form->instance         = '';
+        $form->coursemodule     = '';
+        $form->add              = $add;
+        $form->return           = 0; //must be false if this is an add, go back to course view on cancel
+
         if (!empty($type)) {
             $form->type = $type;
         }
@@ -65,6 +74,8 @@
             $CFG->pagepath .= '/mod';
         }
 
+        $navlinksinstancename = '';
+
     } else if (!empty($update)) {
         if (! $cm = get_record("course_modules", "id", $update)) {
             error("This course module doesn't exist");
@@ -74,7 +85,7 @@
             error("This course doesn't exist");
         }
 
-        require_login($course->id); // needed to setup proper $COURSE
+        require_login($course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
@@ -90,16 +101,19 @@
             error("This course section doesn't exist");
         }
 
-
-        $form->coursemodule = $cm->id;
-        $form->section      = $cm->section;     // The section ID
-        $form->cmidnumber   = $cm->idnumber;    // The cm IDnumber
-        $form->course       = $course->id;
-        $form->module       = $module->id;
-        $form->modulename   = $module->name;
-        $form->instance     = $cm->instance;
-        $form->return = $return;
-        $form->update = $update;
+        $form->coursemodule     = $cm->id;
+        $form->section          = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
+        $form->visible          = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
+        $form->cmidnumber       = $cm->idnumber;          // The cm IDnumber
+        $form->groupmode        = groupmode($COURSE,$cm); // locked later if forced
+        $form->groupingid       = $cm->groupingid;
+        $form->groupmembersonly = $cm->groupmembersonly;
+        $form->course           = $course->id;
+        $form->module           = $module->id;
+        $form->modulename       = $module->name;
+        $form->instance         = $cm->instance;
+        $form->return           = $return;
+        $form->update           = $update;
 
         // add existing outcomes
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
@@ -150,15 +164,14 @@
     }
 
     $mformclassname = 'mod_'.$module->name.'_mod_form';
-    $cousesection=isset($cw->section)?$cw->section:$section;
-    $mform=& new $mformclassname($form->instance, $cousesection, ((isset($cm))?$cm:null));
+    $mform =& new $mformclassname($form->instance, $cw->section, $cm);
     $mform->set_data($form);
 
     if ($mform->is_cancelled()) {
-        if ($return && isset($cm)){
+        if ($return && !empty($cm->id)){
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
         } else {
-            redirect("view.php?id=$course->id#section-".$cousesection);
+            redirect("view.php?id=$course->id#section-".$cw->section);
         }
     } else if ($fromform = $mform->get_data()) {
         if (empty($fromform->coursemodule)) { //add
@@ -210,18 +223,22 @@
                 error($returnfromfunc, "view.php?id=$course->id");
             }
 
-            if (isset($fromform->visible)) {
-                set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-            }
+            set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
 
             if (isset($fromform->groupmode)) {
                 set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
             }
 
-            // set cm id number
-            if (isset($fromform->cmidnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            if (isset($fromform->groupingid)) {
+                set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
             }
+
+            if (isset($fromform->groupmembersonly)) {
+                set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
+            }
+
+            // set cm id number
+            set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
 
             add_to_log($course->id, "course", "update mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -242,19 +259,10 @@
 
             $returnfromfunc = $addinstancefunction($fromform);
             if (!$returnfromfunc) {
-                /*if (file_exists($moderr)) {
-                    $form = $fromform;
-                    include_once($moderr);
-                    die;
-                }*/
                 error("Could not add a new instance of $fromform->modulename", "view.php?id=$course->id");
             }
             if (is_string($returnfromfunc)) {
                 error($returnfromfunc, "view.php?id=$course->id");
-            }
-
-            if (!isset($fromform->groupmode)) { // to deal with pre-1.5 modules
-                $fromform->groupmode = $course->groupmode;  /// Default groupmode the same as course
             }
 
             $fromform->instance = $returnfromfunc;
@@ -273,16 +281,11 @@
                 error("Could not update the course module with the correct section");
             }
 
-            if (!isset($fromform->visible)) {   // We get the section's visible field status
-                $fromform->visible = get_field("course_sections","visible","id",$sectionid);
-            }
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
 
             // set cm idnumber
-            if (isset($fromform->cmidnumber)) {
-                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
-            }
+            set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
 
             add_to_log($course->id, "course", "add mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -413,7 +416,7 @@
 
         $navlinks = array();
         $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
-        if (isset($navlinksinstancename)) {
+        if ($navlinksinstancename) {
             $navlinks[] = $navlinksinstancename;
         }
         $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'title');

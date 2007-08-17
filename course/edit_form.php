@@ -270,6 +270,13 @@ class course_edit_form extends moodleform {
         $mform->setHelpButton('groupmodeforce', array('groupmodeforce', get_string('groupmodeforce')), true);
         $mform->setDefault('groupmodeforce', 0);
 
+        if (!empty($CFG->enablegroupings)) {
+            //default groupings selector
+            $options = array();
+            $options[0] = get_string('none');
+            $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
+        }
+
 //--------------------------------------------------------------------------------
         $mform->addElement('header','', get_string('availability'));
 
@@ -378,6 +385,24 @@ class course_edit_form extends moodleform {
         $mform->addElement('hidden', 'students', get_string('defaultcoursestudents'));
     }
 
+    function definition_after_data() {
+        global $CFG;
+
+        $mform =& $this->_form;
+
+        // add availabe groupings
+        if ($courseid = $mform->getElementValue('id') and $mform->elementExists('defaultgroupingid')) {
+            $options = array();
+            if ($groupings = get_records('groupings', 'courseid', $courseid)) {
+                foreach ($groupings as $grouping) {
+                    $options[$grouping->id] = format_string($grouping->name);
+                }
+            }
+            $gr_el =& $mform->getElement('defaultgroupingid');
+            $gr_el->load($options);
+        }
+    }
+        
 
 /// perform some extra moodle validation
     function validation($data){

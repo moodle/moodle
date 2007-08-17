@@ -16,7 +16,7 @@ class moodleform_mod extends moodleform {
     var $_instance;
     /**
      * Section of course that module instance will be put in or is in.
-     * This is always the section number itself.
+     * This is always the section number itself (column 'section' from 'course_sections' table).
      *
      * @var mixed
      */
@@ -64,6 +64,12 @@ class moodleform_mod extends moodleform {
                 }
             }
         }
+
+        if ($mform->elementExists('groupmode')) {
+            if ($COURSE->groupmodeforce) {
+                $mform->hardFreeze('groupmode'); // groupmode can not be changed if forced from course settings
+            }
+        }
     }
 
     // form verification
@@ -104,7 +110,7 @@ class moodleform_mod extends moodleform {
             $default_values = (array)$default_values;
         }
         $this->data_preprocessing($default_values);
-        parent::set_data($default_values + $this->standard_coursemodule_elements_settings());//never slashed for moodleform_mod
+        parent::set_data($default_values); //never slashed for moodleform_mod
     }
 
     /**
@@ -127,9 +133,22 @@ class moodleform_mod extends moodleform {
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
         if ($supportsgroups){
-            // TODO: we must define this as mod property!
             $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
         }
+
+        if (!empty($CFG->enablegroupings)) {
+            //groupings selector
+            $options = array();
+            $options[0] = get_string('none');
+            if ($groupings = get_records('groupings', 'courseid', $COURSE->id)) {
+                foreach ($groupings as $grouping) {
+                    $options[$grouping->id] = format_string($grouping->name);
+                }
+            }
+            $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
+            $mform->addElement('advcheckbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
+        }
+
         $mform->addElement('modvisible', 'visible', get_string('visible'));
         $mform->addElement('text', 'cmidnumber', get_string('idnumber'));
 
@@ -164,53 +183,6 @@ class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'return', 0);
         $mform->setType('return', PARAM_BOOL);
-    }
-
-    /**
-     * This function is called by course/modedit.php to setup defaults for standard form
-     * elements.
-     *
-     * @param object $course
-     * @param object $cm
-     * @param integer $section
-     * @return unknown
-     */
-    function standard_coursemodule_elements_settings(){
-        return ($this->modgroupmode_settings() + $this->modvisible_settings());
-    }
-    /**
-     * This is called from modedit.php to load the default for the groupmode element.
-     *
-     * @param object $course
-     * @param object $cm
-     */
-    function modgroupmode_settings(){
-        global $COURSE;
-        return array('groupmode'=>groupmode($COURSE, $this->_cm));
-    }
-    /**
-     *  This is called from modedit.php to set the default for modvisible form element.
-     *
-     * @param object $course
-     * @param object $cm
-     * @param integer $section section is a db id when updating a activity config
-     *                   or the section no when adding a new activity
-     */
-    function modvisible_settings(){
-        global $COURSE;
-        $cm=$this->_cm;
-        $section=$this->_section;
-        if ($cm) {
-            $visible = $cm->visible;
-        } else {
-            $visible = 1;
-        }
-
-        $hiddensection = !get_field('course_sections', 'visible', 'section', $section, 'course', $COURSE->id);
-        if ($hiddensection) {
-            $visible = 0;
-        }
-        return array('visible'=>$visible);
     }
 
 }

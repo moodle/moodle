@@ -90,6 +90,7 @@ $string['groupmembersselected'] = 'Members of selected group';
 
 $string['javascriptrequired'] = 'This page requires Javascript to be enabled.';
 
+$string['defaultgrouping'] = 'Default grouping';
 $string['groupmode'] = 'Group mode';
 $string['groupmodeforce'] = 'Force group mode';
 $string['groupmy'] = 'My group';
@@ -97,6 +98,7 @@ $string['groupnotamember'] = 'Sorry, you are not a member of that group';
 $string['groupsnone'] = 'No groups';
 $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
+$string['groupmembersonly'] = 'Available for group members only';
 
 $string['groupaddedsuccesfully'] = 'Group $a added succesfully';
 $string['nopermissionforcreation'] = 'Can\'t create group \"$a\" as you dont have the required permissions';

@@ -2042,6 +2042,14 @@ function set_coursemodule_groupmode($id, $groupmode) {
     return set_field("course_modules", "groupmode", $groupmode, "id", $id);
 }
 
+function set_coursemodule_groupingid($id, $groupingid) {
+    return set_field("course_modules", "groupingid", $groupingid, "id", $id);
+}
+
+function set_coursemodule_groupmembersonly($id, $groupmembersonly) {
+    return set_field("course_modules", "groupmembersonly", $groupmembersonly, "id", $id);
+}
+
 function set_coursemodule_idnumber($id, $idnumber) {
     return set_field("course_modules", "idnumber", $idnumber, "id", $id);  
 }
