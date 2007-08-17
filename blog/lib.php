@@ -568,13 +568,20 @@
                 // all users with a role assigned
                 $context = get_context_instance(CONTEXT_COURSE, $filterselect);
 
+                // MDL-10037, hidden users' blogs should not appear
+                if (has_capability('moodle/role:viewhiddenassigns', $context)) {
+                    $hiddensql = ''; 
+                } else {                    
+                    $hiddensql = ' AND ra.hidden = 0 '; 
+                }
+
                 $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                         .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
                         WHERE p.userid = ra.userid '.$tagquerysql.'
                         AND ra.contextid '.get_related_contexts_string($context).'
                         AND u.id = p.userid
                         AND u.deleted = 0
-                        '.$permissionsql.$typesql;
+                        '.$hiddensql.$permissionsql.$typesql;
 
             break;
 
