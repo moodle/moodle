@@ -798,21 +798,6 @@ class grade_report_grader extends grade_report {
         }
 
         if ($showaverages) {
-            /*
-             * this sql is broken in the event of multiple grade book roles assigned to one user
-             * or same role in multiple contexts
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
-                FROM {$CFG->prefix}grade_items gi LEFT JOIN
-                     {$CFG->prefix}grade_grades g ON gi.id = g.itemid LEFT JOIN
-                     {$CFG->prefix}user u ON u.id = g.userid LEFT JOIN
-                     {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                     $groupsql
-                WHERE gi.courseid = $this->courseid
-                     $groupwheresql
-                AND ra.roleid in ($this->gradebookroles)
-                AND ra.contextid ".get_related_contexts_string($this->context)."
-                GROUP BY g.itemid";
-            */
 
             // the first join on user is needed for groupsql
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
