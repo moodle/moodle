@@ -18,30 +18,30 @@
         //If we've selected none, simply return 0
         if ($backup_users == 0 or $backup_users == 1) {
 
-            //Calculate needed users (calling every xxxx_get_participants function + scales users)
-            $needed_users = backup_get_needed_users($course, $backup_messages);
-
-            //Calculate enrolled users (students + teachers)
-            $enrolled_users = backup_get_enrolled_users($course);
-
-            //Calculate all users (every record in users table)
-            $all_users = backup_get_all_users();
-
-            //Calculate course users (needed + enrolled)
-            //First, needed
-            $course_users = $needed_users;
-
-            //Now, enrolled
-            if ($enrolled_users) {
-                foreach ($enrolled_users as $enrolled_user) {
-                    $course_users[$enrolled_user->id]->id = $enrolled_user->id;
-                }
-            }
-
             //Now, depending of parameters, create $backupable_users
             if ($backup_users == 0) {
+                //Calculate all users (every record in users table)
+                $all_users = backup_get_all_users();
+
                 $backupable_users = $all_users;
             } else {
+                //Calculate needed users (calling every xxxx_get_participants function + scales users)
+                $needed_users = backup_get_needed_users($course, $backup_messages);
+
+                //Calculate enrolled users (students + teachers)
+                $enrolled_users = backup_get_enrolled_users($course);
+
+                //Calculate course users (needed + enrolled)
+                //First, needed
+                $course_users = $needed_users;
+        
+                //Now, enrolled
+                if ($enrolled_users) {
+                    foreach ($enrolled_users as $enrolled_user) {
+                        $course_users[$enrolled_user->id]->id = $enrolled_user->id; 
+                    }
+                }
+
                 $backupable_users = $course_users;
             }
 
@@ -60,6 +60,7 @@
                         // might need another variable
 
                     //Now create the backup_id record
+                    $backupids_rec = new stdClass;
                     $backupids_rec->backup_code = $backup_unique_code;
                     $backupids_rec->table_name = "user";
                     $backupids_rec->old_id = $backupable_user->id;
