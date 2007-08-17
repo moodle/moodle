@@ -222,6 +222,12 @@ class qformat_gift extends qformat_default {
         // determine QUESTION TYPE
         $question->qtype = NULL;
 
+        // give plugins first try
+        // plugins must promise not to intercept standard qtypes
+        if ($question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
+            return $question;
+        }
+
         if ($description) {
             $question->qtype = DESCRIPTION;
         }
@@ -259,10 +265,6 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
-            // try for plugins
-            if ($question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
-                return $question;
-            }
             $giftqtypenotset = get_string('giftqtypenotset','quiz');
             $this->error( $giftqtypenotset, $text );
             return false;
