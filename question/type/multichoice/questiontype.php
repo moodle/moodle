@@ -623,11 +623,12 @@ class question_multichoice_qtype extends default_questiontype {
 
     function find_file_links($question, $courseid){
         $urls = array();
-        $urls = parent::find_file_links($question, $courseid);
-        // find links in the question_match_sub table.
-        foreach ($question->options->subquestions as $subquestion) {
-            $urls += question_find_file_links_from_html($subquestion->questiontext, $courseid);
-
+        // find links in the answers table.
+        $urls +=  question_find_file_links_from_html($question->options->correctfeedback, $courseid);
+        $urls +=  question_find_file_links_from_html($question->options->partiallycorrectfeedback, $courseid);
+        $urls +=  question_find_file_links_from_html($question->options->incorrectfeedback, $courseid);
+        foreach ($question->options->answers as $answer) {
+            $urls += question_find_file_links_from_html($answer->answer, $courseid);
         }
         //set all the values of the array to the question id
         if ($urls){
@@ -647,6 +648,15 @@ class question_multichoice_qtype extends default_questiontype {
         if ($optionschanged){
             if (!update_record('question_multichoice', addslashes_recursive($question->options))) {
                 error('Couldn\'t update \'question_multichoice\' record '.$question->options->id);
+            }
+        }
+        $answerchanged = false;
+        foreach ($question->options->answers as $answer) {
+            $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
+            if ($answerchanged){
+                if (!update_record('question_answers', addslashes_recursive($answer))){
+                    error('Couldn\'t update \'question_answers\' record '.$answer->id);
+                }
             }
         }
     }
