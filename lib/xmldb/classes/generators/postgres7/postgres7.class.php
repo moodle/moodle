@@ -398,7 +398,7 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     function getDropEnumSQL($xmldb_table, $xmldb_field) {
     /// All we have to do is to drop the check constraint
         return array('ALTER TABLE ' . $this->getTableName($xmldb_table) .
-                     ' DROP CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck'));
+                     ' DROP CONSTRAINT ' . $this->getStandardNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck'));
     }
 
     /**
