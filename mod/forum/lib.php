@@ -2278,14 +2278,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
     }
 
-    if ($post->parent) {
-        if ($threadedmode) {
-            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
-                          $post->discussion.'&amp;parent='.$post->parent.'">'.$strparent.'</a>';
-        } else {
-            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
-                          $post->discussion.'#p'.$post->parent.'">'.$strparent.'</a>';
-        }
+    if ($post->parent) {  // Zoom in to the parent specifically
+        $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                      $post->discussion.'&amp;parent='.$post->parent.'">'.$strparent.'</a>';
     }
 
     $forumtype = get_field('forum', 'type', 'id', $post->forum);
