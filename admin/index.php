@@ -129,7 +129,8 @@
         error_reporting($CFG->debug);
         if (empty($agreelicense)) {
             $strlicense = get_string('license');
-            print_header($strlicense, $strlicense, $strlicense, "", "", false, "&nbsp;", "&nbsp;");
+            $navigation = build_navigation(array(array('name'=>$strlicense, 'link'=>null, 'type'=>'misc')));
+            print_header($strlicense, $strlicense, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("<a href=\"http://moodle.org\">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment");
             print_heading(get_string('copyrightnotice'));
             print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
@@ -141,7 +142,8 @@
         }
         if (empty($confirmrelease)) {
             $strcurrentrelease = get_string("currentrelease");
-            print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+            $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
+            print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
             print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
             echo '<form action="index.php"><div>';
@@ -157,7 +159,8 @@
 
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
-        print_header($strdatabasesetup, $strdatabasesetup, $strdatabasesetup,
+        $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
+        print_header($strdatabasesetup, $strdatabasesetup, $navigation,
                         "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
     /// return to original debugging level
         $CFG->debug = $origdebug;
@@ -167,13 +170,13 @@
 
     /// Both old .sql files and new install.xml are supported
     /// But we prioritise install.xml (XMLDB) if present
-    
+
         change_db_encoding(); // first try to change db encoding to utf8
         if (!setup_is_unicodedb()) {
             // If could not convert successfully, throw error, and prevent installation
-            print_error('unicoderequired', 'admin');  
+            print_error('unicoderequired', 'admin');
         }
-    
+
         $status = false;
         if (file_exists("$CFG->libdir/db/install.xml")) {
             $status = install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
@@ -267,7 +270,8 @@
             }
 
             if (empty($confirmupgrade)) {
-                print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
+                $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
+                print_header($strdatabasechecking, $stradministration, $navigation,
                         "", "", false, "&nbsp;", "&nbsp;");
 
                 notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
@@ -275,14 +279,15 @@
 
             } else if (empty($confirmrelease)){
                 $strcurrentrelease = get_string("currentrelease");
-                print_header($strcurrentrelease, $strcurrentrelease, $strcurrentrelease, "", "", false, "&nbsp;", "&nbsp;");
+                $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
+                print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
                 print_heading("Moodle $release");
                 print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
 
                 require_once($CFG->libdir.'/environmentlib.php');
                 print_heading(get_string('environment', 'admin'));
                 if (!check_moodle_environment($release, $environment_results, true)) {
-                    notice_yesno(get_string('environmenterrorupgrade', 'admin'), 
+                    notice_yesno(get_string('environmenterrorupgrade', 'admin'),
                                  'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
                 } else {
                     notify(get_string('environmentok', 'admin'), 'notifysuccess');
@@ -300,7 +305,8 @@
                 die;
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
-                print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
+                $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));
+                print_header($strdatabasechecking, $stradministration, $navigation,
                         "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
 
             /// return to original debugging level
@@ -309,7 +315,7 @@
                 upgrade_log_start();
 
             /// Upgrade current language pack if we can
-                upgrade_language_pack();   
+                upgrade_language_pack();
 
                 print_heading($strdatabasechecking);
                 $db->debug=true;
@@ -337,7 +343,7 @@
                     }
                     // update core events
                     events_update_definition();
-                    
+
                     require_once($CFG->libdir.'/statslib.php');
                     if (!stats_upgrade_for_roles_wrapper()) {
                         notify('Couldn\'t upgrade the stats tables to use the new roles system');

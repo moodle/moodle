@@ -1,20 +1,20 @@
 <?PHP // $Id$
-    
+
     require_once('../config.php');
     require_once($CFG->dirroot.'/my/pagelib.php');
     require_once($CFG->dirroot.'/lib/pagelib.php');
     require_once($CFG->dirroot.'/lib/blocklib.php');
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
-    
+
     $pt  = optional_param('pt', null, PARAM_SAFEDIR); //alhanumeric and -
 
     $pagetypes = array(PAGE_MY_MOODLE => array('id' => PAGE_MY_MOODLE,
                                               'lib' => '/my/pagelib.php',
                                               'name' => get_string('mymoodle','admin')),
-                       PAGE_COURSE_VIEW => array('id' => PAGE_COURSE_VIEW, 
+                       PAGE_COURSE_VIEW => array('id' => PAGE_COURSE_VIEW,
                                                 'lib' => '/lib/pagelib.php',
                                                 'name' => get_string('stickyblockscourseview','admin'))
                        // ... more?
@@ -27,29 +27,33 @@
     }
 
     require_login();
-  
+
     require_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM, SITEID));
 
     // first thing to do is print the dropdown menu
 
     $strtitle = get_string('stickyblocks','admin');
     $strheading = get_string('adminhelpstickyblocks');
-    
-    
+
+
 
     if (!empty($pt)) {
 
         require_once($CFG->dirroot.$pagetypes[$pt]['lib']);
-        
+
         define('ADMIN_STICKYBLOCKS',$pt);
-        
+
         $PAGE = page_create_object($pt, SITEID);
         $blocks = blocks_setup($PAGE,BLOCKS_PINNED_TRUE);
         $blocks_preferred_width = bounded_number(180, blocks_preferred_width($blocks[BLOCK_POS_LEFT]), 210);
 
-        print_header($strtitle,$strtitle,'<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/index.php">'.
-                     get_string('administration').'</a> -> '.$strtitle);
-    
+        $navlinks = array(array('name' => get_string('administration'),
+                                'link' => "$CFG->wwwroot/$CFG->admin/index.php",
+                                'type' => 'misc'));
+        $navlinks[] = array('name' => $strtitle, 'link' => null, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        print_header($strtitle,$strtitle,$navigation);
+
         echo '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">';
         echo '<tr valign="top">';
 
@@ -60,7 +64,7 @@
         echo '</td>';
         echo '<td valign="top" id="middle-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
-        
+
     } else {
         require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('stickyblocks');

@@ -98,7 +98,7 @@ class assignment_base {
             $this->navigation[] = array('name' => $this->strassignment, 'link' => '', 'type' => 'activityinstance');
             $navigation = build_navigation($this->navigation);
 
-            print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strassignment",
+            print_header($pagetitle, $this->course->fullname, $this->navigation,
                          "", "", true, '', navmenu($this->course, $this->cm));
             notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
         }
@@ -690,7 +690,7 @@ class assignment_base {
                       'grade'.$submission->userid, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$submission->userid);
             $output.= 'opener.document.getElementById("up'.$submission->userid.'").innerHTML="'.addslashes_js($button).'";';
         }
-    
+
         if (!empty($CFG->enableoutcomes) and empty($SESSION->flextable['mod-assignment-submissions']->collapse['outcomes'])) {
             if ($outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $submission->userid)) {
                 foreach($outcomes_data as $n=>$data) {
@@ -2482,9 +2482,9 @@ function assignment_count_real_submissions($assignment, $groupid=0) {
         return count_records_sql("SELECT COUNT(DISTINCT gm.userid, gm.groupid)
                                      FROM {$CFG->prefix}assignment_submissions a,
                                           {$CFG->prefix}groups_members g
-                                    WHERE a.assignment = $assignment->id 
+                                    WHERE a.assignment = $assignment->id
                                       AND a.timemodified > 0
-                                      AND g.groupid = '$groupid' 
+                                      AND g.groupid = '$groupid'
                                       AND a.userid = g.userid ");
     } else {
         $cm = get_coursemodule_from_instance('assignment', $assignment->id);

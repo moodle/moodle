@@ -16,8 +16,8 @@ $string['trustedhostsexplain']          = '<p>The trusted hosts mechanism allows
                                            is available for scripts to control Moodle behaviour and can be
                                            a very dangerous option to enable. If in doubt, keep it off.</p>
                                            <p>This is <strong>not</strong> needed for Moodle Networking.</p>
-                                           <p>To enable it, enter a list of IP addresses or networks, 
-                                           one on each line. 
+                                           <p>To enable it, enter a list of IP addresses or networks,
+                                           one on each line.
                                            Some examples:</p>'.
                                           'Your local host:<br />'.
                                           '127.0.0.1<br />'.
@@ -50,6 +50,7 @@ $string['selectahost']                  = 'Please select a remote Moodle host.';
 $string['selectaccesslevel']            = 'Please select an access level from the list.';
 $string['noaclentries']                 = 'No entries in the SSO access control list';
 $string['deleteaserver']                = 'Deleting a Server';
+$string['deletehost']                   = 'Delete host';
 $string['nosite']                       = 'Could not find site-level course';
 $string['postrequired']                 = 'The delete function requires a POST request.';
 $string['hostdeleted']                  = 'Ok - host deleted';
@@ -75,7 +76,7 @@ $string['expireyourkeyexplain']         = 'Moodle automatically rotates your key
                                           'key has been compromised. A replacement will be immediately automatically generated.<br />'.
                                           'Deleting this key will make it impossible for other Moodles to communicate with you, until you '.
                                           'manually contact each administrator and provide them with your new key.';
-$string['deleteoutoftime']              = 'Your 60-second window for deleting this key has expired. Please start again.'; 
+$string['deleteoutoftime']              = 'Your 60-second window for deleting this key has expired. Please start again.';
 $string['deletewrongkeyvalue']          = 'An error has occurred. If you were not trying to delete your server\'s SSL key, it is possible '.
                                           'you have been the subject of a malicious attack. No action has been taken.';
 
@@ -92,7 +93,7 @@ $string['forbidden-function']           = 'That function has not been enabled fo
 $string['forbidden-transport']          = 'The transport method you are trying to use is not permitted.';
 
 $string['registerallhosts']             = 'Register all hosts (<em>Hub mode</em>)';
-$string['registerallhostsexplain']      = 'You can choose to register all hosts that try to connect to you automatically. 
+$string['registerallhostsexplain']      = 'You can choose to register all hosts that try to connect to you automatically.
                                            This means that a record will appear in your hosts list for any '.
                                           'Moodle site that connects to you and requests your public key.<br />'.
                                           'You have the option below to configure services for \'All Hosts\' and by enabling some services there, you are able to provide '.
@@ -104,7 +105,7 @@ $string['ssl_acl_deny']                = 'SSO ACL: Deny user $a[0] from $a[1]';
 $string['enabled_for_all']              = '(This service has been enabled for all hosts).';
 $string['nosuchfile']                   = 'The file/function $a does not exist.';
 $string['nosuchfunction']               = 'Unable to locate function, or function prohibited for RPC.';
-$string['nosuchmodule']                 = 'The function was incorrectly addressed and could not be located. Please use the 
+$string['nosuchmodule']                 = 'The function was incorrectly addressed and could not be located. Please use the
 mod/modulename/lib/functionname format.';
 $string['nosuchpublickey']              = 'Unable to obtain public key for signature verification.';
 $string['nosuchservice']                = 'The RPC service is not running on this host.';
@@ -228,7 +229,7 @@ $string['logs'] = 'logs';
 $string['courses'] = 'courses';
 
 $string['enrolcourses_desc'] = 'Courses offered for remote enrolment by this host.';
-$string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using Moodle Network enrolments. 
+$string['enrolcourseenrol_desc'] = 'Enrol/unenrol users from this course using Moodle Network enrolments.
                                     Note that users may have been enrolled in this course via other enrolment
                                     methods if the remote hosts allows them. Such enrolments are listed under
                                     <em>Other enrolled users</em>';

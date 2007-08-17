@@ -100,8 +100,8 @@
                  continue;
             }
 
-            if (isset($localoverrides[$capname])) {    
-                // Something exists, so update it               
+            if (isset($localoverrides[$capname])) {
+                // Something exists, so update it
                 assign_capability($capname, $value, $roleid, $context->id, true);
             } else { // insert a record
                 if ($value != CAP_INHERIT) {    // Ignore inherits
@@ -116,18 +116,22 @@
 /// Print the header and tabs
 
     if ($context->contextlevel == CONTEXT_USER) {
-
+        $navlinks = array();
         /// course header
         if ($course->id != SITEID) {
-            print_header("$fullname", "$fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$course->id\">$fullname</a> -> $straction",
-                      "", "", true, "&nbsp;", navmenu($course));
+            $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=$course->id", 'type' => 'course');
+            $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$fullname", "$fullname", $navigation, "", "", true, "&nbsp;", navmenu($course));
 
         /// site header
         } else {
-            print_header("$course->fullname: $fullname", $course->fullname,
-                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$course->id\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$course->fullname: $fullname", $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
         }
         $showroles = 1;
         $currenttab = 'override';

@@ -1,7 +1,10 @@
 <?php
-print_header("$site->shortname: $strmnetsettings", "$site->fullname",
-             '<a href="'.$CFG->wwwroot.'/admin/index.php">'.$stradministration.'</a> -> '.
-             '<a href="'.$CFG->wwwroot.'/admin/mnet/index.php">'.get_string('mnetsettings', 'mnet').'</a> -> Delete host');
+$navlinks = array();
+$navlinks[] = array('name' => $stradministration, 'link' => $CFG->wwwroot.'/admin/index.php', 'type' => 'misc');
+$navlinks[] = array('name' => get_string('mnetsettings', 'mnet'), 'link' => $CFG->wwwroot.'/admin/mnet/index.php', 'type' => 'misc');
+$navlinks[] = array('name' => get_string('deletehost', 'mnet'), 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+print_header("$site->shortname: $strmnetsettings", "$site->fullname", $navigation);
 
 print_heading(get_string('mnetsettings', 'mnet'));
 ?>

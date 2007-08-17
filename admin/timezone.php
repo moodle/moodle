@@ -13,7 +13,7 @@
     $strusers = get_string("users");
     $strall = get_string("all");
 
-    print_header($strtimezone, $strtimezone, $strtimezone);
+    print_header($strtimezone, $strtimezone, build_navigation(array(array('name' => $strtimezone, 'link' => null, 'type' => 'misc'))));
 
     print_heading("");
 

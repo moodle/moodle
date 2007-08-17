@@ -18,9 +18,11 @@
     $stradministration = get_string("administration");
     $site = get_site();
 
+    $navigation = build_navigation(array(
+        array('name'=>$stradministration, 'link'=>'index.php', 'type'=>'misc'),
+        array('name'=>$strdatabaseperformance, 'link'=>null, 'type'=>'misc')));
     if (!empty($topframe)) {
-        print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", 
-                     "<a $CFG->frametarget href=\"index.php\">$stradministration</a> -> Database performance");
+        print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", $navigation);
         exit;
     }
 

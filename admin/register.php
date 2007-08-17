@@ -33,9 +33,11 @@
     $stradministration = get_string("administration");
     $strregistration = get_string("registration");
     $strregistrationinfo = get_string("registrationinfo");
-
-    print_header("$site->shortname: $strregistration", $site->fullname, 
-                 "<a href=\"../$CFG->admin/index.php\">$stradministration</a> -> $strregistration");
+    $navlinks = array();
+    $navlinks[] = array('name' => $stradministration, 'link' => "../$CFG->admin/index.php", 'type' => 'misc');
+    $navlinks[] = array('name' => $strregistration, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
+    print_header("$site->shortname: $strregistration", $site->fullname, $navigation);
 
     print_heading($strregistration);
 
@@ -63,12 +65,12 @@
     echo '<div class="fitemtitle"><label>URL</label></div>';
     echo '<div class="felement ftext">'.$CFG->wwwroot.'</div>';
     echo '</div>';
-            
+
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label>'.get_string("currentversion").'</label></div>';
     echo '<div class="felement ftext">'."$CFG->release ($CFG->version)".'</div>';
     echo '</div>';
-            
+
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="sitename">'.get_string("fullsitename").'</label></div>';
     echo '<div class="felement ftext">';
@@ -103,7 +105,7 @@
     unset($options);
     echo '</div>';
     echo '</div>';
-            
+
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label>'.get_string("statistics")."<br />(".get_string("notpublic").')'.'</label></div>';
     echo '<div class="felement ftext">';
@@ -119,7 +121,7 @@
     echo '<br />';
 
     // total number of role assignments
-    $count = count_records('role_assignments'); 
+    $count = count_records('role_assignments');
     echo get_string('roleassignments', 'role').": ".$count;
     echo "<input type=\"hidden\" name=\"roleassignments\" value=\"$count\" />\n";
     echo '<br />';
@@ -127,13 +129,13 @@
     // first find all distinct roles with mod/course:update
     // please change the name and strings to something appropriate to reflect the new data collected
     $sql = "SELECT COUNT(DISTINCT u.id)
-            FROM {$CFG->prefix}role_capabilities rc, 
+            FROM {$CFG->prefix}role_capabilities rc,
                  {$CFG->prefix}role_assignments ra,
                  {$CFG->prefix}user u
             WHERE (rc.capability = 'moodle/course:update' or rc.capability='moodle/site:doanything')
                    AND rc.roleid = ra.roleid
                    AND u.id = ra.userid";
-    
+
     $count = count_records_sql($sql);
     echo get_string("teachers").": ".$count;
     echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\" />\n";
@@ -154,7 +156,7 @@
     echo "<input type=\"hidden\" name=\"resources\" value=\"$count\" />\n";
     echo '</div>';
     echo '</div>';
-            
+
     echo '<div class="fitem">';
     echo '<div class="fitemtitle"><label for="adminname">'.get_string("administrator").'</label></div>';
     echo '<div class="felement ftext">';

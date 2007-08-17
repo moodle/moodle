@@ -13,7 +13,10 @@ if ($currenttab != 'update') {
 
         case CONTEXT_SYSTEM:
             $stradministration = get_string('administration');
-            print_header($SITE->fullname, "$SITE->fullname","<a href=\"../index.php\">$stradministration</a> -> $straction");
+            $navlinks[] = array('name' => $stradministration, 'link' => '../index.php', 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header($SITE->fullname, "$SITE->fullname", $navigation);
             break;
 
         case CONTEXT_PERSONAL:

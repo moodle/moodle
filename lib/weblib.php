@@ -2246,17 +2246,17 @@ function get_html_lang($dir = false) {
  * @uses $USER
  * @uses $CFG
  * @uses $SESSION
- * @param string $title Appears at the top of the window
- * @param string $heading Appears at the top of the page
- * @param string $navigation Premade navigation string (for use as breadcrumbs links)
- * @param string $focus Indicates form element to get cursor focus on load eg  inputform.password
- * @param string $meta Meta tags to be added to the header
+ * @param string  $title Appears at the top of the window
+ * @param string  $heading Appears at the top of the page
+ * @param array   $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
+ * @param string  $focus Indicates form element to get cursor focus on load eg  inputform.password
+ * @param string  $meta Meta tags to be added to the header
  * @param boolean $cache Should this page be cacheable?
- * @param string $button HTML code for a button (usually for module editing)
- * @param string $menu HTML code for a popup menu
+ * @param string  $button HTML code for a button (usually for module editing)
+ * @param string  $menu HTML code for a popup menu
  * @param boolean $usexml use XML for this page
- * @param string $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
- * @param bool   $return If true, return the visible elements of the header instead of echoing them.
+ * @param string  $bodytags This text will be included verbatim in the <body> tag (useful for onload() etc)
+ * @param bool    $return If true, return the visible elements of the header instead of echoing them.
  */
 function print_header ($title='', $heading='', $navigation='', $focus='',
                        $meta='', $cache=true, $button='&nbsp;', $menu='',
@@ -4263,7 +4263,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
  */
 function use_html_editor($name='', $editorhidebuttons='', $id='') {
     global $THEME;
-    
+
     $editor = 'editor_'.md5($name); //name might contain illegal characters
     if ($id === '') {
         $id = 'edit-'.$name;
@@ -4274,7 +4274,7 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
     echo "var config = $editor.config;\n";
 
     echo print_editor_config($editorhidebuttons);
-    
+
     if (empty($THEME->htmleditorpostprocess)) {
         if (empty($name)) {
             echo "\nHTMLArea.replaceAll($editor.config);\n";
@@ -6398,7 +6398,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
     }
 }
 
-/** 
+/**
  * Returns boolean true if the current language is right-to-left (Hebrew, Arabic etc)
  *
  */
@@ -6420,8 +6420,8 @@ function right_to_left() {
  * @return string
  */
 function fix_align_rtl($align) {
-	if (!right_to_left()) { 
-        return $align; 
+	if (!right_to_left()) {
+        return $align;
     }
 	if ($align=='left')  { return 'right'; }
 	if ($align=='right') { return 'left'; }

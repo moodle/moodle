@@ -2784,6 +2784,9 @@ function admin_externalpage_setup($section) {
 
 }
 
+/**
+ * TODO document
+ */
 function admin_externalpage_print_header() {
 
     global $CFG, $PAGE, $SITE, $THEME;
@@ -2802,7 +2805,7 @@ function admin_externalpage_print_header() {
                                                BLOCK_L_MAX_WIDTH);
         $PAGE->print_header();
         echo '<table id="layout-table" summary=""><tr>';
-        
+
         $lt = (empty($THEME->layouttable)) ? array('left', 'middle', 'right') : $THEME->layouttable;
         foreach ($lt as $column) {
             $lt1[] = $column;
@@ -2817,12 +2820,12 @@ function admin_externalpage_print_header() {
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
-        
+
                 case 'middle':
         echo '<td id="middle-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
                 break;
-                
+
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';
@@ -2872,12 +2875,12 @@ function admin_externalpage_print_footer() {
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
-                
+
                 case 'middle':
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
                 break;
-                
+
                 case 'right':
         if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT)) {
             echo '<td style="width: ' . $preferred_width_right . 'px;" id="right-column">';

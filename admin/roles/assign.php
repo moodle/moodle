@@ -90,7 +90,7 @@
     $timeformat = get_string('strftimedate');
     $today = time();
     $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
-    
+
     $basemenu[0] = get_string('startdate') . ' (' . userdate($course->startdate, $timeformat) . ')';
     if ($course->enrollable != 2 || ($course->enrolstartdate == 0 || $course->enrolstartdate <= $today) && ($course->enrolenddate == 0 || $course->enrolenddate > $today)) {
         $basemenu[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
@@ -103,7 +103,7 @@
             $basemenu[5] = get_string('courseenrolenddate') . ' (' . userdate($course->enrolenddate, $timeformat) . ')';
         }
     }
-    
+
 /// Make sure this user can assign that role
 
     if ($roleid) {
@@ -122,16 +122,22 @@
 
     if ($context->contextlevel == CONTEXT_USER) {
         /// course header
+        $navlinks = array();
         if ($courseid != SITEID) {
-            print_header("$fullname", "$fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> -> <a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">$fullname</a> ->".$straction,
-                      "", "", true, "&nbsp;", navmenu($course));
+            $navlinks[] = array('name' => $course->shortname, 'link' => "$CFG->wwwroot/course/view.php?id=$course->id", 'type' => 'course');
+            $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+
+            print_header("$fullname", "$fullname", $navigation, "", "", true, "&nbsp;", navmenu($course));
 
         /// site header
         } else {
-            print_header("$course->fullname: $fullname", $course->fullname,
-                        "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">$fullname</a> -> $straction", "", "", true, "&nbsp;", navmenu($course));
+            $navlinks[] = array('name' => $fullname, 'link' => "$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid", 'type' => 'misc');
+            $navlinks[] = array('name' => $straction, 'link' => null, 'type' => 'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$course->fullname: $fullname", $course->fullname, $navigation, "", "", true, "&nbsp;", navmenu($course));
         }
 
         $showroles = 1;
@@ -190,7 +196,7 @@
                             $timestart = $course->enrolenddate;
                             break;
                     }
-                    
+
                     if($extendperiod > 0) {
                         $timeend = $timestart + $extendperiod;
                     } else {
@@ -251,7 +257,7 @@
     if ($context->contextlevel==CONTEXT_SYSTEM) {
         print_box(get_string('globalroleswarning', 'role'));
     }
-    
+
     if ($roleid) {        /// prints a form to swap roles
 
     /// Get all existing participants in this context.
