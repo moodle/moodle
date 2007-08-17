@@ -80,8 +80,8 @@
             $title = $strlanguage;
             break;
     }
-    $crumbs[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/admin/lang.php");
-    $navigation = build_navigation($crumbs);
+    $navlinks[] = array('name' => $strlanguage, 'link' => "$CFG->wwwroot/admin/lang.php", 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
     admin_externalpage_print_header();
 
