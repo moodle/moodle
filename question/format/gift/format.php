@@ -224,8 +224,8 @@ class qformat_gift extends qformat_default {
 
         // give plugins first try
         // plugins must promise not to intercept standard qtypes
-        if ($question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
-            return $question;
+        if ($try_question = $this->try_importing_using_qtypes( $lines, $question, $answertext )) {
+            return $try_question;
         }
 
         if ($description) {
