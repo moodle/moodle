@@ -85,7 +85,7 @@
                     $navlinks[] = array('name' => $strlogs, 'link' => "index.php?id=$course->id", 'type' => 'misc');
                     $navlinks[] = array('name' => "$userinfo, $dateinfo", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
-                    print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation '');
+                    print_header($course->shortname .': '. $strlogs, $course->fullname, $navigation);
                 }
 
                 print_heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")");

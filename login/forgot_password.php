@@ -124,7 +124,7 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    print_header($strforgotten, $strforgotten, $navigation
+    print_header($strforgotten, $strforgotten, $navigation);
 
     if (empty($user->email) or !empty($CFG->protectusernames)) {
         // Print general confirmation message
