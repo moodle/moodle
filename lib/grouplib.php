@@ -83,6 +83,7 @@ function groups_get_group($groupid) {
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
     global $CFG;
 
+    // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $groupingid = 0;
     }
@@ -136,6 +137,7 @@ function groups_is_member($groupid, $userid=null) {
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER;
 
+    // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $cm->groupingid = 0;
     }
@@ -206,6 +208,7 @@ function groups_get_activity_groupmode($cm) {
 function groups_print_activity_menu($cm, $urlroot, $return=false) {
     global $CFG, $USER;
 
+    // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $cm->groupingid = 0;
     }
@@ -270,6 +273,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false) {
 function groups_get_activity_group($cm, $update=false) {
     global $CFG, $USER, $SESSION;
 
+    // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $cm->groupingid = 0;
     }
