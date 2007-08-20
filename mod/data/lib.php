@@ -1385,7 +1385,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
 function data_preset_name($shortname, $path) {
 
     /// We are looking inside the preset itself as a first choice, but also in normal data directory
-    $string = get_string('presetname'.$shortname, 'data', NULL, $path.'/lang/');
+    $string = get_string('modulename', 'datapreset_'.$shortname);
 
     if (substr($string, 0, 1) == '[') {
         return $shortname;

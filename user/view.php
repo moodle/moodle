@@ -48,7 +48,7 @@
     if ($USER->id != $user->id 
         && !has_capability('moodle/user:viewdetails', $coursecontext) 
         && !has_capability('moodle/user:viewdetails', $usercontext)) {
-        error('You can not view the profile of this user');
+        print_error('cannotviewprofile');
     }
 
     if (!empty($CFG->forceloginforprofiles)) {

@@ -469,6 +469,7 @@ $string['protectusernames'] = 'Protect usernames';
 $string['proxyhost'] = 'Proxy host';
 $string['proxyport'] = 'Proxy port';
 $string['quarantinedir'] = 'Quarantine directory';
+$string['question'] = 'Question';
 $string['rcache'] = 'Record cache';
 $string['rcachettl'] = 'Record cache TTL';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_new\" href=\"$a\">Release Notes</a>';
