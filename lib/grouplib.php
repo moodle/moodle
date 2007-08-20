@@ -83,6 +83,10 @@ function groups_get_group($groupid) {
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
     global $CFG;
 
+    if (empty($CFG->enablegroupings)) {
+        $groupingid = 0;
+    }
+
     if (!empty($userid)) {
         $userfrom  = ", {$CFG->prefix}groups_members gm";
         $userwhere = "AND g.id = gm.groupid AND gm.userid = '$userid'";
@@ -131,6 +135,10 @@ function groups_is_member($groupid, $userid=null) {
  */
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER;
+
+    if (empty($CFG->enablegroupings)) {
+        $cm->groupingid = 0;
+    }
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -196,7 +204,11 @@ function groups_get_activity_groupmode($cm) {
  * @return mixed void or string depending on $return param
  */
 function groups_print_activity_menu($cm, $urlroot, $return=false) {
-    global $USER;
+    global $CFG, $USER;
+
+    if (empty($CFG->enablegroupings)) {
+        $cm->groupingid = 0;
+    }
 
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         if ($return) {
@@ -256,7 +268,11 @@ function groups_print_activity_menu($cm, $urlroot, $return=false) {
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
  */
 function groups_get_activity_group($cm, $update=false) {
-    global $USER, $SESSION;
+    global $CFG, $USER, $SESSION;
+
+    if (empty($CFG->enablegroupings)) {
+        $cm->groupingid = 0;
+    }
 
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         // NOGROUPS used
