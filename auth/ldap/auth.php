@@ -340,6 +340,9 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
+        global $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+        
         if ($this->user_exists($user->username)) {
             print_error('auth_ldap_user_exists', 'auth');
         }
@@ -354,6 +357,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (! ($user->id = insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert', 'auth');
         }
+
+        /// Save any custom profile field information
+        profile_save_data($user);
 
         $this->update_user_record($user->username);
         update_internal_user_password($user, $plainslashedpassword);

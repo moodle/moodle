@@ -74,11 +74,18 @@ class auth_plugin_email extends auth_plugin_base {
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
+        global $CFG;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+        
         $user->password = hash_internal_user_password($user->password);
 
         if (! ($user->id = insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert','auth');
         }
+        
+        /// Save any custom profile field information
+        profile_save_data($user);
+
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail','auth');
         }

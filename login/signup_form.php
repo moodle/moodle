@@ -1,6 +1,7 @@
 <?php  // $Id$
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class login_signup_form extends moodleform {
     function definition() {
@@ -56,6 +57,8 @@ class login_signup_form extends moodleform {
         $mform->addElement('select', 'country', get_string('country'), $country);
         $mform->addRule('country', get_string('missingcountry'), 'required', null, 'server');
         $mform->setDefault('country', '');
+
+        profile_signup_fields($mform);
 
         if (!empty($CFG->sitepolicy)) {
             $mform->addElement('header', '', get_string('policyagreement'), '');
