@@ -1126,6 +1126,7 @@ class assignment_base {
 
             foreach ($ausers as $auser) {
             /// Calculate user status
+                $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
                 $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
 
                 if (empty($auser->submissionid)) {
