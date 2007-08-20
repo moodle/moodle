@@ -275,7 +275,7 @@
     }
 
 /// print option to add a subcategory
-    if (has_capability('moodle/category:create', $context)) {
+    if (has_capability('moodle/category:create', $context) && $creatorediting) {
         $cat->id = $id;
         $mform->set_data($cat);
         $mform->display();

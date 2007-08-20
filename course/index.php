@@ -75,7 +75,6 @@
                           $strcategories, '', '', true, update_categories_button());
             print_heading($strcategories);
             print_box_start('categorybox');
-            print_category_create_form();
             print_whole_category_list();
             print_box_end();
             print_course_search();
@@ -85,7 +84,6 @@
                     build_navigation(array(array('name'=>$strfulllistofcourses, 'link'=>'','type'=>'misc'))),
                          '', '', true, update_categories_button());
             print_box_start('courseboxes');
-            print_category_create_form();
             print_courses(0);
             print_box_end();
         }
