@@ -1698,6 +1698,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 
 /// Groups needed for Add entry tab
     $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
     /// Print the tabs
 
