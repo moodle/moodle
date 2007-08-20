@@ -278,7 +278,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('lessondefault', 0);
 
 //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements(false);
+        $this->standard_coursemodule_elements(array('groups'=>false));
 //-------------------------------------------------------------------------------
 // buttons
         $this->add_action_buttons();

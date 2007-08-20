@@ -85,6 +85,11 @@ class moodleform_mod extends moodleform {
 
         $errors = array();
 
+        $name = trim($data['name']);
+        if ($name == '') {
+            $errors['name'] = get_string('required');
+        }
+
         $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$data['modulename'],
                      'iteminstance'=>$data['instance'], 'itemnumber'=>0, 'courseid'=>$COURSE->id));
         if ($data['coursemodule']) {
@@ -123,12 +128,36 @@ class moodleform_mod extends moodleform {
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
      *
-     * @param bool $supportsgroups does this module support groups?
-     * @param bool $supportgroupmembersonly does this module support groupmembersonly access?
+     * @param mixed array or object describing supported features - groups, groupings, groupmembersonly
      */
-    function standard_coursemodule_elements($supportsgroups=true, $supportgroupmembersonly=false){
+    function standard_coursemodule_elements($features=null){
         global $COURSE, $CFG;
         $mform =& $this->_form;
+
+        // deal with legacy $supportgroups param
+        if ($features === true or $features === false) {
+            $groupmode = $features;
+            $features = new object();
+            $features->groups = $groupmode;
+
+        } else if (is_array($features)) {
+            $features = (object)$features;
+
+        } else if (empty($features)) {
+            $features = new object();
+        }
+
+        if (!isset($features->groups)) {
+            $features->groups = true;
+        }
+
+        if (!isset($features->groupings)) {
+            $features->groupings = false;
+        }
+
+        if (!isset($features->groupmembersonly)) {
+            $features->groupmembersonly = false;
+        }
 
         if (!empty($CFG->enableoutcomes)) {
             if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
@@ -140,23 +169,25 @@ class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('header', 'modstandardelshdr', get_string('modstandardels', 'form'));
-        if ($supportsgroups){
+        if ($features->groups){
             $mform->addElement('modgroupmode', 'groupmode', get_string('groupmode'));
         }
 
         if (!empty($CFG->enablegroupings)) {
-            //groupings selector
-            $options = array();
-            $options[0] = get_string('none');
-            if ($groupings = get_records('groupings', 'courseid', $COURSE->id)) {
-                foreach ($groupings as $grouping) {
-                    $options[$grouping->id] = format_string($grouping->name);
+            if ($features->groupings or $features->groupmembersonly) {
+                //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
+                $options = array();
+                $options[0] = get_string('none');
+                if ($groupings = get_records('groupings', 'courseid', $COURSE->id)) {
+                    foreach ($groupings as $grouping) {
+                        $options[$grouping->id] = format_string($grouping->name);
+                    }
                 }
+                $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
+                $mform->setAdvanced('groupingid');
             }
-            $mform->addElement('select', 'groupingid', get_string('grouping', 'group'), $options);
-            $mform->setAdvanced('groupingid');
-            
-            if ($supportgroupmembersonly) {
+
+            if ($features->groupmembersonly) {
                 $mform->addElement('advcheckbox', 'groupmembersonly', get_string('groupmembersonly', 'group'));
                 $mform->setAdvanced('groupmembersonly');
             }

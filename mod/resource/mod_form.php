@@ -43,7 +43,7 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('header', 'typedesc', get_string('resourcetype'.$type,'resource'));
         $this->_resinstance->setup_elements($mform);
 
-        $this->standard_coursemodule_elements(false, true);
+        $this->standard_coursemodule_elements(array('groups'=>false, 'groupmembersonly'=>true));
 
         $this->add_action_buttons();
     }

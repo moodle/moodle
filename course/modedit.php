@@ -208,11 +208,16 @@
         $updateinstancefunction = $fromform->modulename."_update_instance";
 
         if (!empty($fromform->update)) {
+            if (!isset($fromform->groupingid)) {
+                $fromform->groupingid = 0;
+            }
 
-            if (isset($fromform->name)) {
-                if (trim($fromform->name) == '') {
-                    unset($fromform->name);
-                }
+            if (!isset($fromform->groupmembersonly)) {
+                $fromform->groupmembersonly = 0;
+            }
+
+            if (!isset($fromform->groupmode)) {
+                $fromform->groupmode = 0;
             }
 
             $returnfromfunc = $updateinstancefunction($fromform);
@@ -224,18 +229,9 @@
             }
 
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-
-            if (isset($fromform->groupmode)) {
-                set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
-            }
-
-            if (isset($fromform->groupingid)) {
-                set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
-            }
-
-            if (isset($fromform->groupmembersonly)) {
-                set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
-            }
+            set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
+            set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
+            set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
 
             // set cm id number
             set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
@@ -248,13 +244,20 @@
                        "$fromform->instance", $fromform->coursemodule);
 
         } else if (!empty($fromform->add)){
-
             if (!course_allowed_module($course,$fromform->modulename)) {
                 error("This module ($fromform->modulename) has been disabled for this particular course");
             }
 
-            if (!isset($fromform->name) || trim($fromform->name) == '') {
-                $fromform->name = get_string("modulename", $fromform->modulename);
+            if (!isset($fromform->groupingid)) {
+                $fromform->groupingid = 0;
+            }
+
+            if (!isset($fromform->groupmembersonly)) {
+                $fromform->groupmembersonly = 0;
+            }
+
+            if (!isset($fromform->groupmode)) {
+                $fromform->groupmode = 0;
             }
 
             $returnfromfunc = $addinstancefunction($fromform);
