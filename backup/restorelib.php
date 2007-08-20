@@ -1576,7 +1576,7 @@
                             }
                             
                             // no need to restore grades/grades_text if user data is not selected
-                            if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
+                            if ($dbrec->itemtype == 'mod' && !restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
                                 // module instance not selected when restored using granular
                                 // skip this item
                                 $counteritems++;

@@ -1514,7 +1514,10 @@
 
                 // back up the other stuff here
                 // mod grades should only be backed up if selected
-                if ($grade_item->itemtype == 'mod' && backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                if ($grade_item->itemtype == 'mod' && !backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                    // do not write grades if a mod grade_item is being restored
+                    // but userdata is not selected
+                } else {
                     $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
                     $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
                 }
