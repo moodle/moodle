@@ -1174,7 +1174,7 @@
     //about each incidence
     function restore_create_gradebook($restore,$xml_file) {
 
-        global $CFG, $db;
+        global $CFG, $db, $SESSION;
 
         $status = true;
         //Check it exists
@@ -1467,12 +1467,12 @@
                                             "old_id, old_id",
                                             $counteritems,
                                             $recordset_size);
+                                            
                 if ($recs) {
                     foreach ($recs as $rec) {
                         //Get the full record from backup_ids
                         $data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id);
                         if ($data) {
-
                             //Now get completed xmlized object
                             $info = $data->info;
                             //traverse_xmlize($info);                            //Debug
@@ -1480,8 +1480,12 @@
                             //$GLOBALS['traverse_array']="";                     //Debug
 
                             $dbrec->courseid = $restore->course_id;
-
-                            if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
+                            
+                            if (isset($SESSION->restore->importing)) {
+                                // if we are importing, points all grade_items to the course category
+                                $coursecat = get_record('grade_categories', 'courseid', $restore->course_id, 'depth', 1);
+                                $dbrec->categoryid = $coursecat->id;
+                            } else if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
                                 $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
                                 $dbrec->categoryid = $category->new_id;
                             }
@@ -1492,16 +1496,8 @@
                             /// this needs to point to either the new mod id
                             /// or the category id
                             $iteminstance = backup_todb($info['GRADE_ITEM']['#']['ITEMINSTANCE']['0']['#']);
-
                             // do not restore if this grade_item is a mod, and
                             if ($dbrec->itemtype == 'mod') {
-
-                                if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
-                                    // module instance not selected when restored using granular
-                                    // skip this item
-                                    $counteritems++;
-                                    continue;
-                                }
 
                                 // iteminstance should point to new mod
 
@@ -1512,24 +1508,29 @@
                                 // the item instance should point to the new grade category
 
                                 // only proceed if we are restoring all grade items
-                                if ($restoreall) {
+                                // need to skip for imports
+                                if ($restoreall && !isset($SESSION->restore->importing)) {
                                     $category = backup_getid($restore->backup_unique_code,'grade_categories', $iteminstance);
                                     $dbrec->iteminstance = $category->new_id;
                                 } else {
                                     // otherwise we can safely ignore this grade item and subsequent
                                     // grade_raws, grade_finals etc
+                                    $counteritems++;
                                     continue;
                                 }
                             } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
-                                if ($restoreall) {
+                                if ($restoreall && !isset($SESSION->restore->importing)) {
                                     // TODO any special code needed here to restore course item without duplicating it?
                                     // find the course category with depth 1, and course id = current course id
                                     // this would have been already restored
 
+                                    // need to skip for imports
                                     $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
                                     $dbrec->iteminstance = $cat->id;
-
+                                    //$counteritems++;
+                                    //continue;
                                 } else {
+                                    $counteritems++;
                                     continue;
                                 }
                             }
@@ -1557,7 +1558,6 @@
                             $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);
                             $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);
 
-
                             // get the current sortorder, add 1 to it and use that
                             if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
                                                         WHERE courseid = $restore->course_id
@@ -1574,6 +1574,15 @@
                             if ($itemid) {
                                 backup_putid($restore->backup_unique_code,'grade_items', backup_todb($info['GRADE_ITEM']['#']['ID']['0']['#']), $itemid);
                             }
+                            
+                            // no need to restore grades/grades_text if user data is not selected
+                            if (!restore_userdata_selected($restore,  $dbrec->itemmodule, $iteminstance)) {
+                                // module instance not selected when restored using granular
+                                // skip this item
+                                $counteritems++;
+                                continue;
+                            }
+                            
                             /// now, restore grade_grades, grade_text
                             if (!empty($info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']) && ($grades = $info['GRADE_ITEM']['#']['GRADE_GRADES']['0']['#']['GRADE'])) {
                                 //Iterate over items
@@ -1666,7 +1675,7 @@
         }
 
         // process histories
-        if ($gchcount && $continue) {
+        if ($gchcount && $continue && !isset($SESSION->restore->importing)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradecategoryhistory','grades').'</li>';
             }
@@ -1759,7 +1768,7 @@
         }
 
         // process histories
-        if ($gghcount && $continue) {
+        if ($gghcount && $continue && !isset($SESSION->restore->importing)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradegradeshistory','grades').'</li>';
             }
@@ -1840,7 +1849,7 @@
 
         // process histories
 
-        if ($ggthcount && $continue) {
+        if ($ggthcount && $continue && !isset($SESSION->restore->importing)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradegradestexthistory','grades').'</li>';
             }
@@ -1914,7 +1923,7 @@
         }
 
         // process histories
-        if ($gihcount && $continue) {
+        if ($gihcount && $continue && !isset($SESSION->restore->importing)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeitemshistory','grades').'</li>';
             }
@@ -2053,7 +2062,7 @@
         }
 
         // process histories
-        if ($gohcount && $continue) {
+        if ($gohcount && $continue && !isset($SESSION->restore->importing)) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeoutcomeshistory','grades').'</li>';
             }
@@ -6676,7 +6685,7 @@
                 && !empty($restore->mods[$modname]->instances[$modid]->userinfo);
         }
 
-        print_object($restore->mods[$modname]);
+        //print_object($restore->mods[$modname]);
         return !empty($restore->mods[$modname]->userinfo);
     }
 

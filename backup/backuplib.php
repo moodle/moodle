@@ -1477,11 +1477,7 @@
 
                 // do not restore if this grade_item is a mod, and
                 if ($grade_item->itemtype == 'mod') {
-
-                    // if no user data selected, we skip this grade_item
-                    if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
-                        continue;
-                    }
+                    // this still needs to be included, though grades and grades_text can be ignored
                 } else if ($grade_item->itemtype == 'category') {
                     // if not all grade items are being backed up
                     // we ignore this type of grade_item and grades associated
@@ -1517,9 +1513,11 @@
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
 
                 // back up the other stuff here
-                $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
-                $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
-
+                // mod grades should only be backed up if selected
+                if ($grade_item->itemtype == 'mod' && backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                    $status = backup_gradebook_grades_info($bf,$preferences,$grade_item->id);
+                    $status = backup_gradebook_grades_text_info($bf,$preferences,$grade_item->id);
+                }
                 //End grade_item
                 fwrite ($bf,end_tag("GRADE_ITEM",4,true));
             }
