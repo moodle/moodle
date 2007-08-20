@@ -135,7 +135,6 @@
     } else {
         $groupselect = "";
         $groupparam = "";
-        $currentgroup = 0;
     }
 
 /// Print the tabs
