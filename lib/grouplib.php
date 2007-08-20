@@ -331,4 +331,32 @@ function groups_get_activity_group($cm, $update=false) {
     return $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid];
 }
 
+/**
+ * Determine if a course module is currently visible to a user
+ * @uses $USER If $userid is null, use the global object.
+ * @param int $cm The course module
+ * @param int $userid The user to check against the group.
+ * @return boolean True if the user can view the course module, false otherwise.
+ */
+function groups_course_module_visible($cm, $userid=null) {
+    global $CFG, $USER;
+    
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+    if (empty($CFG->enablegroupings)) {
+        return(true);
+    }
+    if (empty($cm->groupmembersonly)) {
+        return(true);
+    }
+    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
+        return(true);
+    }
+    if (groups_has_membership($cm, $userid)) {
+        return(true);
+    }
+    return(false);
+}
+
 ?>
