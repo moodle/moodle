@@ -20,7 +20,7 @@ the random question is created.</p>
 $string['cwrqpfsnoprob'] = 'No question categories in your site are affected by the \'Random questions selecting questions from sub categories\' issue.';
 $string['copy']= 'Copy from $a and change links.';
 $string['created'] = 'Created';
-$string['createdmodifiedheader'] = 'Created / Modified';
+$string['createdmodifiedheader'] = 'Created / Last Saved';
 $string['defaultfor'] = 'Default for $a';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'$a\'.';
 $string['donothing']= 'Don\'t copy or move files or change links.';
@@ -42,7 +42,7 @@ $string['linkedfiledoesntexist'] = 'Linked file $a doesn\'t exist';
 $string['makechildof'] = "Make Child of '\$a'";
 $string['maketoplevelitem'] = 'Move to top level';
 $string['missingimportantcode'] = 'This question type is missing important code: $a.';
-$string['modified'] = 'Modified';
+$string['modified'] = 'Last saved';
 $string['move']= 'Move from $a and change links.';
 $string['movecategory']= 'Move Category';
 $string['movelinksonly']= 'Just change where links point to, do not move or copy files.';
