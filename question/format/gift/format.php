@@ -616,7 +616,12 @@ function writequestion( $question ) {
         $expout .= "::".$this->repchar($question->name)."::".$tfname.$this->repchar( $question->questiontext, $textformat )."{#\n";
         foreach ($question->options->answers as $answer) {
             if ($answer->answer != '') {
-                $expout .= "\t=".$answer->answer.":".(float)$answer->tolerance."#".$this->repchar( $answer->feedback )."\n";
+                $percentage = '';
+                if ($answer->fraction < 1) {
+                    $pval = $answer->fraction * 100;
+                    $percentage = "%$pval%";
+                }
+                $expout .= "\t=$percentage".$answer->answer.":".(float)$answer->tolerance."#".$this->repchar( $answer->feedback )."\n";
             } else {
                 $expout .= "\t~#".$this->repchar( $answer->feedback )."\n";
             }
