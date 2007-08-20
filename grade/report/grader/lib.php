@@ -708,7 +708,7 @@ class grade_report_grader extends grade_report {
 
                     if ($gradedisplaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         if (!is_null($gradeval)) {
-                            $gradeval = grade_grade::standardise_score($gradeval, $grademin, $grademax, 0, 100);
+                            $gradeval = grade_to_percentage($gradeval, $grademin, $grademax);
                         }
                         $percentsign = '%';
                     }
@@ -791,16 +791,12 @@ class grade_report_grader extends grade_report {
             $groupwheresql = null;
         }
 
-        if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
-            $totalcount = 0;
-        } else {
-            $totalcount = $this->get_numusers(false);
-        }
+        $totalcount = $this->get_numusers(false);
 
         if ($showaverages) {
 
             // the first join on user is needed for groupsql
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum, COUNT(DISTINCT(u.id)) as count
+            $SQL = "SELECT g.itemid, SUM(g.finalgrade) as sum
                 FROM {$CFG->prefix}grade_items gi LEFT JOIN
                      {$CFG->prefix}grade_grades g ON gi.id = g.itemid LEFT JOIN
                      {$CFG->prefix}user u ON g.userid = u.id
@@ -816,15 +812,9 @@ class grade_report_grader extends grade_report {
                      )
                 GROUP BY g.itemid";
             $sum_array = array();
-            $count_array = array();
             if ($sums = get_records_sql($SQL)) {
                 foreach ($sums as $itemid => $csum) {
                     $sum_array[$itemid] = $csum->sum;
-                    if ($totalcount) {
-                        $count_array[$itemid] = $totalcount;
-                    } else {
-                        $count_array[$itemid] = $csum->count;
-                    }
                 }
             }
 
@@ -832,6 +822,37 @@ class grade_report_grader extends grade_report {
 
             $columncount=1;
             foreach ($this->items as $item) {
+                if (empty($sum_array[$item->id])) {
+                    $sum_array[$item->id] = 0;
+                }
+
+                // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
+                // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
+                $SQL = "SELECT COUNT(*) AS count FROM {$CFG->prefix}user u
+                         WHERE u.id NOT IN
+                           (SELECT userid FROM {$CFG->prefix}grade_grades
+                             WHERE itemid = $item->id
+                               AND finalgrade IS NOT NULL
+                           )
+                           AND u.id IN (
+                             SELECT DISTINCT(u.id)
+                              FROM {$CFG->prefix}user u LEFT JOIN
+                                   {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                             WHERE ra.roleid in ($this->gradebookroles)
+                               AND ra.contextid ".get_related_contexts_string($this->context)."
+                           )";
+
+                $ungraded_count = get_field_sql($SQL);
+
+                if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
+                    $mean_count = $totalcount - $ungraded_count;
+                } else { // Bump up the sum by the number of ungraded items * grademin
+                    if (isset($sum_array[$item->id])) {
+                        $sum_array[$item->id] += $ungraded_count * $item->grademin;
+                    }
+                    $mean_count = $totalcount;
+                }
+
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this average
                 $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
@@ -847,7 +868,7 @@ class grade_report_grader extends grade_report {
                     $decimalpoints = $averagesdecimalpoints;
                 }
 
-                if (empty($count_array[$item->id]) || !isset($sum_array[$item->id])) {
+                if (!isset($sum_array[$item->id]) || $mean_count == 0) {
                     $avghtml .= '<td class="cell c' . $columncount++.'">-</td>';
                 } else {
                     $sum = $sum_array[$item->id];
@@ -855,24 +876,23 @@ class grade_report_grader extends grade_report {
                     if ($item->scaleid) {
                         if ($grouponly) {
                             $finalsum = $sum_array[$item->id];
-                            $finalavg = $finalsum/$count_array[$item->id];
+                            $finalavg = $finalsum/$mean_count;
                         } else {
-                            $finalavg = $sum/$count_array[$item->id];
+                            $finalavg = $sum/$mean_count;
                         }
-
                         $scaleval = round($finalavg);
                         $scale_object = new grade_scale(array('id' => $item->scaleid), false);
                         $gradehtml = $scale_object->get_nearest_item($scaleval);
                         $rawvalue = $scaleval;
                     } else {
-                        $gradeval = format_float($sum/$count_array[$item->id], $decimalpoints);
+                        $gradeval = format_float($sum/$mean_count, $decimalpoints);
                         $gradehtml = $gradeval;
                         $rawvalue = $gradeval;
                     }
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_grade::standardise_score($rawvalue, $item->grademin, $item->grademax, 0, 100);
-                        $gradehtml = number_format($gradeval, $decimalpoints) . '%';
+                        $gradeval = grade_to_percentage($rawvalue, $item->grademin, $item->grademax);
+                        $gradehtml = number_format(format_float($gradeval, $decimalpoints), $decimalpoints) . '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);

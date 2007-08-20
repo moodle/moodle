@@ -5888,10 +5888,10 @@ function format_float($float, $decimalpoints=1) {
 }
 
 /**
- * Convers locale specific floating point/comma number back to standard PHP float value
+ * Converts locale specific floating point/comma number back to standard PHP float value
  * Do NOT try to do any math operations before this conversion on any user submitted floats!
  *
- * @param  string $locale_float locale aware flaot represenation
+ * @param  string $locale_float locale aware float representation
  */
 function unformat_float($locale_float) {
     $locale_float = trim($locale_float);
@@ -5907,7 +5907,7 @@ function unformat_float($locale_float) {
 
 /**
  * Given a simple array, this shuffles it up just like shuffle()
- * Unlike PHP's shuffle() ihis function works on any machine.
+ * Unlike PHP's shuffle() this function works on any machine.
  *
  * @param array $array The array to be rearranged
  * @return array

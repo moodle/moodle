@@ -413,7 +413,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 
     $record = get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
 
-    // If we're caching records, store this one 
+    // If we're caching records, store this one
     // (supposing we got something - we don't cache failures)
     if ($docache) {
         if (isset($record)) {
@@ -436,7 +436,7 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed, should normally only return one record.
- * @param bool $expectmultiple If the SQL cannot be written to conviniently return just one record,
+ * @param bool $expectmultiple If the SQL cannot be written to conveniently return just one record,
  *      set this to true to hide the debug message.
  * @param bool $nolimit sometimes appending ' LIMIT 1' to the SQL causes an error. Set this to true
  *      to stop your SQL being modified. This argument should probably be deprecated.
@@ -1247,7 +1247,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
         $update = "$newfield = '$newvalue'";
     }
 
-/// Arriving here, standard update 
+/// Arriving here, standard update
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '.$update.' '.$select);
 }
 
@@ -1585,7 +1585,7 @@ function update_record($table, $dataobject) {
     $count = 0;
     $update = '';
 
-/// Only if we have fields to be updated (this will prevent both wrong updates + 
+/// Only if we have fields to be updated (this will prevent both wrong updates +
 /// updates of only LOBs in Oracle
     if ($numddd) {
         foreach ($ddd as $key => $value) {
@@ -1950,7 +1950,7 @@ function sql_primary_role_subselect() {
             FROM '.$CFG->prefix.'role_assignments ra
             INNER JOIN '.$CFG->prefix.'role r ON ra.roleid = r.id
             INNER JOIN '.$CFG->prefix.'context c ON ra.contextid = c.id
-            WHERE NOT EXISTS ( 
+            WHERE NOT EXISTS (
                               SELECT 1
                               FROM '.$CFG->prefix.'role_assignments i_ra
                               INNER JOIN '.$CFG->prefix.'role i_r ON i_ra.roleid = i_r.id

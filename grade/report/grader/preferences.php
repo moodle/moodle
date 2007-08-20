@@ -49,7 +49,7 @@ if ($data = data_submitted()) {
                 set_user_preference('calendar_persistflt', intval($value));
                 break;
             default:
-                if ($value == GRADE_REPORT_PREFERENCE_DEFAULT || empty($value)) {
+                if ($value == GRADE_REPORT_PREFERENCE_DEFAULT || strlen($value) == 0) {
                     unset_user_preference($preference);
                 } else {
                     set_user_preference($preference, $value);

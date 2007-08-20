@@ -442,6 +442,12 @@ function grade_to_percentage($gradeval, $grademin, $grademax) {
     if ($grademin >= $grademax) {
         debugging("The minimum grade ($grademin) was higher than or equal to the maximum grade ($grademax)!!! Cannot proceed with computation.");
     }
+
+    // If given gradevalue is lower than grademin, adjust it to grademin
+    if ($gradeval < $grademin || empty($gradeval)) {
+        $gradeval = $grademin;
+    }
+
     $offset_value = $gradeval - $grademin;
     $offset_max = $grademax - $grademin;
     $factor = 100 / $offset_max;
