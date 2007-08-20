@@ -794,7 +794,7 @@ class assignment_base {
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment,
-                          s.timemodified, s.timemarked, (s.timemarked > 0 AND s.timemarked>=s.timemodified) AS status ';
+                          s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
@@ -1107,7 +1107,7 @@ class assignment_base {
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment,
-                          s.timemodified, s.timemarked, (s.timemarked > 0 AND s.timemarked >= s.timemodified) AS status ';
+                          s.timemodified, s.timemarked ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
