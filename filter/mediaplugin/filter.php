@@ -17,65 +17,74 @@
 
 require_once($CFG->libdir.'/filelib.php');
 
+
 function mediaplugin_filter($courseid, $text) {
     global $CFG;
 
     include 'defaultsettings.php';
+
+    // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.
+    // The reason is that you must always be able to refer to the original parameter that was passed.
+    // For this reason, I changed $text = preg_replace(..,..,$text) into $newtext = preg.... (NICOLAS CONNAULT)
+    // Thanks to Pablo Etcheverry for pointing this out! MDL-10177
 
     // We're using the UFO technique for flash to attain XHTML Strict 1.0
     // See: http://www.bobbyvandersluis.com/ufo/
 
     if ($CFG->filter_mediaplugin_enable_mp3) {
         $search = '/<a.*?href="([^<]+\.mp3)"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_swf) {
         $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_flv) {
         $search = '/<a.*?href="([^<]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_mov) {
         $search = '/<a.*?href="([^<]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_wmv) {
         $search = '/<a.*?href="([^<]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_mpg) {
         $search = '/<a.*?href="([^<]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_avi) {
         $search = '/<a.*?href="([^<]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_ram) {
         $search = '/<a.*?href="([^<]+\.ram)"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_rpm) {
         $search = '/<a.*?href="([^<]+\.rpm)"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
     }
 
     if ($CFG->filter_mediaplugin_enable_rm) {
         $search = '/<a.*?href="([^<]+\.rm)"[^>]*>.*?<\/a>/is';
-        $text = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
     }
 
-    return $text;
+    if (empty($newtext)) {
+        $newtext = $text;
+    }
+    return $newtext;
 }
 
 ///===========================
