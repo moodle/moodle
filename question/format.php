@@ -210,6 +210,42 @@ class qformat_default {
         $grades = get_grade_options();
         $gradeoptionsfull = $grades->gradeoptionsfull;
 
+        // check answer grades are valid
+        // (now need to do this here because of 'stop on error': MDL-10689)
+        $gradeerrors = 0;
+        $goodquestions = array();
+        foreach ($questions as $question) {
+            if (!empty($question->fraction) and (is_array($question->fraction))) {
+                $fractions = $question->fraction;
+                $answersvalid = true; // in case they are!
+                foreach ($fractions as $key => $fraction) {
+                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $this->matchgrades);
+                    if ($newfraction===false) {
+                        $answersvalid = false;
+                    }
+                    else {
+                        $fractions[$key] = $newfraction;
+                    }
+                }
+                if (!$answersvalid) {
+                    notify(get_string('matcherror', 'quiz'));
+                    ++$gradeerrors;
+                    continue;
+                }
+                else {
+                    $question->fraction = $fractions;
+                }
+            }
+            $goodquestions[] = $question;
+        }
+        $questions = $goodquestions;
+
+        // check for errors before we continue
+        if ($this->stoponerror and ($gradeerrors>0)) {
+            return false;
+        }
+
+        // count number of questions processed
         $count = 0;
 
         foreach ($questions as $question) {   // Process and store each question
@@ -233,28 +269,6 @@ class qformat_default {
             $count++;
 
             echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
-
-            // check for answer grades validity (must match fixed list of grades)
-            if (!empty($question->fraction) and (is_array($question->fraction))) {
-                $fractions = $question->fraction;
-                $answersvalid = true; // in case they are!
-                foreach ($fractions as $key => $fraction) {
-                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $this->matchgrades);
-                    if ($newfraction===false) {
-                        $answersvalid = false;
-                    }
-                    else {
-                        $fractions[$key] = $newfraction;
-                    }
-                }
-                if (!$answersvalid) {
-                    notify(get_string('matcherror', 'quiz'));
-                    continue;
-                }
-                else {
-                    $question->fraction = $fractions;
-                }
-            }
 
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
