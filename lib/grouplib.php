@@ -83,11 +83,6 @@ function groups_get_group($groupid) {
 function groups_get_all_groups($courseid, $userid=0, $groupingid=0) {
     global $CFG;
 
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $groupingid = 0;
-    }
-
     if (!empty($userid)) {
         $userfrom  = ", {$CFG->prefix}groups_members gm";
         $userwhere = "AND g.id = gm.groupid AND gm.userid = '$userid'";
@@ -136,11 +131,6 @@ function groups_is_member($groupid, $userid=null) {
  */
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER;
-
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -206,12 +196,7 @@ function groups_get_activity_groupmode($cm) {
  * @return mixed void or string depending on $return param
  */
 function groups_print_activity_menu($cm, $urlroot, $return=false) {
-    global $CFG, $USER;
-
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
+    global $USER;
 
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         if ($return) {
@@ -271,12 +256,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false) {
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
  */
 function groups_get_activity_group($cm, $update=false) {
-    global $CFG, $USER, $SESSION;
-
-    // groupings are ignored when not enabled
-    if (empty($CFG->enablegroupings)) {
-        $cm->groupingid = 0;
-    }
+    global $USER, $SESSION;
 
     if (!$groupmode = groups_get_activity_groupmode($cm)) {
         // NOGROUPS used
@@ -329,34 +309,6 @@ function groups_get_activity_group($cm, $update=false) {
     }
 
     return $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid];
-}
-
-/**
- * Determine if a course module is currently visible to a user
- * @uses $USER If $userid is null, use the global object.
- * @param int $cm The course module
- * @param int $userid The user to check against the group.
- * @return boolean True if the user can view the course module, false otherwise.
- */
-function groups_course_module_visible($cm, $userid=null) {
-    global $CFG, $USER;
-    
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-    if (empty($CFG->enablegroupings)) {
-        return(true);
-    }
-    if (empty($cm->groupmembersonly)) {
-        return(true);
-    }
-    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
-        return(true);
-    }
-    if (groups_has_membership($cm, $userid)) {
-        return(true);
-    }
-    return(false);
 }
 
 ?>
