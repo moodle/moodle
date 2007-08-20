@@ -1180,7 +1180,6 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     
     ///actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
-    $options = new object();
     $options->para=false;
     $options->noclean=true;
     echo '<tr><td>';
@@ -1396,7 +1395,7 @@ function data_print_comment($data, $comment, $page=0) {
     echo '</div></td></tr>';
 
     echo '<tr><td class="left side">';
-    if ($groups = groups_get_all_groups($data->course, $comment->userid, $cm->groupingid)) {
+    if ($groups = groups_get_all_groups($data->course, $comment->userid)) {
         print_group_picture($groups, $data->course, false, false, true);
     } else {
         echo '&nbsp;';
@@ -1575,10 +1574,14 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
         $cm = get_record('course_modules', 'id', $cmid);
     }
 
+    // $cm->groupmode:
+    // 0 - No groups
+    // 1 - Separate groups
+    // 2 - Visible groups
     switch ($cm->groupmode) {
-        case NOGROUPS:
+        case 0:
             break;
-        case SEPARATEGROUPS:
+        case 1:
             foreach ($studentroles as $studentrole) {
                 assign_capability('moodle/site:accessallgroups', CAP_PREVENT, $studentrole->id, $context->id);
             }
@@ -1586,7 +1589,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
                 assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $teacherrole->id, $context->id);
             }
             break;
-        case VISIBLEGROUPS:
+        case 2:
             foreach ($studentroles as $studentrole) {
                 assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $studentrole->id, $context->id);
             }
@@ -1697,8 +1700,8 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    $currentgroup = groups_get_activity_group($cm);
-    $groupmode = groups_get_activity_groupmode($cm);
+    $groupmode = groupmode($course, $cm);
+    $currentgroup = get_and_set_current_group($course, $groupmode);
 
     /// Print the tabs
 
