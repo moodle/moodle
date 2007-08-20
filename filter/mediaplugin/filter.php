@@ -1,8 +1,8 @@
 <?php // $id$
 //////////////////////////////////////////////////////////////
 //  Media plugin filtering
-// 
-//  This filter will replace any links to a media file with 
+//
+//  This filter will replace any links to a media file with
 //  a media plugin that plays that media inline
 //
 //  To activate this filter, add a line like this to your
@@ -12,13 +12,19 @@
 //
 //////////////////////////////////////////////////////////////
 
-/// This is the filtering function itself.  It accepts the 
+/// This is the filtering function itself.  It accepts the
 /// courseid and the text to be filtered (in HTML form).
 
 function mediaplugin_filter($courseid, $text) {
     global $CFG, $THEME;
 
     include "defaultsettings.php";
+
+    // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.
+    // The reason is that you must always be able to refer to the original parameter that was passed.
+    // For this reason, I changed $text = preg_replace(..,..,$text) into $newtext = preg.... (NICOLAS CONNAULT)
+    // Thanks to Pablo Etcheverry for pointing this out! MDL-10177
+    $newtext = fullclone($text);
 
     if ($CFG->filter_mediaplugin_enable_mp3) {
         static $c;
@@ -47,8 +53,8 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
-    
-        $text = preg_replace($search, $replace, $text);
+
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_swf) {
@@ -85,13 +91,13 @@ function mediaplugin_filter($courseid, $text) {
         $replace[1] .= '</embed>';
         $replace[1] .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
 
     }
 
     if ($CFG->filter_mediaplugin_enable_flv) {
         $search = '/<a(.*?)href=\"([^<]+)\.flv\"([^>]*)>(.*?)<\/a>/is';
-            
+
         $replace  = '\\0&nbsp;<object class="mediaplugin flv" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
         $replace .= ' width="480" height="360" id="flvplayer">';
@@ -104,8 +110,8 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
         $replace .= '</object>&nbsp;';
-    
-        $text = preg_replace($search, $replace, $text);
+
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mov) {
@@ -127,7 +133,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_wmv) {
@@ -154,7 +160,7 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mpg) {
@@ -166,8 +172,8 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.\\3" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
-        
-        $text = preg_replace($search, $replace, $text);
+
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_avi) {
@@ -179,10 +185,10 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '<param name="autoplay" value="false" />';
         $replace .= '<embed src="\\2.avi" width="240" height="180" controller="true" autoplay="false"> </embed>';
         $replace .= '</object></p>';
-    
-        $text = preg_replace($search, $replace, $text);
+
+        $newtext = preg_replace($search, $replace, $newtext);
     }
-    
+
     if ($CFG->filter_mediaplugin_enable_ram) {
         $search = '/<a(.*?)href=\"([^<]+)\.ram\"([^>]*)>(.*?)<\/a>/is';
 
@@ -205,9 +211,9 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
     }
-     
+
     if ($CFG->filter_mediaplugin_enable_rpm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rpm\"([^>]*)>(.*?)<\/a>/is';
 
@@ -230,9 +236,9 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
     }
-    
+
     if ($CFG->filter_mediaplugin_enable_rm) {
         $search = '/<a(.*?)href=\"([^<]+)\.rm\"([^>]*)>(.*?)<\/a>/is';
 
@@ -255,11 +261,13 @@ function mediaplugin_filter($courseid, $text) {
         $replace .= '</embed>';
         $replace .= '</object></p>';
 
-        $text = preg_replace($search, $replace, $text);
+        $newtext = preg_replace($search, $replace, $newtext);
     }
 
-
-    return $text;
+    if (is_null($newtext)) {
+        $newtext = $text;
+    }
+    return $newtext;
 }
 
 
