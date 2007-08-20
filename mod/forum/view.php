@@ -84,8 +84,9 @@
     }
     
 /// find out current groups mode
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = setup_and_print_groups($course, $groupmode, 'view.php?id=' . $cm->id);
+    groups_print_activity_menu($cm, 'view.php?id=' . $cm->id);
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
 /// Okay, we can show the discussions. Log the forum view.
     if ($cm->id) {

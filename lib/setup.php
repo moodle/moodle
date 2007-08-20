@@ -194,6 +194,7 @@ global $HTTPSPAGEREQUIRED;
     require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
+    require_once($CFG->libdir .'/grouplib.php');        // Groups functions
     
 /// Disable errors for now - needed for installation when debug enabled in config.php
     if (isset($CFG->debug)) {

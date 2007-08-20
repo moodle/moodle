@@ -48,6 +48,11 @@ if ($id) {
     error('Parameter missing');
 }
 
+// fill in missing properties needed for updating of instance
+$data->course     = $cm->course;
+$data->cmidnumber = $cm->idnumber;
+$data->instance   = $cm->instance;
+
 if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
     error('Could not find context');
 }

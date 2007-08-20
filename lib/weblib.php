@@ -4607,81 +4607,6 @@ function update_categories_search_button($search,$page,$perpage) {
     }
 }
 
-
-/**
- * Prints the editing button on groups page
- *
- * @uses $CFG
- * @uses $USER
- * @param int $courseid The id of the course to be edited
- * @return string
- * @todo Finish documenting this function
- */
-function update_groups_button($courseid) {
-    global $CFG, $USER;
-
-    if (has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $courseid))) {
-        if (!empty($USER->groupsediting)) {
-            $string = get_string('turneditingoff');
-            $edit = 'off';
-        } else {
-            $string = get_string('turneditingon');
-            $edit = 'on';
-        }
-
-        return "<form $CFG->frametarget method=\"get\" action=\"$CFG->wwwroot/group/index.php\">".
-               '<div>'.
-               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"submit\" value=\"$string\" /></div></form>";
-    }
-}
-
-/**
- * Prints an appropriate group selection menu
- *
- * @uses VISIBLEGROUPS
- * @param array $groups ?
- * @param int $groupmode ?
- * @param string $currentgroup ?
- * @param string $urlroot ?
- * @param boolean $showall: if set to 0, it is a student in separate groups, do not display all participants
- * @todo Finish documenting this function
- */
-function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1, $return=false) {
-
-    $output = '';
-    $groupsmenu = array();
-
-/// Add an "All groups" to the start of the menu
-    if ($showall){
-        $groupsmenu[0] = get_string('allparticipants');
-    }
-    foreach ($groups as $key => $group) {
-        $groupsmenu[$key] = format_string($group->name);
-    }
-
-    if ($groupmode == VISIBLEGROUPS) {
-        $grouplabel = get_string('groupsvisible');
-    } else {
-        $grouplabel = get_string('groupsseparate');
-    }
-
-    if (count($groupsmenu) == 1) {
-        $groupname = reset($groupsmenu);
-        $output .= $grouplabel.': '.$groupname;
-    } else {
-        $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self', $grouplabel);
-    }
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-
-}
-
 /**
  * Given a course and a (current) coursemodule
  * This function returns a small popup menu with all the
@@ -4747,6 +4672,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
         if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
             break;
+        }
+        $mod->id = $mod->cm;
+        if (!groups_course_module_visible($mod)) {
+            continue;
         }
 
         if ($mod->section > 0 and $section <> $mod->section) {

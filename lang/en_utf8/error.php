@@ -14,6 +14,7 @@ $string['cannotfindcomponent'] = 'Cannot find component.';
 $string['cannotsavemd5file'] = 'Cannot save md5 file.';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file.';
 $string['cannotunzipfile'] = 'Cannot unzip file.';
+$string['cannotviewprofile'] = 'You can not view the profile of this user.';
 $string['cantunenrollfrommetacourse'] = 'You can not unenrol from this meta course.';
 $string['cantunenrollinthisrole'] = 'You can not unenrol from this course while you are in your current role.';
 $string['cmunknown'] = 'Couldn\'t find this course module';

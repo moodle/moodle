@@ -114,6 +114,12 @@ if ($events === false) {
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');
 foreach($events as $event) {
+   if (!empty($event->modulename)) {
+        $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
+        if (!groups_course_module_visible($cm)) {
+            continue;
+        }
+    }
     $ev = new iCalendar_event;
     $ev->add_property('summary', $event->name);
     $ev->add_property('description', $event->description);

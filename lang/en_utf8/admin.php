@@ -266,7 +266,6 @@ $string['doctonewwindow'] = 'Open in new window';
 $string['download'] = 'Download';
 $string['editennotallowed'] = 'Language en_utf8 cannot be edited with this page - switch to local';
 $string['edithelpdocs'] = 'Edit help documents';
-$string['editlang'] = '<b>Edit</b>';
 $string['editorbackgroundcolor'] = 'Background color';
 $string['editordictionary'] = 'Editor dictionary';
 $string['editorfontfamily'] = 'Font family';

@@ -87,8 +87,8 @@
     print_heading(format_string($data->name));
 
 /// Groups needed for Add entry tab
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = get_and_set_current_group($course, $groupmode);
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
 /// Print the tabs
     $currenttab = 'add';

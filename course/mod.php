@@ -214,6 +214,10 @@
                 break;
 
             case "delete":
+                if ($cm and $cw = get_record("course_sections", "id", $cm->section)) {
+                    $sectionreturn = $cw->section;
+                }
+
                 if (! $deleteinstancefunction($mod->instance)) {
                     notify("Could not delete the $mod->modulename (instance)");
                 }

@@ -123,8 +123,9 @@
                         navmenu($course, $cm), '', '');
 
 /// Check to see if groups are being used here
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = setup_and_print_groups($course, $groupmode, 'edit.php?d='.$data->id);
+    groups_print_activity_menu($cm, 'edit.php?d='.$data->id);
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
     print_heading(format_string($data->name));
 
@@ -134,6 +135,7 @@
     } else {
         $groupselect = "";
         $groupparam = "";
+        $currentgroup = 0;
     }
 
 /// Print the tabs

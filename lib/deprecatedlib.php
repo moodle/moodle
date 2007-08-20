@@ -1412,4 +1412,49 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
     return $currentgroup;
 }
 
+/**
+ * Prints an appropriate group selection menu
+ *
+ * @uses VISIBLEGROUPS
+ * @param array $groups ?
+ * @param int $groupmode ?
+ * @param string $currentgroup ?
+ * @param string $urlroot ?
+ * @param boolean $showall: if set to 0, it is a student in separate groups, do not display all participants
+ * @todo Finish documenting this function
+ */
+function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1, $return=false) {
+
+    $output = '';
+    $groupsmenu = array();
+
+/// Add an "All groups" to the start of the menu
+    if ($showall){
+        $groupsmenu[0] = get_string('allparticipants');
+    }
+    foreach ($groups as $key => $group) {
+        $groupsmenu[$key] = format_string($group->name);
+    }
+
+    if ($groupmode == VISIBLEGROUPS) {
+        $grouplabel = get_string('groupsvisible');
+    } else {
+        $grouplabel = get_string('groupsseparate');
+    }
+
+    if (count($groupsmenu) == 1) {
+        $groupname = reset($groupsmenu);
+        $output .= $grouplabel.': '.$groupname;
+    } else {
+        $output .= popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $currentgroup, '', '', '', true, 'self', $grouplabel);
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+
+}
+
 ?>

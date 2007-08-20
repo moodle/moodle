@@ -117,9 +117,9 @@
         $post->userid     = $USER->id;
         $post->message    = '';
 
-        if ($groupmode = groupmode($course, $cm)) {
-            $post->groupid = get_and_set_current_group($course, $groupmode);
-            if ($post->groupid == 0) {
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            $post->groupid = groups_get_activity_group($cm);
+            if (empty($post->groupid)) {
                 $post->groupid = -1; //TODO: why -1??
             }
         } else {

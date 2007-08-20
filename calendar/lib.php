@@ -152,13 +152,19 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 
     // Set event course class for course events
     if (!empty($events)) {
-        foreach ($events as $event) {
+        foreach ($events as $eventid => $event) {
             if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {
                 $event->class = 'event_course'.array_search($event->courseid, $courses) % CALENDAR_MAXCOURSES;
             }
+            if (!empty($event->modulename)) {
+                $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
+                if (!groups_course_module_visible($cm)) {
+                    unset($events[$eventid]);
+                }
+            }
         }
     }
-
+    
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
     // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
@@ -418,6 +424,12 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     if($events !== false) {
 
         foreach($events as $event) {
+            if(!empty($event->modulename)) {
+                $mod = get_coursemodule_from_instance($event->modulename, $event->instance);
+                if (!groups_course_module_visible($mod)) {
+                    continue;
+                }
+            }
 
             if($processed >= $display->maxevents) {
                 break;

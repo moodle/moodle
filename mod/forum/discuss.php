@@ -154,7 +154,7 @@
         $capname = 'mod/forum:replypost';
     }
     
-    $groupmode = groupmode($course, $cm);  
+    $groupmode = groups_get_activity_groupmode($cm);  
     if ($canreply = has_capability($capname, $modcontext)) {
          
         if ($groupmode && !has_capability('moodle/site:accessallgroups', $modcontext)) {   

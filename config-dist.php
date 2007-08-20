@@ -256,6 +256,10 @@ $CFG->admin = 'admin';
 // called. This option will action disregarding error_reporting setting.
 //     $CFG->dblogerror = true;
 //
+// The following setting will log every database query to a table called adodb_logsql.
+// Use this setting on a development server only, the table grows quickly!
+//     $CFG->logsql = true;
+//
 // The following setting will turn on username logging into Apache log. For full details regarding setting
 // up of this function please refer to the install section of the document.
 //     $CFG->apacheloguser = 0; // Turn this feature off. Default value.

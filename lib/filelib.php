@@ -682,7 +682,7 @@ function file_modify_html_header($text) {
     preg_match('/\<html\>|\<HTML\>/', $text, $matches);
     if ($matches) {
         // replace <html> tag with <html><head>includes</head>
-        $replacement = '<html>."\n".<head>'.$ufo.$stylesheetshtml.'</head>';
+        $replacement = '<html>'."\n".'<head>'.$ufo.$stylesheetshtml.'</head>';
         $text = preg_replace('/\<html\>|\<HTML\>/', $replacement, $text, 1);
         return $text;  
     }
@@ -690,7 +690,7 @@ function file_modify_html_header($text) {
     // if not, look for <body> tag, and stick <head> before body
     preg_match('/\<body\>|\<BODY\>/', $text, $matches);
     if ($matches) {
-        $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>."\n".<body>';
+        $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".'<body>';
         $text = preg_replace('/\<body\>|\<BODY\>/', $replacement, $text, 1);
         return $text;  
     }    

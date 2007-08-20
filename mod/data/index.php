@@ -79,14 +79,6 @@
         array_push($table->align, 'center');
     }
 
-    $currentgroup = get_and_set_current_group($course, groupmode($course));
-    if ($currentgroup and has_capability('mod/data:manageentries', $context)) {
-        $group = groups_get_group($currentgroup, false);
-        $groupname = " ($group->name)";
-    } else {
-        $groupname = "";
-    }
-
     $currentsection = "";
 
     foreach ($datas as $data) {

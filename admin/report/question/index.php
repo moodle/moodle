@@ -10,7 +10,8 @@
     print_heading(page_doc_link(get_string('adminreport', 'question')));
 
     $probstr = '';
-    if ($CFG->version < 2007081000){
+    $contextupgradeversion = 2007081000;
+    if ($CFG->version < $contextupgradeversion){
         ///cwrqpfs issue
         $probstr = print_heading(get_string('cwrqpfs', 'question'), '', 3, 'main', true);
 
@@ -34,12 +35,12 @@
                 }
                 $probstr .= '<li>'.get_string('changepublishstatuscat', 'question', $categories[$id]);
                 if ($questions = get_records_sql('SELECT q.*, qui.id as quizid, qui.name as quizname, cm.id as cmid, '
-                               .'qui.course, c.fullname as coursename FROM '.$CFG->prefix.'question as q, '
-                               .$CFG->prefix.'quiz_question_instances as qqi, '
-                               .$CFG->prefix.'quiz as qui, '
-                               .$CFG->prefix.'course_modules as cm, '
-                               .$CFG->prefix.'modules as m, '
-                               .$CFG->prefix.'course as c '
+                               .'qui.course, c.fullname as coursename FROM '.$CFG->prefix.'question q, '
+                               .$CFG->prefix.'quiz_question_instances qqi, '
+                               .$CFG->prefix.'quiz qui, '
+                               .$CFG->prefix.'course_modules cm, '
+                               .$CFG->prefix.'modules m, '
+                               .$CFG->prefix.'course c '
                             .'WHERE (q.category = '.$id.' AND qqi.question = q.id '
                             .'AND qqi.quiz = qui.id '
                             .'AND qui.course = c.id '

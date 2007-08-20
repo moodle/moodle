@@ -372,7 +372,17 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     else {
         $events = get_records_select('event', $whereclause, 'timestart');
     }
-
+    if (!empty($events)) {
+        foreach($events as $eventid => $event) {
+            if (!empty($event->modulename)) {
+                $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
+                if (!groups_course_module_visible($cm)) {
+                    unset($events[$eventid]);
+                }
+            }
+        }
+    }
+    
     // Extract information: events vs. time
     calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $courses);
 

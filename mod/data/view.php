@@ -260,10 +260,10 @@
     }
 
 /// Check to see if groups are being used here
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = setup_and_print_groups($course, $groupmode,
-                                            'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).
-                                            '&amp;order='.s($order).'&amp;');
+    $returnurl = 'view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+    groups_print_activity_menu($cm, $returnurl);
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
     print_heading(format_string($data->name));
 

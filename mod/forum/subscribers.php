@@ -55,8 +55,9 @@
     }
 
 /// Check to see if groups are being used in this forum
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = setup_and_print_groups($course, $groupmode, "subscribers.php?id=$forum->id");
+    groups_print_activity_menu($cm, "subscribers.php?id=$forum->id");
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
     if (empty($USER->subscriptionsediting)) {         /// Display an overview of subscribers
 

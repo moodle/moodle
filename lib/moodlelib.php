@@ -43,21 +43,6 @@
  */
 define('MOODLE_INTERNAL', true);
 
-/**
- * No groups used?
- */
-define('NOGROUPS', 0);
-
-/**
- * Groups used?
- */
-define('SEPARATEGROUPS', 1);
-
-/**
- * Groups visible?
- */
-define('VISIBLEGROUPS', 2);
-
 /// Date and time constants ///
 /**
  * Time constant - the number of seconds in a year

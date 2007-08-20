@@ -1359,7 +1359,7 @@ function instance_is_visible($moduletype, $module) {
     global $CFG;
 
     if (!empty($module->id)) {
-        if ($records = get_records_sql("SELECT cm.instance, cm.visible
+        if ($records = get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly
                                         FROM {$CFG->prefix}course_modules cm,
                                              {$CFG->prefix}modules m
                                        WHERE cm.course = '$module->course' AND
@@ -1368,7 +1368,7 @@ function instance_is_visible($moduletype, $module) {
                                              cm.instance = '$module->id'")) {
 
             foreach ($records as $record) { // there should only be one - use the first one
-                return $record->visible;
+                return $record->visible && groups_course_module_visible($record);
             }
         }
     }

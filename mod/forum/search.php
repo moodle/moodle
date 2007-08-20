@@ -379,7 +379,6 @@ function forum_clean_search_terms($words, $prefix='') {
 function forum_menu_list($course)  {
 
     $menu = array();
-    $currentgroup = get_and_set_current_group($course, groupmode($course));
 
     if ($forums = get_all_instances_in_course("forum", $course)) {
         if ($course->format == 'weeks') {
@@ -391,13 +390,14 @@ function forum_menu_list($course)  {
         foreach ($forums as $forum) {
             if ($cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $currentgroup = groups_get_activity_group($cm);
                 if (!isset($forum->visible)) {
                     if (!instance_is_visible("forum", $forum) &&
                             !has_capability('moodle/course:viewhiddenactivities', $context)) {
                         continue;
                     }
                 }
-                $groupmode = groupmode($course, $cm);   // Groups are being used
+                $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
                 if ($groupmode == SEPARATEGROUPS && ($currentgroup === false) &&
                                   !has_capability('moodle/site:accessallgroups', $context)) {
                     continue;

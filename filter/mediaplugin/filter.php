@@ -30,58 +30,59 @@ function mediaplugin_filter($courseid, $text) {
 
     // We're using the UFO technique for flash to attain XHTML Strict 1.0
     // See: http://www.bobbyvandersluis.com/ufo/
+    $newtext = fullclone($text);
 
     if ($CFG->filter_mediaplugin_enable_mp3) {
         $search = '/<a.*?href="([^<]+\.mp3)"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_swf) {
         $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_flv) {
         $search = '/<a.*?href="([^<]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_flv_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mov) {
         $search = '/<a.*?href="([^<]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_wmv) {
         $search = '/<a.*?href="([^<]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_mpg) {
         $search = '/<a.*?href="([^<]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_qt_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_avi) {
         $search = '/<a.*?href="([^<]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_wmp_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_ram) {
         $search = '/<a.*?href="([^<]+\.ram)"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_rpm) {
         $search = '/<a.*?href="([^<]+\.rpm)"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
     }
 
     if ($CFG->filter_mediaplugin_enable_rm) {
         $search = '/<a.*?href="([^<]+\.rm)"[^>]*>.*?<\/a>/is';
-        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $text);
+        $newtext = preg_replace_callback($search, 'mediaplugin_filter_real_callback', $newtext);
     }
 
-    if (empty($newtext)) {
+    if (is_null($newtext)) {
         $newtext = $text;
     }
     return $newtext;

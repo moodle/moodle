@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // role.php - created with Moodle 1.7 beta + (2006101003)
 
 
@@ -91,11 +91,17 @@ $string['permissions'] = 'Permissions';
 $string['potentialusers'] = '$a potential users';
 $string['prevent'] = 'Prevent';
 $string['prohibit'] = 'Prohibit';
+$string['question:add'] = 'Add new questions';
 $string['question:config'] = 'Configure question types';
-$string['question:export'] = 'Export questions';
-$string['question:import'] = 'Import questions';
-$string['question:manage'] = 'Manage questions';
-$string['question:managecategory'] = 'Manage question category';
+$string['question:editall'] = 'Edit all questions';
+$string['question:editmine'] = 'Edit your own questions';
+$string['question:managecategory'] = 'Edit question categories';
+$string['question:moveall'] = 'Move all questions';
+$string['question:movemine'] = 'Move your own questions';
+$string['question:useall'] = 'Use all questions';
+$string['question:usemine'] = 'Use your own questions';
+$string['question:viewall'] = 'View all questions';
+$string['question:viewmine'] = 'View your own questions';
 $string['resetrole'] = 'Reset to defaults';
 $string['resetrolenolegacy'] = 'Clear permissions';
 $string['resetrolesure'] = 'Are you sure that you want to reset role \"$a->name ($a->shortname)\" to defaults?<p></p>The defaults are taken from the selected legacy capability ($a->legacytype).';

@@ -18,7 +18,6 @@
     }
 
     require_course_login($course);
-    $currentgroup = get_and_set_current_group($course, groupmode($course));
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
 
@@ -163,9 +162,12 @@
            
             $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-           
+            
+            if (!groups_course_module_visible($cm)) {
+                continue;
+            }
             if (isset($forum->groupmode)) {
-                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
+                $groupmode = groups_get_activity_groupmode($cm);
             } else {
                 $groupmode = NOGROUPS;
             }
@@ -296,12 +298,18 @@
         if ($learningforums) {
             $currentsection = "";
             foreach ($learningforums as $key => $forum) {
-                $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
                 $forum->visible = instance_is_visible("forum", $forum)
                                     || has_capability('moodle/course:view', $coursecontext);
                 
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                
+                if (!groups_course_module_visible($mod)) {
+                    continue;
+                }
+                $currentgroup = groups_get_activity_group($cm);
+                $groupmode = groups_get_activity_groupmode($cm);
+                
  
                 $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
 

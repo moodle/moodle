@@ -87,6 +87,10 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                 if (!$mod->visible and !has_capability('moodle/course:viewhiddenactivities',get_context_instance(CONTEXT_MODULE, $mod->cm))) {
                     continue;
                 }
+                $mod->id = $mod->cm;
+                if (!groups_course_module_visible($mod)) {
+                    continue;
+                }
 
                 if ($mod->section > 0 and $section <> $mod->section) {
                     $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
@@ -1156,6 +1160,8 @@ function get_array_of_activities($courseid) {
 //  section - the number of the section (eg week or topic)
 //  name - the name of the instance
 //  visible - is the instance visible or not
+//  groupingid - grouping id
+//  groupmembersonly - is this instance visible to group members only
 //  extra - contains extra string to include in any link
 
     global $CFG;
@@ -1179,6 +1185,8 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->section = $section->section;
                    $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
                    $mod[$seq]->visible = $rawmods[$seq]->visible;
+                   $mod[$seq]->groupingid = $rawmods[$seq]->groupingid;
+                   $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
                    $mod[$seq]->extra = "";
 
                    $modname = $mod[$seq]->mod;
@@ -1229,6 +1237,10 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
     if ($rawmods = get_course_mods($courseid)) {
         foreach($rawmods as $mod) {    // Index the mods
             if (empty($modnames[$mod->modname])) {
+                continue;
+            }
+            // Check groupings
+            if (!groups_course_module_visible($mod)) {
                 continue;
             }
             $mods[$mod->id] = $mod;
@@ -1342,7 +1354,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if (($mod->visible or has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id))) &&
-                (!$ismoving || $mod->id != $USER->activitycopy)) {
+                (!$ismoving || $mod->id != $USER->activitycopy) &&
+                groups_course_module_visible($mod)) {
                 echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
                 if ($ismoving) {
                     echo '<a title="'.$strmovefull.'"'.

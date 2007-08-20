@@ -391,7 +391,7 @@ function forum_cron() {
                 course_setup($course);   // More environment
 
                 // Make sure groups allow this user to see this email
-                if ($discussion->groupid > 0 and $groupmode = groupmode($course, $cm)) {   // Groups are being used
+                if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
                     if (! groups_group_exists($discussion->groupid)) { // Can't find group
                         continue;                           // Be safe and don't send it to anyone
                     }
@@ -1060,7 +1060,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             if (!has_capability('moodle/site:accessallgroups', $modcontext)
                     && $post->groupid != -1) {   // Open discussions have groupid -1
 
-                $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
+                $groupmode[$post->forum] = groups_get_activity_groupmode($cm[$post->forum]);
 
                 if ($groupmode[$post->forum]) {
                     //hope i didn't break anything
@@ -1366,7 +1366,9 @@ function forum_get_readable_forums($userid, $courseid=0) {
                                 f.course AS course,
                                 cm.id AS cmid,
                                 cm.visible AS cmvisible,
-                                cm.groupmode AS cmgroupmode
+                                cm.groupmode AS cmgroupmode,
+                                cm.groupingid AS cmgroupingid,
+                                cm.groupmembersonly AS cmgroupmembersonly
                            FROM {$CFG->prefix}course_modules cm,
                                 {$CFG->prefix}forum f
                           WHERE cm.instance = f.id
@@ -1388,8 +1390,13 @@ function forum_get_readable_forums($userid, $courseid=0) {
                     $cm = new object;
                     $cm->id = $forum->cmid;
                     $cm->groupmode = $forum->cmgroupmode;
-                    $forum->cmgroupmode = groupmode($course, $cm);
-
+                    $cm->groupingid = $forum->cmgroupingid;
+                    $cm->groupmembersonly = $forum->cmgroupmembersonly;
+                    $cm->course = $forum->course;
+                    $forum->cmgroupmode = groups_get_activity_groupmode($cm);
+                    if (!groups_course_module_visible($cm)) {
+                        continue;
+                    }
                     if ($forum->cmgroupmode == SEPARATEGROUPS
                             && !has_capability('moodle/site:accessallgroups', $forumcontext)) {
                         $forum->accessallgroups = false;
@@ -3312,7 +3319,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=-1, $groupmode=-1,
         if (!$course = get_record('course', 'id', $cm->course)) {
             error('Can not find course');
         }
-        $groupmode = groupmode($course, $cm);
+        $groupmode = groups_get_activity_groupmode($cm);
     }
 
     if ($forum->type == 'news') {
@@ -3399,7 +3406,7 @@ function forum_user_can_view_post($post, $course, $cm, $forum, $discussion, $use
 
 // If it's a grouped discussion, make sure the user is a member
     if ($discussion->groupid > 0) {
-        $groupmode = groupmode($course, $cm);
+        $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode == SEPARATEGROUPS) {
             return groups_is_member($discussion->groupid) || has_capability('moodle/site:accessallgroups', $modcontext);
         }
@@ -3482,7 +3489,11 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL) {
     if (!has_capability('mod/forum:viewdiscussion', $context, $user->id)) {
         return false;
     }
-
+    
+    if (!groups_course_module_visible($cm, $user->id)) {
+        return false;
+    }
+    
     if ($forum->type == 'qanda') {
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
 
@@ -3532,8 +3543,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 // Decide if current user is allowed to see ALL the current discussions or not
 
 // First check the group stuff
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = get_and_set_current_group($course, $groupmode);
+    $groupmode = groups_get_activity_groupmode($cm);
+    $currentgroup = groups_get_activity_group($cm);
 
 // If the user can post discussions, then this is a good place to put the
 // button for it. We do not show the button if we are showing site news
@@ -4008,6 +4019,9 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext);
 
         if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$canviewallgroups)) {
+            continue;
+        }
+        if (!groups_course_module_visible($post->cmid)) {
             continue;
         }
 

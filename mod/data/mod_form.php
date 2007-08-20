@@ -6,7 +6,7 @@ class mod_data_mod_form extends moodleform_mod {
     function definition() {
 
         global $CFG;
-        $mform    =& $this->_form;
+        $mform =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -29,7 +29,7 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addElement('date_selector', 'timeviewto', get_string('viewtodate', 'data'), array('optional'=>true));
 
 
-        $countoptions=  array(0=>get_string('none'))+
+        $countoptions = array(0=>get_string('none'))+
                         (array_combine(range(1, DATA_MAX_ENTRIES),//keys
                                         range(1, DATA_MAX_ENTRIES)));//values
         $mform->addElement('select', 'requiredentries', get_string('requiredentries', 'data'), $countoptions);
@@ -41,7 +41,7 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxentries', get_string('maxentries', 'data'), $countoptions);
         $mform->setHelpButton('maxentries', array('maxentries', get_string('maxentries', 'data'), 'data'));
 
-        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
+        $ynoptions = array(0 => get_string('no'), 1 => get_string('yes'));
         $mform->addElement('select', 'comments', get_string('comments', 'data'), $ynoptions);
         $mform->setHelpButton('comments', array('comments', get_string('allowcomments', 'data'), 'data'));
 
@@ -50,13 +50,13 @@ class mod_data_mod_form extends moodleform_mod {
 
         $mform->addElement('select', 'rssarticles', get_string('numberrssarticles', 'data') , $countoptions);
 
-        $mform->addElement('checkbox', 'assessed', get_string("allowratings", "data") , get_string('ratingsuse', 'data'));
+        $mform->addElement('checkbox', 'assessed', get_string('allowratings', 'data') , get_string('ratingsuse', 'data'));
 
         $mform->addElement('modgrade', 'scale', get_string('grade'), false);
         $mform->disabledIf('scale', 'assessed');
 
 
-        $this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements(array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true));
 
 //-------------------------------------------------------------------------------
         // buttons
