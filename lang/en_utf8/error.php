@@ -3,6 +3,7 @@
 
 
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
+$string['cannotassignrole'] = 'Cannot assign role in course';
 $string['cannotcreatelangdir'] = 'Cannot create lang dir.';
 $string['cannotcreatetempdir'] = 'Cannot create temp dir.';
 $string['cannotcustomizelocallang'] = 'You do not have permission to customize the strings translation.  This permission is controlled by the capability "moodle/site:langeditlocal". Set this capability to allow you to edit local language packages in case you want to modify translations for your site.';
@@ -21,6 +22,7 @@ $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirm
 $string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
 $string['coursegroupunknown'] = 'Course corresponding to group $a not specified';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
+$string['duplicateusername'] = 'Duplicate username - skiping record';
 $string['errorcleaningdirectory'] = 'Error cleaning directory \"$a\"';
 $string['errorcopyingfiles'] = 'Error copying files';
 $string['errorcreatingdirectory'] = 'Error creating directory \"$a\"';
@@ -85,11 +87,12 @@ $string['unicodeupgradeerror'] = 'Sorry, but your database is not already in Uni
 $string['unknowncourse'] = 'Unknown course named \"$a\"';
 $string['unknowncourseidnumber'] = 'Unknown Course ID \"$a\"';
 $string['unknownuseraction'] = 'Sorry, I do not understand this user action.';
-$string['usernotaddederror'] = 'User \"$a\" not added - unknown error';
-$string['usernotaddedregistered'] = 'User \"$a\" not added - already registered';
+$string['usernotaddederror'] = 'User not added - unknown error';
+$string['usernotaddedregistered'] = 'User not added - already registered';
 $string['usernotavailable'] = 'The details of this user are not available to you.';
 $string['usernotrenamedexists'] = 'User not renamed -- the new username is already in use.';
 $string['usernotrenamedmissing'] = 'User not renamed -- could not find the old username.';
+$string['usernotupdatederror'] = 'User not updated - unknown error';
 $string['wrongdestpath'] = 'Wrong destination path.';
 $string['wrongsourcebase'] = 'Wrong source URL base.';
 $string['wrongzipfilename'] = 'Wrong ZIP filename.';

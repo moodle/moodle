@@ -21,7 +21,7 @@ foreach ($SESSION->bulk_susers as $k => $v) {
 }
 
 if (empty($userlist)) {
-    redirect($CFG->wwwroot . '/admin/user_bulk.php');
+    redirect($CFG->wwwroot . '/admin/user/user_bulk.php');
 }
 
 admin_externalpage_setup('userbulk');

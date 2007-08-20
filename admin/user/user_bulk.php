@@ -22,20 +22,19 @@
         $actions[2] = get_string('messageselectadd');
     }
     $actions[3] = get_string('delete');
-
+    $actions[4] = get_string('displayonpage');
     // create the bulk operations form
     $user_bulk_form =& new user_bulk_form(null, $actions);
     // check if an action should be performed and do so
     switch ($user_bulk_form->getAction()) {
     case 1:
-        include($CFG->dirroot . '/admin/user/user_bulk_confirm.php');
-        return;
+        redirect($CFG->wwwroot . '/admin/user/user_bulk_confirm.php');
     case 2:
-        include($CFG->dirroot . '/admin/user/user_bulk_message.php');
-        return;
+        redirect($CFG->wwwroot . '/admin/user/user_bulk_message.php');
     case 3:
-        include($CFG->dirroot . '/admin/user/user_bulk_delete.php');
-        return;
+        redirect($CFG->wwwroot . '/admin/user/user_bulk_delete.php');
+    case 4:
+        redirect($CFG->wwwroot . '/admin/user/user_bulk_display.php');
     }
 
     // prepare user filter types
