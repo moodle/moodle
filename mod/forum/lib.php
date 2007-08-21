@@ -2118,7 +2118,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     global $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune;
-    static $strpruneheading, $threadedmode;
+    static $strpruneheading, $displaymode;
     static $strmarkread, $strmarkunread, $istracked;
 
 
@@ -2166,7 +2166,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strparent = get_string('parent', 'forum');
         $strpruneheading = get_string('pruneheading', 'forum');
         $strprune = get_string('prune', 'forum');
-        $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
+        $displaymode = get_user_preferences('forum_displaymode', $CFG->forum_displaymode);
         $strmarkread = get_string('markread', 'forum');
         $strmarkunread = get_string('markunread', 'forum');
 
@@ -2275,7 +2275,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                 $mcmd = '&amp;mark=read&amp;postid='.$post->id;
                 $mtxt = $strmarkread;
             }
-            if ($threadedmode) {
+            if ($displaymode == FORUM_MODE_THREADED) {
                 $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
                               $post->discussion.'&amp;parent='.$post->id.$mcmd.'">'.$mtxt.'</a>';
             } else {
@@ -2286,8 +2286,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     if ($post->parent) {  // Zoom in to the parent specifically
-        $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+        if ($displaymode == FORUM_MODE_THREADED) {
+            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
                       $post->discussion.'&amp;parent='.$post->parent.'">'.$strparent.'</a>';
+        } else {
+            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                      $post->discussion.'#p'.$post->parent.'">'.$strparent.'</a>';
+        }
     }
 
     $forumtype = get_field('forum', 'type', 'id', $post->forum);
