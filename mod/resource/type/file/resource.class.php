@@ -418,7 +418,7 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header_simple($pagetitle, '', "$this->navigation <a $CFG->frametarget title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            print_header($pagetitle, '', "$this->navigation <a $CFG->frametarget title=\"$strdirectlink\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
 
         }
 
