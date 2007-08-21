@@ -284,7 +284,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     if (!empty($search)) {
         $search = trim($search);
-        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
+        $select .= " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%' OR username='$search') ";
     }
 
     if ($firstinitial) {
