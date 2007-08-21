@@ -1799,8 +1799,17 @@ function assignment_delete_instance($id){
         return false;
     }
 
-    require_once("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
-    $assignmentclass = "assignment_$assignment->assignmenttype";
+    // fall back to base class if plugin missing
+    $classfile = "$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php";
+    if (file_exists($classfile)) {
+        require_once($classfile);
+        $assignmentclass = "assignment_$assignment->assignmenttype";
+
+    } else {
+        debugging("Missing assignment plug-in: {$assignment->assignmenttype}. Using base class for deleting instead.");
+        $assignmentclass = "assignment_base";
+    }
+
     $ass = new $assignmentclass();
     return $ass->delete_instance($assignment);
 }
