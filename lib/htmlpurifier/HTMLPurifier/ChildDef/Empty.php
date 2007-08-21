@@ -19,4 +19,3 @@ class HTMLPurifier_ChildDef_Empty extends HTMLPurifier_ChildDef
     }
 }
 
-?>

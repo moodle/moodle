@@ -39,7 +39,8 @@ class HTMLPurifier_TagTransform_Font extends HTMLPurifier_TagTransform
     function transform($tag, $config, &$context) {
         
         if ($tag->type == 'end') {
-            $new_tag = new HTMLPurifier_Token_End($this->transform_to);
+            $new_tag = $tag->copy();
+            $new_tag->name = $this->transform_to;
             return $new_tag;
         }
         
@@ -91,4 +92,3 @@ class HTMLPurifier_TagTransform_Font extends HTMLPurifier_TagTransform
     }
 }
 
-?>

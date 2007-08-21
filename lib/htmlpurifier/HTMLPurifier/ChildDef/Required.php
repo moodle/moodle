@@ -25,11 +25,10 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
             $elements = array_flip($elements);
             foreach ($elements as $i => $x) {
                 $elements[$i] = true;
-                if (empty($i)) unset($elements[$i]);
+                if (empty($i)) unset($elements[$i]); // remove blank
             }
         }
         $this->elements = $elements;
-        $this->gen = new HTMLPurifier_Generator();
     }
     var $allow_empty = false;
     var $type = 'required';
@@ -57,6 +56,12 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         // some configuration
         $escape_invalid_children = $config->get('Core', 'EscapeInvalidChildren');
         
+        // generator
+        static $gen = null;
+        if ($gen === null) {
+            $gen = new HTMLPurifier_Generator();
+        }
+        
         foreach ($tokens_of_children as $token) {
             if (!empty($token->is_whitespace)) {
                 $result[] = $token;
@@ -80,7 +85,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
                         $result[] = $token;
                     } elseif ($pcdata_allowed && $escape_invalid_children) {
                         $result[] = new HTMLPurifier_Token_Text(
-                            $this->gen->generateFromToken($token, $config)
+                            $gen->generateFromToken($token, $config)
                         );
                     }
                     continue;
@@ -91,7 +96,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
             } elseif ($pcdata_allowed && $escape_invalid_children) {
                 $result[] =
                     new HTMLPurifier_Token_Text(
-                        $this->gen->generateFromToken( $token, $config )
+                        $gen->generateFromToken( $token, $config )
                     );
             } else {
                 // drop silently
@@ -104,4 +109,3 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
     }
 }
 
-?>

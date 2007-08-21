@@ -10,67 +10,62 @@ require_once 'HTMLPurifier/HTMLModule.php';
  *          - Block Structural (div, p)
  *          - Inline Phrasal (abbr, acronym, cite, code, dfn, em, kbd, q, samp, strong, var)
  *          - Inline Structural (br, span)
- *       We have elected not to follow suite, but this may change.
+ *       This module, functionally, does not distinguish between these
+ *       sub-modules, but the code is internally structured to reflect
+ *       these distinctions.
  */
 class HTMLPurifier_HTMLModule_Text extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'Text';
-    
-    var $elements = array('abbr', 'acronym', 'address', 'blockquote',
-        'br', 'cite', 'code', 'dfn', 'div', 'em', 'h1', 'h2', 'h3',
-        'h4', 'h5', 'h6', 'kbd', 'p', 'pre', 'q', 'samp', 'span', 'strong',
-        'var', 'nolink', 'tex', 'algebra'); //moodle modification
-    
     var $content_sets = array(
-        'Heading' => 'h1 | h2 | h3 | h4 | h5 | h6',
-        'Block' => 'address | blockquote | div | p | pre | nolink | tex | algebra', //moodle modification
-        'Inline' => 'abbr | acronym | br | cite | code | dfn | em | kbd | q | samp | span | strong | var',
         'Flow' => 'Heading | Block | Inline'
     );
     
     function HTMLPurifier_HTMLModule_Text() {
-        foreach ($this->elements as $element) {
-            $this->info[$element] = new HTMLPurifier_ElementDef();
-            // attributes
-            if ($element == 'br') {
-                $this->info[$element]->attr = array(0 => array('Core'));
-            } elseif ($element == 'blockquote' || $element == 'q') {
-                $this->info[$element]->attr = array(0 => array('Common'), 'cite' => 'URI');
-            } else {
-                $this->info[$element]->attr = array(0 => array('Common'));
-            }
-            // content models
-            if ($element == 'br') {
-                $this->info[$element]->content_model_type = 'empty';
-            } elseif ($element == 'blockquote') {
-                $this->info[$element]->content_model = 'Heading | Block | List';
-                $this->info[$element]->content_model_type = 'optional';
-            } elseif ($element == 'div') {
-                $this->info[$element]->content_model = '#PCDATA | Flow';
-                $this->info[$element]->content_model_type = 'optional';
-            } else {
-                $this->info[$element]->content_model = '#PCDATA | Inline';
-                $this->info[$element]->content_model_type = 'optional';
-            }
-        }
-        // SGML permits exclusions for all descendants, but this is
-        // not possible with DTDs or XML Schemas. W3C has elected to
-        // use complicated compositions of content_models to simulate
-        // exclusion for children, but we go the simpler, SGML-style
-        // route of flat-out exclusions. Note that the Abstract Module
-        // is blithely unaware of such distinctions.
-        $this->info['pre']->excludes = array_flip(array(
-            'img', 'big', 'small',
-            'object', 'applet', 'font', 'basefont' // generally not allowed
-        ));
-        $this->info['p']->auto_close = array_flip(array(
-            'address', 'blockquote', 'dd', 'dir', 'div', 'dl', 'dt',
-            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'ol', 'p', 'pre',
-            'table', 'ul', 'nolink', 'tex', 'algebra' //moodle modification
-        ));
+        
+        // Inline Phrasal -------------------------------------------------
+        $this->addElement('abbr',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('acronym', true, 'Inline', 'Inline', 'Common');
+        $this->addElement('cite',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('code',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('dfn',     true, 'Inline', 'Inline', 'Common');
+        $this->addElement('em',      true, 'Inline', 'Inline', 'Common');
+        $this->addElement('kbd',     true, 'Inline', 'Inline', 'Common');
+        $this->addElement('q',       true, 'Inline', 'Inline', 'Common', array('cite' => 'URI'));
+        $this->addElement('samp',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('strong',  true, 'Inline', 'Inline', 'Common');
+        $this->addElement('var',     true, 'Inline', 'Inline', 'Common');
+        
+        // Inline Structural ----------------------------------------------
+        $this->addElement('span', true, 'Inline', 'Inline', 'Common');
+        $this->addElement('br',   true, 'Inline', 'Empty',  'Core');
+
+        // Moodle specific elements - start
+        $this->addElement('nolink',  true, 'Inline', 'Flow');
+        $this->addElement('tex',     true, 'Inline', 'Flow');
+        $this->addElement('algebra', true, 'Inline', 'Flow');
+        $this->addElement('lang',    true, 'Inline', 'Flow', 'I18N');
+        // Moodle specific elements - end
+
+        // Block Phrasal --------------------------------------------------
+        $this->addElement('address',     true, 'Block', 'Inline', 'Common');
+        $this->addElement('blockquote',  true, 'Block', 'Optional: Heading | Block | List', 'Common', array('cite' => 'URI') );
+        $pre =& $this->addElement('pre', true, 'Block', 'Inline', 'Common');
+        $pre->excludes = $this->makeLookup(
+            'img', 'big', 'small', 'object', 'applet', 'font', 'basefont' );
+        $this->addElement('h1', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h2', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h3', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h4', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h5', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h6', true, 'Heading', 'Inline', 'Common');
+        
+        // Block Structural -----------------------------------------------
+        $this->addElement('p', true, 'Block', 'Inline', 'Common');
+        $this->addElement('div', true, 'Block', 'Flow', 'Common');
+        
     }
     
 }
 
-?>

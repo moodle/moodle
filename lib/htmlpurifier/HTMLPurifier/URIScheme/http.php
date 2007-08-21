@@ -9,16 +9,13 @@ class HTMLPurifier_URIScheme_http extends HTMLPurifier_URIScheme {
     
     var $default_port = 80;
     var $browsable = true;
+    var $hierarchical = true;
     
-    function validateComponents(
-        $userinfo, $host, $port, $path, $query, $config, &$context
-    ) {
-        list($userinfo, $host, $port, $path, $query) = 
-            parent::validateComponents(
-                $userinfo, $host, $port, $path, $query, $config, $context );
-        return array(null, $host, $port, $path, $query);
+    function validate(&$uri, $config, &$context) {
+        parent::validate($uri, $config, $context);
+        $uri->userinfo = null;
+        return true;
     }
     
 }
 
-?>

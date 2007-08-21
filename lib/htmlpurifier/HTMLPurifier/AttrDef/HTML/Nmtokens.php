@@ -48,4 +48,3 @@ class HTMLPurifier_AttrDef_HTML_Nmtokens extends HTMLPurifier_AttrDef
     
 }
 
-?>

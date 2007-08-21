@@ -20,7 +20,10 @@ HTMLPurifier_ConfigSchema::define(
 );
 
 /**
- * Post-transform that ensures the required attrs of img (alt and src) are set
+ * Transform that supplies default values for the src and alt attributes
+ * in img tags, as well as prevents the img tag from being removed
+ * because of a missing alt tag. This needs to be registered as both
+ * a pre and post attribute transform.
  */
 class HTMLPurifier_AttrTransform_ImgRequired extends HTMLPurifier_AttrTransform
 {
@@ -29,6 +32,7 @@ class HTMLPurifier_AttrTransform_ImgRequired extends HTMLPurifier_AttrTransform
         
         $src = true;
         if (!isset($attr['src'])) {
+            if ($config->get('Core', 'RemoveInvalidImg')) return $attr;
             $attr['src'] = $config->get('Attr', 'DefaultInvalidImage');
             $src = false;
         }
@@ -47,4 +51,3 @@ class HTMLPurifier_AttrTransform_ImgRequired extends HTMLPurifier_AttrTransform
     
 }
 
-?>

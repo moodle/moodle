@@ -10,15 +10,12 @@ class HTMLPurifier_URIScheme_nntp extends HTMLPurifier_URIScheme {
     var $default_port = 119;
     var $browsable = false;
     
-    function validateComponents(
-        $userinfo, $host, $port, $path, $query, $config, &$context
-    ) {
-        list($userinfo, $host, $port, $path, $query) = 
-            parent::validateComponents(
-                $userinfo, $host, $port, $path, $query, $config, $context );
-        return array(null, $host, $port, $path, null);
+    function validate(&$uri, $config, &$context) {
+        parent::validate($uri, $config, $context);
+        $uri->userinfo = null;
+        $uri->query    = null;
+        return true;
     }
     
 }
 
-?>

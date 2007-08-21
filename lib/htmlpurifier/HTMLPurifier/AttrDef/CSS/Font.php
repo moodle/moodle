@@ -18,18 +18,6 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
      */
     var $info = array();
     
-    /**
-     * System font keywords.
-     */
-    var $system_fonts = array(
-        'caption' => true,
-        'icon' => true,
-        'menu' => true,
-        'message-box' => true,
-        'small-caption' => true,
-        'status-bar' => true
-    );
-    
     function HTMLPurifier_AttrDef_CSS_Font($config) {
         $def = $config->getCSSDefinition();
         $this->info['font-style']   = $def->info['font-style'];
@@ -42,13 +30,22 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
     
     function validate($string, $config, &$context) {
         
+        static $system_fonts = array(
+            'caption' => true,
+            'icon' => true,
+            'menu' => true,
+            'message-box' => true,
+            'small-caption' => true,
+            'status-bar' => true
+        );
+        
         // regular pre-processing
         $string = $this->parseCDATA($string);
         if ($string === '') return false;
         
         // check if it's one of the keywords
         $lowercase_string = strtolower($string);
-        if (isset($this->system_fonts[$lowercase_string])) {
+        if (isset($system_fonts[$lowercase_string])) {
             return $lowercase_string;
         }
         
@@ -151,4 +148,3 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
     
 }
 
-?>

@@ -72,4 +72,3 @@ class HTMLPurifier_AttrDef_Lang extends HTMLPurifier_AttrDef
     
 }
 
-?>

@@ -38,35 +38,42 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         $this->factory = new HTMLPurifier_TokenFactory();
     }
     
-    public function tokenizeHTML($string, $config, &$context) {
+    public function tokenizeHTML($html, $config, &$context) {
         
-        $string = $this->normalize($string, $config, $context);
+        $html = $this->normalize($html, $config, $context);
         
-        // preprocess string, essential for UTF-8
-        $string =
+        // attempt to armor stray angled brackets that cannot possibly
+        // form tags and thus are probably being used as emoticons
+        if ($config->get('Core', 'AggressivelyFixLt')) {
+            $char = '[^a-z!\/]';
+            $comment = "/<!--(.*?)(-->|\z)/is";
+            $html = preg_replace_callback($comment, array('HTMLPurifier_Lexer_DOMLex', 'callbackArmorCommentEntities'), $html);
+            $html = preg_replace("/<($char)/i", '&lt;\\1', $html);
+            $html = preg_replace_callback($comment, array('HTMLPurifier_Lexer_DOMLex', 'callbackUndoCommentSubst'), $html); // fix comments
+        }
+        
+        // preprocess html, essential for UTF-8
+        $html =
             '<!DOCTYPE html '.
                 'PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'.
                 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'.
             '<html><head>'.
             '<meta http-equiv="Content-Type" content="text/html;'.
                 ' charset=utf-8" />'.
-            '</head><body><div>'.$string.'</div></body></html>';
+            '</head><body><div>'.$html.'</div></body></html>';
         
         $doc = new DOMDocument();
-        $doc->encoding = 'UTF-8'; // technically does nothing, but whatever
+        $doc->encoding = 'UTF-8'; // theoretically, the above has this covered
         
-        // DOM will toss errors if the HTML its parsing has really big
-        // problems, so we're going to mute them. This can cause problems
-        // if a custom error handler that doesn't implement error_reporting
-        // is set, as noted by a Drupal plugin of HTML Purifier. Consider
-        // making our own error reporter to temporarily load in
-        @$doc->loadHTML($string);
+        set_error_handler(array($this, 'muteErrorHandler'));
+        $doc->loadHTML($html);
+        restore_error_handler();
         
         $tokens = array();
         $this->tokenizeDOM(
-            $doc->getElementsByTagName('html')->item(0)-> // html
-                  getElementsByTagName('body')->item(0)-> // body
-                  getElementsByTagName('div')->item(0) // div
+            $doc->getElementsByTagName('html')->item(0)-> // <html>
+                  getElementsByTagName('body')->item(0)-> //   <body>
+                  getElementsByTagName('div')->item(0)    //     <div>
             , $tokens);
         return $tokens;
     }
@@ -82,14 +89,16 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
      * @returns Tokens of node appended to previously passed tokens.
      */
     protected function tokenizeDOM($node, &$tokens, $collect = false) {
-        // recursive goodness!
         
         // intercept non element nodes. WE MUST catch all of them,
         // but we're not getting the character reference nodes because
         // those should have been preprocessed
-        if ($node->nodeType === XML_TEXT_NODE ||
-                  $node->nodeType === XML_CDATA_SECTION_NODE) {
+        if ($node->nodeType === XML_TEXT_NODE) {
             $tokens[] = $this->factory->createText($node->data);
+            return;
+        } elseif ($node->nodeType === XML_CDATA_SECTION_NODE) {
+            // undo DOM's special treatment of <script> tags
+            $tokens[] = $this->factory->createText($this->parseData($node->data));
             return;
         } elseif ($node->nodeType === XML_COMMENT_NODE) {
             $tokens[] = $this->factory->createComment($node->data);
@@ -147,6 +156,26 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
         return $array;
     }
     
+    /**
+     * An error handler that mutes all errors
+     */
+    public function muteErrorHandler($errno, $errstr) {}
+    
+    /**
+     * Callback function for undoing escaping of stray angled brackets
+     * in comments
+     */
+    function callbackUndoCommentSubst($matches) {
+        return '<!--' . strtr($matches[1], array('&amp;'=>'&','&lt;'=>'<')) . $matches[2];
+    }
+    
+    /**
+     * Callback function that entity-izes ampersands in comments so that
+     * callbackUndoCommentSubst doesn't clobber them
+     */
+    function callbackArmorCommentEntities($matches) {
+        return '<!--' . str_replace('&', '&amp;', $matches[1]) . $matches[2];
+    }
+    
 }
 
-?>

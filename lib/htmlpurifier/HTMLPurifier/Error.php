@@ -5,4 +5,3 @@
  */
 class HTMLPurifier_Error {}
 
-?>

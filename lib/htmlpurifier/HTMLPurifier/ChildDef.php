@@ -37,6 +37,11 @@ class HTMLPurifier_ChildDef
     var $allow_empty;
     
     /**
+     * Lookup array of all elements that this definition could possibly allow
+     */
+    var $elements = array();
+    
+    /**
      * Validates nodes according to definition and returns modification.
      * 
      * @public
@@ -52,4 +57,4 @@ class HTMLPurifier_ChildDef
     }
 }
 
-?>
+

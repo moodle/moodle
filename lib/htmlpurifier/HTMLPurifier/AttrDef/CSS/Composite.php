@@ -35,4 +35,3 @@ class HTMLPurifier_AttrDef_CSS_Composite extends HTMLPurifier_AttrDef
     
 }
 
-?>

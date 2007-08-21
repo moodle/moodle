@@ -72,4 +72,3 @@ class HTMLPurifier_AttrDef_Integer extends HTMLPurifier_AttrDef
     
 }
 
-?>

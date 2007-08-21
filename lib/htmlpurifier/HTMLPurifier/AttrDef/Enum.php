@@ -45,6 +45,21 @@ class HTMLPurifier_AttrDef_Enum extends HTMLPurifier_AttrDef
         return $result ? $string : false;
     }
     
+    /**
+     * @param $string In form of comma-delimited list of case-insensitive
+     *      valid values. Example: "foo,bar,baz". Prepend "s:" to make
+     *      case sensitive
+     */
+    function make($string) {
+        if (strlen($string) > 2 && $string[0] == 's' && $string[1] == ':') {
+            $string = substr($string, 2);
+            $sensitive = true;
+        } else {
+            $sensitive = false;
+        }
+        $values = explode(',', $string);
+        return new HTMLPurifier_AttrDef_Enum($values, $sensitive);
+    }
+    
 }
 
-?>

@@ -18,4 +18,3 @@ class HTMLPurifier_AttrTransform_Name extends HTMLPurifier_AttrTransform
     
 }
 
-?>

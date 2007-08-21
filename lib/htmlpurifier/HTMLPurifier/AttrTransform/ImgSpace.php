@@ -44,4 +44,3 @@ extends HTMLPurifier_AttrTransform {
     
 }
 
-?>

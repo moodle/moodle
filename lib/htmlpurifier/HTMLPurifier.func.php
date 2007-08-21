@@ -18,4 +18,3 @@ function HTMLPurifier($html, $config = null) {
     return $purifier->purify($html, $config);
 }
 
-?>

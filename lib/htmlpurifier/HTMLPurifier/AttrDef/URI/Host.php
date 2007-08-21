@@ -51,4 +51,3 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
     
 }
 
-?>

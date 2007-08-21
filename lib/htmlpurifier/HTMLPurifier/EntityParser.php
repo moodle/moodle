@@ -24,8 +24,8 @@ class HTMLPurifier_EntityParser
      * @protected
      */                             
     var $_substituteEntitiesRegex =
-'/&(?:[#]x([a-fA-F0-9]+)|[#]0*(\d+)|([A-Za-z]+));?/';
-//     1. hex             2. dec      3. string
+'/&(?:[#]x([a-fA-F0-9]+)|[#]0*(\d+)|([A-Za-z_:][A-Za-z0-9.\-_:]*));?/';
+//     1. hex             2. dec      3. string (XML style)
     
     
     /**
@@ -97,7 +97,6 @@ class HTMLPurifier_EntityParser
         } else {
             if (isset($this->_special_ent2dec[$matches[3]])) return $entity;
             if (!$this->_entity_lookup) {
-                require_once 'HTMLPurifier/EntityLookup.php';
                 $this->_entity_lookup = HTMLPurifier_EntityLookup::instance();
             }
             if (isset($this->_entity_lookup->table[$matches[3]])) {
@@ -155,4 +154,3 @@ class HTMLPurifier_EntityParser
     
 }
 
-?>

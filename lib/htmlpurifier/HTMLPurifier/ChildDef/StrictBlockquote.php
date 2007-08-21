@@ -45,8 +45,8 @@ extends HTMLPurifier_ChildDef_Required
             if (!$is_inline) {
                 if (!$depth) {
                      if (
-                        $token->type == 'text' ||
-                        !isset($this->elements[$token->name])
+                        ($token->type == 'text' && !$token->is_whitespace) ||
+                        ($token->type != 'text' && !isset($this->elements[$token->name]))
                      ) {
                         $is_inline = true;
                         $ret[] = $block_wrap_start;
@@ -73,4 +73,3 @@ extends HTMLPurifier_ChildDef_Required
     }
 }
 
-?>

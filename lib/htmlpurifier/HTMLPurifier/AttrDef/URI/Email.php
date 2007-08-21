@@ -14,4 +14,3 @@ class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
     
 }
 
-?>

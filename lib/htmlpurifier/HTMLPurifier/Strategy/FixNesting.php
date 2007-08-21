@@ -42,15 +42,20 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
         $definition = $config->getHTMLDefinition();
         
         // insert implicit "parent" node, will be removed at end.
-        // ! we might want to move this to configuration
         // DEFINITION CALL
         $parent_name = $definition->info_parent;
         array_unshift($tokens, new HTMLPurifier_Token_Start($parent_name));
         $tokens[] = new HTMLPurifier_Token_End($parent_name);
         
-        // setup the context variables
-        $is_inline = false; // reference var that we alter
+        // setup the context variable 'IsInline', for chameleon processing
+        // is 'false' when we are not inline, 'true' when it must always
+        // be inline, and an integer when it is inline for a certain
+        // branch of the document tree
+        $is_inline = $definition->info_parent_def->descendants_are_inline;
         $context->register('IsInline', $is_inline);
+        
+        // setup error collector
+        $e =& $context->get('ErrorCollector', true);
         
         //####################################################################//
         // Loop initialization
@@ -60,9 +65,15 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
         $stack = array();
         
         // stack that contains all elements that are excluded
-        // same structure as $stack, but it is only populated when an element
-        // with exclusions is processed, i.e. there won't be empty exclusions.
+        // it is organized by parent elements, similar to $stack, 
+        // but it is only populated when an element with exclusions is
+        // processed, i.e. there won't be empty exclusions.
         $exclude_stack = array();
+        
+        // variable that contains the start token while we are processing
+        // nodes. This enables error reporting to do its job
+        $start_token = false;
+        $context->register('CurrentToken', $start_token);
         
         //####################################################################//
         // Loop
@@ -97,6 +108,8 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
             // $i is index of start token
             // $j is index of end token
             
+            $start_token = $tokens[$i]; // to make token available via CurrentToken
+            
             //################################################################//
             // Gather information on parent
             
@@ -110,7 +123,10 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
                     $parent_def   = $definition->info[$parent_name];
                 }
             } else {
-                // unknown info, it won't be used anyway
+                // processing as if the parent were the "root" node
+                // unknown info, it won't be used anyway, in the future,
+                // we may want to enforce one element only (this is 
+                // necessary for HTML Purifier to clean entire documents
                 $parent_index = $parent_name = $parent_def = null;
             }
             
@@ -194,6 +210,14 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
             } elseif($result === false) {
                 // remove entire node
                 
+                if ($e) {
+                    if ($excluded) {
+                        $e->send(E_ERROR, 'Strategy_FixNesting: Node excluded');
+                    } else {
+                        $e->send(E_ERROR, 'Strategy_FixNesting: Node removed');
+                    }
+                }
+                
                 // calculate length of inner tokens and current tokens
                 $length = $j - $i + 1;
                 
@@ -207,6 +231,12 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
                 // current node is now the next possible start node
                 // unless it turns out that we need to do a double-check
                 
+                // this is a rought heuristic that covers 100% of HTML's
+                // cases and 99% of all other cases. A child definition
+                // that would be tricked by this would be something like:
+                // ( | a b c) where it's all or nothing. Fortunately,
+                // our current implementation claims that that case would
+                // not allow empty, even if it did
                 if (!$parent_def->child->allow_empty) {
                     // we need to do a double-check
                     $i = $parent_index;
@@ -221,6 +251,14 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
                 
                 // calculate length of inner tokens
                 $length = $j - $i - 1;
+                
+                if ($e) {
+                    if (empty($result) && $length) {
+                        $e->send(E_ERROR, 'Strategy_FixNesting: Node contents removed');
+                    } else {
+                        $e->send(E_WARNING, 'Strategy_FixNesting: Node reorganized');
+                    }
+                }
                 
                 // perform replacement
                 array_splice($tokens, $i + 1, $length, $result);
@@ -279,6 +317,7 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
         
         // remove context variables
         $context->destroy('IsInline');
+        $context->destroy('CurrentToken');
         
         //####################################################################//
         // Return
@@ -289,4 +328,4 @@ class HTMLPurifier_Strategy_FixNesting extends HTMLPurifier_Strategy
     
 }
 
-?>
+

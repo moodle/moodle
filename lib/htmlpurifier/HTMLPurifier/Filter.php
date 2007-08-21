@@ -36,4 +36,3 @@ class HTMLPurifier_Filter
     
 }
 
-?>

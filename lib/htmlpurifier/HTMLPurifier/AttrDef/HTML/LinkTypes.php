@@ -26,22 +26,20 @@ HTMLPurifier_ConfigSchema::define(
 class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
 {
     
-    /** Lookup array of attribute names to configuration name */
-    var $configLookup = array(
-        'rel' => 'AllowedRel',
-        'rev' => 'AllowedRev'
-    );
-    
     /** Name config attribute to pull. */
     var $name;
     
     function HTMLPurifier_AttrDef_HTML_LinkTypes($name) {
-        if (!isset($this->configLookup[$name])) {
+        $configLookup = array(
+            'rel' => 'AllowedRel',
+            'rev' => 'AllowedRev'
+        );
+        if (!isset($configLookup[$name])) {
             trigger_error('Unrecognized attribute name for link '.
                 'relationship.', E_USER_ERROR);
             return;
         }
-        $this->name = $this->configLookup[$name];
+        $this->name = $configLookup[$name];
     }
     
     function validate($string, $config, &$context) {
@@ -72,4 +70,3 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
     
 }
 
-?>

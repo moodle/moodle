@@ -19,7 +19,7 @@ class HTMLPurifier_EntityLookup {
      */
     function setup($file = false) {
         if (!$file) {
-            $file = dirname(__FILE__) . '/EntityLookup/entities.ser';
+            $file = HTMLPURIFIER_PREFIX . '/HTMLPurifier/EntityLookup/entities.ser';
         }
         $this->table = unserialize(file_get_contents($file));
     }
@@ -43,4 +43,3 @@ class HTMLPurifier_EntityLookup {
     
 }
 
-?>

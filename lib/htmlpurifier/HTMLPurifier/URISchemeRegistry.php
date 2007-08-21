@@ -79,12 +79,14 @@ class HTMLPurifier_URISchemeRegistry
         }
         
         if (isset($this->schemes[$scheme])) return $this->schemes[$scheme];
-        if (empty($this->_dir)) $this->_dir = dirname(__FILE__) . '/URIScheme/';
+        if (empty($this->_dir)) $this->_dir = HTMLPURIFIER_PREFIX . '/HTMLPurifier/URIScheme/';
         
         if (!isset($allowed_schemes[$scheme])) return $null;
         
-        @include_once $this->_dir . $scheme . '.php';
+        // this bit of reflection is not very efficient, and a bit
+        // hacky too
         $class = 'HTMLPurifier_URIScheme_' . $scheme;
+        if (!class_exists($class)) include_once $this->_dir . $scheme . '.php';
         if (!class_exists($class)) return $null;
         $this->schemes[$scheme] = new $class();
         return $this->schemes[$scheme];
@@ -101,4 +103,4 @@ class HTMLPurifier_URISchemeRegistry
     
 }
 
-?>
+

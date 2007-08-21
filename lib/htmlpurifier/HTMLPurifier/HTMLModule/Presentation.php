@@ -16,25 +16,17 @@ class HTMLPurifier_HTMLModule_Presentation extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'Presentation';
-    var $elements = array('b', 'big', 'hr', 'i', 'small', 'sub', 'sup', 'tt');
-    var $content_sets = array(
-        'Block' => 'hr',
-        'Inline' => 'b | big | i | small | sub | sup | tt'
-    );
     
     function HTMLPurifier_HTMLModule_Presentation() {
-        foreach ($this->elements as $element) {
-            $this->info[$element] = new HTMLPurifier_ElementDef();
-            $this->info[$element]->attr = array(0 => array('Common'));
-            if ($element == 'hr') {
-                $this->info[$element]->content_model_type = 'empty';
-            } else {
-                $this->info[$element]->content_model = '#PCDATA | Inline';
-                $this->info[$element]->content_model_type = 'optional';
-            }
-        }
+        $this->addElement('b',      true, 'Inline', 'Inline', 'Common');
+        $this->addElement('big',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('hr',     true, 'Block',  'Empty',  'Common');
+        $this->addElement('i',      true, 'Inline', 'Inline', 'Common');
+        $this->addElement('small',  true, 'Inline', 'Inline', 'Common');
+        $this->addElement('sub',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('sup',    true, 'Inline', 'Inline', 'Common');
+        $this->addElement('tt',     true, 'Inline', 'Inline', 'Common');
     }
     
 }
 
-?>

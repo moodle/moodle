@@ -5,7 +5,6 @@
 $fallback = 'en';
 
 $messages = array(
-    'htmlpurifier' => 'HTML Purifier X'
+    'HTMLPurifier' => 'HTML Purifier X'
 );
 
-?>

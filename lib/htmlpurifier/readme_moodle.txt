@@ -1,7 +1,7 @@
-Description of HTML Purifier v1.6.1 library import into Moodle
+Description of HTML Purifier v2.1.1 Lite library import into Moodle
 
 Changes:
- * Text.php - added nolink, tex and algebra tags
+ * Text.php - added nolink, tex, lang and algebra tags
 
 skodak
 

@@ -1865,10 +1865,13 @@ function purify_html($text) {
 
     static $purifier = false;
     if (!$purifier) {
+        make_upload_directory('cache/htmlpurifier', false);
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.auto.php';
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Core', 'AcceptFullDocuments', false);
-        //$config->set('HTML', 'Strict', true);
+        $config->set('Core', 'Encoding', 'UTF-8');
+        $config->set('HTML', 'Doctype', 'XHTML 1.0 Transitional');
+        $config->set('Cache', 'SerializerPath', $CFG->dataroot.'/cache/htmlpurifier');
         $config->set('URI', 'AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
         $purifier = new HTMLPurifier($config);
     }

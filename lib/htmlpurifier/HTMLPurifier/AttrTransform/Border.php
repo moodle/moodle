@@ -17,4 +17,3 @@ class HTMLPurifier_AttrTransform_Border extends HTMLPurifier_AttrTransform {
     
 }
 
-?>

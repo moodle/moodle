@@ -2,18 +2,29 @@
 
 require_once 'HTMLPurifier/Lexer.php';
 
+HTMLPurifier_ConfigSchema::define(
+    'Core', 'DirectLexLineNumberSyncInterval', 0, 'int', '
+<p>
+  Specifies the number of tokens the DirectLex line number tracking
+  implementations should process before attempting to resyncronize the
+  current line count by manually counting all previous new-lines. When
+  at 0, this functionality is disabled. Lower values will decrease
+  performance, and this is only strictly necessary if the counting
+  algorithm is buggy (in which case you should report it as a bug).
+  This has no effect when %Core.MaintainLineNumbers is disabled or DirectLex is
+  not being used. This directive has been available since 2.0.0.
+</p>
+');
+
 /**
  * Our in-house implementation of a parser.
  * 
  * A pure PHP parser, DirectLex has absolutely no dependencies, making
  * it a reasonably good default for PHP4.  Written with efficiency in mind,
  * it can be four times faster than HTMLPurifier_Lexer_PEARSax3, although it
- * pales in comparison to HTMLPurifier_Lexer_DOMLex.  It will support UTF-8
- * completely eventually.
+ * pales in comparison to HTMLPurifier_Lexer_DOMLex.
  * 
  * @todo Reread XML spec and document differences.
- * 
- * @todo Determine correct behavior in transforming comment data. (preserve dashes?)
  */
 class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
 {
@@ -24,7 +35,24 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
      */
     var $_whitespace = "\x20\x09\x0D\x0A";
     
+    /**
+     * Callback function for script CDATA fudge
+     * @param $matches, in form of array(opening tag, contents, closing tag)
+     * @static
+     */
+    function scriptCallback($matches) {
+        return $matches[1] . htmlspecialchars($matches[2], ENT_COMPAT, 'UTF-8') . $matches[3];
+    }
+    
     function tokenizeHTML($html, $config, &$context) {
+        
+        // special normalization for script tags without any armor
+        // our "armor" heurstic is a < sign any number of whitespaces after
+        // the first script tag
+        if ($config->get('HTML', 'Trusted')) {
+            $html = preg_replace_callback('#(<script[^>]*>)(\s*[^<].+?)(</script>)#si',
+                array('HTMLPurifier_Lexer_DirectLex', 'scriptCallback'), $html);
+        }
         
         $html = $this->normalize($html, $config, $context);
         
@@ -32,9 +60,31 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         $inside_tag = false; // whether or not we're parsing the inside of a tag
         $array = array(); // result array
         
+        $maintain_line_numbers = $config->get('Core', 'MaintainLineNumbers');
+        
+        if ($maintain_line_numbers === null) {
+            // automatically determine line numbering by checking
+            // if error collection is on
+            $maintain_line_numbers = $config->get('Core', 'CollectErrors');
+        }
+        
+        if ($maintain_line_numbers) $current_line = 1;
+        else $current_line = false;
+        $context->register('CurrentLine', $current_line);
+        $nl = "\n";
+        // how often to manually recalculate. This will ALWAYS be right,
+        // but it's pretty wasteful. Set to 0 to turn off
+        $synchronize_interval = $config->get('Core', 'DirectLexLineNumberSyncInterval'); 
+        
+        $e = false;
+        if ($config->get('Core', 'CollectErrors')) {
+            $e =& $context->get('ErrorCollector');
+        }
+        
         // infinite loop protection
         // has to be pretty big, since html docs can be big
         // we're allow two hundred thousand tags... more than enough?
+        // NOTE: this is also used for synchronization, so watch out
         $loops = 0;
         
         while(true) {
@@ -42,10 +92,21 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             // infinite loop protection
             if (++$loops > 200000) return array();
             
+            // recalculate lines
+            if (
+                $maintain_line_numbers && // line number tracking is on
+                $synchronize_interval &&  // synchronization is on
+                $cursor > 0 &&            // cursor is further than zero
+                $loops % $synchronize_interval === 0 // time to synchronize!
+            ) {
+                $current_line = 1 + $this->substrCount($html, $nl, 0, $cursor);
+            }
+            
             $position_next_lt = strpos($html, '<', $cursor);
             $position_next_gt = strpos($html, '>', $cursor);
             
             // triggers on "<b>asdf</b>" but not "asdf <b></b>"
+            // special case to set up context
             if ($position_next_lt === $cursor) {
                 $inside_tag = true;
                 $cursor++;
@@ -53,7 +114,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             
             if (!$inside_tag && $position_next_lt !== false) {
                 // We are not inside tag and there still is another tag to parse
-                $array[] = new
+                $token = new
                     HTMLPurifier_Token_Text(
                         $this->parseData(
                             substr(
@@ -61,6 +122,11 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             )
                         )
                     );
+                if ($maintain_line_numbers) {
+                    $token->line = $current_line;
+                    $current_line += $this->substrCount($html, $nl, $cursor, $position_next_lt - $cursor);
+                }
+                $array[] = $token;
                 $cursor  = $position_next_lt + 1;
                 $inside_tag = true;
                 continue;
@@ -69,7 +135,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 // If we're already at the end, break
                 if ($cursor === strlen($html)) break;
                 // Create Text of rest of string
-                $array[] = new
+                $token = new
                     HTMLPurifier_Token_Text(
                         $this->parseData(
                             substr(
@@ -77,26 +143,54 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             )
                         )
                     );
+                if ($maintain_line_numbers) $token->line = $current_line;
+                $array[] = $token;
                 break;
             } elseif ($inside_tag && $position_next_gt !== false) {
                 // We are in tag and it is well formed
                 // Grab the internals of the tag
                 $strlen_segment = $position_next_gt - $cursor;
+                
+                if ($strlen_segment < 1) {
+                    // there's nothing to process!
+                    $token = new HTMLPurifier_Token_Text('<');
+                    $cursor++;
+                    continue;
+                }
+                
                 $segment = substr($html, $cursor, $strlen_segment);
                 
                 // Check if it's a comment
                 if (
-                    substr($segment, 0, 3) == '!--' &&
-                    substr($segment, $strlen_segment-2, 2) == '--'
+                    substr($segment, 0, 3) == '!--'
                 ) {
-                    $array[] = new
+                    // re-determine segment length, looking for -->
+                    $position_comment_end = strpos($html, '-->', $cursor);
+                    if ($position_comment_end === false) {
+                        // uh oh, we have a comment that extends to
+                        // infinity. Can't be helped: set comment
+                        // end position to end of string
+                        if ($e) $e->send(E_WARNING, 'Lexer: Unclosed comment');
+                        $position_comment_end = strlen($html);
+                        $end = true;
+                    } else {
+                        $end = false;
+                    }
+                    $strlen_segment = $position_comment_end - $cursor;
+                    $segment = substr($html, $cursor, $strlen_segment);
+                    $token = new
                         HTMLPurifier_Token_Comment(
                             substr(
-                                $segment, 3, $strlen_segment - 5
+                                $segment, 3, $strlen_segment - 3
                             )
                         );
+                    if ($maintain_line_numbers) {
+                        $token->line = $current_line;
+                        $current_line += $this->substrCount($html, $nl, $cursor, $strlen_segment);
+                    }
+                    $array[] = $token;
+                    $cursor = $end ? $position_comment_end : $position_comment_end + 3;
                     $inside_tag = false;
-                    $cursor = $position_next_gt + 1;
                     continue;
                 }
                 
@@ -104,7 +198,12 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 $is_end_tag = (strpos($segment,'/') === 0);
                 if ($is_end_tag) {
                     $type = substr($segment, 1);
-                    $array[] = new HTMLPurifier_Token_End($type);
+                    $token = new HTMLPurifier_Token_End($type);
+                    if ($maintain_line_numbers) {
+                        $token->line = $current_line;
+                        $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
+                    }
+                    $array[] = $token;
                     $inside_tag = false;
                     $cursor = $position_next_gt + 1;
                     continue;
@@ -113,8 +212,10 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 // Check leading character is alnum, if not, we may
                 // have accidently grabbed an emoticon. Translate into
                 // text and go our merry way
-                if (!ctype_alnum($segment[0])) {
-                    $array[] = new
+                if (!ctype_alpha($segment[0])) {
+                    // XML:  $segment[0] !== '_' && $segment[0] !== ':'
+                    if ($e) $e->send(E_NOTICE, 'Lexer: Unescaped lt');
+                    $token = new
                         HTMLPurifier_Token_Text(
                             '<' .
                             $this->parseData(
@@ -122,6 +223,11 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                             ) . 
                             '>'
                         );
+                    if ($maintain_line_numbers) {
+                        $token->line = $current_line;
+                        $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
+                    }
+                    $array[] = $token;
                     $cursor = $position_next_gt + 1;
                     $inside_tag = false;
                     continue;
@@ -142,10 +248,15 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 
                 if ($position_first_space >= $strlen_segment) {
                     if ($is_self_closing) {
-                        $array[] = new HTMLPurifier_Token_Empty($segment);
+                        $token = new HTMLPurifier_Token_Empty($segment);
                     } else {
-                        $array[] = new HTMLPurifier_Token_Start($segment);
+                        $token = new HTMLPurifier_Token_Start($segment);
                     }
+                    if ($maintain_line_numbers) {
+                        $token->line = $current_line;
+                        $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
+                    }
+                    $array[] = $token;
                     $inside_tag = false;
                     $cursor = $position_next_gt + 1;
                     continue;
@@ -169,26 +280,54 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 }
                 
                 if ($is_self_closing) {
-                    $array[] = new HTMLPurifier_Token_Empty($type, $attr);
+                    $token = new HTMLPurifier_Token_Empty($type, $attr);
                 } else {
-                    $array[] = new HTMLPurifier_Token_Start($type, $attr);
+                    $token = new HTMLPurifier_Token_Start($type, $attr);
                 }
+                if ($maintain_line_numbers) {
+                    $token->line = $current_line;
+                    $current_line += $this->substrCount($html, $nl, $cursor, $position_next_gt - $cursor);
+                }
+                $array[] = $token;
                 $cursor = $position_next_gt + 1;
                 $inside_tag = false;
                 continue;
             } else {
-                $array[] = new
+                // inside tag, but there's no ending > sign
+                if ($e) $e->send(E_WARNING, 'Lexer: Missing gt');
+                $token = new
                     HTMLPurifier_Token_Text(
                         '<' .
                         $this->parseData(
                             substr($html, $cursor)
                         )
                     );
+                if ($maintain_line_numbers) $token->line = $current_line;
+                // no cursor scroll? Hmm...
+                $array[] = $token;
                 break;
             }
             break;
         }
+        
+        $context->destroy('CurrentLine');
         return $array;
+    }
+    
+    /**
+     * PHP 4 compatible substr_count that implements offset and length
+     */
+    function substrCount($haystack, $needle, $offset, $length) {
+        static $oldVersion;
+        if ($oldVersion === null) {
+            $oldVersion = version_compare(PHP_VERSION, '5.1', '<');
+        }
+        if ($oldVersion) {
+            $haystack = substr($haystack, $offset, $length);
+            return substr_count($haystack, $needle);
+        } else {
+            return substr_count($haystack, $needle, $offset, $length);
+        }
     }
     
     /**
@@ -202,6 +341,11 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         
         if ($string == '') return array(); // no attributes
         
+        $e = false;
+        if ($config->get('Core', 'CollectErrors')) {
+            $e =& $context->get('ErrorCollector');
+        }
+        
         // let's see if we can abort as quickly as possible
         // one equal sign, no spaces => one attribute
         $num_equal = substr_count($string, '=');
@@ -213,7 +357,10 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             // only one attribute
             list($key, $quoted_value) = explode('=', $string);
             $quoted_value = trim($quoted_value);
-            if (!$key) return array();
+            if (!$key) {
+                if ($e) $e->send(E_ERROR, 'Lexer: Missing attribute key');
+                return array();
+            }
             if (!$quoted_value) return array($key => '');
             $first_char = @$quoted_value[0];
             $last_char  = @$quoted_value[strlen($quoted_value)-1];
@@ -227,11 +374,13 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             } else {
                 // not well behaved
                 if ($open_quote) {
+                    if ($e) $e->send(E_ERROR, 'Lexer: Missing end quote');
                     $value = substr($quoted_value, 1);
                 } else {
                     $value = $quoted_value;
                 }
             }
+            if ($value === false) $value = '';
             return array($key => $value);
         }
         
@@ -246,18 +395,19 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         
         // infinite loop protection
         $loops = 0;
-        
         while(true) {
             
             // infinite loop protection
-            if (++$loops > 1000) return array();
+            if (++$loops > 1000) {
+                trigger_error('Infinite loop detected in attribute parsing', E_USER_WARNING);
+                return array();
+            }
             
             if ($cursor >= $size) {
                 break;
             }
             
             $cursor += ($value = strspn($string, $this->_whitespace, $cursor));
-            
             // grab the key
             
             $key_begin = $cursor; //we're currently at the start of the key
@@ -269,7 +419,11 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             
             $key = substr($string, $key_begin, $key_end - $key_begin);
             
-            if (!$key) continue; // empty key
+            if (!$key) {
+                if ($e) $e->send(E_ERROR, 'Lexer: Missing attribute key');
+                $cursor += strcspn($string, $this->_whitespace, $cursor + 1); // prevent infinite loop
+                continue; // empty key
+            }
             
             // scroll past all whitespace
             $cursor += strspn($string, $this->_whitespace, $cursor);
@@ -289,6 +443,11 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 $cursor++;
                 $cursor += strspn($string, $this->_whitespace, $cursor);
                 
+                if ($cursor === false) {
+                    $array[$key] = '';
+                    break;
+                }
+                
                 // we might be in front of a quote right now
                 
                 $char = @$string[$cursor];
@@ -306,7 +465,14 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     $value_end = $cursor;
                 }
                 
+                // we reached a premature end
+                if ($cursor === false) {
+                    $cursor = $size;
+                    $value_end = $cursor;
+                }
+                
                 $value = substr($string, $value_begin, $value_end - $value_begin);
+                if ($value === false) $value = '';
                 $array[$key] = $this->parseData($value);
                 $cursor++;
                 
@@ -314,6 +480,9 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 // boolattr
                 if ($key !== '') {
                     $array[$key] = $key;
+                } else {
+                    // purely theoretical
+                    if ($e) $e->send(E_ERROR, 'Lexer: Missing attribute key');
                 }
                 
             }
@@ -323,4 +492,3 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
     
 }
 
-?>

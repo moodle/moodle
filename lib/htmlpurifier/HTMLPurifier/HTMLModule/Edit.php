@@ -11,27 +11,23 @@ class HTMLPurifier_HTMLModule_Edit extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'Edit';
-    var $elements = array('del', 'ins');
-    var $content_sets = array('Inline' => 'del | ins');
     
     function HTMLPurifier_HTMLModule_Edit() {
-        foreach ($this->elements as $element) {
-            $this->info[$element] = new HTMLPurifier_ElementDef();
-            $this->info[$element]->attr = array(
-                0 => array('Common'),
-                'cite' => 'URI',
-                // 'datetime' => 'Datetime' // Datetime not implemented
-            );
-            // Inline context ! Block context (exclamation mark is
-            // separator, see getChildDef for parsing)
-            $this->info[$element]->content_model =
-                '#PCDATA | Inline ! #PCDATA | Flow';
-            // HTML 4.01 specifies that ins/del must not contain block
-            // elements when used in an inline context, chameleon is
-            // a complicated workaround to acheive this effect
-            $this->info[$element]->content_model_type = 'chameleon';
-        }
+        $contents = 'Chameleon: #PCDATA | Inline ! #PCDATA | Flow';
+        $attr = array(
+            'cite' => 'URI',
+            // 'datetime' => 'Datetime', // not implemented
+        );
+        $this->addElement('del', true, 'Inline', $contents, 'Common', $attr);
+        $this->addElement('ins', true, 'Inline', $contents, 'Common', $attr);
     }
+    
+    // HTML 4.01 specifies that ins/del must not contain block
+    // elements when used in an inline context, chameleon is
+    // a complicated workaround to acheive this effect
+    
+    // Inline context ! Block context (exclamation mark is
+    // separator, see getChildDef for parsing)
     
     var $defines_child_def = true;
     function getChildDef($def) {
@@ -42,4 +38,3 @@ class HTMLPurifier_HTMLModule_Edit extends HTMLPurifier_HTMLModule
     
 }
 
-?>

@@ -1,5 +1,7 @@
 <?php
 
+require_once 'HTMLPurifier/Definition.php';
+
 require_once 'HTMLPurifier/AttrDef/CSS/Background.php';
 require_once 'HTMLPurifier/AttrDef/CSS/BackgroundPosition.php';
 require_once 'HTMLPurifier/AttrDef/CSS/Border.php';
@@ -15,12 +17,23 @@ require_once 'HTMLPurifier/AttrDef/CSS/TextDecoration.php';
 require_once 'HTMLPurifier/AttrDef/CSS/URI.php';
 require_once 'HTMLPurifier/AttrDef/Enum.php';
 
+HTMLPurifier_ConfigSchema::define(
+    'CSS', 'DefinitionRev', 1, 'int', '
+<p>
+    Revision identifier for your custom definition. See
+    %HTML.DefinitionRev for details. This directive has been available
+    since 2.0.0.
+</p>
+');
+
 /**
  * Defines allowed CSS attributes and what their values are.
  * @see HTMLPurifier_HTMLDefinition
  */
-class HTMLPurifier_CSSDefinition
+class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
 {
+    
+    var $type = 'CSS';
     
     /**
      * Assoc array of attribute name to definition object.
@@ -30,7 +43,7 @@ class HTMLPurifier_CSSDefinition
     /**
      * Constructs the info array.  The meat of this class.
      */
-    function setup($config) {
+    function doSetup($config) {
         
         $this->info['text-align'] = new HTMLPurifier_AttrDef_Enum(
             array('left', 'right', 'center', 'justify'), false);
@@ -213,4 +226,3 @@ class HTMLPurifier_CSSDefinition
     
 }
 
-?>

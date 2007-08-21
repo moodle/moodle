@@ -27,4 +27,3 @@ class HTMLPurifier_Strategy_Composite extends HTMLPurifier_Strategy
     
 }
 
-?>

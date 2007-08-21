@@ -42,4 +42,3 @@ class HTMLPurifier_AttrDef_CSS_Border extends HTMLPurifier_AttrDef
     
 }
 
-?>

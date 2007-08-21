@@ -14,4 +14,3 @@ class HTMLPurifier_AttrDef_Text extends HTMLPurifier_AttrDef
     
 }
 
-?>

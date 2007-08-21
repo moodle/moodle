@@ -9,16 +9,15 @@ class HTMLPurifier_URIScheme_news extends HTMLPurifier_URIScheme {
     
     var $browsable = false;
     
-    function validateComponents(
-        $userinfo, $host, $port, $path, $query, $config, &$context
-    ) {
-        list($userinfo, $host, $port, $path, $query) = 
-            parent::validateComponents(
-                $userinfo, $host, $port, $path, $query, $config, $context );
+    function validate(&$uri, $config, &$context) {
+        parent::validate($uri, $config, $context);
+        $uri->userinfo = null;
+        $uri->host     = null;
+        $uri->port     = null;
+        $uri->query    = null;
         // typecode check needed on path
-        return array(null, null, null, $path, null);
+        return true;
     }
     
 }
 
-?>

@@ -35,6 +35,7 @@ class HTMLPurifier_ChildDef_Chameleon extends HTMLPurifier_ChildDef
     function HTMLPurifier_ChildDef_Chameleon($inline, $block) {
         $this->inline = new HTMLPurifier_ChildDef_Optional($inline);
         $this->block  = new HTMLPurifier_ChildDef_Optional($block);
+        $this->elements = $this->block->elements;
     }
     
     function validateChildren($tokens_of_children, $config, &$context) {
@@ -48,4 +49,3 @@ class HTMLPurifier_ChildDef_Chameleon extends HTMLPurifier_ChildDef
     }
 }
 
-?>

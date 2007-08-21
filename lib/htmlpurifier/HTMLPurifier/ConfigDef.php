@@ -7,4 +7,3 @@ class HTMLPurifier_ConfigDef {
     var $class = false;
 }
 
-?>

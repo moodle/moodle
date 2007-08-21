@@ -10,23 +10,19 @@ require_once 'HTMLPurifier/AttrDef.php';
 class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
 {
     
-    /**
-     * Lookup table of allowed values.
-     * @protected
-     */
-    var $allowed_values = array(
-        'line-through' => true,
-        'overline' => true,
-        'underline' => true
-    );
-    
     function validate($string, $config, &$context) {
+        
+        static $allowed_values = array(
+            'line-through' => true,
+            'overline' => true,
+            'underline' => true
+        );
         
         $string = strtolower($this->parseCDATA($string));
         $parts = explode(' ', $string);
         $final = '';
         foreach ($parts as $part) {
-            if (isset($this->allowed_values[$part])) {
+            if (isset($allowed_values[$part])) {
                 $final .= $part . ' ';
             }
         }
@@ -38,4 +34,3 @@ class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
     
 }
 
-?>

@@ -84,4 +84,3 @@ class HTMLPurifier_AttrDef_CSS_Background extends HTMLPurifier_AttrDef
     
 }
 
-?>

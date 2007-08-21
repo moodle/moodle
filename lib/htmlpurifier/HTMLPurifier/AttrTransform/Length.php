@@ -26,4 +26,3 @@ class HTMLPurifier_AttrTransform_Length extends HTMLPurifier_AttrTransform
     
 }
 
-?>

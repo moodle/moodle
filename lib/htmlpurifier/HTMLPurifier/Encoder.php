@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/EntityLookup.php';
-
 HTMLPurifier_ConfigSchema::define(
     'Core', 'Encoding', 'utf-8', 'istring', 
     'If for some reason you are unable to convert all webpages to UTF-8, '. 
@@ -400,4 +398,3 @@ class HTMLPurifier_Encoder
     
 }
 
-?>

@@ -127,4 +127,3 @@ class HTMLPurifier_AttrDef_CSS_BackgroundPosition extends HTMLPurifier_AttrDef
     
 }
 
-?>

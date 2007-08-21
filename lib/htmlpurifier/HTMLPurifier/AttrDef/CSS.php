@@ -66,4 +66,3 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
     
 }
 
-?>

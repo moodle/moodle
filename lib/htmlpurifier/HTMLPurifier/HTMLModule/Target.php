@@ -9,13 +9,12 @@ class HTMLPurifier_HTMLModule_Target extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'Target';
-    var $elements = array('a');
     
     function HTMLPurifier_HTMLModule_Target() {
-        foreach ($this->elements as $e) {
-            $this->info[$e] = new HTMLPurifier_ElementDef();
-            $this->info[$e]->standalone = false;
-            $this->info[$e]->attr = array(
+        $elements = array('a');
+        foreach ($elements as $name) {
+            $e =& $this->addBlankElement($name);
+            $e->attr = array(
                 'target' => new HTMLPurifier_AttrDef_HTML_FrameTarget()
             );
         }
@@ -23,4 +22,3 @@ class HTMLPurifier_HTMLModule_Target extends HTMLPurifier_HTMLModule
     
 }
 
-?>

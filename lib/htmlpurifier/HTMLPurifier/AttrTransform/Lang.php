@@ -27,4 +27,3 @@ class HTMLPurifier_AttrTransform_Lang extends HTMLPurifier_AttrTransform
     
 }
 
-?>

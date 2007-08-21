@@ -9,6 +9,8 @@ class HTMLPurifier_ChildDef_Table extends HTMLPurifier_ChildDef
 {
     var $allow_empty = false;
     var $type = 'table';
+    var $elements = array('tr' => true, 'tbody' => true, 'thead' => true,
+        'tfoot' => true, 'caption' => true, 'colgroup' => true, 'col' => true);
     function HTMLPurifier_ChildDef_Table() {}
     function validateChildren($tokens_of_children, $config, &$context) {
         if (empty($tokens_of_children)) return false;
@@ -139,4 +141,3 @@ class HTMLPurifier_ChildDef_Table extends HTMLPurifier_ChildDef
     }
 }
 
-?>

@@ -2,6 +2,8 @@
 
 /**
  * Registry object that contains information about the current context.
+ * @warning Is a bit buggy when variables are set to null: it thinks
+ *          they don't exist! So use false instead, please.
  */
 class HTMLPurifier_Context
 {
@@ -19,7 +21,7 @@ class HTMLPurifier_Context
      */
     function register($name, &$ref) {
         if (isset($this->_storage[$name])) {
-            trigger_error('Name collision, cannot re-register',
+            trigger_error("Name $name produces collision, cannot re-register",
                           E_USER_ERROR);
             return;
         }
@@ -29,11 +31,14 @@ class HTMLPurifier_Context
     /**
      * Retrieves a variable reference from the context.
      * @param $name String name
+     * @param $ignore_error Boolean whether or not to ignore error
      */
-    function &get($name) {
+    function &get($name, $ignore_error = false) {
         if (!isset($this->_storage[$name])) {
-            trigger_error('Attempted to retrieve non-existent variable',
-                          E_USER_ERROR);
+            if (!$ignore_error) {
+                trigger_error("Attempted to retrieve non-existent variable $name",
+                              E_USER_ERROR);
+            }
             $var = null; // so we can return by reference
             return $var;
         }
@@ -46,7 +51,7 @@ class HTMLPurifier_Context
      */
     function destroy($name) {
         if (!isset($this->_storage[$name])) {
-            trigger_error('Attempted to destroy non-existent variable',
+            trigger_error("Attempted to destroy non-existent variable $name",
                           E_USER_ERROR);
             return;
         }
@@ -73,4 +78,3 @@ class HTMLPurifier_Context
     
 }
 
-?>

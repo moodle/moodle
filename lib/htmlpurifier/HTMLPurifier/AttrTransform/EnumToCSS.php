@@ -57,4 +57,3 @@ class HTMLPurifier_AttrTransform_EnumToCSS extends HTMLPurifier_AttrTransform {
     
 }
 
-?>

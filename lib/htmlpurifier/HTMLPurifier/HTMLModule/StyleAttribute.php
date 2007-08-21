@@ -24,4 +24,3 @@ class HTMLPurifier_HTMLModule_StyleAttribute extends HTMLPurifier_HTMLModule
     
 }
 
-?>

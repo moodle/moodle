@@ -13,6 +13,8 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
     
     function validate($aIP, $config, &$context) {
         
+        if (!$this->ip4) $this->_loadRegex();
+        
         $original = $aIP;
         
         $hex = '[0-9a-fA-F]';
@@ -96,4 +98,3 @@ class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
     
 }
 
-?>

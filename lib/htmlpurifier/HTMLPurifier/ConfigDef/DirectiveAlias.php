@@ -24,4 +24,3 @@ class HTMLPurifier_ConfigDef_DirectiveAlias extends HTMLPurifier_ConfigDef
     }
 }
 
-?>

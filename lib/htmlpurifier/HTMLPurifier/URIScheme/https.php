@@ -11,4 +11,3 @@ class HTMLPurifier_URIScheme_https extends HTMLPurifier_URIScheme_http {
     
 }
 
-?>

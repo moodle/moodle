@@ -14,24 +14,23 @@ class HTMLPurifier_HTMLModule_Image extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'Image';
-    var $elements = array('img');
-    var $content_sets = array('Inline' => 'img');
     
     function HTMLPurifier_HTMLModule_Image() {
-        $this->info['img'] = new HTMLPurifier_ElementDef();
-        $this->info['img']->attr = array(
-            0 => array('Common'),
-            'alt' => 'Text',
-            'height' => 'Length',
-            'longdesc' => 'URI', 
-            'src' => new HTMLPurifier_AttrDef_URI(true), // embedded
-            'width' => 'Length'
+        $img =& $this->addElement(
+            'img', true, 'Inline', 'Empty', 'Common',
+            array(
+                'alt*' => 'Text',
+                'height' => 'Length',
+                'longdesc' => 'URI', 
+                'src*' => new HTMLPurifier_AttrDef_URI(true), // embedded
+                'width' => 'Length'
+            )
         );
-        $this->info['img']->content_model_type = 'empty';
-        $this->info['img']->attr_transform_post[] =
+        // kind of strange, but splitting things up would be inefficient
+        $img->attr_transform_pre[] =
+        $img->attr_transform_post[] =
             new HTMLPurifier_AttrTransform_ImgRequired();
     }
     
 }
 
-?>

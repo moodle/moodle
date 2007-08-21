@@ -28,4 +28,3 @@ class HTMLPurifier_AttrTransform_BdoDir extends HTMLPurifier_AttrTransform
     
 }
 
-?>

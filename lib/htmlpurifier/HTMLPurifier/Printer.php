@@ -4,6 +4,8 @@ require_once 'HTMLPurifier/Generator.php';
 require_once 'HTMLPurifier/Token.php';
 require_once 'HTMLPurifier/Encoder.php';
 
+// OUT OF DATE, NEEDS UPDATING!
+
 class HTMLPurifier_Printer
 {
     
@@ -25,10 +27,20 @@ class HTMLPurifier_Printer
     }
     
     /**
-     * Main function that renders object or aspect of that object
-     * @param $config Configuration object
+     * Give generator necessary configuration if possible
      */
-    function render($config) {}
+    function prepareGenerator($config) {
+        // hack for smoketests/configForm.php
+        if (empty($config->conf['HTML'])) return;
+        $context = new HTMLPurifier_Context();
+        $this->generator->generateFromTokens(array(), $config, $context);
+    }
+    
+    /**
+     * Main function that renders object or aspect of that object
+     * @note Parameters vary depending on printer
+     */
+    // function render() {}
     
     /**
      * Returns a start tag
@@ -62,6 +74,18 @@ class HTMLPurifier_Printer
         return $this->start($tag, $attr) .
                ($escape ? $this->escape($contents) : $contents) .
                $this->end($tag);
+    }
+    
+    function elementEmpty($tag, $attr = array()) {
+        return $this->generator->generateFromToken(
+            new HTMLPurifier_Token_Empty($tag, $attr)
+        );
+    }
+    
+    function text($text) {
+        return $this->generator->generateFromToken(
+            new HTMLPurifier_Token_Text($text)
+        );
     }
     
     /**
@@ -146,4 +170,3 @@ class HTMLPurifier_Printer
     
 }
 
-?>

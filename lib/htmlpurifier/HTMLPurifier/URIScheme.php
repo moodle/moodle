@@ -20,25 +20,24 @@ class HTMLPurifier_URIScheme
     var $browsable = false;
     
     /**
+     * Whether or not the URI always uses <hier_part>, resolves edge cases
+     * with making relative URIs absolute
+     */
+    var $hierarchical = false;
+    
+    /**
      * Validates the components of a URI
      * @note This implementation should be called by children if they define
      *       a default port, as it does port processing.
-     * @note Fragment is omitted as that is scheme independent
-     * @param $userinfo User info found before at sign in authority
-     * @param $host Hostname in authority
-     * @param $port Port found after colon in authority
-     * @param $path Path of URI
-     * @param $query Query of URI, found after question mark
+     * @param $uri Instance of HTMLPurifier_URI
      * @param $config HTMLPurifier_Config object
      * @param $context HTMLPurifier_Context object
+     * @return Bool success or failure
      */
-    function validateComponents(
-        $userinfo, $host, $port, $path, $query, $config, &$context
-    ) {
-        if ($this->default_port == $port) $port = null;
-        return array($userinfo, $host, $port, $path, $query);
+    function validate(&$uri, $config, &$context) {
+        if ($this->default_port == $uri->port) $uri->port = null;
+        return true;
     }
     
 }
 
-?>

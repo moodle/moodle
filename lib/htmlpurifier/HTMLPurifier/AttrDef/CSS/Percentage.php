@@ -40,4 +40,3 @@ class HTMLPurifier_AttrDef_CSS_Percentage extends HTMLPurifier_AttrDef
     
 }
 
-?>

@@ -118,4 +118,3 @@ class HTMLPurifier_AttrDef_HTML_ID extends HTMLPurifier_AttrDef
     
 }
 
-?>

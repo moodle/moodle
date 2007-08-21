@@ -15,16 +15,14 @@ class HTMLPurifier_URIScheme_mailto extends HTMLPurifier_URIScheme {
     
     var $browsable = false;
     
-    function validateComponents(
-        $userinfo, $host, $port, $path, $query, $config, &$context
-    ) {
-        list($userinfo, $host, $port, $path, $query) = 
-            parent::validateComponents(
-                $userinfo, $host, $port, $path, $query, $config, $context );
+    function validate(&$uri, $config, &$context) {
+        parent::validate($uri, $config, $context);
+        $uri->userinfo = null;
+        $uri->host     = null;
+        $uri->port     = null;
         // we need to validate path against RFC 2368's addr-spec
-        return array(null, null, null, $path, $query);
+        return true;
     }
     
 }
 
-?>

@@ -9,7 +9,6 @@ class HTMLPurifier_HTMLModule_List extends HTMLPurifier_HTMLModule
 {
     
     var $name = 'List';
-    var $elements = array('dl', 'dt', 'dd', 'ol', 'ul', 'li');
     
     // According to the abstract schema, the List content set is a fully formed
     // one or more expr, but it invariably occurs in an optional declaration
@@ -19,28 +18,19 @@ class HTMLPurifier_HTMLModule_List extends HTMLPurifier_HTMLModule
     // Furthermore, the actual XML Schema may disagree. Regardless,
     // we don't have support for such nested expressions without using
     // the incredibly inefficient and draconic Custom ChildDef.
-    var $content_sets = array('List' => 'dl | ol | ul', 'Flow' => 'List');
+    
+    var $content_sets = array('Flow' => 'List');
     
     function HTMLPurifier_HTMLModule_List() {
-        foreach ($this->elements as $element) {
-            $this->info[$element] = new HTMLPurifier_ElementDef();
-            $this->info[$element]->attr = array(0 => array('Common'));
-            if ($element == 'li' || $element == 'dd') {
-                $this->info[$element]->content_model = '#PCDATA | Flow';
-                $this->info[$element]->content_model_type = 'optional';
-            } elseif ($element == 'ol' || $element == 'ul') {
-                $this->info[$element]->content_model = 'li';
-                $this->info[$element]->content_model_type = 'required';
-            }
-        }
-        $this->info['dt']->content_model = '#PCDATA | Inline';
-        $this->info['dt']->content_model_type = 'optional';
-        $this->info['dl']->content_model = 'dt | dd';
-        $this->info['dl']->content_model_type = 'required';
-        // this could be a LOT more robust
-        $this->info['li']->auto_close = array('li' => true);
+        $this->addElement('ol', true, 'List', 'Required: li', 'Common');
+        $this->addElement('ul', true, 'List', 'Required: li', 'Common');
+        $this->addElement('dl', true, 'List', 'Required: dt | dd', 'Common');
+        
+        $this->addElement('li', true, false, 'Flow', 'Common');
+        
+        $this->addElement('dd', true, false, 'Flow', 'Common');
+        $this->addElement('dt', true, false, 'Inline', 'Common');
     }
     
 }
 
-?>

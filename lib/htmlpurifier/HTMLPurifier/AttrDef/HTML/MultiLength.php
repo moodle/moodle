@@ -41,4 +41,3 @@ class HTMLPurifier_AttrDef_HTML_MultiLength extends HTMLPurifier_AttrDef_HTML_Le
     
 }
 
-?>

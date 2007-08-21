@@ -20,4 +20,3 @@ class HTMLPurifier_ChildDef_Optional extends HTMLPurifier_ChildDef_Required
     }
 }
 
-?>
