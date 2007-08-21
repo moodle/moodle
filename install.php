@@ -282,6 +282,13 @@ if ($INSTALL['stage'] == DATABASE) {
         }
     }
 
+    if ($INSTALL['dbtype'] == 'mysqli') {  /// Check MySQLi extension is present
+        if (!extension_loaded('mysqli')) {
+            $errormsg = get_string('mysqliextensionisnotpresentinphp', 'install');
+            $nextstage = DATABASE;
+        }
+    }
+
     if ($INSTALL['dbtype'] == 'postgres7') {  /// Check PostgreSQL extension is present
         if (!extension_loaded('pgsql')) {
             $errormsg = get_string('pgsqlextensionisnotpresentinphp', 'install');
@@ -317,7 +324,7 @@ if ($INSTALL['stage'] == DATABASE) {
         }
     }
 
-    if (empty($INSTALL['prefix']) && $INSTALL['dbtype'] != 'mysql') { // All DBs but MySQL require prefix (reserv. words)
+    if (empty($INSTALL['prefix']) && $INSTALL['dbtype'] != 'mysql' && $INSTALL['dbtype'] != 'mysqli') { // All DBs but MySQL require prefix (reserv. words)
         $errormsg = get_string('dbwrongprefix', 'install');
         $nextstage = DATABASE;
     }
@@ -343,6 +350,7 @@ if ($INSTALL['stage'] == DATABASE) {
             if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
                 switch ($INSTALL['dbtype']) {   /// Try to create a database
                     case 'mysql':
+                    case 'mysqli':
                         if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
                             $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
                         } else {
@@ -358,6 +366,7 @@ if ($INSTALL['stage'] == DATABASE) {
             $encoding = '';
             switch ($INSTALL['dbtype']) {
                 case 'mysql':
+                case 'mysqli':
                 /// Get MySQL character_set_database value
                     $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
                     if ($rs && $rs->RecordCount() > 0) {
@@ -589,6 +598,8 @@ if (isset($_GET['help'])) {
                     echo '<script type="text/javascript" defer="defer">window.onload=toggledbinfo;</script>';
                     echo '<div id="mysql" name="mysql">' . get_string('databasesettingssub_mysql', 'install') . '</div>';
 
+                    echo '<div id="mysqli" name="mysqli">' . get_string('databasesettingssub_mysqli', 'install') . '</div>';
+
                     echo '<div id="postgres7" name="postgres7">' . get_string('databasesettingssub_postgres7', 'install') . '</div>';
 
                     echo '<div id="mssql" name="mssql">' . get_string('databasesettingssub_mssql', 'install');
@@ -793,6 +804,7 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
                 <td class="td_left"><p><?php print_string('dbtype', 'install') ?></p></td>
                 <td class="td_right">
                 <?php choose_from_menu (array('mysql' => get_string('mysql', 'install'),
+                                              'mysqli' => get_string('mysqli', 'install'),
                                               'oci8po' => get_string('oci8po', 'install'),
                                               'postgres7' => get_string('postgres7', 'install'),
                                               'mssql' => get_string('mssql', 'install'),
@@ -1201,7 +1213,7 @@ function css_styles() {
       padding:0px;
       margin:0px;
     }
-    #mysql, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
+    #mysql, #mysqli, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
         display: none;
     }
 
@@ -1225,6 +1237,7 @@ function toggledbinfo() {
     if (document.getElementById) {
         //Hide all the divs
         document.getElementById('mysql').style.display = '';
+        document.getElementById('mysqli').style.display = '';
         document.getElementById('postgres7').style.display = '';
         document.getElementById('mssql').style.display = '';
         document.getElementById('mssql_n').style.display = '';
@@ -1236,6 +1249,7 @@ function toggledbinfo() {
         //This is the way old msie versions work
         //Hide all the divs
         document.all['mysql'].style.display = '';
+        document.all['mysqli'].style.display = '';
         document.all['postgres7'].style.display = '';
         document.all['mssql'].style.display = '';
         document.all['mssql_n'].style.display = '';
@@ -1247,6 +1261,7 @@ function toggledbinfo() {
         //This is the way nn4 works
         //Hide all the divs
         document.layers['mysql'].style.display = '';
+        document.layers['mysqli'].style.display = '';
         document.layers['postgres7'].style.display = '';
         document.layers['mssql'].style.display = '';
         document.layers['mssql_n'].style.display = '';

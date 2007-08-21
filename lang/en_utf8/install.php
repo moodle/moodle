@@ -86,6 +86,12 @@ $string['databasesettingssub_mysql'] = '<b>Type:</b> MySQL<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (optional)';
+$string['databasesettingssub_mysqli'] = '<b>Type:</b> Improved MySQL<br />
+       <b>Host:</b> eg localhost or db.isp.com<br />
+       <b>Name:</b> database name, eg moodle<br />
+       <b>User:</b> your database username<br />
+       <b>Password:</b> your database password<br />
+       <b>Tables Prefix:</b> prefix to use for all table names (optional)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
        <b>Host:</b> not used, must be left blank<br />
        <b>Name:</b> given name of the tnsnames.ora connection<br />
@@ -232,7 +238,9 @@ $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server with UTF-8 support (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MSSQL extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['mysql'] = 'MySQL (mysql)';
+$string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.  MySQLi extension is not available for PHP 4.';
 $string['oci8po'] = 'Oracle (oci8po)';
 $string['ociextensionisnotpresentinphp'] = 'PHP has not been properly configured with the OCI8 extension so that it can communicate with Oracle.  Please check your php.ini file or recompile PHP.';
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';

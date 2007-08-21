@@ -34,6 +34,7 @@ databasesettingssub
 databasesettingssub_mssql
 databasesettingssub_mssql_n
 databasesettingssub_mysql
+databasesettingssub_mysqli
 databasesettingssub_oci8po
 databasesettingssub_odbc_mssql
 databasesettingssub_postgres7
@@ -97,9 +98,11 @@ mssql
 mssql_n
 mssqlextensionisnotpresentinphp
 mysql
+mysqli
 mysql416bypassed
 mysql416required
 mysqlextensionisnotpresentinphp
+mysqliextensionisnotpresentinphp
 name
 next
 oci8po
