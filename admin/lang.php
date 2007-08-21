@@ -711,8 +711,9 @@ function lang_save_file($path, $file, $strings, $local, $packstrings) {
         @list($id, $stringname) = explode('XXX',$key);
         $value = lang_fix_value_before_save($value);
         if ($id == "string" and $value != ""){
-            if ((!$local) || (lang_fix_value_from_file($packstrings[$stringname]) <> lang_fix_value_from_file($value))) {
+            if ((!$local) || (!isset($packstrings[$stringname])) || (lang_fix_value_from_file($packstrings[$stringname]) <> lang_fix_value_from_file($value))) {
                 // Either we are saving the master language pack
+                // or the string is not saved in packstring - fixes PHP notices about missing key
                 // or we are saving local language pack and the strings differ.
                 fwrite($f,"\$string['$stringname'] = '$value';\n");
             }
