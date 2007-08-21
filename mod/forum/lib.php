@@ -3255,8 +3255,18 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $linktext = $messages['unsubscribed'];
             $linktitle = get_string('subscribestart', 'forum');
         }
-        return print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id,
+
+        $link = '<script type="text/javascript">';
+        $link .= 'document.getElementById("subscriptionlink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
+           '/mod/forum/subscribe.php?id=' . $forum->id . '\">' . $linktext . '</a>";';
+        $link .= '</script>';
+        // use <noscript> to print button in case javascript is not enabled
+        $link .= '<noscript>';
+        $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id,
                 '', $linktext, 'post', '_self', true, $linktitle);
+        $link .= '</noscript>';
+
+        return $link;  
     }    
 }
 

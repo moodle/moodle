@@ -155,7 +155,7 @@
                 echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
             }
 
-            echo '<br /><span class="helplink">', forum_get_subscribe_link($forum, $context, 
+            echo '<br /><span class="helplink" id="subscriptionlink">', forum_get_subscribe_link($forum, $context, 
                     array('forcesubscribed' => '', 'cantsubscribe' => '')), '</span>';
         }
 
