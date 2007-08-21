@@ -4673,6 +4673,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
         if ($mod->section > $course->numsections) {   /// Don't show excess hidden sections
             break;
         }
+        $mod->id = $mod->cm;
+        if (!groups_course_module_visible($mod)) {
+            continue;
+        }
 
         if ($mod->section > 0 and $section <> $mod->section) {
             $thissection = $sections[$mod->section];
