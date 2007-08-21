@@ -17,7 +17,7 @@
 
         if ($updates = question_cwqpfs_to_update()){
 
-            $probstr .=('<p>'.get_string('cwrqpfsinfo', 'question').'</p>');
+            $probstr .=get_string('cwrqpfsinfo', 'question');
             $probstr .= '<ul>';
             $catlist = join(array_keys($updates), ',');
             //get info about cateogries and no of questions used outside category's course
