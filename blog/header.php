@@ -258,11 +258,12 @@ if ($filtertype=='user') {
 }
 $currenttab = 'blogs';
 
+require_once($CFG->dirroot .'/user/tabs.php');
+
+
 /// Layout the whole page as three big columns.
 print '<table border="0" cellpadding="3" cellspacing="0" width="100%" id="layout-table">' . "\n";
 print '<tr valign="top">' . "\n";
-
-require_once($CFG->dirroot .'/user/tabs.php');
 
 /// The left column ...
 if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $editing) {
