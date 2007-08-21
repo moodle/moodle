@@ -1,6 +1,10 @@
 <?PHP // $Id$
     /**
     * Display the admin/language menu and process strings translation.
+    *
+    * @param string $mode the mode of the script: null, "compare", "missing"
+    * @param string $currentfile the filename of the English file to edit (if mode==compare)
+    * @param bool $uselocal save translations into *_local pack?
     */
 
     require_once('../config.php');
@@ -18,6 +22,7 @@
     define('LANG_DEFAULT_USELOCAL', 0);         // should *_utf8_local be used by default?
     define('LANG_MISSING_TEXT_MAX_LEN', 60);    // maximum length of the missing text to display
     define('LANG_KEEP_ORPHANS', 1);             // keep orphaned strings (i.e. strings w/o English reference)
+    define('LANG_SEARCH_EXTRA', 1);             // search lang files in extra locations
 
     $mode        = optional_param('mode', '', PARAM_ALPHA);
     $currentfile = optional_param('currentfile', LANG_DEFAULT_FILE, PARAM_FILE);
@@ -64,6 +69,7 @@
     $strlocalstringcustomization = get_string('localstringcustomization', 'admin');
     $strlangpackmaintaining = get_string('langpackmaintaining', 'admin');
     $strnomissingstrings = get_string('nomissingstrings', 'admin');
+    $streditingnoncorelangfile = get_string('editingnoncorelangfile', 'admin');
 
     $currentlang = current_language();
 
@@ -138,17 +144,13 @@
     }
     $locallangdir = "$langbase/{$currentlang}_local";
 
-    if (! $stringfiles = get_directory_list($enlangdir, "", false)) {
-        error("Could not find English language pack!");
+    // get the list of all English stringfiles
+    $stringfiles = lang_standard_locations();
+    if (LANG_SEARCH_EXTRA) {
+        $stringfiles += lang_extra_locations();
     }
-
-    foreach ($stringfiles as $key => $file) {
-        if (substr($file, -4) != ".php") { //Avoid non php files to be showed
-            unset($stringfiles[$key]);
-        }
-        if ($file == "langconfig.php") { //Avoid langconfig.php to be showed
-            unset($stringfiles[$key]);
-        }
+    if (count($stringfiles) == 0) {
+        error("Could not find English language pack!");
     }
 
     if ($mode == "missing") {
@@ -160,45 +162,111 @@
         $m = '';
         $o = '';
 
+        $m_x = false;
+
+        // Total number of strings and missing strings
+        $totalcounter->strings = 0;
+        $totalcounter->missing = 0;       
+
         // For each file, check that a counterpart exists, then check all the strings
-        foreach ($stringfiles as $file) {
+        foreach ($stringfiles as $stringfile) {
+            $location = $stringfile['location'];
+            $plugin = $stringfile['plugin'];
+            $prefix = $stringfile['prefix'];
+            $filename = $stringfile['filename'];
             unset($string);
-            include("$enlangdir/$file");
+            
+            // Get some information about file locations:
+            //  $enfilepath = the path to the English file distributed either in the core space or in plugin space
+            //  $trfilepath = the path to the translated file distributed either in the lang pack or in plugin space
+            //  $lcfilepath = the path to the _local customization
+            //  $trfilename = the filename of the translated version of the file (including prefix for non-core files)
+            if ($location || $plugin) {
+                // non-core file in an extra location
+                $enfilepath = "$CFG->dirroot/$location/$plugin/lang/en_utf8/$filename";
+                $trfilepath = "$CFG->dirroot/$location/$plugin/lang/$currentlang/$filename";
+                $lcfilepath = "$locallangdir/$filename";
+                $trfilename = $filename;
+                if (!$m_x) {
+                    $m .= '<hr />';
+                    $m_x = true;
+                }
+            } else {
+                // core file in standard location
+                $enfilepath = "$CFG->dirroot/lang/en_utf8/$filename";
+                $trfilepath = "$langdir/$filename";
+                $lcfilepath = "$locallangdir/$filename";
+                $trfilename = $filename;
+            }
+            // $enstring = English strings distributed either in the core space or in plugin space
+            include($enfilepath);
             $enstring = $string;
-
-            ksort($enstring);
-
             unset($string);
+            ksort($enstring);
+            
+            //$lcstring = local customizations
+            $lcstring = array();
+            if (file_exists($lcfilepath)) {
+                include($lcfilepath);
+                $localfileismissing = 0;
+                if (is_array($string)) {
+                    $lcstring = $string;
+                }
+                unset($string);
+                ksort($lcstring);
+            } else {
+                $localfileismissing = 1;
+            }
 
-            if (file_exists("$langdir/$file")) {
-                include("$langdir/$file");
+            // $string = translated strings distibuted either in core lang pack or in plugin space
+            $string = array();
+            if (file_exists($trfilepath)) {
+                include($trfilepath);
                 $fileismissing = 0;
             } else {
                 $fileismissing = 1;
-                // notify(get_string("filemissing", "", "$langdir/$file"));
-                $o .= '<div class="notifyproblem">'.get_string("filemissing", "", "$langdir/$file").'</div><br />';
-                $string = array();
+                $o .= notify(get_string("filemissing", "", $trfilepath), "notifyproblem", "center", true);
             }
 
             $missingcounter = 0;
 
-            $first = true;
+            $first = true; // first missing string found in the file
+            // For all English strings in the current file check distributed translations and _local customizations
             foreach ($enstring as $key => $value) {
-                if (empty($string[$key]) and $string[$key] != "0") {    //bug fix 4735 mits
+                $totalcounter->strings++;
+                $missingstring = false;
+                $missinglocalstring = false;
+                $translationsdiffer = false;
+                if (empty($string[$key]) and $string[$key] != "0") { // MDL-4735
+                    // string is missing in distributed pack
+                    $missingstring = true;
+                }
+                if (empty($lcstring[$key]) and $lcstring[$key] != "0") { // MDL-4735
+                    // string is missing in _local customization
+                    $missinglocalstring = true;
+                }
+                if (!$missingstring && !$missinglocalstring && ($lcstring[$key] != $string[$key])) {
+                    $translationsdiffer = true;
+                }
+                if ($missingstring || $translationsdiffer) {
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);
                     if ($first) {
-                        $m .= "<a href=\"lang.php?mode=missing#$file\">$file";
+                        $m .= "<a href=\"lang.php?mode=missing#$trfilename\">$trfilename";
                         $m .= $fileismissing ? '*' : '';
                         $m .= '</a> &nbsp; ';
-                        $o .= "<p><a name=\"$file\"></a><b>".get_string("stringsnotset","","$langdir/$file")."</b></p><pre>";
+                        $o .= "<p><a name=\"$trfilename\"></a><b>".
+                            get_string("stringsnotset","", $trfilepath)."</b></p><pre>";
                         $first = false;
                         $somethingfound = true;
                     }
-                    $missingcounter++;
-                    if (LANG_LINK_MISSING_STRINGS) {
-                        $missinglinkstart = "<a href=\"lang.php?mode=compare&amp;currentfile=$file#missing$missingcounter\">";
+                    if ($missingstring) {
+                        $missingcounter++;
+                        $totalcounter->missing++;
+                    }
+                    if (LANG_LINK_MISSING_STRINGS && $missingstring) {
+                        $missinglinkstart = "<a href=\"lang.php?mode=compare&amp;currentfile=$filename#missing$missingcounter\">";
                         $missinglinkend = '</a>';
                     } else {
                         $missinglinkstart = '';
@@ -207,7 +275,16 @@
                     if (strlen($value) > LANG_MISSING_TEXT_MAX_LEN) {
                         $value = lang_xhtml_save_substr($value, 0, LANG_MISSING_TEXT_MAX_LEN) . ' ...'; // MDL-8852
                     }
-                    $o .= "$"."string['".$missinglinkstart.$key.$missinglinkend."'] = \"$value\";<br />";
+                    if ($translationsdiffer) {
+                        $o .= '// ';
+                    }
+                    $o .= "$"."string['".$missinglinkstart.$key.$missinglinkend."'] = \"$value\";";
+                    if ($translationsdiffer) {
+                        $o .= '    // differs from the translation in _local';
+                    } elseif (!$missinglocalstring) {
+                        $o .= '    // translated only in _local';
+                    }
+                    $o .= "\n";
                 }
             }
             if (!$first) {
@@ -215,9 +292,17 @@
             }
         }
 
+        if ($totalcounter->missing > 0) {
+            $totalcounter->missingpercent = sprintf('%02.1f', ($totalcounter->missing / $totalcounter->strings * 100));
+            print_heading(get_string('numberofstrings', 'admin', $totalcounter), '', 4);
+        } else {
+            print_heading($strnomissingstrings, '', 4, 'notifysuccess');
+        }
+
         if ($m <> '') {
             print_box($m, 'filenames');
         }
+
         echo $o;
 
         if (! $files = get_directory_list("$CFG->dirroot/lang/en_utf8/help", "CVS")) {
@@ -226,7 +311,7 @@
 
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
+                notify(get_string("filemissing", "", "$langdir/help/$file"), 'notifyproblem');
                 $somethingfound = true;
                 continue;
             }
@@ -237,7 +322,7 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/docs/$file")."</font></p>";
+                notify(get_string("filemissing", "", "$langdir/docs/$file"), 'notifyproblem');
                 $somethingfound = true;
                 continue;
             }
@@ -278,6 +363,51 @@
             }
         }
 
+        if ($currentfile <> '') {
+            if (!$fileinfo = lang_get_file_info($currentfile, $stringfiles)) {
+                error('Unable to find info for: '.$currentfile);
+            }
+            // check the filename is set up correctly, prevents bugs similar to MDL-10920
+            $location = $fileinfo['location'];
+            $plugin = $fileinfo['plugin'];
+            $prefix = $fileinfo['prefix'];
+            $filename = $fileinfo['filename'];
+            if ($location || $plugin) {
+                // file in an extra location
+                if ($currentfile != "{$prefix}{$plugin}.php") {
+                    error("Non-core filename mismatch. The file $currentfile should be {$prefix}{$plugin}.php");
+                }
+                if (!$uselocal) {
+                    notify($streditingnoncorelangfile);
+                    $editable = false;
+                }
+            } else {
+                // file in standard location
+                if ($currentfile != $filename) {
+                    error("Core filename mismatch. The file $currentfile should be $filename");
+                }
+            }
+
+            // Get some information about file locations:
+            //  $enfilepath = the path to the English file distributed either in the core space or in plugin space
+            //  $trfilepath = the path to the translated file distributed either in the lang pack or in plugin space
+            //  $lcfilepath = the path to the _local customization
+            //  $trfilename = the filename of the translated version of the file (including prefix for non-core files)
+            if ($location || $plugin) {
+                // non-core file in an extra location
+                $enfilepath = "$CFG->dirroot/$location/$plugin/lang/en_utf8/$filename";
+                $trfilepath = "$CFG->dirroot/$location/$plugin/lang/$currentlang/$filename";
+                $lcfilepath = "$locallangdir/$filename";
+                $trfilename = $filename;
+            } else {
+                // core file in standard location
+                $enfilepath = "$CFG->dirroot/lang/en_utf8/$filename";
+                $trfilepath = "$langdir/$filename";
+                $lcfilepath = "$locallangdir/$filename";
+                $trfilename = $filename;
+            }
+        }
+
         if (isset($_POST['currentfile'])){   // Save a file
             if (!confirm_sesskey()) {
                 error(get_string('confirmsesskeybad', 'error'));
@@ -293,7 +423,7 @@
             unset($newstrings['currentfile']);
 
             if ($uselocal) {
-                include("$langdir/$currentfile");
+                include($trfilepath);
                 if (isset($string)) {
                     $packstring = $string;
                 } else {
@@ -316,8 +446,18 @@
 
         print_box_start('generalbox editstrings');
         $menufiles = array();
-        foreach ($stringfiles as $file) {
-            $menufiles[$file] = $file;
+        $menufiles_coregrp = 1;
+        foreach ($stringfiles as $stringfile) {
+            $item_key = $stringfile['filename'];
+            $item_label = $stringfile['filename'];
+            if ($stringfile['location'] != '' && $stringfile['plugin'] != '') {
+                $item_label .= ' ('.$stringfile['location'].'/'.$stringfile['plugin'].')';
+                if ($menufiles_coregrp == 1) {
+                    $menufiles['extra'] = '------------';
+                    $menufiles_coregrp = 0;
+                }
+            }
+            $menufiles[$item_key] = $item_label;
         }
         popup_form("$CFG->wwwroot/$CFG->admin/lang.php?mode=compare&amp;currentfile=", $menufiles, "choosefile",
             $currentfile, $strchoosefiletoedit);
@@ -334,44 +474,52 @@
         if ($currentfile <> '') {
             $saveto = $uselocal ? $locallangdir : $langdir;
             error_reporting(0);
-            if (!file_exists("$saveto/$currentfile")) {
-                if (!@touch("$saveto/$currentfile")) {
-                    print_heading(get_string("filemissing", "", "$saveto/$currentfile"), '', 4, 'error');
-                } else {
-                    print_heading($strfilecreated, '', 4, 'notifysuccess');
+            if (!isset($editable) || $editable) {
+                if (!file_exists("$saveto/$currentfile")) {
+                    if (!@touch("$saveto/$currentfile")) {
+                        print_heading(get_string("filemissing", "", "$saveto/$currentfile"), '', 4, 'error');
+                    } else {
+                        print_heading($strfilecreated, '', 4, 'notifysuccess');
+                    }
                 }
-            }
-            if ($currentlang == "en_utf8" && !$uselocal) {
-                $editable = false;
-                print_heading($streditennotallowed, '', 4);
-            } elseif ($f = fopen("$saveto/$currentfile","r+")) {
-                $editable = true;
-                fclose($f);
-            } else {
-                $editable = false;
-                echo "<p><font size=\"1\">".get_string("makeeditable", "", "$saveto/$currentfile")."</font></p>";
+                if ($currentlang == "en_utf8" && !$uselocal) {
+                    $editable = false;
+                    print_heading($streditennotallowed, '', 4);
+                } elseif ($f = fopen("$saveto/$currentfile","r+")) {
+                    $editable = true;
+                    fclose($f);
+                } else {
+                    $editable = false;
+                    notify(get_string("makeeditable", "", "$saveto/$currentfile"), 'notifyproblem');
+                }
             }
             error_reporting($CFG->debug);
 
             $o = '';    // stores the HTML output to be echo-ed
+            
             unset($string);
-            include("$enlangdir/$currentfile");
+            include($enfilepath);
             $enstring = $string;
+            //
+            // TODO/FIXME: IMHO following should not be here as the strings have moved into langconfig.php -- mudrd8mz
+            //
             if ($currentlang != 'en' and $currentfile == 'moodle.php') {
                 $enstring['thislanguage'] = "<< TRANSLATORS: Specify the name of your language here.  If possible use Unicode Numeric Character References >>";
                 $enstring['thischarset'] = "<< TRANSLATORS:  Charset encoding - always use utf-8 >>";
                 $enstring['thisdirection'] = "<< TRANSLATORS: This string specifies the direction of your text, either left-to-right or right-to-left.  Insert either 'ltr' or 'rtl' here. >>";
                 $enstring['parentlanguage'] = "<< TRANSLATORS: If your language has a Parent Language that Moodle should use when strings are missing from your language pack, then specify the code for it here.  If you leave this blank then English will be used.  Example: nl >>";
             }
+            unset($string);
             ksort($enstring);
 
-            unset($string);
-
-            @include("$locallangdir/$currentfile");
+            @include($lcfilepath);
             $localstring = isset($string) ? $string : array();
             unset($string);
+            ksort($localstring);
 
-            @include("$langdir/$currentfile");
+            @include($trfilepath);
+            $string = isset($string) ? $string : array();
+            ksort($string);
 
             if ($editable) {
                 $o .= "<form id=\"$currentfile\" action=\"lang.php\" method=\"post\">";
@@ -453,7 +601,11 @@
                 }
 
                 if ($editable) {
-                    $o .= '<td '.$cellcolour.' valign="top">'. $missingprev . $missingtarget."\n";
+                    $o .= '<td '.$cellcolour.' valign="top">';
+                    if ($missingcounter > 1) {
+                        $o .= $missingprev;
+                    }
+                    $o .= $missingtarget."\n";
                     if (isset($string[$key])) {
                         $valuelen = strlen($value);
                     } else {
@@ -475,7 +627,7 @@
                     $o .= $missingnext . '</td>';
 
                 } else {
-                    $o .= '<td '.$cellcolour.' valign="top">'.$value.'</td>';
+                    $o .= '<td '.$cellcolour.' valign="top">'.$value.'<br />'.$value2.'</td>';
                 }
                 $o .= '</tr>'."\n";
             }
@@ -742,10 +894,11 @@ function lang_xhtml_save_substr($str, $start, $length = NULL) {
 /**
 * Finds all English string files in the standard lang/en_utf8 location.
 *
+* Core lang files should always be stored here and not in the module space (MDL-10920).
 * The English version of the file may be found in
 *  $CFG->dirroot/lang/en_utf8/filename
 * The localised version of the found file should be saved into
-*  $CFG->dataroot/lang/current_lang[_local]/filename
+*  $CFG->dataroot/lang/currentlang[_local]/filename
 * where "filename" is returned as a part of the file record.
 *
 * @return array Array of a file information. Compatible format with {@link lang_extra_locations()}
@@ -780,7 +933,7 @@ function lang_standard_locations() {
 * The English version of the file may be found in
 *  $CFG->dirroot/location/plugin/lang/en_utf8/filename
 * The localised version of the found file should be saved into
-*  $CFG->dataroot/lang/current_lang[_local]/prefix_plugin.php
+*  $CFG->dataroot/lang/currentlang[_local]/prefix_plugin.php
 * where "location", "plugin", "prefix" and "filename" are returned as a part of the file record.
 *
 * @return array Array of a file information. Compatible format with {@link lang_standard_locations()}
@@ -812,5 +965,32 @@ function lang_extra_locations() {
     return $files;
 }
 
+/**
+ * Lookup for a stringfile details.
+ *
+ * English files can be stored in several places (core space or module/plugin space). Their translations
+ * go into the one directory - the current language pack. Therefore, the name of the stringfile may be
+ * considered as a key of the list of all stringfiles.
+ *
+ * @param string $currentfile the filename
+ * @param array $stringfiles the array of file info returned by {@link lang_extra_locations()}
+ * @return array Array of a file information (filename, location, plugin, prefix) or null.
+ */
+function lang_get_file_info($currentfile, $stringfiles) {
+    $found = false;
+    foreach ($stringfiles as $path=>$stringfile) {
+        if ($stringfile['filename'] == $currentfile) {
+            $found = true;
+            $ret = $stringfile;
+            $ret['fullpath'] = $path;
+            break;
+        }
+    }
+    if ($found) {
+        return $ret;
+    } else {
+        return null;
+    }
+}
 
 ?>
