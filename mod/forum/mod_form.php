@@ -124,7 +124,11 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->disabledIf('warnafter', 'blockperiod', 'eq', 0);
 
 //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements(true, true);
+        $features = new stdClass;
+        $features->groups = true;
+        $features->groupings = true;
+        $features->groupmembersonly = true;
+        $this->standard_coursemodule_elements($features);
 //-------------------------------------------------------------------------------
 // buttons
         $this->add_action_buttons();
