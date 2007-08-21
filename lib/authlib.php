@@ -139,6 +139,16 @@ class auth_plugin_base {
     }
 
     /**
+     * User delete requested - internal user record is mared as deleted already, username not present anymore.
+     * Do any action in external database.
+     * @param object $user       Userobject before delete    (without system magic quotes)
+     */
+    function user_delete($olduser) {
+        //override if needed
+        return;
+    }
+
+    /**
      * Returns true if plugin allows resetting of internal password.
      *
      * @return bool

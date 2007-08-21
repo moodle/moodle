@@ -614,21 +614,9 @@ class auth_plugin_ldap extends auth_plugin_base {
             if (!empty($remove_users)) {
                 print "User entries to remove: ". count($remove_users) . "\n";
 
-                begin_sql();
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == 2) {
-                        //following is copy pasted from admin/user.php
-                        //maybe this should moved to function in lib/datalib.php
-                        $updateuser = new object();
-                        $updateuser->id           = $user->id;
-                        $updateuser->deleted      = 1;
-                        $updateuser->username     = addslashes("$user->email.".time());  // Remember it just in case
-                        $updateuser->email        = '';               // Clear this field to free it up
-                        $updateuser->idnumber     = '';               // Clear this field to free it up
-                        $updateuser->timemodified = time();
-                        if (update_record('user', $updateuser)) {
-                            delete_records('role_assignments', 'userid', $user->id); // unassign all roles
-                        //copy pasted part ends
+                        if (delete_user($user)) {
                             echo "\t"; print_string('auth_dbdeleteuser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth', $user->username); echo "\n";
@@ -644,7 +632,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                         }
                     }
                 }
-                commit_sql();
             } else {
                 print "No user entries to be removed\n";
             }

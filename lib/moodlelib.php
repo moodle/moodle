@@ -2617,6 +2617,56 @@ function truncate_userinfo($info) {
 }
 
 /**
+ * Marks user deleted in internal user database and notifies the auth plugin.
+ * Also unenrols user from all roles and does other cleanup.
+ * @param object $user       Userobject before delete    (without system magic quotes)
+ * @return boolean success
+ */
+function delete_user($user) {
+    global $CFG;
+    require_once($CFG->libdir.'/grouplib.php');
+
+    begin_sql();
+
+    // delete all grades - backup is kept in grade_grades_history table
+    if ($grades = grade_grade::fetch_all(array('userid'=>$user->id))) {
+        foreach ($grades as $grade) {
+            $grade->delete('userdelete');
+        }
+    }
+
+    // remove from all groups
+    delete_records('groups_members', 'userid', $user->id);
+
+    // unenrol from all roles in all contexts
+    role_unassign(0, $user->id); // this might be slow but it is really needed - modules might do some extra cleanup!
+
+    // now do a final accesslib cleanup - removes all role assingments in user context and context itself
+    delete_context(CONTEXT_USER, $user->id);
+
+    // mark internal user record as "deleted"
+    $updateuser = new object();
+    $updateuser->id           = $user->id;
+    $updateuser->deleted      = 1;
+    $updateuser->username     = addslashes("$user->email.".time());  // Remember it just in case
+    $updateuser->email        = '';               // Clear this field to free it up
+    $updateuser->idnumber     = '';               // Clear this field to free it up
+    $updateuser->timemodified = time();
+
+    if (update_record('user', $updateuser)) {
+        commit_sql();
+        // notify auth plugin - do not block the delete even when plugin fails
+        $authplugin = get_auth_plugin($user->auth);
+        $authplugin->user_delete($user);
+        return true;
+
+    } else {
+        rollback_sql();
+        return false;
+    }
+}
+
+/**
  * Retrieve the guest user object
  *
  * @uses $CFG
