@@ -1781,6 +1781,14 @@ class assignment_base {
         return false;
     }
 
+    /**
+     * Plugin cron method - do not use $this here, create new assignment instances if needed.
+     * @return void
+     */
+    function cron() {
+        //no plugin cron by default - override if needed
+    }
+
 } ////// End of the assignment_base class
 
 
@@ -1885,6 +1893,16 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
 function assignment_cron () {
 
     global $CFG, $USER;
+
+    /// first execute all crons in plugins
+    if ($plugins = get_list_of_plugins('mod/assignment/type')) {
+        foreach ($plugins as $plugin) {
+            require_once("$CFG->dirroot/mod/assignment/type/$plugin/assignment.class.php");
+            $assignmentclass = "assignment_$plugin";
+            $ass = new $assignmentclass();
+            $ass->cron();
+        }
+    }
 
     /// Notices older than 1 day will not be mailed.  This is to avoid the problem where
     /// cron has not been running for a long time, and then suddenly people are flooded
