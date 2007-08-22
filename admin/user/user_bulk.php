@@ -4,6 +4,7 @@
     require_once($CFG->libdir.'/dmllib.php');
 
     require_once($CFG->dirroot.'/user/filters/text.php');
+    require_once($CFG->dirroot.'/user/filters/date.php');
     require_once($CFG->dirroot.'/user/filters/select.php');
     require_once($CFG->dirroot.'/user/filters/courserole.php');
     require_once($CFG->dirroot.'/user/filters/globalrole.php');
@@ -47,6 +48,7 @@
     $filters[] = new user_filter_profilefield('profile', get_string('profile'));
     $filters[] = new user_filter_courserole('course', get_string('courserole', 'filters'));
     $filters[] = new user_filter_globalrole('system', get_string('globalrole', 'role'));
+    $filters[] = new user_filter_date('date', get_string('date'), 'lastaccess', array('lastlogin'=> get_string('lastlogin'), 'firstaccess' => get_string('firstaccess', 'filters'), 'lastaccess' => get_string('lastaccess'), 'timemodified' => get_string('lastmodified')));
     
     // create the user filter form
     $user_filter_form =& new user_filter_form(null, $filters);

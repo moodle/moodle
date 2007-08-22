@@ -77,6 +77,9 @@ class user_filter_profilefield extends user_filter_type {
         $objs[] =& $mform->createElement('text', $this->_name, null);
         $grp =& $mform->addElement('group', $this->_name . '_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('profilefield','','filters'));
+        $mform->setDefault($this->_name . '_fld', $this->_profile_field);
+        $mform->setDefault($this->_name . '_op', $this->_operator);
+        $mform->setDefault($this->_name, $this->_value);
     }
     
     /**

@@ -50,6 +50,8 @@ class user_filter_select extends user_filter_type {
         $objs[] =& $mform->createElement('select', $this->_name, null, $this->_options);
         $grp =& $mform->addElement('group', $this->_name . '_grp', $this->_label, $objs, '', false);
         $grp->setHelpButton(array('select','','filters'));
+        $mform->setDefault($this->_name . '_op', $this->_operator);
+        $mform->setDefault($this->_name, $this->_value);
     }
     
     /**

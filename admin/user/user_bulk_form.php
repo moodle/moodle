@@ -53,7 +53,7 @@ class user_bulk_form extends moodleform {
         }
         $obj =& $this->_form->getElement('comment');
         $obj->setLabel($comment);
-        $obj->setText(get_string('usersfound', 'bulkusers', $count) . ' ' .get_string('usersselected', 'bulkusers', count($SESSION->bulk_susers)));
+        $obj->setText(get_string('usersfound', 'bulkusers', $count) . ' ' .get_string('usersselected', 'bulkusers', count(@$SESSION->bulk_susers)));
     }
     
     function definition_after_data() {

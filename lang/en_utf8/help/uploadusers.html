@@ -9,11 +9,11 @@
   <li>The first record of the file is special, and contains a list of fieldnames. This defines the format of the rest of the file.
     <blockquote>
       <p><strong>Required fieldnames:</strong> these fields must be included in the first record, and defined for each user</p>
-      <p><code class="example1">firstname, lastname</code></p>
+      <p><code>firstname, lastname</code></p>
       <p><strong>Optional fieldnames: </strong>all of these are completely optional. If a values is present for the field in the file, then that value is used; else, the default value for that field is used.</p>
-      <p> <code class="example1">institution, department, city, country, lang, auth, timezone, idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, emailstop</code></p>
+      <p> <code>institution, department, city, country, lang, auth, timezone, idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, emailstop, deleted</code></p>
       <p><strong>Enrolment fieldnames (optional): </strong>The  course names are the &quot;shortnames&quot; of the courses - if present then the user will be enrolled in those courses. For groups use group name; for roles use id. Group names must be associated to the corresponding courses, i.e. group1 to course1, etc.</p>
-      <p><code class="example1">course1, group1, type1, role1, course2, group2, type2, role2, etc.</code></p>
+      <p><code>course1, group1, type1, role1, course2, group2, type2, role2, etc.</code></p>
     </blockquote>
     </li>
   <li>Commas within the data should be encoded as &amp;#44 - the script will automatically decode these back to commas. </li>
@@ -27,6 +27,11 @@
 <p><code>username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1, type1<br />
 jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1, 1<br />
 reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202, Section 3, 3
+</code></p>
+<p>The CSV file may contain full informations for some users and use default values for others (use extra commas to corectly associate data to headers). For example, the following file will use default values for username, city and country for user Trent Reznor:</p>
+<p><code>username, password, firstname, lastname, country, city<br />
+jonest, verysecret, Tom, Jones, RO, Constanta<br />
+, somesecret, Trent, Reznor, ,
 </code></p>
 
 <h2>Templates</h2>
@@ -54,7 +59,7 @@ reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Ad
 </ul>
 <p>Template processing is done only on default values, and not on the values retrieved from the CSV file.</p>
 <p>In order to create corect Moodle usernames, the username is always converted to lowercase. Moreover, if the &quot;Allow extended characters in usernames&quot; option in the Site policies page is off, characters different to letters, digits, dash (-) and dot (.) are removed. 
-For example if the firstname is John Jr. and the lastname is Doe, the username %-f%-l will produce john jr.doe when Allow extended characters in usernames is on, and johnjr.doe when off (notice the extra space).</p>
+For example if the firstname is John Jr. and the lastname is Doe, the username %-f_%-l will produce john jr._doe when Allow extended characters in usernames is on, and johnjr.doe when off.</p>
 <p>When the &quot;New username duplicate handling&quot; setting is set to Append counter, an auto-increment counter will be append to duplicate usernames produced by the template.
 For example, if the CSV file contains the users named John Doe, Jane Doe and Jenny Doe without explicit usernames, the default username is %-1f%-l and New username duplicate handling is set to Append counter, then the usernames produced will be jdoe, jdoe2 and jdoe3.
 </p>
@@ -63,6 +68,14 @@ For example, if the CSV file contains the users named John Doe, Jane Doe and Jen
 
 <p>By default Moodle assumes that you will be creating new user accounts, and skips records where the username matches an existing account. However, if you set "Update existing accounts" to <b>Yes</b>, the existing user account will be updated. </p>
 
-<p>When updating existing accounts you can change usernames as well. Set "Allow renames" to <b>Yes</b> and include in your file a field called <code class="example1">oldusername</code>.</p>
+<p>When updating existing accounts you can change usernames as well. Set "Allow renames" to <b>Yes</b> and include in your file a field called <code>oldusername</code>.</p>
 
 <p><b>Warning:</b> any errors updating existing accounts can affect your users badly. Be careful when using the options to update.</p>
+
+<h2>Deleting accounts</h2>
+<p>If the <code>deleted</code> field is present, users with value 1 for it will be deleted. In this case, all the fields may be omitted, except for <code>username</code> (which should be present in the CSV file, or a default value for it should be available).</p>
+<p>Deleting and uploading accounts could be done with a single CSV file. For example, the following file will add the user Tom Jones and delete the user reznort:</p>
+<p><code>username, firstname, lastname, deleted<br />
+jonest, Tom, Jones, 0<br />
+reznort, , , 1
+</code></p>

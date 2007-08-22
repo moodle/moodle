@@ -46,7 +46,7 @@ class user_filter_radios extends user_filter_type {
             $objs[] =& $mform->createElement('radio', $this->_name, null, $v, $k);
         }
         $grp =& $mform->addElement('group', $this->_name . '_grp', $this->_label, $objs, '', false);
-        $mform->setDefault($this->_name, -1);
+        $mform->setDefault($this->_name, $this->_value);
         $grp->setHelpButton(array('radios','','filters'));
     }
     
