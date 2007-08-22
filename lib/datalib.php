@@ -1328,6 +1328,10 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
     $outputarray = array();
 
     foreach ($modinfo as $mod) {
+        $mod->id = $mod->cm;
+        if (!groups_course_module_visible($mod)) {
+            continue;
+        }
         if ($mod->mod == $modulename and $mod->visible > $invisible) {
             $instance = $rawmods[$mod->cm];
             if (!empty($mod->extra)) {
