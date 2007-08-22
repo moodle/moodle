@@ -90,7 +90,7 @@ function question_random_check($result){
         $a->reporturl = "{$CFG->wwwroot}/{$CFG->admin}/report/question/";
         $lang = str_replace('_utf8', '', current_language());
         $a->docsurl = "{$CFG->docroot}/$lang/admin/report/question/index";
-        $result->feedback_str = get_string('questioncwqpfscheck', 'admin', $a);
+        $result->setFeedbackStr(array('questioncwqpfscheck', 'admin', $a));
         $result->setStatus(false);//fail test
     }
     return $result;

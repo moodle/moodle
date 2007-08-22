@@ -239,26 +239,18 @@ function print_moodle_environment($result, $environment_results) {
             $status = '<span class="'.$messagetype.'">'.$status.'</span>';
         /// Here we'll store all the feedback found
             $feedbacktext = '';
-                ///Process the feedback if necessary
-            if ($feedbackstr = $environment_result->getFeedbackStr()) {
-                $feedbacktext .= '<p class="'.$messagetype.'">'.get_string($feedbackstr, 'admin').'</p>';
-            }
-        ///Process the bypass if necessary
-            if ($bypassstr = $environment_result->getBypassStr()) {
-                $feedbacktext .= '<p class="warn">'.get_string($bypassstr, 'admin').'</p>';
-            }
-        ///Process the restrict if necessary
-            if ($restrictstr = $environment_result->getRestrictStr()) {
-                $feedbacktext .= '<p class="error">'.get_string($restrictstr, 'admin').'</p>';
-            }
-            if ($feedbacktext) {
-                $report = $report .$feedbacktext;
-            }
+            ///Append  the feedback if there is some
+            $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), $messagetype);
+        ///Append the bypass if there is some
+            $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'warn');
+        ///Append the restrict if there is some
+            $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
+
+            $report .= $feedbacktext;
         /// Add the row to the table
 
             if ($environment_result->getPart() == 'custom_check'){
                 $otherdata[$messagetype][] = array ($info, $report, $status);
-
             } else {
                 $serverdata[$messagetype][] = array ($type, $info, $report, $status);
             }
@@ -999,15 +991,22 @@ class environment_results {
 
     /**
      * Set the feedback string
-     * @param string the feedback string
+     * @param mixed the feedback string that will be fetched from the admin lang file.
+     *                  pass just the string or pass an array of params for get_string
+     *                  You always should put your string in admin.php but a third param is useful
+     *                  to pass an $a object / string to get_string
      */
     function setFeedbackStr($str) {
         $this->feedback_str=$str;
     }
 
+
     /**
      * Set the bypass string
-     * @param string the bypass string
+     * @param string the bypass string that will be fetched from the admin lang file.
+     *                  pass just the string or pass an array of params for get_string
+     *                  You always should put your string in admin.php but a third param is useful
+     *                  to pass an $a object / string to get_string
      */
     function setBypassStr($str) {
         $this->bypass_str=$str;
@@ -1015,7 +1014,10 @@ class environment_results {
 
     /**
      * Set the restrict string
-     * @param string the restrict string
+     * @param string the restrict string that will be fetched from the admin lang file.
+     *                  pass just the string or pass an array of params for get_string
+     *                  You always should put your string in admin.php but a third param is useful
+     *                  to pass an $a object / string to get_string
      */
     function setRestrictStr($str) {
         $this->restrict_str=$str;
@@ -1079,7 +1081,8 @@ class environment_results {
 
     /**
      * Get the feedback string
-     * @return string feedback string
+     * @return mixed feedback string (can be an array of params for get_string or a single string to fetch from
+     *                  admin.php lang file).
      */
     function getFeedbackStr() {
         return $this->feedback_str;
@@ -1087,7 +1090,8 @@ class environment_results {
 
     /**
      * Get the bypass string
-     * @return string bypass string
+     * @return mixed bypass string (can be an array of params for get_string or a single string to fetch from
+     *                  admin.php lang file).
      */
     function getBypassStr() {
         return $this->bypass_str;
@@ -1095,10 +1099,31 @@ class environment_results {
 
     /**
      * Get the restrict string
-     * @return string restrict string
+     * @return mixed restrict string (can be an array of params for get_string or a single string to fetch from
+     *                  admin.php lang file).
      */
     function getRestrictStr() {
         return $this->restrict_str;
+    }
+
+    /**
+     * @param mixed $string params for get_string, either a string to fetch from admin.php or an array of
+     *                       params for get_string.
+     * @param string $class css class(es) for message.
+     * @return string feedback string fetched from lang file wrapped in p tag with class $class or returns
+     *                              empty string if $string is empty.
+     */
+    function strToReport($string, $class){
+        if (!empty($string)){
+            if (is_array($string)){
+                $str = call_user_func_array('get_string', $string);
+            } else {
+                $str = get_string($string, 'admin');
+            }
+            return '<p class="'.$class.'">'.$str.'</p>';
+        } else {
+            return '';
+        }
     }
 }
 
