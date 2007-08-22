@@ -689,6 +689,13 @@ class block_list extends block_base {
     var $content_type  = BLOCK_TYPE_LIST;
 
     function is_empty() {
+
+        $context = get_context_instance(CONTEXT_BLOCK, $this->instance->id);
+        
+        if ( !has_capability('moodle/block:view', $context) ) {
+            return true;
+        }
+
         $this->get_content();
         return (empty($this->content->items) && empty($this->content->footer));
     }
