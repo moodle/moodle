@@ -520,7 +520,7 @@ $string['qtyperqpwillberemoved'] = 'During the upgrade, the RQP question type wi
 $string['qtyperqpwillberemovedanyway'] = 'During the upgrade, the RQP question type will be removed. You have some RQP questions in your database, and these will stop working unless you reinstall the code from http://moodle.org/mod/data/view.php?d=13&amp;rid=797 before continuing with the upgrade.';
 $string['quarantinedir'] = 'Quarantine directory';
 $string['question'] = 'Question';
-$string['questioncwqpfscheck'] = 'One or more \'random\' questions in a quiz are set up to select questions from a mixture of shared and unshared question categories. There is a more detailled report <a href=\"$a->reporturl\">here</a> and see Moodle Docs page <a href=\"$a->docsurl\">here</a>.';
+$string['questioncwqpfscheck'] = 'One or more \'random\' questions in a quiz are set up to select questions from a mixture of shared and unshared question categories. There is a more detailed report <a href=\"$a->reporturl\">here</a> and see Moodle Docs page <a href=\"$a->docsurl\">here</a>.';
 $string['questioncwqpfsok'] = 'Good. There are no \'random\' questions in your quizzes that are set up to select questions from a mixture of shared and unshared question categories.';
 $string['rcache'] = 'Record cache';
 $string['rcachettl'] = 'Record cache TTL';
