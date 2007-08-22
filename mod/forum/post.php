@@ -24,7 +24,7 @@
 
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http', 'https', $wwwroot);
+            $wwwroot = str_replace('http:', 'https:', $wwwroot);
         }
 
         if (!empty($forum)) {      // User is starting a new discussion in a forum

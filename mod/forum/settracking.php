@@ -27,7 +27,7 @@
     if (isguest()) {   // Guests can't change tracking
         $wwwroot = $CFG->wwwroot.'/login/index.php';
         if (!empty($CFG->loginhttps)) {
-            $wwwroot = str_replace('http','https', $wwwroot);
+            $wwwroot = str_replace('http:','https:', $wwwroot);
         }
 
         $strforums = get_string('modulenameplural', 'forum');
