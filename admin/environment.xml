@@ -119,7 +119,70 @@
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
   </MOODLE>
-  <MOODLE version="2.0">
+  <MOODLE version="1.9">
+    <UNICODE level="required">
+      <FEEDBACK>
+        <ON_ERROR message="unicoderequired" />
+      </FEEDBACK>
+    </UNICODE>
+    <DATABASE level="required">
+      <VENDOR name="mysql" version="4.1.16">
+        <FEEDBACK>
+          <ON_ERROR message="mysql416required" />
+        </FEEDBACK>
+        <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
+      </VENDOR>
+      <VENDOR name="postgres" version="7.4" />
+      <VENDOR name="mssql" version="9.0" />
+      <VENDOR name="odbc_mssql" version="9.0" />
+      <VENDOR name="mssql_n" version="9.0" />
+      <VENDOR name="oracle" version="9.0" />
+    </DATABASE>
+    <PHP version="4.3.0" level="required">
+      <RESTRICT function="restrict_php50_version" message="php50restricted" />
+    </PHP>
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="iconv" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="iconvrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="mbstring" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="mbstringrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="curl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="curlrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="openssl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opensslrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="tokenizer" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tokenizerrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+    </PHP_EXTENSIONS>
+    <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="qtyperqpwillberemovedanyway" />
+          <ON_OK message="qtyperqpwillberemoved" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_random_check" level="optional">
+        <FEEDBACK>
+          <ON_OK message="questioncwqpfsok" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+    </CUSTOM_CHECKS>
+  </MOODLE>
+  <MOODLE version="2.0" requires="1.9">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
@@ -167,5 +230,13 @@
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
+    <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="qtyperqpwillberemovedanyway" />
+          <ON_OK message="qtyperqpwillberemoved" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+    </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
