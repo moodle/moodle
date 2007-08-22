@@ -4,7 +4,7 @@ require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/magpie/rss_cache.inc');
 require_once($CFG->libdir . '/phpxml/xml.php');
 
-define('YOUTUBE_DEV_KEY', 'PGm8FdJXS8Q');
+define('YOUTUBE_DEV_KEY', 'Dlp6qqRbI28');
 define('DEFAULT_NUMBER_OF_VIDEOS', 5);
 define('YOUTUBE_CACHE_EXPIRATION', 1800);
 

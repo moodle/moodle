@@ -3,7 +3,7 @@
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/magpie/rss_cache.inc');
 
-define('FLICKR_DEV_KEY', '4764a9d4fb1e1468f114158a7904901e');
+define('FLICKR_DEV_KEY', '4fddbdd7ff2376beec54d7f6afad425e');
 define('DEFAULT_NUMBER_OF_PHOTOS', 6);
 define('FLICKR_CACHE_EXPIRATION', 1800);
 
