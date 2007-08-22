@@ -219,11 +219,15 @@ function question_upgrade_context_etc(){
         unset($question_categories[$id]->course);
         if ($question_categories[$id]->publish){
             $context = get_context_instance(CONTEXT_SYSTEM);
+            //new name with old course name in brackets
+            $coursename = get_field('course', 'shortname', 'id', $course);
+            $question_categories[$id]->name .= " ($coursename)";
         } else {
             $context = get_context_instance(CONTEXT_COURSE, $course);
         }
         $question_categories[$id]->contextid = $context->id;
         unset($question_categories[$id]->publish);
+
     }
 
     $question_categories = question_category_checking($question_categories);
