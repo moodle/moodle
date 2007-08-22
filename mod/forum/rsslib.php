@@ -174,15 +174,8 @@
                                             p.discussion = d.id AND
                                             p.parent = 0 AND
                                             u.id = p.userid $newsince
-                                      ORDER BY p.created desc")) {
+                                      ORDER BY p.created desc", 0, $forum->rssarticles)) {
 
-            //Are we just looking for new ones?  If so, then return now.
-            if ($newsince) {
-                return true;
-            }
-
-            //Iterate over each discussion to get forum->rssarticles records
-            $articlesleft = $forum->rssarticles;
             $item = NULL;
             $user = NULL;
 
@@ -200,10 +193,6 @@
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid;
                 $item->description = format_text($rec->postmessage,$rec->postformat,$formatoptions,$forum->course);
                 $items[] = $item;
-                $articlesleft--;
-                if ($articlesleft < 1) {
-                    break;
-                }
             }
         }
         return $items;
@@ -239,15 +228,8 @@
                                       WHERE d.forum = '$forum->id' AND
                                             p.discussion = d.id AND
                                             u.id = p.userid $newsince
-                                      ORDER BY p.created desc")) {
+                                      ORDER BY p.created desc", 0, $forum->rssarticles)) {
 
-            //Are we just looking for new ones?  If so, then return now.
-            if ($newsince) {
-                return true;
-            }
-
-            //Iterate over each discussion to get forum->rssarticles records
-            $articlesleft = $forum->rssarticles;
             $item = NULL;
             $user = NULL;
 
@@ -285,10 +267,6 @@
                 }
 
                 $items[] = $item;
-                $articlesleft--;
-                if ($articlesleft < 1) {
-                    break;
-                }
             }
         }
         return $items;
