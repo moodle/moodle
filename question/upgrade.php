@@ -22,7 +22,7 @@ function question_random_check($result){
         $a->reporturl = "{$CFG->wwwroot}/{$CFG->admin}/report/question/";
         $lang = str_replace('_utf8', '', current_language());
         $a->docsurl = "{$CFG->docroot}/$lang/admin/report/question/index";
-        $result->feedback_str = get_string('questioncwqpfscheck', 'admin', $a);
+        $result->setFeedbackStr(array('questioncwqpfscheck', 'admin', $a));
         $result->setStatus(false);//fail test
     }
     return $result;
@@ -84,6 +84,28 @@ function question_cwqpfs_check_children($checkid, $categories, $categorychildpar
         }
     }
     return $tofix;
+}
+/**
+ * This test is becuase the RQP question type was included in core
+ * up to and including Moodle 1.8, and was removed before Moodle 1.9.
+ *
+ * Therefore, we want to check whether any rqp questions exist in the database
+ * before doing the upgrade. However, the check is not relevant if that
+ * question type was never installed, or if the person has chosen to
+ * manually reinstall the rqp question type from contrib.
+ *
+ * @param $result the result object that can be modified.
+ * @return null if the test is irrelevant, or true or false depending on whether the test passes.
+ */
+function question_check_no_rqp_questions($result) {
+    global $CFG;
+
+    if (empty($CFG->qtype_rqp_version) || is_dir($CFG->dirroot . '/question/type/rqp')) {
+        return null;
+    } else {
+        $result->setStatus(count_records('question', 'qtype', 'rqp') == 0);
+    }
+    return $result;
 }
 
 ?>
