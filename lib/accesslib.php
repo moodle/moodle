@@ -613,13 +613,9 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                         $capcache[$cachekey] = $result;
                         return $result;
                     }
-                } else { // if not course-view type of blocks, check site
-                    if (isset($capabilities[$sitecontext->id]['do_anything'])) {
-                        $result = (0 < $capabilities[$sitecontext->id]['do_anything']);
-                        $capcache[$cachekey] = $result;
-                        return $result;
-                    }
                 }
+                // blocks that do not have course as parent do not need to do any more checks - already done above
+
             break;
 
             default:
@@ -725,8 +721,9 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
                 $parentcontext = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
             } else {
                 $parentcontext = get_context_instance(CONTEXT_SYSTEM); 
-            }           
-            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
+            }
+            // ignore the $switchroleactive beause we want the real block view capability defined in system context
+            $permission = capability_search($capability, $parentcontext, $capabilities, false);
         break;
 
         default:
@@ -1361,7 +1358,7 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
         break;
 
         case CONTEXT_BLOCK:
-            // 1 to 1 to course.
+            // not necessarily 1 to 1 to course.
             if (!$block = get_record('block_instance','id',$context->instanceid)) {
                 $prohibits[$capability][$context->id] = false;
                 return false;
@@ -2831,7 +2828,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
             }
             break;
 
-        case CONTEXT_BLOCK: // 1 to 1 to course
+        case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
             if ($blockinstance = get_record('block_instance','id',$context->instanceid)) {
                 if ($block = get_record('block','id',$blockinstance->blockid)) {
                     global $CFG;
@@ -3121,7 +3118,7 @@ function get_parent_contexts($context) {
             }
         break;
 
-        case CONTEXT_BLOCK: // 1 to 1 to course
+        case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
             if (!$block = get_record('block_instance','id',$context->instanceid)) {
                 return array();
             }
