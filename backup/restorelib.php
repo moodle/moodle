@@ -1243,6 +1243,15 @@
         if (!defined('RESTORE_SILENTLY')) {
             echo '<ul>';
         }
+        
+        // fetch the course grade item
+        
+        require_once($CFG->libdir.'/grade/grade_item.php');
+        require_once($CFG->libdir.'/grade/grade_category.php');
+        require_once($CFG->libdir.'/gradelib.php');
+        $courseitem = grade_item::fetch_course_item($restore->course_id);
+        $coursecategory = grade_category::fetch_course_category($restore->course_id);
+        
         // Number of records to get in every chunk
         $recordset_size = 2;
         // Flag to mark if we must continue
@@ -1274,12 +1283,21 @@
                             //Now build the GRADE_PREFERENCES record structure
 
                             $dbrec->courseid   = $restore->course_id;
+                            // categories are not backed up during import. 
+                            // however, depth 1 categories needs to be skipped during restore into exisiting course
 
                             // get the new grade category parent
-                            if (!empty($info['GRADE_CATEGORY']['#']['PARENT']['0']['#'])) {
-                                $parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
+                            
+                            //if (!empty($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']) && $info['GRADE_CATEGORY']['#']['PARENT']['0']['#'] != '$@NULL@$') {
+                             
+                            $parent = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_CATEGORY']['#']['PARENT']['0']['#']));
+                            if (isset($parent->new_id)) {
                                 $dbrec->parent = $parent->new_id;
+                            } else {
+                                // orphans should get adopted by course category
+                                $dbrec->parent = $coursecategory->id; 
                             }
+                            //}
 
                             $dbrec->fullname = backup_todb($info['GRADE_CATEGORY']['#']['FULLNAME']['0']['#']);
                             $dbrec->aggregation = backup_todb($info['GRADE_CATEGORY']['#']['AGGREGATION']['0']['#']);
@@ -1485,9 +1503,15 @@
                                 // if we are importing, points all grade_items to the course category
                                 $coursecat = get_record('grade_categories', 'courseid', $restore->course_id, 'depth', 1);
                                 $dbrec->categoryid = $coursecat->id;
-                            } else if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#'])) {
+                            } else if (!empty($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']) && $info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']!='$@NULL@$') {
                                 $category = backup_getid($restore->backup_unique_code,'grade_categories',backup_todb($info['GRADE_ITEM']['#']['CATEGORYID']['0']['#']));
-                                $dbrec->categoryid = $category->new_id;
+                                if ($category->new_id) {
+                                    $dbrec->categoryid = $category->new_id;
+                                } else { 
+                                    // this could be restoring into existing course, and grade item points to the old course grade item (category)
+                                    // which was never imported. In this case we just point them to the new course item
+                                    $dbrec->categoryid = $coursecategory->id;                                 
+                                }
                             }
 
                             $dbrec->itemname = backup_todb($info['GRADE_ITEM']['#']['ITEMNAME']['0']['#']);
@@ -1519,16 +1543,13 @@
                                     continue;
                                 }
                             } elseif ($dbrec->itemtype == 'course') { // We don't restore course type to avoid duplicate course items
-                                if ($restoreall && !isset($SESSION->restore->importing)) {
+
+                                if ($restoreall && !isset($SESSION->restore->importing) && $restore->restoreto == 2) {
                                     // TODO any special code needed here to restore course item without duplicating it?
                                     // find the course category with depth 1, and course id = current course id
-                                    // this would have been already restored
-
-                                    // need to skip for imports
-                                    $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
-                                    $dbrec->iteminstance = $cat->id;
-                                    //$counteritems++;
-                                    //continue;
+                                    // this would have been already restored                                    
+                                    $counteritems++;
+                                    continue;
                                 } else {
                                     $counteritems++;
                                     continue;
@@ -1892,7 +1913,7 @@
                                 $counter++;
                                 continue; // grade not being restore, possibly because grade item is not restored
                             }
-                            $oldobj = backup_getid($restore->backup_unique_code,"user", backup_todb($info['GRADE_TEXT_HISTORY']['#']['USERID']['0']['#']));
+
                             $dbrec->information = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATION']['0']['#']);
                             $dbrec->informationformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATIONFORMAT']['0']['#']);
                             $dbrec->feedback = backup_todb($info['GRADE_TEXT_HISTORY']['#']['FEEDBACK']['0']['#']);

@@ -1374,6 +1374,7 @@
 
         if ($grade_items = get_records_sql("SELECT * FROM {$CFG->prefix}grade_items
                                             WHERE courseid = $preferences->backup_course
+                                            AND itemtype != 'course'
                                             ORDER BY sortorder ASC")) {
             foreach ($grade_items as $grade_item) {
 
@@ -1426,6 +1427,7 @@
         // we do this by getting the lowest depth first
         $grade_categories = get_records_sql("SELECT * FROM {$CFG->prefix}grade_categories
                                                       WHERE courseid = $preferences->backup_course
+                                                            AND depth > 1
                                                       ORDER BY depth ASC");
         if ($grade_categories) {
             //Begin grade_categories tag
