@@ -605,28 +605,28 @@ if (isset($_GET['help'])) {
                     echo '<div id="mssql" name="mssql">' . get_string('databasesettingssub_mssql', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
                     echo '<div id="mssql_n" name="mssql">' . get_string('databasesettingssub_mssql_n', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" />';
+                    echo '<img src="pix/docs.gif' . '" alt="Docs" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
                     echo '<div id="odbc_mssql" name="odbc_mssql">'. get_string('databasesettingssub_odbc_mssql', 'install');
                 /// Link to mssql installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_MSSQL_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
 
                     echo '<div id="oci8po" name="oci8po">' . get_string('databasesettingssub_oci8po', 'install');
                 /// Link to oracle installation page
                     echo '<p align="right"><a href="http://docs.moodle.org/en/Installing_Oracle_for_PHP" target="_blank">';
-                    echo '<img src="' . $INSTALL['wwwrootform'] . '/pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
+                    echo '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
                     echo get_string('moodledocslink', 'install') . '</a></p>';
                     echo '</div>';
                 } else {
@@ -995,7 +995,7 @@ function install_helpbutton($url, $title='') {
         $title = get_string('help');
     }
     echo "<a href=\"javascript: void(0)\">";
-    echo "<img src=\"./pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\" ";
+    echo "<img src=\"pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\" ";
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }
