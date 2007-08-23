@@ -60,8 +60,8 @@ The feature will also reset the start date of the course if necessary.
 
     echo '<div class="courseinfo">';
     echo $strremove.':<br />';
+    print_checkbox('reset_teachers', 1, false, get_string('teachers'), '', '');  echo '<br />';
     print_checkbox('reset_students', 1, true, get_string('students'), '', '');  echo '<br />';
-    print_checkbox('reset_teachers', 1, true, get_string('teachers'), '', '');  echo '<br />';
     print_checkbox('reset_events', 1, true, get_string('courseevents', 'calendar'), '', '');  echo '<br />';
     print_checkbox('reset_logs', 1, true, get_string('logs'), '', '');  echo '<br />';
     print_checkbox('reset_groups', 1, true, get_string('groups'), '', '');  echo '<br />';
