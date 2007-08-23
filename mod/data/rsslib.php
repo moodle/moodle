@@ -37,9 +37,10 @@
                         // Get the data_records out.
                         $approved = ($data->approval) ? ' AND dr.approved = 1 ' : ' ';
 
-                        $sql = 'SELECT dr.* ' .
-                                    "FROM {$CFG->prefix}data_records dr " .
+                        $sql = 'SELECT dr.*, u.firstname, u.lastname ' .
+                                    "FROM {$CFG->prefix}data_records dr, {$CFG->prefix}user u " .
                                     "WHERE dr.dataid = {$data->id} " .$approved.
+                                    '  AND dr.userid = u.id '.
                                     'ORDER BY dr.timecreated DESC';
 
                         if (!$records = get_records_sql($sql, 0, $data->rssarticles)) {
