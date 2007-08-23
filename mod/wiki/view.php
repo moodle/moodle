@@ -65,9 +65,12 @@
 
     require_course_login($course, true, $cm);
     
-    /// Add the course module 'groupmode' to the wiki object, for easy access.
+    /// Add the course module info to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;
-
+    $wiki->groupingid = $cm->groupingid;
+    $wiki->groupmembersonly = $cm->groupmembersonly;
+    $wiki->cmid = $cm->id;
+    
     /// Default format:
     $moodle_format=FORMAT_MOODLE;
 
