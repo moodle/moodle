@@ -136,7 +136,9 @@ function groups_is_member($groupid, $userid=null) {
  */
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER;
-
+    
+    static $cache = array();
+    
     // groupings are ignored when not enabled
     if (empty($CFG->enablegroupings)) {
         $cm->groupingid = 0;
@@ -144,6 +146,11 @@ function groups_has_membership($cm, $userid=null) {
 
     if (empty($userid)) {
         $userid = $USER->id;
+    }
+
+    $cachekey = $userid.'|'.$cm->course.'|'.$cm->groupingid;
+    if (isset($cache[$cachekey])) {
+        return($cache[$cachekey]);
     }
 
     if ($cm->groupingid) {
@@ -158,8 +165,10 @@ function groups_has_membership($cm, $userid=null) {
                   FROM {$CFG->prefix}groups_members gm, {$CFG->prefix}groups g
                  WHERE gm.userid = $userid AND gm.groupid = g.id AND g.courseid = {$cm->course}";
     }
-
-    return record_exists_sql($sql);
+    
+    $cache[$cachekey] = record_exists_sql($sql);
+    
+    return $cache[$cachekey];
 }
 
 /**
@@ -350,10 +359,7 @@ function groups_course_module_visible($cm, $userid=null) {
     if (empty($cm->groupmembersonly)) {
         return(true);
     }
-    if (has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
-        return(true);
-    }
-    if (groups_has_membership($cm, $userid)) {
+    if (groups_has_membership($cm, $userid) || has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id), $userid)) {
         return(true);
     }
     return(false);
