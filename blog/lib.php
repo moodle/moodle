@@ -32,12 +32,12 @@
 
                 // add blog_menu block
                 $newblock = new object();
-                $newblock -> blockid  = $menublock->id;
-                $newblock -> pageid   = $USER->id;
-                $newblock -> pagetype = 'blog-view';
-                $newblock -> position = 'r';
-                $newblock -> weight   = 0;
-                $newblock -> visible  = 1;
+                $newblock->blockid  = $menublock->id;
+                $newblock->pageid   = $USER->id;
+                $newblock->pagetype = 'blog-view';
+                $newblock->position = 'r';
+                $newblock->weight   = 0;
+                $newblock->visible  = 1;
                 insert_record('block_instance', $newblock);
 
                 // add blog_tags menu
@@ -80,7 +80,7 @@
         $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
         $morelink = '<br />&nbsp;&nbsp;';
-    
+
         $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC');
         $blogEntries = fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', true);
 
@@ -105,21 +105,21 @@
                 blog_print_entry($blogEntry, 'list', $filtertype, $filterselect); //print this entry.
                 $count++;
             }
-            
+
             print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
-            
+
             if (!$count) {
                 print '<br /><div style="text-align:center">'. get_string('noentriesyet', 'blog') .'</div><br />';
 
             }
-                       
+
             print $morelink.'<br />'."\n";
             return;
         }
 
         $output = '<br /><div style="text-align:center">'. get_string('noentriesyet', 'blog') .'</div><br />';
-        
-        print $output;       
+
+        print $output;
 
     }
 
@@ -188,7 +188,7 @@
     /// Actual content
 
         echo '</td><td class="content">'."\n";
-        
+
         if ($blogEntry->attachment) {
             echo '<div class="attachments">';
             $attachedimages = blog_print_attachments($blogEntry);
@@ -217,7 +217,7 @@
 
         // Print whole message
         echo format_text($template['body']);
-        
+
         /// Print attachments
         echo $attachedimages;
     /// Links to tags
@@ -251,7 +251,7 @@
         echo '</td></tr></table>'."\n\n";
 
     }
-    
+
     function blog_file_area_name($blogentry) {
     //  Creates a directory file name, suitable for make_upload_directory()
         global $CFG;
@@ -350,11 +350,11 @@
         if ($CFG->bloglevel >= BLOG_USER_LEVEL) {
             $options = array ( 'draft' => get_string('publishtonoone', 'blog') );
         }
-        
+
         if ($CFG->bloglevel > BLOG_USER_LEVEL) {
             $options['site'] = get_string('publishtosite', 'blog');
         }
-        
+
         if ($CFG->bloglevel >= BLOG_GLOBAL_LEVEL) {
             $options['public'] = get_string('publishtoworld', 'blog');
         }
@@ -409,15 +409,15 @@
         if (has_capability('moodle/blog:manageentries', $sitecontext)) {
             return true; // can manage all posts
         }
-        
+
         // coming for 1 post, make sure it's not a draft
         if ($blogEntry and $blogEntry->publishstate == 'draft') {
             return false;  // can not view draft of others
         }
-        
+
         // coming for 1 post, make sure user is logged in, if not a public blog
         if ($blogEntry && $blogEntry->publishstate != 'public' && !isloggedin()) {
-            return false;  
+            return false;
         }
 
         switch ($CFG->bloglevel) {
@@ -480,9 +480,9 @@
     function fetch_entries($postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
 
         global $CFG, $USER;
-        
+
         /// the post table will be used for other things too
-        $typesql = " AND p.module = 'blog' ";    
+        $typesql = " AND p.module = 'blog' ";
 
         /// set the tag id for searching
         if ($tagid) {
@@ -533,13 +533,13 @@
         } else {
             $permissionsql =  'AND p.publishstate = \'public\'';
         }
-        
+
         // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
         // admins can see all blogs regardless of publish states, as described on the help page
         if (has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-            $permissionsql = ''; 
+            $permissionsql = '';
         } else if ($filtertype=='user' && has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_USER, $filterselect))) {
-            $permissionsql = '';  
+            $permissionsql = '';
         }
         /****************************************
          * depending on the type, there are 4   *
@@ -567,12 +567,12 @@
             case 'course':
                 // all users with a role assigned
                 $context = get_context_instance(CONTEXT_COURSE, $filterselect);
-                
+
                 // MDL-10037, hidden users' blogs should not appear
                 if (has_capability('moodle/role:viewhiddenassigns', $context)) {
-                    $hiddensql = ''; 
-                } else {                    
-                    $hiddensql = ' AND ra.hidden = 0 '; 
+                    $hiddensql = '';
+                } else {
+                    $hiddensql = ' AND ra.hidden = 0 ';
                 }
 
                 $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql

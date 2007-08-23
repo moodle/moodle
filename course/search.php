@@ -173,9 +173,13 @@
         $searchform .= update_categories_search_button($search,$page,$perpage);
     }
 
+    $navlinks = array();
+    $navlinks[] = array('name' => $strcourses, 'link' => 'index.php', 'type' => 'misc');
+    $navlinks[] = array('name' => $strsearch, 'link' => 'search.php', 'type' => 'misc');
+    $navlinks[] = array('name' => "'".s($search, true)."'", 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-    print_header("$site->fullname : $strsearchresults", $site->fullname,
-                 "<a href=\"index.php\">$strcourses</a> -> <a href=\"search.php\">$strsearch</a> -> '".s($search, true)."'", "", "", "", $searchform);
+    print_header("$site->fullname : $strsearchresults", $site->fullname, $navigation, "", "", "", $searchform);
 
 
     $lastcategory = -1;
