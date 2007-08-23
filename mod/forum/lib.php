@@ -1765,11 +1765,12 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
 
     $timelimit = '';
 
+    if (!$cm = get_coursemodule_from_instance('forum', $forum)) {
+        error('Course Module ID was incorrect');
+    }
+
     if (!empty($CFG->forum_enabletimedposts)) {
 
-        if (!$cm = get_coursemodule_from_instance('forum', $forum)) {
-            error('Course Module ID was incorrect');
-        }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         if (!has_capability('mod/forum:viewhiddentimedposts', $modcontext)) {
