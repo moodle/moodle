@@ -1525,6 +1525,7 @@ function rebuild_course_cache($courseid=0) {
         $select = "id = '$courseid'";
     } else {
         $select = "";
+        @set_time_limit(0);  // this could take a while!   MDL-10954
     }
 
     if ($courses = get_records_select("course", $select,'','id,fullname')) {
