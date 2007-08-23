@@ -73,6 +73,12 @@ $string['databasesettingssub_mysql'] = '<b>Tipo:</b> MySQL<br />
 <b>Usuario:</b> usuario de la base de datos<br />
 <b>Contraseña:</b> contraseña de la base de datos<br />
 <b>Prefijo de tablas:</b> prefijo a usar en los nombres de las tablas (opcional)';
+$string['databasesettingssub_mysqli'] = '<b>Tipo:</b> MySQL Mejorado<br />
+<b>Host:</b> e.g., localhost o db.isp.com<br />
+<b>Nombre:</b> nombre de la base de datos, e.g., moodle<br />
+<b>Usuario:</b> nombre de usuario de su base de datos<br />
+<b>Contraseña:</b> contraseña de su base de datos<br />
+<b>Prefijo de Tablas:</b> prefijo a usar en los nombres de las tablas (opcional)';
 $string['databasesettingssub_oci8po'] = '<b>Tipo:</b> Oracle<br />
 <b>Servidor:</b> no usado, puede dejarse en blanco<br />
 <b>Nombre:</b> nombre de la conexión tnsnames.ora<br />
@@ -187,6 +193,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'En cualquier caso, si su sitio únicamente está utilizando idiomas ISO-8859-1 (latin), puede continuar con su versión de MySQL actual (4.1.12 o superior).';
 $string['mysql416required'] = 'MySQL 4.1.16 es la versión mínima requerida para trabajar con Moodle 1.6 y garantizar que toda la información podrá ser convertida a UTF-8 en el futuro.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión MySQL de modo que pueda comunicarse con MySQL. Por favor, compruebe el archivo php.ini o recompile PHP.';
+$string['mysqli'] = 'MySQL Mejorado';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP no ha sido configurado adecuadamente con la extensión MySQLi de forma que se pueda comunicar con MySQL. Por favor, compruebe su archivo php.ini o recompile PHP. La extensión MySQLi no está disponible en PHP 4.';
 $string['name'] = 'Nombre';
 $string['next'] = 'Siguiente';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -195,6 +203,7 @@ $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión ODBC de modo que pueda comunicarse con SQL*Server. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';
 $string['ok'] = 'OK';
 $string['opensslrecommended'] = 'Instalar la librería opcional OpenSSL es altamente recomendado -- activa la funcionalidad de red de Moodle (\'Moodle Networking\').';
+$string['parentlanguage'] = 'es';
 $string['pass'] = 'Correcto';
 $string['password'] = 'Contraseña';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP no ha sido adecuadamente configurado con la extensión PGSQL de modo que pueda comunicarse con PostgreSQL. Por favor, compruebe el archivo php.ini o vuelva a compilar PHP.';

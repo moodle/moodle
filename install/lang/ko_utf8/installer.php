@@ -70,6 +70,12 @@ $string['databasesettingssub_mysql'] = '<b>종류:</b> MySQL<br />
 <b>사용자:</b> 데이터베이스 사용자명<br />
 <b>암호:</b> 데이터베이스 암호<br />
 <b>테이블 접두어:</b> 모든 테이블에 사용할 접두어(선택사항)';
+$string['databasesettingssub_mysqli'] = '<b>종류:</b>향상된 MySQL<br />
+<b>호스트:</b>예: localhost 또는 db.isp.com <br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle<br />
+<b>사용자:</b> 데이터베이스 사용자명<br />
+<b>암호:</b> 데이터베이스 암호<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용할 접두어(선택사항)';
 $string['databasesettingssub_oci8po'] = '<b>종류:</b>  Oracle<br />
 <b>호스트:</b> 사용되지 않음, 공백이어야 함<br />
 <b>이름:</b> tnsnames.ora 접속에 쓰는 이름<br />
@@ -176,6 +182,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '당신의 사이트가 iso-8859-1 (라틴) 언어만을 사용하는 경우 현재 설치된 MySQL 4.1.12 혹은 그 이상 버전을 사용할 수 있습니다.';
 $string['mysql416required'] = '모든 데이터가 향후 UTF-8로 변환될 수 있도록 하기위해서는 MySQL 4.1.16 이상 버전이 무들 1.6버전에 필요합니다.';
 $string['mysqlextensionisnotpresentinphp'] = 'MySQL확장자를 이용해 서버와 연동할 수 있도록 적절하게 설정되지 못했습니다. php.ini 파일을 점검해 보거나 PHP를 다시 컴파일 하십시오.';
+$string['mysqli'] = '향상된 MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP가 MySQLi확장자를 이용해 서버와 연동할 수 있도록 적절하게 설정되지 못해서 MySQL로 통신하게 되었습니다. php.ini 파일을 점검해 보거나 PHP를 다시 컴파일 하십시오.  MySQLi 확장자는 PHP 4에는 사용할 수 없습니다.';
 $string['name'] = '이름';
 $string['next'] = '다음으로';
 $string['oci8po'] = 'Oracle (oci8po)';

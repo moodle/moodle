@@ -70,6 +70,12 @@ $string['databasesettingssub_mysql'] = '<b>Type:</b> MYSQL<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
 <b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b>een voorvoegsel dat je wil gebruiken voor alle tabelnamen (optioneel)';
+$string['databasesettingssub_mysqli'] = '<b>Type:</b> Improved MySQL<br />
+<b>Host:</b> vb localhost of db.isp.com<br />
+<b>Naam:</b> databank naam, vb moodle<br />
+<b>Gebruiker:</b> Gebruikersnaam van jouw databank<br />
+<b>Wachtwoord:</b> Wachtwoord voor jouw databank<br />
+<b>Tabelvoorvoegsel:</b> voorvoegsel voor alle tabelnamen (optioneel)';
 $string['databasesettingssub_oci8po'] = '<b>Type:</b> Oracle<br />
 <b>Host:</b>niet gebruikt - moet leeggelaten worden<br />
 <b>Naam:</b> database naam of de tnsnames.ora connection<br />
@@ -174,6 +180,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Als je site echter UITSLUITEND iso-8859-1 (latin) talen gebruikt, dan kun je MySQL 4.1.12 (of hoger) blijven gebruiken.';
 $string['mysql416required'] = 'MySQL 4.1.16 is de minimum versie die nodig is voor Moodle 1.6 om te kunnen garanderen dat alle gegevens naar UTF-8 geconverteerd zullen worden.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd met de MySQL-extentie om met MySQL te communiceren. Controleer je php.ini-bestand of hercompileer PHP.';
+$string['mysqli'] = 'Improved MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP is niet goed geconfigureerd - het kan niet communiceren met MySQL. Controleer je php.ini bestand of hercompileer PHP. De MySQLi-extentie is niet beschikbaar voor PHP 4.';
 $string['name'] = 'Naam';
 $string['next'] = 'Volgende';
 $string['oci8po'] = 'Oracle (oci8po)';
