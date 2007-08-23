@@ -71,8 +71,11 @@
         if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
             $strcourses = get_string('courses');
             $strcategories = get_string('categories');
-            print_header("$site->shortname: $strcategories", build_navigation(array(array('name'=>$strcourses,'link'=>'','type'=>'misc'))),
-                          $strcategories, '', '', true, update_categories_button());
+
+            $navlinks = array();
+            $navlinks[] = array('name'=>$strcategories,'link'=>'','type'=>'misc');
+            $navigation = build_navigation($navlinks);
+            print_header("$site->shortname: $strcategories", $strcourses, $navigation, '', '', true, update_categories_button());
             print_heading($strcategories);
             print_box_start('categorybox');
             print_whole_category_list();
@@ -113,8 +116,8 @@
         admin_externalpage_setup('coursemgmt');
         admin_externalpage_print_header();
     } else {
-        print_header("$site->shortname: $strcategories", build_navigation(array(array('name'=>$strcourses,'link'=>'','type'=>'misc'))),
-                  $strcategories, '', '', true, update_categories_button());
+        print_header("$site->shortname: $strcategories", $strcourses,
+            build_navigation(array(array('name'=>$strcategories,'link'=>'','type'=>'misc'))), '', '', true, update_categories_button());
     }
 
     print_heading($strcategories);
