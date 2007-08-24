@@ -139,46 +139,53 @@ class grade_report_user extends grade_report {
                     $excluded = '';
                 }
 
-                if ($grade_item->scaleid) {
-                    // using scales
-                    if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
-                        $scales = explode(",", $scale->scale);
-                        // reindex because scale is off 1
-                        // invalid grade if gradeval < 1
-                        if ((int) $grade_grade->finalgrade < 1) {
-                            $data[] = $excluded.'-';
-                        } else {
-                            $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
-                        }
-                    }
+                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
+                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                 
                 } else {
-                    // normal grade, or text, just display
-                    $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
+                    if ($grade_item->scaleid) {
+                        // using scales
+                        if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
+                            $scales = explode(",", $scale->scale);
+                            // reindex because scale is off 1
+                            // invalid grade if gradeval < 1
+                            if ((int) $grade_grade->finalgrade < 1) {
+                                $data[] = $excluded.'-';
+                            } else {
+                                $data[] = $excluded.$scales[$grade_grade->finalgrade-1];
+                            }
+                        }
+                    } else {
+                        // normal grade, or text, just display
+                        $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
+                    }
                 }
-
                 /// prints percentage
 
-                if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
-                    // processing numeric grade
-                    if ($grade_grade->finalgrade) {
-                        $percentage = format_float(($grade_grade->finalgrade / $grade_item->grademax) * 100, $decimalpoints).'%';
+                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
+                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                } else {
+                    if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
+                        // processing numeric grade
+                        if ($grade_grade->finalgrade) {
+                            $percentage = format_float(($grade_grade->finalgrade / $grade_item->grademax) * 100, $decimalpoints).'%';
+                        } else {
+                            $percentage = '-';
+                        }
+
+                    } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+                        // processing scale grade
+                        $scale = get_record('scale', 'id', $grade_item->scaleid);
+                        $scalevals = explode(",", $scale->scale);
+                        $percentage = format_float(($grade_grade->finalgrade) / count($scalevals) * 100, $decimalpoints).'%';
+
                     } else {
+                        // text grade
                         $percentage = '-';
                     }
 
-                } else if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
-                    // processing scale grade
-                    $scale = get_record('scale', 'id', $grade_item->scaleid);
-                    $scalevals = explode(",", $scale->scale);
-                    $percentage = format_float(($grade_grade->finalgrade) / count($scalevals) * 100, $decimalpoints).'%';
-
-                } else {
-                    // text grade
-                    $percentage = '-';
+                    $data[] = $percentage;
                 }
-
-                $data[] = $percentage;
-
                 /// prints rank
                 if ($grade_grade->finalgrade) {
                     /// find the number of users with a higher grade

@@ -153,6 +153,7 @@ $string['gradebookhistories'] = 'Grade histories';
 $string['gradeboundary'] = 'Letter grade boundary';
 $string['gradecategory'] = 'Grade Category';
 $string['gradecategoryhelp'] = 'Grade Category Help';
+$string['gradedon'] = 'Graded $a';
 $string['gradedisplaytype'] = 'Grade display type';
 $string['gradeexceptions'] = 'Grade Exceptions';
 $string['gradeexceptionshelp'] = 'Grade Exceptions Help';
