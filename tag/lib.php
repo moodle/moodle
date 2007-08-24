@@ -341,25 +341,53 @@ function tag_name_from_string($tag_names_or_ids_csv) {
 
 function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="default") {
 
+    global $CFG;
     //convert any tag ids passed to their corresponding tag names
     $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
-
+        
     //create the tags
     $tags_created_ids = tag_create($tag_names_csv,$tag_type);
 
+    //tag instances of an item are ordered, get the last one
+    $query = "
+        SELECT
+            MAX(ordering) max_order
+        FROM
+            {$CFG->prefix}tag_instance ti
+        WHERE
+            ti.itemtype = '{$item_type}'
+        AND
+            ti.itemid = '{$item_id}'
+        ";
+    
+    $max_order = get_field_sql($query);    
+    $tag_names = explode(',', tag_normalize($tag_names_csv));
+    
+    $ordering = array();
+    foreach($tag_names as $tag_name){
+        $ordering[$tag_name] = ++$max_order;
+    }
+    
+    //setup tag_instance object
     $tag_instance = new StdClass;
     $tag_instance->itemtype = $item_type;
     $tag_instance->itemid = $item_id;
-
+    
+    
     //create tag instances
-    foreach ($tags_created_ids as $tag_id) {
+    foreach ($tags_created_ids as $tag_normalized_name => $tag_id) {
 
         $tag_instance->tagid = $tag_id;
+        $tag_instance->ordering = $ordering[$tag_normalized_name];
+        
+        $tag_instance_exists = get_record('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
 
-        $exists = record_exists('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
-
-        if (!$exists) {
+        if (!$tag_instance_exists) {
             insert_record('tag_instance',$tag_instance);
+        }
+        else {
+            $tag_instance_exists->ordering = $ordering[$tag_normalized_name];
+            update_record('tag_instance',$tag_instance_exists);
         }
     }
 
@@ -462,19 +490,24 @@ function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
  * 
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item beeing queried
+ * @param string $sort an order to sort the results in, a valid SQL ORDER BY parameter (default is 'ti.order ASC')
  * @param string $fields tag fields to be selected (optional, default is 'id, name, rawname, tagtype, flag')
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 
-function get_item_tags($item_type, $item_id, $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='') {
+function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='') {
 
     global $CFG;
 
     $fields = 'tg.' . $fields;
     $fields = str_replace(',', ',tg.', $fields);
 
+    if ($sort) {
+        $sort = ' ORDER BY '. $sort;
+    }
+        
     $query = "
         SELECT
             {$fields}
@@ -486,7 +519,9 @@ function get_item_tags($item_type, $item_id, $fields=DEFAULT_TAG_TABLE_FIELDS, $
             tg.id = ti.tagid
         WHERE 
             ti.itemtype = '{$item_type}' AND
-            ti.itemid = '{$item_id}'";
+            ti.itemid = '{$item_id}'
+        {$sort}
+            ";
 
     return get_records_sql($query, $limitfrom, $limitnum);
 
@@ -704,7 +739,7 @@ function related_tags($tag_name_or_id, $limitnum=10) {
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     //gets the manually added related tags
-    $manual_related_tags = get_item_tags('tag',$tag_id, DEFAULT_TAG_TABLE_FIELDS);
+    $manual_related_tags = get_item_tags('tag',$tag_id, 'ti.ordering ASC',DEFAULT_TAG_TABLE_FIELDS);
     if ($manual_related_tags == false) $manual_related_tags = array();
 
     //gets the correlated tags

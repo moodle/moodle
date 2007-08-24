@@ -1749,6 +1749,17 @@ function xmldb_main_upgrade($oldversion=0) {
 
     }
 
+    if ($result && $oldversion < 2007082300) {
+
+    /// Define field ordering to be added to tag_instance table
+        $table = new XMLDBTable('tag_instance');
+        $field = new XMLDBField('ordering');
+        
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'itemid');
+
+    /// Launch add field rawname
+        $result = $result && add_field($table, $field);
+    }    
 
 /*
     /// drop old gradebook tables
