@@ -1120,9 +1120,6 @@ $moodle_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW,
             'user' => CAP_ALLOW
         )
@@ -1132,9 +1129,8 @@ $moodle_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
+            'admin' => CAP_ALLOW,
+            'user' => CAP_ALLOW
         )
     ),
     
