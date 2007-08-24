@@ -41,7 +41,7 @@ function tag_create($tag_names_csv, $tag_type="default") {
 
         $exists = record_exists('tag', 'name', $tag_object->name);
 
-        if ( !$exists && !empty($tag_object->name) && !is_numeric($tag_object->name) ) {
+        if ( !$exists && is_tag_name_valid($tag_object->name) ) {
             if ($can_create_tags) {
                 insert_record('tag', $tag_object);
             }
@@ -323,6 +323,22 @@ function tag_name_from_string($tag_names_or_ids_csv) {
 
 }
 
+
+/**
+ * Determines if a tag name is valid
+ *
+ * @param string $name
+ * @return boolean
+ */
+function is_tag_name_valid($name){
+
+    $normalized = tag_normalize($name);
+
+    return !strcmp($normalized, $name) && !empty($name) && !is_numeric($name);
+
+}
+
+
 /**
  * Associates a tag with an item
  * 
@@ -344,7 +360,7 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
     global $CFG;
     //convert any tag ids passed to their corresponding tag names
     $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
-        
+
     //create the tags
     $tags_created_ids = tag_create($tag_names_csv,$tag_type);
 
@@ -359,27 +375,28 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
         AND
             ti.itemid = '{$item_id}'
         ";
-    
-    $max_order = get_field_sql($query);    
+
+    $max_order = get_field_sql($query);
+
     $tag_names = explode(',', tag_normalize($tag_names_csv));
-    
+
     $ordering = array();
     foreach($tag_names as $tag_name){
         $ordering[$tag_name] = ++$max_order;
     }
-    
+
     //setup tag_instance object
     $tag_instance = new StdClass;
     $tag_instance->itemtype = $item_type;
     $tag_instance->itemid = $item_id;
-    
-    
+
+
     //create tag instances
     foreach ($tags_created_ids as $tag_normalized_name => $tag_id) {
 
         $tag_instance->tagid = $tag_id;
         $tag_instance->ordering = $ordering[$tag_normalized_name];
-        
+
         $tag_instance_exists = get_record('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
 
         if (!$tag_instance_exists) {
@@ -507,7 +524,7 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
     if ($sort) {
         $sort = ' ORDER BY '. $sort;
     }
-        
+
     $query = "
         SELECT
             {$fields}
@@ -959,7 +976,7 @@ function tag_normalize($tag_names_csv, $lowercase=true) {
         }
 
         //$value = preg_replace('|[^\w ]|i', '', strtolower(trim($tag_names_csv)));
-        $value = preg_replace('|[\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\\"\'\_.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
+        $value = preg_replace('|[\,\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\\"\'\_.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
 
         //removes excess white spaces
         $value = preg_replace('/\s\s+/', ' ', $value);
@@ -1008,6 +1025,44 @@ function tag_flag_reset($tag_names_or_ids_csv){
         ";
 
     execute_sql($query, false);
+}
+
+/**
+ * Function that updates tags names. 
+ * Updates only if the new name suggested for a tag doesn´t exist already.
+ *
+ * @param Array $tags_names_changed array of new tag names indexed by tag ids.
+ * @return Array array of tags names that were effectively updated, indexed by tag ids.
+ */
+function tag_update_name($tags_names_changed){
+
+    $tags_names_updated = array();
+
+    foreach ($tags_names_changed as $id => $newname){
+
+        $norm_newname = tag_normalize($newname);
+
+        if( !tag_exists($norm_newname) && is_tag_name_valid($norm_newname) ) {
+
+            $tag = tag_by_id($id);
+
+            $tags_names_updated[$id] = $tag->name;
+
+            // rawname keeps the original casing of the string
+            $tag->rawname        = tag_normalize($newname, false);
+
+            // name lowercases the string
+            $tag->name           = $norm_newname;
+
+            $tag->timemodified   = time();
+
+            update_record('tag',$tag);
+
+        }
+    }
+
+    return $tags_names_updated;
+
 }
 
 /**
@@ -1456,13 +1511,14 @@ function print_tag_management_list($perpage='100') {
 
     //setup table
 
-    $tablecolumns = array('id','name', 'owner', 'count', 'flag', 'timemodified', '');
+    $tablecolumns = array('id','name', 'owner', 'count', 'flag', 'timemodified', 'rawname', '');
     $tableheaders = array(  get_string('id' , 'tag'),
     get_string('name' , 'tag'),
     get_string('owner','tag'),
     get_string('count','tag'),
     get_string('flag','tag'),
     get_string('timemodified','tag'),
+    get_string('newname', 'tag'),
     get_string('select', 'tag')
     );
 
@@ -1547,6 +1603,7 @@ function print_tag_management_list($perpage='100') {
             $flag           =   $tag->flag;
             $timemodified   =   format_time(time() - $tag->timemodified);
             $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
+            $text           =   '<input type="text" name="newname['.$tag->id.']" />';
 
             //if the tag if flagged, highlight it
             if ($tag->flag > 0) {
@@ -1558,7 +1615,7 @@ function print_tag_management_list($perpage='100') {
                 $timemodified = '<span class="flagged-tag">' . $timemodified . '</span>';
             }
 
-            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $checkbox);
+            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $text, $checkbox);
 
             $table->add_data($data);
         }
@@ -1571,6 +1628,7 @@ function print_tag_management_list($perpage='100') {
                     <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
                     <option value="reset">'. get_string('resetflag', 'tag') .'</option>
                     <option value="delete">'. get_string('delete', 'tag') .'</option>
+                    <option value="changename">'. get_string('changename', 'tag') .'</option>
                 </select>';
 
         echo '<button id="tag-management-submit" type="submit">'. get_string('ok') .'</button>';

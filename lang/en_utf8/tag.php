@@ -2,6 +2,7 @@
 
 $string['addtagtomyinterests'] =  'Add \"$a\" to my interests';
 $string['count'] = 'Count';
+$string['changename'] = 'Change name';
 $string['description'] = 'Description';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'Deleted';
@@ -12,6 +13,8 @@ $string['helprelatedtags'] = 'Comma separated related tags';
 $string['id'] = 'id';
 $string['managetags'] = 'Manage Tags';
 $string['name'] = 'Name';
+$string['namesalreadybeeingused'] = 'Tag names already being used';
+$string['newname'] = 'New Name';
 $string['noresultsfor'] = 'No results for \"$a\"';
 $string['owner'] = 'Owner';
 $string['relatedtags'] = 'Related tags';
@@ -31,6 +34,7 @@ $string['thistaghasnodesc'] = 'This tag currently has no description.';
 $string['timemodified'] = 'Modified';
 $string['userstaggedwith'] = 'Users tagged with \"$a\"';
 $string['updatetag'] = 'Update';
+$string['updated'] = 'Updated';
 $string['withselectedtags'] = 'With selected tags...';
 
 ?>
