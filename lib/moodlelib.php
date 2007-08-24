@@ -596,7 +596,7 @@ function unset_config($name, $plugin=NULL) {
 
     if (empty($plugin)) {
         return delete_records('config', 'name', $name);
-    } else { 
+    } else {
         return delete_records('config_plugins', 'name', $name, 'plugin', $plugin);
     }
 }
@@ -1480,7 +1480,7 @@ function course_setup($courseorid=0) {
 /// Redefine global $COURSE if needed
     if (empty($courseorid)) {
         // no change in global $COURSE - for backwards compatibiltiy
-        // if require_rogin() used after require_login($courseid); 
+        // if require_rogin() used after require_login($courseid);
     } else if (is_object($courseorid)) {
         $COURSE = clone($courseorid);
     } else {
@@ -1552,7 +1552,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         $USER = NULL;
-        if ($autologinguest && !empty($CFG->autologinguests) and 
+        if ($autologinguest && !empty($CFG->autologinguests) and
             $courseid and ($courseid == SITEID or get_field('course','guest','id',$courseid)) ) {
             $loginguest = '?loginguest=true';
         } else {
@@ -1626,14 +1626,14 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
     /// We can eliminate hidden site activities straight away
 
         if ($course->id == SITEID) {
-            if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', 
+            if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities',
                                                           get_context_instance(CONTEXT_SYSTEM, SITEID))) {
                 redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
             }
             return;
         }
 
- 
+
     /// If the whole course is hidden from us then we can stop now
 
         if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
@@ -1645,8 +1645,8 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id)) ){
             print_header_simple();
             notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }    
-        
+        }
+
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
         if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
@@ -1662,13 +1662,13 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
         if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
             switch ($course->guest) {    /// Check course policy about guest access
 
-                case 1:    /// Guests always allowed 
+                case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
                         print_header_simple();
                         notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
                     }
                     if (!empty($cm) and !$cm->visible) { // Not allowed to see module, send to course page
-                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, 
+                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course,
                                  get_string('activityiscurrentlyhidden'));
                     }
 
@@ -1676,7 +1676,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
                     break;
 
-                case 2:    /// Guests allowed with key 
+                case 2:    /// Guests allowed with key
                     if (!empty($USER->enrolkey[$course->id])) {   // Set by enrol/manual/enrol.php
                         return true;
                     }
@@ -1708,7 +1708,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) { 
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // User is allowed to see this course
@@ -1927,7 +1927,7 @@ function sync_metacourse($course) {
             return false; // invalid course id
         }
     }
-    
+
     if (empty($course->metacourse)) {
         return false; // can not sync normal course or not $course object
     }
@@ -1937,7 +1937,7 @@ function sync_metacourse($course) {
     if (!$roles = get_records('role')) {
         return false; // hmm, there should be always at least one role
     }
-    
+
     // always keep metacourse managers
     if ($users = get_users_by_capability($context, 'moodle/course:managemetacourse')) {
         $managers = array_keys($users);
@@ -1946,7 +1946,7 @@ function sync_metacourse($course) {
     }
 
     // find all role users in child courses + build list of current metacourse assignments
-    $in_childs = array(); 
+    $in_childs = array();
     foreach ($roles as $role) {
         if ($users = get_role_users($role->id, $context, false)) {
             $current[$role->id] = array_keys($users);
@@ -1967,7 +1967,7 @@ function sync_metacourse($course) {
             }
         }
     }
-    
+
     foreach ($roles as $role) {
         //clean up the duplicates from cuncurrent assignments in child courses
         $in_childs[$role->id] = array_unique($in_childs[$role->id]);
@@ -1987,11 +1987,11 @@ function sync_metacourse($course) {
                 }
             }
         }
-        // now assign roles to those left in $in_childs  
+        // now assign roles to those left in $in_childs
         foreach ($in_childs[$role->id] as $userid) {
             //echo "  assigning uid: $userid from role: $role->id in context: $context->id <br>\n";
             role_assign($role->id, $userid, 0, $context->id);
-        }        
+        }
     }
 
 // TODO: finish timeend and timestart
@@ -2251,7 +2251,7 @@ function create_user_record($username, $password, $auth='') {
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
     update_internal_user_password($newuser, $password, false);
-    
+
     // fix for MDL-8480
     // user CFG lang for user if $newuser->lang is empty
     // or $user->lang is not an installed language
@@ -2422,8 +2422,8 @@ function authenticate_user_login($username, $password) {
         } else {
             $user = create_user_record($username, $password, $auth);
         }
-        // fix for MDL-6928        
-        if (function_exists('auth_iscreator')) {                    
+        // fix for MDL-6928
+        if (function_exists('auth_iscreator')) {
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if ($creatorroles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
                 $creatorrole = array_shift($creatorroles); // We can only use one, let's use the first one
@@ -2458,7 +2458,7 @@ function authenticate_user_login($username, $password) {
 /**
  * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @return bool is password valid?
@@ -2504,7 +2504,7 @@ function validate_internal_user_password(&$user, $password) {
 
 /**
  * Calculate hashed value from password using current hash mechanism.
- * 
+ *
  * @param string password
  * @return string password hash
  */
@@ -2520,7 +2520,7 @@ function hash_internal_user_password($password) {
 
 /**
  * Update pssword hash in user object.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @param bool store changes also in db, default true
@@ -2755,7 +2755,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
 /// Delete course blocks
 
-    if ($blocks = get_records_sql("SELECT * 
+    if ($blocks = get_records_sql("SELECT *
                                    FROM {$CFG->prefix}block_instance
                                    WHERE pagetype = '".PAGE_COURSE_VIEW."'
                                    AND pageid = $course->id")) {
@@ -2763,18 +2763,18 @@ function remove_course_contents($courseid, $showfeedback=true) {
             if ($showfeedback) {
                 notify($strdeleted .' block_instance');
             }
-            
+
             require_once($CFG->libdir.'/blocklib.php');
             foreach ($blocks as $block) {  /// Delete any associated contexts for this block
-                
+
                 // Block instances are rarely created. Since the block instance is gone from the above delete
                 // statement, calling delete_context() will generate a warning as get_context_instance could
-                // no longer create the context as the block is already gone. 
+                // no longer create the context as the block is already gone.
                 if (record_exists('context', 'contextlevel', CONTEXT_BLOCK, 'instanceid', $block->id)) {
                     delete_context(CONTEXT_BLOCK, $block->id);
                 }
-                 
-                // fix for MDL-7164                
+
+                // fix for MDL-7164
                 // Get the block object and call instance_delete()
                 if (!$record = blocks_get_record($block->blockid)) {
                     $result = false;
@@ -2871,7 +2871,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
     if ($courseid != SITEID) {
         delete_context(CONTEXT_COURSE, $course->id);
     }
-    
+
     // fix for MDL-9016
     // clear the cache because the course context is deleted, and
     // we don't want to write assignment, overrides and context_rel table
@@ -4300,7 +4300,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 /// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
 /// default to a different lang pack, and redefine the module for some special strings
 /// that, under 1.6 lang packs, reside under langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale',
                             'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
@@ -4346,10 +4346,13 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     if (isset($CFG->running_installer)) {
         $module = 'installer';
         $filetocheck = 'installer.php';
-        $locations += array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dirroot.'/install/lang/';
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
         $defaultlang = 'en_utf8';
     } else {
-        $locations += array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
     }
 
 
@@ -5596,7 +5599,7 @@ function moodle_setlocale($locale='') {
  * @deprecated Use textlib->strtolower($text, current_charset()) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
-    
+
     //If not specified, get the current encoding
     if (empty($encoding)) {
         $encoding = current_charset();
@@ -6521,19 +6524,19 @@ eval('
  * This function expects to called during shutdown
  * should be set via register_shutdown_function()
  * in lib/setup.php .
- * 
+ *
  * Right now we do it only if we are under apache, to
  * make sure apache children that hog too much mem are
  * killed.
- * 
+ *
  */
 function moodle_request_shutdown() {
 
     global $CFG;
 
-    // initially, we are only ever called under apache 
-    // but check just in case 
-    if (function_exists('apache_child_terminate') 
+    // initially, we are only ever called under apache
+    // but check just in case
+    if (function_exists('apache_child_terminate')
         && function_exists('memory_get_usage')
         && ini_get_bool('child_terminate')) {
         if (empty($CFG->apachemaxmem)) {
@@ -6547,7 +6550,7 @@ function moodle_request_shutdown() {
 }
 
 /**
- * This function will make a complete copy of anything it's given, 
+ * This function will make a complete copy of anything it's given,
  * regardless of whether it's an object or not.
  * @param mixed $thing
  * @return mixed
