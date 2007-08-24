@@ -116,24 +116,13 @@ class grade_report_user extends grade_report {
                 $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
                 $grade_text = $grade_grade->load_text();
 
-                /// prints mod icon if available
-                if ($grade_item->itemtype == 'mod') {
-                    $iconpath = $CFG->dirroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
-                    $icon = $CFG->wwwroot.'/mod/'.$grade_item->itemmodule.'/icon.gif';
-                    if (file_exists($iconpath)) {
-                        $data[] = '<img src = "'.$icon.'" alt="'.$grade_item->itemname.'" class="activityicon"/>';
-                    }
-                } else {
-                    $data[] = '';
-                }
-
                 // TODO: indicate items that "needsupdate" - missing final calculation
 
                 /// prints grade item name
                 if ($grade_item->is_course_item() or $grade_item->is_category_item()) {
                     $data[] = '<b>'.$grade_item->get_name().'</b>';
                 } else {
-                    $data[] = $grade_item->get_name();
+                    $data[] = $this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance);;
                 }
 
                 /// prints the grade
