@@ -4481,10 +4481,13 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     if (isset($CFG->running_installer)) {
         $module = 'installer';
         $filetocheck = 'installer.php';
-        $locations += array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dirroot.'/install/lang/';
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
         $defaultlang = 'en_utf8';
     } else {
-        $locations += array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
     }
 
 /// Add extra places to look for strings for particular plugin types.
@@ -4525,7 +4528,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
                 eval($result);
                 return $resultstring;
             }
-        }
+       }
     }
 
 /// If the preferred language was English (utf8) we can abort now

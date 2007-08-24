@@ -35,7 +35,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'report' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'lang/');
+            $reportnames[$url] = get_string('modulename', 'gradereport_'.$plugin, NULL, $CFG->dirroot.'/grade/report/'.$plugin.'/lang/');
         }
         asort($reportnames);
     }
@@ -59,7 +59,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'import' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin, NULL, $CFG->dirroot.'/grade/import/'.$plugin.'lang/');
+            $importnames[$url] = get_string('modulename', 'gradeimport_'.$plugin, NULL, $CFG->dirroot.'/grade/import/'.$plugin.'/lang/');
         }
         asort($importnames);
     }
@@ -83,7 +83,7 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             if ($active_type == 'export' and $active_plugin == $plugin ) {
                 $active = $url;
             }
-            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin, NULL, $CFG->dirroot.'/grade/export/'.$plugin.'lang/');
+            $exportnames[$url] = get_string('modulename', 'gradeexport_'.$plugin, NULL, $CFG->dirroot.'/grade/export/'.$plugin.'/lang/');
         }
         asort($exportnames);
     }
