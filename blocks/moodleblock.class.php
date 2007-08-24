@@ -344,9 +344,10 @@ class block_base {
         }
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
-         // place holder for roles button
-         $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
-                        '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
+        if (empty($this->instance->pinned)) {
+            $movebuttons .= '<a class="icon roles" title="'. $this->str->assignroles .'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$blockcontext->id.'">' .
+                            '<img src="'.$CFG->pixpath.'/i/roles.gif" alt="'.$this->str->assignroles.'" /></a>';
+        }
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
