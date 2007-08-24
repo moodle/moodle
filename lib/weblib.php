@@ -3237,6 +3237,91 @@ function get_separator() {
 }
 
 /**
+ * Prints breadcrumb trail of links, called in theme/-/header.html
+ *
+ * @uses $CFG
+ * @param mixed $navigation The breadcrumb navigation string to be printed
+ * @param string $separator The breadcrumb trail separator. The default 0 leads to the use
+ *  of $THEME->rarrow, themes could use '&rarr;', '/', or '' for a style-sheet solution.
+ * @param boolean $return False to echo the breadcrumb string (default), true to return it.
+ */
+function print_navigation ($navigation, $separator=0, $return=false) {
+    global $CFG, $THEME;
+    $output = '';
+
+    if (0 === $separator) {
+        $separator = get_separator();
+    }
+    else {
+        $separator = '<span class="sep">'. $separator .'</span>';
+    }
+
+    if ($navigation) {
+
+        if (is_newnav($navigation)) {
+            if ($return) {
+                return($navigation['navlinks']);
+            } else {
+                echo $navigation['navlinks'];
+                return;
+            }
+        } else {
+            debugging('Navigation needs to be updated to use build_navigation()', DEBUG_DEVELOPER);
+        }
+
+        if (!is_array($navigation)) {
+            $ar = explode('->', $navigation);
+            $navigation = array();
+
+            foreach ($ar as $a) {
+                if (strpos($a, '</a>') === false) {
+                    $navigation[] = array('title' => $a, 'url' => '');
+                } else {
+                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {
+                        $navigation[] = array('title' => $matches[2], 'url' => $matches[1]);
+                    }
+                }
+            }
+        }
+
+        if (! $site = get_site()) {
+            $site = new object();
+            $site->shortname = get_string('home');
+        }
+
+        //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
+        $nav_text = get_string('youarehere','access');
+        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
+
+        $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+               .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
+                                 && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
+
+
+        foreach ($navigation as $navitem) {
+            $title = trim(strip_tags(format_string($navitem['title'], false)));
+            $url   = $navitem['url'];
+
+            if (empty($url)) {
+                $output .= '<li class="first">'."$separator $title</li>\n";
+            } else {
+                $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+                           .$url.'">'."$title</a>\n</li>\n";
+            }
+        }
+
+        $output .= "</ul>\n";
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+/**
  * This function will build the navigation string to be used by print_header
  * and others
  * @uses $CFG

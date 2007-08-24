@@ -81,7 +81,7 @@
     <div class="navbar clearfix">
     <?php if ($navigation) { // This is the navigation table with breadcrumbs
     ?>
-        <div class="breadcrumb"><?php echo $navigation['navlinks']; ?></div>
+        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
     <?php } ?>
     </div>
