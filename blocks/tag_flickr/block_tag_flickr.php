@@ -116,8 +116,10 @@ class block_tag_flickr extends block_base {
    function fetch_request($request){
         
         global $CFG;
+
+        make_upload_directory('/cache/flickr');
         
-        $cache = new RSSCache($CFG->dataroot . '/cache', FLICKR_CACHE_EXPIRATION);
+        $cache = new RSSCache($CFG->dataroot . '/cache/flickr', FLICKR_CACHE_EXPIRATION);
         $cache_status = $cache->check_cache( $request);
 
         if ( $cache_status == 'HIT' ) {

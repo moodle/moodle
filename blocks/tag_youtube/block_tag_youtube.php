@@ -123,7 +123,9 @@ class block_tag_youtube extends block_base {
 
         global $CFG;
 
-        $cache = new RSSCache($CFG->dataroot . '/cache',YOUTUBE_CACHE_EXPIRATION);
+        make_upload_directory('/cache/youtube');
+
+        $cache = new RSSCache($CFG->dataroot . '/cache/youtube',YOUTUBE_CACHE_EXPIRATION);
         $cache_status = $cache->check_cache( $request);
 
         if ( $cache_status == 'HIT' ) {
