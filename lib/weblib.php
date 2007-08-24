@@ -2267,6 +2267,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
 
+    if (gettype($navigation) == 'string' && strlen($navigation) != 0) {
+        debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
+                . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.");
+    }
+
     $heading = format_string($heading); // Fix for MDL-8582
 
 /// This makes sure that the header is never repeated twice on a page
@@ -3231,92 +3236,81 @@ function get_separator() {
     return ' '.link_arrow_right($text='/', $url='', $accesshide=true, 'sep').' ';
 }
 
-
-
 /**
- * Prints breadcrumb trail of links, called in theme/-/header.html
- *
+ * This function will build the navigation string to be used by print_header
+ * and others
  * @uses $CFG
- * @param mixed $navigation The breadcrumb navigation string to be printed
- * @param string $separator The breadcrumb trail separator. The default 0 leads to the use
- *  of $THEME->rarrow, themes could use '&rarr;', '/', or '' for a style-sheet solution.
- * @param boolean $return False to echo the breadcrumb string (default), true to return it.
+ * @uses $THEME
+ * @param $extranavlinks - array of associative arrays, keys: name, link, type
+ * @return $navigation as an object so it can be differentiated from old style
+ * navigation strings.
  */
-function print_navigation ($navigation, $separator=0, $return=false) {
-    global $CFG, $THEME;
-    $output = '';
+function build_navigation($extranavlinks) {
+    global $CFG, $COURSE;
 
-    if (0 === $separator) {
-        $separator = get_separator();
-    }
-    else {
-        $separator = '<span class="sep">'. $separator .'</span>';
-    }
+    $navigation = '';
+    $navlinks = array();
 
-    if ($navigation) {
-
-        if (is_newnav($navigation)) {
-            if ($return) {
-                return($navigation['navlinks']);
-            } else {
-                echo $navigation['navlinks'];
-                return;
-            }
-        } else {
-            debugging('Navigation needs to be updated to use build_navigation()', DEBUG_DEVELOPER);
-        }
-
-        if (!is_array($navigation)) {
-            $ar = explode('->', $navigation);
-            $navigation = array();
-
-            foreach ($ar as $a) {
-                if (strpos($a, '</a>') === false) {
-                    $navigation[] = array('title' => $a, 'url' => '');
-                } else {
-                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {
-                        $navigation[] = array('title' => $matches[2], 'url' => $matches[1]);
-                    }
-                }
-            }
-        }
-
-        if (! $site = get_site()) {
-            $site = new object();
-            $site->shortname = get_string('home');
-        }
-
-        //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
-        $nav_text = get_string('youarehere','access');
-        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
-
-        $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
-               .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
-                                 && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
-
-
-        foreach ($navigation as $navitem) {
-            $title = trim(strip_tags(format_string($navitem['title'], false)));
-            $url   = $navitem['url'];
-
-            if (empty($url)) {
-                $output .= '<li class="first">'."$separator $title</li>\n";
-            } else {
-                $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
-                           .$url.'">'."$title</a>\n</li>\n";
-            }
-        }
-
-        $output .= "</ul>\n";
+    //Site name
+    if ($site = get_site()) {
+        $navlinks[] = array('name' => format_string($site->shortname),
+                            'link' => "$CFG->wwwroot/",
+                            'type' => 'home');
     }
 
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
+
+    if ($COURSE) {
+        if ($COURSE->id != SITEID) {
+            //Course
+            $navlinks[] = array('name' => format_string($COURSE->shortname),
+                                'link' => "$CFG->wwwroot/course/view.php?id=$COURSE->id",
+                                'type' => 'course');
+        }
     }
+
+    //Merge in extra navigation links
+    $navlinks = array_merge($navlinks, $extranavlinks);
+
+    //Construct an unordered list from $navlinks
+    //Accessibility: heading hidden from visual browsers by default.
+    $navigation = '<h2 class="accesshide">'.get_string('youarehere','access')."</h2> <ul>\n";
+    $countlinks = count($navlinks);
+    $i = 0;
+    foreach ($navlinks as $navlink) {
+        if ($i >= $countlinks || !is_array($navlink)) {
+            continue;
+        }
+        // Check the link type to see if this link should appear in the trail
+        $cap = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id));
+        $hidetype_is2 = $CFG->hideactivitytypenavlink == 2;
+        $hidetype_is1 = $CFG->hideactivitytypenavlink == 1;
+
+        if ($navlink['type'] == 'activity' &&
+            $i+1 < $countlinks  &&
+            ($hidetype_is2 || ($hidetype_is1 && !$cap))) {
+            continue;
+        }
+        $navigation .= '<li class="first">';
+        if ($i > 0) {
+            $navigation .= get_separator();
+        }
+        if ($navlink['link'] && $i+1 < $countlinks) {
+            $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
+        }
+        $navigation .= "{$navlink['name']}";
+        if ($navlink['link'] && $i+1 < $countlinks) {
+            $navigation .= "</a>";
+        }
+
+        $navigation .= "</li>";
+        $i++;
+    }
+
+    $navigation .= "</ul>";
+
+    return(array('newnav' => true, 'navlinks' => $navigation));
 }
+
 
 /**
  * Prints a string in a specified size  (retained for backward compatibility)

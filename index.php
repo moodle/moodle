@@ -33,11 +33,11 @@
     require_once('config.php');
     require_once($CFG->dirroot .'/course/lib.php');
     require_once($CFG->dirroot .'/lib/blocklib.php');
-    
+
     if (!empty($THEME->customcorners)) {
         require_once($CFG->dirroot.'/lib/custom_corners_lib.php');
     }
-    
+
     if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
@@ -81,7 +81,7 @@
     }
 
 
-    if (get_moodle_cookie() == '') {   
+    if (get_moodle_cookie() == '') {
         set_moodle_cookie('nobody');   // To help search for cookies on login page
     }
 
@@ -101,12 +101,13 @@
     $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
     $pageblocks = blocks_setup($PAGE);
     $editing    = $PAGE->user_is_editing();
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                             BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                             BLOCK_R_MAX_WIDTH);
 
-    print_header($SITE->fullname, $SITE->fullname, 'home', '',
+    $navigation = build_navigation(array(array('name' => get_string('home'), 'link'=> null, 'type' => 'misc')));
+    print_header($SITE->fullname, $SITE->fullname, $navigation, '',
                  '<meta name="description" content="'. s(strip_tags($SITE->summary)) .'" />',
                  true, '', user_login_string($SITE).$langmenu);
 
@@ -170,7 +171,7 @@
 
             get_all_mods($SITE->id, $mods, $modnames, $modnamesplural, $modnamesused);
             print_section($SITE, $section, $mods, $modnamesused, true);
-    
+
             if ($editing) {
                 print_section_add_menus($SITE, $section->section, $modnames);
             }

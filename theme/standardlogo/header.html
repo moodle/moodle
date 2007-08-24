@@ -14,10 +14,10 @@
         echo " onload=\"setfocus()\"";
     }
     ?>>
-    
+
 <div id="page">
 
-<?php if ($home) {  // This is what gets printed on the home page only  
+<?php if ($home) {  // This is what gets printed on the home page only
       if (file_exists($CFG->dirroot.'/logo.jpg')) {
           $standardlogo = $CFG->httpswwwroot.'/logo.jpg';
       } else if (file_exists($CFG->dirroot.'/logo.gif')) {
@@ -37,14 +37,14 @@
       } else {
           $standardlogo = $CFG->httpsthemewww .'/'. current_theme().'/logo.gif';
       }
-      
+
       //Accessibility: warning: ALT text will need editing if logo changes. 'headermain' is now H1.
 ?>
     <div id="header-home" class="clearfix">
         <h1 class="headermain"><img alt="Moodle" src="<?php echo $standardlogo ?>" /></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header" class="clearfix">
         <h1 class="headermain"><?php echo $heading ?></h1>
@@ -54,10 +54,10 @@
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
       if ($navigation) { // This is the navigation table with breadcrumbs  ?>
     <div class="navbar clearfix">
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="breadcrumb"><?php echo $navigation['navlinks']; ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
     </div>
-<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line
 ?>
         <hr />
 <?php } ?>

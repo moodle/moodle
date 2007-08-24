@@ -5,7 +5,7 @@
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
     <link rel="shortcut icon" href="<?php echo $CFG->themewww .'/'. current_theme() ?>/favicon.ico" />
-    
+
     <?php include('ui/chameleon.php'); ?>
     <?php include("$CFG->javascript"); ?>
 </head>
@@ -16,19 +16,19 @@
         echo " onload=\"setfocus()\"";
     };
     ?>>
-    
+
 <div id="page">
-    
-<?php if ($home) {  // This is what gets printed on the home page only  
+
+<?php if ($home) {  // This is what gets printed on the home page only
 ?>
     <div id="header-home" class="clearfix">
       <h1 class="headermain"><?php echo $heading ?></h1>
       <div class="headermenu"><?php echo $menu ?></div>
     </div>
     <div class="navbar clearfix">
-        &nbsp;      
+        &nbsp;
     </div>
-<?php } else {  // This is what gets printed on any other page with a heading 
+<?php } else {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header" class="clearfix">
       <h1 class="headermain"><?php echo $heading ?></h1>
@@ -37,7 +37,7 @@
     <div class="navbar clearfix">
     <?php if ($navigation) { // This is the navigation table with breadcrumbs
     ?>
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="breadcrumb"><?php echo $navigation['navlinks']; ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
     <?php } ?>
     </div>

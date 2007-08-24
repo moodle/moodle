@@ -14,7 +14,7 @@
         echo " onload=\"setfocus()\"";
     }
     ?>>
-    
+
 <div id="page">
 
 <?php //Accessibility: 'headermain' is now H1, see theme/standard/styles_layout.css: .headermain
@@ -24,7 +24,7 @@
         <h1 class="headermain"><?php echo $heading ?></h1>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header" class="clearfix">
         <h1 class="headermain"><?php echo $heading ?></h1>
@@ -34,10 +34,10 @@
 <?php //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
       if ($navigation) { // This is the navigation bar with breadcrumbs  ?>
     <div class="navbar clearfix">
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="breadcrumb"><?php echo $navigation['navlinks']; ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
-    </div>   
-<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
+    </div>
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line
 ?>
         <hr />
 <?php } ?>

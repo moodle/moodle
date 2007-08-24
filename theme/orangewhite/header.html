@@ -14,10 +14,10 @@
         echo " onload=\"setfocus()\"";
     };
     ?>>
-    
+
 <div id="page">
 
-<?php if ($home) {  // This is what gets printed on the home page only  
+<?php if ($home) {  // This is what gets printed on the home page only
 ?>
     <div id="header-home">
         <h1 class="headermain"><?php echo $heading ?></h1>
@@ -25,7 +25,7 @@
     </div>
     <div class="navbar">
     </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading
 ?>
     <div id="header">
         <h1 class="headermain"><?php echo $heading ?></h1>
@@ -36,7 +36,7 @@
 <?php if ($navigation) { // This is the navigation table with breadcrumbs
 ?>
     <div class="navbar">
-        <div class="breadcrumb"><?php print_navigation($navigation); ?></div>
+        <div class="breadcrumb"><?php echo $navigation['navlinks']; ?></div>
         <div class="navbutton"><?php echo $button; ?></div>
     </div>
 <?php } ?>

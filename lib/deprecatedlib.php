@@ -119,8 +119,8 @@ function isadmin($userid=0) {
         return record_exists('user_admins', 'userid', $userid);
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
-    
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+
     return has_capability('moodle/legacy:admin', $context, $userid, false);
 }
 
@@ -145,7 +145,7 @@ function isteacher($courseid=0, $userid=0, $obsolete_includeadmin=true) {
     if ($courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     } else {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     }
 
     return (has_capability('moodle/legacy:teacher', $context, $userid, false)
@@ -199,7 +199,7 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
 
 /// Include admins if required
     if ($includeadmin) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         if (has_capability('moodle/legacy:admin', $context, $userid, false)) {
             return true;
         }
@@ -223,7 +223,7 @@ function isteacheredit($courseid, $userid=0, $obsolete_ignorestudentview=false) 
     }
 
     if (empty($courseid)) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
@@ -245,7 +245,7 @@ function iscreator ($userid=0) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
 
     return (has_capability('moodle/legacy:coursecreator', $context, $userid, false)
          or has_capability('moodle/legacy:admin', $context, $userid, false));
@@ -271,7 +271,7 @@ function isstudent($courseid=0, $userid=0) {
     }
 
     if ($courseid == 0) {
-        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);  
+        $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
     } else {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
     }
@@ -292,7 +292,7 @@ function isguest($userid=0) {
         return false;
     }
 
-    $context = get_context_instance(CONTEXT_SYSTEM);  
+    $context = get_context_instance(CONTEXT_SYSTEM);
 
     return has_capability('moodle/legacy:guest', $context, $userid, false);
 }
@@ -341,7 +341,7 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
  */
 function unenrol_student($userid, $courseid=0) {
     global $CFG;
-    
+
     $status = true;
 
     if ($courseid) {
@@ -376,7 +376,7 @@ function unenrol_student($userid, $courseid=0) {
 }
 
 /**
- * Add a teacher to a given course  
+ * Add a teacher to a given course
  *
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $courseid The id of the course that is being viewed, if any
@@ -536,7 +536,7 @@ function get_teacher($courseid) {
 function get_recent_enrolments($courseid, $timestart) {
 
     global $CFG;
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, l.time
@@ -581,9 +581,9 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
     // make sure it works on the site course
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    /// For the site course, old way was to check if $CFG->allusersaresitestudents was set to true. 
+    /// For the site course, old way was to check if $CFG->allusersaresitestudents was set to true.
     /// The closest comparible method using roles is if the $CFG->defaultuserroleid is set to the legacy
-    /// student role. This function should be replaced where it is used with something more meaningful. 
+    /// student role. This function should be replaced where it is used with something more meaningful.
     if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
         if ($roles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW, $context)) {
             $hascap = false;
@@ -604,15 +604,15 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                     $sort = $sort .' '. $dir;
                 }
                 // Now we have to make sure site teachers are excluded
-        
+
                 if ($teachers = get_course_teachers(SITEID)) {
                     foreach ($teachers as $teacher) {
                         $exceptions .= ','. $teacher->userid;
                     }
-                    $exceptions = ltrim($exceptions, ','); 
-                  
-                }        
-        
+                    $exceptions = ltrim($exceptions, ',');
+
+                }
+
                 return get_users(true, $search, true, $exceptions, $sort, $firstinitial, $lastinitial,
                                   $page, $recordsperpage, $fields ? $fields : '*');
             }
@@ -629,7 +629,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
         // If not site, require specific course
         $select.= "c.instanceid=$courseid AND ";
     }
-    $select.="rc.capability='moodle/legacy:student' AND rc.permission=".CAP_ALLOW." AND "; 
+    $select.="rc.capability='moodle/legacy:student' AND rc.permission=".CAP_ALLOW." AND ";
 
     $select .= ' u.deleted = \'0\' ';
 
@@ -675,7 +675,7 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
                                      {$CFG->prefix}context c ON c.id=ra.contextid LEFT OUTER JOIN
                                      {$CFG->prefix}user_lastaccess ul on ul.userid=ra.userid
                                      $groupmembers
-                                WHERE $select $search $sort $dir", $page, $recordsperpage); 
+                                WHERE $select $search $sort $dir", $page, $recordsperpage);
 
     return $students;
 }
@@ -685,10 +685,10 @@ function get_course_students($courseid, $sort='ul.timeaccess', $dir='', $page=''
  *
  * @param object $course The course in question as a course object.
  * @param string $search ?
- * @param string $firstinitial ? 
+ * @param string $firstinitial ?
  * @param string $lastinitial ?
  * @param ? $group ?
- * @param string $exceptions ? 
+ * @param string $exceptions ?
  * @return int
  * @todo Finish documenting this function
  */
@@ -709,21 +709,21 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
  * @uses $CFG
  * @param int $courseid The course in question.
  * @param string $sort ?
- * @param string $exceptions ? 
+ * @param string $exceptions ?
  * @return object
  * @todo Finish documenting this function
  */
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
 
     global $CFG;
-    
+
     $sort = 'ul.timeaccess DESC';
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     /// For the site course, if the $CFG->defaultuserroleid is set to the legacy teacher role, then all
-    /// users are teachers. This function should be replaced where it is used with something more 
-    /// meaningful. 
+    /// users are teachers. This function should be replaced where it is used with something more
+    /// meaningful.
     if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
         if ($roles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW, $context)) {
             $hascap = false;
@@ -771,7 +771,7 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     /// If the course id is the SITEID, we need to return all the users if the "defaultuserroleid"
-    /// has the capbility of accessing the site course. $CFG->nodefaultuserrolelists set to true can 
+    /// has the capbility of accessing the site course. $CFG->nodefaultuserrolelists set to true can
     /// over-rule using this.
     if (($courseid == SITEID) && !empty($CFG->defaultuserroleid) && empty($CFG->nodefaultuserrolelists)) {
         if ($roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context)) {
@@ -803,7 +803,7 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
  * @return object (changed to groupids)
  */
 function get_group_students($groupids, $sort='ul.timeaccess DESC') {
-    
+
     if (is_array($groupids)){
         $groups = $groupids;
         // all groups must be from one course anyway...
@@ -850,7 +850,7 @@ function get_group_teachers($courseid, $groupid) {
 
 /**
  * Print a message in a standard themed box.
- * This old function used to implement boxes using tables.  Now it uses a DIV, but the old 
+ * This old function used to implement boxes using tables.  Now it uses a DIV, but the old
  * parameters remain.  If possible, $align, $width and $color should not be defined at all.
  * Preferably just use print_box() in weblib.php
  *
@@ -878,7 +878,7 @@ function print_simple_box($message, $align='', $width='', $color='', $padding=5,
 
 
 /**
- * This old function used to implement boxes using tables.  Now it uses a DIV, but the old 
+ * This old function used to implement boxes using tables.  Now it uses a DIV, but the old
  * parameters remain.  If possible, $align, $width and $color should not be defined at all.
  * Even better, please use print_box_start() in weblib.php
  *
@@ -1078,7 +1078,7 @@ function groups_members_from_sql() {
  * @param group ID, optional to include a test for this in the SQL.
  * @return SQL string.
  */
-function groups_members_join_sql($groupid=false) {    
+function groups_members_join_sql($groupid=false) {
     $sql = ' JOIN '.groups_members_from_sql().' ON u.id = gm.userid ';
     if ($groupid) {
         $sql = "AND gm.groupid = '$groupid' ";
@@ -1090,7 +1090,7 @@ function groups_members_join_sql($groupid=false) {
 
 /**
  * Returns SQL for a WHERE clause testing the group ID.
- * Optionally test the member's ID against another table's user ID column. 
+ * Optionally test the member's ID against another table's user ID column.
  * @param groupid
  * @param userid_sql Optional user ID column selector, example "mdl_user.id", or false.
  * @return SQL string.
@@ -1162,7 +1162,7 @@ function mygroupid($courseid) {
 }
 
 /**
- * Add a user to a group, return true upon success or if user already a group 
+ * Add a user to a group, return true upon success or if user already a group
  * member
  *
  * @param int $groupid  The group id to add user to
@@ -1187,7 +1187,7 @@ function add_user_to_group($groupid, $userid) {
  * @return object
  * @todo Finish documenting this function
  */
-function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', 
+function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='',
                          $fields='u.*') {
     global $CFG;
     if (!empty($exceptions)) {
@@ -1212,7 +1212,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='',
 
 /**
  * Returns the current group mode for a given course or activity module
- * 
+ *
  * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
  */
 function groupmode($course, $cm=null) {
@@ -1226,11 +1226,11 @@ function groupmode($course, $cm=null) {
 
 /**
  * Sets the current group in the session variable
- * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups. 
+ * When $SESSION->currentgroup[$courseid] is set to 0 it means, show all groups.
  * Sets currentgroup[$courseid] in the session variable appropriately.
- * Does not do any permission checking. 
+ * Does not do any permission checking.
  * @uses $SESSION
- * @param int $courseid The course being examined - relates to id field in 
+ * @param int $courseid The course being examined - relates to id field in
  * 'course' table.
  * @param int $groupid The group being examined.
  * @return int Current group id which was set by this function
@@ -1242,13 +1242,13 @@ function set_current_group($courseid, $groupid) {
 
 
 /**
- * Gets the current group - either from the session variable or from the database. 
+ * Gets the current group - either from the session variable or from the database.
  *
  * @uses $USER
  * @uses $SESSION
- * @param int $courseid The course being examined - relates to id field in 
+ * @param int $courseid The course being examined - relates to id field in
  * 'course' table.
- * @param bool $full If true, the return value is a full record object. 
+ * @param bool $full If true, the return value is a full record object.
  * If false, just the id of the record.
  */
 function get_current_group($courseid, $full = false) {
@@ -1297,7 +1297,7 @@ function get_current_group($courseid, $full = false) {
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
-    // Sets to the specified group, provided the current user has view permission 
+    // Sets to the specified group, provided the current user has view permission
     if (!$groupmode) {   // Groups don't even apply
         return false;
     }
@@ -1455,6 +1455,91 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall
         echo $output;
     }
 
+}
+
+/**
+ * Prints breadcrumb trail of links, called in theme/-/header.html
+ *
+ * @uses $CFG
+ * @param mixed $navigation The breadcrumb navigation string to be printed
+ * @param string $separator The breadcrumb trail separator. The default 0 leads to the use
+ *  of $THEME->rarrow, themes could use '&rarr;', '/', or '' for a style-sheet solution.
+ * @param boolean $return False to echo the breadcrumb string (default), true to return it.
+ */
+function print_navigation ($navigation, $separator=0, $return=false) {
+    global $CFG, $THEME;
+    $output = '';
+
+    if (0 === $separator) {
+        $separator = get_separator();
+    }
+    else {
+        $separator = '<span class="sep">'. $separator .'</span>';
+    }
+
+    if ($navigation) {
+
+        if (is_newnav($navigation)) {
+            if ($return) {
+                return($navigation['navlinks']);
+            } else {
+                echo $navigation['navlinks'];
+                return;
+            }
+        } else {
+            debugging('Navigation needs to be updated to use build_navigation()', DEBUG_DEVELOPER);
+        }
+
+        if (!is_array($navigation)) {
+            $ar = explode('->', $navigation);
+            $navigation = array();
+
+            foreach ($ar as $a) {
+                if (strpos($a, '</a>') === false) {
+                    $navigation[] = array('title' => $a, 'url' => '');
+                } else {
+                    if (preg_match('/<a.*href="([^"]*)">(.*)<\/a>/', $a, $matches)) {
+                        $navigation[] = array('title' => $matches[2], 'url' => $matches[1]);
+                    }
+                }
+            }
+        }
+
+        if (! $site = get_site()) {
+            $site = new object();
+            $site->shortname = get_string('home');
+        }
+
+        //Accessibility: breadcrumb links now in a list, &raquo; replaced with a 'silent' character.
+        $nav_text = get_string('youarehere','access');
+        $output .= '<h2 class="accesshide">'.$nav_text."</h2><ul>\n";
+
+        $output .= '<li class="first">'."\n".'<a '.$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+               .$CFG->wwwroot.((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))
+                                 && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
+                                 ? '/my' : '') .'/">'. format_string($site->shortname) ."</a>\n</li>\n";
+
+
+        foreach ($navigation as $navitem) {
+            $title = trim(strip_tags(format_string($navitem['title'], false)));
+            $url   = $navitem['url'];
+
+            if (empty($url)) {
+                $output .= '<li class="first">'."$separator $title</li>\n";
+            } else {
+                $output .= '<li class="first">'."$separator\n<a ".$CFG->frametarget.' onclick="this.target=\''.$CFG->framename.'\'" href="'
+                           .$url.'">'."$title</a>\n</li>\n";
+            }
+        }
+
+        $output .= "</ul>\n";
+    }
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 ?>
