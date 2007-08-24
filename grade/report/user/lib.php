@@ -65,8 +65,8 @@ class grade_report_user extends grade_report {
         */
 
         // setting up table headers
-        $tablecolumns = array('itempic', 'itemname', 'grade', 'percentage', 'rank', 'feedback');
-        $tableheaders = array('', $this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('grade'),
+        $tablecolumns = array('itemname', 'category', 'grade', 'percentage', 'rank', 'feedback');
+        $tableheaders = array($this->get_lang_string('gradeitem', 'grades'), $this->get_lang_string('category'), $this->get_lang_string('grade'),
             $this->get_lang_string('percent', 'grades'), $this->get_lang_string('rank', 'grades'),
             $this->get_lang_string('feedback'));
 
@@ -124,6 +124,11 @@ class grade_report_user extends grade_report {
                 } else {
                     $data[] = $this->get_module_link($grade_item->get_name(), $grade_item->itemmodule, $grade_item->iteminstance);;
                 }
+
+                /// prints category
+                $cat = $grade_item->get_parent_category();
+                $data[] = $cat->fullname;
+
 
                 /// prints the grade
 
