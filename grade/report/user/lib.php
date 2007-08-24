@@ -108,9 +108,10 @@ class grade_report_user extends grade_report {
             $total = $grade_items[1];
             unset($grade_items[1]);
             $grade_items[] = $total;
-
+            
             foreach ($grade_items as $grade_item) {
 
+                $decimalpoints = $this->get_pref('decimalpoints', $grade_item->id);
                 $data = array();
 
                 $grade_grade = new grade_grade(array('itemid'=>$grade_item->id, 'userid'=>$this->user->id));
@@ -152,7 +153,7 @@ class grade_report_user extends grade_report {
                     }
                 } else {
                     // normal grade, or text, just display
-                    $data[] = $excluded.format_float($grade_grade->finalgrade);
+                    $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
                 }
 
                 /// prints percentage
@@ -160,7 +161,7 @@ class grade_report_user extends grade_report {
                 if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                     // processing numeric grade
                     if ($grade_grade->finalgrade) {
-                        $percentage = format_float(($grade_grade->finalgrade / $grade_item->grademax) * 100).'%';
+                        $percentage = format_float(($grade_grade->finalgrade / $grade_item->grademax) * 100, $decimalpoints).'%';
                     } else {
                         $percentage = '-';
                     }
@@ -169,7 +170,7 @@ class grade_report_user extends grade_report {
                     // processing scale grade
                     $scale = get_record('scale', 'id', $grade_item->scaleid);
                     $scalevals = explode(",", $scale->scale);
-                    $percentage = format_float(($grade_grade->finalgrade) / count($scalevals) * 100).'%';
+                    $percentage = format_float(($grade_grade->finalgrade) / count($scalevals) * 100, $decimalpoints).'%';
 
                 } else {
                     // text grade
