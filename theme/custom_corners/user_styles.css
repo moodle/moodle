@@ -969,3 +969,12 @@ body#course-user div.section {
 body#course-user div.tabtree {
   margin-bottom: 10px;
 }
+a.dimmed:link,
+a.dimmed:visited {
+  color:#AAAAAA;
+}
+
+.dimmed_text {
+  color:#AAAAAA;
+}
+
