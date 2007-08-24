@@ -2643,7 +2643,7 @@ function authenticate_user_login($username, $password) {
 /**
  * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @return bool is password valid?
@@ -2689,7 +2689,7 @@ function validate_internal_user_password(&$user, $password) {
 
 /**
  * Calculate hashed value from password using current hash mechanism.
- * 
+ *
  * @param string password
  * @return string password hash
  */
@@ -2705,7 +2705,7 @@ function hash_internal_user_password($password) {
 
 /**
  * Update pssword hash in user object.
- * 
+ *
  * @param object user
  * @param string plain text password
  * @param bool store changes also in db, default true
@@ -4714,7 +4714,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
 /// default to a different lang pack, and redefine the module for some special strings
 /// that, under 1.6 lang packs, reside under langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 
+    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale',
                             'localewin', 'localewincharset', 'oldcharset',
                             'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
                             'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
@@ -4748,10 +4748,13 @@ function get_string($identifier, $module='', $a=NULL) {
     if (isset($CFG->running_installer)) {
         $module = 'installer';
         $filetocheck = 'installer.php';
-        $locations = array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dirroot.'/install/lang/';
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
         $defaultlang = 'en_utf8';
     } else {
-        $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
+        $locations[] = $CFG->dataroot.'/lang/';
+        $locations[] = $CFG->dirroot.'/lang/';
     }
 
     if ($module != 'moodle' && $module != 'langconfig') {
@@ -5996,7 +5999,7 @@ function moodle_setlocale($locale='') {
  * @deprecated Use textlib->strtolower($text, current_charset()) instead.
  */
 function moodle_strtolower ($string, $encoding='') {
-    
+
     //If not specified, get the current encoding
     if (empty($encoding)) {
         $encoding = current_charset();
@@ -6454,19 +6457,19 @@ function httpsrequired() {
  * This function expects to called during shutdown
  * should be set via register_shutdown_function()
  * in lib/setup.php .
- * 
+ *
  * Right now we do it only if we are under apache, to
  * make sure apache children that hog too much mem are
  * killed.
- * 
+ *
  */
 function moodle_request_shutdown() {
 
     global $CFG;
 
-    // initially, we are only ever called under apache 
-    // but check just in case 
-    if (function_exists('apache_child_terminate') 
+    // initially, we are only ever called under apache
+    // but check just in case
+    if (function_exists('apache_child_terminate')
         && function_exists('memory_get_usage')
         && ini_get_bool('child_terminate')) {
         if (empty($CFG->apachemaxmem)) {
@@ -6883,7 +6886,7 @@ eval('
 
 
 /**
- * This function will make a complete copy of anything it's given, 
+ * This function will make a complete copy of anything it's given,
  * regardless of whether it's an object or not.
  * @param mixed $thing
  * @return mixed
