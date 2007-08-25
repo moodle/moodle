@@ -681,7 +681,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
  */
 function capability_search($capability, $context, $capabilities, $switchroleactive=false) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $COURSE;
 
     if (!isset($context->id)) {
         return 0;
@@ -712,9 +712,16 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
         break;
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            $coursecat = get_record('course_categories','id',$context->instanceid);
-            if (!empty($coursecat->parent)) { // return parent value if it exists
-                $parentcontext = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
+            static $categorycache = null; // caching of parent categories - these are never changing on one page
+            if (!isset($categorycache)) {
+                $categorycache = array();
+            }
+            if (!array_key_exists($context->instanceid, $categorycache)) {
+                $coursecat = get_record('course_categories','id',$context->instanceid);
+                $categorycache[$context->instanceid] = $coursecat->parent;
+            }
+            if (!empty($categorycache[$context->instanceid])) { // return parent value if it exists
+                $parentcontext = get_context_instance(CONTEXT_COURSECAT, $categorycache[$context->instanceid]);
             } else { // else return site value
                 $parentcontext = get_context_instance(CONTEXT_SYSTEM);
             }
@@ -724,7 +731,11 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
         case CONTEXT_COURSE: // 1 to 1 to course cat
             if (empty($switchroleactive)) {
                 // find the course cat, and return its value
-                $course = get_record('course','id',$context->instanceid);
+                if ($context->instanceid == $COURSE->id) {
+                    $course = $COURSE; // reuse the global COURSE we already have ;-)
+                } else {
+                    $course = get_record('course','id',$context->instanceid);
+                }
                 if ($course->id == SITEID) {   // In 1.8 we've separated site course and system
                     $parentcontext = get_context_instance(CONTEXT_SYSTEM);
                 } else {
