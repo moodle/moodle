@@ -267,64 +267,78 @@ function get_guest_role() {
  * (!)note this only gets course category contexts, and not the site
  * context
  * @param object $context
- * @param int $type
  * @return array of contextids
  */
-function get_parent_cats($context, $type) {
+function get_parent_cats($context) {
+    global $COURSE;
 
-    $parents = array();
-
-    switch ($type) {
+    switch ($context->contextlevel) {
         // a category can be the parent of another category
         // there is no limit of depth in this case
         case CONTEXT_COURSECAT:
-            if (!$cat = get_record('course_categories','id',$context->instanceid)) {
-                break;
+            static $categoryparents = null; // cache for parent categories
+            if (!isset($categoryparents)) {
+                $categoryparents = array();
+            }
+            if (array_key_exists($context->instanceid, $categoryparents)) {
+                return $categoryparents[$context->instanceid];
             }
 
+            if (!$cat = get_record('course_categories','id',$context->instanceid)) {
+                //error?
+                return array();
+            }
+            $parents = array();
             while (!empty($cat->parent)) {
-                if (!$context = get_context_instance(CONTEXT_COURSECAT, $cat->parent)) {
+                if (!$catcontext = get_context_instance(CONTEXT_COURSECAT, $cat->parent)) {
+                    debugging('Incorrect category parent');
                     break;
                 }
-                $parents[] = $context->id;
+                $parents[] = $catcontext->id;
                 $cat = get_record('course_categories','id',$cat->parent);
             }
+           return $categoryparents[$context->instanceid] = array_reverse($parents);
         break;
         
         // a course always fall into a category, unless it's a site course
         // this happens when SITEID == $course->id
         // in this case the parent of the course is site context
         case CONTEXT_COURSE:
-            if (!$course = get_record('course', 'id', $context->instanceid)) {
-                break;
+            static $courseparents = null; // cache course parents
+            if (!isset($courseparents)) {
+                $courseparents = array();
             }
-            if (!$catinstance = get_context_instance(CONTEXT_COURSECAT, $course->category)) {
-                break;
+            if (array_key_exists($context->instanceid, $courseparents)) {
+                return $courseparents[$context->instanceid];
+            }
+            if ($context->instanceid == SITEID) {
+                return $courseparents[$context->instanceid] = array(); // frontpage course does not have parent cats
+            }
+            if ($context->instanceid == $COURSE->id) {
+                $course = $COURSE;
+            } else if (!$course = get_record('course', 'id', $context->instanceid)) {
+                //error?
+                return array();;
             }
 
-            $parents[] = $catinstance->id;
+            if (empty($course->category)) {
+                // this should not happen
+                return $courseparents[$context->instanceid] = array();
+            }
+            
+            if (!$catcontext = get_context_instance(CONTEXT_COURSECAT, $course->category)) {
+                debugging('Incorect course category');
+                return array();;
+            }
 
-            if (!$cat = get_record('course_categories','id',$course->category)) {
-                break;
-            }
-            // Yu: Separating site and site course context
-            if ($course->id == SITEID) {
-                break;  
-            }
-
-            while (!empty($cat->parent)) {
-                if (!$context = get_context_instance(CONTEXT_COURSECAT, $cat->parent)) {
-                    break;
-                }
-                $parents[] = $context->id;
-                $cat = get_record('course_categories','id',$cat->parent);
-            }
+            return $courseparents[$context->instanceid] = array_merge(get_parent_cats($catcontext), array($catcontext->id)); //recursion :-)
         break;
 
         default:
+            // something is very wrong!
+            return array();
         break;
     }
-    return array_reverse($parents);
 }
 
 
@@ -555,7 +569,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
             case CONTEXT_COURSECAT:
                 // Check parent cats.
-                $parentcats = get_parent_cats($context, CONTEXT_COURSECAT);
+                $parentcats = get_parent_cats($context);
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['moodle/site:doanything'])) {
                         $result = (0 < $capabilities[$parentcat]['moodle/site:doanything']);
@@ -567,7 +581,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
             case CONTEXT_COURSE:
                 // Check parent cat.
-                $parentcats = get_parent_cats($context, CONTEXT_COURSE);
+                $parentcats = get_parent_cats($context);
 
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
@@ -583,7 +597,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $courseid = get_field('groups', 'courseid', 'id', $context->instanceid);
                 $courseinstance = get_context_instance(CONTEXT_COURSE, $courseid);
 
-                $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
+                $parentcats = get_parent_cats($courseinstance);
                 foreach ($parentcats as $parentcat) {
                     if (isset($capabilities[$parentcat]['do_anything'])) {
                         $result = (0 < $capabilities[$parentcat]['do_anything']);
@@ -606,7 +620,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $cm = get_record('course_modules', 'id', $context->instanceid);
                 $courseinstance = get_context_instance(CONTEXT_COURSE, $cm->course);
 
-                if ($parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE)) {
+                if ($parentcats = get_parent_cats($courseinstance)) {
                     foreach ($parentcats as $parentcat) {
                         if (isset($capabilities[$parentcat]['do_anything'])) {
                             $result = (0 < $capabilities[$parentcat]['do_anything']);
@@ -629,7 +643,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                 $block = get_record('block_instance','id',$context->instanceid);
                 if ($block->pagetype == 'course-view') {
                     $courseinstance = get_context_instance(CONTEXT_COURSE, $block->pageid); // needs check
-                    $parentcats = get_parent_cats($courseinstance, CONTEXT_COURSE);
+                    $parentcats = get_parent_cats($courseinstance);
                 
                     foreach ($parentcats as $parentcat) {
                         if (isset($capabilities[$parentcat]['do_anything'])) {
@@ -681,7 +695,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
  */
 function capability_search($capability, $context, $capabilities, $switchroleactive=false) {
 
-    global $USER, $CFG;
+    global $USER, $CFG, $COURSE;
 
     if (!isset($context->id)) {
         return 0;
@@ -711,27 +725,25 @@ function capability_search($capability, $context, $capabilities, $switchroleacti
             $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
+        case CONTEXT_COURSE:
+            if ($switchroleactive) {
+                // if switchrole active, do not check permissions above the course context, blocks are an exception
+                break;
+            }
+            // break is not here intentionally - because the code is the same for category and course
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            $coursecat = get_record('course_categories','id',$context->instanceid);
-            if (!empty($coursecat->parent)) { // return parent value if it exists
-                $parentcontext = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
-            } else { // else return site value
-                $parentcontext = get_context_instance(CONTEXT_SYSTEM);
-            }
-            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
-        break;
+            $parents = get_parent_cats($context); // cached internally
 
-        case CONTEXT_COURSE: // 1 to 1 to course cat
-            if (empty($switchroleactive)) {
-                // find the course cat, and return its value
-                $course = get_record('course','id',$context->instanceid);
-                if ($course->id == SITEID) {   // In 1.8 we've separated site course and system
-                    $parentcontext = get_context_instance(CONTEXT_SYSTEM);
-                } else {
-                    $parentcontext = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            // non recursive - should be faster
+            foreach ($parents as $parentid) {
+                $parentcontext = get_context_instance_by_id($parentid);
+                if (isset($capabilities[$parentcontext->id][$capability])) {
+                    return ($capabilities[$parentcontext->id][$capability]);
                 }
-                $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
             }
+            // finally check system context
+            $parentcontext = get_context_instance(CONTEXT_SYSTEM);
+            $permission = capability_search($capability, $parentcontext, $capabilities, $switchroleactive);
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
@@ -1333,34 +1345,17 @@ function capability_prohibits($capability, $context, $sum='', $array='') {
         break;
 
         case CONTEXT_COURSECAT:
-            // Coursecat -> coursecat or site.
-            if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
-                $prohibits[$capability][$context->id] = false;
-                return false;
-            }         
-            if (!empty($coursecat->parent)) {
-                // return parent value if exist.
-                $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
-            } else {
-                // Return site value.
-                $parent = get_context_instance(CONTEXT_SYSTEM);
-            }
-            $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
-            return $prohibits[$capability][$context->id];
-        break;
-
         case CONTEXT_COURSE:
-            // 1 to 1 to course cat.
-            // Find the course cat, and return its value.
-            if (!$course = get_record('course','id',$context->instanceid)) {
-                $prohibits[$capability][$context->id] = false;
-                return false;
-            }
-            // Yu: Separating site and site course context
-            if ($course->id == SITEID) {
+            $parents = get_parent_cats($context); // cached internally
+            // no workaround for recursion now - it needs some more work and maybe fixing
+
+            if (empty($parents)) {
+                // system context - this is either top category or frontpage course
                 $parent = get_context_instance(CONTEXT_SYSTEM);
             } else {
-                $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+                // parent context - recursion
+                $parentid = array_pop($parents);
+                $parent = get_context_instance_by_id($parentid);
             }
             $prohibits[$capability][$context->id] = capability_prohibits($capability, $parent);
             return $prohibits[$capability][$context->id];
@@ -3090,37 +3085,11 @@ function get_parent_contexts($context) {
         break;
 
         case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-            if (!$coursecat = get_record('course_categories','id',$context->instanceid)) {
-                return array();
-            }
-            if (!empty($coursecat->parent)) { // return parent value if exist
-                $parent = get_context_instance(CONTEXT_COURSECAT, $coursecat->parent);
-                $res = array_merge(array($parent->id), get_parent_contexts($parent));
-                $pcontexts[$context->id] = $res;
-                return $res;
-            } else { // else return site value
-                $parent = get_context_instance(CONTEXT_SYSTEM);
-                $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
-                return $res;
-            }
-        break;
-
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            if (!$course = get_record('course','id',$context->instanceid)) {
-                return array();
-            }
-            if ($course->id != SITEID) {
-                $parent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-                $res = array_merge(array($parent->id), get_parent_contexts($parent));
-                return $res;
-            } else {
-                // Yu: Separating site and site course context
-                $parent = get_context_instance(CONTEXT_SYSTEM);
-                $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
-                return $res;
-            }
+            $parents = get_parent_cats($context);
+            $parents = array_reverse($parents);
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            return $pcontexts[$context->id] = array_merge($parents, array($systemcontext->id));
         break;
 
         case CONTEXT_GROUP: // 1 to 1 to course
