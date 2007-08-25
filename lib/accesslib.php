@@ -377,6 +377,37 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
     }
 }
 
+/**
+ * Cheks if current user has allowed permission for any of submitted capabilities
+ * in given or child contexts.
+ * @param object $context - a context object (record from context table)
+ * @param array $capabilitynames array of strings, capability names
+ * @return boolean
+ */
+function has_capability_including_child_contexts($context, $capabilitynames) {
+    global $USER;
+
+    foreach ($capabilitynames as $capname) {
+        if (has_capability($capname, $context)) {
+            return true;
+        }
+    }
+
+    if ($children = get_child_contexts($context)) {
+        foreach ($capabilitynames as $capname) {
+            foreach ($children as $child) {
+                if (isset($USER->capabilities[$child][$capname]) and $USER->capabilities[$child][$capname] == CAP_ALLOW) {
+                    // extra check for inherited prevent and prohibit
+                    if (has_capability($capname, get_context_instance_by_id($child), $USER->id, false)) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
 
 /**
  * This function returns whether the current user has the capability of performing a function
@@ -3976,6 +4007,7 @@ function role_switch($roleid, $context) {
         || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
 
         unset($USER->switchrole[$context->id]);  // Delete old capabilities
+        unset($USER->courseeditallowed);               // drop cache for course edit button
         load_all_capabilities();   //reload user caps
         return true;
     }
@@ -3995,6 +4027,7 @@ function role_switch($roleid, $context) {
 /// We have a valid roleid that this user can switch to, so let's set up the session
 
     $USER->switchrole[$context->id] = $roleid;     // So we know later what state we are in
+    unset($USER->courseeditallowed);                     // drop cache for course edit button
 
     load_all_capabilities();   //reload switched role caps
 

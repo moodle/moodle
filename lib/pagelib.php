@@ -345,32 +345,14 @@ class page_course extends page_base {
 
     // Can user edit the course page or "sticky page"?
     // This is also about editting of blocks BUT mainly activities in course page layout, see
-    // update_course_icon() - it must use the same capability
+    // update_course_icon() has very similar checks - it must use the same capabilities
     function user_allowed_editing() {
+        global $USER;
+
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->id);
-        $capcheck = false;   
-        if (has_capability('moodle/course:manageactivities', $coursecontext) ||
-            has_capability('moodle/site:manageblocks', $coursecontext)) {
-            $capcheck = true;      
-        } else {
-            // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks  
-            if ($children = get_child_contexts($coursecontext)) {
-                foreach ($children as $child) {
-                    $childcontext = get_record('context', 'id', $child);
-                    if (has_capability('moodle/course:manageactivities', $childcontext) ||
-                        has_capability('moodle/site:manageblocks', $childcontext)) {
-                        $capcheck = true;
-                        break;
-                    }             
-                }          
-            }
-        }
-        
-    return $capcheck;
+        return editcourseallowed($this->id);
     }
 
     // Is the user actually editing this course page or "sticky page" right now?
