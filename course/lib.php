@@ -2007,6 +2007,25 @@ function add_course_module($mod) {
     return insert_record("course_modules", $mod);
 }
 
+/**
+ * Returns course section - creates new if does not exist yet.
+ * @param int $relative section number
+ * @param int $courseid
+ * @return object $course_section object
+ */
+function get_course_section($section, $courseid) {
+    if ($cw = get_record("course_sections", "section", $section, "course", $courseid)) {
+        return $cw;
+    }
+    $cw = new object();
+    $cw->course = $courseid;
+    $cw->section = $section;
+    $cw->summary = "";
+    $cw->sequence = "";
+    $id = insert_record("course_sections", $cw);
+    return get_record("course_sections", "id", $id);
+}
+
 function add_mod_to_section($mod, $beforemod=NULL) {
 /// Given a full mod object with section and course already defined
 /// If $before is specified, then this is an existing ID which we

@@ -29,9 +29,7 @@
             error("This module type doesn't exist");
         }
 
-        if (! $cw = get_record("course_sections", "section", $section, "course", $course->id)) {
-            error("This course section doesn't exist");
-        }
+        $cw = get_course_section($section, $course->id);
 
         if (!course_allowed_module($course, $module->id)) {
             error("This module has been disabled for this particular course");
