@@ -102,7 +102,7 @@ class assignment_base {
                          "", "", true, '', navmenu($this->course, $this->cm));
             notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
         }
-        $this->currentgroup = get_and_set_current_group($this->course, groupmode($this->course, $this->cm));
+        $this->currentgroup = groups_get_activity_group($this->cm);
 
     /// Set up things for a HTML editor if it's needed
         if ($this->usehtmleditor = can_use_html_editor()) {
@@ -164,8 +164,9 @@ class assignment_base {
                      true, update_module_button($this->cm->id, $this->course->id, $this->strassignment),
                      navmenu($this->course, $this->cm));
 
-        $groupmode = groupmode($this->course, $this->cm);
-        $currentgroup = setup_and_print_groups($this->course, $groupmode, 'view.php?id=' . $this->cm->id);
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        $currentgroup = groups_get_activity_group($this->cm);
+        groups_print_activity_menu($this->cm, 'view.php?id=' . $this->cm->id);
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
         echo '<div class="clearer"></div>';
@@ -300,7 +301,7 @@ class assignment_base {
 
         // if this user can mark and is put in a group
         // then he can only see/mark submission in his own groups
-            if (!has_capability('moodle/course:managegroups', $context) and (groupmode($this->course, $this->cm) == SEPARATEGROUPS)) {
+            if (!has_capability('moodle/course:managegroups', $context) and (groups_get_activity_groupmode($this->cm) == SEPARATEGROUPS)) {
                 $count = $this->count_real_submissions($this->currentgroup);  // Only their groups
             } else {
                 $count = $this->count_real_submissions();                     // Everyone
@@ -788,7 +789,7 @@ class assignment_base {
 
         /// Get all ppl that can submit assignments
 
-        $currentgroup = get_and_set_current_group($course, groupmode($course, $cm));
+        $currentgroup = groups_get_activity_group($cm);
 
         $users = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.id', '', '', '', $currentgroup, '', false);
 
@@ -1022,11 +1023,19 @@ class assignment_base {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         /// find out current groups mode
-        $groupmode = groupmode($course, $cm);
-        $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id=' . $this->cm->id);
+        $groupmode = groups_get_activity_groupmode($cm);
+        $currentgroup = groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, 'submissions.php?id=' . $this->cm->id);
 
         /// Get all ppl that are allowed to submit assignments
         $users = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', $currentgroup, '', false);
+        $users = array_keys($users);
+
+        if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+            $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
+            $users = array_intersect($users, array_keys($groupingusers));
+            
+        }
 
         $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status');
         if ($uses_outcomes) {
@@ -1111,7 +1120,7 @@ class assignment_base {
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
-               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
+               'WHERE '.$where.'u.id IN ('.implode(',',$users).') ';
 
         $table->pagesize($perpage, count($users));
 
@@ -1512,7 +1521,7 @@ class assignment_base {
         $potgraders = get_users_by_capability($this->context, 'mod/assignment:grade', '', '', '', '', '', '', false, false);
 
         $graders = array();
-        if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
+        if (groups_get_activity_groupmode($this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
             if ($groups = groups_get_all_groups($this->course->id, $user->id)) {  // Try to find all groups
                 foreach ($groups as $group) {
                     foreach ($potgraders as $t) {

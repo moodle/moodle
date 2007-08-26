@@ -46,14 +46,6 @@
         $table->align = array ("left", "left", "left", "right");
     }
 
-    $currentgroup = get_and_set_current_group($course, groupmode($course));
-    if ($currentgroup and has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_COURSE, $id))) {
-        $group = groups_get_group($currentgroup, false);
-        $groupname = " ($group->name)";
-    } else {
-        $groupname = "";
-    }
-
     $currentsection = "";
 
     $types = assignment_types();
