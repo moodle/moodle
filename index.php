@@ -254,10 +254,10 @@
             break;
             case 'right':
     // The right column
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || editcourseallowed(SITEID)) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
-        if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, SITEID))) {
+        if (editcourseallowed(SITEID)) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
