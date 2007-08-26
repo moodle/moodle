@@ -311,6 +311,11 @@ function get_parent_cats($context) {
             if (array_key_exists($context->instanceid, $courseparents)) {
                 return $courseparents[$context->instanceid];
             }
+
+            if (count($courseparents) > 1000) {
+                $courseparents = array();   // max cache size when looping through thousands of courses
+            }
+
             if ($context->instanceid == SITEID) {
                 return $courseparents[$context->instanceid] = array(); // frontpage course does not have parent cats
             }
