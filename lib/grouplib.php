@@ -174,16 +174,37 @@ function groups_has_membership($cm, $userid=null) {
 /**
  * Returns the users in the specified group.
  * @param int $groupid The groupid to get the users for
+ * @param int $fields The fields to return
  * @param int $sort optional sorting of returned users
  * @return array | false Returns an array of the users for the specified
  * group or false if no users or an error returned.
  */
-function groups_get_members($groupid, $sort='lastname ASC') {
+function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
     global $CFG;
 
-    return get_records_sql("SELECT u.*
+    return get_records_sql("SELECT $fields
                               FROM {$CFG->prefix}user u, {$CFG->prefix}groups_members gm
                              WHERE u.id = gm.userid AND gm.groupid = '$groupid'
+                          ORDER BY $sort");
+}
+
+
+/**
+ * Returns the users in the specified grouping.
+ * @param int $groupingid The groupingid to get the users for
+ * @param int $fields The fields to return
+ * @param int $sort optional sorting of returned users
+ * @return array | false Returns an array of the users for the specified
+ * group or false if no users or an error returned.
+ */
+function groups_get_grouping_members($groupingid, $fields='u.*', $sort='lastname ASC') {
+    global $CFG;
+
+    return get_records_sql("SELECT $fields
+                              FROM {$CFG->prefix}user u
+                                INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
+                                INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid
+                             WHERE  gg.groupingid = $groupingid
                           ORDER BY $sort");
 }
 

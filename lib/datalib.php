@@ -1329,6 +1329,7 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
 
     foreach ($modinfo as $mod) {
         $mod->id = $mod->cm;
+        $mod->course = $course->id;
         if (!groups_course_module_visible($mod)) {
             continue;
         }
@@ -1363,7 +1364,7 @@ function instance_is_visible($moduletype, $module) {
     global $CFG;
 
     if (!empty($module->id)) {
-        if ($records = get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly
+        if ($records = get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly, cm.course
                                         FROM {$CFG->prefix}course_modules cm,
                                              {$CFG->prefix}modules m
                                        WHERE cm.course = '$module->course' AND

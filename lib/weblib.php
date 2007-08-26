@@ -4733,6 +4733,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
             break;
         }
         $mod->id = $mod->cm;
+        $mod->course = $course->id;
         if (!groups_course_module_visible($mod)) {
             continue;
         }
