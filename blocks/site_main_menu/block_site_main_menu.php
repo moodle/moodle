@@ -29,7 +29,7 @@ class block_site_main_menu extends block_list {
         $course = get_record('course', 'id', $this->instance->pageid);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        $isediting = isediting($this->instance->pageid);
+        $isediting = isediting($this->instance->pageid) && has_capability('moodle/course:manageactivities', $context);
         $ismoving  = ismoving($this->instance->pageid);
 
         $sections = get_all_sections($this->instance->pageid);
