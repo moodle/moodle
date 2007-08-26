@@ -83,11 +83,15 @@ class moodleform_mod extends moodleform {
     function validation($data) {
         global $COURSE;
 
+        $mform =& $this->_form;
+
         $errors = array();
 
-        $name = trim($data['name']);
-        if ($name == '') {
-            $errors['name'] = get_string('required');
+        if ($mform->elementExists('name')) {
+            $name = trim($data['name']);
+            if ($name == '') {
+                $errors['name'] = get_string('required');
+            }
         }
 
         $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$data['modulename'],
@@ -98,9 +102,11 @@ class moodleform_mod extends moodleform {
             $cm = null;
         }
 
-        // verify the idnumber
-        if (!grade_verify_idnumber($data['cmidnumber'], $grade_item, $cm)) {
-            $errors['cmidnumber'] = get_string('idnumbertaken');
+        if ($mform->elementExists('cmidnumber')) {
+            // verify the idnumber
+            if (!grade_verify_idnumber($data['cmidnumber'], $grade_item, $cm)) {
+                $errors['cmidnumber'] = get_string('idnumbertaken');
+            }
         }
 
         if (count($errors) == 0) {

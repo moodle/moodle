@@ -75,7 +75,6 @@
         }
 
         $navlinksinstancename = '';
-
     } else if (!empty($update)) {
         if (! $cm = get_record("course_modules", "id", $update)) {
             error("This course module doesn't exist");
@@ -207,18 +206,23 @@
         $addinstancefunction    = $fromform->modulename."_add_instance";
         $updateinstancefunction = $fromform->modulename."_update_instance";
 
+        if (!isset($fromform->groupingid)) {
+            $fromform->groupingid = 0;
+        }
+
+        if (!isset($fromform->groupmembersonly)) {
+            $fromform->groupmembersonly = 0;
+        }
+
+        if (!isset($fromform->groupmode)) {
+            $fromform->groupmode = 0;
+        }
+
+        if (!isset($fromform->name)) { //label
+            $fromform->name = $fromform->modulename;
+        }
+
         if (!empty($fromform->update)) {
-            if (!isset($fromform->groupingid)) {
-                $fromform->groupingid = 0;
-            }
-
-            if (!isset($fromform->groupmembersonly)) {
-                $fromform->groupmembersonly = 0;
-            }
-
-            if (!isset($fromform->groupmode)) {
-                $fromform->groupmode = 0;
-            }
 
             $returnfromfunc = $updateinstancefunction($fromform);
             if (!$returnfromfunc) {
@@ -233,8 +237,10 @@
             set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
             set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
 
-            // set cm id number
-            set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            if (isset($fromform->cmidnumber)) { //label
+                // set cm idnumber
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            }
 
             add_to_log($course->id, "course", "update mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
@@ -244,20 +250,9 @@
                        "$fromform->instance", $fromform->coursemodule);
 
         } else if (!empty($fromform->add)){
+
             if (!course_allowed_module($course,$fromform->modulename)) {
                 error("This module ($fromform->modulename) has been disabled for this particular course");
-            }
-
-            if (!isset($fromform->groupingid)) {
-                $fromform->groupingid = 0;
-            }
-
-            if (!isset($fromform->groupmembersonly)) {
-                $fromform->groupmembersonly = 0;
-            }
-
-            if (!isset($fromform->groupmode)) {
-                $fromform->groupmode = 0;
             }
 
             $returnfromfunc = $addinstancefunction($fromform);
@@ -287,8 +282,10 @@
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
 
-            // set cm idnumber
-            set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            if (isset($fromform->cmidnumber)) { //label
+                // set cm idnumber
+                set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+            }
 
             add_to_log($course->id, "course", "add mod",
                        "../mod/$fromform->modulename/view.php?id=$fromform->coursemodule",
