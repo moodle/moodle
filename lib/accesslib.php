@@ -3338,6 +3338,18 @@ function get_capability_string($capabilityname) {
             $string = get_string($stringname, 'format_'.$componentname);
         break;
 
+        case 'gradeexport':
+            $string = get_string($stringname, 'gradeexport_'.$componentname);
+        break;
+
+        case 'gradeimport':
+            $string = get_string($stringname, 'gradeimport_'.$componentname);
+        break;
+
+        case 'gradereport':
+            $string = get_string($stringname, 'gradereport_'.$componentname);
+        break;
+
         default:
             $string = get_string($stringname);
         break;
