@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'Valitud administreerimiskataloog on vale';
 $string['admindirname'] = 'Administreerimiskataloog';
 $string['caution'] = 'Hoiatus';
-$string['closewindow'] = 'Sulge aken';
+$string['closewindow'] = 'Sule aken';
 $string['configfilenotwritten'] = 'Installeerimisskript ei suutnud automaatselt tekitada config.php faili, mis sisaldaks sinu valitud seadistusi. Põhjus võib olla selles, et sinu Moodle kataloog ei ole kirjutatav. Sa võid käsitsi kopeerida järgneva koodi config.php nimelisse faili, mis asub Moodle juurkataloogis.';
 $string['configfilewritten'] = 'config.php on edukalt loodud';
 $string['continue'] = 'Jätka';
@@ -41,7 +41,7 @@ $string['gdversionhelp'] = '<p>Sinu serveril ei paista GD installeeritud olevat.
 
 <p>Windowsis saad sa tavaliselt muuta php.ini faili ja kommenteerida sisse libdg.dll\'le vastava rea.</p>';
 $string['help'] = 'Abi';
-$string['info'] = 'Infromatsioon';
+$string['info'] = 'Informatsioon';
 $string['installation'] = 'Installeerimine';
 $string['language'] = 'Keel';
 $string['magicquotesruntime'] = 'Magic Quotes talitlusaeg';
@@ -61,6 +61,7 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 <li>Mõnedes PHP serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab seda rida:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
 </ol>';
+$string['moodledocslink'] = 'Moodle dokumendid käesoleva lehe kohta';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP ei ole MySQL laiendiga õigesti konfigureeritud, seega ei saa ta MySQL\'ga suhelda. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['name'] = 'Nimi';
 $string['next'] = 'Järgmine';
@@ -73,6 +74,7 @@ $string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sinu jooksev versioon on $a</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
 $string['previous'] = 'Eelmine';
+$string['report'] = 'Ülevaade';
 $string['safemode'] = 'Ohutu reiim';
 $string['safemodeerror'] = 'Moodle\'il võib ohutus reiimis komplikatsioone tekkida';
 $string['sessionautostart'] = 'Sessioonide automaatne algatamine';
