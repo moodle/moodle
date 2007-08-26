@@ -26,7 +26,7 @@ class block_section_links extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
 
         $highlight = 0;
 
@@ -42,7 +42,11 @@ class block_section_links extends block_base {
             return $this->content;
         }
 
-        $course = get_record('course', 'id', $this->instance->pageid);
+        if ($this->instance->pageid == $COURSE->id) {
+            $course = $COURSE;
+        } else {
+            $course = get_record('course', 'id', $this->instance->pageid);
+        }
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         if ($course->format == 'weeks' or $course->format == 'weekscss') {

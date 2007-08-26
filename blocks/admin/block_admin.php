@@ -8,7 +8,7 @@ class block_admin extends block_list {
 
     function get_content() {
 
-        global $CFG, $USER, $SITE;
+        global $CFG, $USER, $SITE, $COURSE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -27,13 +27,13 @@ class block_admin extends block_list {
 
         if (!empty($this->instance->pageid)) {
             $context = get_context_instance(CONTEXT_COURSE, $this->instance->pageid);
-        }
-
-        if (empty($context)) {
+            if ($COURSE->id == $this->instance->pageid) {
+                $course = $COURSE;
+            } else {
+                $course = get_record('course', 'id', $this->instance->pageid);
+            }
+        } else {
             $context = get_context_instance(CONTEXT_SYSTEM);
-        }
-
-        if (!$course = get_record('course', 'id', $this->instance->pageid)) {
             $course = $SITE;
         }
 

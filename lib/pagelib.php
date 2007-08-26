@@ -328,13 +328,19 @@ class page_course extends page_base {
     // in init_quick() and instead deferred here. Of course this function had better recognize
     // $this->full_init_done to prevent wasteful multiple-time data retrieval.
     function init_full() {
+        global $COURSE;
         if($this->full_init_done) {
             return;
         }
         if (empty($this->id)) {
             $this->id = 0; // avoid db errors
         }
-        $this->courserecord = get_record('course', 'id', $this->id);
+        if ($this->id == $COURSE->id) {
+            $this->courserecord = $COURSE;
+        } else {
+            $this->courserecord = get_record('course', 'id', $this->id);
+        }
+
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
             error('Cannot fully initialize page: invalid course id '. $this->id);
         }

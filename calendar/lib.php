@@ -1154,8 +1154,13 @@ function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
 }
 
 function calendar_get_course_cached(&$coursecache, $courseid) {
-    if(!isset($coursecache[$courseid])) {
-        $coursecache[$courseid] = get_record('course', 'id', $courseid);
+    global $COURSE;
+    if (!isset($coursecache[$courseid])) {
+        if ($courseid == $COURSE->id) {
+            $coursecache[$courseid] = $COURSE;
+        } else {
+            $coursecache[$courseid] = get_record('course', 'id', $courseid);
+        }
     }
     return $coursecache[$courseid];
 }
