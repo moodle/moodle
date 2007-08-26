@@ -415,7 +415,7 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
     if ($children = get_child_contexts($context)) {
         foreach ($capabilitynames as $capname) {
             foreach ($children as $child) {
-                if (isset($USER->capabilities[$child][$capname]) and $USER->capabilities[$child][$capname] == CAP_ALLOW) {
+                if (isset($USER->capabilities[$child][$capname]) and $USER->capabilities[$child][$capname] > 0) {
                     // extra check for inherited prevent and prohibit
                     if (has_capability($capname, get_context_instance_by_id($child), $USER->id, false)) {
                         return true;
