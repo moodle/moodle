@@ -2267,7 +2267,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $COURSE;
 
-    if (gettype($navigation) == 'string' && strlen($navigation) != 0) {
+    if (gettype($navigation) == 'string' && strlen($navigation) != 0 && $navigation != 'home') {
         debugging("print_header() was sent a string as 3rd ($navigation) parameter. "
                 . "This is deprecated in favour of an array built by build_navigation(). Please upgrade your code.");
     }
