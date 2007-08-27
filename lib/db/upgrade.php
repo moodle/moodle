@@ -1779,6 +1779,17 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 */
 
+    if ($result && $oldversion < 2007082700) {
+
+    /// Define field timemodified to be added to tag_instance
+        $table = new XMLDBTable('tag_instance');
+        $field = new XMLDBField('timemodified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'ordering');
+
+    /// Launch add field timemodified
+        $result = $result && add_field($table, $field);
+    }
+
     return $result;
 }
 
