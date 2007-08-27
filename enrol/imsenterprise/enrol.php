@@ -27,18 +27,18 @@ require_once($CFG->dirroot.'/group/lib.php');
 
 Note for programmers:
 
-This class uses regular expressions to mine the data file. The main reason is 
+This class uses regular expressions to mine the data file. The main reason is
 that XML handling changes from PHP 4 to PHP 5, so this should work on both.
 
-One drawback is that the pattern-matching doesn't (currently) handle XML 
+One drawback is that the pattern-matching doesn't (currently) handle XML
 namespaces - it only copes with a <group> tag if it says <group>, and not
 (for example) <ims:group>.
 
-This should also be able to handle VERY LARGE FILES - so the entire IMS file is 
-NOT loaded into memory at once. It's handled line-by-line, 'forgetting' tags as 
+This should also be able to handle VERY LARGE FILES - so the entire IMS file is
+NOT loaded into memory at once. It's handled line-by-line, 'forgetting' tags as
 soon as they are processed.
 
-N.B. The "sourcedid" ID code is translated to Moodle's "idnumber" field, both 
+N.B. The "sourcedid" ID code is translated to Moodle's "idnumber" field, both
 for users and for courses.
 
 */
@@ -46,7 +46,7 @@ for users and for courses.
 
 class enrolment_plugin_imsenterprise {
 
-    var $log;    
+    var $log;
 
 // The "roles" hard-coded in the IMS specification are:
 var $imsroles = array(
@@ -64,7 +64,7 @@ var $imsroles = array(
 
 
 /**
-* This function is only used when first setting up the plugin, to 
+* This function is only used when first setting up the plugin, to
 * decide which role assignments to recommend by default.
 * For example, IMS role '01' is 'Learner', so may map to 'student' in Moodle.
 */
@@ -98,17 +98,17 @@ function determine_default_rolemapping($imscode) {
 function config_form($frm) {
     global $CFG, $imsroles;
 
-    $vars = array('enrol_imsfilelocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes', 
-            'enrol_createnewcourses', 'enrol_createnewcategories', 'enrol_createnewusers', 'enrol_mailadmins', 
+    $vars = array('enrol_imsfilelocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes',
+            'enrol_createnewcourses', 'enrol_createnewcategories', 'enrol_createnewusers', 'enrol_mailadmins',
             'enrol_imsunenrol', 'enrol_imssourcedidfallback', 'enrol_imscapitafix', 'enrol_imsrestricttarget', 'enrol_imsdeleteusers',
             'enrol_imse_imsrolemap01','enrol_imse_imsrolemap02','enrol_imse_imsrolemap03','enrol_imse_imsrolemap04',
             'enrol_imse_imsrolemap05','enrol_imse_imsrolemap06','enrol_imse_imsrolemap07','enrol_imse_imsrolemap08');
     foreach ($vars as $var) {
         if (!isset($frm->$var)) {
             $frm->$var = '';
-        } 
+        }
     }
-    include ("$CFG->dirroot/enrol/imsenterprise/config.html");    
+    include ("$CFG->dirroot/enrol/imsenterprise/config.html");
 }
 
 
@@ -164,12 +164,12 @@ function process_config($config) {
         $config->enrol_mailadmins = '';
     }
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
-    
+
     if (!isset($config->enrol_imsunenrol)) {
         $config->enrol_imsunenrol = '';
     }
     set_config('enrol_imsunenrol', $config->enrol_imsunenrol);
-    
+
     if (!isset($config->enrol_imssourcedidfallback)) {
         $config->enrol_imssourcedidfallback = '';
     }
@@ -213,7 +213,7 @@ function get_access_icons($course){}
 
 /**
 * Read in an IMS Enterprise file.
-* Originally designed to handle v1.1 files but should be able to handle 
+* Originally designed to handle v1.1 files but should be able to handle
 * earlier types as well, I believe.
 *
 */
@@ -236,19 +236,19 @@ function cron() {
 
     if ( file_exists($filename) ) {
         @set_time_limit(0);
-        $starttime = time();            
-        
+        $starttime = time();
+
         $this->log_line('----------------------------------------------------------------------');
         $this->log_line("IMS Enterprise enrol cron process launched at " . userdate(time()));
         $this->log_line('Found file '.$filename);
         $this->xmlcache = '';
-        
+
         // Make sure we understand how to map the IMS-E roles to Moodle roles
         $this->load_role_mappings();
 
         $md5 = md5_file($filename); // NB We'll write this value back to the database at the end of the cron
         $filemtime = filemtime($filename);
-        
+
         // Decide if we want to process the file (based on filepath, modification time, and MD5 hash)
         // This is so we avoid wasting the server's efforts processing a file unnecessarily
         if(empty($CFG->enrol_ims_prev_path)  || ($filename != $CFG->enrol_ims_prev_path)){
@@ -264,20 +264,20 @@ function cron() {
         }
 
         if($fileisnew){
-        
+
             $listoftags = array('group', 'person', 'member', 'membership', 'comments', 'properties'); // The list of tags which should trigger action (even if only cache trimming)
             $this->continueprocessing = true; // The <properties> tag is allowed to halt processing if we're demanding a matching target
-            
+
             // FIRST PASS: Run through the file and process the group/person entries
             if (($fh = fopen($filename, "r")) != false) {
-            
+
                 $line = 0;
                 while ((!feof($fh)) && $this->continueprocessing) {
-                
+
                     $line++;
                     $curline = fgets($fh);
                     $this->xmlcache .= $curline; // Add a line onto the XML cache
-                    
+
                     while(true){
                       // If we've got a full tag (i.e. the most recent line has closed the tag) then process-it-and-forget-it.
                       // Must always make sure to remove tags from cache so they don't clog up our memory
@@ -302,16 +302,16 @@ function cron() {
                 } // end of while loop
                 fclose($fh);
             } // end of if(file_open) for first pass
-            
+
             /*
-            
-            
+
+
             SECOND PASS REMOVED
             Since the IMS specification v1.1 insists that "memberships" should come last,
             and since vendors seem to have done this anyway (even with 1.0),
             we can sensibly perform the import in one fell swoop.
-            
-            
+
+
             // SECOND PASS: Now go through the file and process the membership entries
             $this->xmlcache = '';
             if (($fh = fopen($filename, "r")) != false) {
@@ -320,7 +320,7 @@ function cron() {
                     $line++;
                     $curline = fgets($fh);
                     $this->xmlcache .= $curline; // Add a line onto the XML cache
-                    
+
                     while(true){
                   // Must always make sure to remove tags from cache so they don't clog up our memory
                   if($tagcontents = $this->full_tag_found_in_cache('group', $curline)){
@@ -341,8 +341,8 @@ function cron() {
                 } // end of while loop
                 fclose($fh);
             } // end of if(file_open) for second pass
-           
-           
+
+
            */
 
             $timeelapsed = time() - $starttime;
@@ -350,8 +350,8 @@ function cron() {
 
 
         } // END of "if file is new"
-        
-        
+
+
         // These variables are stored so we can compare them against the IMS file, next time round.
         set_config('enrol_ims_prev_time', $filemtime);
         set_config('enrol_ims_prev_md5',  $md5);
@@ -386,7 +386,7 @@ function cron() {
     if($this->logfp){
       fclose($this->logfp);
     }
-    
+
 
 } // end of cron() function
 
@@ -439,7 +439,7 @@ function get_recstatus($tagdata, $tagname){
 */
 function process_group_tag($tagcontents){
     global $CFG;
-    
+
     // Process tag contents
     unset($group);
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
@@ -451,22 +451,22 @@ function process_group_tag($tagcontents){
     if(preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)){
         $group->category = trim($matches[1]);
     }
-    
+
     $recstatus = ($this->get_recstatus($tagcontents, 'group'));
     //echo "<p>get_recstatus for this group returned $recstatus</p>";
-    
+
     if(!(strlen($group->coursecode)>0)){
         $this->log_line('Error at line '.$line.': Unable to find course code in \'group\' element.');
     }else{
         // First, truncate the course code if desired
         if(intval($CFG->enrol_truncatecoursecodes)>0){
-            $group->coursecode = ($CFG->enrol_truncatecoursecodes > 0) 
+            $group->coursecode = ($CFG->enrol_truncatecoursecodes > 0)
                      ? substr($group->coursecode, 0, intval($CFG->enrol_truncatecoursecodes))
                      : $group->coursecode;
         }
-        
+
         /* -----------Course aliasing is DEACTIVATED until a more general method is in place---------------
-       
+
        // Second, look in the course alias table to see if the code should be translated to something else
         if($aliases = get_field('enrol_coursealias', 'toids', 'fromid', $group->coursecode)){
             $this->log_line("Found alias of course code: Translated $group->coursecode to $aliases");
@@ -474,10 +474,10 @@ function process_group_tag($tagcontents){
             $group->coursecode = explode(',', $aliases);
         }
        */
-       
+
         // For compatibility with the (currently inactive) course aliasing, we need this to be an array
         $group->coursecode = array($group->coursecode);
-        
+
         // Third, check if the course(s) exist
         foreach($group->coursecode as $coursecode){
             $coursecode = trim($coursecode);
@@ -504,7 +504,7 @@ function process_group_tag($tagcontents){
                     $course->student = get_string("defaultcoursestudent");
                     $course->students = get_string("defaultcoursestudents");
                 }
-        
+
                 // Handle course categorisation (taken from the group.org.orgunit field if present)
                 if(strlen($group->category)>0){
                     // If the category is defined and exists in Moodle, we want to store it in that one
@@ -532,7 +532,7 @@ function process_group_tag($tagcontents){
                 $course->startdate = time();
                 $course->numsections = 1;
                 // Choose a sort order that puts us at the start of the list!
-                $sortinfo = get_record_sql('SELECT MIN(sortorder) AS min, 
+                $sortinfo = get_record_sql('SELECT MIN(sortorder) AS min,
                            MAX(sortorder) AS max
                             FROM ' . $CFG->prefix . 'course WHERE category<>0');
                 if (is_object($sortinfo)) { // no courses?
@@ -544,19 +544,19 @@ function process_group_tag($tagcontents){
                     $course->sortorder = 1000;
                 }
                 if($course->id = insert_record('course', $course)){
-                
+
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
-                
+
                     $section = NULL;
                     $section->course = $course->id;   // Create a default section.
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
-                
+
                     fix_course_sortorder();
                     add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
-                
+
                     $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                 }else{
                     $this->log_line('Failed to create course '.$coursecode.' in Moodle');
@@ -626,7 +626,7 @@ function process_person_tag($tagcontents){
     // Now if the recstatus is 3, we should delete the user if-and-only-if the setting for delete users is turned on
     // In the "users" table we can do this by setting deleted=1
     if($recstatus==3){
-    
+
         if($CFG->enrol_imsdeleteusers){ // If we're allowed to delete user records
             // Make sure their "deleted" field is set to one
             set_field('user', 'deleted', 1, 'username', $person->username);
@@ -634,9 +634,9 @@ function process_person_tag($tagcontents){
         }else{
             $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
         }
-    
+
     }else{ // Add or update record
-    
+
 
         // If the user exists (matching sourcedid) then we don't need to do anything.
         if(!get_field('user', 'id', 'idnumber', $person->idnumber) && $CFG->enrol_createnewusers){
@@ -647,24 +647,25 @@ function process_person_tag($tagcontents){
                 // If their idnumber is not registered but their user ID is, then add their idnumber to their record
                 set_field('user', 'idnumber', addslashes($person->idnumber), 'username', $person->username);
             }else{
-       
+
             // If they don't exist and they have a defined username, and $CFG->enrol_createnewusers == true, we create them.
-            $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes 
+            $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes
             $person->auth = $CFG->auth;
             $person->confirmed = 1;
             $person->timemodified = time();
+            $person->mnethostid = $CFG->mnet_localhost_id;
             if($id = insert_record('user', addslashes_object($person))){
     /*
     Photo processing is deactivated until we hear from Moodle dev forum about modification to gdlib.
-    
-                                 //Antoni Mas. 07/12/2005. If a photo URL is specified then we might want to load 
+
+                                 //Antoni Mas. 07/12/2005. If a photo URL is specified then we might want to load
                                  // it into the user's profile. Beware that this may cause a heavy overhead on the server.
                                  if($CFG->enrol_processphoto){
                                    if(preg_match('{<photo>.*?<extref>(.*?)</extref>.*?</photo>}is', $tagcontents, $matches)){
                                      $person->urlphoto = trim($matches[1]);
                                    }
                                    //Habilitam el flag que ens indica que el personatge t foto prpia.
-                                   $person->picture = 1;    
+                                   $person->picture = 1;
                                    //Llibreria creada per nosaltres mateixos.
                                    require_once($CFG->dirroot.'/lib/gdlib.php');
                                    if ($usernew->picture = save_profile_image($id, $person->urlphoto,'users', true)) {
@@ -679,19 +680,19 @@ function process_person_tag($tagcontents){
             }
         }elseif($CFG->enrol_createnewusers){
             $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");
-            
+
             // Make sure their "deleted" field is set to zero.
             set_field('user', 'deleted', 0, 'idnumber', $person->idnumber);
         }else{
             $this->log_line("No user record found for '$person->username' (ID number $person->idnumber).");
         }
-    
+
     } // End of are-we-deleting-or-adding
 
 } // End process_person_tag()
 
 /**
-* Process the membership tag. This defines whether the specified Moodle users 
+* Process the membership tag. This defines whether the specified Moodle users
 * should be added/removed as teachers/students.
 * @param string $tagconents The raw contents of the XML element
 */
@@ -699,12 +700,12 @@ function process_membership_tag($tagcontents){
     global $CFG;
     $memberstally = 0;
     $membersuntally = 0;
-    
+
     // In order to reduce the number of db queries required, group name/id associations are cached in this array:
     $groupids = array();
-    
+
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
-        $ship->coursecode = ($CFG->enrol_truncatecoursecodes > 0) 
+        $ship->coursecode = ($CFG->enrol_truncatecoursecodes > 0)
                                  ? substr(trim($matches[1]), 0, intval($CFG->enrol_truncatecoursecodes))
                                  : trim($matches[1]);
         $ship->courseid = get_field('course', 'id', 'idnumber', $ship->coursecode);
@@ -741,12 +742,12 @@ function process_membership_tag($tagcontents){
                 $member->groupname = trim($matches[1]);
                 // The actual processing (ensuring a group record exists, etc) occurs below, in the enrol-a-student clause
             }
-            
+
             $rolecontext = get_context_instance(CONTEXT_COURSE, $ship->courseid);
             $rolecontext = $rolecontext->id; // All we really want is the ID
 //$this->log_line("Context instance for course $ship->courseid is...");
 //print_r($rolecontext);
-            
+
             // Add or remove this student or teacher to the course...
             $memberstoreobj->userid = get_field('user', 'id', 'idnumber', $member->idnumber);
             $memberstoreobj->enrol = 'imsenterprise';
@@ -754,7 +755,7 @@ function process_membership_tag($tagcontents){
             $memberstoreobj->time = time();
             $memberstoreobj->timemodified = time();
             if($memberstoreobj->userid){
-            
+
                 // Decide the "real" role (i.e. the Moodle role) that this user should be assigned to.
                 // Zero means this roletype is supposed to be skipped.
                 $moodleroleid = $this->rolemappings[$member->roletype];
@@ -762,7 +763,7 @@ function process_membership_tag($tagcontents){
                     $this->log_line("SKIPPING role $member->roletype for $memberstoreobj->userid ($member->idnumber) in course $memberstoreobj->course");
                     continue;
                 }
-                
+
                 if(intval($member->status) == 1){
 
                     // Enrol unsing the generic role_assign() function
@@ -772,7 +773,7 @@ function process_membership_tag($tagcontents){
                     }else{
                         $this->log_line("Enrolled user #$memberstoreobj->userid ($member->idnumber) to role $member->roletype in course $memberstoreobj->course");
                         $memberstally++;
-                        
+
                         // At this point we can also ensure the group membership is recorded if present
                         if(isset($member->groupname)){
                             // Create the group if it doesn't exist - either way, make sure we know the group ID
@@ -799,7 +800,7 @@ function process_membership_tag($tagcontents){
                                 groups_add_member($member->groupid, $memberstoreobj->userid);
                             }
                         } // End of group-enrolment (from member.role.extension.cohort tag)
-                        
+
                     }
                 }elseif($CFG->enrol_imsunenrol){
                     // Unenrol
@@ -811,7 +812,7 @@ function process_membership_tag($tagcontents){
                         $this->log_line("Unenrolled $member->idnumber from role $moodleroleid in course");
                     }
                 }
-                
+
             }
         }
         $this->log_line("Added $memberstally users to course $ship->coursecode");
@@ -828,7 +829,7 @@ function process_membership_tag($tagcontents){
 */
 function process_properties_tag($tagcontents){
     global $CFG;
-    
+
     if($CFG->enrol_imsrestricttarget){
         if(!(preg_match('{<target>'.preg_quote($CFG->enrol_imsrestricttarget).'</target>}is', $tagcontents, $matches))){
             $this->log_line("Skipping processing: required target \"$CFG->enrol_imsrestricttarget\" not specified in this data.");
@@ -839,7 +840,7 @@ function process_properties_tag($tagcontents){
 
 /**
 * Store logging information. This does two things: uses the {@link mtrace()}
-* function to print info to screen/STDOUT, and also writes log to a text file 
+* function to print info to screen/STDOUT, and also writes log to a text file
 * if a path has been specified.
 * @param string $string Text to write (newline will be added automatically)
 */
@@ -868,7 +869,7 @@ function decode_timeframe($string){ // Pass me the INNER CONTENTS of a <timefram
 } // End decode_timeframe
 
 /**
-* Load the role mappings (from the config), so we can easily refer to 
+* Load the role mappings (from the config), so we can easily refer to
 * how an IMS-E role corresponds to a Moodle role
 */
 function load_role_mappings() {
