@@ -766,7 +766,7 @@
         <INDEX NAME="timeend" UNIQUE="false" FIELDS="timeend" PREVIOUS="roleid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="post" COMMENT="Generic post table to hold data blog entries etc in different modules" PREVIOUS="stats_user_monthly" NEXT="tags">
+    <TABLE NAME="post" COMMENT="Generic post table to hold data blog entries etc in different modules" PREVIOUS="stats_user_monthly" NEXT="role">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="module"/>
         <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
@@ -798,40 +798,7 @@
         <INDEX NAME="subject" UNIQUE="false" FIELDS="subject" PREVIOUS="module"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="tags" COMMENT="tags structure for moodle" PREVIOUS="post" NEXT="blog_tag_instance">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="type"/>
-        <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="official" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="type" NEXT="text"/>
-        <FIELD NAME="text" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tags"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="type-userid" UNIQUE="false" FIELDS="type, userid" NEXT="text"/>
-        <INDEX NAME="text" UNIQUE="false" FIELDS="text" PREVIOUS="type-userid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="blog_tag_instance" COMMENT="tag instance for blogs" PREVIOUS="tags" NEXT="role">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="entryid"/>
-        <FIELD NAME="entryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="tagid"/>
-        <FIELD NAME="tagid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="entryid" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="tagid" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="courseid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for blog_tag_instance"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="entryid" UNIQUE="false" FIELDS="entryid" NEXT="tagid"/>
-        <INDEX NAME="tagid" UNIQUE="false" FIELDS="tagid" PREVIOUS="entryid"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="role" COMMENT="moodle roles" PREVIOUS="blog_tag_instance" NEXT="context">
+    <TABLE NAME="role" COMMENT="moodle roles" PREVIOUS="post" NEXT="context">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="shortname"/>
