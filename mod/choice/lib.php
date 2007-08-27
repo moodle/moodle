@@ -316,15 +316,24 @@ function choice_show_results($choice, $course, $cm, $forcepublish='') {
         $forcepublish = $choice->publish;
     }
 
-    $groupmode = groupmode($course, $cm);
+    $groupmode = groups_get_activity_groupmode($cm);
 
     if ($groupmode > 0) {
-        $currentgroup = get_current_group($course->id);
+        $currentgroup = groups_get_activity_group($cm);
     } else {
         $currentgroup = 0;
     }
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false);
+
+    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
+        $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
+        foreach($users as $key => $user) {
+            if (!isset($groupingusers[$user->id])) {
+                unset($users[$key]);
+            }
+        }
+    }
 
     if (!$users) {
         print_heading(get_string("nousersyet"));

@@ -50,15 +50,25 @@
         print_header_simple(format_string($choice->name).": $strresponses", "", $navigation, "", '', true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
         /// Check to see if groups are being used in this choice
-        $groupmode = groupmode($course, $cm);
-        setup_and_print_groups($course, $groupmode, 'report.php?id='.$id);
+        $groupmode = groups_get_activity_groupmode($cm);
+        groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, 'report.php?id='.$id);
     } else {
-        $groupmode = groupmode($course, $cm);
-        get_and_set_current_group($course, $groupmode);
+        $groupmode = groups_get_activity_groupmode($cm);
+        groups_get_activity_group($cm, true);
     }
 
     $users = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC');
-
+    
+    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
+        $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
+        foreach($users as $key => $user) {
+            if (!isset($groupingusers[$user->id])) {
+                unset($users[$key]);
+            }
+        }
+    }
+    
     if (!$users) {
         print_heading(get_string("nousersyet"));        
     }
