@@ -84,8 +84,9 @@
     if (!empty($THEME->customcorners)) print_custom_corners_start();
 
 /// Check to see if groups are being used here
-    $groupmode = groupmode($course, $cm);
-    $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+    $groupmode = groups_get_activity_groupmode($cm);
+    $currentgroup = groups_get_activity_group($cm, true);
+    groups_print_activity_menu($cm, "view.php?id=$cm->id");
     
     if ($currentgroup) {
         $groupselect = " AND groupid = '$currentgroup'";
@@ -163,7 +164,7 @@
 
     chat_delete_old_users();
 
-    if ($chatusers = chat_get_users($chat->id, $currentgroup)) {
+    if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
         $timenow = time();
         print_simple_box_start('center');
         print_heading($strcurrentusers);

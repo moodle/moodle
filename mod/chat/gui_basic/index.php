@@ -27,9 +27,9 @@
     require_capability('mod/chat:chat',$context);
 
 /// Check to see if groups are being used here
-     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        if ($groupid = get_and_set_current_group($course, $groupmode, $groupid)) {
-            if (!$group = get_record('groups', 'id', $groupid)) {
+     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        if ($groupid = groups_get_activity_group($cm)) {
+            if (!$group = groups_get_group($groupid, false)) {
                 error("That group (id $groupid) doesn't exist!");
             }
             $groupname = ': '.$group->name;
@@ -48,7 +48,7 @@
         error('Could not log in to chat room!!');
     }
 
-    if (!$chatusers = chat_get_users($chat->id, $groupid)) {
+    if (!$chatusers = chat_get_users($chat->id, $groupid, $cm->groupingid)) {
         error(get_string('errornousers', 'chat'));
     }
 

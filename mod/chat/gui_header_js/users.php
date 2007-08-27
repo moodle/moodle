@@ -28,6 +28,10 @@
 
     $courseid = $chatuser->course;
 
+    if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid)) {
+        error('Course Module ID was incorrect');
+    }
+
     if ($beep) {
         $message->chatid    = $chatuser->chatid;
         $message->userid    = $chatuser->userid;
@@ -50,7 +54,7 @@
 
     /// Get list of users
 
-    if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid)) {
+    if (!$chatusers = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid)) {
         error(get_string('errornousers', 'chat'));
     }
 

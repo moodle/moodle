@@ -30,8 +30,8 @@
     }
 
 /// Check to see if groups are being used here
-     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        if ($groupid = get_and_set_current_group($course, $groupmode, $groupid)) {
+     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
                 error("That group (id $groupid) doesn't exist!");
             }

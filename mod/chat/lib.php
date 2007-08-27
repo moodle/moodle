@@ -315,7 +315,7 @@ function chat_refresh_events($courseid = 0) {
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
-function chat_get_users($chatid, $groupid=0) {
+function chat_get_users($chatid, $groupid=0, $groupingid=0) {
 
     global $CFG;
 
@@ -324,12 +324,21 @@ function chat_get_users($chatid, $groupid=0) {
     } else {
         $groupselect = "";
     }
+    
+    if (!empty($CFG->enablegroupings) && !(empty($groupingid))) {
+        $groupingjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
+                         INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid AND gg.groupingid = $groupingid ";
+        
+    } else {
+        $groupingjoin = '';
+    }
 
     return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping
-                              FROM {$CFG->prefix}chat_users c,
-                                   {$CFG->prefix}user u
+                              FROM {$CFG->prefix}chat_users c
+                                INNER JOIN {$CFG->prefix}user u ON u.id = c.userid
+                                $groupingjoin
                              WHERE c.chatid = '$chatid'
-                               AND u.id = c.userid $groupselect
+                                $groupselect
                              ORDER BY c.firstping ASC");
 }
 

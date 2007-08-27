@@ -50,8 +50,10 @@
                       '', '', true, '', navmenu($course, $cm));
 
     /// Check to see if groups are being used here
-        $groupmode = groupmode($course, $cm);
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+        $groupmode = groups_get_activity_groupmode($cm);
+        $currentgroup = groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, "report.php?id=$cm->id");
+
 
         if ($currentgroup) {
             $groupselect = " AND groupid = '$currentgroup'";
@@ -106,8 +108,9 @@
 
 
 /// Check to see if groups are being used here
-    if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-        $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id");
+    if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+        $currentgroup = groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, "report.php?id=$cm->id");
     } else {
         $currentgroup = false;
     }
