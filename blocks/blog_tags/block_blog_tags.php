@@ -74,7 +74,7 @@ class block_blog_tags extends block_base {
 
         $timewithin = $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
-        $sql  = 'SELECT t.id, t.tagtype, t.name, COUNT(DISTINCT ti.id) as ct ';
+        $sql  = 'SELECT t.id, t.tagtype, t.rawname as name, COUNT(DISTINCT ti.id) as ct ';
         $sql .= "FROM {$CFG->prefix}tag t, {$CFG->prefix}tag_instance ti, {$CFG->prefix}post p ";
         $sql .= 'WHERE t.id = ti.tagid ';
         $sql .= 'AND p.id = ti.itemid ';
