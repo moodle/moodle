@@ -173,7 +173,8 @@
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
             echo '<td class="left side">&nbsp;</td>';
 
-            $weekperiod = $weekday.' '.$endweekday;
+            $weekperiod = $weekday.' - '.$endweekday;
+            
 
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
