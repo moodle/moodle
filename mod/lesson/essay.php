@@ -30,13 +30,25 @@
                 // Get only the attempts that are in response to essay questions
                 if ($essayattempts = get_records_select('lesson_attempts', 'pageid IN('.implode(',', array_keys($pages)).')')) {
                     // Get all the users who have taken this lesson, order by their last name
-                    if (!$users = get_records_sql("SELECT u.*
-                                             FROM {$CFG->prefix}user u,
-                                                  {$CFG->prefix}lesson_attempts a
-                                             WHERE a.lessonid = '$lesson->id' and
-                                                   u.id = a.userid
-                                             ORDER BY u.lastname")) {
-                        error('Error: could not find users');
+                    if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+                        $sql = "SELECT DISTINCT u.*
+                                FROM {$CFG->prefix}lesson_attempts a 
+                                    INNER JOIN {$CFG->prefix}user u ON u.id = a.userid
+                                    INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id
+                                    INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = {$cm->groupingid}
+                                WHERE a.lessonid = '$lesson->id'
+                                ORDER BY u.lastname";
+                    } else {
+                        $sql = "SELECT u.*
+                                FROM {$CFG->prefix}user u,
+                                     {$CFG->prefix}lesson_attempts a
+                                WHERE a.lessonid = '$lesson->id' and
+                                      u.id = a.userid
+                                ORDER BY u.lastname";
+                    }
+                    if (!$users = get_records_sql($sql)) {
+                        $mode = 'none'; // not displaying anything
+                        lesson_set_message(get_string('noonehasanswered', 'lesson'));
                     }
                 } else {
                     $mode = 'none'; // not displaying anything
