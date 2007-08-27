@@ -407,7 +407,7 @@ if ( $formdata = $mform->get_data() ) {
 }
 
 /// Print the form
-print_heading_with_help(get_string('uploadusers'), 'uploadusers');
+print_heading_with_help(get_string('uploadusers'), 'uploadusers2');
 $mform->display();
 admin_externalpage_print_footer();
 ?>
