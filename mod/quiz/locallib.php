@@ -881,7 +881,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // check for notifications required
     $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.email, u.emailstop, u.lang, u.timezone, u.mailformat, u.maildisplay';
     $userstonotify = get_users_by_capability($context, 'mod/quiz:emailnotifysubmission',
-            $notifyfields, '', '', '', groups_get_all_groups($course->id, $USER->id),
+            $notifyfields, '', '', '', array_keys(groups_get_all_groups($course->id, $USER->id)),
             $notifyexcludeusers, false, false, true);
 
     // if something to send, then build $a

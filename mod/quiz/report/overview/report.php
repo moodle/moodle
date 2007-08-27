@@ -67,14 +67,12 @@ class quiz_report extends quiz_default_report {
         }
 
         /// find out current groups mode
-        if ($groupmode = groupmode($course, $cm)) { // Groups are being used
+        $currentgroup = groups_get_activity_group($cm, true);
+        
+        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                $currentgroup = setup_and_print_groups($course, $groupmode, $reporturlwithoptions);
-            } else {
-                $currentgroup = get_and_set_current_group($course, $groupmode);
+                groups_print_activity_menu($cm, $reporturlwithoptions);
             }
-        } else {
-            $currentgroup = get_and_set_current_group($course, $groupmode);
         }
 
         $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;

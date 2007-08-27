@@ -22,14 +22,12 @@ class quiz_report extends quiz_default_report {
         }
 
     /// Check to see if groups are being used in this quiz
-        if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
+        $currentgroup = groups_get_activity_group($cm, true);
+        
+        if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=analysis");
-            } else {
-                $currentgroup = get_and_set_current_group($course, $groupmode);
+                groups_print_activity_menu($cm, "report.php?id=$cm->id&amp;mode=analysis");
             }
-        } else {
-            $currentgroup = get_and_set_current_group($course, $groupmode);
         }
 
         // set Table and Analysis stats options
