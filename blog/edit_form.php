@@ -92,12 +92,14 @@ class blog_edit_form extends moodleform {
     function otags_select_setup(){
         global $CFG;
         $mform =& $this->_form;
-        $otagsselect =& $mform->getElement('otags');
-        $otagsselect->removeOptions();
-        if ($otags = get_records_sql_menu('SELECT id, text from '.$CFG->prefix.'tags WHERE type=\'official\' ORDER by text ASC')){
+        if ($otagsselect =& $mform->getElement('otags')) {
+            $otagsselect->removeOptions();
+        }
+        if ($otags = get_records_sql_menu('SELECT id, name from '.$CFG->prefix.'tag WHERE tagtype=\'official\' ORDER by name ASC')){
             $otagsselect->loadArray($otags);
         } else {
-            $mform->removeElement('otags');
+            // removing this causes errors
+            //$mform->removeElement('otags');
         }
     }
 

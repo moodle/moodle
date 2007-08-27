@@ -7,7 +7,7 @@
     require_once($CFG->libdir .'/pagelib.php');
     require_once($CFG->dirroot .'/blog/rsslib.php');
     require_once($CFG->dirroot .'/blog/blogpage.php');
-
+    include_once($CFG->dirroot.'/tag/lib.php');
 
     /**
      * Definition of blogcourse page type (blog page with course id present).
@@ -222,15 +222,18 @@
         echo $attachedimages;
     /// Links to tags
 
+        /*
         if ($blogtags = get_records_sql('SELECT t.* FROM '.$CFG->prefix.'tags t, '.$CFG->prefix.'blog_tag_instance ti
                                      WHERE t.id = ti.tagid
                                      AND ti.entryid = '.$blogEntry->id)) {
+        */
+        if ($blogtags = get_item_tags('blog', $blogEntry->id)) {
             echo '<div class="tags">';
             if ($blogtags) {
                 print_string('tags');
                 echo ': ';
                 foreach ($blogtags as $key => $blogtag) {
-                    $taglist[] = '<a href="index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->text.'</a>';
+                    $taglist[] = '<a href="index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->name.'</a>';
                 }
                 echo implode(', ', $taglist);
             }
@@ -488,7 +491,7 @@
         if ($tagid) {
             $tag = $tagid;
         } else if ($tag) {
-            if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tags WHERE text LIKE "'.$tag.'"')) {
+            if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tag WHERE name LIKE "'.$tag.'"')) {
                 $tag = $tagrec->id;
             } else {
                 $tag = -1;    //no records found
@@ -521,8 +524,8 @@
         }
 
         if ($tag) {
-            $tagtablesql = $CFG->prefix.'blog_tag_instance bt, ';
-            $tagquerysql = ' AND bt.entryid = p.id AND bt.tagid = '.$tag.' ';
+            $tagtablesql = $CFG->prefix.'tag_instance ti, ';
+            $tagquerysql = ' AND ti.itemid = p.id AND ti.tagid = '.$tag.' ';
         } else {
             $tagtablesql = '';
             $tagquerysql = '';

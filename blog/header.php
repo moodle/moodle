@@ -87,13 +87,11 @@ if ($editing) {
 }
 
 if (!empty($tagid)) {
-    $taginstance = get_record('tags', 'id', $tagid);
+    $taginstance = get_record('tag', 'id', $tagid);
 } else {
     $tagid = '';
     if (!empty($tag)) {
-        $tagrec = get_record('tags', 'text', $tag);
-        $tagid = $tagrec->id;
-        $taginstance = get_record('tags', 'id', $tagid);
+        $taginstance = tag_id($tag);
     }
 }
 
@@ -119,7 +117,7 @@ $navlinks = array();
         case 'site':
             if ($tagid || !empty($tag)) {
                 $navlinks[] = array('name' => $blogstring, 'link' => "index.php?filtertype=site", 'type' => 'misc');
-                $navlinks[] = array('name' => "$tagstring: $taginstance->text", 'link' => null, 'type' => 'misc');
+                $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                 $navigation = build_navigation($navlinks);
                 print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
             } else {
@@ -134,7 +132,7 @@ $navlinks = array();
                 $navlinks[] = array('name' => $blogstring,
                                     'link' => "index.php?filtertype=course&amp;filterselect=$filterselect",
                                     'type' => 'misc');
-                $navlinks[] = array('name' => "$tagstring: $taginstance->text", 'link' => null, 'type' => 'misc');
+                $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                 $navigation = build_navigation($navlinks);
                 print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
             } else {
@@ -154,7 +152,7 @@ $navlinks = array();
                     $navlinks[] = array('name' => $blogstring,
                                         'link' => "index.php?filtertype=group&amp;filterselect=$filterselect",
                                         'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->text", 'link' => null, 'type' => 'misc');
+                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
                 } else {
@@ -191,7 +189,7 @@ $navlinks = array();
                     $navlinks[] = array('name' => $blogstring,
                                         'link' => "index.php?courseid=$course->id&amp;filtertype=user&amp;filterselect=$filterselect",
                                         'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->text", 'link' => null, 'type' => 'misc');
+                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
 
                     print_header("$course->shortname: $blogstring", $course->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());
@@ -226,7 +224,7 @@ $navlinks = array();
                     $navlinks[] = array('name' => $blogstring,
                                         'link' => "index.php?filtertype=user&amp;filterselect=$filterselect",
                                         'type' => 'misc');
-                    $navlinks[] = array('name' => "$tagstring: $taginstance->text", 'link' => null, 'type' => 'misc');
+                    $navlinks[] = array('name' => "$tagstring: $taginstance->name", 'link' => null, 'type' => 'misc');
                     $navigation = build_navigation($navlinks);
 
                     print_header("$SITE->shortname: $blogstring", $SITE->fullname, $navigation,'','',true,$PAGE->get_extra_header_string());

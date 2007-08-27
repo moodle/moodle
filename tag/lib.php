@@ -74,11 +74,14 @@ function tag_delete($tag_names_or_ids_csv) {
 
     //covert all ids to names
     $tag_names_csv = tag_name_from_string($tag_names_or_ids_csv);
-
+    $tag_ids_csv = tag_id_from_string($tag_names_csv);
     //put apostrophes in names
     $tag_names_csv_with_apos = "'" . str_replace(',', "','", $tag_names_csv) . "'";
+    $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv) . "'";
 
-    delete_records_select('tag',"name IN ($tag_names_csv_with_apos)");
+    // tag instances needs to be deleted as well
+    delete_records_select('tag_instance',"tagid IN ($tag_ids_csv_with_apos)");
+    return delete_records_select('tag',"name IN ($tag_names_csv_with_apos)");
 
 }
 
@@ -396,13 +399,14 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
 
         $tag_instance->tagid = $tag_id;
         $tag_instance->ordering = $ordering[$tag_normalized_name];
-
+        $tag_instance->timemodified = time();
         $tag_instance_exists = get_record('tag_instance', 'tagid', $tag_id, 'itemtype', $item_type, 'itemid', $item_id);
 
         if (!$tag_instance_exists) {
             insert_record('tag_instance',$tag_instance);
         }
         else {
+            $tag_instance_exists->timemodified = time();
             $tag_instance_exists->ordering = $ordering[$tag_normalized_name];
             update_record('tag_instance',$tag_instance_exists);
         }

@@ -33,25 +33,19 @@ switch ($action) {
             $otag = trim(required_param('otag', PARAM_NOTAGS));
             // When adding ofical tag, we see if there's already a personal tag
             // With the same Name, if there is, we just change the type
-            if ($tag = get_record('tags', 'text', $otag)) {
+            if ($tag = tag_by_name ($otag)) {
                 if ($tag->type == 'official') {
                     // official tag already exist
                     $error = get_string('tagalready');
                     break;
                 } else { 
                     $tag->type = 'official';
-                    update_record('tags', $tag);
+                    update_record('tag', $tag);
                     $tagid = $tag->id;
                 }
                 
             } else { // Brand new offical tag
-
-                $tag = new object();
-                $tag->userid = $USER->id;
-                $tag->text   = $otag;
-                $tag->type   = 'official';
-            
-                if (!$tagid = insert_record('tags', $tag)) {
+                if (!$tagid = tag_create($otag, 'official')) {
                     error('Can not create tag!');
                 }
             }

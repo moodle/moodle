@@ -1789,7 +1789,50 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field timemodified
         $result = $result && add_field($table, $field);
     }
+    
+    /// migrate all tags table to tag
+    if ($result && $oldversion < 2007082701) {
+        require_once($CFG->dirroot.'/tag/lib.php');  
+        $tagrefs = array(); // $tagrefs[$oldtagid] = $newtagid
+        if ($tags = get_records('tags')) {
+            foreach ($tags as $oldtag) {
+                // if this tag does not exist in tag table yet
+                if (!$newtag = get_record('tag', 'name', tag_normalize($oldtag->text))) {
+                    $itag->name = tag_normalize($oldtag->text);
+                    $itag->rawname = tag_normalize($oldtag->text, false);
 
+                    if ($oldtag->type == 'official') {
+                        $itag->tagtype = $oldtag->type;
+                    } else {
+                        $itag->tagtype = 'default';
+                    }
+                    $itag->userid = $oldtag->userid;
+                    $itag->timemodified = time();
+
+                    if ($idx = insert_record('tag', $itag)) {
+                        $tagrefs[$oldtag->id] = $idx;
+                    }
+                // if this tag is already used by tag table
+                } else {
+                    $tagrefs[$oldtag->id] = $newtag->id;
+                }
+            }
+        }
+        
+        // fetch all the tag instances and migrate them as well
+        if ($blogtags = get_records('blog_tag_instance')) {
+            foreach ($blogtags as $blogtag) {
+                if (!empty($tagrefs[$blogtag->tagid])) {
+                    tag_an_item('blog', $blogtag->entryid, $tagrefs[$blogtag->tagid]);
+                }
+            }
+        }
+
+        $table = new XMLDBTable('tags');
+        drop_table($table);
+        $table = new XMLDBTable('blog_tag_instance');
+        drop_table($table);
+    }
     return $result;
 }
 
