@@ -2322,10 +2322,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $meta = $meta."\n".$metapage;
 
 
-/// Add the required JavaScript Libraries
-    $meta .= "\n".require_js();
+/// Add the required JavaScript Libraries for AJAX
+    if (!empty($CFG->enableajax)) {
+        $meta .= "\n".require_js();
+    }
 
-    if(is_newnav($navigation)){
+/// Set up some navigation variables
+
+    if (is_newnav($navigation)){
         $home = false;
     } else {
         if ($navigation == 'home') {
