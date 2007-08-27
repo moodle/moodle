@@ -88,6 +88,7 @@ class new_table extends XMLDBAction {
             $field->setType(XMLDB_TYPE_INTEGER);
             $field->setLength(10);
             $field->setNotNull(true);
+            $field->setUnsigned(true);
             $field->setSequence(true);
             $field->setComment('id of the table, please edit me');
             $field->setLoaded(true);
