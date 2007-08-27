@@ -1,4 +1,4 @@
-<html><head></head><body><h1>Upload users</h1>
+<h1>Upload users</h1>
 
 <p>Firstly, note that <strong>it is  usually not necessary to import users in bulk</strong>
 - to keep your own maintenance work down you should first explore forms
@@ -42,8 +42,7 @@ student. </li>
       userid number (database index) for that user, and will enrol the user as a student in any of the
       specified courses WITHOUT updating the other specified data.</li>
 </ul>
-  
-  
+
 <p>Here is an example of a valid import file:</p>
 <p><code>username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1, type1<br>
 jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101, Section 1, 1<br>
@@ -59,4 +58,3 @@ account. However, if you set "Update existing accounts" to <b>Yes</b>, the exist
 <p>When updating existing accounts you can change usernames as well. Set "Allow renames" to <b>Yes</b> and include in your file a field called <code class="example1">oldusername</code>.</p>
 
 <p><b>Warning:</b> any errors updating existing accounts can affect your users badly. Be careful when using the options to update.</p>
-</body></html>
