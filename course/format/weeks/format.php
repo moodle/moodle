@@ -13,9 +13,9 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
+    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),
                                             BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
+    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]),
                                             BLOCK_R_MAX_WIDTH);
 
     if ($week != -1) {
@@ -88,7 +88,7 @@
         echo '<tr id="section-0" class="section main">';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
-        
+
         echo '<div class="summary">';
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
@@ -99,7 +99,7 @@
                  'class="icon edit" alt="'.$streditsummary.'" /></a><br /><br />';
         }
         echo '</div>';
-        
+
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
@@ -173,17 +173,7 @@
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
             echo '<td class="left side">&nbsp;</td>';
 
-
-            if (ajaxenabled() && $editing) {
-                // Temporarily hide the dates for the weeks. We do it this way
-                // for now. Eventually, we'll have to modify the javascript code
-                // to handle re-calculation of dates when sections are moved
-                // around. For now, just hide all the dates to avoid confusion.
-                $weekperiod = '';
-            } else {
-                $weekperiod = $weekday.' '.$endweekday;
-            }
-
+            $weekperiod = $weekday.' '.$endweekday;
 
             echo '<td class="content">';
             if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
