@@ -5550,7 +5550,7 @@ function notify($message, $style='notifyproblem', $align='center', $return=false
 
     $message = clean_text($message);
 
-    $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."<br />\n";
+    $output = '<div class="'.$style.'" style="text-align:'. $align .'">'. $message .'</div>'."\n";
 
     if ($return) {
         return $output;
