@@ -35,7 +35,7 @@
        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
        <title><?php echo get_string('discussion', 'message').': '.fullname($user) ?></title>
      </head>
-     <frameset rows="110,*,0,200">
+     <frameset rows="110,*,0,220">
        <noframes><body><?php
            echo '<a href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'<a/>';
        ?></body></noframes>

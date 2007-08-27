@@ -1022,9 +1022,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
             if (!empty($preference->message_emailaddress)) {
                 $userto->email = $preference->message_emailaddress;   // Use custom messaging address
             }
-            email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml);
-            debugging('Mail was sent', DEBUG_NORMAL);
-            echo "mail was sent"; 
+            if (email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml)) {
+                $CFG->messagewasjustemailed = true;
+            }
             sleep(3);
         }
     }

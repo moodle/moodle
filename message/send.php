@@ -85,28 +85,34 @@
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
     }
 
-    echo '<title></title></head>';
+    echo '<title> </title></head>';
 
 
     echo '<body class="message course-1" id="message-send">';
     echo '<center>';
     echo '<form id="editing" method="post" action="send.php">';
+    echo '<div>';
     echo '<input type="hidden" name="id" value="'.$user->id.'" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
     $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
     if ($usehtmleditor) {
         echo '<table align="center"><tr><td align="center">';
-        print_textarea($usehtmleditor, 8, 34, 0, 0, 'message', '');
+        print_textarea($usehtmleditor, 7, 34, 0, 0, 'message', '');
         echo '</td></tr></table>';
+        echo '<input type="submit" value="'.get_string('sendmessage', 'message').'" />';
         use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
     } else {
         print_textarea(false, 5, 34, 0, 0, 'message', '');
         echo '<input type="hidden" name="format" value="'.FORMAT_MOODLE.'" />';
+        echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />';
     }
-    echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />';
+    echo '</div>';
     echo '</form>';
+    if (!empty($CFG->messagewasjustemailed)) {
+        notify(get_string('mailsent', 'message'), 'notifysuccess');
+    }
     echo '<div class="noframesjslink"><a target="_parent" href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a></div>';
     echo '</center>';
 

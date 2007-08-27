@@ -28,6 +28,7 @@ $string['incomingcontacts'] = 'Incoming Contacts ($a)';
 $string['keywords'] = 'Keywords';
 $string['keywordssearchresults'] = 'Search results: $a messages found';
 $string['maxmessages'] = 'Maximum number of messages to show in the discussion history';
+$string['mailsent'] = 'Your message was sent via email.';
 $string['message'] = 'Message';
 $string['messagehistory'] = 'Message History';
 $string['messages'] = 'Messages';
