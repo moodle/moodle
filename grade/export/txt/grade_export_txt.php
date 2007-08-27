@@ -44,6 +44,8 @@ class grade_export_txt extends grade_export {
 
         global $CFG;
 
+        $retval = '';
+
         /// Whether this plugin is entitled to update export time
         if ($expplugins = explode(",", $CFG->gradeexport)) {
             if (in_array($this->format, $expplugins)) {
@@ -62,7 +64,7 @@ class grade_export_txt extends grade_export {
 
 /// Print names of all the fields
 
-        echo get_string("firstname")."$this->separator".
+        $retval .= get_string("firstname")."$this->separator".
              get_string("lastname")."{$this->separator}".
              get_string("idnumber")."{$this->separator}".
              get_string("institution")."{$this->separator}".
@@ -70,14 +72,14 @@ class grade_export_txt extends grade_export {
              get_string("email");
         foreach ($this->columns as $column) {
             $column = strip_tags($column);
-            echo "{$this->separator}$column";
+            $retval .= "{$this->separator}$column";
 
             /// add a column_feedback column
             if ($feedback) {
-                echo "{$this->separator}{$column}_feedback";
+                $retval .= "{$this->separator}{$column}_feedback";
             }
         }
-        echo "{$this->separator}".get_string("total")."\n";
+        $retval .= "{$this->separator}".get_string("total")."\n";
 
 /// Print all the lines of data.
         foreach ($this->grades as $studentid => $studentgrades) {
@@ -86,14 +88,14 @@ class grade_export_txt extends grade_export {
             if (empty($this->totals[$student->id])) {
                 $this->totals[$student->id] = '';
             }
-            echo "$student->firstname{$this->separator}$student->lastname{$this->separator}$student->idnumber{$this->separator}$student->institution{$this->separator}$student->department{$this->separator}$student->email";
+            $retval .= "$student->firstname{$this->separator}$student->lastname{$this->separator}$student->idnumber{$this->separator}$student->institution{$this->separator}$student->department{$this->separator}$student->email";
 
             foreach ($studentgrades as $gradeitemid => $grade) {
                 $grade = strip_tags($grade);
-                echo "{$this->separator}$grade";
+                $retval .= "{$this->separator}$grade";
 
                 if ($feedback) {
-                    echo "{$this->separator}".array_shift($this->comments[$student->id]);
+                    $retval .= "{$this->separator}".array_shift($this->comments[$student->id]);
                 }
 
                 /// if export flag needs to be set
@@ -110,9 +112,11 @@ class grade_export_txt extends grade_export {
                     $grade_grade->update();
                 }
             }
-            echo "{$this->separator}".$this->totals[$student->id];
-            echo "\n";
+            $retval .= "{$this->separator}".$this->totals[$student->id];
+            $retval .= "\n";
         }
+
+        echo $retval;
 
         exit;
     }

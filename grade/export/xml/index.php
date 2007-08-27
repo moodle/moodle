@@ -47,6 +47,7 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xml');
+
 // process post information
 if (($data = data_submitted()) && confirm_sesskey()) {
 
@@ -58,7 +59,12 @@ if (($data = data_submitted()) && confirm_sesskey()) {
 
     // print the grades on screen for feedbacks
 
-    $export = new grade_export($id, $data->itemids, $data->export_letters);
+    $export = new grade_export($id, $data->itemids, $data->export_letters, $data->publish);
+
+    if ($data->publish) {
+        // Record an entry in the 'published' table: people can now access this data by URL
+    }
+
     $export->display_grades($feedback, $data->previewrows);
 
     // this redirect should trigger a download prompt

@@ -56,6 +56,7 @@ class grade_export {
     var $columnidnumbers = array(); // Collect all gradeitem id numbers
     var $students = array();
     var $course; // course
+    var $publish; // Whether to publish this data via URL, or dump it to browser as usual
 
     // common strings
     var $strgrades;
@@ -68,7 +69,7 @@ class grade_export {
      * @param boolean $export_letters Whether to export letter grade_items as literal letters, or as numerical values
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($id, $itemids = '', $export_letters=false) {
+    function grade_export($id, $itemids = '', $export_letters=false, $publish=false) {
         global $CFG, $COURSE;
 
         if ($export_letters) {
@@ -77,6 +78,7 @@ class grade_export {
             $letters = $report->get_grade_letters();
         }
 
+        $this->publish = $publish;
         $this->strgrades = get_string("grades");
         $this->strgrade = get_string("grade");
         $this->itemids = $itemids;
@@ -243,10 +245,10 @@ class grade_export {
 
         $i = 0;
         foreach ($this->grades as $studentid => $studentgrades) {
-            
+
             // number of preview rows
             if ($i++ == $rows) {
-                break; 
+                break;
             }
             echo '<tr>';
             $student = $this->students[$studentid];
