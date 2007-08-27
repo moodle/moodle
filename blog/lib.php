@@ -233,7 +233,7 @@
                 print_string('tags');
                 echo ': ';
                 foreach ($blogtags as $key => $blogtag) {
-                    $taglist[] = '<a href="index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.$blogtag->name.'</a>';
+                    $taglist[] = '<a href="index.php?filtertype='.$filtertype.'&amp;filterselect='.$filterselect.'&amp;tagid='.$blogtag->id.'">'.tag_display_name($blogtag).'</a>';
                 }
                 echo implode(', ', $taglist);
             }
