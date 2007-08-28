@@ -157,7 +157,8 @@
             }
 
             // MDL-10818, do not display broken graph when user has no permission to view graph
-            if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $id))) {
+            if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $id)) ||
+                ($course->showreports and $USER->id == $user->id)) {
                 echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
             }
 
