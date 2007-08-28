@@ -1438,11 +1438,11 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
         return;
     }
 
+    sort($tagcloud);
+
     if ( $shuffle ) {
         shuffle($tagcloud);
-    }
-
-    sort($tagcloud);
+    }    
     
     $count = array();
     foreach ($tagcloud as $key => $value){
