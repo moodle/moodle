@@ -59,16 +59,18 @@ if (($data = data_submitted()) && confirm_sesskey()) {
 
     // print the grades on screen for feedbacks
 
-    $export = new grade_export($id, $data->itemids, $data->export_letters, $data->publish);
-
-    if ($data->publish) {
-        // Record an entry in the 'published' table: people can now access this data by URL
-    }
+    $export = new grade_export($id, $data->itemids, $data->export_letters, !empty($data->key));
 
     $export->display_grades($feedback, $data->previewrows);
 
     // this redirect should trigger a download prompt
-    redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
+    if (empty($data->key)) {
+        print_continue('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
+
+    } else {
+        $link = $CFG->wwwroot.'/grade/export/xml/dump.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters.'&amp;key='.$data->key;
+        echo "<a href=\"$link\">$link</a>";
+    }
     exit;
 }
 

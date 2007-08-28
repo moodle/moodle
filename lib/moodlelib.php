@@ -1883,6 +1883,78 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null) {
 }
 
 /**
+ * Require key login. Function terminates with error if key not found or incorrect.
+ * @param string $script unique script identifier
+ * @param int $instance optional instance id
+ */
+function require_user_key_login($script, $instance=null) {
+    global $nomoodlecookie, $USER, $SESSION;
+
+    if (empty($nomoodlecookie)) {
+        error('Incorrect use of require_key_login() - session cookies must be disabled!');
+    }
+
+/// extra safety
+    @session_write_close();
+
+    $keyvalue = required_param('key', PARAM_ALPHANUM);
+
+    if (!$key = get_record('user_private_key', 'script', $script, 'value', $keyvalue, 'instance', $instance)) {
+        error('Incorrect key');
+    }
+
+    if (!empty($key->validuntil) and $key->validuntil < time()) {
+        error('Expired key');
+    }
+
+    if (false) { // TODO
+        error('Client IP mismatch');
+    }
+
+    if (!$user = get_record('user', 'id', $key->userid)) {
+        error('Incorrect user record');
+    }
+
+/// emulate normal session
+    $SESSION = new object();
+    $USER    = $user;
+
+/// return isntance id - it might be empty
+    return $key->instance;
+}
+
+/**
+ * Creates a new private user access key.
+ * @param string $script unique target identifier
+ * @param int $userid
+ * @param instance $int optional instance id
+ * @param string $iprestriction optional ip restricted access
+ * @param timestamp $validuntil key valid only until given data
+ * @return string access key value
+ */
+function create_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
+    $key = new object();
+    $key->script        = $script;
+    $key->userid        = $userid;
+    $key->instance      = $instance;
+    $key->iprestriction = $iprestriction;
+    $key->validuntil    = $validuntil;
+    $key->timecreated   = time();
+
+    $key->value         = md5($userid.'_'.time().random_string(40)); // something long and unique
+    while (record_exists('user_private_key', 'value', $key->value)) {
+        // must be unique
+        $key->value     = md5($userid.'_'.time().random_string(40));
+    }
+
+    if (!insert_record('user_private_key', $key)) {
+        error('Can not insert new key');
+    }
+
+    return $key->value;
+}
+
+/**
  * Modify the user table by setting the currently logged in user's
  * last login to now.
  *

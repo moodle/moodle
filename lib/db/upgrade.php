@@ -1935,7 +1935,34 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_key($table, $key);
         
     } 
-    
+
+
+    if ($result && $oldversion < 2007082801) {
+
+    /// Define table user_private_key to be created
+        $table = new XMLDBTable('user_private_key');
+
+    /// Adding fields to table user_private_key
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('script', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('value', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('iprestriction', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->addFieldInfo('validuntil', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+
+    /// Adding keys to table user_private_key
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->addKeyInfo('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table user_private_key
+        $table->addIndexInfo('script-value', XMLDB_INDEX_NOTUNIQUE, array('script', 'value'));
+
+    /// Launch create table for user_private_key
+        $result = $result && create_table($table);
+    }
+
     return $result;
 }
 

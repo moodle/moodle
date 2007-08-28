@@ -3,8 +3,8 @@ require_once $CFG->libdir.'/formslib.php';
 
 class grade_export_form extends moodleform {
     function definition (){
-        global $CFG;
-        include_once($CFG->libdir.'/pear/HTML/QuickForm/advcheckbox.php');
+        global $CFG, $COURSE, $USER;
+
         $mform =& $this->_form;
         if (isset($this->_customdata['plugin'])) {
             $plugin = $this->_customdata['plugin'];
@@ -18,15 +18,15 @@ class grade_export_form extends moodleform {
         $mform->setDefault('export_letters', 0);
         $mform->setHelpButton('export_letters', array(false, get_string('exportletters', 'grades'), false, true, false, get_string("exportlettershelp", 'grades')));
 
-        $mform->addElement('advcheckbox', 'publish', get_string('publish', 'grades'));
-        $mform->setDefault('publish', 0);
-        $mform->setHelpButton('publish', array(false, get_string('publish', 'grades'), false, true, false, get_string("publishhelp", 'grades')));
-
-        $mform->addElement('textarea', 'iplist', get_string('iplist', 'grades'), array('cols' => 40, 'rows' => 5));
-        $mform->setHelpButton('iplist', array(false, get_string('iplist', 'grades'), false, true, false, get_string("iplisthelp", 'grades')));
-
-        $mform->addElement('password', 'password', get_string('password'));
-        $mform->setHelpButton('password', array(false, get_string('password', 'grades'), false, true, false, get_string("passwordhelp", 'grades')));
+        $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
+        $options = array('no');
+        if ($keys = get_records_select('user_private_key', "script='grade/export' AND instance={$COURSE->id} AND userid={$USER->id}")) {
+            foreach ($keys as $key) {
+                $options[$key->value] = $key->value; // TODO: add ip, date, etc.??
+            }
+        }
+        $mform->addElement('select', 'key', get_string('userkey', 'grades'), $options);
+        $mform->addElement('static', 'justalink', get_string('key_manager'), '<a href="hmm_create_me">some link to key manager</a>');
 
         $mform->addElement('header', 'general', get_string('gradeitemsinc', 'grades')); // TODO: localize
 
