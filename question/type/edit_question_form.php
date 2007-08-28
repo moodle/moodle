@@ -70,7 +70,7 @@ class question_edit_form extends moodleform {
         if (!isset($this->question->id)){
             //adding question
             $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
-                    array('contexts' => array($this->categorycontext)));
+                    array('contexts' => $this->contexts->having_cap('moodle/question:add')));
         } elseif (!($this->question->formoptions->canmove || $this->question->formoptions->cansaveasnew)){
             //editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
