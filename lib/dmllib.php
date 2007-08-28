@@ -927,7 +927,7 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
  */
 function recordset_to_menu($rs) {
     global $CFG;
-
+    $menu = array();
     if ($rs && $rs->RecordCount() > 0) {
         $keys = array_keys($rs->fields);
         $key0=$keys[0];
@@ -945,6 +945,30 @@ function recordset_to_menu($rs) {
         return $menu;
     } else {
         return false;
+    }
+}
+
+/**
+ * Utility function 
+ * Similar to recordset_to_menu 
+ *
+ * field1, field2 is needed because the order from get_records_sql is not reliable
+ * @param records - records from get_records_sql() or get_records()
+ * @param field1 - field to be used as menu index
+ * @param field2 - feild to be used as coresponding menu value
+ * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
+ */
+function records_to_menu($records, $field1, $field2) {
+
+    $menu = array();
+    foreach ($records as $record) {
+        $menu[$record->$field1] = $record->$field2;
+    }
+
+    if (!empty($menu)) {
+        return $menu;
+    } else {
+        return false; 
     }
 }
 

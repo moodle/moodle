@@ -520,7 +520,7 @@ function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 
-function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='') {
+function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DEFAULT_TAG_TABLE_FIELDS, $limitfrom='', $limitnum='', $tagtype='') {
 
     global $CFG;
 
@@ -529,6 +529,12 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
 
     if ($sort) {
         $sort = ' ORDER BY '. $sort;
+    }
+
+    if ($tagtype) {
+        $tagwhere = " AND tg.tagtype = '$tagtype' "; 
+    } else {
+        $tagwhere = ''; 
     }
 
     $query = "
@@ -543,6 +549,7 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
         WHERE 
             ti.itemtype = '{$item_type}' AND
             ti.itemid = '{$item_id}'
+            $tagwhere
         {$sort}
             ";
 

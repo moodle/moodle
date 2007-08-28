@@ -119,25 +119,13 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($ptags = get_records_sql_menu("SELECT t.id, t.name FROM
-                                     {$CFG->prefix}tag t,
-                                     {$CFG->prefix}tag_instance ti
-                                     WHERE t.id = ti.tagid
-                                     AND t.tagtype = 'default'
-                                     AND ti.itemid = {$post->id}")) {
-
+        if ($ptags = records_to_menu(get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'default'), 'id','rawname')) {           
             $post->ptags = implode(', ', $ptags);
         } else {
-            //$idsql = " AND bti.entryid = 0";
-            //was used but seems redundant.
             $post->ptags = '';
         }
-        if ($otags = get_records_sql_menu("SELECT t.id, t.name FROM
-                                     {$CFG->prefix}tag t,
-                                     {$CFG->prefix}tag_instance ti
-                                     WHERE t.id = ti.tagid
-                                     AND t.tagtype = 'official'
-                                     AND ti.itemid = {$post->id}")){
+        
+        if ($otags = records_to_menu(get_item_tags('blog', $post->id, 'ti.ordering ASC', 'id,rawname', '', '', 'official'), 'id','rawname')) {
             $post->otags = array_keys($otags);
         }
     break;
