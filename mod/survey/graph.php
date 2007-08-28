@@ -20,7 +20,7 @@
 
     require_login($course->id, false, $cm);
 
-    $groupmode = groupmode($course, $cm);   // Groups are being used
+    $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!has_capability('mod/survey:readresponses', $context)) {
@@ -36,8 +36,10 @@
     }
 
 /// Check to see if groups are being used in this survey
-    if ($groupmode and $group) {
-        $users = get_group_users($group);
+    if ($group) {
+        $users = groups_get_members($group);
+    } else if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) { 
+        $users = groups_get_grouping_members($cm->groupingid);
     } else {
         $users = get_course_users($course->id);
         $group = false;

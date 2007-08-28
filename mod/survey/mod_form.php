@@ -33,7 +33,11 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addElement('textarea', 'intro', get_string('customintro', 'survey'), 'wrap="virtual" rows="20" cols="75"');
         $mform->setType('intro', PARAM_RAW);
 
-        $this->standard_coursemodule_elements();
+        $features = new stdClass;
+        $features->groups = true;
+        $features->groupings = true;
+        $features->groupmembersonly = true;
+        $this->standard_coursemodule_elements($features);
 
 //-------------------------------------------------------------------------------
         // buttons

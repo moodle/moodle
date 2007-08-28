@@ -213,23 +213,24 @@ function survey_log_info($log) {
                               AND u.id = '$log->userid'");
 }
 
-function survey_get_responses($surveyid, $groupid) {
+function survey_get_responses($surveyid, $groupid, $groupingid) {
     global $CFG;
 
     if ($groupid) {
-        $groupsdb = ", {$CFG->prefix}groups_members gm ";
-        $groupsql = "AND gm.groupid = '$groupid' AND u.id = gm.userid";
+        $groupsjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid AND gm.groupid = '$groupid' ";
 
+    } else if ($groupingid) {
+        $groupsjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
+                       INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid AND gg.groupingid = $groupingid ";
     } else {
-        $groupsdb = "";
-        $groupsql = "";
+        $groupsjoin = "";
     }
 
     return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, MAX(a.time) as time
-                            FROM {$CFG->prefix}survey_answers a,
-                                 {$CFG->prefix}user u   $groupsdb
+                            FROM {$CFG->prefix}survey_answers a
+                                INNER JOIN {$CFG->prefix}user u ON a.userid = u.id
+                                $groupsjoin
                             WHERE a.survey = $surveyid
-                              AND a.userid = u.id $groupsql
                             GROUP BY u.id, u.firstname, u.lastname, u.picture
                             ORDER BY time ASC");
 }
@@ -298,8 +299,8 @@ function survey_already_done($survey, $user) {
    return record_exists("survey_answers", "survey", $survey, "userid", $user);
 }
 
-function survey_count_responses($surveyid, $groupid) {
-    if ($responses = survey_get_responses($surveyid, $groupid)) {
+function survey_count_responses($surveyid, $groupid, $groupingid) {
+    if ($responses = survey_get_responses($surveyid, $groupid, $groupingid)) {
         return count($responses);
     } else {
         return 0;

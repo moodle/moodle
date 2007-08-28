@@ -27,10 +27,10 @@
 
 /// Check to see if groups are being used in this survey
 
-    $groupmode = groupmode($course, $cm);   // Groups are being used
+    $groupmode = groups_get_activity_groupmode($cm);   // Groups are being used
 
     if ($groupmode and $group) {
-        $users = get_group_users($group);
+        $users = groups_get_members($group);
     } else {
         $users = get_course_users($course->id);
         $group = false;
