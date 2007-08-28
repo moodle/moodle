@@ -1963,6 +1963,34 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && create_table($table);
     }
 
+/// Going to modify the applicationid from int(1) to int(10). Dropping and
+/// re-creating the associated keys/indexes is mandatory to be cross-db. MDL-11042
+    if ($result && $oldversion < 2007082803) {
+
+    /// Define key applicationid (foreign) to be dropped form mnet_host
+        $table = new XMLDBTable('mnet_host');
+        $key = new XMLDBKey('applicationid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('applicationid'), 'mnet_application', array('id'));
+
+    /// Launch drop key applicationid
+        $result = $result && drop_key($table, $key);
+
+    /// Changing type of field applicationid on table mnet_host to int
+        $field = new XMLDBField('applicationid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'last_log_id');
+
+    /// Launch change of type for field applicationid
+        $result = $result && change_field_type($table, $field);
+
+    /// Define key applicationid (foreign) to be added to mnet_host
+        $key = new XMLDBKey('applicationid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('applicationid'), 'mnet_application', array('id'));
+
+    /// Launch add key applicationid
+        $result = $result && add_key($table, $key);
+
+    }
+
     return $result;
 }
 
