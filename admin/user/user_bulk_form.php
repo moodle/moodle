@@ -26,16 +26,21 @@ class user_bulk_form extends moodleform {
         $objs[] = &$this->ausers;
         $objs[] = &$this->susers;
 
-        $mform->addElement('group', 'usersgrp', get_string('users'), $objs, ' ', false);
+        $grp =& $mform->addElement('group', 'usersgrp', get_string('users'), $objs, ' ', false);
+        $grp->setHelpButton(array('lists','','bulkusers')); 
+
         $mform->addElement('static', 'comment');
 
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addone', get_string('addsel', 'bulkusers'));
-        $objs[] =& $mform->createElement('submit', 'removeone', get_string('removesel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
+        $objs[] =& $mform->createElement('submit', 'removesel', get_string('removesel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
-        $mform->addElement('group', 'buttonsgrp', null, $objs, array(' ', '<br />'), false);
-
+        $objs[] =& $mform->createElement('submit', 'deletesel', get_string('deletesel', 'bulkusers'));
+        $objs[] =& $mform->createElement('submit', 'deleteall', get_string('deleteall', 'bulkusers'));
+        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
+        $grp->setHelpButton(array('selectedlist','','bulkusers')); 
+        
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', get_string('withselected'), @$this->_customdata);
         $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));;
@@ -87,11 +92,19 @@ class user_bulk_form extends moodleform {
             if(!empty($data->ausers)) {
                 $SESSION->bulk_susers = array_merge($SESSION->bulk_susers, array_values($data->ausers));
             }
-        } else if(@$data->removeone) {
+        } else if(@$data->removeall) {
+            if(!empty($SESSION->bulk_ausers)) {
+                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, $SESSION->bulk_ausers);
+            }
+        } else if(@$data->removesel) {
+            if(!empty($data->ausers)) {
+                $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, array_values($data->ausers));
+            }
+        } else if(@$data->deletesel) {
             if(!empty($data->susers)) {
                 $SESSION->bulk_susers = array_diff($SESSION->bulk_susers, array_values($data->susers));
             }
-        } else if(@$data->removeall) {
+        } else if(@$data->deleteall) {
             $SESSION->bulk_susers = array();
         }
         $SESSION->bulk_susers = array_unique($SESSION->bulk_susers);
