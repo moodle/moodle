@@ -3,6 +3,8 @@
 require_once(dirname(__FILE__) . '/../config.php');
 
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
+define('MAX_TAG_LENGTH',50);
+
 /**
  * Creates tags
 
@@ -562,8 +564,7 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
  *      (to avoid field name ambiguity in the query, use the identifier "it" Ex: 'it.name ASC' )
  * @param string $fields a comma separated list of fields to return 
  *   (optional, by default all fields are returned). The first field will be used as key for the
- *   array so must be a unique field such as 'id'. To avoid field name ambiguity in the query, 
- *   use the identifier "it" Ex: 'it.name, it.id' )
+ *   array so must be a unique field such as 'id'. )
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
  * @return mixed an array of objects indexed by their ids, or false if no records were found or an error occured.
@@ -985,7 +986,7 @@ function tag_normalize($tag_names_csv, $lowercase=true) {
         //removes excess white spaces
         $value = preg_replace('/\s\s+/', ' ', $value);
 
-        return $value;
+        return substr($value,0,MAX_TAG_LENGTH);
     }
 
 }
@@ -1125,32 +1126,15 @@ function tag_names_csv($tag_objects) {
 
 
 /**
- * Returns a number of random tags, ordered by their popularity
+ * Returns most popular tags, ordered by their popularity
  *
  * @param int $nr_of_tags number of random tags to be returned
  * @param unknown_type $tag_type
  * @return mixed an array of tag objects with the following fields: id, name and count
  */
-function rand_tags_count($nr_of_tags=20, $tag_type = 'default') {
+function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
 
     global $CFG;
-
-    if (!$tags = get_all_tags($tag_type)) {
-        return array();
-    }
-
-    if(sizeof($tags) < $nr_of_tags) {
-        $nr_of_tags = sizeof($tags);
-    }
-
-    $rndtags = array_rand($tags, $nr_of_tags);
-
-    $tags_id_csv_with_apos = "'";
-    foreach($rndtags as $tagid) {
-        $tags_id_csv_with_apos .= $tags[$tagid]->id . "','";
-    }
-    $tags_id_csv_with_apos = substr($tags_id_csv_with_apos,0,-2);
-
 
     $query = "
         SELECT 
@@ -1163,15 +1147,14 @@ function rand_tags_count($nr_of_tags=20, $tag_type = 'default') {
             tg.id = ti.tagid
         WHERE 
             ti.tagid
-        IN 
-            ({$tags_id_csv_with_apos}) 
         GROUP BY 
             tagid 
         ORDER BY 
             count 
-        ASC";
-
-    return get_records_sql($query);
+        DESC
+        ";
+    
+    return get_records_sql($query,0,$nr_of_tags);
 
 
 }
@@ -1459,6 +1442,8 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
         shuffle($tagcloud);
     }
 
+    sort($tagcloud);
+    
     $count = array();
     foreach ($tagcloud as $key => $value){
         if(!empty($value->count)) {
