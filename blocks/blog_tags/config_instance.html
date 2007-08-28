@@ -1,9 +1,15 @@
 <?php
     if (empty($this->config->title)) {
-        $this->config->title = get_string('blocktagstitle', 'tag');
+        $this->config->title = get_string('blogtags', 'blog');
+    }
+    if (empty($this->config->timewithin)) {
+        $this->config->timewithin = BLOGDEFAULTTIMEWITHIN;
     }
     if (empty($this->config->numberoftags)) {
-        $this->config->numberoftags = 80;
+        $this->config->numberoftags = BLOGDEFAULTNUMBEROFTAGS;
+    }
+    if (empty($this->config->sort)) {
+        $this->config->sort = BLOGDEFAULTSORT;
     }
 ?>
 
@@ -17,6 +23,16 @@
 <tr valign="top">
 <td align="right"><?php print_string("numberoftags","blog") ?>:</td>
 <td><?php choose_from_menu($numberoftags,"numberoftags",$this->config->numberoftags) ?></td>
+</tr>
+
+<tr valign="top">
+<td align="right"><?php print_string("timewithin","blog") ?>:</td>
+<td><?php choose_from_menu($timewithin,"timewithin",$this->config->timewithin) ?></td>
+</tr>
+
+<tr valign="top">
+<td align="right"><?php print_string("tagsort","blog") ?>:</td>
+<td><?php choose_from_menu($sort,"sort",$this->config->sort) ?></td>
 </tr>
 
 <tr>
