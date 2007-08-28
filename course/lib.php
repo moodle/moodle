@@ -955,8 +955,12 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     if (empty($CFG->gdversion)) {
         echo "(".get_string("gdneed").")";
     } else {
-        echo '<img src="'.$CFG->wwwroot.'/course/report/log/graph.php?id='.$course->id.
-             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
+        // MDL-10818, do not display broken graph when user has no permission to view graph
+        if (has_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id)) ||
+            ($course->showreports and $USER->id == $userid)) {
+            echo '<img src="'.$CFG->wwwroot.'/course/report/log/graph.php?id='.$course->id.
+                 '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
+        }
     }
 }
 
