@@ -48,7 +48,8 @@ class main_view extends XMLDBAction {
             'reservedwords' => 'xmldb',
             'test' => 'xmldb',
             'gotolastused' => 'xmldb',
-            'checkindexes' => 'xmldb'
+            'checkindexes' => 'xmldb',
+            'checkbigints' => 'xmldb'
         ));
     }
 
@@ -87,6 +88,10 @@ class main_view extends XMLDBAction {
         $b .= '&nbsp;<a href="index.php?action=test">[' . $this->str['test'] . ']</a>';
     /// The check indexes button
         $b .= '&nbsp;<a href="index.php?action=check_indexes">[' . $this->str['checkindexes'] . ']</a>';
+    /// The check bigints button (only for MySQL and PostgreSQL) MDL-11038a
+        if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
+            $b .= '&nbsp;<a href="index.php?action=check_bigints">[' . $this->str['checkbigints'] . ']</a>';
+        }
         $b .= '</p>';
     /// Send buttons to output
         $o .= $b;
