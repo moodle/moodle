@@ -37,6 +37,11 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('moodle/grade:export', $context);
 
+// extra security check
+if (!empty($key->userid) and $USER->id != $key->userid) {
+    error('You are not owner of this key');
+}
+
 $returnurl = $CFG->wwwroot.'/grade/export/keymanager.php?id='.$course->id;
 
 if ($id and $delete) {
