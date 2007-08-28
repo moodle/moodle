@@ -26,7 +26,7 @@ class grade_export_form extends moodleform {
             }
         }
         $mform->addElement('select', 'key', get_string('userkey', 'grades'), $options);
-        $mform->addElement('static', 'justalink', get_string('key_manager'), '<a href="hmm_create_me">some link to key manager</a>');
+        $mform->addElement('static', 'keymanagerlink', get_string('key_manager'), '<a href="'.$CFG->wwwroot.'/grade/export/keymanager.php?id='.$COURSE->id.'">'.get_string('keymanager').'</a>');
 
         $mform->addElement('header', 'general', get_string('gradeitemsinc', 'grades')); // TODO: localize
 
