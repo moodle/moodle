@@ -79,6 +79,19 @@
                 }
             }
 
+            // skip restore of plugins that are not installed
+            static $plugins;
+            if (!isset($plugins)) {
+                $plugins = get_list_of_plugins('mod/assignment/type');
+            }
+
+            if (!in_array($assignment->assignmenttype, $plugins)) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo "<li><strong>".get_string("modulename","assignment")." \"".format_string(stripslashes($assignment->name),true)."\" - plugin '{$assignment->assignmenttype}' not available!</strong></li>";
+                }
+                return true; // do not fail the restore
+            }
+
             //The structure is equal to the db, so insert the assignment
             $newid = insert_record ("assignment",$assignment);
 
@@ -95,7 +108,7 @@
                 //Now check if want to restore user data and do it.
                 if (restore_userdata_selected($restore,'assignment',$mod->id)) { 
                     //Restore assignmet_submissions
-                    $status = assignment_submissions_restore_mods ($mod->id, $newid,$info,$restore);
+                    $status = assignment_submissions_restore_mods($mod->id, $newid,$info,$restore) && $status;
                 }
             } else {
                 $status = false;
@@ -114,8 +127,12 @@
 
         $status = true;
 
-        //Get the submissions array 
-        $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
+        //Get the submissions array - it might not be present
+        if (isset($info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'])) {
+            $submissions = $info['MOD']['#']['SUBMISSIONS']['0']['#']['SUBMISSION'];
+        } else {
+            $submissions = array();
+        }
 
         //Iterate over submissions
         for($i = 0; $i < sizeof($submissions); $i++) {
