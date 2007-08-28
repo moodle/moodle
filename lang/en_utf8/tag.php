@@ -1,6 +1,7 @@
 <?php
 
 $string['addtagtomyinterests'] =  'Add \"$a\" to my interests';
+$string['blocktagstitle'] =  'Tags';
 $string['count'] = 'Count';
 $string['changename'] = 'Change name';
 $string['description'] = 'Description';
