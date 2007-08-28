@@ -42,18 +42,17 @@ echo '<tr valign="top">';
 
 $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
-echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
 if (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing()) {
+    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="left-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
+    echo '</td>';
 }
-echo '</td>';
 
 
 
 //----------------- middle column -----------------
 
 echo '<td valign="top" id="middle-column">';
-
 
 $tagname  = tag_display_name($tag);
 
@@ -92,11 +91,11 @@ echo '</td>';
 
 $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
 
-echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
 if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing()) {
+    echo '<td style="vertical-align: top; width: '.$blocks_preferred_width.'px;" id="right-column">';
     blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
+    echo '</td>';
 }
-echo '</td>';
 
 /// Finish the page
 echo '</tr></table>';
