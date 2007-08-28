@@ -951,7 +951,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
 
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
-    global $CFG;
+    global $CFG, $USER;
     if (empty($CFG->gdversion)) {
         echo "(".get_string("gdneed").")";
     } else {
