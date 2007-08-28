@@ -3494,7 +3494,9 @@
                             && !empty($restore->mods[$mod->modtype]->instances[$mod->id]->restore))) {
                         $modrestore = $mod->modtype."_restore_mods";
                         if (function_exists($modrestore)) {                                               //Debug
-                            $status = $status and $modrestore($mod,$restore); //bit operator & not reliable here!
+                             // we want to restore all mods even when one fails
+                             // incorrect code here ignored any errors during module restore in 1.6-1.8
+                            $status = $status && $modrestore($mod,$restore);
                         } else {
                             //Something was wrong. Function should exist.
                             $status = false;
@@ -7349,8 +7351,10 @@
         /*******************************************************************************
          ************* Restore of Roles and Capabilities happens here ******************
          *******************************************************************************/
-        $status = restore_create_roles($restore, $xml_file);
-        $status = restore_roles_settings($restore, $xml_file);
+         // try to restore roles even when restore is going to fail - teachers might have
+         // at least some role assigned - this is not correct though
+        $status = restore_create_roles($restore, $xml_file) && $status;
+        $status = restore_roles_settings($restore, $xml_file) && $status;
 
         //Now if all is OK, update:
         //   - course modinfo field
@@ -7407,7 +7411,8 @@
             }
         }
 
-        if ($status = restore_close_html($restore)){
+        // this is not a critical check - the result can be ignored
+        if (restore_close_html($restore)){
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>Closing the Restorelog.html file.</li>';
             }
@@ -7415,10 +7420,6 @@
         else {
             if (!defined('RESTORE_SILENTLY')) {
                 notify("Could not close the restorelog.html file");
-            }
-            else {
-                $errorstr = "Could not close the restorelog.html file";
-                return false;
             }
         }
 
