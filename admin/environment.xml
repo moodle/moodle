@@ -132,7 +132,7 @@
         </FEEDBACK>
         <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
       </VENDOR>
-      <VENDOR name="postgres" version="7.4" />
+      <VENDOR name="postgres" version="8.0" />
       <VENDOR name="mssql" version="9.0" />
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
@@ -195,7 +195,7 @@
         </FEEDBACK>
         <BYPASS function="bypass_mysql416_reqs" message="mysql416bypassed" />
       </VENDOR>
-      <VENDOR name="postgres" version="7.4" />
+      <VENDOR name="postgres" version="8.0" />
       <VENDOR name="mssql" version="9.0" />
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
