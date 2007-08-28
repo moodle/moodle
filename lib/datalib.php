@@ -1303,7 +1303,7 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
         return array();
     }
 
-    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode
+    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode,cm.groupingid
                             FROM {$CFG->prefix}course_modules cm,
                                  {$CFG->prefix}course_sections cw,
                                  {$CFG->prefix}modules md,

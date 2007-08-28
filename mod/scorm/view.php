@@ -75,9 +75,10 @@
     }
 
     if (has_capability('moodle/course:manageactivities', $context)) {
-        $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
-        if ($trackedusers->c > 0) {
-            echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+        
+        $trackedusers = scorm_get_count_users($scorm->id, $cm->groupingid);
+        if ($trackedusers > 0) {
+            echo "<div class=\"reportlink\"><a $CFG->frametarget href=\"report.php?id=$cm->id\"> ".get_string('viewallreports','scorm',$trackedusers).'</a></div>';
         } else {
             echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
         }

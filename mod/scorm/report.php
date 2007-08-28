@@ -100,7 +100,24 @@
     if (empty($b)) {
         if (empty($a)) {
             // No options, show the global scorm report
-            if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
+            
+            if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+                $sql = "SELECT st.userid, st.scormid
+                        FROM {$CFG->prefix}scorm_scoes_track st
+                            INNER JOIN {$CFG->prefix}groups_members gm ON st.userid = gm.userid
+                            INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid 
+                        WHERE st.scormid = {$scorm->id} AND gg.groupingid = {$cm->groupingid}
+                        GROUP BY st.userid,st.scormid
+                        ";
+            } else {
+                $sql = "SELECT st.userid, st.scormid
+                        FROM {$CFG->prefix}scorm_scoes_track st 
+                        WHERE st.scormid = {$scorm->id}
+                        GROUP BY st.userid,st.scormid
+                        ";
+            }
+            
+            if ($scousers=get_records_sql($sql)) {
                 $table = new stdClass();
                 $table->head = array('&nbsp;', get_string('name'));
                 $table->align = array('center', 'left');

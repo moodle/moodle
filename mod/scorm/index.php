@@ -1,6 +1,7 @@
 <?php // $Id$
 
     require_once("../../config.php");
+    require_once("locallib.php");
 
     $id = required_param('id', PARAM_INT);   // course id
 
@@ -67,9 +68,9 @@
         }
         $report = '&nbsp;';
         if (has_capability('mod/scorm:viewreport', $context)) {
-            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
-            if ($trackedusers->c > 0) {
-                $reportshow = '<a href="report.php?id='.$scorm->coursemodule.'">'.get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
+            $trackedusers = scorm_get_count_users($scorm->id, $scorm->groupingid);
+            if ($trackedusers > 0) {
+                $reportshow = '<a href="report.php?id='.$scorm->coursemodule.'">'.get_string('viewallreports','scorm',$trackedusers).'</a></div>';
             } else {
                 $reportshow = get_string('noreports','scorm');
             }

@@ -186,7 +186,11 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 
 //-------------------------------------------------------------------------------
-        $this->standard_coursemodule_elements();
+        $features = new stdClass;
+        $features->groups = false;
+        $features->groupings = true;
+        $features->groupmembersonly = true;
+        $this->standard_coursemodule_elements($features);
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
