@@ -182,8 +182,8 @@
     print_heading($strpreview);
 
     if (!empty($quizid)) {
-        echo '<p align="center">'.get_string('modulename', 'quiz') . ': ';
-        p($quiz->name);
+        echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
+        p(format_string($quiz->name));
         echo "</p>\n";
     }
     $number = 1;

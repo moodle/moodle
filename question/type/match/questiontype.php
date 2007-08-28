@@ -173,7 +173,7 @@ class question_match_qtype extends default_questiontype {
             // answers per question, each with different marks and feedback.
             $answer = new stdClass();
             $answer->id       = $subquestion->code;
-            $answer->answer   = $subquestion->answertext;
+            $answer->answer   = format_string($subquestion->answertext);
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->code] = clone($answer);
