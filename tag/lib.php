@@ -1138,7 +1138,7 @@ function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
 
     $query = "
         SELECT 
-            tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count, tg.flag 
+            tg.rawname, tg.id, tg.name, COUNT(ti.id) AS count, tg.flag 
         FROM 
             {$CFG->prefix}tag_instance ti 
         INNER JOIN 
@@ -1438,11 +1438,11 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
         return;
     }
 
-    sort($tagcloud);
-
-    if ( $shuffle ) {
+    if ($shuffle) {
         shuffle($tagcloud);
-    }    
+    } else {
+        ksort($tagcloud);
+    }
     
     $count = array();
     foreach ($tagcloud as $key => $value){

@@ -37,7 +37,7 @@ if(!empty($query)) {
 echo '<br/><br/>';
 
 print_box_start('generalbox', 'big-tag-cloud-box');
-print_tag_cloud(popular_tags_count(60), true, 170,70);
+print_tag_cloud(popular_tags_count(60), false, 170,70);
 print_box_end();
 
 print_footer();
