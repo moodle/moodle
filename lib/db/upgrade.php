@@ -1833,6 +1833,109 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('blog_tag_instance');
         drop_table($table);
     }
+    
+    /// MDL-11015, MDL-11016
+    if ($result && $oldversion < 2007082800) {
+
+    /// Changing type of field userid on table tag to int
+        $table = new XMLDBTable('tag');
+        $field = new XMLDBField('userid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'id');
+
+    /// Launch change of type for field userid
+        $result = $result && change_field_type($table, $field);
+        
+    /// Changing type of field descriptionformat on table tag to int
+        $table = new XMLDBTable('tag');
+        $field = new XMLDBField('descriptionformat');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'description');
+
+    /// Launch change of type for field descriptionformat
+        $result = $result && change_field_type($table, $field);
+        
+    /// Define key userid (foreign) to be added to tag
+        $table = new XMLDBTable('tag');
+        $key = new XMLDBKey('userid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Launch add key userid
+        $result = $result && add_key($table, $key);
+        
+    /// Define index tagiditem (unique) to be dropped form tag_instance
+        $table = new XMLDBTable('tag_instance');
+        $index = new XMLDBIndex('tagiditem');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('tagid', 'itemtype', 'itemid'));
+
+    /// Launch drop index tagiditem
+        $result = $result && drop_index($table, $index);
+        
+    /// Changing type of field tagid on table tag_instance to int
+        $table = new XMLDBTable('tag_instance');
+        $field = new XMLDBField('tagid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'id');
+
+    /// Launch change of type for field tagid
+        $result = $result && change_field_type($table, $field);
+        
+    /// Define key tagid (foreign) to be added to tag_instance
+        $table = new XMLDBTable('tag_instance');
+        $key = new XMLDBKey('tagid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('tagid'), 'tag', array('id'));
+
+     /// Launch add key tagid
+        $result = $result && add_key($table, $key);       
+
+    /// Changing sign of field itemid on table tag_instance to unsigned
+        $table = new XMLDBTable('tag_instance');
+        $field = new XMLDBField('itemid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'itemtype');
+
+    /// Launch change of sign for field itemid
+        $result = $result && change_field_unsigned($table, $field);
+        
+    /// Changing sign of field ordering on table tag_instance to unsigned
+        $table = new XMLDBTable('tag_instance');
+        $field = new XMLDBField('ordering');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'itemid');
+
+    /// Launch change of sign for field ordering
+        $result = $result && change_field_unsigned($table, $field);        
+        
+    /// Define index itemtype-itemid-tagid (unique) to be added to tag_instance
+        $table = new XMLDBTable('tag_instance');
+        $index = new XMLDBIndex('itemtype-itemid-tagid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid'));
+
+    /// Launch add index itemtype-itemid-tagid
+        $result = $result && add_index($table, $index);
+        
+    /// Define index tagid (unique) to be dropped form tag_correlation
+        $table = new XMLDBTable('tag_correlation');
+        $index = new XMLDBIndex('tagid');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('tagid'));
+
+    /// Launch drop index tagid
+        $result = $result && drop_index($table, $index);        
+        
+    /// Changing type of field tagid on table tag_correlation to int
+        $table = new XMLDBTable('tag_correlation');
+        $field = new XMLDBField('tagid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'id');
+
+    /// Launch change of type for field tagid
+        $result = $result && change_field_type($table, $field);
+        
+        
+    /// Define key tagid (foreign) to be added to tag_correlation
+        $table = new XMLDBTable('tag_correlation');
+        $key = new XMLDBKey('tagid');
+        $key->setAttributes(XMLDB_KEY_FOREIGN, array('tagid'), 'tag', array('id'));
+
+    /// Launch add key tagid
+        $result = $result && add_key($table, $key);
+        
+    } 
+    
     return $result;
 }
 
