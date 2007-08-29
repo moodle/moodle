@@ -1437,7 +1437,7 @@ function print_tag_search_results($query,  $page, $perpage) {
  * @param int $max_size maximum text size, in percentage
  * @param int $min_size minimum text size, in percentage
  */
-function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) {
+function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80, $return=false) {
 
     global $CFG;
 
@@ -1475,7 +1475,7 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
     $can_manage_tags = has_capability('moodle/tag:manage', $systemcontext);
 
     //prints the tag cloud
-    echo '<ul id="tag-cloud-list">';
+    $output = '<ul id="tag-cloud-list">';
     foreach ($tagcloud as $key => $tag) {
 
         $size = $min_size + ((log10($tag->count) - $min) * $step);
@@ -1493,10 +1493,16 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80) 
 
         $tag_link = '<li><a '.$href.' '.$title.' '. $style .'>'.$tagname.'</a></li> ';
 
-        echo $tag_link;
+        $output .= $tag_link;
 
     }
-    echo '</ul>';
+    $output .= '</ul>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 
 }
 
