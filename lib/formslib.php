@@ -562,7 +562,6 @@ class moodleform {
      * get data with get_data().
      *
      * @param boolean $cancel whether to show cancel button, default true
-     * @param boolean $revert whether to show revert button, default true
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
     function add_action_buttons($cancel = true, $submitlabel=null){

@@ -352,8 +352,6 @@ function grade_build_nav($path, $pagename=null, $id=null) {
 
     $path_elements_count = count($path_elements);
 
-    $last_element = $path_elements[$path_elements_count-1]; // Should be the filename (including extension)
-
     // First link is always 'grade'
     $navlinks = array();
     $navlinks[] = array('name' => $strgrades,
@@ -376,6 +374,11 @@ function grade_build_nav($path, $pagename=null, $id=null) {
     }
 
     $navlink4 = null;
+
+    // Remove file extensions from filenames
+    foreach ($path_elements as $key => $filename) {
+        $path_elements[$key] = str_replace('.php', '', $filename);
+    }
 
     // Second level links
     switch ($path_elements[1]) {

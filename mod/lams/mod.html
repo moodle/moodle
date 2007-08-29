@@ -25,17 +25,17 @@ if (!isset($form->create_sequence_url)) {
     $hash = sha1(strtolower($plaintext));
     $form->create_sequence_url = $CFG->lams_serverurl.$LAMSCONSTANTS->login_request.
         '?'.$LAMSCONSTANTS->param_uid.'='.$USER->username.
-        '&'.$LAMSCONSTANTS->param_method.'='.$LAMSCONSTANTS->author_method.
-        '&'.$LAMSCONSTANTS->param_timestamp.'='.urlencode($datetime).
-        '&'.$LAMSCONSTANTS->param_serverid.'='.$CFG->lams_serverid.
-        '&'.$LAMSCONSTANTS->param_hash.'='.$hash.
-        '&'.$LAMSCONSTANTS->param_courseid.'='.$form->course;
+        '&amp;'.$LAMSCONSTANTS->param_method.'='.$LAMSCONSTANTS->author_method.
+        '&amp;'.$LAMSCONSTANTS->param_timestamp.'='.urlencode($datetime).
+        '&amp;'.$LAMSCONSTANTS->param_serverid.'='.$CFG->lams_serverid.
+        '&amp;'.$LAMSCONSTANTS->param_hash.'='.$hash.
+        '&amp;'.$LAMSCONSTANTS->param_courseid.'='.$form->course;
 }
 ?>
 
 <form id="form" method="post" action="mod.php" onSubmit="disableSumbit(this);">
 <center>
-<span id="message"><p>Please wait .......</p></span>
+<p id="message">Please wait .......</p>
 <table cellpadding="5">
 <tr valign="top">
 <td align="right"><b><?php print_string("workspace", "lams") ?>:</b></td>
@@ -58,7 +58,7 @@ if (!isset($form->create_sequence_url)) {
 <tr>
 <td align="right"><p><b><?php print_string("introduction", "lams") ?>:</b></p>
 <br />
-<font size="1">
+<!-- <font size="1"> DEPRECATED, USE CSS -->
 <?php
 if ($usehtmleditor) {
     helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -70,7 +70,7 @@ if ($usehtmleditor) {
 }
 ?>
 <br />
-</font>
+<!-- </font> DEPRECATED, USE CSS -->
 </td>
 <td>
 <?php
@@ -87,13 +87,13 @@ print_textarea($usehtmleditor, 20, 50, 680, 400, "introduction", $form->introduc
 </table>
 <input type="hidden" name="learning_session_id"/>
 <input type="hidden" name="create_sequence_url" id="create_sequence_url"/>
-<input type="submit" id="save" name="save" value="<?php print_string("useSequence","lams") ?>" onClick="return validate();">
+<input type="submit" id="save" name="save" value="<?php print_string("useSequence","lams") ?>" onClick="return validate();" />
 <input type="button" id="edit" name="edit" value="<?php print_string("editSequence","lams") ?>" onClick="openAuthor(<?php
-    echo "'".$form->create_sequence_url."&".$LAMSCONSTANTS->param_ldid."=".$form->sequence."'";?>);">
+    echo "'".$form->create_sequence_url."&amp;".$LAMSCONSTANTS->param_ldid."=".@$form->sequence."'";?>);" />
 <input type="button" id="create" name="create" value="<?php print_string("createSequence","lams") ?>" onClick="openAuthor(<?php
-    echo "'".$form->create_sequence_url."'";?>);">
-<input type="button" id="refresh" name="refresh" value="<?php print_string("refreshSequenceList","lams")?>" onclick="refreshLists();">
-<input type="submit" id="cancel" name=cancel value="<?php  print_string("cancel") ?>">
+    echo "'".$form->create_sequence_url."'";?>);" />
+<input type="button" id="refresh" name="refresh" value="<?php print_string("refreshSequenceList","lams")?>" onclick="refreshLists();" />
+<input type="submit" id="cancel" name=cancel value="<?php  print_string("cancel") ?>" />
 
 
 <!-- These hidden variables are always the same -->
@@ -111,7 +111,7 @@ print_textarea($usehtmleditor, 20, 50, 680, 400, "introduction", $form->introduc
 
 <script type="text/javascript">
 //<![CDATA[
-
+<!--
 function validate(){
     workspaceObj = document.getElementById("workspace");
     if (workspaceObj.options.length == 0){
@@ -214,7 +214,7 @@ var req;
  * This function is to initialize elements' status and refresh workspace and sequence lists
  */
 function refreshLists(){
-    document.getElementById("message").innerHTML = "<p>Please wait .......</p>";
+    document.getElementById("message").innerHTML = "<p>Please wait .......<" + "/p>";
     disableSubmit(document.forms[0]);
     document.getElementById("create").disabled = true;
     document.getElementById("edit").disabled = true;
@@ -291,25 +291,25 @@ function processStateChange() {
             }
             initDynamicOptionLists(); //construct the list
             document.getElementById("message").innerHTML =
-                "<p>Select an existing sequence or create a new sequence.</p>";
+                "<p>Select an existing sequence or create a new sequence.<" + "/p>";
         }else if(req.status == 504){//gateway timeout. probabaly LAMS server is not available.
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It seems the LAMS server is not available!<br/> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It seems the LAMS server is not available!<br/> Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }else if(req.status == 401){//AuthenticationException thrown by LAMS server.
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server is not authenticated by LAMS!<br/> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server is not authenticated by LAMS!<br/> Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }else if(req.status == 502){//Unknow exception thrown by LAMS server
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">An unexpected error returned from LAMS server:'+req.responseText+'! Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">An unexpected error returned from LAMS server:'+req.responseText+'! Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }else if(req.status == 417){//ServerNotFound exception thrown by LAMS server
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server has not registered in LAMS!<br/> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">This moodle server has not registered in LAMS!<br/> Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }else if(req.status == 402){//All LAMS module settings have not not been set up
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">All the LAMS module settings have not been set up!<br/> Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">All the LAMS module settings have not been set up!<br/> Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }else{//this error should come from moodle server itself
             document.getElementById("message").innerHTML =
-                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It should be a moodle server error:'+req.status + ' ' + req.statusText+'! Please contact your administrator.</h4></td></tr></table>';
+                '<table align="center" width="57%"  class="noticebox" border="0" cellpadding="15" cellspacing="0"><tr><td bgcolor="#FFAAAA" class="noticeboxcontent"><h4   class="main">It should be a moodle server error:'+req.status + ' ' + req.statusText+'! Please contact your administrator.<'+'/h4><'+'/td><'+'/tr><'+'/table>';
         }
     }
 }
@@ -776,5 +776,6 @@ function DOL_selectChildOptions(obj,usePreselected) {
 }
 
 refreshLists();//refresh the lists when form is displayed.
+-->
 //]]>
 </script>

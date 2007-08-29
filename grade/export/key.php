@@ -49,7 +49,7 @@ if ($id and $delete) {
         print_header(get_string('deleteselectedkey'), get_string('deleteselectedkey'));
         $optionsyes = array('id'=>$id, 'delete'=>1, 'courseid'=>$courseid, 'sesskey'=>sesskey(), 'confirm'=>1);
         $optionsno  = array('id'=>$courseid);
-        notice_yesno(get_string('deletekeyconfirm', 'key', $key->value), 'key.php', 'keymanager.php', $optionsyes, $optionsno, 'get', 'get');
+        notice_yesno(get_string('deletekeyconfirm', 'userkey', $key->value), 'key.php', 'keymanager.php', $optionsyes, $optionsno, 'get', 'get');
         print_footer();
         die;
 
@@ -81,13 +81,13 @@ if ($editform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$strkeys   = get_string('userkeys');
+$strkeys   = get_string('userkeys', 'userkey');
 $strgrades = get_string('grades');
 
 if ($id) {
-    $strheading = get_string('edituserkey', 'key');
+    $strheading = get_string('edituserkey', 'userkey');
 } else {
-    $strheading = get_string('createuserkey', 'key');
+    $strheading = get_string('createuserkey', 'userkey');
 }
 
 

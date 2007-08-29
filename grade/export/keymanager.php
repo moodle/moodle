@@ -63,7 +63,7 @@ if ($keys = get_records_select('user_private_key', "script='grade/export' AND in
         $data[] = $line;
     }
 }
-$table->head  = array(get_string('keyvalue'), get_string('keyiprestriction'), get_string('keyvaliduntil'), $stredit);
+$table->head  = array(get_string('keyvalue', 'userkey'), get_string('keyiprestriction', 'userkey'), get_string('keyvaliduntil', 'userkey'), $stredit);
 $table->size  = array('50%', '30%', '10%', '10%');
 $table->align = array('left', 'left', 'left', 'center');
 $table->width = '90%';
@@ -71,7 +71,7 @@ $table->data  = $data;
 print_table($table);
 
 echo '<div class="buttons">';
-print_single_button('key.php', array('courseid'=>$course->id), get_string('newuserkey'));
+print_single_button('key.php', array('courseid'=>$course->id), get_string('newuserkey', 'userkey'));
 echo '</div>';
 
 print_footer();
