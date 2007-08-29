@@ -53,7 +53,13 @@ $mform = new grade_export_form(null, array('plugin'=>'xmlexport'));
 // process post information
 if ($data = $mform->get_data()) {
     if ($data->itemids) {
-        $itemidsurl = implode(",",$data->itemids);
+        $items = array();
+        foreach ($data->itemids as $itemid=>$selected) {
+            if ($selected) {
+                $items[] = $itemid;
+            }
+        }
+        $itemidsurl = implode(",", $items);
     } else {
         //error?
         $itemidsurl = '';

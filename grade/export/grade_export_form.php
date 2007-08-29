@@ -2,7 +2,7 @@
 require_once $CFG->libdir.'/formslib.php';
 
 class grade_export_form extends moodleform {
-    function definition (){
+    function definition() {
         global $CFG, $COURSE, $USER;
 
         $mform =& $this->_form;
@@ -45,24 +45,19 @@ class grade_export_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradeitemsinc', 'grades')); // TODO: localize
 
         $mform->addElement('hidden', 'id', $COURSE->id);
+
         if ($grade_items = grade_item::fetch_all(array('courseid'=>$COURSE->id))) {
-            $noidnumber = false;
             foreach ($grade_items as $grade_item) {
-
                 if ($plugin != 'xmlexport' || $grade_item->idnumber) {
-                    $element = new HTML_QuickForm_advcheckbox('itemids['.$grade_item->id.']', null, $grade_item->get_name(), array('selected'=>'selected'), array(0, $grade_item->id));
-                    $element->setChecked(1);
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name());
+                    $mform->setDefault('itemids['.$grade_item->id.']', 1);
+
                 } else {
+                    $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber'));
+                    $mform->hardFreeze('itemids['.$grade_item->id.']');
                     $noidnumber = true;
-                    $element = new HTML_QuickForm_advcheckbox('itemids['.$grade_item->id.']', null, $grade_item->get_name(), array('disabled'=>'disabled'), array(0, $grade_item->id));
                 }
-
-                $mform->addElement($element);
             }
-        }
-
-        if ($noidnumber) {
-            $mform->addElement('static', 'noidnumber',  '', get_string('noidnumber'));
         }
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
