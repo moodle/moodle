@@ -637,7 +637,9 @@ class qformat_default {
             // export the question displaying message
             $count++;
             echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
-            $expout .= $this->writequestion( $question ) . "\n";
+            if (question_has_capability_on($question, 'view', $question->category)){
+                $expout .= $this->writequestion( $question ) . "\n";
+            }
         }
 
         // final pre-process on exported data
