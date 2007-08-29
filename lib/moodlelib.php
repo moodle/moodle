@@ -1907,8 +1907,11 @@ function require_user_key_login($script, $instance=null) {
         error('Expired key');
     }
 
-    if (false) { // TODO
-        error('Client IP mismatch');
+    if ($key->iprestriction) {
+        $remoteaddr = getremoteaddr();
+        if ($remoteaddr == '' or !address_in_subnet($remoteaddr, $key->iprestriction)) {
+            error('Client IP address mismatch');
+        }
     }
 
     if (!$user = get_record('user', 'id', $key->userid)) {
