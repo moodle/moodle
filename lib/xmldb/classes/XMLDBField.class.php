@@ -45,7 +45,7 @@ class XMLDBField extends XMLDBObject {
         parent::XMLDBObject($name);
         $this->type = NULL;
         $this->length = NULL;
-        $this->unsigned = false;
+        $this->unsigned = true;
         $this->notnull = false;
         $this->default = NULL;
         $this->sequence = false;
