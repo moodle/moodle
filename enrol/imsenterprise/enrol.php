@@ -486,6 +486,7 @@ function process_group_tag($tagcontents){
                   $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
               } else {
                 // Create the (hidden) course(s) if not found
+                $course = new object();
                 $course->fullname = $group->description;
                 $course->shortname = $coursecode;
                 $course->idnumber = $coursecode;
@@ -543,13 +544,13 @@ function process_group_tag($tagcontents){
                 }else{
                     $course->sortorder = 1000;
                 }
-                if($course->id = insert_record('course', $course)){
+                if($course->id = insert_record('course', addslashes_object($course))){
 
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
-                    $section = NULL;
+                    $section = new object();
                     $section->course = $course->id;   // Create a default section.
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
