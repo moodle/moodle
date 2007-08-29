@@ -26,7 +26,6 @@
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_txt.php';
-require_once 'grade_export_txt_form.php';
 
 $id       = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
@@ -49,7 +48,7 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'txt');
 
-$mform = new grade_export_txt_form();
+$mform = new grade_export_form(null, array('includeseparator'=>true));
 
 // process post information
 if ($data = $mform->get_data()) {

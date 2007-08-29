@@ -48,7 +48,7 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xml');
 
-$mform = new grade_export_form(null, array('plugin'=>'xmlexport'));
+$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing'=>true));
 
 // process post information
 if ($data = $mform->get_data()) {
