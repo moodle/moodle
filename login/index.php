@@ -184,7 +184,7 @@ httpsrequired();
                 if ($passwordchangeurl != '') {
                     redirect($passwordchangeurl);
                 } else {
-                    error(get_strin('nopasswordchangeforced', 'auth'));
+                    error(get_string('nopasswordchangeforced', 'auth'));
                 }
             }
 
