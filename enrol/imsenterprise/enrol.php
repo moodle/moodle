@@ -542,7 +542,7 @@ function process_group_tag($tagcontents){
                 }else{
                     $course->sortorder = 1000;
                 }
-                if($course->id = insert_record('course', $course)){
+                if($course->id = insert_record('course', addslashes_object($course))){
 
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
