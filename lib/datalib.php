@@ -619,7 +619,8 @@ function get_my_courses($userid, $sort=NULL, $fields=NULL, $doanything=false,$li
     if (!empty($USER->id) && ($USER->id == $userid) && $usingdefaults) {
         if (!empty($USER->mycourses[$doanything])) {
             if ($limit && $limit < count($USER->mycourses[$doanything])) {
-                return array_slice($USER->mycourses[$doanything], 0, $limit, true);
+                //silence warnings in PHP 4.x - the last param was added in PHP 5.0.2
+                return @array_slice($USER->mycourses[$doanything], 0, $limit, true);
             } else {
                 return $USER->mycourses[$doanything];
             }
