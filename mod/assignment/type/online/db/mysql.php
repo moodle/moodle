@@ -1,7 +1,7 @@
 <?php  // $Id$
 
 
-function assignment_online_upgrade($oldversion)  {
+function assignment_type_online_upgrade($oldversion)  {
     global $CFG, $db;
 
     if ($oldversion < 2005042900 and empty($CFG->noconvertjournals)) {  // Phase out Journals, convert them 
