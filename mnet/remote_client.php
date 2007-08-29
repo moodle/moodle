@@ -1,7 +1,7 @@
-<?php
+<?php // $Id$
 /**
  * An object to represent lots of information about an RPC-peer machine
- * 
+ *
  * @author  Donal McMullan  donal@catalyst.net.nz
  * @version 0.0.1
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License

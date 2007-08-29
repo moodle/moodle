@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * Info about the local environment, wrt RPC
  *

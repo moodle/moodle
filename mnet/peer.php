@@ -1,4 +1,4 @@
-<?php
+<?php // $Id$
 /**
  * An object to represent lots of information about an RPC-peer machine
  *

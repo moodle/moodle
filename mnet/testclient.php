@@ -1,12 +1,12 @@
-<?php
+<?php // $Id$
 /**
  * A template to test Moodle's XML-RPC feature
- * 
- * This script 'remotely' executes the mnet_concatenate_strings function in 
+ *
+ * This script 'remotely' executes the mnet_concatenate_strings function in
  * mnet/testlib.php
  * It steps through each stage of the process, printing some data as it goes
  * along. It should help you to get your remote method working.
- * 
+ *
  * @author  Donal McMullan  donal@catalyst.net.nz
  * @version 0.0.1
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
