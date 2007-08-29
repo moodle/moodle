@@ -26,6 +26,7 @@
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_txt.php';
+require_once 'grade_export_txt_form.php';
 
 $id       = required_param('id', PARAM_INT); // course id
 $feedback = optional_param('feedback', '', PARAM_ALPHA);
@@ -47,14 +48,16 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'txt');
-// process post information
-if (($data = data_submitted()) && confirm_sesskey()) {
 
-    // $itemids consists of ints and ",", will be cleaned in the main export class
-    if (!is_array($data->itemids)) {
-        $itemidsurl = $data->itemids;
-    } else {
+$mform = new grade_export_txt_form();
+
+// process post information
+if ($data = $mform->get_data()) {
+    if ($data->itemids) {
         $itemidsurl = implode(",",$data->itemids);
+    } else {
+        //error?
+        $itemidsurl = '';
     }
 
     $export = new grade_export($id, $data->itemids, $data->export_letters);
@@ -66,8 +69,6 @@ if (($data = data_submitted()) && confirm_sesskey()) {
 }
 
 // print the form to choose what grade_items to export
-include_once('grade_export_txt_form.php');
-$mform = new grade_export_txt_form(qualified_me(), array('id'=>$id));
 $mform->display();
 
 print_footer();

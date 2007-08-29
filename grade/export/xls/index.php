@@ -47,13 +47,16 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xls');
-// process post information
-if (($data = data_submitted()) && confirm_sesskey()) {
 
-    if (!is_array($data->itemids)) {
-        $itemidsurl = $data->itemids;
-    } else {
+$mform = new grade_export_form();
+
+// process post information
+if ($data = $mform->get_data()) {
+    if ($data->itemids) {
         $itemidsurl = implode(",",$data->itemids);
+    } else {
+        //error?
+        $itemidsurl = '';
     }
 
     // print the grades on screen for feedbacks
@@ -66,6 +69,7 @@ if (($data = data_submitted()) && confirm_sesskey()) {
     exit;
 }
 
-print_gradeitem_selections($id);
+$mform->display();
+
 print_footer();
 ?>

@@ -48,13 +48,15 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xml');
 
-// process post information
-if (($data = data_submitted()) && confirm_sesskey()) {
+$mform = new grade_export_form(null, array('plugin'=>'xmlexport'));
 
-    if (!is_array($data->itemids)) {
-        $itemidsurl = $data->itemids;
-    } else {
+// process post information
+if ($data = $mform->get_data()) {
+    if ($data->itemids) {
         $itemidsurl = implode(",",$data->itemids);
+    } else {
+        //error?
+        $itemidsurl = '';
     }
 
     // print the grades on screen for feedbacks
@@ -68,12 +70,16 @@ if (($data = data_submitted()) && confirm_sesskey()) {
         print_continue('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
 
     } else {
+        if ($data->key == 1) {
+            $data->key = create_user_key('grade/export', $USER->id, $COURSE->id, $data->iprestriction, $data->validuntil);
+        }
         $link = $CFG->wwwroot.'/grade/export/xml/dump.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters.'&amp;key='.$data->key;
         echo "<a href=\"$link\">$link</a>";
     }
     exit;
 }
 
-print_gradeitem_selections($id, array('plugin'=>'xmlexport'));
+$mform->display();
+
 print_footer();
 ?>
