@@ -108,6 +108,11 @@
                 notify("Error occurred while deleting the $strmodulename record from modules table");
             }
 
+            // And the module configuration records
+            if (!execute_sql("DELETE FROM {$CFG->prefix}config WHERE name LIKE '{$module->name}_%'")) {
+                notify("Error occurred while deleting the $strmodulename records from the config table");
+            }
+
             // Then the tables themselves
 
             if ($tables = $db->Metatables()) {
