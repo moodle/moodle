@@ -791,7 +791,7 @@ class grade_report_grader extends grade_report {
             $groupwheresql = null;
         }
 
-        $totalcount = $this->get_numusers(false);
+        $totalcount = $this->get_numusers($grouponly);
 
         if ($showaverages) {
 
@@ -825,7 +825,13 @@ class grade_report_grader extends grade_report {
                 if (empty($sum_array[$item->id])) {
                     $sum_array[$item->id] = 0;
                 }
-
+                if ($grouponly) {
+                    $groupsql = $this->groupsql;
+                    $groupwheresql = $this->groupwheresql;
+                } else {
+                    $groupsql = '';
+                    $groupwheresql = '';
+                }
                 // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
                 // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
                 $SQL = "SELECT COUNT(*) AS count FROM {$CFG->prefix}user u
@@ -838,8 +844,10 @@ class grade_report_grader extends grade_report {
                              SELECT DISTINCT(u.id)
                               FROM {$CFG->prefix}user u LEFT JOIN
                                    {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                                   $groupsql
                              WHERE ra.roleid in ($this->gradebookroles)
                                AND ra.contextid ".get_related_contexts_string($this->context)."
+                               $groupwheresql
                            )";
 
                 $ungraded_count = get_field_sql($SQL);
