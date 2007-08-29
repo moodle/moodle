@@ -2639,83 +2639,12 @@ function assignment_types() {
  * Executes upgrade scripts for assignment types when necessary
  */
 function assignment_upgrade_submodules() {
+
     global $CFG;
 
-    $types = assignment_types();
+/// Install/upgrade assignment types (it uses, simply, the standard plugin architecture)
+    upgrade_plugins('assignment_type', 'mod/assignment/type', "$CFG->wwwroot/$CFG->admin/index.php");
 
-    include($CFG->dirroot.'/mod/assignment/version.php');  // defines $module with version etc
-
-    foreach ($types as $type => $typename) {
-
-        $fullpath = $CFG->dirroot.'/mod/assignment/type/'.$type;
-
-    /// Check for an external version file (defines $submodule)
-
-        if (!is_readable($fullpath .'/version.php')) {
-            continue;
-        }
-        include_once($fullpath .'/version.php');
-
-    /// Check whether we need to upgrade
-
-        if (!isset($submodule->version)) {
-            continue;
-        }
-
-    /// Make sure this submodule will work with this assignment version
-
-        if (isset($submodule->requires) and ($submodule->requires > $module->version)) {
-            notify("Assignment submodule '$type' is too new for your assignment");
-            continue;
-        }
-
-    /// If the submodule is new, then let's install it!
-
-        $currentversion = 'assignment_'.$type.'_version';
-
-        if (!isset($CFG->$currentversion)) {   // First install!
-            set_config($currentversion, $submodule->version);  // Must keep track of version
-
-            if (!is_readable($fullpath .'/db/'.$CFG->dbtype.'.sql')) {
-                continue;
-            }
-
-            upgrade_log_start();
-            $db->debug=true;
-            if (!modify_database($fullpath .'/db/'.$CFG->dbtype.'.sql')) {
-                notify("Error installing tables for submodule '$type'!");
-            }
-            $db->debug=false;
-            continue;
-        }
-
-    /// See if we need to upgrade
-
-        if ($submodule->version <= $CFG->$currentversion) {
-            continue;
-        }
-
-    /// Look for the upgrade file
-
-        if (!is_readable($fullpath .'/db/'.$CFG->dbtype.'.php')) {
-            continue;
-        }
-
-        include_once($fullpath .'/db/'. $CFG->dbtype .'.php');  // defines assignment_xxx_upgrade
-
-    /// Perform the upgrade
-
-        $upgrade_function = 'assignment_'.$type.'_upgrade';
-        if (function_exists($upgrade_function)) {
-            upgrade_log_start();
-            $db->debug=true;
-            if ($upgrade_function($CFG->$currentversion)) {
-                $db->debug=false;
-                set_config($currentversion, $submodule->version);
-            }
-            $db->debug=false;
-        }
-    }
 }
 
 function assignment_print_overview($courses, &$htmlarray) {
