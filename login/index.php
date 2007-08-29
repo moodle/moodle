@@ -181,6 +181,10 @@ httpsrequired();
 
         /// check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
+                if ($frm->password == 'changeme') {
+                    //force the change
+                    set_user_preference('auth_forcepasswordchange', true);
+                }
                 if ($passwordchangeurl != '') {
                     redirect($passwordchangeurl);
                 } else {
