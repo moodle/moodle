@@ -304,7 +304,7 @@
                 $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 
-                if (!groups_course_module_visible($mod)) {
+                if (!groups_course_module_visible($cm)) {
                     continue;
                 }
                 $currentgroup = groups_get_activity_group($cm);
