@@ -83,16 +83,19 @@ if ($usercount > 0) {
 
 }
 
-// print last 10 blogs
 
-print_box_start('generalbox', 'tag-blogs');
 
-print_heading(get_string('lasttenblogs', 'tag'), '', 3);
+
+// Print last 10 blogs
 
 // I was not able to use get_items_tagged_with() because it automatically 
 // tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
-// uses the post table so this would not really work.
+// uses the post table so this would not really work.    - Yu 29/8/07
 if ($blogs = fetch_entries('', 10, 0, 'site', '', $tag->id)) {
+
+    print_box_start('generalbox', 'tag-blogs');
+
+    print_heading(get_string('lasttenblogs', 'tag'), '', 3);
 
     echo '<ul id="tagblogentries">';
     foreach ($blogs as $blog) {
@@ -114,8 +117,9 @@ if ($blogs = fetch_entries('', 10, 0, 'site', '', $tag->id)) {
     }
     echo '</ul>';
 
+    print_box_end();
 }
-print_box_end();
+
 
 echo '</td>';
 
