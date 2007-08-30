@@ -5665,7 +5665,11 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
                 $output .= '&nbsp;(<a href="'. $baseurl->out(false, array($pagevar => $pagenum)).'">'. get_string('previous') .'</a>)&nbsp;';
             }
         }
-        $lastpage = ceil($totalcount / $perpage);
+        if ($perpage > 0) {
+            $lastpage = ceil($totalcount / $perpage);
+        } else {
+            $lastpage = 1;
+        }
         if ($page > 15) {
             $startpage = $page - 10;
             if (!is_a($baseurl, 'moodle_url')){
