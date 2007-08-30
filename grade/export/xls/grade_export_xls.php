@@ -26,21 +26,20 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xls extends grade_export {
 
-    var $format = 'xls'; // export format
-
     /**
      * To be implemented by child classes
      */
     function print_grades($feedback = false) {
-
         global $CFG;
+
+        $this->load_grades();
 
         /// Whether this plugin is entitled to update export time
         if ($expplugins = explode(",", $CFG->gradeexport)) {
-            if (in_array($this->format, $expplugins)) {
+            if (in_array('xls', $expplugins)) {
                 $export = true;
             } else {
-            $export = false;
+                $export = false;
           }
         } else {
             $export = false;
@@ -72,7 +71,6 @@ class grade_export_xls extends grade_export {
                 $myxls->write_string(0,$pos++,strip_tags($column."_feedback"));
             }
         }
-        $myxls->write_string(0,$pos,get_string("total"));
 
     /// Print all the lines of data.
         $i = 0;
@@ -93,7 +91,7 @@ class grade_export_xls extends grade_export {
                 $j=6;
                 foreach ($studentgrades as $gradeitemid => $grade) {
                     if (is_numeric($grade)) {
-                        $myxls->write_number($i,$j++,strip_tags($grade));
+                        $myxls->write_number($i,$j++,$grade);
                     }
                     else {
                         $myxls->write_string($i,$j++,strip_tags($grade));
@@ -101,7 +99,7 @@ class grade_export_xls extends grade_export {
 
                     // writing comment if requested
                     if ($feedback) {
-                        $myxls->write_string($i,$j++,array_shift($this->comments[$student->id]));
+                        $myxls->write_string($i,$j++,$this->comments[$student->id][$gradeitemid]);
                     }
 
                     /// if export flag needs to be set
@@ -118,7 +116,6 @@ class grade_export_xls extends grade_export {
                         $grade_grade->update();
                     }
                 }
-                $myxls->write_number($i,$j,$this->totals[$student->id]);
             }
         }
 

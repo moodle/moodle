@@ -26,8 +26,6 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xml extends grade_export {
 
-    var $format = 'xml'; // export format
-
     /**
      * To be implemented by child classes
      * @param boolean $feedback
@@ -35,23 +33,22 @@ class grade_export_xml extends grade_export {
      * @return string
      */
     function print_grades($feedback = false) {
-
         global $CFG;
+
+        $this->load_grades();
 
         $retval = '';
 
         /// Whether this plugin is entitled to update export time
         if ($expplugins = explode(",", $CFG->gradeexport)) {
-            if (in_array($this->format, $expplugins)) {
+            if (in_array('xml', $expplugins)) {
                 $export = true;
             } else {
-            $export = false;
+                $export = false;
           }
         } else {
             $export = false;
         }
-
-        require_once($CFG->dirroot.'/lib/excellib.class.php');
 
         /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");
