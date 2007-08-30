@@ -52,22 +52,20 @@ $mform = new grade_export_form();
 
 // process post information
 if ($data = $mform->get_data()) {
+    $itemids = array();
     if ($data->itemids) {
-        $items = array();
         foreach ($data->itemids as $itemid=>$selected) {
             if ($selected) {
-                $items[] = $itemid;
+                $itemids[] = $itemid;
             }
         }
-        $itemidsurl = implode(",", $items);
+        $itemidsurl = implode(",", $itemids);
     } else {
         //error?
         $itemidsurl = '';
     }
 
-    // print the grades on screen for feedbacks
-
-    $export = new grade_export($id, $data->itemids, $data->export_letters);
+    $export = new grade_export($id, $itemids, $data->export_letters);
     $export->display_grades($feedback, $data->previewrows);
 
     // this redirect should trigger a download prompt

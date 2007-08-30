@@ -34,7 +34,7 @@ class grade_export {
 
     var $format = ''; // export format
     var $id; // course id
-    var $itemids; // comma separated grade_item ids;
+    var $itemids; // array of grade_item ids;
     var $grades = array();    // Collect all grades in this array
     var $gradeshtml= array(); // Collect all grades html formatted in this array
     var $comments = array(); // Collect all comments for each grade
@@ -53,11 +53,11 @@ class grade_export {
     /**
      * Constructor should set up all the private variables ready to be pulled
      * @param int $id course id
-     * @param string $itemids comma separated value of itemids to process for this export
+     * @param string $itemids array of item ids
      * @param boolean $export_letters Whether to export letter grade_items as literal letters, or as numerical values
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($id, $itemids = '', $export_letters=false, $publish=false) {
+    function grade_export($id, $itemids = null, $export_letters=false, $publish=false) {
         global $CFG, $COURSE;
 
         if ($export_letters) {
@@ -118,12 +118,9 @@ class grade_export {
 
         // if grade_item ids are specified
         if ($itemids) {
+            $gradeitems = array();
             foreach ($itemids as $iid) {
-
-                if ($iid) {
-                    $params->id = clean_param($iid, PARAM_INT);
-                    $gradeitems[] = new grade_item($params);
-                }
+                $gradeitems[] = grade_item::fetch(array('id'=>(int)$iid, 'courseid'=>$this->id));
             }
         } else {
             // else we get all items for this course
@@ -132,7 +129,6 @@ class grade_export {
 
         if ($gradeitems) {
             foreach ($gradeitems as $gradeitem) {
-
                 // load as an array of grade_final objects
                 if ($itemgrades = $gradeitem->get_final()) {
 
