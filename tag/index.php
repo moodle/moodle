@@ -83,8 +83,24 @@ if ($usercount > 0) {
 
 }
 
-echo '</td>';
+// print last 10 blogs
+print_string('lasttenblogs', 'tag');
 
+print_box_start();
+
+// I was not able to use get_items_tagged_with() because it automatically 
+// tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
+// uses the post table so this would not really work.
+if ($blogs = fetch_entries('', 10, 0, 'site', '', $tag->id)) {
+
+    foreach ($blogs as $blog) {
+        blog_print_entry($blog);
+    }
+
+}
+print_box_end();
+
+echo '</td>';
 
 
 //----------------- right column -----------------

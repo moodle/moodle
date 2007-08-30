@@ -12,6 +12,7 @@ $string['flag'] = 'Flag';
 $string['flagasinappropriate'] = 'Flag as inappropriate';
 $string['helprelatedtags'] = 'Comma separated related tags';
 $string['id'] = 'id';
+$string['lasttenblogs'] = 'Last 10 blogs';
 $string['managetags'] = 'Manage tags';
 $string['name'] = 'Tag name';
 $string['namesalreadybeeingused'] = 'Tag names already being used';

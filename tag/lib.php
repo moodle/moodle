@@ -1581,11 +1581,13 @@ function print_tag_management_list($perpage='100') {
         {$sort}
         ";
 
-    $totalcount = count_records('tag');
 
-    $table->initialbars($totalcount > $perpage);
+    $totalcount = count_records_sql("SELECT COUNT(DISTINCT(tg.id)) 
+                                     FROM {$CFG->prefix}tag tg LEFT JOIN {$CFG->prefix}user u ON u.id = tg.userid
+                                     $where");
+
+    $table->initialbars(true); // always initial bars
     $table->pagesize($perpage, $totalcount);
-
 
     echo '<form id="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';
 
@@ -1607,7 +1609,18 @@ function print_tag_management_list($perpage='100') {
             $timemodified   =   format_time(time() - $tag->timemodified);
             $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
             $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-            $tagtypes       =   array('default'=>'default', 'official'=>'official');
+            
+            // get all the possible tag types from db
+            $tagtypes = array();
+            if ($ptypes = get_records_sql("SELECT DISTINCT(tagtype), id FROM {$CFG->prefix}tag")) {
+                foreach ($ptypes as $ptype) {
+                    $tagtypes[$ptype->tagtype] = $ptype->tagtype;
+                }
+            }
+            // default types
+            $tagtypes['default']='default';
+            $tagtypes['official']='official';
+            
             $tagtype        =   choose_from_menu ($tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, '', '', '0', true);
 
             //if the tag if flagged, highlight it
