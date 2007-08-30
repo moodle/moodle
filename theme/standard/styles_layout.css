@@ -2800,7 +2800,8 @@ h2.tag-heading {
 
 }
 
-div#tag-description {
+div#tag-description,
+div#tag-blogs {
  width:95%;
  padding: 5px 5px 5px 5px;
  margin-left:auto;
