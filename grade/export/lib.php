@@ -69,7 +69,12 @@ class grade_export {
         $this->publish = $publish;
         $this->strgrades = get_string("grades");
         $this->strgrade = get_string("grade");
-        $this->itemids = $itemids;
+        if (is_array($itemids)) {
+            $this->itemids = $itemids;
+        } else {
+            $this->itemids = array();
+        }
+        
 
         $strmax = get_string("maximumshort");
 
@@ -117,9 +122,9 @@ class grade_export {
         }
 
         // if grade_item ids are specified
-        if ($itemids) {
+        if (empty($this->itemids)) {
             $gradeitems = array();
-            foreach ($itemids as $iid) {
+            foreach ($this->itemids as $iid) {
                 $gradeitems[] = grade_item::fetch(array('id'=>(int)$iid, 'courseid'=>$this->id));
             }
         } else {
