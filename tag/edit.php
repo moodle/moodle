@@ -53,19 +53,12 @@ print_heading($tagname, '', 2);
 $tagform->display();
 
 
+echo require_js('yui_dom-event');
+echo require_js('yui_connection');
+echo require_js('yui_animation');
+echo require_js('yui_autocomplete');
+
 ?>
-
-<!-- Dependencies -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.2.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-
-<!-- OPTIONAL: Connection (required only if using XHR DataSource) -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.2.2/build/connection/connection-min.js"></script>
-
-<!-- OPTIONAL: Animation (required only if enabling animation) -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.2.2/build/animation/animation-min.js"></script>
-
-<!-- Source file -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.2.2/build/autocomplete/autocomplete-min.js"></script>
 
 <script type="text/javascript">
 
