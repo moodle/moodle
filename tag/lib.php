@@ -1,4 +1,4 @@
-<?php // $Id$
+﻿<?php
 
 global $CFG;
 require_once($CFG->libdir.'/textlib.class.php');
@@ -1457,7 +1457,7 @@ function print_tag_search_results($query,  $page, $perpage, $return=false) {
 
     if($tags) { // there are results to display!!
 
-        $output .= print_heading(get_string('searchresultsfor', 'tag', $query) . " : {$count}", '', 3, null,true);
+        $output .= print_heading(get_string('searchresultsfor', 'tag', $query) . " : {$count}", '', 3, 'main' ,true);
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
@@ -1479,11 +1479,11 @@ function print_tag_search_results($query,  $page, $perpage, $return=false) {
         $output .= '</ul>';
         $output .= '<div>&nbsp;</div>'; // <-- small layout hack in order to look good in Firefox
 
-        $output .= print_paging_bar($count, $page, $perpage, $baseurl.'&amp;', 'page', null, true);
+        $output .= print_paging_bar($count, $page, $perpage, $baseurl.'&amp;', 'page', false, true);
     }
     else { //no results were found!!
 
-        $output .= print_heading(get_string('noresultsfor', 'tag', $query), '', 3, null, true);
+        $output .= print_heading(get_string('noresultsfor', 'tag', $query), '', 3, 'main' , true);
 
         //print a link "Add $query to my interests"
         if (!empty($addtaglink)) {
