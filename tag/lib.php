@@ -1513,7 +1513,7 @@ function print_tag_management_list($perpage='100') {
 
     //setup table
 
-    $tablecolumns = array('id','name', 'owner', 'count', 'flag', 'timemodified', 'rawname', '');
+    $tablecolumns = array('id','name', 'fullname', 'count', 'flag', 'timemodified', 'rawname', 'tagtype', '');
     $tableheaders = array(  get_string('id' , 'tag'),
     get_string('name' , 'tag'),
     get_string('owner','tag'),
@@ -1521,6 +1521,7 @@ function print_tag_management_list($perpage='100') {
     get_string('flag','tag'),
     get_string('timemodified','tag'),
     get_string('newname', 'tag'),
+    get_string('tagtype', 'tag'),
     get_string('select', 'tag')
     );
 
@@ -1563,9 +1564,9 @@ function print_tag_management_list($perpage='100') {
 
     $query = "
         SELECT 
-            tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified    
+            tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname
         FROM 
-            {$CFG->prefix}tag_instance ti 
+            {$CFG->prefix}tag_instance ti
         RIGHT JOIN 
             {$CFG->prefix}tag tg 
         ON 
@@ -1600,12 +1601,14 @@ function print_tag_management_list($perpage='100') {
 
             $id             =   $tag->id;
             $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>';
-            $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . $tag->owner . '</a>';
+            $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . fullname($tag) . '</a>';
             $count          =   $tag->count;
             $flag           =   $tag->flag;
             $timemodified   =   format_time(time() - $tag->timemodified);
             $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
             $text           =   '<input type="text" name="newname['.$tag->id.']" />';
+            $tagtypes       =   array('default'=>'default', 'official'=>'official');
+            $tagtype        =   choose_from_menu ($tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, '', '', '0', true);
 
             //if the tag if flagged, highlight it
             if ($tag->flag > 0) {
@@ -1615,9 +1618,10 @@ function print_tag_management_list($perpage='100') {
                 $count = '<span class="flagged-tag">' . $count . '</span>';
                 $flag = '<span class="flagged-tag">' . $flag . '</span>';
                 $timemodified = '<span class="flagged-tag">' . $timemodified . '</span>';
+                $tagtype = '<span class="flagged-tag">'. $tagtype. '</span>';
             }
 
-            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $text, $checkbox);
+            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $text, $tagtype, $checkbox);
 
             $table->add_data($data);
         }
@@ -1630,6 +1634,7 @@ function print_tag_management_list($perpage='100') {
                     <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
                     <option value="reset">'. get_string('resetflag', 'tag') .'</option>
                     <option value="delete">'. get_string('delete', 'tag') .'</option>
+                    <option value="changetype">'. get_string('changetype', 'tag') .'</option>
                     <option value="changename">'. get_string('changename', 'tag') .'</option>
                 </select>';
 

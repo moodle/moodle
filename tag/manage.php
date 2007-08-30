@@ -16,6 +16,7 @@ require_capability('moodle/tag:manage', $systemcontext);
 
 $tagschecked    = optional_param('tagschecked', array());
 $newnames       = optional_param('newname', array());
+$tagtypes       = optional_param('tagtypes', array());
 $action         = optional_param('action', '', PARAM_ALPHA);
 
 $navlinks = array();
@@ -45,11 +46,24 @@ switch($action) {
         tag_flag_reset(implode($tagschecked, ','));
         
         break;
+    case 'changetype':
         
+        foreach ($tagschecked as $tag_id){
+            
+            // update tag type;
+            $tag = tag_by_id($tag_id);
+            
+            $tag -> tagtype = $tagtypes[$tag_id];
+            if (update_record('tag', $tag)) {
+                $notice .= ' --  ' . get_string('typechanged','tag'); 
+            }
+        }
+        
+        break;
     case 'changename':
         
         $normalized_new_names_csv = tag_normalize( str_replace(',,','',implode($newnames, ',')) );
-        
+   
         //tag names entered might already exist
         $existing_tags = tags_id( $normalized_new_names_csv );
         

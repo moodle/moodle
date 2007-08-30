@@ -3103,11 +3103,14 @@ body#user-index #showall {
   margin: 10px 0px;
 }
 
-body#user-index table#participants {
+body#user-index table#participants,
+body#tag-manage table#tag-management-list {
   margin: auto;
   width: 80%;
 }
 
+body#tag-manage table#tag-management-list td,
+body#tag-manage table#tag-management-list, th,
 body#user-index table#participants td,
 body#user-index table#participants th {
   vertical-align: middle;
