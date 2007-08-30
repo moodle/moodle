@@ -261,6 +261,7 @@ $string['nocategoryname'] = 'No category name was given.';
 $string['nocategoryview'] = 'No category to view by';
 $string['nogradeletters'] = 'No grade letters set';
 $string['nogradesreturned'] = 'No grades returned';
+$string['noidnumber'] = 'No id number';
 $string['nolettergrade'] = 'No letter grade for';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Received non-numeric value for';

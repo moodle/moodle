@@ -11,5 +11,6 @@ $string['keyvaliduntilhelp'] = 'Select an optional date after which the key will
 $string['keyvalue'] = 'Key value';
 $string['newuserkey'] = 'New user key';
 $string['userkey'] = 'User key';
+$string['userkeys'] = 'User keys';
 
 ?>
