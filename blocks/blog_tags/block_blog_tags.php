@@ -42,7 +42,7 @@ class block_blog_tags extends block_base {
 
         global $CFG, $SITE, $COURSE, $USER;
 
-        if (empty($CFG->bloglevel)) {
+        if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
             $this->content->text = '';
             return $this->content;
         }

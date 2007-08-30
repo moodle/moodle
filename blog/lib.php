@@ -227,7 +227,7 @@
                                      WHERE t.id = ti.tagid
                                      AND ti.entryid = '.$blogEntry->id)) {
         */
-        if ($blogtags = get_item_tags('blog', $blogEntry->id)) {
+        if (!empty($CFG->usetags) && ($blogtags = get_item_tags('blog', $blogEntry->id))) {
             echo '<div class="tags">';
             if ($blogtags) {
                 print_string('tags');
