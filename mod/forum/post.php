@@ -143,7 +143,6 @@
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        $modcontext = get_context_instance(CONTEXT_MODULE, $forum->id);
 
         if (! forum_user_can_post($forum)) {
             if (has_capability('moodle/legacy:guest', $coursecontext, NULL, false)) {  // User is a guest here!
@@ -157,6 +156,7 @@
 
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (groupmode($course, $cm)) {   // Make sure user can post here
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
                 $mygroupid = mygroupid($course->id);
                 if (!((empty($mygroupid) and $discussion->groupid == -1)
                         || (groups_is_member($discussion->groupid)/*$mygroupid == $discussion->groupid*/)
