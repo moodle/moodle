@@ -113,12 +113,7 @@ class block_blog_menu extends block_base {
                 $output .= get_string('viewsiteentries', 'blog')."</a></li>\n";
             }
 
-            if (has_capability('moodle/blog:manageofficialtags', $sitecontext)
-              or has_capability('moodle/blog:managepersonaltags', $sitecontext)
-              or has_capability('moodle/blog:create', $sitecontext)) {
-
-                $output .= '<li>'. link_to_popup_window("/blog/tags.php",'popup',get_string('tagmanagement'), 400, 500, 'Popup window', 'none', true) ."</li>\n";
-            }
+            // took out tag management interface/link, should use tag/manage.php
 
             // show Help with blogging link
             //$output .= '<li><a href="'. $CFG->wwwroot .'/help.php?module=blog&amp;file=user.html">';
