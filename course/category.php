@@ -328,7 +328,11 @@
         // be moved up and down beyond the paging border
         if ($totalcount > $perpage) {
             $atfirstpage = ($page == 0);
-            $atlastpage = (($page + 1) == ceil($totalcount / $perpage));
+            if ($perpage > 0) {
+                $atlastpage = (($page + 1) == ceil($totalcount / $perpage));
+            } else {
+                $atlastpage = true;
+            }
         } else {
             $atfirstpage = true;
             $atlastpage = true;
