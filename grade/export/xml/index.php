@@ -80,7 +80,11 @@ if ($data = $mform->get_data()) {
             $data->key = create_user_key('grade/export', $USER->id, $COURSE->id, $data->iprestriction, $data->validuntil);
         }
         $link = $CFG->wwwroot.'/grade/export/xml/dump.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters.'&amp;key='.$data->key;
-        echo "<a href=\"$link\">$link</a>";
+
+        echo '<p>';
+        echo '<a href="'.$link.'">'.$link.'</a>';
+        echo '</p>';
+        print_footer();
     }
     exit;
 }
