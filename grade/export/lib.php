@@ -58,13 +58,7 @@ class grade_export {
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
     function grade_export($id, $itemids = null, $export_letters=false, $publish=false) {
-        global $CFG, $COURSE;
-
-        if ($export_letters) {
-            require_once($CFG->dirroot . '/grade/report/lib.php');
-            $report = new grade_report($COURSE->id, null, null);
-            $letters = $report->get_grade_letters();
-        }
+        global $CFG;
 
         $this->publish = $publish;
         $this->strgrades = get_string("grades");
@@ -86,6 +80,12 @@ class grade_export {
 
         $this->id = $id;
         $this->course = $course;
+
+        if ($export_letters) {
+            require_once($CFG->dirroot . '/grade/report/lib.php');
+            $report = new grade_report($this->id, null, null);
+            $letters = $report->get_grade_letters();
+        }
 
         // first make sure we have all final grades
         // TODO: check that no grade_item has needsupdate set
