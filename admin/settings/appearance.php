@@ -121,4 +121,7 @@ $ADMIN->add('appearance', new admin_externalpage('stickyblocks', get_string('sti
 $temp = new admin_settingpage('ajax', get_string('ajaxuse'));
 $temp->add(new admin_setting_configcheckbox('enableajax', get_string('enableajax', 'admin'), get_string('configenableajax', 'admin'), 0));
 $ADMIN->add('appearance', $temp);
+
+// link to tag management interface
+$ADMIN->add('appearance', new admin_externalpage('managetags', get_string('managetags', 'tag'), "$CFG->wwwroot/tag/manage.php"));
 ?>
