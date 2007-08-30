@@ -171,7 +171,7 @@
             } else {
                 $groupmode = NOGROUPS;
             }
-
+            $currentgroup = groups_get_activity_group($cm);
             $cantaccessagroup = $groupmode and !has_capability('moodle/site:accessallgroups', $context) and !mygroupid($course->id);
 
             // this is potentially wrong logic. could possibly check for if user has the right to hmmm
