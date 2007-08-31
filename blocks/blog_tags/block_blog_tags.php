@@ -78,7 +78,11 @@ class block_blog_tags extends block_base {
         $sql .= "FROM {$CFG->prefix}tag t, {$CFG->prefix}tag_instance ti, {$CFG->prefix}post p ";
         $sql .= 'WHERE t.id = ti.tagid ';
         $sql .= 'AND p.id = ti.itemid ';
-        $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
+        
+        // admins should be able to read all tags      
+        if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+            $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
+        }
         $sql .= "AND ti.timemodified > {$timewithin} ";
         $sql .= 'GROUP BY t.id, t.tagtype, t.name ';
         $sql .= 'ORDER BY ct DESC, t.name ASC';
