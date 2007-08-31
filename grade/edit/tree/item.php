@@ -41,7 +41,7 @@ if ($item = get_record('grade_items', 'id', $id, 'courseid', $course->id)) {
     $decimalpoints = grade_report::get_pref('decimalpoints', $item->id);
 
 } else {
-    $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'));
+    $item = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual'), false);
     // Get Item preferences
     $item->pref_gradedisplaytype = grade_report::get_pref('gradedisplaytype');
     $item->pref_decimalpoints    = grade_report::get_pref('decimalpoints');
