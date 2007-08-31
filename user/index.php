@@ -77,7 +77,7 @@
 
     // no roles to display yet?
     if (empty($rolenames)) {
-        if (has_capability('moodle/user:assign', $context)) {
+        if (has_capability('moodle/role:assign', $context)) {
             redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
             error ('No participants found for this course');
