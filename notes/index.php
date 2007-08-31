@@ -50,7 +50,9 @@
 /// output HTML
 
     $strnotes = get_string('notes', 'notes');
-    $nav = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
+    $nav = array();
+    $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+    $nav[] = array('name' => $strnotes, 'link' => '', 'type' => 'misc');
 
     print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
 

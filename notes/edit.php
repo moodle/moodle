@@ -71,11 +71,12 @@
     $strnotes = get_string('editnote', 'notes');
 
 /// output HTML
-    $crumbs = array();
-    $crumbs[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
-    $crumbs[] = array('name' => $strnotes, 'link' => '', 'type' => 'activity');
+    $nav = array();
+    $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+    $nav[] = array('name' => get_string('notes', 'notes'), 'link' => $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $user->id, 'type' => 'misc');
+    $nav[] = array('name' => $strnotes, 'link' => '', 'type' => 'activity');
 
-    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($crumbs));
+    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
 
     print_heading(fullname($user));
 
