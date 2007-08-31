@@ -34,6 +34,7 @@ class grade_export {
 
     var $id; // course id
     var $grade_items; // array of grade_items
+    var $groupid;
     var $grades = array();    // Collect all grades in this array
     var $comments = array(); // Collect all comments for each grade
     var $columns = array();     // Accumulate column names in this array.
@@ -119,6 +120,8 @@ class grade_export {
         } else {
             $currentgroup = false;
         }
+
+        $this->groupid = $currentgroup;
 
         if ($currentgroup) {
             $this->students = get_group_students($currentgroup, "u.lastname ASC");
