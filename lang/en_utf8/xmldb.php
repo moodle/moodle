@@ -76,6 +76,7 @@ $string['missingvaluesinsentence'] = 'Missing values in sentence';
 $string['mustselectonefield'] = 'You must select one field to see field related actions!';
 $string['mustselectoneindex'] = 'You must select one index to see index related actions!';
 $string['mustselectonekey'] = 'You must select one key to see key related actions!';
+$string['mysqlextracheckbigints'] = 'Under MySQL it also looks for incorrectly signed bigints, generating the required SQL to be executed in order to fix all them.';
 $string['new_statement'] = 'New Statement';
 $string['new_table_from_mysql'] = 'New Table From MySQL';
 $string['newfield'] = 'New Field';
