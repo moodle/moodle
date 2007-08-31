@@ -513,20 +513,20 @@ class grade_category extends grade_object {
                 $num = count($grade_values);
                 $grades = array_values($grade_values);
                 if ($num % 2 == 0) {
-                    $rawgrade = ($grades[intval($num/2)-1] + $grades[intval($num/2)]) / 2;
+                    $agg_grade = ($grades[intval($num/2)-1] + $grades[intval($num/2)]) / 2;
                 } else {
-                    $rawgrade = $grades[intval(($num/2)-0.5)];
+                    $agg_grade = $grades[intval(($num/2)-0.5)];
                 }
                 break;
 
             case GRADE_AGGREGATE_MIN_ALL:
             case GRADE_AGGREGATE_MIN_GRADED:
-                $rawgrade = reset($grade_values);
+                $agg_grade = reset($grade_values);
                 break;
 
             case GRADE_AGGREGATE_MAX_ALL:
             case GRADE_AGGREGATE_MAX_GRADED:
-                $rawgrade = array_pop($grade_values);
+                $agg_grade = array_pop($grade_values);
                 break;
 
             case GRADE_AGGREGATE_MODE_ALL:       // the most common value, average used if multimode
@@ -536,7 +536,7 @@ class grade_category extends grade_object {
                 $top = reset($freq);               // highest frequency count
                 $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
                 rsort($modes, SORT_NUMERIC);       // get highes mode
-                $rawgrade = reset($modes);
+                $agg_grade = reset($modes);
                 break;
 
             case GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED: // Weighted average of all existing final grades
@@ -551,9 +551,9 @@ class grade_category extends grade_object {
                     $sum       += $items[$itemid]->aggregationcoef * $grade_value;
                 }
                 if ($weightsum == 0) {
-                    $rawgrade = null;
+                    $agg_grade = null;
                 } else {
-                    $rawgrade = $sum / $weightsum;
+                    $agg_grade = $sum / $weightsum;
                 }
                 break;
 
@@ -570,9 +570,9 @@ class grade_category extends grade_object {
                     }
                 }
                 if ($num == 0) {
-                    $rawgrade = $sum; // only extra credits or wrong coefs
+                    $agg_grade = $sum; // only extra credits or wrong coefs
                 } else {
-                    $rawgrade = $sum / $num;
+                    $agg_grade = $sum / $num;
                 }
                 break;
 
@@ -581,7 +581,7 @@ class grade_category extends grade_object {
             default:
                 $num = count($grade_values);
                 $sum = array_sum($grade_values);
-                $rawgrade = $sum / $num;
+                $agg_grade = $sum / $num;
                 break;
         }
 
@@ -589,12 +589,16 @@ class grade_category extends grade_object {
         $grade->rawgrademin = $this->grade_item->grademin;
         $grade->rawgrademax = $this->grade_item->grademax;
         $grade->rawscaleid  = $this->grade_item->scaleid;
+        $grade->rawgrade    = null; // categories do not use raw grades
 
         // recalculate the rawgrade back to requested range
-        $grade->rawgrade = grade_grade::standardise_score($rawgrade, 0, 1, $grade->rawgrademin, $grade->rawgrademax);
+        $finalgrade = grade_grade::standardise_score($agg_grade, 0, 1, $this->grade_item->grademin, $this->grade_item->grademax);
 
-        // calculate final grade
-        $grade->finalgrade = $this->grade_item->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+        if (!is_null($finalgrade)) {
+            $grade->finalgrade = bounded_number($this->grade_item->grademin, $finalgrade, $this->grade_item->grademax);
+        } else {
+            $grade->finalgrade = $finalgrade;
+        }
 
         // update in db if changed
         if (   $grade->finalgrade  !== $oldgrade->finalgrade

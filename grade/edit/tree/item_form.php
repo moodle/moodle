@@ -64,12 +64,14 @@ class edit_item_form extends moodleform {
         $mform->addElement('text', 'multfactor', get_string('multfactor', 'grades'));
         $mform->setHelpButton('multfactor', array(false, get_string('multfactor', 'grades'),
                 false, true, false, get_string('multfactorhelp', 'grades')));
+        $mform->setAdvanced('multfactor');
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('text', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->setHelpButton('plusfactor', array(false, get_string('plusfactor', 'grades'),
                 false, true, false, get_string('plusfactorhelp', 'grades')));
+        $mform->setAdvanced('plusfactor');
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
@@ -143,10 +145,13 @@ class edit_item_form extends moodleform {
         if ($id = $mform->getElementValue('id')) {
             $grade_item = grade_item::fetch(array('id'=>$id));
 
-            if ($grade_item->is_outcome_item()) {
-                // we have to prevent incompatible modifications of outcomes
+            if (!$grade_item->is_raw_used()) {
                 $mform->removeElement('plusfactor');
                 $mform->removeElement('multfactor');
+            }
+
+            if ($grade_item->is_outcome_item()) {
+                // we have to prevent incompatible modifications of outcomes
                 $mform->removeElement('grademax');
                 $mform->removeElement('grademin');
                 $mform->removeElement('gradetype');
@@ -157,11 +162,6 @@ class edit_item_form extends moodleform {
                     // following items are set up from modules and should not be overrided by user
                     $mform->hardFreeze('itemname,idnumber,gradetype,grademax,grademin,scaleid');
                     //$mform->removeElement('calculation');
-
-                } else if ($grade_item->is_manual_item()) {
-                    // manual grade item does not use these - uses only final grades
-                    $mform->removeElement('plusfactor');
-                    $mform->removeElement('multfactor');
                 }
             }
             //remove the aggregation coef element if not needed

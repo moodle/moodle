@@ -597,8 +597,13 @@ class grade_item extends grade_object {
             } else {
                 return "Could not aggregate final grades for category:".$this->id; // TODO: improve and localize
             }
+
         } else if ($this->is_manual_item()) {
             // manual items track only final grades, no raw grades
+            return true;
+
+        } else if (!$this->is_raw_used()) {
+            // hmm - raw grades are not used- nothing to regrade
             return true;
         }
 
@@ -619,7 +624,7 @@ class grade_item extends grade_object {
                         continue;
                     }
 
-                    $grade->finalgrade = $this->adjust_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+                    $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
 
                     if ($grade_record->finalgrade !== $grade->finalgrade) {
                         if (!$grade->update('system')) {
@@ -640,7 +645,7 @@ class grade_item extends grade_object {
      * @param object $rawgrade The raw grade value.
      * @return mixed
      */
-    function adjust_grade($rawgrade, $rawmin, $rawmax) {
+    function adjust_raw_grade($rawgrade, $rawmin, $rawmax) {
         if (is_null($rawgrade)) {
             return null;
         }
@@ -667,7 +672,7 @@ class grade_item extends grade_object {
 
             return bounded_number($this->grademin, $rawgrade, $this->grademax);
 
-        } else if($this->gradetype == GRADE_TYPE_SCALE) { // Dealing with a scale value
+        } else if ($this->gradetype == GRADE_TYPE_SCALE) { // Dealing with a scale value
             if (empty($this->scale)) {
                 $this->load_scale();
             }
@@ -840,6 +845,14 @@ class grade_item extends grade_object {
      */
     function is_normal_item() {
         return ($this->itemtype != 'course' and $this->itemtype != 'category' and $this->itemtype != 'manual');
+    }
+
+    /**
+     * Returns true if grade items uses raw grades
+     * @return boolean
+     */
+    function is_raw_used() {
+        return ($this->is_normal_item() and !$this->is_calculated() and !$this->is_outcome_item());
     }
 
     /**
@@ -1209,7 +1222,7 @@ class grade_item extends grade_object {
      * TODO Allow for a change of feedback without a change of finalgrade. Currently I get notice about uninitialised $result
      */
     function update_final_grade($userid, $finalgrade=false, $source=NULL, $note=NULL, $feedback=false, $feedbackformat=FORMAT_MOODLE, $usermodified=null) {
-        global $USER;
+        global $USER, $CFG;
         if (empty($usermodified)) {
             $usermodified = $USER->id;
         }
@@ -1244,27 +1257,42 @@ class grade_item extends grade_object {
         $oldgrade->rawscaleid  = $grade->rawscaleid;
         $oldgrade->overridden  = $grade->overridden;
 
-        if ($finalgrade !== false) {
-            if (!is_null($finalgrade)) {
-                $grade->finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
+        $override = false;
+        $functionname = null;
+
+        if ($finalgrade !== false or $feedback !== false) {
+            if (($this->is_outcome_item() or $this->is_manual_item()) and !$this->is_calculated()) {
+                // final grades updated only by user - no need for overriding
+
+            } else if ($this->itemtype == 'mod' and $this->plusfactor == 0 and $this->multfactor == 1) {
+                // do not override grade if module can update own raw grade
+                require_once($CFG->dirroot.'/mod/'.$this->itemmodule.'/lib.php');
+                $functionname = $this->itemmodule.'_grade_updated';
+                if (!function_exists($functionname)) {
+                    $override = true;
+                    $functionname = null;
+                }
+
             } else {
-                $grade->finalgrade = $finalgrade;
+                $override = true;
             }
+        }
 
-            if ($this->is_manual_item() and !$this->is_calculated()) {
-                // no overriding on manual grades - raw not used
+        if ($finalgrade !== false)  {
+            if (!is_null($finalgrade)) {
+                $finalgrade = bounded_number($this->grademin, $finalgrade, $this->grademax);
+            } else {
+                $finalgrade = $finalgrade;
+            }
+            $grade->finalgrade = $finalgrade;
 
-            } else if ($this->is_outcome_item() and !$this->is_calculated()) {
-                // no updates of raw grades for outcomes - raw grades not used
-
-            } else if (!$this->is_normal_item() or $this->plusfactor != 0 or $this->multfactor != 1
-                    or !events_is_registered('grade_updated', $this->itemtype.'/'.$this->itemmodule)) {
-                // we can not update the raw grade - flag it as overridden
+            if ($override) {
                 if (!$grade->overridden) {
                     $grade->overridden = time();
                 }
 
-            } else {
+            } else if ($this->is_raw_used()) {
+                // module which is not overridden - no factors used
                 $grade->rawgrade = $finalgrade;
                 // copy current grademin/max and scale
                 $grade->rawgrademin = $this->grademin;
@@ -1310,9 +1338,9 @@ class grade_item extends grade_object {
             }
         }
 
-        // no events for overridden items and outcomes
-        if ($result and !$grade->overridden and $this->itemnumber < 1000) {
-            $this->trigger_raw_updated($grade, $source);
+        // inform modules, etc. if needed
+        if ($result and $functionname) {
+            $functionname($this->iteminstance, $this->itemnumber, $userid, $finalgrade, $feedback, $feedbackformat, $usermodified);
         }
 
         return $result;
@@ -1409,44 +1437,7 @@ class grade_item extends grade_object {
             }
         }
 
-        // no events for outcomes
-        if ($result and $this->itemnumber < 1000) {
-            $this->trigger_raw_updated($grade, $source);
-        }
-
         return $result;
-    }
-
-    /**
-     * Internal function used by update_final/raw_grade() only.
-     */
-    function trigger_raw_updated($grade, $source) {
-        global $CFG;
-        require_once($CFG->libdir.'/eventslib.php');
-
-        // trigger grade_updated event notification
-        $eventdata = new object();
-
-        $eventdata->source       = $source;
-        $eventdata->itemid       = $this->id;
-        $eventdata->courseid     = $this->courseid;
-        $eventdata->itemtype     = $this->itemtype;
-        $eventdata->itemmodule   = $this->itemmodule;
-        $eventdata->iteminstance = $this->iteminstance;
-        $eventdata->itemnumber   = $this->itemnumber;
-        $eventdata->idnumber     = $this->idnumber;
-        $eventdata->userid       = $grade->userid;
-        $eventdata->rawgrade     = $grade->rawgrade;
-
-        // load existing text annotation
-        if ($grade_text = $grade->load_text()) {
-            $eventdata->feedback          = $grade_text->feedback;
-            $eventdata->feedbackformat    = $grade_text->feedbackformat;
-            $eventdata->information       = $grade_text->information;
-            $eventdata->informationformat = $grade_text->informationformat;
-        }
-
-        events_trigger('grade_updated', $eventdata);
     }
 
     /**

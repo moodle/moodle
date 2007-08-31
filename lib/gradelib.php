@@ -95,7 +95,7 @@ require_once($CFG->libdir . '/grade/grade_grade_text.php');
  * Only following grade item properties can be changed 'itemname', 'idnumber', 'gradetype', 'grademax',
  * 'grademin', 'scaleid', 'multfactor', 'plusfactor', 'deleted'.
  *
- * @param string $source source of the grade such as 'mod/assignment', often used to prevent infinite loops when processing grade_updated events
+ * @param string $source source of the grade such as 'mod/assignment'
  * @param int $courseid id of course
  * @param string $itemtype type of grade item - mod, block
  * @param string $itemmodule more specific then $itemtype - assignment, forum, etc.; maybe NULL for some item types

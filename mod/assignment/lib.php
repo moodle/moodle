@@ -2125,23 +2125,13 @@ function assignment_grade_item_delete($assignment) {
 }
 
 /**
- * Something wants to change the grade from outside using "grade_updated" event.
+ * Gradebook informs this module about new grade or feedback.
  *
  */
-function assignment_grade_handler($eventdata) {
+function assignment_grade_updated($instance, $itemnumber, $userid, $gradevalue, $feedback, $feedbackformat, $usermodified) {
     global $CFG, $USER;
 
-    if ($eventdata->source == 'mod/assignment') {
-        // event from assignment itself
-        return true;
-    }
-
-    if ($eventdata->itemtype != 'mod' or $eventdata->itemmodule != 'assignment') {
-        //not for us - ignore it
-        return true;
-    }
-
-    if (!$assignment = get_record('assignment', 'id', $eventdata->iteminstance)) {
+    if (!$assignment = get_record('assignment', 'id', $instance)) {
         return true;
     }
     if (! $course = get_record('course', 'id', $assignment->course)) {
@@ -2156,36 +2146,36 @@ function assignment_grade_handler($eventdata) {
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
     $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
-    $old = $assignmentinstance->get_submission($eventdata->userid, true);  // Get or make one
+    $old = $assignmentinstance->get_submission($userid, true);  // Get or make one
     $submission = new object();
     $submission->id         = $old->id;
     $submission->userid     = $old->userid;
-    $submission->teacher    = $USER->id;
-    $submission->timemarked = time();
+    $submission->teacher    = $usermodified;
 
-    if (is_null($eventdata->rawgrade)) {
+    if ($gradevalue === false) {
+        $submission->grade  = $old->grade;
+    } else if (is_null($gradevalue)) {
         $submission->grade  = -1;
     } else {
-        $submission->grade  = (int)$eventdata->rawgrade; // round it for now
-        if ($old->grade != $submission->grade) {
-            $submission->mailed = 0;       // Make sure mail goes out (again, even)
+        $submission->grade  = (int)$gradevalue; // round it for now
+        $submission->timemarked = time();
+    }
+
+    if ($feedback === false) {
+        $submission->submissioncomment = addslashes($old->submissioncomment);
+        $submission->format            = $old->format;
+    } else {
+        $submission->submissioncomment = addslashes($feedback);
+        $submission->format            = (int)$feedbackformat;
+    }
+
+    if ($old->submissioncomment != $submission->submissioncomment or $old->grade != $submission->grade) {
+
+        $submission->mailed = 0; // Make sure mail goes out (again, even)
+
+        if (!update_record('assignment_submissions', $submission)) {
+            return false;
         }
-    }
-
-    if (isset($eventdata->feedback)) {
-        $submission->submissioncomment = addslashes($eventdata->feedback);
-    }
-
-    if (isset($eventdata->feedbackformat)) {
-        $submission->format            = (int)$eventdata->feedbackformat;
-    }
-
-    if (isset($eventdata->feedback) && ($old->submissioncomment != $eventdata->feedback or $old->format != $submission->format)) {
-        $submission->mailed = 0;       // Make sure mail goes out (again, even)
-    }
-
-    if (!update_record('assignment_submissions', $submission)) {
-        //return false;
     }
 
     // TODO: add proper logging
