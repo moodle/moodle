@@ -26,7 +26,8 @@
 
 /// This class will check all the int(10) fields existing in the DB
 /// reporting about the ones not phisically implemented as BIGINTs
-/// and providing one SQL script to fix all them. MDL-11038
+/// and providing one SQL script to fix all them. Also, under MySQL,
+/// it performs one check of signed bigints. MDL-11038
 
 class check_bigints extends XMLDBAction {
 
@@ -52,6 +53,7 @@ class check_bigints extends XMLDBAction {
             'completelogbelow' => 'xmldb',
             'nowrongintsfound' => 'xmldb',
             'yeswrongintsfound' => 'xmldb',
+            'mysqlextracheckbigints' => 'xmldb',
             'yes' => '',
             'no' => '',
             'error' => '',
@@ -104,6 +106,9 @@ class check_bigints extends XMLDBAction {
             $o = '<table class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
             $o.= '    <p class="centerpara">' . $this->str['confirmcheckbigints'] . '</p>';
+            if ($CFG->dbfamily == 'mysql') {
+                $o.= '    <p class="centerpara">' . $this->str['mysqlextracheckbigints'] . '</p>';
+            }
             $o.= '    <table class="boxaligncenter" cellpadding="20"><tr><td>';
             $o.= '      <div class="singlebutton">';
             $o.= '        <form action="index.php?action=check_bigints&amp;confirmed=yes" method="post"><fieldset class="invisiblefieldset">';
@@ -187,17 +192,16 @@ class check_bigints extends XMLDBAction {
                                     $metacolumn = $metacolumns[$xmldb_field->getName()];
                                 /// Going to check this field in DB
                                     $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
-                                /// Detect if the phisical field is wrong
-                                    if ($metacolumn->type == $correct_type) {
-                                        $o.='<font color="green">' . $this->str['ok'] . '</font></li>';
-                                        continue;
-                                    } else {
+                                /// Detect if the phisical field is wrong and, under mysql, check for incorrect signed fields too
+                                    if ($metacolumn->type != $correct_type || ($CFG->dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
                                         $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                                     /// Add the wrong field to the list
                                         $obj = new object;
                                         $obj->table = $xmldb_table;
                                         $obj->field = $xmldb_field;
                                         $wrong_fields[] = $obj;
+                                    } else {
+                                        $o.='<font color="green">' . $this->str['ok'] . '</font>';
                                     }
                                     $o.='</li>';
                                 }
