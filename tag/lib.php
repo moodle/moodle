@@ -1253,32 +1253,33 @@ function print_tag_description_box($tag_object, $return=false) {
     $tagname  = tag_display_name($tag_object);
     $related_tags =  related_tags($tag_object->id);
 
-    $output = '';
+    $content = !empty($tag_object->description) || $related_tags;
 
-    $output .= print_box_start('generalbox', 'tag-description',true);
+    $output = '';
+ 
+    if ($content) {
+        $output .= print_box_start('generalbox', 'tag-description',true);
+    }
 
     if (!empty($tag_object->description)) {
         $options = new object;
         $options->para=false;
         $output .= format_text($tag_object->description, $tag_object->descriptionformat, $options );
     }
-    else {
-        $output .= format_text(get_string('thistaghasnodesc','tag'));
-    }
 
     if ($related_tags) {
         $output .= '<br/><br/><b>'.get_string('relatedtags','tag').': </b>' . tag_links_csv($related_tags);
     }
 
-    $output .= print_box_end(true);
+    if ($content) {
+        $output .= print_box_end(true);
+    }
 
     if ($return) {
         return $output;
-    }
-    else {
+    } else {
         echo $output;
     }
-
 }
 
 /**

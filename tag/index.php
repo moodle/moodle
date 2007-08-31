@@ -96,7 +96,7 @@ if ($blogs = fetch_entries('', 10, 0, 'site', '', $tag->id)) {
 
     print_box_start('generalbox', 'tag-blogs');
 
-    print_heading(get_string('lasttenblogs', 'tag'), '', 3);
+    print_heading(get_string('relatedblogs', 'tag'), '', 3);
 
     echo '<ul id="tagblogentries">';
     foreach ($blogs as $blog) {
