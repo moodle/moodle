@@ -593,7 +593,7 @@
 
                 $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
                           .$CFG->prefix.'groups_members gm, '.$CFG->prefix.'user u
-                        WHERE p.userid =g m.userid AND u.id = p.userid
+                        WHERE p.userid = gm.userid AND u.id = p.userid '.$tagquerysql.'
                           AND gm.groupid = '.$filterselect.'
                           AND u.deleted = 0
                           '.$permissionsql.$typesql;
