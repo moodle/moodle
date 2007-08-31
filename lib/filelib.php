@@ -30,10 +30,10 @@ function download_file_content($url) {
 }
 
 /**
- * @return List of information about file types based on extensions. 
+ * @return List of information about file types based on extensions.
  *   Associative array of extension (lower-case) to associative array
  *   from 'element name' to data. Current element names are 'type' and 'icon'.
- *   Unknown types should use the 'xxx' entry which includes defaults. 
+ *   Unknown types should use the 'xxx' entry which includes defaults.
  */
 function get_mimetypes_array() {
     return array (
@@ -53,7 +53,7 @@ function get_mimetypes_array() {
         'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash.gif'),
         'cpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text.gif'),
-        'css'  => array ('type'=>'text/css', 'icon'=>'text.gif'),        
+        'css'  => array ('type'=>'text/css', 'icon'=>'text.gif'),
         'csv'  => array ('type'=>'text/csv', 'icon'=>'excel.gif'),
         'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video.gif'),
         'dmg'  => array ('type'=>'application/octet-stream', 'icon'=>'dmg.gif'),
@@ -192,13 +192,13 @@ function get_mimetypes_array() {
     );
 }
 
-/** 
+/**
  * Obtains information about a filetype based on its extension. Will
  * use a default if no information is present about that particular
  * extension.
- * @param string $element Desired information (usually 'icon' 
+ * @param string $element Desired information (usually 'icon'
  *   for icon filename or 'type' for MIME type)
- * @param string $filename Filename we're looking up  
+ * @param string $filename Filename we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
@@ -216,17 +216,17 @@ function mimeinfo($element, $filename) {
     }
 }
 
-/** 
+/**
  * Obtains information about a filetype based on the MIME type rather than
  * the other way around.
  * @param string $element Desired information (usually 'icon')
- * @param string $mimetype MIME type we're looking up  
+ * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_type($element, $mimetype) {
     static $mimeinfo;
     $mimeinfo=get_mimetypes_array();
-    
+
     foreach($mimeinfo as $values) {
         if($values['type']==$mimetype) {
             if(isset($values[$element])) {
@@ -239,11 +239,11 @@ function mimeinfo_from_type($element, $mimetype) {
 }
 
 /**
- * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the 
- * mimetypes.php language file. 
+ * Obtains descriptions for file types (e.g. 'Microsoft Word document') from the
+ * mimetypes.php language file.
  * @param string $mimetype MIME type (can be obtained using the mimeinfo function)
  * @param bool $capitalise If true, capitalises first character of result
- * @return string Text description 
+ * @return string Text description
  */
 function get_mimetype_description($mimetype,$capitalise=false) {
     $result=get_string($mimetype,'mimetypes');
@@ -251,16 +251,16 @@ function get_mimetype_description($mimetype,$capitalise=false) {
     // (maybe there is a better way to find this out?)
     if(strpos($result,'[')===0) {
         $result=get_string('document/unknown','mimetypes');
-    } 
+    }
     if($capitalise) {
         $result=ucfirst($result);
     }
     return $result;
 }
 
-/** 
- * Handles the sending of file data to the user's browser, including support for 
- * byteranges etc. 
+/**
+ * Handles the sending of file data to the user's browser, including support for
+ * byteranges etc.
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
  * @param string $filename Filename to send
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
@@ -276,7 +276,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
     // only Firefox saves all files locally before opening when content-disposition: attachment stated
     $isFF         = check_browser_version('Firefox', '1.5'); // only FF > 1.5 properly tested
-    $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' : 
+    $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
                          ($mimetype ? $mimetype : mimeinfo('type', $filename));
     $lastmodified = $pathisstring ? time() : filemtime($path);
     $filesize     = $pathisstring ? strlen($path) : filesize($path);
@@ -287,13 +287,13 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
         //or file linked from another site; browser caching of pdfs is now disabled too
         if (!empty($_SERVER['HTTP_RANGE'])) {
             //already byteserving
-            $lifetime = 1; // >0 needed for byteserving    
+            $lifetime = 1; // >0 needed for byteserving
         } else if (empty($_SERVER['HTTP_REFERER']) or strpos($_SERVER['HTTP_REFERER'], $CFG->wwwroot)!==0) {
             $mimetype = 'application/x-forcedownload';
             $forcedownload = true;
             $lifetime = 0;
         } else {
-            $lifetime = 1; // >0 needed for byteserving    
+            $lifetime = 1; // >0 needed for byteserving
         }
     }
 
@@ -399,7 +399,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $options->noclean = true;
             $options->nocache = true; // temporary workaround for MDL-5136
             $text = $pathisstring ? $path : implode('', file($path));
-            
+
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
@@ -542,11 +542,11 @@ function put_records_csv($file, $records, $table = NULL) {
 
 
 /**
- * Recursively delete the file or folder with path $location. That is, 
+ * Recursively delete the file or folder with path $location. That is,
  * if it is a file delete it. If it is a folder, delete all its content
- * then delete it. If $location does not exist to start, that is not 
- * considered an error. 
- * 
+ * then delete it. If $location does not exist to start, that is not
+ * considered an error.
+ *
  * @param $location the path to remove.
  */
 function fulldelete($location) {
@@ -585,7 +585,7 @@ function fulldelete($location) {
 function readfile_chunked($filename, $retbytes=true) {
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
     $buffer = '';
-    $cnt =0;// $handle = fopen($filename, 'rb');
+    $cnt =0;
     $handle = fopen($filename, 'rb');
     if ($handle === false) {
         return false;
@@ -673,44 +673,44 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
 function file_modify_html_header($text) {
     // first look for <head> tag
     global $CFG;
-    
+
     $stylesheetshtml = '';
     foreach ($CFG->stylesheets as $stylesheet) {
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }    
-    
+    }
+
     $filters = explode(",", $CFG->textfilters);
     if (in_array('filter/mediaplugin', $filters)) {
-        // this script is needed by most media filter plugins. 
-        $ufo = "\n".'<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/ufo.js"></script>'."\n";    
+        // this script is needed by most media filter plugins.
+        $ufo = "\n".'<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/ufo.js"></script>'."\n";
     } else {
-        $ufo = ''; 
+        $ufo = '';
     }
-  
+
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);
     if ($matches) {
         $replacement = '<head>'.$ufo.$stylesheetshtml;
         $text = preg_replace('/\<head\>|\<HEAD\>/', $replacement, $text, 1);
-        return $text; 
+        return $text;
     }
-    
+
     // if not, look for <html> tag, and stick <head> right after
     preg_match('/\<html\>|\<HTML\>/', $text, $matches);
     if ($matches) {
         // replace <html> tag with <html><head>includes</head>
         $replacement = '<html>'."\n".'<head>'.$ufo.$stylesheetshtml.'</head>';
         $text = preg_replace('/\<html\>|\<HTML\>/', $replacement, $text, 1);
-        return $text;  
+        return $text;
     }
-    
+
     // if not, look for <body> tag, and stick <head> before body
     preg_match('/\<body\>|\<BODY\>/', $text, $matches);
     if ($matches) {
         $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".'<body>';
         $text = preg_replace('/\<body\>|\<BODY\>/', $replacement, $text, 1);
-        return $text;  
-    }    
-    
+        return $text;
+    }
+
     // if not, just stick a <head> tag at the beginning
     $text = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".$text;
     return $text;

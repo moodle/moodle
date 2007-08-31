@@ -53,14 +53,20 @@ class grade_export_xml extends grade_export {
         /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xml");
 
+        $tempfilename = $CFG->dataroot . MD5(microtime()) . $downloadfilename;
+        if (!$handle = fopen($tempfilename, 'w+b')) {
+            error("Could not create a temporary file into which to dump the XML data.");
+            return false;
+        }
+
         /// time stamp to ensure uniqueness of batch export
-        $retval .= '<results batch="xml_export_'.time().'">';
+        fwrite($handle,  '<results batch="xml_export_'.time().'">'."\n");
 
         foreach ($this->columnidnumbers as $index => $idnumber) {
 
             // studentgrades[] index should match with corresponding $index
             foreach ($this->grades as $studentid => $studentgrades) {
-                $retval .= '<result>';
+                fwrite($handle,  "\t<result>\n");
 
                 // state can be new, or regrade
                 // require comparing of timestamps in db
@@ -94,16 +100,16 @@ class grade_export_xml extends grade_export {
                     $status = 'new';
                 }
 
-                $retval .= '<state>'.$status.'</state>';
+                fwrite($handle,  "\t\t<state>$status</state>\n");
                 // only need id number
-                $retval .= '<assignment>'.$idnumber.'</assignment>';
+                fwrite($handle,  "\t\t<assignment>$idnumber</assignment>\n");
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
-                $retval .= '<student>'.$studentid.'</student>';
-                $retval .= '<score>'.$studentgrades[$index].'</score>';
+                fwrite($handle,  "\t\t<student>$studentid</student>\n");
+                fwrite($handle,  "\t\t<score>{$studentgrades[$index]}</score>\n");
                 if ($feedback) {
-                    $retval .= '<feedback>'.$this->comments[$studentid][$index].'</feedback>';
+                    fwrite($handle,  "\t\t<feedback>{$this->comments[$studentid][$index]}</feedback>\n");
                 }
-                $retval .= '</result>';
+                fwrite($handle,  "\t</result>\n");
 
                 // timestamp this if needed
                 if ($export) {
@@ -113,16 +119,19 @@ class grade_export_xml extends grade_export {
                 }
             }
         }
-        $retval .= '</results>';
+        fwrite($handle,  "</results>");
+        fclose($handle);
 
-        if ($this->publish) {
-            header("Content-type: text/xml; charset=UTF-8");
-            header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
-        }
+        require_once($CFG->libdir . '/filelib.php');
 
-        echo $retval;
+        header("Content-type: text/xml; charset=UTF-8");
+        header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
 
-        exit;
+        readfile_chunked($tempfilename);
+
+        unlink($tempfilename);
+
+        exit();
     }
 }
 
