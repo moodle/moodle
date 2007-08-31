@@ -242,7 +242,7 @@ function upgrade_17_groups() {
  * @param XMLDBTable $table 'groups_groupings' table object.
  */
 function upgrade_18_groups() {
-    global $db;
+    global $CFG, $db;
 
     $result = upgrade_18_groups_drop_keys_indexes();
 
@@ -318,37 +318,24 @@ function upgrade_18_groups() {
 
 ///=================
 
-/// Transfer course ID from 'mdl_groups_courses_groups' to 'mdl_groups'.
+/// Transfer courseid from 'mdl_groups_courses_groups' to 'mdl_groups'.
     if ($result) {
-        if ($rs = get_recordset('groups_courses_groups')) {
-            $db->debug = false;
-            if ($rs->RecordCount() > 0) {
-                while ($group = rs_fetch_next_record($rs)) {
-                    //Update record, overwrite the 'id' (not useful) with group ID.
-                    $group->id = $group->groupid;
-                    unset($group->groupid);
-                    $result = $result && update_record('groups', $group);
-                }
-            }
-            rs_close($rs);
-            $db->debug = true;
-        }
+        $sql = "UPDATE {$CFG->prefix}groups g
+                   SET courseid = (
+                        SELECT MAX(courseid)
+                          FROM {$CFG->prefix}groups_courses_groups gcg
+                         WHERE gcg.groupid = g.id)";
+        execute_sql($sql);
     }
 
-/// Transfer course ID from 'groups_courses_groupings' to 'mdl_groupings'.
+/// Transfer courseid from 'groups_courses_groupings' to 'mdl_groupings'.
     if ($result) {
-        if ($rs = get_recordset('groups_courses_groupings')) {
-            if ($rs->RecordCount() > 0) {
-                while ($course_grouping = rs_fetch_next_record($rs)) {
-                    //Update record, overwrite the 'id' (not useful) with grouping ID.
-                    $course_grouping->id = $course_grouping->groupingid;
-                    unset($course_grouping->groupingid);
-                    $result = $result && update_record('groupings', $course_grouping);
-                }
-            }
-            rs_close($rs);
-            $db->debug = true;
-        }
+        $sql = "UPDATE {$CFG->prefix}groupings g
+                   SET courseid = (
+                        SELECT MAX(courseid)
+                          FROM {$CFG->prefix}groups_courses_groupings gcg
+                         WHERE gcg.groupingid = g.id)";
+        execute_sql($sql);
     }
 
 /// Drop the old tables
