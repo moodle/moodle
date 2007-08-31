@@ -2809,6 +2809,10 @@ div#tag-blogs {
  display:block;
 }
 
+body#tag-index .moreblogs {
+ text-align:right;
+}
+
 div#tag-management-box {
  margin-bottom:10px;
  text-align:center;

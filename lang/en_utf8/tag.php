@@ -24,6 +24,7 @@ $string['responsiblewillbenotified'] = 'The person responsible will be notified'
 $string['resetflag'] = 'Reset flag';
 $string['reset'] = 'Reset';
 $string['search'] = 'Search';
+$string['seeallblogs'] = 'See all blogs with this tag';
 $string['searchresultsfor'] = 'Search results for \"$a\"';
 $string['searchtags'] = 'Search tags';
 $string['select'] = 'Select';
