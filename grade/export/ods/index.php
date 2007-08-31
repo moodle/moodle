@@ -48,29 +48,14 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'ods');
 
-$mform = new grade_export_form(null, array('publishing' => true));
+$mform = new grade_export_form(null, array('publishing' => $CFG->enablepublishing));
 
 // process post information
 if ($data = $mform->get_data()) {
-    $itemids = array();
-    if ($data->itemids) {
-        foreach ($data->itemids as $itemid=>$selected) {
-            if ($selected) {
-                $itemids[] = $itemid;
-            }
-        }
-        $itemidsurl = implode(",", $itemids);
-    } else {
-        //error?
-        $itemidsurl = '';
-    }
-
-    $export = new grade_export($id, $itemids, $data->export_letters);
+    // print the grades on screen for feedbacks
+    $export = new grade_export($id, $itemids, $data);
     $export->display_grades($feedback, $data->previewrows);
-
-    // this redirect should trigger a download prompt
-    redirect('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
-    exit;
+    $export->print_continue('ods');
 }
 
 $mform->display();

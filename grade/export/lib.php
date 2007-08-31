@@ -40,8 +40,9 @@ class grade_export {
     var $columnidnumbers = array(); // Collect all gradeitem id numbers
     var $students = array();
     var $course; // course
-    var $publish; // Whether to publish this data via URL, or dump it to browser as usual
+    var $userkey; // Optional MD5 string used to publish this export data via a URL
     var $export_letters;
+    var $itemidsurl; // A string of itemids to add to the URL for the export
 
     // common strings
     var $strgrades;
@@ -51,15 +52,25 @@ class grade_export {
      * Constructor should set up all the private variables ready to be pulled
      * @param int $courseid course id
      * @param array $itemids array of grade item ids, empty means all
-     * @param boolean $export_letters Whether to export letter grade_items as literal letters, or as numerical values
-     * @param boolean $publish published using private user key
+     * @param stdClass $formdata Optional object of formdata.
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($courseid, $itemids=null, $export_letters=false, $publish=false) {
-        global $CFG;
+    function grade_export($courseid, $itemids=null, $formdata=null) {
+        global $CFG, $USER, $COURSE;
 
-        $this->publish = $publish;
-        $this->export_letters = $export_letters;
+        $this->export_letters = false;
+        if (isset($formdata->export_letters)) {
+            $this->export_letters = $formdata->export_letters;
+        }
+
+        $this->userkey = false;
+        if (isset($formdata->key)) {
+            if ($formdata->key == 1 && isset($formdata->iprestriction) && isset($formdata->validuntil)) { // Create a new key
+                $formdata->key = create_user_key('grade/export', $USER->id, $COURSE->id, $formdata->iprestriction, $formdata->validuntil);
+            }
+            $this->userkey = $formdata->key;
+        }
+
         $this->strgrades = get_string("grades");
         $this->strgrade = get_string("grade");
 
@@ -121,9 +132,27 @@ class grade_export {
                 $this->comments[$student->id] = array(); // Collect all comments in tihs array
             }
         }
+
+        if (isset($formdata->itemids)) {
+            // Build itemidsurl for links
+            $itemids = array();
+            if ($formdata->itemids) {
+                foreach ($formdata->itemids as $itemid=>$selected) {
+                    if ($selected) {
+                        $itemids[] = $itemid;
+                    }
+                }
+                $this->itemidsurl = implode(",", $itemids);
+            } else {
+                //error?
+                $this->itemidsurl = '';
+            }
+        }
     }
 
     function load_grades() {
+        global $CFG;
+
         // first make sure we have all final grades
         // TODO: check that no grade_item has needsupdate set
         grade_regrade_final_grades($this->id);
@@ -155,8 +184,7 @@ class grade_export {
                             $grade_item_displaytype = $report->get_pref('gradedisplaytype', $gradeitem->id);
                             // TODO Convert final grade to letter if export option is on, and grade_item is set to letter type MDL-10490
                             if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
-                                $finalgrade = grade_grade::get_letter($letters, $finalgrade,
-                                            $gradeitem->grademin, $gradeitem->grademax);
+                                $finalgrade = grade_grade::get_letter($letters, $finalgrade, $gradeitem->grademin, $gradeitem->grademax);
                             }
                         }
 
@@ -169,7 +197,7 @@ class grade_export {
     }
 
     /**
-     * To be implemented by child classe
+     * To be implemented by child class
      * TODO finish PHPdocs
      */
     function print_grades() { }
@@ -224,6 +252,31 @@ class grade_export {
             echo "</tr>";
         }
         echo '</table>';
+    }
+
+    /**
+     * Either prints a "continue" box, which will redirect the user to the download page, or prints the URL for the published data.
+     * @note exit() at the end of the method
+     * @param string $plugin Required: name of the plugin calling this method. Used for building the URL.
+     * @return void
+     */
+    function print_continue($plugin) {
+        global $CFG;
+
+        // this redirect should trigger a download prompt
+        if (!$this->userkey) {
+            print_continue('export.php?id='.$this->id.'&amp;itemids='.$this->itemidsurl.'&amp;export_letters='.$this->export_letters);
+
+        } else {
+            $link = $CFG->wwwroot.'/grade/export/'.$plugin.'/dump.php?id='.$this->id.'&amp;itemids='
+                  . $this->itemidsurl.'&amp;export_letters='.$this->export_letters.'&amp;key='.$this->userkey;
+
+            echo '<p>';
+            echo '<a href="'.$link.'">'.$link.'</a>';
+            echo '</p>';
+            print_footer();
+        }
+        exit();
     }
 }
 

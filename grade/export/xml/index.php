@@ -48,45 +48,14 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xml');
 
-$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing'=>true));
+$mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing'=>$CFG->enablepublishing));
 
 // process post information
 if ($data = $mform->get_data()) {
-    $itemids = array();
-    if ($data->itemids) {
-        foreach ($data->itemids as $itemid=>$selected) {
-            if ($selected) {
-                $itemids[] = $itemid;
-            }
-        }
-        $itemidsurl = implode(",", $itemids);
-    } else {
-        //error?
-        $itemidsurl = '';
-    }
-
     // print the grades on screen for feedbacks
-
-    $export = new grade_export($id, $itemids, $data->export_letters, !empty($data->key));
-
+    $export = new grade_export($id, $itemids, $data);
     $export->display_grades($feedback, $data->previewrows);
-
-    // this redirect should trigger a download prompt
-    if (empty($data->key)) {
-        print_continue('export.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters);
-
-    } else {
-        if ($data->key == 1) {
-            $data->key = create_user_key('grade/export', $USER->id, $COURSE->id, $data->iprestriction, $data->validuntil);
-        }
-        $link = $CFG->wwwroot.'/grade/export/xml/dump.php?id='.$id.'&amp;itemids='.$itemidsurl.'&amp;export_letters='.$data->export_letters.'&amp;key='.$data->key;
-
-        echo '<p>';
-        echo '<a href="'.$link.'">'.$link.'</a>';
-        echo '</p>';
-        print_footer();
-    }
-    exit;
+    $export->print_continue('xml');
 }
 
 $mform->display();
