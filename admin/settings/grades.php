@@ -8,6 +8,8 @@ $temp = new admin_settingpage('gradessettings', get_string('gradessettings', 'gr
 $temp->add(new admin_setting_special_gradeexport());
 // enable outcomes checkbox
 $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
+// enable publishing in exports/imports
+$temp->add(new admin_setting_configcheckbox('enablepublishing', get_string('enablepublishing', 'userkey'), get_string('configenablepublishing', 'userkey'), 0, PARAM_INT));
 $ADMIN->add('grades', $temp);
 
 /// Scales and outcomes
