@@ -10,9 +10,6 @@ class note_edit_form extends moodleform {
         $strpublishstate = get_string('publishstate', 'notes');
         $mform->addElement('header', 'general', get_string('note', 'notes'));
 
-        $mform->addElement('select', 'user', get_string('user'), $this->_customdata['userlist']);
-        $mform->addRule('user', get_string('nouser', 'notes'), 'required', null, 'client');
-
         $mform->addElement('textarea', 'content', $strcontent, array('rows'=>15, 'cols'=>40));
         $mform->setType('content', PARAM_RAW);
         $mform->addRule('content', get_string('nocontent', 'notes'), 'required', null, 'client');
@@ -27,6 +24,9 @@ class note_edit_form extends moodleform {
 
         $mform->addElement('hidden', 'course');
         $mform->setType('course', PARAM_INT);
+
+        $mform->addElement('hidden', 'user');
+        $mform->setType('user', PARAM_INT);
 
         $mform->addElement('hidden', 'note');
         $mform->setType('note', PARAM_INT);
