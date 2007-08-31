@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070828" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070829" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -183,7 +183,7 @@
         <FIELD NAME="shortname" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="fullname" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="shortname" NEXT="reason"/>
         <FIELD NAME="reason" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="summary" NEXT="requester"/>
-        <FIELD NAME="requester" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="reason" NEXT="password"/>
+        <FIELD NAME="requester" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="reason" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="requester"/>
       </FIELDS>
       <KEYS>
@@ -387,8 +387,8 @@
     <TABLE NAME="message" COMMENT="Stores all unread messages" PREVIOUS="log_display" NEXT="message_read">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
-        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
-        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
         <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="messagetype"/>
@@ -405,8 +405,8 @@
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read" PREVIOUS="message" NEXT="message_contacts">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
-        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
-        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
         <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="timeread"/>
@@ -486,7 +486,7 @@
     </TABLE>
     <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users" PREVIOUS="adodb_logsql" NEXT="user">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="year"/>
         <FIELD NAME="year" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="tzrule"/>
         <FIELD NAME="tzrule" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="year" NEXT="gmtoff"/>
@@ -514,7 +514,7 @@
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="auth" NEXT="policyagreed"/>
         <FIELD NAME="policyagreed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="confirmed" NEXT="deleted"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="policyagreed" NEXT="mnethostid"/>
-        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="username"/>
+        <FIELD NAME="mnethostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="mnethostid" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="username" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="password" NEXT="firstname"/>
@@ -625,8 +625,8 @@
     <TABLE NAME="scale_history" COMMENT="History table" PREVIOUS="scale" NEXT="stats_daily">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -768,7 +768,7 @@
     </TABLE>
     <TABLE NAME="post" COMMENT="Generic post table to hold data blog entries etc in different modules" PREVIOUS="stats_user_monthly" NEXT="role">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="module"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="module"/>
         <FIELD NAME="module" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="module" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="groupid"/>
@@ -832,9 +832,9 @@
     </TABLE>
     <TABLE NAME="context_rel" COMMENT="context relations, c2 is a parent (or higher) of c1" PREVIOUS="context" NEXT="capabilities">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="c1"/>
-        <FIELD NAME="c1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="context 1, child context" PREVIOUS="id" NEXT="c2"/>
-        <FIELD NAME="c2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="parent (or higher) context" PREVIOUS="c1"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="c1"/>
+        <FIELD NAME="c1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="context 1, child context" PREVIOUS="id" NEXT="c2"/>
+        <FIELD NAME="c2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="parent (or higher) context" PREVIOUS="c1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me" NEXT="c1"/>
@@ -951,7 +951,7 @@
     </TABLE>
     <TABLE NAME="role_sortorder" COMMENT="sort order of course managers in a course" PREVIOUS="role_names" NEXT="user_info_field">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="roleid"/>
         <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="contextid"/>
         <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="roleid" NEXT="sortoder"/>
@@ -969,7 +969,7 @@
     </TABLE>
     <TABLE NAME="user_info_field" COMMENT="Customisable user profile fields" PREVIOUS="role_sortorder" NEXT="user_info_category">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="shortname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="shortname" SEQUENCE="false" ENUM="false" COMMENT="short name for each field" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="field name" PREVIOUS="shortname" NEXT="datatype"/>
         <FIELD NAME="datatype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Type of data held in this field" PREVIOUS="name" NEXT="description"/>
@@ -994,7 +994,7 @@
     </TABLE>
     <TABLE NAME="user_info_category" COMMENT="Customisable fields categories" PREVIOUS="user_info_field" NEXT="user_info_data">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Category name" PREVIOUS="id" NEXT="sortorder"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Display order" PREVIOUS="name"/>
       </FIELDS>
@@ -1004,7 +1004,7 @@
     </TABLE>
     <TABLE NAME="user_info_data" COMMENT="Data for the customisable user fields" PREVIOUS="user_info_category" NEXT="mnet_enrol_course">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id from the user table" PREVIOUS="id" NEXT="fieldid"/>
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id from the field table" PREVIOUS="userid" NEXT="data"/>
         <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Field data" PREVIOUS="fieldid"/>
@@ -1015,7 +1015,7 @@
     </TABLE>
     <TABLE NAME="mnet_enrol_course" COMMENT="Information about courses on remote hosts" PREVIOUS="user_info_data" NEXT="mnet_enrol_assignments">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique remote-course ID" NEXT="hostid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Unique remote-course ID" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="remoteid"/>
         <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="cat_id"/>
         <FIELD NAME="cat_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="remoteid" NEXT="cat_name"/>
@@ -1041,7 +1041,7 @@
     </TABLE>
     <TABLE NAME="mnet_enrol_assignments" COMMENT="Information about enrolments on courses on remote hosts" PREVIOUS="mnet_enrol_course" NEXT="mnet_application">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique enrollment ID" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Unique enrollment ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of user on *this* server" PREVIOUS="id" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique ID of course on its home server" PREVIOUS="hostid" NEXT="rolename"/>
@@ -1071,7 +1071,7 @@
     </TABLE>
     <TABLE NAME="mnet_host" COMMENT="Information about the local and remote hosts for RPC" PREVIOUS="mnet_application" NEXT="mnet_host2service">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique Host ID" NEXT="deleted"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Unique Host ID" NEXT="deleted"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="wwwroot"/>
         <FIELD NAME="wwwroot" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="deleted" NEXT="ip_address"/>
         <FIELD NAME="ip_address" TYPE="char" LENGTH="39" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="wwwroot" NEXT="name"/>
@@ -1091,7 +1091,7 @@
     </TABLE>
     <TABLE NAME="mnet_host2service" COMMENT="Information about the services for a given host" PREVIOUS="mnet_host" NEXT="mnet_log">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="serviceid"/>
         <FIELD NAME="serviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hostid" NEXT="publish"/>
         <FIELD NAME="publish" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="serviceid" NEXT="subscribe"/>
@@ -1106,7 +1106,7 @@
     </TABLE>
     <TABLE NAME="mnet_log" COMMENT="Store session data from users migrating to other sites" PREVIOUS="mnet_host2service" NEXT="mnet_rpc">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="hostid"/>
         <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique host ID" PREVIOUS="id" NEXT="remoteid"/>
         <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="hostid" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="remoteid" NEXT="userid"/>
@@ -1129,7 +1129,7 @@
     </TABLE>
     <TABLE NAME="mnet_rpc" COMMENT="Functions or methods that we may publish or subscribe to" PREVIOUS="mnet_log" NEXT="mnet_service">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique Function ID" NEXT="function_name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Unique Function ID" NEXT="function_name"/>
         <FIELD NAME="function_name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="xmlrpc_path"/>
         <FIELD NAME="xmlrpc_path" TYPE="char" LENGTH="80" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="function_name" NEXT="parent_type"/>
         <FIELD NAME="parent_type" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_path" NEXT="parent"/>
@@ -1147,7 +1147,7 @@
     </TABLE>
     <TABLE NAME="mnet_service" COMMENT="A service is a group of functions" PREVIOUS="mnet_rpc" NEXT="mnet_service2rpc">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Unique Service ID" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Unique Service ID" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="description"/>
         <FIELD NAME="description" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="apiversion"/>
         <FIELD NAME="apiversion" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="description" NEXT="offer"/>
@@ -1159,7 +1159,7 @@
     </TABLE>
     <TABLE NAME="mnet_service2rpc" COMMENT="Group functions or methods under a service" PREVIOUS="mnet_service" NEXT="mnet_session">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="serviceid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="serviceid"/>
         <FIELD NAME="serviceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique service ID" PREVIOUS="id" NEXT="rpcid"/>
         <FIELD NAME="rpcid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique Function ID" PREVIOUS="serviceid"/>
       </FIELDS>
@@ -1172,7 +1172,7 @@
     </TABLE>
     <TABLE NAME="mnet_session" COMMENT="Store session data from users migrating to other sites" PREVIOUS="mnet_service2rpc" NEXT="mnet_sso_access_control">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Unique user ID" PREVIOUS="id" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Unique username" PREVIOUS="userid" NEXT="token"/>
         <FIELD NAME="token" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Unique SHA1 Token" PREVIOUS="username" NEXT="mnethostid"/>
@@ -1191,7 +1191,7 @@
     </TABLE>
     <TABLE NAME="mnet_sso_access_control" COMMENT="Users by host permitted (or not) to login from a remote provider" PREVIOUS="mnet_session" NEXT="events_queue">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="username"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="Required ID field" NEXT="username"/>
         <FIELD NAME="username" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Username" PREVIOUS="id" NEXT="mnet_host_id"/>
         <FIELD NAME="mnet_host_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="id of mnet host" PREVIOUS="username" NEXT="accessctrl"/>
         <FIELD NAME="accessctrl" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="allow" SEQUENCE="false" ENUM="false" COMMENT="Whether or not this user/host can login" PREVIOUS="mnet_host_id"/>
@@ -1270,7 +1270,7 @@
     </TABLE>
     <TABLE NAME="grade_outcomes_courses" COMMENT="stores what outcomes are used in what courses." PREVIOUS="grade_outcomes" NEXT="grade_categories">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the course" PREVIOUS="id" NEXT="outcomeid"/>
         <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the outcome" PREVIOUS="courseid"/>
       </FIELDS>
@@ -1319,7 +1319,7 @@
         <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the maximum allowable grade?" PREVIOUS="gradetype" NEXT="grademin"/>
         <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the minimum allowable grade?" PREVIOUS="grademax" NEXT="scaleid"/>
         <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is based on a scale, which one is it?" PREVIOUS="grademin" NEXT="outcomeid"/>
-        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
+        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
         <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What grade is needed to pass? grademin &amp;lt; gradepass &amp;lt;= grademax" PREVIOUS="outcomeid" NEXT="multfactor"/>
         <FIELD NAME="multfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Multiply all grades by this" PREVIOUS="gradepass" NEXT="plusfactor"/>
         <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="aggregationcoef"/>
@@ -1397,8 +1397,8 @@
     <TABLE NAME="grade_outcomes_history" COMMENT="History table" PREVIOUS="grade_grades_text" NEXT="grade_categories_history">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1422,8 +1422,8 @@
     <TABLE NAME="grade_categories_history" COMMENT="History of grade_categories" PREVIOUS="grade_outcomes_history" NEXT="grade_items_history">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1451,8 +1451,8 @@
     <TABLE NAME="grade_items_history" COMMENT="History of grade_items" PREVIOUS="grade_categories_history" NEXT="grade_grades_history">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="courseid"/>
@@ -1470,7 +1470,7 @@
         <FIELD NAME="grademax" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the maximum allowable grade?" PREVIOUS="gradetype" NEXT="grademin"/>
         <FIELD NAME="grademin" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What is the minimum allowable grade?" PREVIOUS="grademax" NEXT="scaleid"/>
         <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is based on a scale, which one is it?" PREVIOUS="grademin" NEXT="outcomeid"/>
-        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
+        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="If this grade is related to an outcome, which one is it?" PREVIOUS="scaleid" NEXT="gradepass"/>
         <FIELD NAME="gradepass" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="What grade is needed to pass? grademin &amp;lt; gradepass &amp;lt;= grademax" PREVIOUS="outcomeid" NEXT="multfactor"/>
         <FIELD NAME="multfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1.0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Multiply all grades by this" PREVIOUS="gradepass" NEXT="plusfactor"/>
         <FIELD NAME="plusfactor" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" DECIMALS="5" COMMENT="Add this to all grades" PREVIOUS="multfactor" NEXT="aggregationcoef"/>
@@ -1497,8 +1497,8 @@
     <TABLE NAME="grade_grades_history" COMMENT="History table" PREVIOUS="grade_items_history" NEXT="grade_grades_text_history">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="itemid"/>
@@ -1533,8 +1533,8 @@
     <TABLE NAME="grade_grades_text_history" COMMENT="History table" PREVIOUS="grade_grades_history" NEXT="grade_import_newitem">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="action"/>
-        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
-        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
+        <FIELD NAME="action" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="created/modified/deleted constants" PREVIOUS="id" NEXT="oldid"/>
+        <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="id of the table, please edit me" PREVIOUS="action" NEXT="source"/>
         <FIELD NAME="source" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="What caused the modification? manual/module/import/..." PREVIOUS="oldid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The last time this grade_item was modified" PREVIOUS="source" NEXT="loggeduser"/>
         <FIELD NAME="loggeduser" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="the userid of the person who last modified this outcome" PREVIOUS="timemodified" NEXT="gradeid"/>
@@ -1649,7 +1649,7 @@
     </TABLE>
     <TABLE NAME="groupings" COMMENT="A grouping is a collection of groups. WAS: groups_groupings" PREVIOUS="groups" NEXT="groups_members">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Short human readable unique name for group." PREVIOUS="courseid" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="configdata"/>
@@ -1677,7 +1677,7 @@
     </TABLE>
     <TABLE NAME="groupings_groups" COMMENT="Link a grouping to a group (note, groups can be in multiple groupings ONLY in a course). WAS: groups_groupings_groups" PREVIOUS="groups_members" NEXT="user_private_key">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="groupingid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="groupingid"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="groupid"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupingid" NEXT="timeadded"/>
         <FIELD NAME="timeadded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid"/>
