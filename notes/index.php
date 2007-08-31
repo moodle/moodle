@@ -51,7 +51,10 @@
 
     $strnotes = get_string('notes', 'notes');
     $nav = array();
-    $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+    $nav[] = array('name' => get_string('participants'), 'link' => $CFG->wwwroot . '/user/index.php?id=' . $course->id, 'type' => 'misc');
+    if ($userid) {
+        $nav[] = array('name' => fullname($user), 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id. '&amp;course=' . $course->id, 'type' => 'misc');
+    }
     $nav[] = array('name' => $strnotes, 'link' => '', 'type' => 'misc');
 
     print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
@@ -72,7 +75,7 @@
         $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
         $view = has_capability('moodle/notes:view', $context);
         note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
-        note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes, $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
+        note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes. ' ('.$course->fullname.')', $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
         note_print_notes('<a name="personalnotes"></a>' . $strpersonalnotes, $addid, $view, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
 
     } else {  // Normal course

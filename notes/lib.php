@@ -235,7 +235,11 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
         echo '<div class="notesgroup">';
     }
     if ($addcourseid) {
-        echo '<p><a href="'. $CFG->wwwroot .'/notes/add.php?course=' . $addcourseid . '&amp;user=' . $userid . '&amp;state=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
+        if ($userid) {
+           echo '<p><a href="'. $CFG->wwwroot .'/notes/add.php?course=' . $addcourseid . '&amp;user=' . $userid . '&amp;state=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
+        } else {
+           echo '<p><a href="'. $CFG->wwwroot .'/user/index.php?id=' . $addcourseid. '">' . get_string('addnewnoteselect', 'notes') . '</a></p>';
+        }
     }
     if ($viewnotes) {
         $notes =& note_list($courseid, $userid, $state, $author);
