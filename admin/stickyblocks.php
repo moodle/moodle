@@ -72,7 +72,7 @@
 
     if (!empty($pt)) {
         echo '</td>';
-        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="right-column">';
         blocks_print_group($PAGE, $blocks, BLOCK_POS_RIGHT);
         echo '</td>';
         echo '</tr></table>';
