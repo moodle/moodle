@@ -97,7 +97,7 @@ if ($usercount > 0) {
 // I was not able to use get_items_tagged_with() because it automatically 
 // tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
 // uses the post table so this would not really work.    - Yu 29/8/07
-if ($blogs = fetch_entries('', 10, 0, 'site', '', $tag->id)) {
+if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
 
     print_box_start('generalbox', 'tag-blogs');
 

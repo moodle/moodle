@@ -82,7 +82,7 @@
         $morelink = '<br />&nbsp;&nbsp;';
 
         $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC');
-        $blogEntries = fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', true);
+        $blogEntries = blog_fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', true);
 
         print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
 
@@ -481,7 +481,7 @@
     /**
      * Main filter function.
      */
-    function fetch_entries($postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
+    function blog_fetch_entries($postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
 
         global $CFG, $USER;
 
@@ -633,16 +633,16 @@
 
 
     /**
-     * get the count of viewable entries, easiest way is to count fetch_entries
+     * get the count of viewable entries, easiest way is to count blog_fetch_entries
      * this is used for print_paging_bar
-     * this is not ideal, but because of the UNION in the sql in fetch_entries,
+     * this is not ideal, but because of the UNION in the sql in blog_fetch_entries,
      * it is hard to use count_records_sql
      */
     function get_viewable_entry_count($postid='', $fetchlimit=10,
                 $fetchstart='', $filtertype='', $filterselect='', $tagid='',
                 $tag ='', $sort='lastmodified DESC') {
 
-        $blogEntries = fetch_entries($postid, $fetchlimit,
+        $blogEntries = blog_fetch_entries($postid, $fetchlimit,
                 $fetchstart, $filtertype, $filterselect, $tagid, $tag,
                 $sort='lastmodified DESC', false);
 
