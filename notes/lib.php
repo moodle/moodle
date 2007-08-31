@@ -221,19 +221,23 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
 {
     global $CFG;
     if ($header) {
-        echo '<h3 id="notestitle">' . $header . '</h3>';
+        echo '<h3 class="notestitle">' . $header . '</h3>';
+        echo '<div class="notesgroup">';
     }
     if ($addcourseid) {
         echo '<p><a href="'. $CFG->wwwroot .'/notes/add.php?course=' . $addcourseid . '&amp;user=' . $userid . '&amp;state=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
     }
     if ($viewnotes) {
         $notes =& note_list($courseid, $userid, $state, $author);
-        if($notes) {
+        if ($notes) {
             note_print_list($notes);
-        } else {
-            echo '<p>' . get_string('nonotes', 'notes') . '</p>';
         }
     } else {
         echo '<p>' . get_string('notesnotvisible', 'notes') . '</p>';
     }
+    if ($header) {
+        echo '</div>';  // notesgroup
+    }
 }
+
+?>

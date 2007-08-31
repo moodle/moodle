@@ -2496,11 +2496,21 @@ body#message-send .notifysuccess {
 }
 
 .notepost .content {
-    clear: both;
+  clear: both;
 }
 
 .notepost .footer {
-    clear: both;
+  clear: both;
+}
+
+body.notes .generalbox {
+  margin-left:auto;
+  margin-right:auto;
+  width:90%;
+}
+
+body.notes .notesgroup {
+  margin-left:20px;
 }
 
 /***

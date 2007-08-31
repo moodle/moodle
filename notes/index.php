@@ -1,88 +1,99 @@
 <?php // $Id$
 
-/**
- * file index.php
- * index page to view notes. 
- * if a course id is specified then the entries from that course are shown
- * if a user id is specified only notes related to that user are shown
- */
-require_once('../config.php');
-require_once('lib.php');
-// retrieve parameters
-$courseid     = optional_param('course', SITEID, PARAM_INT);
-$userid       = optional_param('user', 0, PARAM_INT);
-$filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
-$filterselect = optional_param('filterselect', 0, PARAM_INT);
+    /**
+     * file index.php
+     * index page to view notes. 
+     * if a course id is specified then the entries from that course are shown
+     * if a user id is specified only notes related to that user are shown
+     */
+    require_once('../config.php');
+    require_once('lib.php');
 
-// tabs compatibility
-switch($filtertype) {
-    case 'course':
-        $courseid = $filterselect;
-        break;
-    case 'site':
-        $courseid = SITEID;
-        break;
-}
+/// retrieve parameters
+    $courseid     = optional_param('course', SITEID, PARAM_INT);
+    $userid       = optional_param('user', 0, PARAM_INT);
+    $filtertype   = optional_param('filtertype', '', PARAM_ALPHA);
+    $filterselect = optional_param('filterselect', 0, PARAM_INT);
 
-// locate course information
-if (!$course = get_record('course', 'id', $courseid)) {
-    error('Incorrect course id specified');
-}
-
-// locate user information
-if ($userid) {
-    if(!$user = get_record('user', 'id', $userid)) {
-        error('Incorrect user id specified');
+/// tabs compatibility
+    switch($filtertype) {
+        case 'course':
+            $courseid = $filterselect;
+            break;
+        case 'site':
+            $courseid = SITEID;
+            break;
     }
-    $filtertype = 'user';
-    $filterselect = $user->id;
-} else {
-    $filtertype = 'course';
-    $filterselect = $course->id;
-}
 
-// require login to access notes
-require_login($course->id);
-$strnotes = get_string('notes', 'notes');
-$crumbs = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
-$currenttab = 'notes';
-// output HTML
-print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($crumbs));
+/// locate course information
+    if (!$course = get_record('course', 'id', $courseid)) {
+        error('Incorrect course id specified');
+    }
 
-require_once($CFG->dirroot .'/user/tabs.php');
-
-$strsitenotes = get_string('sitenotes', 'notes');
-$strcoursenotes = get_string('coursenotes', 'notes');
-$strpersonalnotes = get_string('personalnotes', 'notes');
-$straddnewnote = get_string('addnewnote', 'notes');
-
-if($courseid != SITEID) {
-    echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a> | <a href="#personalnotes">' . $strpersonalnotes . '</a>';
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
-    $view = has_capability('moodle/notes:view', $context);
-    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
-    note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes, $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
-    note_print_notes('<a name="personalnotes"></a>' . $strpersonalnotes, $addid, $view, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
-} else {
-    echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a>';
-    $view = has_capability('moodle/notes:view', get_context_instance(CONTEXT_SYSTEM));
-    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
-    echo '<a name="coursenotes"></a>';
-    if($userid) {
-        $courses = get_my_courses($userid);
-        foreach($courses as $c) {
-            $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $c->fullname . '</a>';
-            if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {
-                $addid = $c->id;
-            }else {
-                $addid = 0;
-            }
-            note_print_notes($header, $addid, $view, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
+/// locate user information
+    if ($userid) {
+        if (!$user = get_record('user', 'id', $userid)) {
+            error('Incorrect user id specified');
         }
+        $filtertype = 'user';
+        $filterselect = $user->id;
+    } else {
+        $filtertype = 'course';
+        $filterselect = $course->id;
     }
-}    
 
-add_to_log($courseid, 'notes', 'view', 'index.php?course='.$courseid.'&amp;user='.$userid, 'view notes');
+/// require login to access notes
+    require_login($course->id);
+    add_to_log($courseid, 'notes', 'view', 'index.php?course='.$courseid.'&amp;user='.$userid, 'view notes');
 
-print_footer($course);
+
+/// output HTML
+
+    $strnotes = get_string('notes', 'notes');
+    $nav = array(array('name' => $strnotes, 'link' => '', 'type' => 'activity'));
+
+    print_header($course->shortname . ': ' . $strnotes, $course->fullname, build_navigation($nav));
+
+    $currenttab = 'notes';
+    require_once($CFG->dirroot .'/user/tabs.php');
+
+    $strsitenotes = get_string('sitenotes', 'notes');
+    $strcoursenotes = get_string('coursenotes', 'notes');
+    $strpersonalnotes = get_string('personalnotes', 'notes');
+    $straddnewnote = get_string('addnewnote', 'notes');
+
+    print_box_start();
+
+    if ($courseid != SITEID) {
+        //echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a> | <a href="#personalnotes">' . $strpersonalnotes . '</a>';
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
+        $view = has_capability('moodle/notes:view', $context);
+        note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
+        note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes, $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
+        note_print_notes('<a name="personalnotes"></a>' . $strpersonalnotes, $addid, $view, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
+
+    } else {  // Normal course
+        //echo '<a href="#sitenotes">' . $strsitenotes . '</a> | <a href="#coursenotes">' . $strcoursenotes . '</a>';
+        $view = has_capability('moodle/notes:view', get_context_instance(CONTEXT_SYSTEM));
+        note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
+        echo '<a name="coursenotes"></a>';
+
+        if (!empty($userid)) {
+            $courses = get_my_courses($userid);
+            foreach($courses as $c) {
+                $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $c->fullname . '</a>';
+                if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {
+                    $addid = $c->id;
+                } else {
+                    $addid = 0;
+                }
+                note_print_notes($header, $addid, $view, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
+            }
+        }
+    }    
+
+    print_box_end();
+
+    print_footer($course);
+?>
