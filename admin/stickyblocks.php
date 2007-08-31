@@ -82,7 +82,7 @@
     if (!empty($pt)) {
         if (!empty($THEME->customcorners)) print_custom_corners_end();
         echo '</td>';
-        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="left-column">';
+        echo '<td valign="top" style="width: '.$blocks_preferred_width.'px;" id="right-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
         blocks_print_group($PAGE, $blocks, BLOCK_POS_RIGHT);
         if (!empty($THEME->customcorners)) print_custom_corners_end();
