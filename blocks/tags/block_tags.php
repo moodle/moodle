@@ -15,7 +15,7 @@ class block_tags extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true, 'my' => false, 'tag' => false);
+        return array('all' => true);
     }
 
     function instance_allow_config() {
