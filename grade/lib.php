@@ -2,6 +2,197 @@
 
 require_once $CFG->libdir.'/gradelib.php';
 
+
+/**
+ * This class iterates over all users that are graded in a course.
+ * Returns fetailed info about users and their grades.
+ */
+class graded_users_iterator {
+    var $course;
+    var $grade_items;
+    var $groupid;
+    var $users_rs;
+    var $grades_rs;
+    var $gradestack;
+
+    /**
+     * Constructor
+     * @param $coruse object
+     * @param array grade_items array of grade items, if not specified only user info returned
+     * @param int $groupid iterate only group users if present
+     */
+    function graded_users_iterator($course, $grade_items=null, $groupid=0) {
+        $this->course      = $course;
+        $this->grade_items = $grade_items;
+        $this->groupid     = $groupid;
+
+        $this->gradestack  = array();
+    }
+
+    /**
+     * Initialise the iterator
+     * @return boolean success
+     */
+    function init() {
+        global $CFG;
+
+        $this->close();
+
+        grade_regrade_final_grades($this->course->id);
+        $course_item = grade_item::fetch_course_item($this->course->id);
+        if ($course_item->needsupdate) {
+            // can not calculate all final grades - sorry
+            return false;
+        }
+
+        if (strpos($CFG->gradebookroles, ',') !== false) {
+            $gradebookroles = " = {$CFG->gradebookroles}";
+        } else {
+            $gradebookroles = " IN ({$CFG->gradebookroles})";
+        }
+
+        $relatedcontexts = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $this->course->id));
+
+        if ($this->groupid) {
+            $groupsql = "INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id";
+            $groupwheresql = "AND gm.groupid = {$this->groupid}";
+        } else {
+            $groupsql = "";
+            $groupwheresql = "";
+        }
+
+        $users_sql = "SELECT u.*
+                        FROM {$CFG->prefix}user u
+                             INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                             $groupsql
+                       WHERE ra.roleid $gradebookroles
+                             AND ra.contextid $relatedcontexts
+                             $groupwheresql
+                    ORDER BY u.id ASC";
+        $this->rs_users  = get_recordset_sql($users_sql);
+
+        if (!empty($this->grade_items)) {
+            $itemids = array_keys($this->grade_items);
+            $itemids = implode(',', $itemids);
+
+            $grades_sql = "SELECT g.*, gt.feedback, gt.feedbackformat
+                             FROM {$CFG->prefix}grade_grades g
+                                  LEFT JOIN {$CFG->prefix}grade_grades_text gt ON gt.gradeid = g.id
+                                  INNER JOIN {$CFG->prefix}user u ON g.userid = u.id
+                                  INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                                  $groupsql
+                            WHERE ra.roleid $gradebookroles
+                                  AND ra.contextid $relatedcontexts
+                                  AND g.itemid IN ($itemids)
+                                  $groupwheresql
+                         ORDER BY g.userid ASC, g.itemid ASC";
+            $this->rs_grades = get_recordset_sql($grades_sql);
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns information about the next user
+     * @return mixed array of user info, all grades and feedback or null when no more users found
+     */
+    function next_user() {
+        if (!$this->rs_users or !$this->rs_users->RecordCount()) {
+            return false; // no users present
+        }
+
+        if (!$user = rs_fetch_next_record($this->rs_users)) {
+            return false; // no more users
+        }
+
+        //find the first grade of this user
+        $grade_records = array();
+        while (true) {
+            if (!$current = $this->_pop()) {
+                break; // no more grades
+            }
+
+            if ($current->userid < $user->id) {
+                // this should not happen, could be caused by concurrent updates - skip this record
+                continue;
+
+            } else if ($current->userid > $user->id) {
+                // this user does not have any more grades
+                $this->_push($current);
+                break;
+            }
+
+            $grade_records[$current->itemid] = $current;
+        }
+
+        $grades = array();
+        $feedbacks = array();
+
+        foreach ($this->grade_items as $grade_item) {
+            if (array_key_exists($grade_item->id, $grade_records)) {
+                $feedbacks[$grade_item->id]->feedback       = $grade_records[$grade_item->id]->feedback;
+                $feedbacks[$grade_item->id]->feedbackformat = $grade_records[$grade_item->id]->feedbackformat;
+                unset($grade_records[$grade_item->id]->feedback);
+                unset($grade_records[$grade_item->id]->feedbackformat);
+                $grades[$grade_item->id] = new grade_grade($grade_records[$grade_item->id], false);
+            } else {
+                $feedbacks[$grade_item->id]->feedback       = '';
+                $feedbacks[$grade_item->id]->feedbackformat = FORMAT_MOODLE;
+                $grades[$grade_item->id] = new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
+            }
+        }
+
+        $result = new object();
+        $result->user      = $user;
+        $result->grades    = $grades;
+        $result->feedbacks = $feedbacks;
+
+        return $result;
+    }
+
+    /**
+     * Close the iterator, do not forget to call this function.
+     * @return void
+     */
+    function close() {
+        if ($this->rs_users) {
+            rs_close($this->rs_users);
+            $this->rs_users = null;
+        }
+        if ($this->rs_grades) {
+            rs_close($this->rs_grades);
+            $this->rs_grades = null;
+        }
+        $this->gradestack = array();
+    }
+
+    /**
+     * Internal function
+     */
+    function _push($grade) {
+        array_push($this->gradestack, $grade);
+    }
+
+    /**
+     * Internal function
+     */
+    function _pop() {
+        if (empty($this->gradestack)) {
+            if (!$this->rs_grades or !$this->rs_grades->RecordCount()) {
+                return NULL; // no grades present
+            }
+
+            if (!$grade = rs_fetch_next_record($this->rs_grades)) {
+                return NULL; // no more grades
+            }
+
+            return $grade;
+        } else {
+            return array_pop($this->gradestack);
+        }
+    }
+}
+
 /**
  * Print grading plugin selection popup form.
  *
