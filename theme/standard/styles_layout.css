@@ -384,7 +384,7 @@ img.emoticon {
 
 form.popupform,
 form.popupform div {
-    display: inline;
+  display: inline;
 }
 
 form.popupform label {
@@ -734,7 +734,7 @@ table.navbar {
 
 .navigation ul li form fieldset,
 .navigation ul li form div select {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 .navigation optgroup {
@@ -925,7 +925,7 @@ body#admin-modules table.generaltable td.c0
 
 #admin-roles-manage .selector,
 #admin-roles-override .selector {
-    text-align:center;
+  text-align:center;
 }
 
 #admin-roles-manage table.roledesc,
@@ -1063,7 +1063,7 @@ body#admin-modules table.generaltable td.c0
 }
 
 .environmentbox {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .form-buttons {
@@ -1300,17 +1300,17 @@ a.skip-block, .skip-block {
 }
 
 .blockconfigtable td.label {
-    text-align: right;
-    width: 50%;
+  text-align: right;
+  width: 50%;
 }
 
 .blockconfigtable td.value {
-    text-align: left;
-    width: 50%;
+  text-align: left;
+  width: 50%;
 }
 
 .blockconfigtable td.submit {
-    text-align: center;
+  text-align: center;
 }
 
 .blockconfiginstancecontent .tabs {
@@ -1688,9 +1688,9 @@ border-width:0px;
 }
 
 .sideblock .content h3.eventskey {
-    margin-top:0.5em;
-    margin-bottom:0;
-    margin-left:0.5em;
+  margin-top:0.5em;
+  margin-bottom:0;
+  margin-left:0.5em;
 }
 
 /***
@@ -2219,7 +2219,7 @@ body#doc-contents ul {
 }
 
 .grade-edit-tree .idnumber {
-    margin-left: 15px;
+  margin-left: 15px;
 }
 
 .grade-edit-tree .buttons .singlebutton {
@@ -2463,8 +2463,8 @@ body#message-send .notifysuccess {
  *** Notes
  ***/
 .notepost {
-    margin-bottom: 1em;
-    background-color: #EEE;
+  margin-bottom: 1em;
+  background-color: #EEE;
 }
 .sitenotepost {
 }
@@ -2474,25 +2474,25 @@ body#message-send .notifysuccess {
 }
 
 .ownnotepost .info {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .notepost .header {
-    background: #DDD;
-    padding: 5px;
+  background: #DDD;
+  padding: 5px;
 }
 
 .notepost .user {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .notepost .userpicture {
-    float: left;
-    margin-right: 5px;
+  float: left;
+  margin-right: 5px;
 }
 
 .notepost .info {
-    font-size: smaller;
+  font-size: smaller;
 }
 
 .notepost .content {
@@ -3761,26 +3761,26 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-mod #reviewoptionshdr .fitem {
-    float: left;
-    width: 30%;
-    margin-left: 10px;
-    clear: none;
+  float: left;
+  width: 30%;
+  margin-left: 10px;
+  clear: none;
 }
 #mod-quiz-mod #reviewoptionshdr .fitemtitle {
-    width: 100%;
-    font-weight: bold;
-    text-align: left;
-    height: 2.5em;
+  width: 100%;
+  font-weight: bold;
+  text-align: left;
+  height: 2.5em;
  margin-left: 0;
 }
 #mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
-    width: 100%;
-    text-align: left;
+  width: 100%;
+  text-align: left;
  margin-left: 0;
 }
 #mod-quiz-mod #reviewoptionshdr fieldset.fgroup span {
-    float: left;
-    clear: left;
+  float: left;
+  clear: left;
 }
 
 #mod-quiz-edit #page .controls,
@@ -3853,16 +3853,16 @@ body#mod-quiz-report .controls {
   width: 100%;
   padding-top: 15px;
   text-align: center
-  }
+}
 
 .resourcecontent object {
-    height:480px;
-    width:600px;
+  height:480px;
+  width:600px;
 }
 
 .resourcepdf object{
-    height: 800px;
-    width: 800px;
+  height: 800px;
+  width: 800px;
 }
 
 .mod-resource .modified {
