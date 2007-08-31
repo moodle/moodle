@@ -7195,10 +7195,10 @@ function setup_lang_from_browser() {
 ////////////////////////////////////////////////////////////////////////////////
 
 function is_newnav($navigation) {
-    if (is_array($navigation) && $navigation['newnav']) {
-        return(true);
+    if (is_array($navigation) && !empty($navigation['newnav'])) {
+        return true;
     } else {
-        return(false);
+        return false;
     }
 }
 

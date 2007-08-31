@@ -3383,11 +3383,11 @@ function build_navigation($extranavlinks) {
         if ($i > 0) {
             $navigation .= get_separator();
         }
-        if ($navlink['link'] && $i+1 < $countlinks) {
+        if ((!empty($navlink['link'])) && $i+1 < $countlinks) {
             $navigation .= "<a onclick=\"this.target='$CFG->framename'\" href=\"{$navlink['link']}\">";
         }
         $navigation .= "{$navlink['name']}";
-        if ($navlink['link'] && $i+1 < $countlinks) {
+        if ((!empty($navlink['link'])) && $i+1 < $countlinks) {
             $navigation .= "</a>";
         }
 
