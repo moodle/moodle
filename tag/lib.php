@@ -1303,15 +1303,7 @@ function print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='', $re
     $limitfrom,
     $limitnum) );
 
-    $output = '';
-
-    //user table box
-    $output .= print_box_start('generalbox', 'tag-user-table', true);
-
-    $output .= print_user_list($userlist, true);
-
-    $output .= print_box_end(true);
-    //end table box
+    $output = print_user_list($userlist, true);
 
     if ($return) {
         return $output;

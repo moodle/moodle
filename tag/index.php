@@ -73,6 +73,9 @@ $usercount = count_items_tagged_with($tag->id,'user');
 
 if ($usercount > 0) {
 
+    //user table box
+    print_box_start('generalbox', 'tag-user-table');
+
     $heading = get_string('userstaggedwith', 'tag', $tagname) . ': ' . $usercount;
     print_heading($heading, '', 3);
 
@@ -81,6 +84,8 @@ if ($usercount > 0) {
     print_paging_bar($usercount, $userpage, $perpage, $baseurl.'&amp;', 'userpage');
 
     print_tagged_users_table($tag, $userpage * $perpage, $perpage);
+
+    print_box_end();
 
 }
 
