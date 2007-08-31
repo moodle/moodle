@@ -97,6 +97,12 @@ class auth_plugin_cas extends auth_plugin_base {
           return;		
         }
 
+	  if ($_GET["loginguest"]== true) {
+			$frm->username="guest";
+			$frm->password="guest";
+			return;
+	  }		
+		
 		// Test si cas activ� et param�tres non remplis
 	  if (empty($this->config->hostname)) {
 		  return;
