@@ -1,6 +1,5 @@
-﻿<?php
+<?php
 
-require_once('../config.php');
 require_once($CFG->libdir.'/textlib.class.php');
     
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
