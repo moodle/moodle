@@ -26,94 +26,91 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_txt extends grade_export {
 
-    var $separator = "\t"; // default separator
+    var $plugin = 'txt';
 
-    function set_separator($separator) {
-        if ($separator == 'comma') {
-            $this->separator = ",";
-        } else if ($separator == 'tab') {
-            $this->separator = "\t";
+    var $separator; // default separator
+
+    function grade_export_txt($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false, $separator='comma') {
+        $this->grade_export($course, $groupid, $itemlist, $export_feedback, $export_letters);
+        $this->separator = $separator;
+    }
+
+    function process_form($formdata) {
+        parent::process_form($formdata);
+        if (isset($formdata->separator)) {
+            $this->separator = $formdata->separator;
         }
     }
 
-    /**
-     * To be implemented by child classes
-     */
-    function print_grades($feedback = false) {
+    function get_export_params() {
+        $params = parent::get_export_params();
+        $params['separator'] = $this->separator;
+        return $params;
+    }
+
+    function print_grades() {
         global $CFG;
 
-        $this->load_grades();
+        $export_tracking = $this->track_exports();
 
-        $retval = '';
+        $strgrades = get_string('grades', 'grade');
 
-        /// Whether this plugin is entitled to update export time
-        if ($expplugins = explode(",", $CFG->gradeexport)) {
-            if (in_array('txt', $expplugins)) {
-                $export = true;
-            } else {
-                $export = false;
-          }
-        } else {
-            $export = false;
+        switch ($this->separator) {
+            case 'comma':
+                $separator = ",";
+                break;
+            case 'tab':   
+            default:
+                $separator = "\t";
         }
 
         /// Print header to force download
+        @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        @header('Pragma: no-cache');
         header("Content-Type: application/download\n");
-        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades");
+        $downloadfilename = clean_filename("{$this->course->shortname} $strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 /// Print names of all the fields
-
-        $retval .= get_string("firstname")."$this->separator".
-             get_string("lastname")."{$this->separator}".
-             get_string("idnumber")."{$this->separator}".
-             get_string("institution")."{$this->separator}".
-             get_string("department")."{$this->separator}".
+        echo get_string("firstname").$separator.
+             get_string("lastname").$separator.
+             get_string("idnumber").$separator.
+             get_string("institution").$separator.
+             get_string("department").$separator.
              get_string("email");
-        foreach ($this->columns as $column) {
-            $column = strip_tags($column);
-            $retval .= "{$this->separator}$column";
 
-            /// add a column_feedback column
-            if ($feedback) {
-                $retval .= "{$this->separator}{$column}_feedback";
+        foreach ($this->columns as $grade_item) {
+            echo $separator.$this->format_column_name($grade_item);
+
+            /// add a feedback column
+            if ($this->export_feedback) {
+                echo $separator.$this->format_column_name($grade_item, true);
             }
         }
+        echo "\n";
 
 /// Print all the lines of data.
-        foreach ($this->grades as $studentid => $studentgrades) {
+        $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
+        $gui->init();
+        while ($userdata = $gui->next_user()) {
 
-            $student = $this->students[$studentid];
+            $user = $userdata->user;
 
-            $retval .= "$student->firstname{$this->separator}$student->lastname{$this->separator}$student->idnumber{$this->separator}$student->institution{$this->separator}$student->department{$this->separator}$student->email";
+            echo $user->firstname.$separator.$user->lastname.$separator.$user->idnumber.$separator.$user->institution.$separator.$user->department.$separator.$user->email;
 
-            foreach ($studentgrades as $gradeitemid => $grade) {
-                $grade = strip_tags($grade);
-                $retval .= "{$this->separator}$grade";
+            foreach ($userdata->grades as $itemid => $grade) {
+                echo $separator.$this->format_grade($grade);
 
-                if ($feedback) {
-                    $retval .= "{$this->separator}".$this->comments[$student->id][$gradeitemid];
+                if ($this->export_feedback) {
+                    echo $separator.$this->format_feedback($userdata->feedbacks[$itemid]);
                 }
 
-                /// if export flag needs to be set
-                /// construct the grade_grade object and update timestamp if CFG flag is set
-
-                if ($export) {
-                    //this should be improved with sql
-                    $params = new object();
-                    $params->itemid = $gradeitemid;
-                    $params->userid = $studentid;
-
-                    $grade_grade = new grade_grade($params);
-                    $grade_grade->exported = time();
-                    // update the time stamp;
-                    $grade_grade->update();
-                }
+                //TODO: reimplement export handling flag
             }
-            $retval .= "\n";
+            echo "\n";
         }
-
-        echo $retval;
+        $gui->close();
 
         exit;
     }

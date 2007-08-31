@@ -32,187 +32,194 @@ require_once($CFG->dirroot.'/grade/export/grade_export_form.php');
  */
 class grade_export {
 
-    var $id; // course id
-    var $grade_items; // array of grade_items
-    var $groupid;
-    var $grades = array();    // Collect all grades in this array
-    var $comments = array(); // Collect all comments for each grade
-    var $columns = array();     // Accumulate column names in this array.
-    var $columnidnumbers = array(); // Collect all gradeitem id numbers
-    var $students = array();
-    var $course; // course
-    var $userkey; // Optional MD5 string used to publish this export data via a URL
-    var $export_letters;
-    var $itemidsurl; // A string of itemids to add to the URL for the export
+    var $plugin; // plgin name - must be filled in subclasses!
 
-    // common strings
-    var $strgrades;
-    var $strgrade;
+    var $grade_items; // list of all course grade items
+    var $groupid;     // groupid, 0 means all groups
+    var $course;      // course object
+    var $columns;     // array of grade_items selected for export
+
+    var $previewrows;     // number of rows in preview
+    var $export_letters;  // export letters - TODO: finish implementation
+    var $export_feedback; // export feedback
+    var $userkey;         // export using private user key
+
+    var $letters;     // internal
+    var $report;      // internal
 
     /**
      * Constructor should set up all the private variables ready to be pulled
-     * @param int $courseid course id
-     * @param array $itemids array of grade item ids, empty means all
-     * @param stdClass $formdata Optional object of formdata.
+     * @param object $course
+     * @param int $groupid id of selected group, 0 means all
+     * @param string $itemlist comma separated list of item ids, empty means all
+     * @param boolean $export_feedback
+     * @param boolean $export_letters
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($courseid, $itemids=null, $formdata=null) {
-        global $CFG, $USER, $COURSE;
+    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $export_letters=false) {
+        $this->course = $course;
+        $this->groupid = $groupid;
+        $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
 
-        $this->export_letters = false;
-        if (isset($formdata->export_letters)) {
-            $this->export_letters = $formdata->export_letters;
+        $this->columns = array();
+        if (!empty($itemlist)) {
+            $itemids = explode(',', $itemlist);
+            // remove items that are not requested
+            foreach ($itemids as $itemid) {
+                if (array_key_exists($itemid, $this->grade_items)) {
+                    $this->columns[$itemid] =& $this->grade_items[$itemid];
+                }
+            }
+        } else {
+            foreach ($this->grade_items as $itemid=>$unused) {
+                $this->columns[$itemid] =& $this->grade_items[$itemid];
+            }
         }
 
-        $this->userkey = false;
+        $this->export_letters  = $export_letters;
+        $this->export_feedback = $export_feedback;
+        $this->userkey         = '';
+        $this->previewrows     = false;
+    }
+
+    /**
+     * Init object based using data from form
+     * @param object $formdata
+     */
+    function process_form($formdata) {
+        global $USER;
+
+        $this->columns = array();
+        if (!empty($formdata->itemids)) {
+            foreach ($formdata->itemids as $itemid=>$selected) {
+                if ($selected and array_key_exists($itemid, $this->grade_items)) {
+                    $this->columns[$itemid] =& $this->grade_items[$itemid];
+                }
+            }
+        } else {
+            foreach ($this->grade_items as $itemid=>$unused) {
+                $this->columns[$itemid] =& $this->grade_items[$itemid];
+            }
+        }
+
         if (isset($formdata->key)) {
-            if ($formdata->key == 1 && isset($formdata->iprestriction) && isset($formdata->validuntil)) { // Create a new key
-                $formdata->key = create_user_key('grade/export', $USER->id, $COURSE->id, $formdata->iprestriction, $formdata->validuntil);
+            if ($formdata->key == 1 && isset($formdata->iprestriction) && isset($formdata->validuntil)) {
+                // Create a new key
+                $formdata->key = create_user_key('grade/export', $USER->id, $this->course->id, $formdata->iprestriction, $formdata->validuntil);
             }
             $this->userkey = $formdata->key;
         }
 
-        $this->strgrades = get_string("grades");
-        $this->strgrade = get_string("grade");
-
-        if (!$course = get_record("course", "id", $courseid)) {
-            error("Course ID was incorrect");
-        }
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/grade:export', $context);
-
-        $this->id = $course->id;
-        $this->course = $course;
-
-        // fetch all grade items
-        if (empty($itemids)) {
-            $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->id));
-        } else {
-            $this->grade_items = array();
-            foreach ($itemids as $iid) {
-                if ($grade_item = grade_item::fetch(array('id'=>(int)$iid, 'courseid'=>$this->id))) {
-                    $this->grade_items[$grade_item->id] = $grade_item;
-                }
-            }
+        if (isset($formdata->export_letters)) {
+            $this->export_letters = $formdata->export_letters;
         }
 
-        // init colums
-        foreach ($this->grade_items as $grade_item) {
-            if ($grade_item->itemtype == 'mod') {
-                $this->columns[$grade_item->id] = get_string('modulename', $grade_item->itemmodule).': '.$grade_item->get_name();
+        if (isset($formdata->export_feedback)) {
+            $this->export_feedback = $formdata->export_feedback;
+        }
+
+        if (isset($formdata->previewrows)) {
+            $this->previewrows = $formdata->previewrows;
+        }
+
+    }
+
+    /**
+     * Update exported field in grade_grades table
+     * @return boolean
+     */
+    function track_exports() {
+        global $CFG;
+
+        /// Whether this plugin is entitled to update export time
+        if ($expplugins = explode(",", $CFG->gradeexport)) {
+            if (in_array($this->plugin, $expplugins)) {
+                return true;
             } else {
-                $this->columns[$grade_item->id] = $grade_item->get_name();
-            }
-            $this->columnidnumbers[$grade_item->id] = $grade_item->idnumber; // this might be needed for some export plugins
-        }
-
-        /// Check to see if groups are being used in this course
-        if ($groupmode = groupmode($course)) {   // Groups are being used
-
-            if (isset($_GET['group'])) {
-                $changegroup = $_GET['group'];  /// 0 or higher
-            } else {
-                $changegroup = -1;              /// This means no group change was specified
-            }
-
-            $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-
+                return false;
+          }
         } else {
-            $currentgroup = false;
-        }
-
-        $this->groupid = $currentgroup;
-
-        if ($currentgroup) {
-            $this->students = get_group_students($currentgroup, "u.lastname ASC");
-        } else {
-            $this->students = get_role_users(@implode(',', $CFG->gradebookroles), $context);
-        }
-
-        if (!empty($this->students)) {
-            foreach ($this->students as $student) {
-                $this->grades[$student->id] = array();    // Collect all grades in this array
-                $this->comments[$student->id] = array(); // Collect all comments in tihs array
-            }
-        }
-
-        if (isset($formdata->itemids)) {
-            // Build itemidsurl for links
-            $itemids = array();
-            if ($formdata->itemids) {
-                foreach ($formdata->itemids as $itemid=>$selected) {
-                    if ($selected) {
-                        $itemids[] = $itemid;
-                    }
-                }
-                $this->itemidsurl = implode(",", $itemids);
-            } else {
-                //error?
-                $this->itemidsurl = '';
-            }
+            return false;
         }
     }
 
-    function load_grades() {
+    /**
+     * internal
+     */
+    function _init_letters() {
         global $CFG;
 
-        // first make sure we have all final grades
-        // TODO: check that no grade_item has needsupdate set
-        grade_regrade_final_grades($this->id);
-
-        if ($this->export_letters) {
-            require_once($CFG->dirroot . '/grade/report/lib.php');
-            $report = new grade_report($this->id, null, null);
-            $letters = $report->get_grade_letters();
-        } else {
-            $letters = null;
-        }
-
-        if ($this->grade_items) {
-            foreach ($this->grade_items as $gradeitem) {
-                // load as an array of grade_final objects
-                if ($itemgrades = $gradeitem->get_final() and !empty($this->students)) {
-                    foreach ($this->students as $student) {
-                        $finalgrade = null;
-                        $feedback = '';
-                        if (array_key_exists($student->id, $itemgrades)) {
-                            $finalgrade = $itemgrades[$student->id]->finalgrade;
-                            $grade = new grade_grade($itemgrades[$student->id], false);
-                            if ($grade_text = $grade->load_text()) {
-                                $feedback = format_text($grade_text->feedback, $grade_text->feedbackformat);
-                            }
-                        }
-
-                        if ($this->export_letters) {
-                            $grade_item_displaytype = $report->get_pref('gradedisplaytype', $gradeitem->id);
-                            // TODO Convert final grade to letter if export option is on, and grade_item is set to letter type MDL-10490
-                            if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
-                                $finalgrade = grade_grade::get_letter($letters, $finalgrade, $gradeitem->grademin, $gradeitem->grademax);
-                            }
-                        }
-
-                        $this->grades[$student->id][$gradeitem->id] = $finalgrade;
-                        $this->comments[$student->id][$gradeitem->id] = $feedback;
-                    }
-                }
+        if (!isset($this->letters)) {
+            if ($this->export_letters) {
+                require_once($CFG->dirroot . '/grade/report/lib.php');
+                $this->report = new grade_report($this->course->id, null, null);
+                $this->letters = $this->report->get_grade_letters();
+            } else {
+                $this->letters = false; // false prevents another fetching of grade letters
             }
         }
     }
 
     /**
-     * To be implemented by child class
-     * TODO finish PHPdocs
+     * Returns string representation of final grade
+     * @param $object $grade instance of grade_grade class
+     * @return string
+     */
+    function format_grade($grade) {
+        $this->_init_letters();
+
+        //TODO: rewrite the letters handling code - this is slow
+        if ($this->letters) {
+            $grade_item = $this->grade_items[$grade->itemid];
+            $grade_item_displaytype = $this->report->get_pref('gradedisplaytype', $grade_item->id);
+
+            if ($grade_item_displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
+                return grade_grade::get_letter($this->letters, $grade->finalgrade, $grade_item->grademin, $grade_item->grademax);
+            }
+        }
+
+        //TODO: format it somehow - scale/letter/number/etc.
+        return $grade->finalgrade;
+    }
+
+    /**
+     * Returns the name of column in export
+     * @param object $grade_item
+     * @param boolena $feedback feedback colum
+     * &return string
+     */
+    function format_column_name($grade_item, $feedback=false) {
+        if ($grade_item->itemtype == 'mod') {
+            $name = get_string('modulename', $grade_item->itemmodule).': '.$grade_item->get_name();
+        } else {
+            $name = $grade_item->get_name();
+        }
+
+        if ($feedback) {
+            $name .= ' ('.get_string('feedback').')';
+        }
+
+        return strip_tags($name);
+    }
+
+    /**
+     * Returns formatted grade feedback
+     * @param object $feedback object with properties feedback and feedbackformat
+     * @return string
+     */
+    function format_feedback($feedback) {
+        return strip_tags(format_text($feedback->feedback, $feedback->feedbackformat));
+    }
+
+    /**
+     * Implemented by child class
      */
     function print_grades() { }
 
     /**
-     * Displays all the grades on screen as a feedback mechanism
-     * TODO finish PHPdoc
+     * Prints preview of exported grades on screen as a feedback mechanism
      */
-    function display_grades($feedback=false, $rows=10) {
-
-        $this->load_grades();
-
+    function display_preview() {
         echo '<table>';
         echo '<tr>';
         echo '<th>'.get_string("firstname")."</th>".
@@ -221,58 +228,83 @@ class grade_export {
              '<th>'.get_string("institution")."</th>".
              '<th>'.get_string("department")."</th>".
              '<th>'.get_string("email")."</th>";
-        foreach ($this->columns as $column) {
-            $column = strip_tags($column);
-            echo "<th>$column</th>";
+        foreach ($this->columns as $grade_item) {
+            echo '<th>'.$this->format_column_name($grade_item).'</th>';
 
             /// add a column_feedback column
-            if ($feedback) {
-                echo "<th>{$column}_feedback</th>";
+            if ($this->export_feedback) {
+                echo '<th>'.$this->format_column_name($grade_item, true).'</th>';
             }
         }
         echo '</tr>';
         /// Print all the lines of data.
 
         $i = 0;
-        foreach ($this->grades as $studentid => $studentgrades) {
-
+        $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
+        $gui->init();
+        while ($userdata = $gui->next_user()) {
             // number of preview rows
-            if ($i++ == $rows) {
+            if ($this->previewrows and $this->previewrows < ++$i) {
                 break;
             }
+            $user = $userdata->user;
+
             echo '<tr>';
-            $student = $this->students[$studentid];
+            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";
+            foreach ($this->columns as $itemid=>$unused) {
+                $gradetxt = $this->format_grade($userdata->grades[$itemid]);
+                echo "<td>$gradetxt</td>";
 
-            echo "<td>$student->firstname</td><td>$student->lastname</td><td>$student->idnumber</td><td>$student->institution</td><td>$student->department</td><td>$student->email</td>";
-            foreach ($studentgrades as $itemid=>$grade) {
-                $grade = strip_tags($grade);
-                echo "<td>$grade</td>";
-
-                if ($feedback) {
-                    echo '<td>'.$this->comments[$studentid][$itemid].'</td>';
+                if ($this->export_feedback) {
+                    echo '<td>'.$this->format_feedback($userdata->feedbacks[$itemid]).'</td>';
                 }
             }
             echo "</tr>";
         }
         echo '</table>';
+        $gui->close();
     }
 
     /**
-     * Either prints a "continue" box, which will redirect the user to the download page, or prints the URL for the published data.
+     * Returns array of parameters used by dump.php and export.php.
+     * @return array
+     */
+    function get_export_params() {
+        $itemids = array_keys($this->columns);
+
+        $params = array('id'             =>$this->course->id,
+                        'groupid'        =>$this->groupid,
+                        'itemids'        =>implode(',', $itemids),
+                        'export_letters' =>$this->export_letters,
+                        'export_feedback'=>$this->export_feedback);
+
+        return $params;
+    }
+
+    /**
+     * Either prints a "Export" box, which will redirect the user to the download page,
+     * or prints the URL for the published data.
      * @note exit() at the end of the method
-     * @param string $plugin Required: name of the plugin calling this method. Used for building the URL.
      * @return void
      */
-    function print_continue($plugin) {
+    function print_continue() {
         global $CFG;
 
-        // this redirect should trigger a download prompt
+        $params = $this->get_export_params();
+
+        // this button should trigger a download prompt
         if (!$this->userkey) {
-            print_continue('export.php?id='.$this->id.'&amp;itemids='.$this->itemidsurl.'&amp;export_letters='.$this->export_letters);
+            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', $params, get_string('export', 'grades'));
 
         } else {
-            $link = $CFG->wwwroot.'/grade/export/'.$plugin.'/dump.php?id='.$this->id.'&amp;itemids='
-                  . $this->itemidsurl.'&amp;export_letters='.$this->export_letters.'&amp;key='.$this->userkey;
+            $paramstr = '';
+            $sep = '?';
+            foreach($params as $name=>$value) {
+                $paramstr .= $sep.$name.'='.$value;
+                $sep = '&amp;';
+            }
+
+            $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paramstr.'&amp;key='.$this->userkey;
 
             echo '<p>';
             echo '<a href="'.$link.'">'.$link.'</a>';

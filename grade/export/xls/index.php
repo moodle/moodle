@@ -27,8 +27,7 @@ require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_xls.php';
 
-$id       = required_param('id', PARAM_INT); // course id
-$feedback = optional_param('feedback', '', PARAM_ALPHA);
+$id = required_param('id', PARAM_INT); // course id
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -48,15 +47,20 @@ $navigation = grade_build_nav(__FILE__, $actionstr, array('courseid' => $course-
 print_header($course->shortname.': '.get_string('grades'), $course->fullname, $navigation);
 print_grade_plugin_selector($id, 'export', 'xls');
 
-$mform = new grade_export_form(null, array('publishing' => $CFG->enablepublishing));
+$mform = new grade_export_form(null, array('publishing' => true));
 
 // process post information
 if ($data = $mform->get_data()) {
+    $export = new grade_export_xls($course, get_current_group($course->id));
+
     // print the grades on screen for feedbacks
-    $export = new grade_export($id, $itemids, $data);
-    $export->display_grades($feedback, $data->previewrows);
-    $export->print_continue('xls');
+    $export->process_form($data);
+    $export->display_preview();
+    $export->print_continue();
+    die;
 }
+
+//TODO: add course group selector here
 
 $mform->display();
 

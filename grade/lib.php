@@ -69,7 +69,7 @@ class graded_users_iterator {
                              AND ra.contextid $relatedcontexts
                              $groupwheresql
                     ORDER BY u.id ASC";
-        $this->rs_users  = get_recordset_sql($users_sql);
+        $this->users_rs  = get_recordset_sql($users_sql);
 
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
@@ -86,7 +86,7 @@ class graded_users_iterator {
                                   AND g.itemid IN ($itemids)
                                   $groupwheresql
                          ORDER BY g.userid ASC, g.itemid ASC";
-            $this->rs_grades = get_recordset_sql($grades_sql);
+            $this->grades_rs = get_recordset_sql($grades_sql);
         }
 
         return true;
@@ -97,11 +97,11 @@ class graded_users_iterator {
      * @return mixed array of user info, all grades and feedback or null when no more users found
      */
     function next_user() {
-        if (!$this->rs_users or !$this->rs_users->RecordCount()) {
+        if (!$this->users_rs or !$this->users_rs->RecordCount()) {
             return false; // no users present
         }
 
-        if (!$user = rs_fetch_next_record($this->rs_users)) {
+        if (!$user = rs_fetch_next_record($this->users_rs)) {
             return false; // no more users
         }
 
@@ -155,13 +155,13 @@ class graded_users_iterator {
      * @return void
      */
     function close() {
-        if ($this->rs_users) {
-            rs_close($this->rs_users);
-            $this->rs_users = null;
+        if ($this->users_rs) {
+            rs_close($this->users_rs);
+            $this->users_rs = null;
         }
-        if ($this->rs_grades) {
-            rs_close($this->rs_grades);
-            $this->rs_grades = null;
+        if ($this->grades_rs) {
+            rs_close($this->grades_rs);
+            $this->grades_rs = null;
         }
         $this->gradestack = array();
     }
@@ -178,11 +178,11 @@ class graded_users_iterator {
      */
     function _pop() {
         if (empty($this->gradestack)) {
-            if (!$this->rs_grades or !$this->rs_grades->RecordCount()) {
+            if (!$this->grades_rs or !$this->grades_rs->RecordCount()) {
                 return NULL; // no grades present
             }
 
-            if (!$grade = rs_fetch_next_record($this->rs_grades)) {
+            if (!$grade = rs_fetch_next_record($this->grades_rs)) {
                 return NULL; // no more grades
             }
 

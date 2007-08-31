@@ -27,10 +27,11 @@ require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_xls.php';
 
-$id       = required_param('id', PARAM_INT); // course id
-$feedback = optional_param('feedback', '', PARAM_ALPHA);
-$export_letters = optional_param('export_letters', '', PARAM_INT);
-$itemids  = explode(",", required_param('itemids', PARAM_RAW));
+$id              = required_param('id', PARAM_INT); // course id
+$groupid         = optional_param('groupid', 0, PARAM_INT);
+$itemids         = required_param('itemids', PARAM_RAW);
+$export_feedback = optional_param('export_feedback', 0, PARAM_BOOL);
+$export_letters  = optional_param('export_letters', 0, PARAM_BOOL);
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -42,8 +43,9 @@ $context = get_context_instance(CONTEXT_COURSE, $id);
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/xls:view', $context);
 
+
 // print all the exported data here
-$export = new grade_export_xls($id, $itemids, $export_letters);
-$export->print_grades($feedback);
+$export = new grade_export_xls($course, $groupid, $itemids, $export_feedback, $export_letters);
+$export->print_grades();
 
 ?>

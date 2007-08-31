@@ -26,35 +26,27 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xls extends grade_export {
 
+    var $plugin = 'xls';
+
     /**
      * To be implemented by child classes
      */
-    function print_grades($feedback = false) {
+    function print_grades() {
         global $CFG;
-
-        $this->load_grades();
-
-        /// Whether this plugin is entitled to update export time
-        if ($expplugins = explode(",", $CFG->gradeexport)) {
-            if (in_array('xls', $expplugins)) {
-                $export = true;
-            } else {
-                $export = false;
-          }
-        } else {
-            $export = false;
-        }
-
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 
+        $export_tracking = $this->track_exports();
+
+        $strgrades = get_string('grades', 'grade');
+
     /// Calculate file name
-        $downloadfilename = clean_filename("{$this->course->shortname} $this->strgrades.xls");
+        $downloadfilename = clean_filename("{$this->course->shortname} $strgrades.xls");
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
     /// Sending HTTP headers
         $workbook->send($downloadfilename);
     /// Adding the worksheet
-        $myxls =& $workbook->add_worksheet($this->strgrades);
+        $myxls =& $workbook->add_worksheet($strgrades);
 
     /// Print names of all the fields
         $myxls->write_string(0,0,get_string("firstname"));
@@ -64,63 +56,52 @@ class grade_export_xls extends grade_export {
         $myxls->write_string(0,4,get_string("department"));
         $myxls->write_string(0,5,get_string("email"));
         $pos=6;
-        foreach ($this->columns as $column) {
-            $myxls->write_string(0,$pos++,strip_tags($column));
+        foreach ($this->columns as $grade_item) {
+            $myxls->write_string(0, $pos++, $this->format_column_name($grade_item));
+
             /// add a column_feedback column
-            if ($feedback) {
-                $myxls->write_string(0,$pos++,strip_tags($column."_feedback"));
+            if ($this->export_feedback) {
+                $myxls->write_string(0, $pos++, $this->format_column_name($grade_item, true));
             }
         }
 
     /// Print all the lines of data.
         $i = 0;
-        if (!empty($this->grades)) {
-            foreach ($this->grades as $studentid => $studentgrades) {
-                $i++;
-                $student = $this->students[$studentid];
-                if (empty($this->totals[$student->id])) {
-                    $this->totals[$student->id] = '';
+        $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
+        $gui->init();
+        while ($userdata = $gui->next_user()) {
+            $i++;
+            $user = $userdata->user;
+
+            $myxls->write_string($i,0,$user->firstname);
+            $myxls->write_string($i,1,$user->lastname);
+            $myxls->write_string($i,2,$user->idnumber);
+            $myxls->write_string($i,3,$user->institution);
+            $myxls->write_string($i,4,$user->department);
+            $myxls->write_string($i,5,$user->email);
+            $j=6;
+            foreach ($userdata->grades as $itemid => $grade) {
+                $gradestr = $this->format_grade($grade);
+                if (is_numeric($gradestr)) {
+                    $myxls->write_number($i,$j++,$gradestr);
+                }
+                else {
+                    $myxls->write_string($i,$j++,$gradestr);
                 }
 
-                $myxls->write_string($i,0,$student->firstname);
-                $myxls->write_string($i,1,$student->lastname);
-                $myxls->write_string($i,2,$student->idnumber);
-                $myxls->write_string($i,3,$student->institution);
-                $myxls->write_string($i,4,$student->department);
-                $myxls->write_string($i,5,$student->email);
-                $j=6;
-                foreach ($studentgrades as $gradeitemid => $grade) {
-                    if (is_numeric($grade)) {
-                        $myxls->write_number($i,$j++,$grade);
-                    }
-                    else {
-                        $myxls->write_string($i,$j++,strip_tags($grade));
-                    }
-
-                    // writing comment if requested
-                    if ($feedback) {
-                        $myxls->write_string($i,$j++,$this->comments[$student->id][$gradeitemid]);
-                    }
-
-                    /// if export flag needs to be set
-                    /// construct the grade_grade object and update timestamp if CFG flag is set
-
-                    if ($export) {
-                        $params = new object();
-                        $params->itemid = $gradeitemid;
-                        $params->userid = $studentid;
-
-                        $grade_grade = new grade_grade($params);
-                        $grade_grade->exported = time();
-                        // update the time stamp;
-                        $grade_grade->update();
-                    }
+                // writing feedback if requested
+                if ($this->export_feedback) {
+                    $myxls->write_string($i, $j++, $this->format_feedback($userdata->feedbacks[$itemid]));
                 }
+
+                //TODO: reimplement export handling flag
             }
         }
+        $gui->close();
 
     /// Close the workbook
         $workbook->close();
+
         exit;
     }
 }
