@@ -149,11 +149,21 @@ function note_get_state_names() {
 function note_print($note, $detail = NOTES_SHOW_FULL) {
 
     global $CFG, $USER;
-    $user = get_record('user','id',$note->userid);
+    if (!$user = get_record('user','id',$note->userid)) {
+        debugging("User $note->userid not found");
+        return;
+    }
+    if (!$author = get_record('user','id',$note->usermodified)) {
+        debugging("User $note->usermodified not found");
+        return;
+    }
     $context = get_context_instance(CONTEXT_COURSE, $note->courseid);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-    $authoring->name = fullname(get_record('user','id',$note->usermodified));
+
+    $authoring = new object;
+    $authoring->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$author->id.'&amp;course='.$note->courseid.'">'.fullname($author).'</a>';
     $authoring->date = userdate($note->lastmodified);
+
     echo '<div class="notepost '. $note->publishstate . 'notepost' . 
         ($note->usermodified == $USER->id ? ' ownnotepost' : '')  .
         '" id="note-'. $note->id .'">';
