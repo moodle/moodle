@@ -9,6 +9,14 @@
 /// We use this globals to be able to generate the proper JavaScripts
     global $jsarg, $standard_javascript;
 
+/// Let's know if we are using a customcorners theme. It implies new calculations
+/// within the resizeiframe function.
+    if (!empty($THEME->customcorners)) {
+        $customcorners = 'true';
+    } else {
+        $customcorners = 'false';
+    }
+
 /// Load IMS needed JavaScript
 /// The dummy LMS API hack to stop some SCORM packages giving errors.
     echo "<script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/dummyapi.js\"></script>\n";
@@ -16,7 +24,7 @@
     echo "    <script type=\"text/javascript\" src=\"$CFG->wwwroot/mod/resource/type/ims/resize.js\"></script>\n";
     echo "    <script type=\"text/javascript\">
         window.onresize = function() {
-            resizeiframe($jsarg);
+            resizeiframe($jsarg, $customcorners);
         };
         window.name='ims-cp-page';
 
@@ -26,7 +34,7 @@
             var cfnv = document.getElementById('ims-contentframe-no-nav');
 
             if (cf || cfnv) {
-                resizeiframe($jsarg);
+                resizeiframe($jsarg, $customcorners);
                 clearInterval(ourInterval);
                 return true;
             }

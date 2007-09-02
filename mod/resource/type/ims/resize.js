@@ -17,7 +17,7 @@ function getElementStyle(obj, prop, cssProp) {
     return ret;
 }
 
-function resizeiframe (hasNav) {    
+function resizeiframe (hasNav, customCorners) {    
     var winWidth = 0, winHeight = 0;
     if( typeof( window.innerWidth ) == 'number' ) {
         //Non-IE
