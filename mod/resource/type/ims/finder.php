@@ -11,6 +11,7 @@
 /// Directory to browse, inside repository. Starts on ''.    
     $directory = optional_param ('directory', '', PARAM_PATH);
     $choose  = optional_param('choose', 'id_reference_value', PARAM_FILE);
+    $name  = optional_param('name', 'id_name', PARAM_FILE);
     
 /// Get the language strings needed
     $strdeployall = get_string('deployall','resource');
@@ -74,20 +75,23 @@
     ?>
     <script type="text/javascript">
         //<![CDATA[
-        function set_value(txt) {
-            opener.document.getElementById('<?php echo $choose ?>').value = txt;
-            window.close();
+        function set_opener_value(field, txt, force) {
+            if (opener.document.getElementById(field)) {
+                if (force || !opener.document.getElementById(field).value) {
+                    opener.document.getElementById(field).value = txt;
+                }
+            }
         }
         //]]>
     </script>
     <?php
-    echo '<ul style="list-style:none;padding:10px;margin:0px;">';  
+    echo '<ul style="list-style:none;padding:10px;margin:0px;">';
     if ($items != array()) {
-        
+
         foreach ($items as $item) {
             if ($item->type == 'deployed') {
                 echo "<li><img src=\"images/ims.gif\" alt=\"IMS CP Package\" /> $item->name" .
-                     "(<a onclick=\"return set_value('#$item->path')\" href=\"#\">$strchoose</a>) " .
+                     "(<a onclick=\"set_opener_value('$choose', '#$item->path', true); set_opener_value('$name', '$item->name', false); window.close()\" href=\"#\">$strchoose</a>) " .
                      "(<a href=\"preview.php?directory=$item->path&amp;choose=$choose\">$strpreview</a>)</li>\n";
             }
             else if ($item->type == 'not deployed') {
