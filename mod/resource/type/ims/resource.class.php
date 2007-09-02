@@ -487,7 +487,7 @@ class resource_ims extends resource_base {
         /// Now, let's print the footer. It's harcoded here to save some space
         /// because it's impossible to use print_footer() to print NOTHING
         /// Added programatic support to customcorners themes.
-            if ($THEME->customcorners) {
+            if (!empty($THEME->customcorners)) {
                 print_custom_corners_end();
             }
             echo '</div></div></body></html>'; /// Close everything.
