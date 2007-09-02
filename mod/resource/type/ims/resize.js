@@ -54,27 +54,27 @@ function resizeiframe (hasNav, customCorners) {
     if (imsnavbar) {
         imsnavHeight = imsnavbar.offsetHeight;
     }
-    
+
     var topMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginTop', 'margin-top'));
     var bottomMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginBottom', 'margin-bottom'));
-    
-    var totalHeight = headerHeight + 
-                        footerHeight + 
-                        imsnavHeight +
-                        topMargin +
-                        bottomMargin + 20; // +20 to save a minor vertical scroll always present!
-                        
-    
+    var leftMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginLeft', 'margin-left'));
+    var rightMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginRight', 'margin-right'));
+
+    var totalHeight = headerHeight +
+                      footerHeight +
+                      imsnavHeight +
+                      topMargin +
+                      bottomMargin;
 
     if (hasNav == true) {
         var navBarWidth = document.getElementById('ims-menudiv').offsetWidth;
-        var iframeWidth = (winWidth - navBarWidth - 30)+'px';
+        var iframeWidth = (winWidth - navBarWidth - leftMargin - rightMargin - 4)+'px'; // -4 for two divs borders I hope
         document.getElementById('ims-menudiv').style.height = (winHeight - totalHeight)+'px';
     }
     else {
-        var iframeWidth = (winWidth - 30)+'px';
+        var iframeWidth = (winWidth - leftMargin - rightMargin - 2)+'px'; // -2 for one div borders I hope
     }
-    
+
     if (hasNav == true) {
         document.getElementById('ims-contentframe').style.height = (winHeight - totalHeight)+'px';
         document.getElementById('ims-contentframe').style.width = iframeWidth;
