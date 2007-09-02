@@ -484,11 +484,13 @@ class resource_ims extends resource_base {
             }
         /// content - this produces everything else
             $this->print_ims($cm, $course, $items, $resource, $page);
-        /// Moodle footer is back! Now using the DOMContentLoaded event (see resize.js) to trigger the resize
-        /// no Moodle footer (because we cannot insert there the resize script).
-        /// echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
-            print_footer('none');
-        ////    echo "</div></div></body></html>";
+        /// Now, let's print the footer. It's harcoded here to save some space
+        /// because it's impossible to use print_footer() to print NOTHING
+        /// Added programatic support to customcorners themes.
+            if ($THEME->customcorners) {
+                print_custom_corners_end();
+            }
+            echo '</div></div></body></html>'; /// Close everything.
 
         /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
