@@ -487,8 +487,8 @@ class resource_ims extends resource_base {
         /// Moodle footer is back! Now using the DOMContentLoaded event (see resize.js) to trigger the resize
         /// no Moodle footer (because we cannot insert there the resize script).
         /// echo "</div></div><script type=\"text/javascript\">resizeiframe($jsarg);</script></body></html>";
-        /// print_footer();
-            echo "</div></div></body></html>";
+            print_footer('none');
+        ////    echo "</div></div></body></html>";
 
         /// log it.
             add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
