@@ -27,15 +27,22 @@
     $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
+    // Guest can not edit
     if (isguestuser()) {
         print_error('guestnoeditprofile');
     }
 
+    // The user profile we are editing
     if (!$user = get_record('user', 'id', $userid)) {
         error('User ID was incorrect');
     }
 
-    //user interests separated by commas
+    // Guest can not be edited
+    if (isguestuser($user)) {  
+        print_error('guestnoeditprofile');
+    }
+
+    // User interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
         $user->interests = tag_names_csv(get_item_tags('user',$userid));
