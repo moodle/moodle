@@ -130,7 +130,7 @@
             $numids = count($rssidarray);
             $count = 0;
             foreach ($rssidarray as $rssid) {
-                $output .=  clean_text($this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false), FORMAT_HTML);
+                $output .=  $this->get_rss_by_id($rssid, $display_description, $shownumentries, ($numids > 1) ? true : false);
                 if ($numids > 1 && $count != $numids -1 && !empty($rssfeedstring)) {
                     $output .= '<hr style="width=:80%" />';
                 }
@@ -197,11 +197,14 @@
             } else {
                 $feedtitle = $this->format_title($rss_record->preferredtitle);
             }
-//            print_object($rss);
+
             if (isset($this->config) && 
                     isset($this->config->block_rss_client_show_channel_image) && 
                         $this->config->block_rss_client_show_channel_image &&
                             isset($rss->image) && isset($rss->image['link']) && isset($rss->image['title']) && isset($rss->image['url']) ) {
+
+                $rss->image['title'] = s($rss->image['title']);
+
                 $returnstring .= "\n".'<div class="image" title="'. $rss->image['title'] .'"><a href="'. $rss->image['link'] .'"><img src="'. $rss->image['url'] .'" alt="'. $rss->image['title'] .'" /></a></div>';
             }
 
@@ -235,7 +238,7 @@
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'">'. $item['title'] . "</a></div>\n";
+                $returnstring .= '<li><div class="link"><a href="'. $item['link'] .'" onclick="this.target=\'_blank\'" >'. $item['title'] . "</a></div>\n";
 
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
