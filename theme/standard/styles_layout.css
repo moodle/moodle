@@ -3874,14 +3874,16 @@ body#mod-quiz-report .controls {
 }
 
 .ims-nav-bar {
+  margin-top:0.2em;
   position: relative;
-  padding:0.1em;
 }
 
 .ims-nav-button a,
 .ims-nav-dimmed {
   padding-left:1em;
   padding-right:1em;
+  padding-top:0.2em;
+  padding-bottom:0.2em;
 }
 
 #ims-containerdiv {
@@ -3889,14 +3891,16 @@ body#mod-quiz-report .controls {
 }
 
 #ims-menudiv {
+  padding-top:1em;
+  padding-right:0.2em;
   position:absolute;
   width:250px;
   overflow:auto;
 }
 
 #ims-menudiv ol {
+  margin:0em;
   list-style-type:none;
-  margin:0px;
   padding-left:1em;
 }
 
