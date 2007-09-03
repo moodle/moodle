@@ -86,7 +86,10 @@ function tag_delete($tag_names_or_ids_csv) {
     // Luiz: (in near future) tag instances should be cascade deleted by RDMS referential integrity constraints, when moodle implements it
     // For now, tag_instance orphans should be removed using tag_instance_table_cleanup()
     
-    return delete_records_select('tag',"name IN ($tag_ids_csv_with_apos)");
+    $return1 = delete_records_select('tag',"name IN ($tag_ids_csv_with_apos)");
+    $return2 = delete_records_select('tag',"id IN ($tag_ids_csv_with_apos)");
+
+    return $return1 && $return2;
 
 }
 
@@ -1211,7 +1214,7 @@ function print_tag_management_box($tag_object, $return=false) {
 
     // if the user is not tagged with the $tag_object tag, a link "add blahblah to my interests" will appear
     if( !is_item_tagged_with('user', $USER->id, $tag_object->id )) {
-        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;id='. $tag_object->id .'">';
+        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
         $addtaglink .= get_string('addtagtomyinterests','tag',$tagname). '</a>';
         $output .= $addtaglink .' | ';
     }
@@ -1222,7 +1225,7 @@ function print_tag_management_box($tag_object, $return=false) {
     }
 
     // flag as inappropriate link
-    $flagtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=flaginappropriate&amp;id='. $tag_object->id .'">';
+    $flagtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=flaginappropriate&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
     $flagtaglink .= get_string('flagasinappropriate','tag',$tagname). '</a>';
     $output .= $flagtaglink;
 
@@ -1442,7 +1445,7 @@ function print_tag_search_results($query,  $page, $perpage, $return=false) {
     // link "Add $query to my interests"
     $addtaglink = '';
     if( !is_item_tagged_with('user', $USER->id, $query )) {
-        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&name='. $query .'">';
+        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;name='. $query .'">';
         $addtaglink .= get_string('addtagtomyinterests','tag',$query). '</a>';
     }
 
