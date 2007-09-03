@@ -454,11 +454,12 @@
 ";
             }
         } else {
-            // OK, the page is now locked to us. Put in the AJAX for keeping the lock
-            $strlockcancelled=get_string('lockcancelled','wiki');
-            $strnojslockwarning=get_string('nojslockwarning','wiki');
-            $intervalms=WIKI_LOCK_RECONFIRM*1000;
-            print "
+            if (ajaxenabled()) {
+                // OK, the page is now locked to us. Put in the AJAX for keeping the lock
+                $strlockcancelled=get_string('lockcancelled','wiki');
+                $strnojslockwarning=get_string('nojslockwarning','wiki');
+                $intervalms=WIKI_LOCK_RECONFIRM*1000;
+                print "
 <script type='text/javascript'>
 var intervalID;
 function handleResponse(o) {
@@ -481,6 +482,7 @@ intervalID=setInterval(function() {
 $strnojslockwarning
 </p></noscript>
 ";
+            }
             // Print editor etc
             print $content;
         }
