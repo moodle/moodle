@@ -208,29 +208,31 @@ function question_upgrade_context_etc(){
     $result = $result && question_delete_unused_random();
 
     $question_categories = get_records('question_categories');
-
-    $tofix = question_cwqpfs_to_update($question_categories);
-    foreach ($tofix as $catid => $publish){
-        $question_categories[$catid]->publish = $publish;
-    }
-
-    foreach ($question_categories as $id => $question_category){
-        $course = $question_categories[$id]->course;
-        unset($question_categories[$id]->course);
-        if ($question_categories[$id]->publish){
-            $context = get_context_instance(CONTEXT_SYSTEM);
-            //new name with old course name in brackets
-            $coursename = get_field('course', 'shortname', 'id', $course);
-            $question_categories[$id]->name .= " ($coursename)";
-        } else {
-            $context = get_context_instance(CONTEXT_COURSE, $course);
+    if ($question_categories){
+        //prepare content for new db structure
+        $tofix = question_cwqpfs_to_update($question_categories);
+        foreach ($tofix as $catid => $publish){
+            $question_categories[$catid]->publish = $publish;
         }
-        $question_categories[$id]->contextid = $context->id;
-        unset($question_categories[$id]->publish);
 
+        foreach ($question_categories as $id => $question_category){
+            $course = $question_categories[$id]->course;
+            unset($question_categories[$id]->course);
+            if ($question_categories[$id]->publish){
+                $context = get_context_instance(CONTEXT_SYSTEM);
+                //new name with old course name in brackets
+                $coursename = get_field('course', 'shortname', 'id', $course);
+                $question_categories[$id]->name .= " ($coursename)";
+            } else {
+                $context = get_context_instance(CONTEXT_COURSE, $course);
+            }
+            $question_categories[$id]->contextid = $context->id;
+            unset($question_categories[$id]->publish);
+
+        }
+
+        $question_categories = question_category_checking($question_categories);
     }
-
-    $question_categories = question_category_checking($question_categories);
 
 /// Define index course (not unique) to be dropped form question_categories
     $table = new XMLDBTable('question_categories');
@@ -269,10 +271,11 @@ function question_upgrade_context_etc(){
 
 
     /// update table contents with previously calculated new contents.
-
-    foreach ($question_categories as $question_category){
-        if (!$result = update_record('question_categories', $question_category)){
-            notify('Couldn\'t update question_categories "'. $question_category->name .'"!');
+    if ($question_categories){
+        foreach ($question_categories as $question_category){
+            if (!$result = update_record('question_categories', $question_category)){
+                notify('Couldn\'t update question_categories "'. $question_category->name .'"!');
+            }
         }
     }
 
