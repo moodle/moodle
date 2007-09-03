@@ -2208,7 +2208,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo '<td class="topic starter">';
     }
 
-    echo '<div class="subject">'.format_string($post->subject).'</div>';
+    if (!empty($post->subjectkeeplinks)) {
+        echo '<div class="subject">'.format_string($post->subject, false).'</div>';
+    } else {
+        echo '<div class="subject">'.format_string($post->subject).'</div>';
+    }
 
     echo '<div class="author">';
     $fullname = fullname($post, has_capability('moodle/site:viewfullnames', $modcontext));

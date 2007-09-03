@@ -201,6 +201,7 @@
         }
 
         $post->subject = $fullsubject;
+        $post->subjectkeeplinks = true;
 
         // Identify search terms only found in HTML markup, and add a warning about them to
         // the start of the message text. However, do not do the highlighting here. forum_print_post
