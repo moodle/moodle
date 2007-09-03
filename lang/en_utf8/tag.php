@@ -4,6 +4,7 @@ $string['addtagtomyinterests'] =  'Add \"$a\" to my interests';
 $string['blocktagstitle'] =  'Tags';
 $string['count'] = 'Count';
 $string['changename'] = 'Change tag name';
+$string['changetype'] = 'Change tag type';
 $string['description'] = 'Description';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'Deleted';
