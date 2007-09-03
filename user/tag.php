@@ -11,6 +11,15 @@ if (empty($CFG->usetags)) {
     error('Tags are disabled!');
 }
 
+if (!isguestuser()) {
+    print_error('noguest');
+}
+
+if (!confirm_sesskey()) {
+    print_error('sesskey');
+}
+
+
 switch ($action) {
     case 'addinterest':
         $id  = optional_param('id', 0, PARAM_INT);
