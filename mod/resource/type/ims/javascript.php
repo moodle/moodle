@@ -28,12 +28,13 @@
         };
         window.name='ims-cp-page';
 
-        // Set Interval until ims-contentframe or ims-contentframe-no-nav is available
+        // Set Interval until ims-containerdiv and (ims-contentframe or ims-contentframe-no-nav) is available
         function waiting() {
+            var cd   = document.getElementById('ims-containerdiv');
             var cf   = document.getElementById('ims-contentframe');
             var cfnv = document.getElementById('ims-contentframe-no-nav');
 
-            if (cf || cfnv) {
+            if (cd && (cf || cfnv)) {
                 resizeiframe($jsarg, $customcorners);
                 clearInterval(ourInterval);
                 return true;

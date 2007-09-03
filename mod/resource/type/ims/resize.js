@@ -17,7 +17,9 @@ function getElementStyle(obj, prop, cssProp) {
     return ret;
 }
 
-function resizeiframe (hasNav, customCorners) {    
+function resizeiframe (hasNav, customCorners) {
+
+/// Calculate window width and height
     var winWidth = 0, winHeight = 0;
     if( typeof( window.innerWidth ) == 'number' ) {
         //Non-IE
@@ -32,57 +34,83 @@ function resizeiframe (hasNav, customCorners) {
         winWidth = document.body.clientWidth;
         winHeight = document.body.clientHeight;
     }
-                              
-    var header = document.getElementById('header');
-    var divs = document.getElementsByTagName('div');
-    var n = divs.length;
-    
-    
-    var content = document.getElementById('content');
-    var headerHeight = 0;
-    if (content) {
-        headerHeight = content.offsetTop;
-    }
-    
-    var footer = document.getElementById('footer');
-    var imsnavbar = document.getElementById('ims-nav-bar');
-    var footerHeight = 0;
-    var imsnavHeight = 0;
-    if (footer) {
-        footerHeight = footer.offsetHeight + parseInt(getElementStyle(footer, 'marginTop', 'margin-top')) + parseInt(getElementStyle(footer, 'marginBottom', 'margin-bottom'));
-    }
-    if (imsnavbar) {
-        imsnavHeight = imsnavbar.offsetHeight;
-    }
 
+/// Calculate margins
     var topMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginTop', 'margin-top'));
     var bottomMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginBottom', 'margin-bottom'));
     var leftMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginLeft', 'margin-left'));
     var rightMargin = parseInt(getElementStyle(document.getElementsByTagName('body')[0], 'marginRight', 'margin-right'));
 
-    var totalHeight = headerHeight +
-                      footerHeight +
-                      imsnavHeight +
-                      topMargin +
-                      bottomMargin;
-
-    if (hasNav == true) {
-        var navBarWidth = document.getElementById('ims-menudiv').offsetWidth;
-        var iframeWidth = (winWidth - navBarWidth - leftMargin - rightMargin - 4)+'px'; // -4 for two divs borders I hope
-        document.getElementById('ims-menudiv').style.height = (winHeight - totalHeight)+'px';
-    }
-    else {
-        var iframeWidth = (winWidth - leftMargin - rightMargin - 2)+'px'; // -2 for one div borders I hope
+/// Calculate heights
+    var header = document.getElementById('content');
+    var headerHeight = 0;
+    if (header) {
+        headerHeight = header.offsetTop + parseInt(getElementStyle(header, 'marginTop', 'margin-top')) + parseInt(getElementStyle(header, 'marginBottom', 'margin-bottom'));
     }
 
+    var contentbt = document.getElementById('content-bt');
+    var contentbtHeight = 0;
+    if (contentbt) {
+        contentbtHeight = contentbt.offsetHeight + parseInt(getElementStyle(contentbt, 'marginTop', 'margin-top')) + parseInt(getElementStyle(contentbt, 'marginBottom', 'margin-bottom'));
+    }
+
+    var contentbb = document.getElementById('content-bb');
+    var contentbbHeight = 0;
+    if (contentbb) {
+        contentbbHeight = contentbb.offsetHeight + parseInt(getElementStyle(contentbb, 'marginTop', 'margin-top')) + parseInt(getElementStyle(contentbb, 'marginBottom', 'margin-bottom'));
+    }
+
+    var navbar = document.getElementById('ims-nav-bar');
+    var navbarHeight = 0;
+    if (navbar) {
+        navbarHeight = navbar.offsetHeight + parseInt(getElementStyle(navbar, 'marginTop', 'margin-top')) + parseInt(getElementStyle(navbar, 'marginBottom', 'margin-bottom'));;
+    }
+
+    var footer = document.getElementById('footer');
+    var footerHeight = 0;
+    if (footer) {
+        footerHeight = footer.offsetHeight + parseInt(getElementStyle(footer, 'marginTop', 'margin-top')) + parseInt(getElementStyle(footer, 'marginBottom', 'margin-bottom'));
+    }
+
+
+/// Calculate the used height
+    var usedHeight = headerHeight +
+                     contentbtHeight +
+                     navbarHeight +
+                     contentbbHeight +
+                     footerHeight +
+                     bottomMargin + 15; /// Plus 15 points to avoid the wrong vertical scroll bar on some browsers
+
+/// Calculate widths
+    var menu = document.getElementById('ims-menudiv');
+    var menuWidth = 0;
+    var menuLeft = 0;
+    if (menu) {
+        menuLeft = menu.offsetLeft;
+        menuWidth = menu.offsetWidth + parseInt(getElementStyle(menu, 'marginLeft', 'margin-left')) + parseInt(getElementStyle(menu, 'marginRight', 'margin-right')) + 2; /// +2 to leave 1px menu borders
+    }
+
+    var container = document.getElementById('ims-containerdiv');
+    var containerWidth = 0;
+    if (container) {
+        containerWidth = container.offsetWidth - 2; /// -2 to leave some right margin in the container div
+    }
+
+/// Calculate the used width
+    var usedWidth = winWidth - containerWidth + menuWidth;
+
+/// Set contentframe dimensions
     if (hasNav == true) {
-        document.getElementById('ims-contentframe').style.height = (winHeight - totalHeight)+'px';
-        document.getElementById('ims-contentframe').style.width = iframeWidth;
+        document.getElementById('ims-contentframe').style.height = (winHeight - usedHeight)+'px';
+        document.getElementById('ims-contentframe').style.width = (winWidth - usedWidth)+'px';
+        document.getElementById('ims-contentframe').style.left = (menuLeft + menuWidth)+'px';
     } else {
-        document.getElementById('ims-contentframe-no-nav').style.height = (winHeight - totalHeight)+'px';
-        document.getElementById('ims-contentframe-no-nav').style.width = iframeWidth;
+        document.getElementById('ims-contentframe-no-nav').style.height = (winHeight - usedHeight)+'px';
+        document.getElementById('ims-contentframe-no-nav').style.width = (winWidth - usedWidth)+'px';
     }
-    document.getElementById('ims-containerdiv').style.height = (winHeight - totalHeight)+'px';
+
+/// Set containerdiv dimensions
+    document.getElementById('ims-containerdiv').style.height = (winHeight - usedHeight)+'px';
 }
 
 
