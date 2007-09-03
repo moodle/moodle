@@ -2208,8 +2208,8 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         echo '<td class="topic starter">';
     }
 
-    if (!empty($post->subjectkeeplinks)) {
-        echo '<div class="subject">'.format_string($post->subject, false).'</div>';
+    if (!empty($post->subjectnoformat)) {
+        echo '<div class="subject">'.$post->subject.'</div>';
     } else {
         echo '<div class="subject">'.format_string($post->subject).'</div>';
     }
