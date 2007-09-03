@@ -102,7 +102,7 @@ if ($blogeditform->is_cancelled()){
 switch ($action) {
     case 'add':
         // prepare new empty form
-        $post->publishstate = 'draft';
+        $post->publishstate = 'site';
         $strformheading = get_string('addnewentry', 'blog');
         $post->action       = $action;
     break;
