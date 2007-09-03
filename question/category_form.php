@@ -12,7 +12,6 @@ class question_category_edit_form extends moodleform {
         $currentcat   = $this->_customdata['currentcat'];
 //--------------------------------------------------------------------------------
         $mform->addElement('header', 'categoryheader', get_string('addcategory', 'quiz'));
-        $mform->setHelpButton('categoryheader', array('categories_edit', get_string('addcategory', 'quiz'), 'quiz'));
 
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parent', 'quiz'),
                     array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
@@ -20,6 +19,7 @@ class question_category_edit_form extends moodleform {
         if (1 == count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories c1, {$CFG->prefix}question_categories c2 WHERE c2.id = $currentcat AND c1.contextid = c2.contextid")){
             $mform->hardFreeze('parent');
         }
+        $mform->setHelpButton('parent', array('categoryparent', get_string('parent', 'quiz'), 'question'));
 
         $mform->addElement('text','name', get_string('name'),'maxlength="254" size="50"');
         $mform->setDefault('name', '');

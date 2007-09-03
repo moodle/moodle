@@ -230,7 +230,7 @@ class question_category_object {
      *
      */
     function output_edit_lists() {
-        print_heading_with_help(get_string('editcategories', 'quiz'), 'categories', 'quiz');
+        print_heading_with_help(get_string('editcategories', 'quiz'), 'categories', 'question');
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
