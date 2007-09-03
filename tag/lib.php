@@ -1202,34 +1202,39 @@ function print_tag_management_box($tag_object, $return=false) {
 
     $output = '';
 
-    $output .= print_box_start('box','tag-management-box', true);
+    if (!isguestuser()) {
 
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+        $output .= print_box_start('box','tag-management-box', true);
 
-    $addtaglink = '';
-    if ( has_capability('moodle/tag:manage',$systemcontext) ) {
-        $manage_link =  "<a href=\"{$CFG->wwwroot}/tag/manage.php\">" . get_string('managetags', 'tag') . "</a>" ;
-        $output .= $manage_link .' | ';
+        $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+
+        $addtaglink = '';
+
+        if ( has_capability('moodle/tag:manage',$systemcontext) ) {
+            $manage_link =  "<a href=\"{$CFG->wwwroot}/tag/manage.php\">" . get_string('managetags', 'tag') . "</a>" ;
+            $output .= $manage_link .' | ';
+        }
+
+        // if the user is not tagged with the $tag_object tag, a link "add blahblah to my interests" will appear
+        if( !is_item_tagged_with('user', $USER->id, $tag_object->id )) {
+            $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
+            $addtaglink .= get_string('addtagtomyinterests','tag',$tagname). '</a>';
+            $output .= $addtaglink .' | ';
+        }
+
+        // only people with moodle/tag:edit capability may edit the tag description
+        if ( has_capability('moodle/tag:edit',$systemcontext) && is_item_tagged_with('user', $USER->id, $tag_object->id ) ) {
+            $output .= ' <a href="'. $CFG->wwwroot . '/tag/edit.php?id='.$tag_object->id .'">'.get_string('edittag', 'tag').'</a> | ';
+        }
+
+        // flag as inappropriate link
+        $flagtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=flaginappropriate&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
+        $flagtaglink .= get_string('flagasinappropriate','tag',$tagname). '</a>';
+        $output .= $flagtaglink;
+
+        $output .= print_box_end(true);
+
     }
-
-    // if the user is not tagged with the $tag_object tag, a link "add blahblah to my interests" will appear
-    if( !is_item_tagged_with('user', $USER->id, $tag_object->id )) {
-        $addtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=addinterest&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
-        $addtaglink .= get_string('addtagtomyinterests','tag',$tagname). '</a>';
-        $output .= $addtaglink .' | ';
-    }
-
-    // only people with moodle/tag:edit capability may edit the tag description
-    if ( has_capability('moodle/tag:edit',$systemcontext) && is_item_tagged_with('user', $USER->id, $tag_object->id ) ) {
-        $output .= ' <a href="'. $CFG->wwwroot . '/tag/edit.php?id='.$tag_object->id .'">'.get_string('edittag', 'tag').'</a> | ';
-    }
-
-    // flag as inappropriate link
-    $flagtaglink = '<a href="' . $CFG->wwwroot . '/user/tag.php?action=flaginappropriate&amp;sesskey='.sesskey().'&amp;id='. $tag_object->id .'">';
-    $flagtaglink .= get_string('flagasinappropriate','tag',$tagname). '</a>';
-    $output .= $flagtaglink;
-
-    $output .= print_box_end(true);
 
     if ($return) {
         return $output;
