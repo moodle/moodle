@@ -52,7 +52,6 @@
         global $THEME;
         $straddtoquiz = get_string("addtoquiz", "quiz");
         $out = "<input type=\"submit\" name=\"add\" value=\"{$THEME->larrow} $straddtoquiz\" />\n";
-        echo '<br />';
         return $out;
     }
 
