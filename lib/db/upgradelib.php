@@ -320,21 +320,21 @@ function upgrade_18_groups() {
 
 /// Transfer courseid from 'mdl_groups_courses_groups' to 'mdl_groups'.
     if ($result) {
-        $sql = "UPDATE {$CFG->prefix}groups g
+        $sql = "UPDATE {$CFG->prefix}groups
                    SET courseid = (
                         SELECT MAX(courseid)
                           FROM {$CFG->prefix}groups_courses_groups gcg
-                         WHERE gcg.groupid = g.id)";
+                         WHERE gcg.groupid = {$CFG->prefix}groups.id)";
         execute_sql($sql);
     }
 
 /// Transfer courseid from 'groups_courses_groupings' to 'mdl_groupings'.
     if ($result) {
-        $sql = "UPDATE {$CFG->prefix}groupings g
+        $sql = "UPDATE {$CFG->prefix}groupings
                    SET courseid = (
                         SELECT MAX(courseid)
                           FROM {$CFG->prefix}groups_courses_groupings gcg
-                         WHERE gcg.groupingid = g.id)";
+                         WHERE gcg.groupingid = {$CFG->prefix}groupings.id)";
         execute_sql($sql);
     }
 
