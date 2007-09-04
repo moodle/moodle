@@ -59,7 +59,7 @@ class grade_export_txt extends grade_export {
             case 'comma':
                 $separator = ",";
                 break;
-            case 'tab':   
+            case 'tab':
             default:
                 $separator = "\t";
         }
@@ -91,6 +91,7 @@ class grade_export_txt extends grade_export {
         echo "\n";
 
 /// Print all the lines of data.
+        $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
         $gui->init();
         while ($userdata = $gui->next_user()) {
@@ -100,17 +101,20 @@ class grade_export_txt extends grade_export {
             echo $user->firstname.$separator.$user->lastname.$separator.$user->idnumber.$separator.$user->institution.$separator.$user->department.$separator.$user->email;
 
             foreach ($userdata->grades as $itemid => $grade) {
+                if ($export_tracking) {
+                    $status = $geub->track($grade);
+                }
+
                 echo $separator.$this->format_grade($grade);
 
                 if ($this->export_feedback) {
                     echo $separator.$this->format_feedback($userdata->feedbacks[$itemid]);
                 }
-
-                //TODO: reimplement export handling flag
             }
             echo "\n";
         }
         $gui->close();
+        $geub->close();
 
         exit;
     }

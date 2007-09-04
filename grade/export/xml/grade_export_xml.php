@@ -55,6 +55,9 @@ class grade_export_xml extends grade_export {
         /// time stamp to ensure uniqueness of batch export
         fwrite($handle,  '<results batch="xml_export_'.time().'">'."\n");
 
+        $export_buffer = array();
+
+        $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
         $gui->init();
         while ($userdata = $gui->next_user()) {
@@ -67,21 +70,12 @@ class grade_export_xml extends grade_export {
                 $gradestr = $this->format_grade($grade);
 
                 fwrite($handle,  "\t<result>\n");
-                // if exported, check grade_history, if modified after export, set state to regrade
-                $status = 'new';
-/*                if (!empty($grade_grade->exported)) {
-                    //TODO: use timemodified or something else instead
-                    if (record_exists_select('grade_history', 'itemid = '.$gradeitem->id.' AND userid = '.$userid.' AND timemodified > '.$grade_grade->exported)) {
-                        $status = 'regrade';
-                    } else {
-                        $status = 'new';
-                    }
-                } else {
-                    // never exported
-                    $status = 'new';
+
+                if ($export_tracking) {
+                    $status = $geub->track($grade);
+                    fwrite($handle,  "\t\t<state>$status</state>\n");
                 }
-*/
-                fwrite($handle,  "\t\t<state>$status</state>\n");
+
                 // only need id number
                 fwrite($handle,  "\t\t<assignment>{$grade_item->idnumber}</assignment>\n");
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
@@ -92,18 +86,12 @@ class grade_export_xml extends grade_export {
                     fwrite($handle,  "\t\t<feedback>$feedbackstr</feedback>\n");
                 }
                 fwrite($handle,  "\t</result>\n");
-
-                // timestamp this if needed
-/*                if ($export) {
-                    $grade_grade->exported = time();
-                    // update the time stamp;
-                    $grade_grade->update();
-                }
-*/
             }
         }
         fwrite($handle,  "</results>");
         fclose($handle);
+        $gui->close();
+        $geub->close();
 
         @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
         @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');

@@ -315,4 +315,70 @@ class grade_export {
     }
 }
 
+/**
+ * This class is used to update the exported field in grade_grades.
+ * It does internal buffering to speedup the db operations.
+ */
+class grade_export_update_buffer {
+    var $update_list;
+    var $export_time;
+
+    /**
+     * Constructor - creates the buffer and initialises the time stamp
+     */
+    function grade_export_update_buffer() {
+        $this->update_list = array();
+        $this->export_time = time();
+    }
+
+    function flush($buffersize) {
+        global $CFG;
+
+        if (count($this->update_list) > $buffersize) {
+            $list = implode(',', $this->update_list);
+            $sql = "UPDATE {$CFG->prefix}grade_grades SET exported = {$this->export_time} WHERE id IN ($list)";
+            execute_sql($sql, false);
+            $this->update_list = array();
+        }
+    }
+
+    /**
+     * Track grade export status
+     * @param object $grade_grade
+     * @return string $status (unknow, new, regrade, nochange)
+     */
+    function track($grade_grade) {
+        if (empty($grade_grade->exported) or empty($grade_grade->timemodified)) {
+            if (is_null($grade_grade->finalgrade)) {
+                // grade does not exist yet
+                $status = 'unknown';
+            } else {
+                $status = 'new';
+                $this->update_list[] = $grade_grade->id;
+            }
+
+        } else if ($grade_grade->exported < $grade_grade->timemodified) {
+            $status = 'regrade';
+            $this->update_list[] = $grade_grade->id;
+
+        } else if ($grade_grade->exported >= $grade_grade->timemodified) {
+            $status = 'nochange';
+
+        } else {
+            // something is wrong?
+            $status = 'unknown';
+        }
+
+        $this->flush(100);
+
+        return $status;
+    }
+
+    /**
+     * Flush and close the buffer.
+     */
+    function close() {
+        $this->flush(0);
+    }
+}
 ?>

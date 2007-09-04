@@ -67,6 +67,7 @@ class grade_export_ods extends grade_export {
 
     /// Print all the lines of data.
         $i = 0;
+        $geub = new grade_export_update_buffer();
         $gui = new graded_users_iterator($this->course, $this->columns, $this->groupid);
         $gui->init();
         while ($userdata = $gui->next_user()) {
@@ -81,6 +82,10 @@ class grade_export_ods extends grade_export {
             $myxls->write_string($i,5,$user->email);
             $j=6;
             foreach ($userdata->grades as $itemid => $grade) {
+                if ($export_tracking) {
+                    $status = $geub->track($grade);
+                }
+
                 $gradestr = $this->format_grade($grade);
                 if (is_numeric($gradestr)) {
                     $myxls->write_number($i,$j++,$gradestr);
@@ -93,11 +98,10 @@ class grade_export_ods extends grade_export {
                 if ($this->export_feedback) {
                     $myxls->write_string($i, $j++, $this->format_feedback($userdata->feedbacks[$itemid]));
                 }
-
-                //TODO: reimplement export handling flag
             }
         }
         $gui->close();
+        $geub->close();
 
     /// Close the workbook
         $workbook->close();
