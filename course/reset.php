@@ -15,6 +15,8 @@ The feature will also reset the start date of the course if necessary.
         error("Course is misconfigured");
     }
 
+    require_login($course->id);
+
     require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
     $strreset = get_string('reset');
