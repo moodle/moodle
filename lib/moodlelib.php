@@ -6805,7 +6805,7 @@ function message_popup_window() {
     $popuplimit = 30;     // Minimum seconds between popups
 
     if (!defined('MESSAGE_WINDOW')) {
-        if (isset($USER->id)) {
+        if (isset($USER->id) and !isguestuser()) {
             if (!isset($USER->message_lastpopup)) {
                 $USER->message_lastpopup = 0;
             }
