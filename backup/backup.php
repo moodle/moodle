@@ -14,13 +14,14 @@
     $cancel = optional_param( 'cancel' );
     $launch = optional_param( 'launch' );
 
-    require_login();
 
     if (!empty($id)) {
+        require_login($id);
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $id))) {
             error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
+        require_login();
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             error("You need to be an admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }

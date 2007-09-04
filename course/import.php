@@ -9,6 +9,8 @@
         error("That's an invalid course id");
     }
 
+    require_login($course->id);
+
     require_capability('moodle/site:import', get_context_instance(CONTEXT_COURSE, $id));
 
 /// Always we begin an import, we delete all backup/restore/import session structures
