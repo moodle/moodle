@@ -43,21 +43,20 @@
         $continue = false;
     }
 
-
-
+    $url = new moodle_url($CFG->wwwroot . '/question/preview.php');
+    $url->param('id', $id);
+    if ($quizid) {
+        $url->param('quizid', $quizid);
+    } else {
+        $url->param('courseid', $courseid);
+    }
+    $url->param('continue', 1);
     if (!$continue) {
         // Start a new attempt; delete the old session
         unset($SESSION->quizpreview);
         // Redirect to ourselves but with continue=1; prevents refreshing the page
         // from restarting an attempt (needed so that random questions don't change)
-        $url = $CFG->wwwroot . '/question/preview.php?id=' . $id;
-        if ($quizid) {
-            $url .= '&amp;quizid=' . $quizid;
-        } else {
-            $url .= '&amp;courseid=' . $courseid;
-        }
-        $url .= '&amp;continue=1';
-        redirect($url);
+        redirect($url->out());
     }
     // Load the question information
     if (!$questions = get_records('question', 'id', $id)) {
@@ -119,8 +118,7 @@
     // Restore the history of question sessions from the moodle session or create
     // new sessions. Make $states a reference to the states array in the moodle
     // session.
-    if (isset($SESSION->quizpreview->states) and $SESSION->quizpreview->questionid
-     == $id) {
+    if (isset($SESSION->quizpreview->states) and $SESSION->quizpreview->questionid == $id) {
         // Reload the question session history from the moodle session
         $states =& $SESSION->quizpreview->states;
         $historylength = count($states) - 1;
@@ -200,17 +198,14 @@
         echo "</p>\n";
     }
     $number = 1;
-    echo '<form method="post" action="preview.php" enctype="multipart/form-data" id="responseform">', "\n";
+    echo '<form method="post" action="'.$url->out(true).'" enctype="multipart/form-data" id="responseform">', "\n";
     print_question($questions[$id], $curstate, $number, $quiz, $options);
     echo '<br />';
 
 
 
     echo '<div class="controls">';
-    echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-    echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
-    echo "<input type=\"hidden\" name=\"courseid\" value=\"$courseid\" />\n";
-    echo "<input type=\"hidden\" name=\"continue\" value=\"1\" />\n";
+    echo $url->hidden_params_out();
 
     // Print the mark and finish attempt buttons
     echo '<input name="markall" type="submit" value="' . get_string('markall',
