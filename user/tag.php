@@ -11,7 +11,7 @@ if (empty($CFG->usetags)) {
     error('Tags are disabled!');
 }
 
-if (!isguestuser()) {
+if (isguestuser()) {
     print_error('noguest');
 }
 
