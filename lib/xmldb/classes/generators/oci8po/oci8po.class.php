@@ -370,7 +370,7 @@ class XMLDBoci8po extends XMLDBgenerator {
     ///     - fill the new column with the values from the old one
     ///     - drop the old column
     ///     - rename the temp column to the original name
-        if (($typechanged) || ($oldmetatype == 'N' && ($precisionchanged || $decimalchanged))) {
+        if (($typechanged) || (($oldmetatype == 'N' || $oldmetatype == 'I')  && ($precisionchanged || $decimalchanged))) {
             $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
         /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
             $this->alter_column_skip_notnull = true;
