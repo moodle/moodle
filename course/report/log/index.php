@@ -33,8 +33,6 @@
     $chooselog   = optional_param('chooselog', 0, PARAM_INT);
     $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
-    require_login();
-
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = get_record('course', 'id', $id) ) {
             error('That\'s an invalid course id'.$id);
