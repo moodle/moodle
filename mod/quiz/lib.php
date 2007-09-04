@@ -266,6 +266,7 @@ function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
     }
 
     if ($quiz != null) {
+        quiz_grade_item_update($quiz);  // Recreate it if necessary
         if ($grades = quiz_get_user_grades($quiz, $userid)) {
             grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, $grades);
 
