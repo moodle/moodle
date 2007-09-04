@@ -604,8 +604,9 @@ class assignment_base {
 
                 }
 
-                print_heading(get_string('changessaved'));
-                $this->display_submissions();
+                $message = notify(get_string('changessaved'), 'notifysuccess', 'center', true);
+
+                $this->display_submissions($message);
                 break;
 
 
@@ -963,7 +964,7 @@ class assignment_base {
     /**
      *  Display all the submissions ready for grading
      */
-    function display_submissions() {
+    function display_submissions($message='') {
         global $CFG, $db, $USER;
         require_once($CFG->libdir.'/gradelib.php');
 
@@ -1019,6 +1020,10 @@ class assignment_base {
 
         print_header_simple(format_string($this->assignment->name,true), "", $navigation,
                 '', '', true, update_module_button($cm->id, $course->id, $this->strassignment), navmenu($course, $cm));
+
+        if (!empty($message)) {
+            echo $message;   // display messages here if any
+        }
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1265,7 +1270,7 @@ class assignment_base {
             echo '<input type="hidden" name="mode" value="fastgrade" />';
             echo '<input type="hidden" name="page" value="'.$page.'" />';
             echo '</div>';
-            echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
+            //echo '<div style="text-align:center"><input type="submit" name="fastg" value="'.get_string('saveallfeedback', 'assignment').'" /></div>';
         }
 
         $table->print_html();  /// Print the whole table
@@ -2052,6 +2057,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
                     $grades[$k]->rawgrade = null;
                 }
             }
+            assignment_grade_item_update($assignment);
             grade_update('mod/assignment', $assignment->courseid, 'mod', 'assignment', $assignment->id, 0, $grades);
         }
 
