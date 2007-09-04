@@ -214,12 +214,14 @@ echo '</table>'."\n";
 echo '</div>'."\n";
 echo '</form>'."\n";
 
-echo '<script type="text/javascript">'."\n";
-echo '//<![CDATA['."\n";
-echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
-echo 'var membersCombo = new UpdatableMembersCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
-echo '//]]>'."\n";
-echo '</script>'."\n";
+if (ajaxenabled()) {
+    echo '<script type="text/javascript">'."\n";
+    echo '//<![CDATA['."\n";
+    echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
+    echo 'var membersCombo = new UpdatableMembersCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
+    echo '//]]>'."\n";
+    echo '</script>'."\n";
+}
 
 print_footer($course);
 
