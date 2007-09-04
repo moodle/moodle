@@ -45,7 +45,7 @@ class embedded_cloze_qtype extends default_questiontype {
             // for wrapped questions the maxgrade is always equal to the defaultgrade,
             // there is no entry in the question_instances table for them
             $wrapped->maxgrade = $wrapped->defaultgrade;
-            
+
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
         }
 
@@ -55,14 +55,14 @@ class embedded_cloze_qtype extends default_questiontype {
     function save_question_options($question) {
         global $QTYPES;
         $result = new stdClass;
-        
+
         // This function needs to be able to handle the case where the existing set of wrapped
         // questions does not match the new set of wrapped questions so that some need to be
         // created, some modified and some deleted
         // Unfortunately the code currently simply overwrites existing ones in sequence. This
-        // will make re-marking after a re-ordering of wrapped questions impossible and 
+        // will make re-marking after a re-ordering of wrapped questions impossible and
         // will also create difficulties if questiontype specific tables reference the id.
-        
+
         // First we get all the existing wrapped questions
         if (!$oldwrappedids = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
             $oldwrappedids = array();
@@ -191,7 +191,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        
+
         global $QTYPES, $CFG, $USER;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
@@ -199,7 +199,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
-        
+
         // adding an icon with alt to warn user this is a fill in the gap question
         // MDL-7497
         if (!empty($USER->screenreader)) {
@@ -207,10 +207,10 @@ class embedded_cloze_qtype extends default_questiontype {
                 "class=\"icon\" alt=\"".get_string('clozeaid','qtype_multichoice')."\" />  ";
         }
         // For this question type, we better print the image on top:
-        if ($image = get_question_image($question, $cmoptions->course)) {
+        if ($image = get_question_image($question)) {
             echo('<img class="qimage" src="' . $image . '" alt="" /><br />');
         }
-        
+
         $qtextremaining = format_text($question->questiontext,
                 $question->questiontextformat, $formatoptions, $cmoptions->course);
 
@@ -381,7 +381,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         return $responses;
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

@@ -14,7 +14,7 @@ class question_essay_qtype extends default_questiontype {
     function name() {
         return 'essay';
     }
-    
+
     function is_manual_graded() {
         return true;
     }
@@ -55,23 +55,23 @@ class question_essay_qtype extends default_questiontype {
 
         $answers       = &$question->options->answers;
         $readonly      = empty($options->readonly) ? '' : 'disabled="disabled"';
-        
+
         // Only use the rich text editor for the first essay question on a page.
         $usehtmleditor = can_use_html_editor() && !$htmleditorused;
-        
+
         $formatoptions          = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para    = false;
-        
+
         $inputname = $question->name_prefix;
         $stranswer = get_string("answer", "quiz").': ';
-        
+
         /// set question text and media
         $questiontext = format_text($question->questiontext,
                                    $question->questiontextformat,
                                    $formatoptions, $cmoptions->course);
-                         
-        $image = get_question_image($question, $cmoptions->course);
+
+        $image = get_question_image($question);
 
         // feedback handling
         $feedback = '';
@@ -80,16 +80,16 @@ class question_essay_qtype extends default_questiontype {
                 $feedback = format_text($answer->feedback, '', $formatoptions, $cmoptions->course);
             }
         }
-        
+
         // get response value
         if (isset($state->responses[''])) {
-            $value = stripslashes_safe($state->responses['']);            
+            $value = stripslashes_safe($state->responses['']);
         } else {
             $value = "";
         }
 
         // answer
-        if (empty($options->readonly)) {    
+        if (empty($options->readonly)) {
             // the student needs to type in their answer so print out a text editor
             $answer = print_textarea($usehtmleditor, 18, 80, 630, 400, $inputname, $value, $cmoptions->course, true);
         } else {
@@ -99,7 +99,7 @@ class question_essay_qtype extends default_questiontype {
             $answer = format_text($value, FORMAT_MOODLE,
                                   $safeformatoptions, $cmoptions->course);
         }
-        
+
         include("$CFG->dirroot/question/type/essay/display.html");
 
         if ($usehtmleditor) {
@@ -112,7 +112,7 @@ class question_essay_qtype extends default_questiontype {
         // All grading takes place in Manual Grading
 
         clean_param($state->responses[''], PARAM_CLEANHTML);
-        
+
         $state->raw_grade = 0;
         $state->penalty = 0;
 
@@ -121,8 +121,8 @@ class question_essay_qtype extends default_questiontype {
 
     /**
      * Backup the extra information specific to an essay question - over and above
-     * what is in the mdl_question table. 
-     * 
+     * what is in the mdl_question table.
+     *
      * @param file $bf The backup file to write to.
      * @param object $preferences the blackup options controlling this backup.
      * @param $questionid the id of the question being backed up.
@@ -133,7 +133,7 @@ class question_essay_qtype extends default_questiontype {
     }
 
     // Restore method not needed.
-}    
+}
 //// END OF CLASS ////
 
 //////////////////////////////////////////////////////////////////////////

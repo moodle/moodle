@@ -17,7 +17,7 @@ class question_truefalse_qtype extends default_questiontype {
 
     function save_question_options($question) {
         $result = new stdClass;
-        
+
         // fetch old answer ids so that we can reuse them
         if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
             $oldanswers = array();
@@ -143,7 +143,7 @@ class question_truefalse_qtype extends default_questiontype {
         global $CFG;
 
         $readonly = $options->readonly ? ' disabled="disabled"' : '';
-        
+
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
@@ -152,7 +152,7 @@ class question_truefalse_qtype extends default_questiontype {
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          $formatoptions, $cmoptions->course);
-        $image = get_question_image($question, $cmoptions->course);
+        $image = get_question_image($question);
 
         $answers = &$question->options->answers;
         $trueanswer = &$answers[$question->options->trueanswer];
@@ -206,7 +206,7 @@ class question_truefalse_qtype extends default_questiontype {
             $chosenanswer = $answers[$response];
             $feedback = format_text($chosenanswer->feedback, true, $formatoptions, $cmoptions->course);
         }
-        
+
         include("$CFG->dirroot/question/type/truefalse/display.html");
     }
 
@@ -242,7 +242,7 @@ class question_truefalse_qtype extends default_questiontype {
         }
         return $responses;
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

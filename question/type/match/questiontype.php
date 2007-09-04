@@ -268,7 +268,7 @@ class question_match_qtype extends default_questiontype {
         // Print formulation
         $questiontext = $this->format_text($question->questiontext,
                 $question->questiontextformat, $cmoptions);
-        $image = get_question_image($question, $cmoptions->course);
+        $image = get_question_image($question);
 
         // Print the input controls
         foreach ($subquestions as $key => $subquestion) {

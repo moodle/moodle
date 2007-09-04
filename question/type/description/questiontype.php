@@ -62,7 +62,7 @@ class description_qtype extends default_questiontype {
         }
 
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
-        $image = get_question_image($question, $cmoptions->course);
+        $image = get_question_image($question);
 
         include "$CFG->dirroot/question/type/description/question.html";
     }

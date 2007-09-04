@@ -1295,10 +1295,15 @@ function print_question_icon($question, $return = false) {
 * @return string The html image tag or the empy string if there is no image.
 * @param object $question The question object
 */
-function get_question_image($question, $courseid) {
+function get_question_image($question) {
 
     global $CFG;
     $img = '';
+
+    if (!$category = get_record('question_categories', 'id', $question->category)){
+        error('invalid category id '.$question->category);
+    }
+    $coursefilesdir = get_filesdir_from_context(get_context_instance_by_id($category->contextid));
 
     if ($question->image) {
 
@@ -1306,10 +1311,10 @@ function get_question_image($question, $courseid) {
             $img .= $question->image;
 
         } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $img .= "$CFG->wwwroot/file.php/$courseid/$question->image";
+            $img .= "$CFG->wwwroot/file.php/$coursefilesdir/$question->image";
 
         } else {
-            $img .= "$CFG->wwwroot/file.php?file=/$courseid/$question->image";
+            $img .= "$CFG->wwwroot/file.php?file=/$coursefilesdir/$question->image";
         }
     }
     return $img;

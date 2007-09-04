@@ -42,7 +42,7 @@ class question_missingtype_qtype extends default_questiontype {
         $questiontext = format_text($question->questiontext,
                          $question->questiontextformat,
                          $formatoptions, $cmoptions->course);
-        $image = get_question_image($question, $cmoptions->course);
+        $image = get_question_image($question);
 
         // Print each answer in a separate row if there are any
         $anss = array();
