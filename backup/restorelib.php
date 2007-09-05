@@ -2208,10 +2208,21 @@
                         $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
                         $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
                         $gro->timemodified = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
-                
-                        //Now search if that group exists (by name and description field) in 
+
+                        //Now search if that group exists (by name and description field) in
                         //restore->course_id course
-                        $gro_db = groups_group_matches($restore->course_id, $gro->name, $gro->description); 
+                        //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                        $description_clause = '';
+                        if (!empty($gro->description)) { /// Only for groups having a description
+                            $literal_description = "'" . $gro->description . "'";
+                            $description_clause = " AND " .
+                                                  sql_compare_text('description') . " = " .
+                                                  sql_compare_text($literal_description);
+                        }
+                        $gro_db = get_record_sql("SELECT *
+                                                  FROM {$CFG->prefix}groups
+                                                  WHERE courseid = $restore->course_id AND
+                                                        name = '{$gro->name}'" . $description_clause);
                         //If it doesn't exist, create
                         if (!$gro_db) {
                             $create_group = true;
