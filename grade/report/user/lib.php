@@ -95,7 +95,7 @@ class grade_report_user extends grade_report {
 
     function fill_table() {
         global $CFG;
-        $numusers = $this->get_numusers();
+        $numusers = $this->get_numusers(false); // total course users
 
         if ($all_grade_items = grade_item::fetch_all(array('courseid'=>$this->courseid))) {
             $grade_items = array();
@@ -139,8 +139,13 @@ class grade_report_user extends grade_report {
                     $excluded = '';
                 }
 
-                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
-                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {         
+                 
+                    if ((int) $grade_grade->finalgrade < 1) {
+                        $data[] = '-'; 
+                    } else {
+                        $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                    }
                  
                 } else {
                     if ($grade_item->scaleid) {
@@ -157,13 +162,21 @@ class grade_report_user extends grade_report {
                         }
                     } else {
                         // normal grade, or text, just display
-                        $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
+                        if ((int) $grade_grade->finalgrade < 1) {
+                            $data[] = $excluded.'-'; 
+                        } else { 
+                            $data[] = $excluded.format_float($grade_grade->finalgrade, $decimalpoints);
+                        }
                     }
                 }
                 /// prints percentage
 
                 if ($grade_grade->is_hidden() && !has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $grade_item->courseid))) {
-                    $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                    if ((int) $grade_grade->finalgrade < 1) {
+                        $data[] = '-'; 
+                    } else {
+                        $data[] = get_string('gradedon', 'grades', userdate($grade_grade->timemodified));
+                    }
                 } else {
                     if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
                         // processing numeric grade
