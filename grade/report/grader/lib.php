@@ -852,7 +852,7 @@ class grade_report_grader extends grade_report {
 
                 $ungraded_count = get_field_sql($SQL);
 
-                if ($meanselection == GRADE_AGGREGATE_MEAN_GRADED) {
+                if ($meanselection == GRADE_REPORT_MEAN_GRADED) {
                     $mean_count = $totalcount - $ungraded_count;
                 } else { // Bump up the sum by the number of ungraded items * grademin
                     if (isset($sum_array[$item->id])) {

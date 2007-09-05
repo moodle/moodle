@@ -52,8 +52,8 @@ class grader_report_preferences_form extends moodleform {
                                                      GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                      GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
                       'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                     GRADE_AGGREGATE_MEAN_ALL => get_string('meanall', 'grades'),
-                                                     GRADE_AGGREGATE_MEAN_GRADED => get_string('meangraded', 'grades')),
+                                                     GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
+                                                     GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')),
                       'enableajax'          => $checkbox_default);
 
         $preferences['prefshow'] = array('showcalculations'  => $checkbox_default,

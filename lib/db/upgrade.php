@@ -967,28 +967,6 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007072200) {
-/// Remove obsoleted unit tests tables - they will be recreated automatically
-        $tables = array('grade_categories',
-                        'scale',
-                        'grade_items',
-                        'grade_calculations',
-                        'grade_grades',
-                        'grade_grades_raw',
-                        'grade_grades_final',
-                        'grade_grades_text',
-                        'grade_outcomes',
-                        'grade_outcomes_courses');
-
-        foreach ($tables as $tablename) {
-            $table = new XMLDBTable('unittest_'.$tablename);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-            $table = new XMLDBTable('unittest_'.$tablename.'_history');
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-        }
 
 /// Remove all grade tables used in development phases - we need new empty tables for final gradebook upgrade
         $tables = array('grade_categories',
@@ -1063,7 +1041,9 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregateonlygraded', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregatesubcats', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
         $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
@@ -1231,7 +1211,9 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregateonlygraded', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->addFieldInfo('aggregatesubcats', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
     /// Adding keys to table grade_categories_history
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1761,24 +1743,6 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }    
 
-/*
-    /// drop old gradebook tables
-    if ($result && $oldversion < 2007072209) {
-        $tables = array('grade_category',
-                        'grade_item',
-                        'grade_letter',
-                        'grade_preferences',
-                        'grade_exceptions');
-
-        foreach ($tables as $table) {
-            $table = new XMLDBTable($table);
-            if (table_exists($table)) {
-                drop_table($table);
-            }
-        }
-    }
-*/
-
     if ($result && $oldversion < 2007082700) {
 
     /// Define field timemodified to be added to tag_instance
@@ -1798,6 +1762,7 @@ function xmldb_main_upgrade($oldversion=0) {
             foreach ($tags as $oldtag) {
                 // if this tag does not exist in tag table yet
                 if (!$newtag = get_record('tag', 'name', tag_normalize($oldtag->text))) {
+                    $itag = new object();
                     $itag->name = tag_normalize($oldtag->text);
                     $itag->rawname = tag_normalize($oldtag->text, false);
 
@@ -1990,6 +1955,104 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $result && add_key($table, $key);
 
     }
+
+    if ($result && $oldversion < 2007090503) {
+/// Remove obsoleted unit tests tables - they will be recreated automatically
+        $tables = array('grade_categories',
+                        'scale',
+                        'grade_items',
+                        'grade_calculations',
+                        'grade_grades',
+                        'grade_grades_raw',
+                        'grade_grades_final',
+                        'grade_grades_text',
+                        'grade_outcomes',
+                        'grade_outcomes_courses');
+
+        foreach ($tables as $tablename) {
+            $table = new XMLDBTable('unittest_'.$tablename);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+            $table = new XMLDBTable('unittest_'.$tablename.'_history');
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+
+
+    /// Define field aggregatesubcats to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('aggregatesubcats');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'aggregateoutcomes');
+
+        if (!field_exists($table, $field)) {
+        /// Launch add field aggregateonlygraded
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field aggregateonlygraded to be added to grade_categories
+        $table = new XMLDBTable('grade_categories');
+        $field = new XMLDBField('aggregateonlygraded');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'droplow');
+
+        if (!field_exists($table, $field)) {
+        /// Launch add field aggregateonlygraded
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field aggregatesubcats to be added to grade_categories_history
+        $table = new XMLDBTable('grade_categories_history');
+        $field = new XMLDBField('aggregatesubcats');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'aggregateoutcomes');
+
+        if (!field_exists($table, $field)) {
+        /// Launch add field aggregateonlygraded
+            $result = $result && add_field($table, $field);
+        }
+
+    /// Define field aggregateonlygraded to be added to grade_categories_history
+        $table = new XMLDBTable('grade_categories_history');
+        $field = new XMLDBField('aggregateonlygraded');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'droplow');
+
+        if (!field_exists($table, $field)) {
+        /// Launch add field aggregateonlygraded
+            $result = $result && add_field($table, $field);
+        }
+
+    /// upgrade path in grade_categrories table - now using slash on both ends
+        $concat = sql_concat('path', "'/'");
+        $sql = "UPDATE {$CFG->prefix}grade_categories SET path = $concat WHERE path NOT LIKE '/%/'";
+        execute_sql($sql, true);
+
+    /// convert old aggregation constants if needed
+        for ($i=0; $i<=12; $i=$i+2) {
+            $j = $i+1;
+            $sql = "UPDATE {$CFG->prefix}grade_categories SET aggregation = $i, aggregateonlygraded = 1 WHERE aggregation = $j";
+            execute_sql($sql, true);
+        }
+    }
+
+
+
+/*
+    /// drop old gradebook tables
+    if ($result && $oldversion < xxxxxxxx) {
+        $tables = array('grade_category',
+                        'grade_item',
+                        'grade_letter',
+                        'grade_preferences',
+                        'grade_exceptions');
+
+        foreach ($tables as $table) {
+            $table = new XMLDBTable($table);
+            if (table_exists($table)) {
+                drop_table($table);
+            }
+        }
+    }
+*/
 
     return $result;
 }

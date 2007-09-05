@@ -63,7 +63,7 @@ class grade_category extends grade_object {
     var $depth = 0;
 
     /**
-     * Shows the hierarchical path for this category as /1/2/3 (like course_categories), the last number being
+     * Shows the hierarchical path for this category as /1/2/3/ (like course_categories), the last number being
      * this category's autoincrement ID number.
      * @var string $path
      */
@@ -79,7 +79,7 @@ class grade_category extends grade_object {
      * A constant pointing to one of the predefined aggregation strategies (none, mean, median, sum etc) .
      * @var int $aggregation
      */
-    var $aggregation = GRADE_AGGREGATE_MEAN_ALL;
+    var $aggregation = GRADE_AGGREGATE_MEAN;
 
     /**
      * Keep only the X highest items.
@@ -94,10 +94,22 @@ class grade_category extends grade_object {
     var $droplow = 0;
 
     /**
+     * Aggregate only graded items
+     * @var int $aggregateonlygraded
+     */
+    var $aggregateonlygraded = 0;
+
+    /**
      * Aggregate outcomes together with normal items
-     * @$aggregateoutcomes
+     * @var int $aggregateoutcomes
      */
     var $aggregateoutcomes = 0;
+
+    /**
+     * Ignore subcategories when aggregating
+     * @var int $aggregatesubcats
+     */
+    var $aggregatesubcats = 0;
 
     /**
      * Array of grade_items or grade_categories nested exactly 1 level below this category
@@ -136,10 +148,10 @@ class grade_category extends grade_object {
      */
     function build_path($grade_category) {
         if (empty($grade_category->parent)) {
-            return '/'.$grade_category->id;
+            return '/'.$grade_category->id.'/';
         } else {
             $parent = get_record('grade_categories', 'id', $grade_category->parent);
-            return grade_category::build_path($parent).'/'.$grade_category->id;
+            return grade_category::build_path($parent).$grade_category->id.'/';
         }
     }
 
@@ -177,7 +189,7 @@ class grade_category extends grade_object {
         // force recalculation of path;
         if (empty($this->path)) {
             $this->path  = grade_category::build_path($this);
-            $this->depth = substr_count($this->path, '/');
+            $this->depth = substr_count($this->path, '/') - 1;
         }
 
 
@@ -287,7 +299,7 @@ class grade_category extends grade_object {
         $this->fullname  = get_string('coursegradecategory', 'grades');
         $this->path      = null;
         $this->parent    = null;
-        $this->aggregate = GRADE_AGGREGATE_MEAN_ALL;
+        $this->aggregate = GRADE_AGGREGATE_MEAN;
 
         if (!parent::insert('system')) {
             debugging("Could not insert this category: " . print_r($this, true));
@@ -314,12 +326,14 @@ class grade_category extends grade_object {
 
         $db_item = grade_category::fetch(array('id'=>$this->id));
 
-        $aggregationdiff = $db_item->aggregation       != $this->aggregation;
-        $keephighdiff    = $db_item->keephigh          != $this->keephigh;
-        $droplowdiff     = $db_item->droplow           != $this->droplow;
-        $aggoutcomesdiff = $db_item->aggregateoutcomes != $this->aggregateoutcomes;
+        $aggregationdiff = $db_item->aggregation         != $this->aggregation;
+        $keephighdiff    = $db_item->keephigh            != $this->keephigh;
+        $droplowdiff     = $db_item->droplow             != $this->droplow;
+        $aggonlygrddiff  = $db_item->aggregateonlygraded != $this->aggregateonlygraded;
+        $aggoutcomesdiff = $db_item->aggregateoutcomes   != $this->aggregateoutcomes;
+        $aggsubcatsdiff  = $db_item->aggregatesubcats    != $this->aggregatesubcats;
 
-        return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggoutcomesdiff);
+        return ($aggregationdiff || $keephighdiff || $droplowdiff || $aggonlygrddiff || $aggoutcomesdiff || $aggsubcatsdiff);
     }
 
     /**
@@ -475,20 +489,12 @@ class grade_category extends grade_object {
         }
 
         // use min grade if grade missing for these types
-        switch ($this->aggregation) {
-            case GRADE_AGGREGATE_MEAN_ALL:
-            case GRADE_AGGREGATE_MEDIAN_ALL:
-            case GRADE_AGGREGATE_MIN_ALL:
-            case GRADE_AGGREGATE_MAX_ALL:
-            case GRADE_AGGREGATE_MODE_ALL:
-            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL:
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL:
-                foreach($items as $itemid=>$value) {
-                    if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
-                        $grade_values[$itemid] = 0;
-                    }
+        if (!$this->aggregateonlygraded) {
+            foreach($items as $itemid=>$value) {
+                if (!isset($grade_values[$itemid]) and !in_array($itemid, $excluded)) {
+                    $grade_values[$itemid] = 0;
                 }
-                break;
+            }
         }
 
         // limit and sort
@@ -508,8 +514,7 @@ class grade_category extends grade_object {
 
     /// start the aggregation
         switch ($this->aggregation) {
-            case GRADE_AGGREGATE_MEDIAN_ALL: // Middle point value in the set: ignores frequencies
-            case GRADE_AGGREGATE_MEDIAN_GRADED:
+            case GRADE_AGGREGATE_MEDIAN: // Middle point value in the set: ignores frequencies
                 $num = count($grade_values);
                 $grades = array_values($grade_values);
                 if ($num % 2 == 0) {
@@ -519,18 +524,15 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_MIN_ALL:
-            case GRADE_AGGREGATE_MIN_GRADED:
+            case GRADE_AGGREGATE_MIN:
                 $agg_grade = reset($grade_values);
                 break;
 
-            case GRADE_AGGREGATE_MAX_ALL:
-            case GRADE_AGGREGATE_MAX_GRADED:
+            case GRADE_AGGREGATE_MAX:
                 $agg_grade = array_pop($grade_values);
                 break;
 
-            case GRADE_AGGREGATE_MODE_ALL:       // the most common value, average used if multimode
-            case GRADE_AGGREGATE_MODE_GRADED:
+            case GRADE_AGGREGATE_MODE:       // the most common value, average used if multimode
                 $freq = array_count_values($grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
@@ -539,8 +541,7 @@ class grade_category extends grade_object {
                 $agg_grade = reset($modes);
                 break;
 
-            case GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED: // Weighted average of all existing final grades
-            case GRADE_AGGREGATE_WEIGHTED_MEAN_ALL:
+            case GRADE_AGGREGATE_WEIGHTED_MEAN: // Weighted average of all existing final grades
                 $weightsum = 0;
                 $sum       = 0;
                 foreach($grade_values as $itemid=>$grade_value) {
@@ -557,8 +558,7 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL: // special average
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED:
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN: // special average
                 $num = 0;
                 $sum = 0;
                 foreach($grade_values as $itemid=>$grade_value) {
@@ -576,8 +576,7 @@ class grade_category extends grade_object {
                 }
                 break;
 
-            case GRADE_AGGREGATE_MEAN_ALL:    // Arithmetic average of all grade items including even NULLs; NULL grade counted as minimum
-            case GRADE_AGGREGATE_MEAN_GRADED: // Arithmetic average of all final grades, unfinished are not calculated
+            case GRADE_AGGREGATE_MEAN:    // Arithmetic average of all grade items (if ungraded aggregated, NULL counted as minimum)
             default:
                 $num = count($grade_values);
                 $sum = array_sum($grade_values);
@@ -638,10 +637,8 @@ class grade_category extends grade_object {
      * @return boolean true if coeficient used
      */
     function is_aggregationcoef_used() {
-        return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN_ALL
-             or $this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED
-             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL
-             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED);
+        return ($this->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN
+             or $this->aggregation == GRADE_AGGREGATE_EXTRACREDIT_MEAN);
 
     }
 

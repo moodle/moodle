@@ -154,6 +154,9 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregateonlygraded', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregatesubcats', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
 
@@ -368,6 +371,9 @@ class grade_test extends UnitTestCase {
             $table->addFieldInfo('aggregation', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('keephigh', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
             $table->addFieldInfo('droplow', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregateonlygraded', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregateoutcomes', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('aggregatesubcats', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
         /// Adding keys to table grade_categories_history
             $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -647,7 +653,8 @@ class grade_test extends UnitTestCase {
 
         $grade_category->fullname    = 'unittestcategory1';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $course_category->id;
@@ -656,7 +663,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 2;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id;
+            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
             update_record('grade_categories', $grade_category);
             $this->grade_categories[0] = $grade_category;
         }
@@ -665,7 +672,8 @@ class grade_test extends UnitTestCase {
 
         $grade_category->fullname    = 'unittestcategory2';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
@@ -674,7 +682,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 3;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = $this->grade_categories[0]->path.'/'.$grade_category->id;
+            $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
             update_record('grade_categories', $grade_category);
             $this->grade_categories[1] = $grade_category;
         }
@@ -683,7 +691,8 @@ class grade_test extends UnitTestCase {
 
         $grade_category->fullname    = 'unittestcategory3';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $this->grade_categories[0]->id;
@@ -692,7 +701,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 3;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = $this->grade_categories[0]->path.'/'.$grade_category->id;
+            $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
             update_record('grade_categories', $grade_category);
             $this->grade_categories[2] = $grade_category;
         }
@@ -703,7 +712,8 @@ class grade_test extends UnitTestCase {
 
         $grade_category->fullname    = 'level1category';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
         $grade_category->keephigh    = 0;
         $grade_category->droplow     = 0;
         $grade_category->parent      = $course_category->id;
@@ -712,7 +722,7 @@ class grade_test extends UnitTestCase {
         $grade_category->depth = 2;
 
         if ($grade_category->id = insert_record('grade_categories', $grade_category)) {
-            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id;
+            $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
             update_record('grade_categories', $grade_category);
             $this->grade_categories[3] = $grade_category;
         }

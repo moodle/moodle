@@ -41,7 +41,7 @@ function upgrade_18_gradebook($courseid) {
     $course_category->courseid     = $courseid;
     $course_category->fullname     = get_string('coursegradecategory', 'grades');
     $course_category->parent       = null;
-    $course_category->aggregation  = GRADE_AGGREGATE_MEAN_ALL;
+    $course_category->aggregation  = GRADE_AGGREGATE_MEAN;
     $course_category->timemodified = $course_category->timecreated = time();
     if (!$course_category->id = insert_record('grade_categories', $course_category)) {
         return false;
@@ -83,7 +83,7 @@ function upgrade_18_gradebook($courseid) {
             $category->fullname     = addslashes($oldcat->name);
             $category->parent       = $course_category->id;
             $category->droplow      = $oldcat->drop_x_lowest;
-            $category->aggregation  = GRADE_AGGREGATE_MEAN_ALL;
+            $category->aggregation  = GRADE_AGGREGATE_MEAN;
             $category->timemodified = $category->timecreated = time();
             if (!$category->id = insert_record('grade_categories', $category)) {
                 return false;
@@ -115,7 +115,7 @@ function upgrade_18_gradebook($courseid) {
             }
         }
 
-        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN_ALL;
+        $course_category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
         update_record('grade_categories', $course_category);
     }
     unset($oldcats);
@@ -149,8 +149,8 @@ function upgrade_18_gradebook($courseid) {
 
         $newitems[$olditem->id] = $item;
 
-        if ($olditem->extra_credit and $categories[$olditem->category]->aggregation != GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL) {
-            $categories[$olditem->category]->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL;
+        if ($olditem->extra_credit and $categories[$olditem->category]->aggregation != GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+            $categories[$olditem->category]->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN;
             update_record('grade_categories', $categories[$olditem->category]);
         }
     }

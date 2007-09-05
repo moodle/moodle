@@ -1152,20 +1152,33 @@ class grade_item extends grade_object {
                 $outcomes_sql = "AND gi.outcomeid IS NULL";
             }
 
-            $sql = "SELECT gi.id
-                      FROM {$CFG->prefix}grade_items gi
-                     WHERE gi.categoryid = {$grade_category->id}
-                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
-                           $outcomes_sql
+            if ($grade_category->aggregatesubcats) {
+                // return all children excluding category items                
+                $sql = "SELECT gi.id
+                          FROM {$CFG->prefix}grade_items gi
+                         WHERE (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                               $outcomes_sql
+                               AND gi.categoryid IN (
+                                  SELECT gc.id
+                                    FROM {$CFG->prefix}grade_categories gc
+                                   WHERE gc.path LIKE '%/{$grade_category->id}/%')";
 
-                    UNION
-
-                    SELECT gi.id
-                      FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
-                     WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
-                           AND gc.parent = {$grade_category->id}
-                           AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
-                           $outcomes_sql";
+            } else {
+                $sql = "SELECT gi.id
+                          FROM {$CFG->prefix}grade_items gi
+                         WHERE gi.categoryid = {$grade_category->id}
+                               AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                               $outcomes_sql
+    
+                        UNION
+    
+                        SELECT gi.id
+                          FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
+                         WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
+                               AND gc.parent = {$grade_category->id}
+                               AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
+                               $outcomes_sql";
+            }
 
             if ($children = get_records_sql($sql)) {
                 return array_keys($children);

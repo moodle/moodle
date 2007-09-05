@@ -53,7 +53,7 @@ class grade_category_test extends grade_test {
         $this->assertEqual($params->courseid, $grade_category->courseid);
         $this->assertEqual($params->fullname, $grade_category->fullname);
         $this->assertEqual(2, $grade_category->depth);
-        $this->assertEqual("/$course_category->id/$grade_category->id", $grade_category->path);
+        $this->assertEqual("/$course_category->id/$grade_category->id/", $grade_category->path);
         $parentpath = $grade_category->path;
 
         // Test a child category
@@ -63,7 +63,7 @@ class grade_category_test extends grade_test {
         $grade_category->insert();
 
         $this->assertEqual(3, $grade_category->depth);
-        $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path);
+        $this->assertEqual($parentpath.$grade_category->id."/", $grade_category->path);
         $parentpath = $grade_category->path;
 
         // Test a third depth category
@@ -72,7 +72,7 @@ class grade_category_test extends grade_test {
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
         $this->assertEqual(4, $grade_category->depth);
-        $this->assertEqual("$parentpath/$grade_category->id", $grade_category->path);
+        $this->assertEqual($parentpath.$grade_category->id."/", $grade_category->path);
     }
 
     function test_grade_category_build_path() {
@@ -106,7 +106,7 @@ class grade_category_test extends grade_test {
         $grade_category->fullname = 'Updated info for this unittest grade_category';
         $grade_category->path = null; // path must be recalculated if missing
         $grade_category->depth = null;
-        $grade_category->aggregation = GRADE_AGGREGATE_MAX_ALL; // should force regrading
+        $grade_category->aggregation = GRADE_AGGREGATE_MAX; // should force regrading
 
         $grade_item = $grade_category->get_grade_item();
         $this->assertEqual(0, $grade_item->needsupdate);
@@ -142,7 +142,8 @@ class grade_category_test extends grade_test {
 
         $grade_category->fullname    = 'unittestcategory4';
         $grade_category->courseid    = $this->courseid;
-        $grade_category->aggregation = GRADE_AGGREGATE_MEAN_GRADED;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
@@ -150,7 +151,7 @@ class grade_category_test extends grade_test {
 
         $grade_category->insert();
 
-        $this->assertEqual('/'.$course_category->id.'/'.$this->grade_categories[0]->id.'/'.$grade_category->id, $grade_category->path);
+        $this->assertEqual('/'.$course_category->id.'/'.$this->grade_categories[0]->id.'/'.$grade_category->id.'/', $grade_category->path);
         $this->assertEqual(3, $grade_category->depth);
 
         $last_grade_category = end($this->grade_categories);
@@ -171,9 +172,9 @@ class grade_category_test extends grade_test {
         $id = $grade_category->insert_course_category($this->courseid);
         $this->assertNotNull($id);
         $this->assertEqual('course grade category', $grade_category->fullname);
-        $this->assertEqual(GRADE_AGGREGATE_MEAN_ALL, $grade_category->aggregate);
-        $this->assertEqual("/$id", $grade_category->path);
-        $this->assertEqual($id, $grade_category->depth);
+        $this->assertEqual(GRADE_AGGREGATE_MEAN, $grade_category->aggregate);
+        $this->assertEqual("/$id/", $grade_category->path);
+        $this->assertEqual(1, $grade_category->depth);
         $this->assertNull($grade_category->parent);
     }
 
@@ -183,7 +184,7 @@ class grade_category_test extends grade_test {
 
         $this->assertFalse($grade_category->qualifies_for_regrading());
 
-        $grade_category->aggregation = GRADE_AGGREGATE_MAX_ALL;
+        $grade_category->aggregation = GRADE_AGGREGATE_MAX;
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
         $grade_category = new grade_category($this->grade_categories[0]);

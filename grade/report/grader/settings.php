@@ -47,8 +47,8 @@ $settings->add(new admin_setting_configselect('grade_report_gradedisplaytype', g
 
 $settings->add(new admin_setting_configselect('grade_report_meanselection', get_string('meanselection', 'grades'),
                                           get_string('configmeanselection', 'grades'), false,
-                                          array(GRADE_AGGREGATE_MEAN_ALL => get_string('meanall', 'grades'),
-                                                GRADE_AGGREGATE_MEAN_GRADED => get_string('meangraded', 'grades'))));
+                                          array(GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
+                                                GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades'))));
 
 $settings->add(new admin_setting_configcheckbox('grade_report_enableajax', get_string('enableajax', 'grades'),
                                             get_string('configenableajax', 'grades'), 0));

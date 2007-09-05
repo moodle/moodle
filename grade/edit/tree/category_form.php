@@ -11,30 +11,31 @@ class edit_category_form extends moodleform {
         $mform->addElement('header', 'general', get_string('gradecategory', 'grades'));
         $mform->addElement('text', 'fullname', get_string('categoryname', 'grades'));
 
-        $options = array(GRADE_AGGREGATE_MEAN_ALL               =>get_string('aggregatemeanall', 'grades'),
-                         GRADE_AGGREGATE_MEAN_GRADED            =>get_string('aggregatemeangraded', 'grades'),
-                         GRADE_AGGREGATE_MEDIAN_ALL             =>get_string('aggregatemedianall', 'grades'),
-                         GRADE_AGGREGATE_MEDIAN_GRADED          =>get_string('aggregatemediangraded', 'grades'),
-                         GRADE_AGGREGATE_MIN_ALL                =>get_string('aggregateminall', 'grades'),
-                         GRADE_AGGREGATE_MIN_GRADED             =>get_string('aggregatemingraded', 'grades'),
-                         GRADE_AGGREGATE_MAX_ALL                =>get_string('aggregatemaxall', 'grades'),
-                         GRADE_AGGREGATE_MAX_GRADED             =>get_string('aggregatemaxgraded', 'grades'),
-                         GRADE_AGGREGATE_MODE_ALL               =>get_string('aggregatemodeall', 'grades'),
-                         GRADE_AGGREGATE_MODE_GRADED            =>get_string('aggregatemodegraded', 'grades'),
-                         GRADE_AGGREGATE_WEIGHTED_MEAN_ALL      =>get_string('aggregateweightedmeanall', 'grades'),
-                         GRADE_AGGREGATE_WEIGHTED_MEAN_GRADED   =>get_string('aggregateweightedmeangraded', 'grades'),
-                         GRADE_AGGREGATE_EXTRACREDIT_MEAN_ALL   =>get_string('aggregateextracreditmeanall', 'grades'),
-                         GRADE_AGGREGATE_EXTRACREDIT_MEAN_GRADED=>get_string('aggregateextracreditmeangraded', 'grades'));
+        $options = array(GRADE_AGGREGATE_MEAN            =>get_string('aggregatemean', 'grades'),
+                         GRADE_AGGREGATE_MEDIAN          =>get_string('aggregatemedian', 'grades'),
+                         GRADE_AGGREGATE_MIN             =>get_string('aggregatemin', 'grades'),
+                         GRADE_AGGREGATE_MAX             =>get_string('aggregatemax', 'grades'),
+                         GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
+                         GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
+                         GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'));
 
         $mform->addElement('select', 'aggregation', get_string('aggregation', 'grades'), $options);
         $mform->setHelpButton('aggregation', array('aggregation', get_string('aggregation', 'grades'), 'grade'));
-        $mform->setDefault('gradetype', GRADE_AGGREGATE_MEAN_ALL);
+        $mform->setDefault('gradetype', GRADE_AGGREGATE_MEAN);
+
+        $mform->addElement('advcheckbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
+        $mform->setHelpButton('aggregateonlygraded', array(false, get_string('aggregateonlygraded', 'grades'),
+                          false, true, false, get_string('aggregateonlygradedhelp', 'grades')));
 
         if (!empty($CFG->enableoutcomes)) {
             $mform->addElement('advcheckbox', 'aggregateoutcomes', get_string('aggregateoutcomes', 'grades'));
             $mform->setHelpButton('aggregateoutcomes', array(false, get_string('aggregateoutcomes', 'grades'),
-                              false, true, false, get_string("aggregateoutcomeshelp", 'grades')));
+                              false, true, false, get_string('aggregateoutcomeshelp', 'grades')));
         }
+
+        $mform->addElement('advcheckbox', 'aggregatesubcats', get_string('aggregatesubcats', 'grades'));
+        $mform->setHelpButton('aggregatesubcats', array(false, get_string('aggregatesubcats', 'grades'),
+                          false, true, false, get_string('aggregatesubcatshelp', 'grades')));
 
         $options = array();
         $options[0] = get_string('none');
@@ -43,12 +44,12 @@ class edit_category_form extends moodleform {
         }
         $mform->addElement('select', 'keephigh', get_string('keephigh', 'grades'), $options);
         $mform->setHelpButton('keephigh', array(false, get_string('keephigh', 'grades'),
-                          false, true, false, get_string("keephighhelp", 'grades')));
+                          false, true, false, get_string('keephighhelp', 'grades')));
         $mform->disabledIf('keephigh', 'droplow', 'noteq', 0);
 
         $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
         $mform->setHelpButton('droplow', array(false, get_string('droplow', 'grades'),
-                          false, true, false, get_string("droplowhelp", 'grades')));
+                          false, true, false, get_string('droplowhelp', 'grades')));
         $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
 
         // user preferences
@@ -61,7 +62,7 @@ class edit_category_form extends moodleform {
                . ': ' . $options[$CFG->grade_report_aggregationview] . ')';
         $mform->addElement('select', 'pref_aggregationview', $label, $options);
         $mform->setHelpButton('pref_aggregationview', array(false, get_string('aggregationview', 'grades'),
-                              false, true, false, get_string("configaggregationview", 'grades')));
+                              false, true, false, get_string('configaggregationview', 'grades')));
         $mform->setDefault('pref_aggregationview', GRADE_REPORT_PREFERENCE_DEFAULT);
 
         // hidden params
@@ -101,6 +102,15 @@ class edit_category_form extends moodleform {
                 }
                 if ($mform->elementExists('droplow')) {
                     $mform->removeElement('droplow');
+                }
+                if ($mform->elementExists('aggregateonlygraded')) {
+                    $mform->removeElement('aggregateonlygraded');
+                }
+                if ($mform->elementExists('aggregateoutcomes')) {
+                    $mform->removeElement('aggregateoutcomes');
+                }
+                if ($mform->elementExists('aggregatesubcats')) {
+                    $mform->removeElement('aggregatesubcats');
                 }
             }
         }
