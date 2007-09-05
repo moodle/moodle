@@ -2869,7 +2869,7 @@
                                           sql_compare_text('description') . " = " .
                                           sql_compare_text($literal_description);
                 }
-                if ($gro_db = get_record_sql("SELECT *
+                if (!$gro_db = get_record_sql("SELECT *
                                           FROM {$CFG->prefix}groups
                                           WHERE courseid = $restore->course_id AND
                                                 name = '{$gro->name}'" . $description_clause)) {
