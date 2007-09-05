@@ -1208,7 +1208,7 @@
 
         $restoreall = true; // set to false if any grade_item is not selected/restored
 
-        if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'", "old_id", "old_id, old_id")) {
+        if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'", "old_id", "old_id")) {
             foreach ($recs as $rec) {
 
                 if ($data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id)) {
@@ -1267,7 +1267,7 @@
                 // Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_categories' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -1354,7 +1354,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_outcomes' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -1432,7 +1432,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_courses' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -1482,7 +1482,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counteritems,
                                             $recordset_size);
                                             
@@ -1705,7 +1705,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_categories_history' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -1798,7 +1798,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_grades_history' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -1879,7 +1879,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_grades_text_history' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
 
@@ -1953,7 +1953,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_items_history' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -2092,7 +2092,7 @@
                 //Fetch recordset_size records in each iteration
                 $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_history' AND backup_code = '$restore->backup_unique_code'",
                                             "old_id",
-                                            "old_id, old_id",
+                                            "old_id",
                                             $counter,
                                             $recordset_size);
                 if ($recs) {
@@ -2489,7 +2489,7 @@
                         $counter = 0;
                         while ($counter < $unreadcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            $recs = get_records_select("backup_ids","table_name = 'message' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -2555,7 +2555,7 @@
                         $counter = 0;
                         while ($counter < $readcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_read' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            $recs = get_records_select("backup_ids","table_name = 'message_read' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -2622,7 +2622,7 @@
                         $counter = 0;
                         while ($counter < $contactcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_contacts' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
+                            $recs = get_records_select("backup_ids","table_name = 'message_contacts' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -3548,7 +3548,7 @@
             while ($counter < $count_logs) {
                 //Get a chunk of records
                 //Take old_id twice to avoid adodb limitation
-                $logs = get_records_select("backup_ids","table_name = 'log' AND backup_code = '$restore->backup_unique_code'","old_id","old_id,old_id",$counter,$recordset_size);
+                $logs = get_records_select("backup_ids","table_name = 'log' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
                 //We have logs
                 if ($logs) {
                     //Iterate
