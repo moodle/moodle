@@ -2815,6 +2815,8 @@
     //This function creates all the groups
     function restore_create_groups($restore,$xml_file) {
 
+        global $CFG;
+
         //Check it exists
         if (!file_exists($xml_file)) {
             return false;
@@ -2858,7 +2860,19 @@
                 $gro->timemodified     = backup_todb($info['GROUP']['#']['TIMEMODIFIED']['0']['#']);
 
                 //Now search if that group exists (by name and description field) in
-                if (!$gro_db = get_record('groups', 'courseid', $restore->course_id, 'name', $gro->name, 'description', $gro->description)) {
+                //restore->course_id course
+                //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                $description_clause = '';
+                if (!empty($gro->description)) { /// Only for groups having a description
+                    $literal_description = "'" . $gro->description . "'";
+                    $description_clause = " AND " .
+                                          sql_compare_text('description') . " = " .
+                                          sql_compare_text($literal_description);
+                }
+                if ($gro_db = get_record_sql("SELECT *
+                                          FROM {$CFG->prefix}groups
+                                          WHERE courseid = $restore->course_id AND
+                                                name = '{$gro->name}'" . $description_clause)) {
                     //If it doesn't exist, create
                     $newid = insert_record('groups', $gro);
 
