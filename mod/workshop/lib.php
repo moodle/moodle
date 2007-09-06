@@ -1121,7 +1121,8 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $co
     }
 
     $posts = get_records_sql("SELECT s.*, u.firstname, u.lastname,
-            u.picture, cm.instance, w.name, cm.section
+            u.picture, cm.instance, w.name, cm.section, cm.groupmode,
+            cm.course, cm.groupingid, cm.groupmembersonly
             FROM {$CFG->prefix}workshop_submissions s,
             {$CFG->prefix}user u,
             {$CFG->prefix}course_modules cm,
@@ -1140,8 +1141,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $co
     }
 
     foreach ($posts as $post) {
-
-        if (empty($groupid) || groups_is_member($groupid, $post->userid)) {
+        if ((empty($groupid) || groups_is_member($groupid, $post->userid)) && groups_course_module_visible($post)) {
 
             $tmpactivity = new Object;
 

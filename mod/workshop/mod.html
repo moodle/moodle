@@ -403,7 +403,11 @@
             helpbutton("releasegrades", get_string("releaseteachergrades", "workshop"), "workshop");
     ?></td>
 </tr>
-<?php print_standard_coursemodule_settings($form); ?>
+<?php 
+$features = new stdClass;
+$features->groupings = true;
+print_standard_coursemodule_settings($form, $features); 
+?>
 </table>
 <br />
 <div class="boxaligncenter">

@@ -135,6 +135,14 @@
                 if (isset($mod->groupmode)) {
                     set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
                 }
+                
+                if (isset($mod->groupingid)) {
+                    set_coursemodule_groupingid($mod->coursemodule, $mod->groupingid);
+                }
+                
+                if (isset($mod->groupmembersonly)) {
+                    set_coursemodule_groupmembersonly($mod->coursemodule, $mod->groupmembersonly);
+                }
 
                 if (isset($mod->redirect)) {
                     $SESSION->returnpage = $mod->redirecturl;
@@ -176,7 +184,14 @@
                 if (!isset($mod->groupmode)) { // to deal with pre-1.5 modules
                     $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
                 }
-
+                
+                if (isset($mod->groupingid)) {
+                    set_coursemodule_groupingid($mod->coursemodule, $mod->groupingid);
+                }
+                
+                if (isset($mod->groupmembersonly)) {
+                    set_coursemodule_groupmembersonly($mod->coursemodule, $mod->groupmembersonly);
+                }
                 $mod->instance = $return;
 
                 // course_modules and course_sections each contain a reference

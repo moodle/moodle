@@ -2430,11 +2430,14 @@ function course_in_meta ($course) {
 /**
  * Print standard form elements on module setup forms in mod/.../mod.html
  */
-function print_standard_coursemodule_settings($form) {
+function print_standard_coursemodule_settings($form, $features=null) {
     if (! $course = get_record('course', 'id', $form->course)) {
         error("This course doesn't exist");
     }
     print_groupmode_setting($form, $course);
+    if (!empty($features->groupings)) {
+        print_grouping_settings($form, $course);
+    }
     print_visible_setting($form, $course);
 }
 
@@ -2467,6 +2470,46 @@ function print_groupmode_setting($form, $course=NULL) {
         choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
         helpbutton('groupmode', get_string('groupmode'));
         echo '</td></tr>';
+    }
+}
+
+/**
+ * Print groupmode form element on module setup forms in mod/.../mod.html
+ */
+function print_grouping_settings($form, $course=NULL) {
+
+    if (empty($course)) {
+        if (! $course = get_record('course', 'id', $form->course)) {
+            error("This course doesn't exist");
+        }
+    }
+    if ($form->coursemodule) {
+        if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
+            error("This course module doesn't exist");
+        }
+    } else {
+        $cm = null;
+    }
+
+    $groupings = get_records_menu('groupings', 'courseid', $course->id, 'name', 'id, name');
+    if (!empty($groupings)) {
+        echo '<tr valign="top">';
+        echo '<td align="right"><b>'.get_string('grouping', 'group').':</b></td>';
+        echo '<td align="left">';
+        
+        $groupings;
+        $groupingid = isset($cm->groupingid) ? $cm->groupingid : 0;
+        
+        choose_from_menu($groupings, 'groupingid', $groupingid, get_string('none'), '', 0, false);
+        echo '</td></tr>';
+        
+        $checked = empty($cm->groupmembersonly) ? '':'checked="checked"';
+        echo '<tr valign="top">';
+        echo '<td align="right"><b>'.get_string('groupmembersonly', 'group').':</b></td>';
+        echo '<td align="left">';
+        echo "<input type=\"checkbox\" name=\"groupmembersonly\" value=\"1\" $checked />";
+        echo '</td></tr>';
+
     }
 }
 

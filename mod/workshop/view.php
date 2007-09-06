@@ -309,8 +309,9 @@
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         /// find out current groups mode
-        $groupmode = groupmode($course, $cm);
-        $currentgroup = setup_and_print_groups($course, $groupmode, "view.php?id=$cm->id");
+        $groupmode = groups_get_activity_groupmode($cm);
+        $currentgroup = groups_get_activity_group($cm, true);
+        groups_print_activity_menu($cm, "view.php?id=$cm->id");
 
         /// Print admin links
         echo "<table width=\"100%\"><tr><td>";
@@ -367,6 +368,15 @@
             print_heading(get_string("nostudentsyet"));
             print_footer($course);
             exit;
+        }
+        
+        if (!empty($CFG->enablegroupings) && !empty($cm->groupingid) && !empty($users)) {
+            $groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id');
+            foreach($users as $key => $user) {
+                if (!isset($groupingusers[$user->id])) {
+                    unset($users[$key]);
+                }
+            }
         }
 
         /// Now prepare table with student assessments and submissions
@@ -505,6 +515,14 @@
                     STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max
                     FROM {$CFG->prefix}groups_members g, {$CFG->prefix}workshop_assessments a
                     WHERE g.groupid = $currentgroup AND a.userid = g.userid AND a.timegraded > 0
+                    AND a.workshopid = $workshop->id");
+        } elseif (!empty($cm->groupingid) && !empty($CFG->enablegroupings)) {
+            $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean,
+                    STDDEV(gradinggrade) AS stddev, MIN(gradinggrade) AS min, MAX(gradinggrade) AS max
+                    FROM {$CFG->prefix}workshop_assessments a
+                    INNER JOIN {$CFG->prefix}groups_members g ON a.userid = g.userid
+                    INNER JOIN {$CFG->prefix}groupings_groups gg ON g.groupid = gg.groupid
+                    WHERE gg.groupingid = {$cm->groupingid} AND a.timegraded > 0
                     AND a.workshopid = $workshop->id");
         } else { // no group/all participants
             $stats = get_record_sql("SELECT COUNT(*) as count, AVG(gradinggrade) AS mean,
