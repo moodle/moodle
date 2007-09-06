@@ -74,17 +74,17 @@ class block_blog_tags extends block_base {
 
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
-        $sql  = 'SELECT t.id, t.tagtype, t.rawname as name, COUNT(DISTINCT ti.id) as ct ';
+        $sql  = 'SELECT t.id, t.tagtype, t.rawname AS name, COUNT(DISTINCT ti.id) AS ct ';
         $sql .= "FROM {$CFG->prefix}tag t, {$CFG->prefix}tag_instance ti, {$CFG->prefix}post p ";
         $sql .= 'WHERE t.id = ti.tagid ';
         $sql .= 'AND p.id = ti.itemid ';
-        
+
         // admins should be able to read all tags      
         if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
             $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
         }
         $sql .= "AND ti.timemodified > {$timewithin} ";
-        $sql .= 'GROUP BY t.id, t.tagtype, t.name ';
+        $sql .= 'GROUP BY t.id, t.tagtype, t.name, t.rawname ';
         $sql .= 'ORDER BY ct DESC, t.name ASC';
 
         if ($tags = get_records_sql($sql, 0, $this->config->numberoftags)) {
