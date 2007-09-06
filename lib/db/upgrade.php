@@ -2034,6 +2034,35 @@ function xmldb_main_upgrade($oldversion=0) {
         }
     }
 
+/// To have UNIQUE indexes over NULLable columns isn't cross-db at all
+/// so we create a non unique index and programatically enforce uniqueness
+    if ($result && $oldversion < 2007090600) {
+
+    /// Define index idnumber (unique) to be dropped form course_modules
+        $table = new XMLDBTable('course_modules');
+        $index = new XMLDBIndex('idnumber');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('idnumber'));
+
+    /// Launch drop index idnumber
+        $result = $result && drop_index($table, $index);
+
+    /// Define index idnumber-course (not unique) to be added to course_modules
+        $table = new XMLDBTable('course_modules');
+        $index = new XMLDBIndex('idnumber-course');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber', 'course'));
+
+    /// Launch add index idnumber-course
+        $result = $result && add_index($table, $index);
+
+    /// Define index idnumber-courseid (not unique) to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $index = new XMLDBIndex('idnumber-courseid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('idnumber', 'courseid'));
+
+    /// Launch add index idnumber-courseid
+        $result = $result && add_index($table, $index);
+
+    }
 
 
 /*

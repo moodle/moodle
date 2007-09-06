@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20070905" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20070906" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -156,8 +156,8 @@
         <INDEX NAME="visible" UNIQUE="false" FIELDS="visible" NEXT="course"/>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course" PREVIOUS="visible" NEXT="module"/>
         <INDEX NAME="module" UNIQUE="false" FIELDS="module" PREVIOUS="course" NEXT="instance"/>
-        <INDEX NAME="instance" UNIQUE="false" FIELDS="instance" PREVIOUS="module" NEXT="idnumber"/>
-        <INDEX NAME="idnumber" UNIQUE="true" FIELDS="idnumber" COMMENT="Default comment for the index, please edit me" PREVIOUS="instance"/>
+        <INDEX NAME="instance" UNIQUE="false" FIELDS="instance" PREVIOUS="module" NEXT="idnumber-course"/>
+        <INDEX NAME="idnumber-course" UNIQUE="false" FIELDS="idnumber, course" COMMENT="non unique index (although programatically we are guarantying some sort of uniqueness both under this table and the grade_items one). TODO: We need a central store of module idnumbers in the future." PREVIOUS="instance"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules" NEXT="course_request">
@@ -1344,7 +1344,8 @@
       <INDEXES>
         <INDEX NAME="locked-locktime" UNIQUE="false" FIELDS="locked, locktime" COMMENT="used in grading cron" NEXT="itemtype-needsupdate"/>
         <INDEX NAME="itemtype-needsupdate" UNIQUE="false" FIELDS="itemtype, needsupdate" COMMENT="used in grading cron" PREVIOUS="locked-locktime" NEXT="gradetype"/>
-        <INDEX NAME="gradetype" UNIQUE="false" FIELDS="gradetype" COMMENT="index for gradetype" PREVIOUS="itemtype-needsupdate"/>
+        <INDEX NAME="gradetype" UNIQUE="false" FIELDS="gradetype" COMMENT="index for gradetype" PREVIOUS="itemtype-needsupdate" NEXT="idnumber-courseid"/>
+        <INDEX NAME="idnumber-courseid" UNIQUE="false" FIELDS="idnumber, courseid" COMMENT="non unique index (although programatically we are guarantying some sort of uniqueness both under this table and the course_modules one). TODO: We need a central store of module idnumbers in the future." PREVIOUS="gradetype"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="grade_grades" COMMENT="grade_grades  This table keeps individual grades for each user and each item, exactly as imported or submitted by modules. The rawgrademax/min and rawscaleid are stored here to record the values at the time the grade was stored, because teachers might change this for an activity! All the results are normalised/resampled for the final grade value." PREVIOUS="grade_items" NEXT="grade_grades_text">
