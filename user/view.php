@@ -47,13 +47,6 @@
         }
     }
 
-    // make sure user can view this student's profile
-    if ($USER->id != $user->id
-        && !has_capability('moodle/user:viewdetails', $coursecontext)
-        && !has_capability('moodle/user:viewdetails', $usercontext)) {
-        print_error('cannotviewprofile');
-    }
-
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
         if (isguest()) {
@@ -87,6 +80,12 @@
                 exit;
             }
         } else {   // Normal course
+            // check capabilities
+            if (!has_capability('moodle/user:viewdetails', $coursecontext) && 
+                !has_capability('moodle/user:viewdetails', $usercontext)) {
+                print_error('cannotviewprofile');
+            }
+
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
                 if (has_capability('moodle/course:view', $coursecontext)) {
                     $navlinks[] = array('name' => $fullname, 'link' => null, 'type' => 'misc');
