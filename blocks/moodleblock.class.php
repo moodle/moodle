@@ -324,6 +324,15 @@ class block_base {
             $this->str->assignroles = get_string('assignroles', 'role');
         }
 
+        // RTL support - exchange right and left arrows 
+        if (right_to_left()) { 
+            $rightarrow = 'left.gif'; 
+            $leftarrow  = 'right.gif'; 
+        } else { 
+            $rightarrow = 'right.gif'; 
+            $leftarrow  = 'left.gif'; 
+        } 
+
         $movebuttons = '<div class="commands">';
 
         if ($this->instance->visible) {
@@ -362,7 +371,7 @@ class block_base {
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a class="icon left" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $CFG->pixpath .'/t/left.gif" alt="'. $this->str->moveleft .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/'.$leftarrow.'" alt="'. $this->str->moveleft .'" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a class="icon up" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
@@ -374,7 +383,7 @@ class block_base {
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a class="icon right" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $CFG->pixpath .'/t/right.gif" alt="'. $this->str->moveright .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/'.$rightarrow.'" alt="'. $this->str->moveright .'" /></a>';
         }
 
         $movebuttons .= '</div>';

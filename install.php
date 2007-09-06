@@ -549,7 +549,7 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 ?>
-<html dir="<?php echo (get_string('this_direction') == 'rtl') ? 'rtl' : 'ltr' ?>">
+<html dir="<?php echo right_to_left() ? 'rtl' : 'ltr' ?>">
 <head>
 <link rel="shortcut icon" href="theme/standard/favicon.ico" />
 <title>Moodle Install</title>
@@ -670,7 +670,7 @@ if ($nextstage == SAVE) {
         echo "</table>\n";
 
         echo "<hr />\n";
-        echo "<div style=\"text-align: left\">\n";
+        echo "<div style=\"text-align: ".fix_align_rtl("left")."\">\n";
         echo "<pre>\n";
         print_r(s($str));
         echo "</pre>\n";
@@ -924,8 +924,8 @@ function form_table($nextstage = WELCOME, $formaction = "install.php") {
     }
 ?>
 
-            <?php echo ($nextstage < SAVE) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
-            <?php echo ($nextstage > WELCOME) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage < SAVE) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: ".fix_align_rtl("right")."\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage > WELCOME) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: ".fix_align_rtl("left")."\"/>\n" : "&nbsp;\n" ?>
 
 <?php
     if ($needtoopenform) {
@@ -1106,11 +1106,11 @@ function css_styles() {
         width: 500px;
     }
     .td_left {
-        text-align: right;
+        text-align: <?php echo fix_align_rtl("right") ?>;
         font-weight: bold;
     }
     .td_right {
-        text-align: left;
+        text-align: <?php echo fix_align_rtl("left") ?>;
     }
     .main {
         width: 500px;
@@ -1203,6 +1203,9 @@ function css_styles() {
     }
     #mysql, #postgres7, #mssql, #mssql_n, #odbc_mssql, #oci8po {
         display: none;
+    }
+    #menulanguage {
+      direction: ltr;
     }
 
 </style>

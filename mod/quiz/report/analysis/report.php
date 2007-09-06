@@ -337,7 +337,7 @@ class quiz_report extends quiz_default_report {
                 $responses[] = $response;
             }
 
-            $facility = format_float($q['facility']*100,0)." %";
+            $facility = format_float($q['facility']*100,0)."%";
             $qsd = format_float($q['qsd'],3);
             $di = format_float($q['disc_index'],2);
             $dc = format_float($q['disc_coeff'],2);

@@ -199,7 +199,7 @@
             $a->grade = $grade;
             $a->maxgrade = $quiz->grade;
             $rawscore = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
-            $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage %)");
+            $table->data[] = array("$strscore:", "$rawscore/$quiz->sumgrades ($percentage%)");
             $table->data[] = array("$strgrade:", get_string('outof', 'quiz', $a));
         }
     }
