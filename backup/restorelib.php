@@ -7227,7 +7227,7 @@
                 echo '</li>';
             }
         }
-
+        
         //Bring back the course blocks -- do it AFTER the modules!!!
         if($status) {
             //If we are deleting and bringing into a course or making a new course, same situation
@@ -7361,6 +7361,42 @@
                 echo '</li>';
             }
         }
+        
+        // for moodle versions before 1.9, those grades need to be converted to use the new gradebook
+        // this code needs to execute *after* the course_modules are sorted out
+        if ($status && $restore->backup_version < 2007090500) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo "<li>".get_string("migratinggrades");
+            }
+
+            // we need need to worry about mods that are restored
+            // the others in the course are not relevent
+            if (!empty($restore->mods)) {
+                require_once($CFG->dirroot.'/lib/gradelib.php');
+                foreach ($restore->mods as $mod=>$modtype) {    
+                    if (!empty($modtype->instances)) {
+                        foreach ($modtype->instances as $modinstance) {
+                            $sql = "SELECT a.*, cm.idnumber as cmidnumber, m.name as modname
+                                    FROM {$CFG->prefix}$mod a,  
+                                         {$CFG->prefix}course_modules cm, 
+                                         {$CFG->prefix}modules m
+                                    WHERE m.name='$mod' 
+                                        AND m.id=cm.module 
+                                        AND cm.instance=a.id 
+                                        AND cm.id= {$modinstance->restored_as_course_module}";                            
+                            
+                            if ($module = get_record_sql($sql)) {
+                                grade_update_mod_grades($module);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }        
 
         /*******************************************************************************
          ************* Restore of Roles and Capabilities happens here ******************
