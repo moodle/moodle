@@ -209,6 +209,14 @@ function groups_get_grouping_members($groupingid, $fields='u.*', $sort='lastname
 }
 
 /**
+ * Returns effective groupmode used in course
+ * @return integer group mode
+ */
+function groups_get_course_groupmode($course) {
+    return $course->groupmode;
+}
+
+/**
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
  * @return integer group mode
@@ -226,6 +234,66 @@ function groups_get_activity_groupmode($cm) {
     }
 
     return empty($course->groupmodeforce) ? $cm->groupmode : $course->groupmode;
+}
+
+/**
+ * Print group menu selector for course level.
+ * @param object $course course object
+ * @param string $urlroot return address
+ * @param boolean $return return as string instead of printing
+ * @return mixed void or string depending on $return param
+ */
+function groups_print_course_menu($course, $urlroot, $return=false) {
+    global $CFG, $USER;
+
+    if (!$groupmode = $course->groupmode) {
+        if ($return) {
+            return '';
+        } else {
+            return;
+        }
+    }
+
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+        $allowedgroups = groups_get_all_groups($course->id, 0);
+    } else {
+        $allowedgroups = groups_get_all_groups($course->id, $USER->id);
+    }
+
+    $activegroup = groups_get_course_group($course, true);
+
+    $groupsmenu = array();
+    if (!$allowedgroups or $groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+        $groupsmenu[0] = get_string('allparticipants');
+    }
+
+    if ($allowedgroups) {
+        foreach ($allowedgroups as $group) {
+            $groupsmenu[$group->id] = format_string($group->name);
+        }
+    }
+
+    if ($groupmode == VISIBLEGROUPS) {
+        $grouplabel = get_string('groupsvisible');
+    } else {
+        $grouplabel = get_string('groupsseparate');
+    }
+
+    if (count($groupsmenu) == 1) {
+        $groupname = reset($groupsmenu);
+        $output = $grouplabel.': '.$groupname;
+    } else {
+        $output = popup_form($urlroot.'&amp;group=', $groupsmenu, 'selectgroup', $activegroup, '', '', '', true, 'self', $grouplabel);
+    }
+
+    $output = '<div class="groupselector">'.$output.'</div>';
+
+    if ($return) {
+        return $output;
+    } else {
+        echo $output;
+    }
 }
 
 /**
@@ -294,6 +362,69 @@ function groups_print_activity_menu($cm, $urlroot, $return=false) {
 }
 
 /**
+ * Returns group active in course, changes the group by default if 'group' page param present
+ *
+ * @param object $course course bject
+ * @param boolean $update change active group if group param submitted
+ * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
+ */
+function groups_get_course_group($course, $update=false) {
+    global $CFG, $USER, $SESSION;
+
+    if (!$groupmode = $course->groupmode) {
+        // NOGROUPS used
+        return false;
+    }
+
+    // init activegroup array
+    if (!array_key_exists('activegroup', $SESSION)) {
+        $SESSION->activegroup = array();
+    }
+    if (!array_key_exists($course->id, $SESSION->activegroup)) {
+        $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS=>array(), VISIBLEGROUPS=>array());
+    }
+
+    // grouping used the first time - add first user group as default
+    if (!array_key_exists(0, $SESSION->activegroup[$course->id][$groupmode])) {
+        if ($usergroups = groups_get_all_groups($course->id, $USER->id, 0)) {
+            $fistgroup = reset($usergroups);
+            $SESSION->activegroup[$course->id][$groupmode][0] = $fistgroup->id;
+        } else {
+            // this happen when user not assigned into group in SEPARATEGROUPS mode or groups do not exist yet
+            // mod authors must add extra checks for this when SEPARATEGROUPS mode used (such as when posting to forum)
+            $SESSION->activegroup[$course->id][$groupmode][0] = 0;
+        }
+    }
+
+    // set new active group if requested
+    $changegroup = optional_param('group', -1, PARAM_INT);
+    if ($update and $changegroup != -1) {
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+        if ($changegroup == 0) {
+            // do not allow changing to all groups without accessallgroups capability
+            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+                $SESSION->activegroup[$course->id][$groupmode][0] = 0;
+            }
+
+        } else {
+            // first make list of allowed groups
+            if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
+                $allowedgroups = groups_get_all_groups($course->id, 0, 0);
+            } else {
+                $allowedgroups = groups_get_all_groups($course->id, $USER->id, 0);
+            }
+
+            if ($allowedgroups and array_key_exists($changegroup, $allowedgroups)) {
+                $SESSION->activegroup[$course->id][$groupmode][0] = $changegroup;
+            }
+        }
+    }
+
+    return $SESSION->activegroup[$course->id][$groupmode][0];
+}
+
+/**
  * Returns group active in activity, changes the group by default if 'group' page param present
  *
  * @param object $cm course module object
@@ -313,7 +444,7 @@ function groups_get_activity_group($cm, $update=false) {
         return false;
     }
 
-    // innit activegroup array
+    // init activegroup array
     if (!array_key_exists('activegroup', $SESSION)) {
         $SESSION->activegroup = array();
     }

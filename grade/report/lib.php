@@ -18,6 +18,12 @@ class grade_report {
      */
     var $courseid;
 
+    /**
+     * The course.
+     * @var object $course
+     */
+    var $course;
+
     /** Grade plugin return tracking object.
     var $gpr;
 
@@ -104,9 +110,15 @@ class grade_report {
      * @param int $page The current page being viewed (when report is paged)
      */
     function grade_report($courseid, $gpr, $context, $page=null) {
-        global $CFG;
+        global $CFG, $COURSE;
 
         $this->courseid  = $courseid;
+        if ($this->courseid == $COURSE->id) {
+            $this->course = $COURSE;
+        } else {
+            $this->course = get_record('course', 'id', $this->courseid);
+        }
+        
         $this->gpr       = $gpr;
         $this->context   = $context;
         $this->page      = $page;
@@ -273,15 +285,8 @@ class grade_report {
         global $CFG;
 
         /// find out current groups mode
-        $course = get_record('course', 'id', $this->courseid);
-        $groupmode = $course->groupmode;
-        ob_start();
-        $this->currentgroup = setup_and_print_groups($course, $groupmode, $this->pbarurl);
-        $this->group_selector = ob_get_clean();
-
-        // update paging after group
-        $this->baseurl .= 'group='.$this->currentgroup.'&amp;';
-        $this->pbarurl .= 'group='.$this->currentgroup.'&amp;';
+        $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
+        $this->currentgroup = groups_get_course_group($this->course);
 
         if ($this->currentgroup) {
             $this->groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
@@ -312,7 +317,7 @@ class grade_report {
      * @return string HTML
      */
     function get_module_link($modulename, $itemmodule=null, $iteminstance=null) {
-        global $CFG, $COURSE;
+        global $CFG;
 
         $link = null;
         if (!is_null($itemmodule) AND !is_null($iteminstance)) {
@@ -322,7 +327,7 @@ class grade_report {
                             . '/icon.gif" class="icon activity" alt="' . $modulename . '" />' . $modulename;
             }
 
-            $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $COURSE->id);
+            $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->course->id);
 
             $dir = $CFG->dirroot . "/mod/$itemmodule/";
             $url = $CFG->wwwroot . "/mod/$itemmodule/";

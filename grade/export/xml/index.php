@@ -51,7 +51,7 @@ $mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing
 
 // process post information
 if ($data = $mform->get_data()) {
-    $export = new grade_export_xml($course, get_current_group($course->id));
+    $export = new grade_export_xml($course, groups_get_course_group($course));
 
     // print the grades on screen for feedbacks
     $export->process_form($data);
@@ -60,7 +60,8 @@ if ($data = $mform->get_data()) {
     die;
 }
 
-//TODO: add course group selector here
+groups_print_course_menu($course, 'index.php?id='.$id);
+echo '<div class="clearer"></div>';
 
 $mform->display();
 
