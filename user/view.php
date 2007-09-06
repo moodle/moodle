@@ -43,13 +43,6 @@
             require_login($course->id);
         }
     }
-    
-    // make sure user can view this student's profile
-    if ($USER->id != $user->id 
-        && !has_capability('moodle/user:viewdetails', $coursecontext) 
-        && !has_capability('moodle/user:viewdetails', $usercontext)) {
-        print_error('cannotviewprofile');
-    }
 
     if (!empty($CFG->forceloginforprofiles)) {
         require_login();
@@ -77,6 +70,12 @@
                 exit;
             }
         } else {   // Normal course
+            // check capabilities
+            if (!has_capability('moodle/user:viewdetails', $coursecontext) && 
+                !has_capability('moodle/user:viewdetails', $usercontext)) {
+                print_error('cannotviewprofile');
+            }
+
             if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
                 if (has_capability('moodle/course:view', $coursecontext)) {
                     print_header("$strpersonalprofile: ", "$strpersonalprofile: ",
