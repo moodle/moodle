@@ -55,29 +55,31 @@ class block_online_users extends block_base {
         }
 
         if ($COURSE->id == SITEID) {  // Site-level
-            $courseselect = '';
-            $timeselect = "AND (ul.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
-        } else {
+            $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(u.lastaccess) as lastaccess ";
+            $from = "FROM {$CFG->prefix}user u 
+                          $groupmembers ";
+            $where = "WHERE u.lastaccess > $timefrom
+                      $groupselect ";
+            $order = "ORDER BY lastaccess DESC ";
+            
+        } else { // Course-level
             $courseselect = "AND ul.courseid = '".$COURSE->id."'";
-            $timeselect = "AND ul.timeaccess > $timefrom";
+            $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(ul.timeaccess) as lastaccess ";
+            $from = "FROM {$CFG->prefix}user_lastaccess ul,
+                          {$CFG->prefix}user u
+                          $groupmembers ";
+            $where =  "WHERE ul.timeaccess > $timefrom
+                       AND u.id = ul.userid
+                       AND ul.courseid = $COURSE->id
+                       $groupselect ";
+            $order = "ORDER BY lastaccess DESC ";
         }
+        
+        $groupby = "GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture ";
+        
+        $SQL = $select . $from . $where . $groupby . $order;
 
-        $users = array();
-
-        $SQL = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, ul.timeaccess
-                FROM {$CFG->prefix}user_lastaccess ul,
-                     {$CFG->prefix}user u
-                     $groupmembers
-                WHERE 
-                      ul.userid = u.id
-                      $courseselect
-                      $timeselect
-                      $groupselect
-                GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, ul.timeaccess
-                ORDER BY ul.timeaccess DESC";
-        
-        
-        
+        $users = array();        
         $pcontext = get_related_contexts_string($context);
     
         if ($pusers = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
@@ -116,7 +118,7 @@ class block_online_users extends block_base {
             $this->content->text .= "<ul class='list'>\n";
             foreach ($users as $user) {
                 $this->content->text .= '<li class="listentry">';
-                $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
+                $timeago = format_time(time() - $user->lastaccess); //bruno to calculate correctly on frontpage 
                 if ($user->username == 'guest') {
                     $this->content->text .= '<div class="user">'.print_user_picture($user->id, $COURSE->id, $user->picture, 16, true, false, '', false);
                     $this->content->text .= get_string('guestuser').'</div>';
