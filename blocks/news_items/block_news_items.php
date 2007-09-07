@@ -39,8 +39,8 @@ class block_news_items extends block_base {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         /// First work out whether we can post to this group and if so, include a link
-            $groupmode    = groupmode($COURSE, $cm);
-            $currentgroup = get_and_set_current_group($COURSE, $groupmode);
+            $groupmode    = groups_get_activity_groupmode($cm);
+            $currentgroup = groups_get_activity_group($cm, true);
             
 
             if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context)) {
