@@ -21,6 +21,7 @@ $string['password'] = 'Katakunci';
 $string['previous'] = 'Sebelum';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Bahasa Melayu';
 $string['user'] = 'Pengguna';
 ?>

@@ -167,6 +167,7 @@ $string['sessionautostarterror'] = 'ควรจะปิด (off)';
 $string['skipdbencodingtest'] = 'ข้ามการทดสอบการเข้ารหัสของฐานข้อมูล';
 $string['status'] = 'สถานะ';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Thai';
 $string['unicoderecommended'] = 'ระบบแนะนำให้จัดเก็บข้อมูลด้วย unicode (UTF-8 ) ในการติดตั้งใหม่ควรตั้งค่าชุดอักขระของฐานข้อมูลเป็น unicode ในกรณีที่ทำการอัพเกรดควรทำการเปลี่ยนชุดอักขระเดิมให้เป็น UTF-8 (ดูรายละเอียดใน ผู้ดูแลระบบ)';
 $string['unicoderequired'] = 'ระบบนี้จำเป็นที่ต้องเก็บข้อมูลไว้ในรูปแบบ unicode (UTF-8 ) ในการติดตั้งใหม่ควรตั้งค่าชุดอักขระของฐานข้อมูลเป็น unicode ในกรณีที่ทำการอัพเกรดควรทำการเปลี่ยนชุดอักขระเดิมให้เป็น UTF-8 (ดูรายละเอียดใน ผู้ดูแลระบบ)';

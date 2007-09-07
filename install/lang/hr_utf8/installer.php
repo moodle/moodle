@@ -42,6 +42,7 @@ $string['previous'] = 'Prethodni';
 $string['sessionautostarterror'] = 'Ova opcija bi trebala biti isključena';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Hrvatski';
 $string['user'] = 'Korisnik';
 ?>

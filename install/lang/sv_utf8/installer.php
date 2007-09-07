@@ -196,6 +196,7 @@ $string['sessionautostarterror'] = 'De här bör vara inställt till \'off\'.';
 $string['skipdbencodingtest'] = 'Hoppa över Test av DB Encoding';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Svenska';
 $string['unicoderecommended'] = 'Vi rekommenderar att Du lagrar alla Dina data i Unicode (UTF-8). Nya installationer bör genomföras i databaser som har Unicode som förvald standardinställning för teckenuppsättningar. Om Du uppgraderar så bör Du genomföra processen för migration till UTF-8 (se sidan för administration).';
 $string['unicoderequired'] = 'Det är ett krav att Du lagrar alla Dina data i Unicode (UTF-8). Nya installationer måste genomföras i databaser som har Unicode som förvald standardinställning för teckenuppsättningar. Om Du uppgraderar så bör Du genomföra processen för migration till UTF-8 (se sidan för administration).';

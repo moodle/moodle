@@ -15,6 +15,7 @@ $string['continue'] = 'തുടരുക';
 $string['language'] = 'ഭാഷ';
 $string['password'] = 'പാസ്സ്‌വേര്‍ഡ്‌';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'മലയാളം';
 $string['user'] = 'ഉപഭോക്താവ്‌';
 ?>

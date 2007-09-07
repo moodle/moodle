@@ -41,6 +41,7 @@ $string['previous'] = 'Предыдущий';
 $string['report'] = 'Отчет';
 $string['status'] = 'Статус';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Русский';
 $string['user'] = 'Пользователь';
 ?>

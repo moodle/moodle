@@ -179,6 +179,7 @@ $string['sessionautostarterror'] = 'To bi moralo biti izključeno';
 $string['skipdbencodingtest'] = 'Preskoči preizkus kodne tabele podatkovne zbirke';
 $string['status'] = 'Stanje';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Sloven&#353;&#269;ina';
 $string['user'] = 'Uporabnik';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';

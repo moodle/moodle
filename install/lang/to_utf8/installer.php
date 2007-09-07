@@ -83,6 +83,7 @@ $string['sessionautostart'] = 'Sesini  kamata \'otometiki ';
 $string['sessionautostarterror'] = '\'Oku totonu ke \'ofu eni';
 $string['status'] = 'Tu\'unga';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Tongan';
 $string['user'] = '\'Iusa';
 $string['wwwroot'] = 'Tu\'asila Uepi';

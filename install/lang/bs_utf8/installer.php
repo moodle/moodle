@@ -74,6 +74,7 @@ $string['sessionautostart'] = 'Automatski početak akcije';
 $string['sessionautostarterror'] = 'Ovo bi trebalo biti isključeno';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Bosanski';
 $string['user'] = 'Korisnik';
 $string['wwwroot'] = 'Web adresa';

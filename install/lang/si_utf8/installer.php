@@ -26,6 +26,7 @@ $string['previous'] = 'පූර්ව';
 $string['report'] = 'වාර්තාව';
 $string['status'] = 'තත්ත්ව';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Sinhala(සිංහල)';
 $string['user'] = 'භාවිතා කරන්න.';
 ?>

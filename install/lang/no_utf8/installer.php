@@ -214,6 +214,7 @@ $string['sessionautostarterror'] = 'Denne bør være av';
 $string['skipdbencodingtest'] = 'Hopp over DB koding testen';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Norsk - bokmål';
 $string['unicoderecommended'] = 'Vi anbefaler at alle dine data lagres i UNICODE (UTF-8). Nye installasjoner bør gjøres til Unicode-databaser. Dersom du oppgraderer bør du kjøre UTF-8 migrasjonsrutinen i admin-menyen.';
 $string['unicoderequired'] = 'Det er påkrevd at du lagrer alle data i Unicode format(UTF-8).Nye installasjoner må gjøres til Unicode-databaser. Dersom du oppgraderer må etterpå du kjøre UTF-8 migrasjonsrutinen i admin-menyen.';

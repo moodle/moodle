@@ -37,6 +37,7 @@ $string['password'] = 'Пароль';
 $string['previous'] = 'Папярэдні';
 $string['status'] = 'Статус';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Беларуская';
 $string['user'] = 'Карыстальнік';
 ?>

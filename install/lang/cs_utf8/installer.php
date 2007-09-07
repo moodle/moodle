@@ -210,6 +210,7 @@ $string['sessionautostarterror'] = 'Mělo by být vypnuto';
 $string['skipdbencodingtest'] = 'Přeskočit test kódování DB';
 $string['status'] = 'Stav';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Čeština';
 $string['unicoderecommended'] = 'Doporučujeme ukládání dat v kódování Unicode (UTF-8). Nové instalace by měly být založeny nad databází s výchozím kódováním Unicode. Pokud přecházíte z nižších verzí, měli byste podstoupit proces migrace na UTF-8 (viz stránku Správa).';
 $string['unicoderequired'] = 'Je nezbytné ukládání dat v kódování Unicode (UTF-8). Nové instalace musí být založeny nad databází s výchozím kódováním Unicode. Pokud přecházíte z nižších verzí, měli byste podstoupit proces migrace na UTF-8 (viz stránku Správa).';

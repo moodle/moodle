@@ -163,6 +163,7 @@ $string['sessionautostarterror'] = 'Indargabetuta egon behar du';
 $string['skipdbencodingtest'] = 'Datu-basearen dekodifikazio-testa ez kontuan hartu';
 $string['status'] = 'Egoera';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Euskara';
 $string['unicoderecommended'] = 'Datu guztiak Unicode (UTF-8)-n gordetzeko gomendatzen da. Instalazio berriak berez Unicode karaktere-multzoa duten datu-baseetan exekutatu beharko lirateke. Eguneraketa bat egiten ari bazara, UTF-8rako migrazio-prozesua egin beharko zenuke (begiratu horretarako Kudeaketa-orria)';
 $string['unicoderequired'] = 'Datu guztiak Unicode (UTF-8)-n gorde behar dituzu. Instalazio berriak berez Unicode karaktere-multzoa duten datu-baseetan exekutatu beharko lirateke. Eguneraketa bat egiten ari bazara, UTF-8rako migrazio-prozesua egin beharko zenuke (begiratu horretarako Kudeaketa-orria)';

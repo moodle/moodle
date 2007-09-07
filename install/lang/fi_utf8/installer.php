@@ -181,6 +181,7 @@ $string['sessionautostarterror'] = 'Tämän pitäisi olla pois päältä';
 $string['skipdbencodingtest'] = 'Ohita tietokannan merkistö testi';
 $string['status'] = 'Tilanne';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Suomi';
 $string['user'] = 'Käyttäjä';
 $string['welcomep70'] = 'Napsauta \"Seuraava\"-painiketta jatkaaksesi moodlen asennusta';

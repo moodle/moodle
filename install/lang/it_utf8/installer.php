@@ -124,6 +124,7 @@ $string['sessionautostarterror'] = 'Questo deve essere off';
 $string['skipdbencodingtest'] = 'Salta il test del sistema di codifica della base dati';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Italiano';
 $string['unicoderecommended'] = 'E\' raccomandato che tutti i dati vengano memorizzati in formato Unicode (UTF-8). Le nuove installazioni dovrebbero essere effettuate in database che hanno il proprio set di caratteri default impostato come Unicode. Se si sta facendo un aggiornamento, bisogna eseguire il processo di migrazione UTF-8 (vedi pagina di Amministrazione).';
 $string['unicoderequired'] = 'E\' richiesto che tutti i dati vengano memorizzati in formato Unicode (UTF-8). Le nuove installazioni dovrebbero essere effettuate in database che hanno il proprio set di caratteri default impostato come Unicode. Se si sta facendo un aggiornamento, bisogna eseguire il processo di migrazione UTF-8 (vedi pagina di Amministrazione).';

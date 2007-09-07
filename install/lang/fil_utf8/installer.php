@@ -23,6 +23,7 @@ $string['password'] = 'Password';
 $string['previous'] = 'Nakaraan';
 $string['status'] = 'Katayuan';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Filipino';
 $string['user'] = 'User';
 ?>
