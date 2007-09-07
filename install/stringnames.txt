@@ -135,6 +135,7 @@ skipdbencodingtest
 status
 this_direction
 thischarset
+thisdirection
 thislanguage
 unicoderecommended
 unicoderequired
