@@ -215,7 +215,7 @@ $string['unicoderequired'] = 'Je nutné ukladanie údajov v kódovaní Unicode (
 $string['user'] = 'Používateľ';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Podarilo so vám úspešne nainštalovať a spustiť balíček <strong>$a->packname $a->packversion</strong>. Gratulujeme!';
-$string['welcomep30'] = '<strong>$a->installername</strong> obsahuje aplikácia k vytvoreniu prostredia, v ktorom bude prevádzkovaný váš <strong>Moodle</strong>. Menovite sa jedná o:';
+$string['welcomep30'] = '<strong>$a->installername</strong> obsahuje aplikáciu k vytvoreniu prostredia, v ktorom bude prevádzkovaný váš <strong>Moodle</strong>. Menovite sa jedná o:';
 $string['welcomep40'] = 'Balíček tiež obsahuje <strong>Moodle vo verzii $a->moodlerelease ($a->moodleversion)</strong>.';
 $string['welcomep50'] = 'Použitie všetkých aplikácií v tomto balíčku je viazané ich príslušnými licenciami. Kompletný balíček <strong>$a->installername</strong> je software s <a href=\"http://www.opensource.org/docs/definition_plain.html\"> otvoreným kódom (open source)</a> a je šírený pod licenciou <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
 $string['welcomep60'] = 'Nasledujúce stránky vás povedú v nekoľkých jednoduchých krokoch nastavením <strong>Moodle</strong> na vašom počítači. Môžete prijať východzie nastavenie, alebo si ich upraviť podľa svojich potrieb.';
