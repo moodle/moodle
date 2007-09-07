@@ -524,7 +524,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
                 echo '<div class="block-config" id="'.$block->name.'">';   /// Make CSS easier
 
                 print_heading($strheading);
-                echo '<form method="post" action="'. $page->url_get_path() .'">';
+                echo '<form method="post" name="block-config" action="'. $page->url_get_path() .'">';
                 echo '<p>';
                 foreach($hiddendata as $name => $val) {
                     echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
