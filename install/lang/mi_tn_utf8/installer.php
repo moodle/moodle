@@ -45,6 +45,7 @@ $string['safemodeerror'] = 'T&#275;n&#257; pea';
 $string['sessionautostarterror'] = 'Me Whakaweto';
 $string['status'] = '&#256;huatanga';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Māori - Tainui';
 $string['user'] = 'Kaiwhakauru';
 $string['wwwroot'] = 'Nohoanga Tukutuku';

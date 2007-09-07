@@ -21,6 +21,7 @@ $string['password'] = 'Fjalëkalimi';
 $string['previous'] = 'Paraardhësi';
 $string['status'] = 'Gjëndja';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Shqip';
 $string['user'] = 'Përdoruesi';
 ?>

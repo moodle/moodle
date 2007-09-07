@@ -208,6 +208,7 @@ $string['sessionautostarterror'] = 'Ezt ki kell kapcsolni';
 $string['skipdbencodingtest'] = 'Az adatbázis-kódolás ellenőrzésének kihagyása';
 $string['status'] = 'Állapot';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Magyar';
 $string['unicoderecommended'] = 'Ajánlott minden adatot unikódban (UTF-8) tárolni. Az új telepítéseket unikód alapkészletű adatbázisokba kell telepíteni. Ha újabb változatra vált, végre kell hajtania az UTF-8-ra való áttérést (lásd a Rendszergazda oldalát).';
 $string['unicoderequired'] = 'Minden adatot unikódban (UTF-8) kell tárolni. Az új telepítéseket unikód alapkészletű adatbázisokba kell telepíteni. Ha újabb változatra vált, végre kell hajtania az UTF-8-ra való áttérést (lásd a Rendszergazda oldalát).';

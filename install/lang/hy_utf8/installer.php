@@ -23,6 +23,7 @@ $string['previous'] = 'Նախորդ';
 $string['report'] = 'Հաշվետվություն';
 $string['status'] = 'Կարգավիճակ';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Հայերեն';
 $string['user'] = 'Օգտագործող';
 ?>

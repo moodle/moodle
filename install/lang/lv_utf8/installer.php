@@ -21,6 +21,7 @@ $string['password'] = 'Parole';
 $string['previous'] = 'Iepriekšējais';
 $string['status'] = 'Statuss';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Latviešu';
 $string['user'] = 'Lietotājs';
 ?>

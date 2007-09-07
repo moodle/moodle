@@ -217,6 +217,7 @@ $string['sessionautostarterror'] = '이것은 꺼져 있어야(Off) 합니다.';
 $string['skipdbencodingtest'] = 'DB 엔코딩 테스트 생략';
 $string['status'] = '상태';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '한국어';
 $string['unicoderecommended'] = '모든 자료를 유니코드(UTF-8)로 저장해야 합니다. 새 설정은 기본 문자코드가 유니코드로 저장되어 있다고 가정하고 작동이 됩니다. 만일 업그레이드 중이라면 반드시 UTF-8 변환과정을 수행하여야만 합니다.(관리화면 참조)';
 $string['unicoderequired'] = '모든 자료가 유니코드(UTF-8)로 저장되야 합니다. 새 설정은 기본 문자코드가 유니코드로 저장되어 있다고 가정하고 작동이 됩니다. 만일 업그레이드 중이라면 반드시 UTF-8 변환과정을 수행하여야만 합니다.(관리화면 참조)';

@@ -20,6 +20,7 @@ $string['ok'] = 'تا&#1740;&#1740;د';
 $string['password'] = 'رمز ورود';
 $string['status'] = 'وضع&#1740;ت';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'rtl';
 $string['thislanguage'] = 'فارسی';
 $string['user'] = 'کاربر';
 ?>

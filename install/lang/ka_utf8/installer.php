@@ -88,6 +88,7 @@ $string['sessionautostart'] = 'სესიის ავტომატური
 $string['sessionautostarterror'] = 'ეს უნდა იყოს ამორთული';
 $string['status'] = 'მდგომარეობა';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'ქართული';
 $string['user'] = 'მომხმარებელი';
 $string['wwwroot'] = 'Web მისამართი';

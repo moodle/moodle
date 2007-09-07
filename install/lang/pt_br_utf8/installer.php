@@ -151,6 +151,7 @@ $string['sessionautostarterror'] = 'Isto deve estar ativado';
 $string['skipdbencodingtest'] = 'Saltar Teste de Codificação da Base de Dados';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Português - Brasil';
 $string['user'] = 'Usuário';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';

@@ -22,6 +22,7 @@ $string['password'] = 'Pasfhocal';
 $string['previous'] = 'Siar';
 $string['status'] = 'Stádas';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Gaeilge';
 $string['user'] = 'Úsáideoir';
 ?>

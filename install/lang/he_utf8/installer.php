@@ -224,6 +224,7 @@ $string['sessionautostarterror'] = 'חייב לכבות זאת';
 $string['skipdbencodingtest'] = 'דלג על DB Encoding Test';
 $string['status'] = 'מצב';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'rtl';
 $string['thislanguage'] = 'עברית';
 $string['unicoderecommended'] = 'אחסנת המידע שלך בקידוד-Unicode מומלץ. התקנות חדשות יופיעו במסדי הנתונים אשר להם קבוצת התווים כברירת מחדל המתאימה ל-Unicode. אם אתה משדרג, תציג את ה-UTF-8 migration process (ראה בדף מנהל המערכת).';
 $string['unicoderequired'] = 'מומלץ לאחסן את כל המידע שלך בפורמט - Uniucode. התקנות חדשות חייבות להופיע במסדי הנתונים אשר להם קבוצת התווים כברירת מחדל המתאימה ל-Unicode. אם אתה משדרג, תציג את ה-UTF-8 migration process (ראה בדף מנהל המערכת).';

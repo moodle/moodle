@@ -81,6 +81,7 @@ $string['sessionautostart'] = 'Sessioonide automaatne algatamine';
 $string['sessionautostarterror'] = 'See peaks olema välja lülitatud';
 $string['status'] = 'Staatus';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Eesti';
 $string['user'] = 'Kasutaja';
 $string['wwwroot'] = 'Veebiaadress';

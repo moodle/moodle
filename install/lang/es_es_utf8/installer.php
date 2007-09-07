@@ -21,6 +21,7 @@ $string['parentlanguage'] = 'es_utf8';
 $string['password'] = 'Contraseña';
 $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Español - España';
 $string['user'] = 'Usuario';
 ?>

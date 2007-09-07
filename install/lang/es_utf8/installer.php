@@ -228,6 +228,7 @@ $string['sessionautostarterror'] = 'Deb e estar desactivado';
 $string['skipdbencodingtest'] = 'Pasar por alto el test de decodificación de la BD';
 $string['status'] = 'Estado';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Español - Internacional';
 $string['unicoderecommended'] = 'Se recomienda almacenar todos los datos en Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';
 $string['unicoderequired'] = 'Es necesario que almacene todos sus datos en formato Unicode (UTF-8). Las instalaciones nuevas deberían ejecutarse en bases de datos cuyo juego de caracteres por defecto fuera Unicode. Si está realizando una actualización, debería llevar a cabo el proceso de migración UTF-8 (vea al respecto la página de Administración).';

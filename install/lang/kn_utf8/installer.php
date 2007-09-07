@@ -36,6 +36,7 @@ $string['phpversion'] = 'ಪಿಎಚ್‌ಪಿ ಆವೃತ್ತಿ';
 $string['previous'] = 'ಹಿಂದಿನದು';
 $string['status'] = 'ಸ್ಥಿತಿ';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'ಕನ್ನಡ';
 $string['user'] = 'ಬಳಕೆದಾರ';
 $string['wwwroot'] = 'ಅಂತರ್ಜಾಲ ವಿಳಾಸ';

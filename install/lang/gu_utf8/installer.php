@@ -36,6 +36,7 @@ $string['previous'] = 'પહેલાનું';
 $string['report'] = 'રિપોર્ટ';
 $string['restricted'] = 'પ્રતિબંધિત';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'ગુજરાતી';
 $string['user'] = 'યુઝર';
 $string['wrongdestpath'] = 'ખોટો ડેસ્ટીનેશન પાથ.';

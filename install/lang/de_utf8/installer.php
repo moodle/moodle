@@ -207,6 +207,7 @@ $string['sessionautostarterror'] = 'Diese Option sollte abgeschaltet sein';
 $string['skipdbencodingtest'] = 'Prüfung der Datenbank-Verschlüsselung überspringen';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Deutsch';
 $string['unicoderecommended'] = 'Es wird empfohlen, alle Daten im Format Unicode UTF-8 zu speichern. Neuinstallationen sollten mit Datenbanken vorgenommen werden, die als Standardzeichensatz UTF-8 benutzen. Wenn Sie ein Upgrade durchführen, sollten Sie die UTF-8-Migration starten (Admin-Seite).';
 $string['unicoderequired'] = 'Es ist notwendig, alle Daten im Format Unicode UTF-8 zu speichern. Neuinstallationen müssen mit Datenbanken vorgenommen werden, die als Standardzeichensatz UTF-8 benutzen. Wenn Sie ein Upgrade durchführen, sollten Sie die UTF-8-Migration starten (Admin-Seite).';

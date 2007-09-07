@@ -29,6 +29,7 @@ $string['previous'] = 'Kii hore';
 $string['sessionautostarterror'] = 'Kani waa in uu damisnaadaa';
 $string['status'] = 'Darajo';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Soomaali';
 $string['user'] = 'Isticmaale';
 $string['wwwroot'] = 'Cinwaan web';

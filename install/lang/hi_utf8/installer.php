@@ -17,6 +17,7 @@ $string['name'] = 'नाम';
 $string['next'] = 'अगला';
 $string['password'] = 'पासवर्ड';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'िहन्दी';
 $string['user'] = 'यूज़र';
 ?>

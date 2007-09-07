@@ -89,6 +89,7 @@ $string['sessionautostart'] = 'Bắt đầu tự động Session ';
 $string['sessionautostarterror'] = 'Điều này nên là tắt';
 $string['status'] = 'Trạng thái';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Vietnamese';
 $string['user'] = 'Người dùng';
 $string['wwwroot'] = 'Địa chỉ web';

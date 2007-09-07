@@ -22,6 +22,7 @@ $string['password'] = 'Парола';
 $string['previous'] = 'Предишен';
 $string['status'] = 'Състояние';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Български';
 $string['user'] = 'Потребител';
 ?>

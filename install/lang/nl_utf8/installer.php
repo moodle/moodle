@@ -213,6 +213,7 @@ $string['sessionautostarterror'] = 'Dit moet uitgeschakeld zijn';
 $string['skipdbencodingtest'] = 'Negeer DB-encodingtest';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Nederlands';
 $string['unicoderecommended'] = 'Aanbevolen wordt om al je data als Unicode (UTF-8) te bewaren. Nieuwe installaties zouden moeten geïnstalleerd worden met Unicode als standaard tekenset voor de databank. Als je upgrade, moet je het UTF-8 migratieproces laten lopen (zie pagina Beheer).';
 $string['unicoderequired'] = 'Je moet al je data als Unicode (UTF-8) bewaren. Nieuwe installaties moeten geïnstalleerd worden met Unicode als standaard tekenset voor de databank. Als je upgrade, moet je het UTF-8 migratieproces laten lopen (zie pagina Beheer).';
