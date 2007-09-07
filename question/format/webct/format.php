@@ -548,7 +548,7 @@ class qformat_webct extends qformat_default {
                 $datasetnames = $QTYPES[CALCULATED]->find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->dataset[$datasetname] = new stdClass();
-                    $question->dataset[$datasetname]->datesetitem = array();
+                    $question->dataset[$datasetname]->datasetitem = array();
                     $question->dataset[$datasetname]->name = $datasetname ; 
                     $question->dataset[$datasetname]->distribution = 'uniform'; 
                     $question->dataset[$datasetname]->status ='private';
