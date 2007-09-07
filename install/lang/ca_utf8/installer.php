@@ -208,6 +208,7 @@ $string['sessionautostarterror'] = 'Hauria d\'estar desactivat';
 $string['skipdbencodingtest'] = 'Omet la prova de codificació de la base de dades';
 $string['status'] = 'Estat';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Català';
 $string['unicoderecommended'] = 'Es recomana emmagatzemar totes les dades en Unicode (UTF-8). Les noves instal·lacions s\'haurien de realitzar en bases de dades que tinguin definit com a Unicode el conjunt de caràcters per defecte. Si esteu fent una actualització, hauríeu de passar el procés de migració a UTF-8 (vg. la pàgina d\'Administració).';
 $string['unicoderequired'] = 'Es requereix emmagatzemar totes les dades en format Unicode (UTF-8). Les noves instal·lacions s\'han de realitzar en bases de dades que tinguin definit com a Unicode el conjunt de caràcters per defecte. Si esteu fent una actualització, hauríeu de passar el procés de migració a UTF-8 (vg. la pàgina d\'Administració).';

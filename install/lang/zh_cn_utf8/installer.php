@@ -204,6 +204,7 @@ $string['sessionautostarterror'] = '这应当是关闭的';
 $string['skipdbencodingtest'] = '跳过数据库编码检测';
 $string['status'] = '状态';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '简体中文';
 $string['unicoderecommended'] = '建议用Unicode（UTF-8）存储全部数据。全新安装必须安装在缺省字符集为Unicode的数据库中。如果正在升级，您应该执行UTF-8移植处理（请参考管理员页面）。';
 $string['unicoderequired'] = '您必须使用Unicode（UTF-8）存储全部数据。全新安装必须安装在缺省字符集为Unicode的数据库中。如果正在升级，您应该执行UTF-8移植处理（请参考管理员页面）。';

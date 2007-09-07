@@ -221,6 +221,7 @@ $string['sessionautostarterror'] = 'Ova opcija bi trebala biti isključena';
 $string['skipdbencodingtest'] = 'Preskočiti test kodnog rasporeda baze podataka';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Srpski';
 $string['unicoderecommended'] = 'Preporučljivo je smeštanje vaših podataka u Unikod (UTF-8) standard. Nove instalacije biće izvršene nad bazama koji kao podrazumevan karakter-set imaju podešen Unikod. Ukoliko vršite nadogradnju, potrebno je pokrenuti UTF-8 proces migracije (pogledati Admin stranu).';
 $string['unicoderequired'] = 'Potrebno je da sve vaše podatke smeštate u Unikod formatu (UTF-8).Nove instalacije moraju biti primenjene u bazama podataka koje imaju osnovni karakterni set namešten na Unikod. Ukoliko vršite nadogradnju, potrebno je pokrenuti UTF-8 proces migracije (pogledati Admin stranu).';

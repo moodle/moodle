@@ -129,6 +129,7 @@ $string['safemode'] = 'Safe Mode';
 $string['safemodeerror'] = 'Moodle getur átt í vandræðum ef \"Save mode\" stillingin er virkjuð';
 $string['status'] = 'Staða';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = '&Iacute;slenska';
 $string['user'] = 'Notandi';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';

@@ -19,5 +19,6 @@ $string['next'] = 'បន្ទាប់';
 $string['password'] = 'ពាក្យសំងាត់';
 $string['previous'] = 'មុន';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Khmer';
 ?>

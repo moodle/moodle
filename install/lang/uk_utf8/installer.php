@@ -20,6 +20,7 @@ $string['ok'] = 'OK';
 $string['password'] = 'Пароль';
 $string['status'] = 'Статус';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Українська';
 $string['user'] = 'Користувач';
 ?>

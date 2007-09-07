@@ -222,6 +222,7 @@ $string['sessionautostarterror'] = 'Bu kapalı olmalı';
 $string['skipdbencodingtest'] = 'Veritabanı Dil Kodlama Testini Atla';
 $string['status'] = 'Durum';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Türkçe';
 $string['unicoderecommended'] = 'Bütün verilerinizi Unicode (UTF-8) olarak saklamanız tavsiye edilir. Yeni kurulumların veritabanlarına varsayılan olarak Unicode karakter setinde işlem yapması önerilir. Güncelleme yapıyorsanız, UTF-8 Çevirim işlemini yapmanız gerekiyor (Yönetici sayfasına bakınız).';
 $string['unicoderequired'] = 'Bütün verilerinizi Unicode (UTF-8) olarak saklamanız gerekir. Yeni kurulumların veritabanlarına varsayılan olarak Unicode karakter setinde işlem yapması gerekir. Güncelleme yapıyorsanız, UTF-8 Çevirim işlemini yapmanız gerekiyor (Yönetici sayfasına bakınız).';

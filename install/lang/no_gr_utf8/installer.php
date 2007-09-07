@@ -22,6 +22,7 @@ $string['password'] = 'Passord';
 $string['previous'] = 'Forrige';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Norsk';
 $string['user'] = 'Bruker';
 ?>

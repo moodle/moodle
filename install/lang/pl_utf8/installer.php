@@ -132,6 +132,7 @@ $string['safemodeerror'] = 'Moodle ma trudności z włączeniem bezpiecznego try
 $string['sessionautostarterror'] = 'To powinno być wyłączone';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Polski';
 $string['unicoderecommended'] = 'Zalecane jest składowanie danych w formacie Unicode (UTF-8).Nowe instalacje muszą być wykonane w bazach danych których domyślne znaki są ustawione jako Unicode. Jeżeli dokonywane jest uaktualnienie, należy przeprowadzić proces migracji UTF-8 (zobacz stronę Administratora).';
 $string['unicoderequired'] = 'Wymagane jest aby składować wszystkie dane w formacie unicode (UTF-8). Nowe instalacje muszą być wykonane w bazach danych których domyślne kodowanie są ustawione jako Unicode. Jeżeli dokonywane jest uaktualnienie, należy przeprowadzić proces migracji UTF-8 (zobacz stronę Administratora).';

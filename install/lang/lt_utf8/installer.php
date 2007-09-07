@@ -21,6 +21,7 @@ $string['password'] = 'Slaptažodis';
 $string['previous'] = 'Ankstesnis';
 $string['status'] = 'Būsena';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Lietuvių';
 $string['user'] = 'Vartotojas';
 ?>

@@ -157,6 +157,7 @@ $string['sessionautostarterror'] = '這應該關閉';
 $string['skipdbencodingtest'] = '略過資料庫編碼測試';
 $string['status'] = '狀態';
 $string['thischarset'] = "UTF-8";
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = "正體中文";
 $string['unicoderecommended'] = '建議將所有資料儲存為萬國編碼(UTF-8)，新安裝的網站在存取資料庫時預設編碼都是萬國編碼，如果您正在進行升級，您應該執行 UTF-8 轉換程式（請參考管理首頁）';
 $string['unicoderequired'] = '您必須將資料儲存為萬國編碼格式 (UTF-8)，新安裝的網站在存取資料庫時預設編碼都是萬國編碼，如果您正在進行升級，您應該執行 UTF-8 轉換程式（請參考管理首頁）';

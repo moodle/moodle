@@ -63,6 +63,7 @@ $string['sessionautostart'] = 'Démarrage automatique des sessions';
 $string['sessionautostarterror'] = 'Ce paramètre doit être désactivé';
 $string['status'] = 'Statuts';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Français - Canada';
 $string['user'] = 'Utilisateur';
 $string['wwwroot'] = 'Adresse web';

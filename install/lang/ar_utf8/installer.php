@@ -87,6 +87,7 @@ $string['sessionautostarterror'] = 'يجب أن يكون هذا معطل';
 $string['skipdbencodingtest'] = 'تخطى اختبار تشفير قاعدة البيانات';
 $string['status'] = 'الحالة';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'rtl';
 $string['thislanguage'] = 'عربي';
 $string['user'] = 'مستخدم';
 $string['wwwroot'] = 'WWW';

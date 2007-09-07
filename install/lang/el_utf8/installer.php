@@ -28,6 +28,7 @@ $string['report'] = 'Αναφορά';
 $string['restricted'] = 'Περιορισμένο';
 $string['status'] = 'Κατάσταση';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Ελληνικά';
 $string['user'] = 'Χρήστης';
 ?>

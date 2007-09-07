@@ -115,6 +115,7 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 (Im Falle von 5.0.x könntest du auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['remotedownloadnotallowed'] = 'Der Download von Komponenten auf deinen Server ist nicht erlaubt (allow_url_fopen ist deaktiviert). <br /><br /> Die Datei <a href=\"$a->url\">$a->url</a> muss manuell heruntergeladen werden. Kopiere die Datei nach \"$a->dest\" auf deinen Server und entpacke sie dort.';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Deutsch - Du';
 $string['unicoderecommended'] = 'Es wird empfohlen, alle Daten im Format Unicode UTF8 zu speichern. Neuinstallationen sollten mit Datenbanken vorgenommen werden, die als Standardzeichensatz UTF8 benutzen. Wenn du ein Upgrade durchführst, solltest du die UTF8-Migration starten (Admin-Seite).';
 $string['unicoderequired'] = 'Es ist notwendig, alle Daten im Format Unicode UTF8 zu speichern. Neuinstallationen müssen mit Datenbanken vorgenommen werden, die als Standardzeichensatz UTF8 benutzen. Wenn du ein Upgrade durchführst, solltest du die UTF8-Migration starten (Admin-Seite).';

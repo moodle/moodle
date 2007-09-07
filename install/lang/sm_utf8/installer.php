@@ -86,6 +86,7 @@ $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'O le mea lea e tatu ona tape';
 $string['status'] = 'Tulaga';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Samoan';
 $string['user'] = 'O le tagata fa\'aaoga';
 $string['wwwroot'] = 'Tuatusi o le initaneti';

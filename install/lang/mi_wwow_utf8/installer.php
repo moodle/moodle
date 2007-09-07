@@ -134,6 +134,7 @@ $string['sessionautostarterror'] = 'Ko te tikanga kua weto tēnei';
 $string['skipdbencodingtest'] = 'Tīpokatia te Whakamātautau Whakamuna DB';
 $string['status'] = 'Tūnga';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Māori - Waikato';
 $string['unicoderecommended'] = 'E tūtohitia ana te penapena i ō raraunga katoa hei Unicode (UTF-8). Ko te tikanga me mahi i ngā tāutatanga hōu ki ngā pātengi raraunga ko te pūāhua taunoa he Unicode. Mēnā e whakahōu ana koe, me mahi i te tuka heke UTF8 (tirohia te whārangi Whakahaere).';
 $string['unicoderequired'] = 'E hiahiatia ana kia penapena koe i ō raraunga katoa ki te hōputu Unicode (UTF-8). Ko te tikanga me mahi i ngā tāutatanga hōu ki ngā pātengi raraunga ko te pūāhua taunoa he Unicode. Mēnā e whakahōu ana koe, me mahi i te tuka heke UTF8 (tirohia te whārangi Whakahaere).';

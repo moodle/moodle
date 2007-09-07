@@ -206,6 +206,7 @@ $string['sessionautostarterror'] = 'Isto deveria estar desactivado';
 $string['skipdbencodingtest'] = 'Não testar codificação da Base de Dados';
 $string['status'] = 'Regime';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Português - Portugal';
 $string['unicoderecommended'] = 'Recomenda-se a armazenagem de todos os seus dados no código Unicode (UTF-8). Instalações feitas de raiz deverão usar bases de dados com código padrão Unicode. Se estiver a actualizar uma instalação antiga, deverá realizar o processo de migração para UTF-8 (ver página de administração).';
 $string['unicoderequired'] = 'É necessário que armazene todos os seus dados no código Unicode (UTF-8). Instalações feitas de raiz deverão usar bases de dados com código padrão Unicode. Se estiver a actualizar uma instalação antiga, deverá realizar o processo de migração para UTF-8 (ver página de administração).';

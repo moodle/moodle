@@ -220,6 +220,7 @@ $string['sessionautostarterror'] = 'Dapat ay patay ito';
 $string['skipdbencodingtest'] = 'Lagpasan ang Pagsubok sa DB Encoding';
 $string['status'] = 'Katayuan';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Tagalog';
 $string['unicoderecommended'] = 'Iminumungkahi ang pag-imbak ng lahat ng datos mo sa Unicode (UTF-8).  Ang bagong luklok ay dapat may mga datosan na ang umiiral na set ng karakter ay Unicode.  Kung ginagawa mong bago ang iniluklok mo, dapat mong isakatuparan ang proseso ng pagsalin sa UTF-8 (tingnan ang pahinang pang-Admin).';
 $string['unicoderequired'] = 'Kinakailangan na imbakin ang lahat ng datos mo sa anyong Unicode (UTF-8). Ang bagong luklok ay dapat may mga datosan na ang umiiral na set ng karakter ay Unicode.  Kung ginagawa mong bago ang iniluklok mo, dapat mong isakatuparan ang proseso ng pagsalin sa UTF-8 (tingnan ang pahinang pang-Admin).';

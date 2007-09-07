@@ -208,6 +208,7 @@ $string['sessionautostarterror'] = 'Denne skulle være deaktiveret';
 $string['skipdbencodingtest'] = 'Spring DB tegnsæts testen over';
 $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Dansk';
 $string['unicoderecommended'] = 'Alle data skal helst gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';
 $string['unicoderequired'] = 'Alle data skal gemmes i Unicode (UTF-8). Nye installationer skal helst installeres i databaser der har UTF-8 som standard karaktersæt. Hvis du opgradere fra en tidligere installation bør du migrere eksisterende data til UTF-8 (se Admin siderne)';

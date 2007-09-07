@@ -21,6 +21,7 @@ $string['password'] = 'Лозинка';
 $string['previous'] = 'Претходни';
 $string['status'] = 'Статус';
 $string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Српски';
 $string['user'] = 'Корисник';
 ?>
