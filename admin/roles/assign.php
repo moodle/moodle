@@ -277,15 +277,26 @@
             $LIKE      = sql_ilike();
             $FULLNAME  = sql_fullname();
 
-            $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
+            $selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
+            $select  .= $selectsql;
+        } else { 
+            $selectsql = ""; 
         }
 
+        /// MDL-11111 do not include user already assigned this role in this context as available users
+        /// so that the number of available users is right and we save time looping later
         $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
-                                               FROM '.$CFG->prefix.'user
-                                              WHERE '.$select.'
-                                            ORDER BY lastname ASC, firstname ASC');
-
-        /// In the .html file below we loop through these results and exclude any in $contextusers
+                                             FROM '.$CFG->prefix.'user
+                                             WHERE '.$select.'
+                                               AND id NOT IN (
+                                                 SELECT u.id
+                                                 FROM '.$CFG->prefix.'role_assignments r,
+                                                      '.$CFG->prefix.'user u
+                                                       WHERE r.contextid = '.$contextid.'
+                                                       AND u.id = r.userid 
+                                                       AND r.roleid = '.$roleid.'
+                                                       '.$selectsql.')
+                                             ORDER BY lastname ASC, firstname ASC');
 
         echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
         $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles;

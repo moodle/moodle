@@ -63,11 +63,9 @@
             if (!empty($searchtext)) {
                 echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
                 while ($user = rs_fetch_next_record($availableusers)) {
-                    if (!isset($contextusers[$user->id])) {
-                        $fullname = fullname($user, true);
-                        echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                        $i++;
-                    }
+                    $fullname = fullname($user, true);
+                    echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                    $i++;
                 }
                 echo "</optgroup>\n";
 
@@ -77,11 +75,9 @@
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
                 } else {
                     while ($user = rs_fetch_next_record($availableusers)) {
-                        if (!isset($contextusers[$user->id])) {
-                            $fullname = fullname($user, true);
-                            echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
-                            $i++;
-                        }
+                        $fullname = fullname($user, true);
+                        echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
+                        $i++;
                     }
                 }
             }
