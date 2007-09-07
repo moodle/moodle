@@ -191,7 +191,7 @@ class IndexDBControl {
     public function checkDB() {
         global $CFG, $db;
         
-        $sqlfile = "$CFG->dirroot/blocks/search/db/$CFG->dbtype.sql";
+        $sqlfile = "{$CFG->dirroot}/search/db/$CFG->dbtype.sql";
         $ret = false;
         if ($this->checkTableExists()) {
             execute_sql('drop table '.$CFG->prefix.SEARCH_DATABASE_TABLE, false);
