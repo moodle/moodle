@@ -122,10 +122,11 @@ $text_source_options = array(
             if (!$form->timeopen && $course->format == "weeks") {
                 $form->timeopen = $course->startdate + (($form->section - 1) * 608400);
             }
-            print '<input name="enabletimeopen" type="checkbox" value="1" alt="'.get_string("quizopen", "quiz").'" onclick="'."return hotpot_lockoptions('form', 'enabletimeopen', timeopenlockitems)".'" '.(empty($form->timeopen) ? '' : 'checked="checked"').' />';
             print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
             print ' - ';
             print_time_selector("openhour", "openminute", $form->timeopen);
+            print '<input name="enabletimeopen" type="checkbox" value="1" alt="'.get_string("quizopen", "quiz").'" onclick="'."return hotpot_lockoptions('form', 'enabletimeopen', timeopenlockitems)".'" '.(empty($form->timeopen) ? '' : 'checked="checked"').' />';
+            print ' '.get_string('enable').' ';
             helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
         ?></td>
     </tr>
@@ -135,10 +136,11 @@ $text_source_options = array(
             if (!$form->timeclose && $course->format == "weeks") {
                 $form->timeclose= $course->startdate + (($form->section) * 608400);
             }
-            print '<input name="enabletimeclose" type="checkbox" value="1" alt="'.get_string("quizclose", "quiz").'" onclick="'."return hotpot_lockoptions('form', 'enabletimeclose', timecloselockitems)".'" '.(empty($form->timeclose) ? '' : 'checked="checked"').' />';
             print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
             print ' - ';
             print_time_selector("closehour", "closeminute", $form->timeclose);
+            print '<input name="enabletimeclose" type="checkbox" value="1" alt="'.get_string("quizclose", "quiz").'" onclick="'."return hotpot_lockoptions('form', 'enabletimeclose', timecloselockitems)".'" '.(empty($form->timeclose) ? '' : 'checked="checked"').' />';
+            print ' '.get_string('enable').' ';
             helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
         ?></td>
     </tr>
