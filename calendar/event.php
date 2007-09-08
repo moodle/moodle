@@ -505,12 +505,8 @@
                 if (!$course = get_record('course', 'id', $courseid)) {
                     error('Incorrect course ID');
                 }
-                if ($groupmode = groupmode($course)) {   // Groups are being used
-                    $changegroup = optional_param('group', -1, PARAM_INT);
-                    $groupid = get_and_set_current_group($course, $groupmode, $changegroup);
-                } else {
-                    $groupid = 0;
-                }
+                
+                $groupid = groups_get_course_group($course);
 
                 echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
                 echo '<div id="selecteventtype">';

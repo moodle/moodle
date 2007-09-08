@@ -98,7 +98,7 @@ switch ($filtertype) {
         if (!has_capability('moodle/blog:view', $coursecontext)) {
             error('You do not have the required permissions to view blogs in this course/group');
         }
-        if (groupmode($course) == SEPARATEGROUPS
+        if (groups_get_course_groupmode($course) == SEPARATEGROUPS
           and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
             if (!groups_is_member($filterselect)) {
                 error ('You are not a member of this course group');

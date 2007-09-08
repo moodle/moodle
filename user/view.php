@@ -106,7 +106,7 @@
 
 
         // If groups are in use, make sure we can see that group
-        if (groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+        if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
             require_login();
 
             ///this is changed because of mygroupid
@@ -362,7 +362,7 @@
         if ($usergroups = groups_get_all_groups($course->id, $user->id)){
             $groupstr = '';
             foreach ($usergroups as $group){
-                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.$group->name.'</a>,';
+                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
             }
             print_row(get_string("group").":", rtrim($groupstr, ', '));
         }

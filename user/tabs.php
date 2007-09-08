@@ -52,8 +52,8 @@
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         print_heading(format_string($course->fullname));
 
-        $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect.'&amp;group=0',
-            get_string('participants'));    //the groupid hack is necessary, otherwise the group in the session willbe used
+        $toprow[] = new tabobject('participants', $CFG->wwwroot.'/user/index.php?id='.$filterselect,
+            get_string('participants'));
         
         if ($CFG->bloglevel >= 3) {
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs','blog'));
@@ -68,7 +68,7 @@
      **************************************/
     } else if ($filtertype == 'group' && $filterselect) {
 
-        $group_name = groups_get_group_name($filterselect); //TODO:
+        $group_name = groups_get_group_name($filterselect);
         print_heading($group_name);
 
         if ($CFG->bloglevel >= 2) {

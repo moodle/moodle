@@ -102,7 +102,7 @@
         $form->section          = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
         $form->visible          = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
         $form->cmidnumber       = $cm->idnumber;          // The cm IDnumber
-        $form->groupmode        = groupmode($COURSE,$cm); // locked later if forced
+        $form->groupmode        = groups_get_activity_groupmode($cm); // locked later if forced
         $form->groupingid       = $cm->groupingid;
         $form->groupmembersonly = $cm->groupmembersonly;
         $form->course           = $course->id;

@@ -10,7 +10,6 @@
     define('DEFAULT_PAGE_SIZE', 20);
     define('SHOW_ALL_PAGE_SIZE', 5000);
 
-    $group        = optional_param('group', -1, PARAM_INT);                   // Group to show
     $page         = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage      = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
     $mode         = optional_param('mode', NULL);                             // '0' for less details, '1' for more
@@ -114,8 +113,8 @@
 /// Check to see if groups are being used in this forum
 /// and if so, set $currentgroup to reflect the current group
 
-    $groupmode    = groupmode($course);   // Groups are being used
-    $currentgroup = get_and_set_current_group($course, $groupmode, $group);
+    $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
+    $currentgroup = groups_get_course_group($course, true);
 
     if (!$currentgroup) {      // To make some other functions work better later
         $currentgroup  = NULL;
@@ -136,7 +135,7 @@
     }
 
     // Should use this variable so that we don't break stuff every time a variable is added or changed.
-    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;group='.$currentgroup.'&amp;perpage='.$perpage.'&amp;accesssince='.$accesssince.'&amp;search='.s($search);
+    $baseurl = $CFG->wwwroot.'/user/index.php?contextid='.$context->id.'&amp;roleid='.$roleid.'&amp;id='.$course->id.'&amp;perpage='.$perpage.'&amp;accesssince='.$accesssince.'&amp;search='.s($search);
 
 /// Print headers
 
@@ -187,7 +186,7 @@
     }
 
     echo '<td class="left">';
-    setup_and_print_groups($course, $groupmode, $baseurl);
+    groups_print_course_menu($course, $baseurl);
     echo '</td>';
 
     // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
@@ -242,7 +241,7 @@
     echo '</td></tr></table>';
 
     if ($currentgroup and (!$isseparategroups or has_capability('moodle/site:accessallgroups', $context))) {    /// Display info about the group
-        if ($group = groups_get_group($currentgroup)) { //TODO:
+        if ($group = groups_get_group($currentgroup)) {
             if (!empty($group->description) or (!empty($group->picture) and empty($group->hidepicture))) {
                 echo '<table class="groupinfobox"><tr><td class="left side picture">';
                 print_group_picture($group, $course->id, true, false, false);

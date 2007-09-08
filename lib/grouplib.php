@@ -1,17 +1,17 @@
 <?php  //$Id$
 
 /**
- * No groups used?
+ * Groups not used in course or activity
  */
 define('NOGROUPS', 0);
 
 /**
- * Groups used?
+ * Groups used, users do not see other groups
  */
 define('SEPARATEGROUPS', 1);
 
 /**
- * Groups visible?
+ * Groups used, students see other groups
  */
 define('VISIBLEGROUPS', 2);
 

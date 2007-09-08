@@ -178,7 +178,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 
         echo '<tr>';
 
-        $groupmode =  groupmode($course);
+        $groupmode =  groups_get_course_groupmode($course);
 
         if ($groupmode == VISIBLEGROUPS or ($groupmode and has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id)))) {
             if ($groups = groups_get_all_groups($course->id)) {
@@ -1412,9 +1412,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          $typestring.$instancename.'</a>';
                 }
                 if ($usetracking && $mod->modname == 'forum') {
-                    $groupmode = groupmode($course, $mod);
+                    $groupmode = groups_get_course_groupmode($course, $mod);
                     $groupid = ($groupmode == SEPARATEGROUPS && !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) ?
-                               get_current_group($course->id) : false;
+                               groups_get_course_group($course, true) : false;
 
                     if (forum_tp_can_track_forums() && !isset($untracked[$mod->instance])) {
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
@@ -2455,15 +2455,16 @@ function print_groupmode_setting($form, $course=NULL) {
         if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
             error("This course module doesn't exist");
         }
+        $groupmode = groups_get_activity_groupmode($cm);
     } else {
         $cm = null;
+        $groupmode = groups_get_course_groupmode($course);
     }
-    $groupmode = groupmode($course, $cm);
     if ($course->groupmode or (!$course->groupmodeforce)) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('groupmode').':</b></td>';
         echo '<td align="left">';
-        unset($choices);
+        $choices = array();
         $choices[NOGROUPS] = get_string('groupsnone');
         $choices[SEPARATEGROUPS] = get_string('groupsseparate');
         $choices[VISIBLEGROUPS] = get_string('groupsvisible');

@@ -451,9 +451,10 @@
                 $usercourses = array_keys(get_my_courses($targetuserid));
                 $shared = array_intersect($mycourses, $usercourses);
                 foreach ($shared as $courseid) {
+                    $course = get_record('course', 'id', $courseid);
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
                     if (has_capability('moodle/site:accessallgroups', $coursecontext)
-                      or groupmode($courseid) != SEPARATEGROUPS) {
+                      or groups_get_course_groupmode($course) != SEPARATEGROUPS) {
                         return true;
                     } else {
                         if ($usergroups = groups_get_all_groups($courseid, $targetuserid)) {

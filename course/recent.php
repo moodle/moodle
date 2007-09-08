@@ -158,16 +158,23 @@
                 $mod = $mods[$sectionmod];
                 $instance = get_record("$mod->modname", "id", "$mod->instance");
 
-                $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode, cm.visible
+                $coursemod = get_record_sql("SELECT m.id, m.name, cm.groupmode, cm.visible, cm.course, cm.groupingid
                                                FROM {$CFG->prefix}course_modules cm,
                                                     {$CFG->prefix}modules m
                                               WHERE course = '$course->id' $hiddenfilter
                                                 AND m.id = cm.module $activityfilter
                                                 AND cm.id = '$sectionmod'");
-
-                $groupmode = groupmode($course, $coursemod);
+                $groupmode = groups_get_activity_groupmode($coursemod);
                 switch ($groupmode) {
-                    case SEPARATEGROUPS :  $groupid = mygroupid($course->id); break;
+                    case SEPARATEGROUPS :
+                        $groupid = 0;
+                        if ($mygroups = groups_get_all_groups($course->id, $USER->id, $coursemode->groupingid)) {
+                            if (array_key_exists($selectedgroup, $mygroups)) {
+                                $groupid = $selectedgroup;
+                            }
+                        }
+                        break;
+
                     case VISIBLEGROUPS  :  $groupid = $selectedgroup; break;
                     case NOGROUPS       :
                     default             :  $groupid = 0;
