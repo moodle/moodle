@@ -18,8 +18,8 @@
 
     if ($form1 = data_submitted()) {
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
-        $course_header->course_shortname =  $form1->shortname;  //"update_ShortName";
-        $course_header->course_fullname =   $form1->fullname;   //"update_FullName";
+        $course_header->course_shortname =  stripslashes_safe($form1->shortname);  //"update_ShortName";
+        $course_header->course_fullname =   stripslashes_safe($form1->fullname);   //"update_FullName";
         $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
         $currentcoursestartdate = $course_header->course_startdate;
         $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
