@@ -66,6 +66,7 @@ $string['pluginrequirementsnotmet'] = 'Plugin \"$a->pluginname\" ($a->pluginvers
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href=\"$a->url\">$a->url</a> file manually, copy it to \"$a->dest\" in your server and unzip it there.';
 $string['restricteduser'] = 'Sorry, but your current account \"$a\" is restricted from doing that.';
+$string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['sendmessage'] = 'Send Message';
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
