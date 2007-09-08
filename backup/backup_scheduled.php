@@ -177,7 +177,7 @@ function schedule_backup_cron() {
         //Reference
         if ($count_error != 0 || $count_unfinished != 0) {
             $message .= "  ".get_string('backupfailed')."\n\n";
-            $dest_url = $CFG->wwwroot.'/backup/log.php';
+            $dest_url = $CFG->wwwroot.'/admin/report/backups/index.php';
             $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
             //Set message priority
             $admin->priority = 1;
