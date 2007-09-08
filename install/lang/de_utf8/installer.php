@@ -16,8 +16,8 @@ $string['admindirsettingsub'] = 'Einige wenige Webhosting-Anbieter benutzen /adm
 z.B.: <br /> <br /><b>moodleadmin</b><br /> 
 Dies ändert die Links für das Admin-Verzeichnis in Moodle.';
 $string['bypassed'] = 'Unberücksichtigt';
-$string['cannotcreatelangdir'] = 'Das Verzeichnis \"lang\" kann nicht angelegt werden.';
-$string['cannotcreatetempdir'] = 'Das temporäre Verzeichnis kann nicht angelegt werden.';
+$string['cannotcreatelangdir'] = 'Verzeichnis \"lang\" kann nicht angelegt werden.';
+$string['cannotcreatetempdir'] = 'Temporäres Verzeichnis kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Komponenten können nicht heruntergeladen werden.';
 $string['cannotdownloadzipfile'] = 'ZIP-Datei kann nicht heruntergeladen werden.';
 $string['cannotfindcomponent'] = 'Komponente wurde nicht gefunden.';
@@ -72,6 +72,12 @@ $string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
 <b>User:</b> Ihr Anmeldename für die Datenbank<br />
 <b>Password:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
+$string['databasesettingssub_mysqli'] = '<b>Typ:</b> Improved MySQL<br />
+<b>Host:</b> z.B. localhost oder db.domain.com<br />
+<b>Name:</b> Datenbank-Name, z.B moodle<br />
+<b>User:</b> Ihr Datenbank-Anmeldename<br />
+<b>Passwort:</b> Ihr Datenbank-Passwort<br />
+<b>Tabellen-Prefix:</b> Prefix für alle Tabellen (optional)';
 $string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
 <b>Host:</b> unbenutzt - muss leer bleiben!<br />
 <b>Name:</b> vorgegebener Verbindungname zu tnsnames.ora<br />
@@ -115,7 +121,7 @@ web-user des Servers haben. (üblicherweise \'nobody\' or \'apache\'), aber es s
 $string['dirroot'] = 'Moodle-Verzeichnis';
 $string['dirrooterror'] = 'Die Einstellungen für das Moodle-Verzeichnis sind nicht korrekt.  Es wurde keine Moodle-Installation gefunden. Die anderen Werte wurden gelöscht.';
 $string['download'] = 'Herunterladen';
-$string['downloadedfilecheckfailed'] = 'Die Prüfung der heruntergeladenen Datei ist gescheitert';
+$string['downloadedfilecheckfailed'] = 'Prüfung der heruntergeladenen Datei ist gescheitert';
 $string['downloadlanguagebutton'] = 'Download des Sprachpakets: $a';
 $string['downloadlanguagehead'] = 'Download der Sprachpakete';
 $string['downloadlanguagenotneeded'] = 'Sie können die Installation mit dem Sprachpaket \"$a\" fortsetzen.';
@@ -173,6 +179,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Wenn Sie in Ihrer Website ausschließlich ISO-8859-1 (lateinische) Sprachen verwenden, können Sie eine MySQL-Version ab 4.1.12 (oder höher) verwenden.';
 $string['mysql416required'] = 'MySQL 4.1.16 (oder höher) ist für Moodle 1.6 unbedingt erforderlich, um eine Datenkonvertierung nach UTF-8 sicherzustellen.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die MySQL-Erweiterung mit MySQL zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
+$string['mysqli'] = 'Improved MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP wurde nicht ordnungsgemäß für die MySQLi-Erweiterung konfiguriert, um mit MySQL zu kommunizieren. Bitte überprüfen Sie die Datei php.ini oder übersetzen Sie PHP neu. Die MySQLi-Erweiterung ist nicht für PHP4 verfügbar.';
 $string['name'] = 'Name';
 $string['next'] = 'Nächste';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -180,7 +188,7 @@ $string['ociextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert
 $string['odbc_mssql'] = 'SQL*Server über ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP wurde nicht richtig konfiguriert, um über die ODBC-Erweiterung mit SQL*Server zu kommunizieren. Bitte prüfen Sie die Datei php.ini oder kompilieren Sie PHP neu.';
 $string['ok'] = 'OK';
-$string['opensslrecommended'] = 'Die optionale Installation der OpenSSL Bibliothek wird strikt empfohlen. Dadurch wird die Moodle-Netzwerk-Funktionalität ermöglicht.';
+$string['opensslrecommended'] = 'Die optionale Installation der OpenSSL Bibliothek wird dringend empfohlen. Dadurch wird die Moodle-Netzwerk-Funktionalität ermöglicht.';
 $string['parentlanguage'] = 'en_utf8';
 $string['pass'] = 'Durchgang';
 $string['password'] = 'Kennwort';
