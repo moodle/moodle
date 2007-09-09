@@ -477,12 +477,14 @@ class XMLDBoci8po extends XMLDBgenerator {
     }   
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * Given one XMLDBTable returns one array with all the check constrainsts
      * in the table (fetched from DB)
+     * Optionally the function allows one xmldb_field to be specified in
+     * order to return only the check constraints belonging to one field.
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
      */
-    function getCheckConstraintsFromDB($xmldb_table) {
+    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         $results = array();
 

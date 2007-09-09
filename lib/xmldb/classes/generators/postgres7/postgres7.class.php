@@ -305,6 +305,15 @@ class XMLDBpostgres7 extends XMLDBgenerator {
             $notnullchanged = false;
         }
 
+    /// TODO: Some combinations like
+    /// TODO: integer->integer
+    /// TODO: integer->text
+    /// TODO: number->text
+    /// TODO: text->text
+    /// TODO: do not require the use of temp columns, because PG 8.0 supports them automatically
+    /// TODO: with a simple "alter table zzz alter column yyy type new specs"
+    /// TODO: Must be implemented that way. Eloy 09/2007
+
     /// If the type or the precision or the decimals have changed, then we need to:
     ///     - create one temp column with the new specs
     ///     - fill the new column with the values from the old one (casting if needed)
@@ -422,12 +431,14 @@ class XMLDBpostgres7 extends XMLDBgenerator {
     }
 
     /**
-     * Given one XMLDBTable returns one array with all the check constrainsts 
+     * Given one XMLDBTable returns one array with all the check constrainsts
      * in the table (fetched from DB)
+     * Optionally the function allows one xmldb_field to be specified in
+     * order to return only the check constraints belonging to one field.
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
      */
-    function getCheckConstraintsFromDB($xmldb_table) {
+    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
 
         $results = array();
 

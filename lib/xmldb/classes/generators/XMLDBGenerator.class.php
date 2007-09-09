@@ -1194,6 +1194,15 @@ class XMLDBgenerator {
     }
 
     /**
+     * Given one XMLDBTable and one optional XMLDBField, return one array with all the check
+     * constrainst found for that table (or field). Must exist for each DB supported.
+     * (usually invoked from find_check_constraint_name)
+     */
+    function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null) {
+        return array('Code to fetch check constraints goes to getCheckConstraintsFromDB()');
+    }
+
+    /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to add its default 
      * (usually invoked from getModifyDefaultSQL()
      */
