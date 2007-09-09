@@ -251,11 +251,34 @@ class XMLDBmysql extends XMLDBGenerator {
      * in the table (fetched from DB)
      * Each element contains the name of the constraint and its description
      * If no check constraints are found, returns an empty array
-     * MySQL doesn't have check constraints in this implementation
+     * MySQL doesn't have check constraints in this implementation, but
+     * we return them based on the enum fields in the table
      */
     function getCheckConstraintsFromDB($xmldb_table) {
 
-        return array();
+        global $db;
+
+        $results = array();
+
+        $tablename = $this->getTableName($xmldb_table);
+
+    /// Fetch all the columns in the table
+        if ($columns = $db->MetaColumns($tablename)) {
+        /// Normalize array keys
+            $columns = array_change_key_case($columns, CASE_LOWER);
+        /// Iterate over columns searching for enums
+            foreach ($columns as $key => $column) {
+            /// Enum found, let's add it to the constraints list
+                if (!empty($column->enums)) {
+                    $result = new object;
+                    $result->name = $key;
+                    $result->description = implode(', ', $column->enums);
+                    $results[$key] = $result;
+                }
+            }
+        }
+
+        return $results;
     }
 
     /**
