@@ -21,6 +21,9 @@
 function upgrade_plugins($type, $dir, $return) {
     global $CFG, $db;
 
+/// Let's know if the header has been printed, so the funcion is being called embedded in an outer page
+    $embedded = defined('HEADER_PRINTED');
+
     $plugs = get_list_of_plugins($dir);
     $updated_plugins = false;
     $strpluginsetup  = get_string('pluginsetup');
@@ -59,7 +62,7 @@ function upgrade_plugins($type, $dir, $return) {
                 $info->pluginversion  = $plugin->version;
                 $info->currentmoodle = $CFG->version;
                 $info->requiremoodle = $plugin->requires;
-                if (!$updated_plugins) {
+                if (!$updated_plugins && !$embedded) {
                     print_header($strpluginsetup, $strpluginsetup,
                         build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
@@ -82,7 +85,7 @@ function upgrade_plugins($type, $dir, $return) {
         if ($CFG->$pluginversion == $plugin->version) {
             // do nothing
         } else if ($CFG->$pluginversion < $plugin->version) {
-            if (!$updated_plugins) {
+            if (!$updated_plugins && !$embedded) {
                 print_header($strpluginsetup, $strpluginsetup,
                         build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
@@ -181,7 +184,7 @@ function upgrade_plugins($type, $dir, $return) {
 
     upgrade_log_finish();
 
-    if ($updated_plugins) {
+    if ($updated_plugins && !$embedded) {
         print_continue($return);
         print_footer('none');
         die;
