@@ -15,18 +15,28 @@
     require_once('../config.php');
     require_once("$CFG->dirroot/search/lib.php");
 
-    if (empty($CFG->enableglobalsearch)) {
+    if (!search_check_php5()) {
+        $phpversion = phpversion();
+        mtrace("Sorry, cannot cron global search as it requires PHP 5.0.0 or later (currently using version $phpversion)");
+    } 
+    else if (empty($CFG->enableglobalsearch)) {
         mtrace('Global searching is not enabled. Nothing performed by search.');
     }
     else{
-        mtrace("<pre>Starting cron...\n");
-        mtrace("--DELETE----");
-        require_once("$CFG->dirroot/search/delete.php");
-        mtrace("--UPDATE----");
-        require_once("$CFG->dirroot/search/update.php");
-        mtrace("--ADD-------");
-        require_once("$CFG->dirroot/search/add.php");
-        mtrace("------------");
-        mtrace("cron finished.</pre>");
+        try{
+            mtrace("<pre>Starting cron...\n");
+            mtrace("--DELETE----");
+            require_once("$CFG->dirroot/search/delete.php");
+            mtrace("--UPDATE----");
+            require_once("$CFG->dirroot/search/update.php");
+            mtrace("--ADD-------");
+            require_once("$CFG->dirroot/search/add.php");
+            mtrace("------------");
+            mtrace("cron finished.</pre>");
+        }
+        catch(Exception $ex){
+            mtrace('Fatal exception from Lucene subsystem. Search engine may not have been updated.');
+            mtrace($ex);
+        }
     }
 ?>
