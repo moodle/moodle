@@ -502,8 +502,17 @@ class XMLDBoci8po extends XMLDBgenerator {
 
     /// Filter by the required field if specified
         if ($xmldb_field) {
+            $filtered_results = array();
             $filter = $xmldb_field->getName();
-        /// Lets clean a bit each constraint description, looking for the filtered fiel 
+        /// Lets clean a bit each constraint description, looking for the filtered field
+            foreach ($results as $key => $result) {
+            /// description starts by "$filter IN" assume it's a constraint beloging to the field
+                if (preg_match("/^{$filter} IN/i", $result->description)) {
+                    $filtered_results[$key] = $result;
+                }
+            }
+        /// Assign filtered results to the final results array
+            $results =  $filtered_results;
         }
 
         return $results;
