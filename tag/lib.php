@@ -1160,8 +1160,6 @@ function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
             {$CFG->prefix}tag tg 
         ON 
             tg.id = ti.tagid
-        WHERE 
-            ti.tagid
         GROUP BY 
             tagid 
         ORDER BY 
