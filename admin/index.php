@@ -190,8 +190,9 @@
         $db->debug = false;
         if ($status) {
             //ugly hack - install new groups: MDL-9217
-            require_once("$CFG->dirroot/group/db/upgrade.php");
-            install_group_db();
+            require("$CFG->dirroot/group/version.php");
+            set_config('group_version', $group_version);
+            //install_group_db();
 
             // Install the roles system.
             moodle_install_roles();
@@ -325,9 +326,10 @@
             /// If successful, continue upgrading roles and setting everything properly
                 if ($status) {
                     if (empty($CFG->rolesactive)) {
-                        //ugly hack - upgrade to new groups (from 1.6) : MDL-9217
-                        require_once("$CFG->dirroot/group/db/upgrade.php");
-                        install_group_db();
+                        // ugly hack - upgrade to new groups (from 1.6) : MDL-9217
+                        // require_once("$CFG->dirroot/group/db/upgrade.php");
+                        // MDL-11062, proper group upgrade code is done in lib/db/upgrade.php
+                        // install_group_db();
                         // Upgrade to the roles system.
                         moodle_install_roles();
                         set_config('rolesactive', 1);
