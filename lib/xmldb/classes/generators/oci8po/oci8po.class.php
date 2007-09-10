@@ -500,6 +500,12 @@ class XMLDBoci8po extends XMLDBgenerator {
             }
         }
 
+    /// Filter by the required field if specified
+        if ($xmldb_field) {
+            $filter = $xmldb_field->getName();
+        /// Lets clean a bit each constraint description, looking for the filtered fiel 
+        }
+
         return $results;
     }
 

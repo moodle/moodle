@@ -455,6 +455,26 @@ class XMLDBpostgres7 extends XMLDBgenerator {
             }
         }
 
+    /// Filter by the required field if specified
+        if ($xmldb_field) {
+            $filtered_results = array();
+            $filter = $xmldb_field->getName();
+        /// Lets clean a bit each constraint description, looking for the filtered field
+            foreach ($results as $key => $result) {
+                $description = preg_replace('/\("(.*?)"\)/', '($1)', $result->description);// Double quotes out
+                $description = preg_replace('/[\(\)]/', '', $description);                 // Parenthesis out
+                $description = preg_replace('/::[a-z]+/i', '', $description);              // Casts out
+                $description = preg_replace("/({$filter})/i", '@$1@', $description);
+                $description = trim(preg_replace('/ or /i', ' OR ', $description));        // Uppercase or & trim
+            /// description starts by @$filter@ assume it's a constraint beloging to the field
+                if (preg_match("/^@{$filter}@/i", $description)) {
+                    $filtered_results[$key] = $result;
+                }
+            }
+        /// Assign filtered results to the final results array
+            $results =  $filtered_results;
+        }
+
         return $results;
     }
 

@@ -280,6 +280,17 @@ class XMLDBmysql extends XMLDBGenerator {
             }
         }
 
+    /// Filter by the required field if specified
+        if ($xmldb_field) {
+            $filter = $xmldb_field->getName();
+        /// Check if some of the checks belong to the field (easy under MySQL)
+            if (array_key_exists($filter, $results)) {
+                $results = array($filter => $results[$filter]);
+            } else {
+                $results = array();
+            }
+        }
+
         return $results;
     }
 
