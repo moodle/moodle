@@ -49,7 +49,7 @@ class question_import_form extends moodleform {
         $mform->addElement('selectyesno', 'stoponerror', get_string('stoponerror', 'quiz'));
         $mform->setDefault('stoponerror', 1);
         $mform->setHelpButton('stoponerror', array('stoponerror', get_string('stoponerror', 'quiz'), 'quiz'));
-        
+
 //--------------------------------------------------------------------------------
         $mform->addElement('header', 'importfileupload', get_string('importfileupload','quiz'));
 
@@ -59,11 +59,13 @@ class question_import_form extends moodleform {
         $this->add_action_buttons(true, get_string('uploadthisfile'));
 
 //--------------------------------------------------------------------------------
-        $mform->addElement('header', 'importfilearea', get_string('importfilearea','quiz'));
+        if (has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $COURSE->id))){
+            $mform->addElement('header', 'importfilearea', get_string('importfilearea','quiz'));
 
-        $mform->addElement('choosecoursefile', 'choosefile', get_string('choosefile','quiz'));
+            $mform->addElement('choosecoursefile', 'choosefile', get_string('choosefile','quiz'));
 //--------------------------------------------------------------------------------
-        $this->add_action_buttons(true, get_string('importfromthisfile','quiz'));
+            $this->add_action_buttons(true, get_string('importfromthisfile','quiz'));
+        }
 //--------------------------------------------------------------------------------
     }
     function get_importfile_name(){
