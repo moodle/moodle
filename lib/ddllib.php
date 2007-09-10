@@ -355,6 +355,35 @@ function index_exists($table, $index) {
 }
 
 /**
+ * Given one XMLDBField, check if it has a check constraint in DB
+ *
+ * @uses, $db
+ * @param XMLDBTable the table
+ * @param XMLDBField the field to be searched for any existing constraint
+ * @return boolean true/false
+ */
+function check_constraint_exists($table, $field) {
+
+    global $CFG, $db;
+
+    $exists = true;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    $db->debug = false;
+
+/// Wrap over find_check_constraint_name to see if the index exists
+    if (!find_check_constraint_name($table, $field)) {
+        $exists = false;
+    }
+
+/// Re-set original debug
+    $db->debug = $olddbdebug;
+
+    return $exists;
+}
+
+/**
  * This function IS NOT IMPLEMENTED. ONCE WE'LL BE USING RELATIONAL
  * INTEGRITY IT WILL BECOME MORE USEFUL. FOR NOW, JUST CALCULATE "OFFICIAL"
  * KEY NAMES WITHOUT ACCESSING TO DB AT ALL.
@@ -469,6 +498,55 @@ function find_index_name($table, $index) {
 /// Arriving here, index not found
     $db->debug = $olddbdebug; //Re-set original $db->debug
     return false;
+}
+
+/**
+ * Given one XMLDBField, the function returns the name of the check constraint in DB (if exists)
+ * of false if it doesn't exist. Note that XMLDB limits the number of check constrainst per field
+ * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
+ * retrieved by this funcion.
+ *
+ * @uses, $db
+ * @param XMLDBTable the table to be searched
+ * @param XMLDBField the field to be searched
+ * @return string check consrtaint name or false
+ */
+function find_check_constraint_name($table, $field) {
+
+    global $CFG, $db;
+
+/// Do this function silenty (to avoid output in install/upgrade process)
+    $olddbdebug = $db->debug;
+    //$db->debug = false;
+
+/// Check the table exists
+    if (!table_exists($table)) {
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false;
+    }
+
+/// Check the field exists
+    if (!field_exists($table, $field)) {
+        $db->debug = $olddbdebug; //Re-set original $db->debug
+        return false;
+    }
+
+/// Load the needed generator
+    $classname = 'XMLDB' . $CFG->dbtype;
+    $generator = new $classname();
+    $generator->setPrefix($CFG->prefix);
+/// Calculate the name of the table
+    $tablename = $generator->getTableName($table, false);
+
+/// Get list of check_constraints in table
+    $checks = null;
+    if ($checks = $generator->getCheckConstraintsFromDB($table, $field)) {
+        $checks = array_change_key_case($checks, CASE_LOWER);
+    }
+
+/// Arriving here, index not found
+    $db->debug = $olddbdebug; //Re-set original $db->debug
+    return $checks;
 }
 
 /**
