@@ -24,7 +24,7 @@ if (! $site = get_site()) {
     error('Could not find site-level course');
 }
 
-$textlib =& textlib_get_instance();
+$textlib = textlib_get_instance();
 
 $struserrenamed = get_string('userrenamed', 'admin');
 $strusernotrenamedexists = get_string('usernotrenamedexists', 'error');
