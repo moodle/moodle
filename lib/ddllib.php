@@ -517,7 +517,7 @@ function find_check_constraint_name($table, $field) {
 
 /// Do this function silenty (to avoid output in install/upgrade process)
     $olddbdebug = $db->debug;
-    //$db->debug = false;
+    $db->debug = false;
 
 /// Check the table exists
     if (!table_exists($table)) {
@@ -538,13 +538,17 @@ function find_check_constraint_name($table, $field) {
 /// Calculate the name of the table
     $tablename = $generator->getTableName($table, false);
 
-/// Get list of check_constraints in table
+/// Get list of check_constraints in table/field
     $checks = null;
-    if ($checks = $generator->getCheckConstraintsFromDB($table, $field)) {
-        $checks = array_change_key_case($checks, CASE_LOWER);
+    if ($objchecks = $generator->getCheckConstraintsFromDB($table, $field)) {
+    /// Get only the 1st element. Shouldn't be more than 1 under XMLDB
+        $objcheck = array_shift($objchecks);
+        if ($objcheck) {
+            $checks = strtolower($objcheck->name);
+        }
     }
 
-/// Arriving here, index not found
+/// Arriving here, check not found
     $db->debug = $olddbdebug; //Re-set original $db->debug
     return $checks;
 }
