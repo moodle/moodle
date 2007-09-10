@@ -385,7 +385,8 @@
 
         if ($backup_version > $CFG->backup_version) {       // Upgrade tables
             $strdatabaseupgrades = get_string("databaseupgrades");
-            print_header($strdatabaseupgrades, $strdatabaseupgrades, $strdatabaseupgrades, '', upgrade_get_javascript());
+            $navigation = array(array('name' => $strdatabaseupgrades, 'link' => null, 'type' => 'misc'));
+            print_header($strdatabaseupgrades, $strdatabaseupgrades, build_navigation($navigation), '', upgrade_get_javascript());
 
             upgrade_log_start();
             print_heading('backup');
