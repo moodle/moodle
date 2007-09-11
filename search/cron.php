@@ -23,20 +23,6 @@
         mtrace('Global searching is not enabled. Nothing performed by search.');
     }
     else{
-        try{
-            mtrace("<pre>Starting cron...\n");
-            mtrace("--DELETE----");
-            require_once("$CFG->dirroot/search/delete.php");
-            mtrace("--UPDATE----");
-            require_once("$CFG->dirroot/search/update.php");
-            mtrace("--ADD-------");
-            require_once("$CFG->dirroot/search/add.php");
-            mtrace("------------");
-            mtrace("cron finished.</pre>");
-        }
-        catch(Exception $ex){
-            mtrace('Fatal exception from Lucene subsystem. Search engine may not have been updated.');
-            mtrace($ex);
-        }
+       include("{$CFG->dirroot}/search/cron_php5.php");
     }
 ?>
