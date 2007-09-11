@@ -202,13 +202,20 @@ if ($mform->is_cancelled()){
 
     list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
     if ($cm !== null) {
+        $strmodule = get_string('modulename', $cm->modname);
         $strupdatemodule = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id))
-            ? update_module_button($cm->id, $cm->course, get_string('modulename', $cm->modname))
+            ? update_module_button($cm->id, $cm->course, $strmodule)
             : "";
+
+        $streditingmodule = get_string('editinga', 'moodle', $strmodule);
+
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$cm->course", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
-        $navlinks[] = array('name' => get_string('editingquiz', 'quiz'), 'link' => $returnurl, 'type' => 'title');
+        if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0){
+            //don't need this link if returnurl returns to view.php
+            $navlinks[] = array('name' => $streditingmodule, 'link' => $returnurl, 'type' => 'title');
+        }
         $navlinks[] = array('name' => $streditingquestion, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
         print_header_simple($streditingquestion, '', $navigation, "", "", true, $strupdatemodule);
