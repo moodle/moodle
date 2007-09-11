@@ -102,11 +102,7 @@ class auth_plugin_cas extends auth_plugin_base {
 		  return;
 		  }
 
-	  if ($_GET["loginguest"]== true) {
-			$frm->username="guest";
-			$frm->password="guest";
-			return;
-	  }
+
 		  
 // Connection to CAS server
 	 $this->connectCAS();
@@ -119,6 +115,12 @@ class auth_plugin_cas extends auth_plugin_base {
 		$frm->password="passwdCas";		  
 		return;
 	 }	 	
+
+	  if ($_GET["loginguest"]== true) {
+			$frm->username="guest";
+			$frm->password="guest";
+			return;
+	  }
 	 
      if ($this->config->multiauth) {
           $authCAS = optional_param("authCAS");
