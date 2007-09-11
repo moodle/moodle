@@ -755,22 +755,81 @@ class test extends XMLDBAction {
             $tests['rename table'] = $test;
         }
 
-    /// 43th test. Getting the PK sequence name for one table
+    /// 43th test. Add enum to field containing enum
+        if ($test->status) {
+        /// Add enum to field containing enum
+            $table->setName('newnameforthetable');
+            $field = new XMLDBField('newnameforthefield');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_enum($table, $field, false, false);
+        /// Let's see if the constraint exists to alter results
+            if (check_constraint_exists($table, $field)) {
+                $test->sql = array('Nothing executed. Enum already exists. Correct.');
+            } else {
+                $test->status = false;
+            }
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['add enum to field containing enum'] = $test;
+        }
+
+    /// 44th test. Drop enum from field containing enum
+        if ($test->status) {
+        /// Drop enum from field containing enum
+            $table->setName('newnameforthetable');
+            $field = new XMLDBField('newnameforthefield');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_enum($table, $field, false, false);
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop enum from field containing enum'] = $test;
+        }
+
+    /// 45th test. Drop enum from field not containing enum
+        if ($test->status) {
+        /// Drop enum from field not containing enum
+            $table->setName('newnameforthetable');
+            $field = new XMLDBField('newnameforthefield');
+            $field->setAttributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
+        /// Get SQL code and execute it
+            $test = new stdClass;
+            $test->sql = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, true);
+            $test->status = change_field_enum($table, $field, false, false);
+        /// Let's see if the constraint exists to alter results
+            if (!check_constraint_exists($table, $field)) {
+                $test->sql = array('Nothing executed. Enum does not exists. Correct.');
+            } else {
+                $test->status = false;
+            }
+            if (!$test->status) {
+                $test->error = $db->ErrorMsg();
+            }
+            $tests['drop enum from field not containing enum'] = $test;
+        }
+
+    /// 46th test. Getting the PK sequence name for one table
         if ($test->status) {
             $test = new stdClass;
-            $table->setName('newnameforthetable');
             $test->sql =  array(find_sequence_name($table));
             $test->status = find_sequence_name($table);
             if (!$test->status) {
                 if (!$test->error = $db->ErrorMsg()) { //If no db errors, result is ok. Just the driver doesn't support this
-                    $test->sql = array('not needed for this DB');
+                    $test->sql = array('Not needed for this DB. Correct.');
                     $test->status = true;
                 }
             }
             $tests['find sequence name'] = $test;
         }
 
-    /// 44th test. Inserting TEXT contents
+    /// 47th test. Inserting TEXT contents
         $textlib = textlib_get_instance();
         if ($test->status) {
             $test = new stdClass;
@@ -798,6 +857,7 @@ class test extends XMLDBAction {
                     } else {
                         $test->error = $db->ErrorMsg();
                         $test->sql = array($newtextlen . ' cc. (text) transfer failed. Data changed!');
+                        print_object($new);
                         $test->status = false;
                     }
                 } else {
@@ -809,7 +869,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 45th test. Inserting BINARY contents
+    /// 48th test. Inserting BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -838,7 +898,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
         }
 
-    /// 46th test. update_record with TEXT and BINARY contents
+    /// 49th test. update_record with TEXT and BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -878,7 +938,7 @@ class test extends XMLDBAction {
             $tests['update record '. $textlen . ' cc. (text) and ' . $imglen . ' bytes (binary)'] = $test;
         }
 
-    /// 47th test. set_field with TEXT contents
+    /// 50th test. set_field with TEXT contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
@@ -908,7 +968,7 @@ class test extends XMLDBAction {
             $tests['set field '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 48th test. set_field with BINARY contents
+    /// 51th test. set_field with BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
