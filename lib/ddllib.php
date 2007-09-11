@@ -577,7 +577,8 @@ function find_sequence_name($table) {
 
 /// Check table exists
     if (!table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' do not exist. Sequence not found', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() .
+                  ' does not exist. Sequence not found', DEBUG_DEVELOPER);
         $db->debug = $olddbdebug; //Re-set original $db->debug
         return false; //Table doesn't exist, nothing to do
     }
@@ -652,7 +653,8 @@ function create_table($table, $continue=true, $feedback=true) {
 
 /// Check table doesn't exist
     if (table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() .
+                  ' already exists. Create skipped', DEBUG_DEVELOPER);
         return true; //Table exists, nothing to do
     }
 
@@ -686,7 +688,8 @@ function drop_table($table, $continue=true, $feedback=true) {
 
 /// Check table exists
     if (!table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() .
+                  ' does not exist. Delete skipped', DEBUG_DEVELOPER);
         return true; //Table don't exist, nothing to do
     }
 
@@ -739,7 +742,8 @@ function create_temp_table($table, $continue=true, $feedback=true) {
 
 /// Check table doesn't exist
     if (table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() .
+                  ' already exists. Create skipped', DEBUG_DEVELOPER);
         return $table->getName(); //Table exists, nothing to do
     }
 
@@ -781,20 +785,23 @@ function rename_table($table, $newname, $continue=true, $feedback=true) {
 
 /// Check table exists
     if (!table_exists($table)) {
-        debugging('Table ' . $table->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
+        debugging('Table ' . $table->getName() .
+                  ' does not exist. Rename skipped', DEBUG_DEVELOPER);
         return true; //Table doesn't exist, nothing to do
     }
 
 /// Check new table doesn't exist
     $check = new XMLDBTable($newname);
     if (table_exists($check)) {
-        debugging('Table ' . $check->getName() . ' already exists. Rename skipped', DEBUG_DEVELOPER);
+        debugging('Table ' . $check->getName() .
+                  ' already exists. Rename skipped', DEBUG_DEVELOPER);
         return true; //Table exists, nothing to do
     }
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for table ' . $index->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        debugging('New name for table ' . $table->getName() .
+                  ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Table doesn't exist, nothing to do
     }
 
@@ -835,14 +842,16 @@ function add_field($table, $field, $continue=true, $feedback=true) {
 
 /// Check the field doesn't exist
     if (field_exists($table, $field)) {
-        debugging('Field ' . $field->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' already exists. Create skipped', DEBUG_DEVELOPER);
         return true;
     }
 
 /// If NOT NULL and no default given (we ask the generator about the
 /// *real* default that will be used) check the table is empty
     if ($field->getNotNull() && $generator->getDefaultValue($field) === NULL && count_records($table->getName())) {
-        debugging('Field ' . $field->getName() . ' cannot be added. Not null fields added to non empty tables require default value. Create skipped', DEBUG_DEVELOPER);
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' cannot be added. Not null fields added to non empty tables require default value. Create skipped', DEBUG_DEVELOPER);
          return true;
     }
 
@@ -878,7 +887,8 @@ function drop_field($table, $field, $continue=true, $feedback=true) {
 
 /// Check the field exists
     if (!field_exists($table, $field)) {
-        debugging('Field ' . $field->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' does not exist. Delete skipped', DEBUG_DEVELOPER);
         return true;
     }
 
@@ -990,6 +1000,21 @@ function change_field_enum($table, $field, $continue=true, $feedback=true) {
         return false;
     }
 
+/// If enum is defined, we're going to create it, check it doesn't exist.
+    if ($field->getEnum()) {
+        if (check_constraint_exists($table, $field)) {
+            debugging('Enum for ' . $table->getName() . '->' . $field->getName() .
+                      ' already exists. Create skipped', DEBUG_DEVELOPER);
+            return true; //Enum exists, nothing to do
+        }
+    } else { /// Else, we're going to drop it, check it exists
+        if (!check_constraint_exists($table, $field)) {
+            debugging('Enum for ' . $table->getName() . '->' . $field->getName() .
+                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
+            return true; //Enum doesn't exist, nothing to do
+        }
+    }
+
     if(!$sqlarr = $table->getModifyEnumSQL($CFG->dbtype, $CFG->prefix, $field, false)) {
         return true; //Empty array = nothing to do = no error
     }
@@ -1054,25 +1079,29 @@ function rename_field($table, $field, $newname, $continue=true, $feedback=true) 
 
 /// Check we have included full field specs
     if (!$field->getType()) {
-        debugging('Field ' . $field->getName() . ' must contain full specs. Rename skipped', DEBUG_DEVELOPER);
-        return false; 
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' must contain full specs. Rename skipped', DEBUG_DEVELOPER);
+        return false;
     }
 
 /// Check field isn't id. Renaming over that field is not allowed
     if ($field->getName() == 'id') {
-        debugging('Field ' . $field->getName() . ' cannot be renamed. Rename skipped', DEBUG_DEVELOPER);
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' cannot be renamed. Rename skipped', DEBUG_DEVELOPER);
         return true; //Field is "id", nothing to do
     }
 
 /// Check field exists
     if (!field_exists($table, $field)) {
-        debugging('Field ' . $field->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
+        debugging('Field ' . $table->getName() . '->' . $field->getName() .
+                  ' does not exist. Rename skipped', DEBUG_DEVELOPER);
         return true; //Field doesn't exist, nothing to do
     }
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for field ' . $field->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        debugging('New name for field ' . $table->getName() . '->' . $field->getName() .
+                  ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Field doesn't exist, nothing to do
     }
 
@@ -1180,7 +1209,8 @@ function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for key ' . $key->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        debugging('New name for key ' . $table->getName() . '->' . $key->getName() .
+                  ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Key doesn't exist, nothing to do
     }
 
@@ -1218,7 +1248,8 @@ function add_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check index doesn't exist
     if (index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' exists. Create skipped', DEBUG_DEVELOPER);
+        debugging('Index ' . $table->getName() . '->' . $index->getName() .
+                  ' already exists. Create skipped', DEBUG_DEVELOPER);
         return true; //Index exists, nothing to do
     }
 
@@ -1255,7 +1286,8 @@ function drop_index($table, $index, $continue=true, $feedback=true) {
 
 /// Check index exists
     if (!index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' do not exist. Delete skipped', DEBUG_DEVELOPER);
+        debugging('Index ' . $table->getName() . '->' . $index->getName() .
+                  ' does not exist. Delete skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
@@ -1296,13 +1328,15 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
 
 /// Check index exists
     if (!index_exists($table, $index)) {
-        debugging('Index ' . $index->getName() . ' do not exist. Rename skipped', DEBUG_DEVELOPER);
+        debugging('Index ' . $table->getName() . '->' . $index->getName() .
+                  ' does not exist. Rename skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
 /// Check newname isn't empty
     if (!$newname) {
-        debugging('New name for index ' . $index->getName() . ' is empty! Rename skipped', DEBUG_DEVELOPER);
+        debugging('New name for index ' . $table->getName() . '->' . $index->getName() .
+                  ' is empty! Rename skipped', DEBUG_DEVELOPER);
         return true; //Index doesn't exist, nothing to do
     }
 
