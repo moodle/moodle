@@ -888,14 +888,26 @@ class XMLDBgenerator {
     }
 
     /**
-     * Get the name for an object, irrespective of whether it is in use or not.
-     * 
-     * You should probably use getNameForObject instead of this method. I just
-     * made this method as a temporary work-around for MDL-9356 at a time
-     * when Eloy was not around to help. 
+     * Given three strings (table name, list of fields (comma separated) and suffix),
+     * create the proper object name quoting it if necessary.
+     *
+     * IMPORTANT: This function must be used to CALCULATE NAMES of objects TO BE CREATED,
+     *            NEVER TO GUESS NAMES of EXISTING objects!!!
      */
-    function getStandardNameForObject($tablename, $fields, $suffix='') {
+    function getNameForObject($tablename, $fields, $suffix='') {
+
         $name = '';
+
+    /// Implement one basic cache to avoid object name duplication
+    /// and to speed up repeated queries for the same objects
+        if (!isset($used_names)) {
+            static $used_names = array();
+        }
+
+    /// If this exact object has been requested, return it
+        if (array_key_exists($tablename.'-'.$fields.'-'.$suffix, $used_names)) {
+            return $used_names[$tablename.'-'.$fields.'-'.$suffix];
+        }
 
     /// Use standard naming. See http://docs.moodle.org/en/XMLDB_key_and_index_naming
         $tablearr = explode ('_', $tablename);
@@ -917,32 +929,6 @@ class XMLDBgenerator {
         if ($suffix) {
             $namewithsuffix = $namewithsuffix . '_' . $suffix;
         }
-        
-        return $namewithsuffix;
-    }
-
-    /**
-     * Given three strings (table name, list of fields (comma separated) and suffix), 
-     * create the proper object name quoting it if necessary.
-     * 
-     * IMPORTANT: This function must be used to calculate names of objects to be created, 
-     *            never to guess names of existing objects!
-     */
-    function getNameForObject($tablename, $fields, $suffix='') {
-
-    /// Implement one basic cache to avoid object name duplication
-    /// and to speed up repeated queries for the same objects
-        if (!isset($used_names)) {
-            static $used_names = array();
-        }
-
-    /// If this exact object has been requested, return it
-        if (array_key_exists($tablename.'-'.$fields.'-'.$suffix, $used_names)) {
-            return $used_names[$tablename.'-'.$fields.'-'.$suffix];
-        }
-
-        $name = $this->getStandardNameForObject($tablename, $fields); 
-        $namewithsuffix = $this->getStandardNameForObject($tablename, $fields, $suffix);
 
     /// If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
         if (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
