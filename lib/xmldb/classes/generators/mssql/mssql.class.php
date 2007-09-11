@@ -154,7 +154,8 @@ class XMLDBmssql extends XMLDBgenerator {
 
     /**
      * Given one XMLDBTable and one XMLDBField, return the SQL statements needded to drop the field from the table
-     * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default constraints
+     * MSSQL overwrites the standard sentence because it needs to do some extra work dropping the default and
+     * check constraints
      */
     function getDropFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -166,21 +167,17 @@ class XMLDBmssql extends XMLDBgenerator {
         $tablename = $this->getTableName($xmldb_table);
         $fieldname = $this->getEncQuoted($xmldb_field->getName());
 
-        $checkconsname = $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck');
-
     /// Look for any default constraint in this field and drop it
         if ($defaultname = $this->getDefaultConstraintName($xmldb_table, $xmldb_field)) {
             $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $defaultname;
         }
 
     /// Look for any check constraint in this field and drop it
-        if ($check = get_record_sql("SELECT id, object_name(constid) AS checkconstraint
-                                     FROM sysconstraints
-                                     WHERE id = object_id('{$tablename}') AND
-                                           object_name(constid) = '$checkconsname'")) {
-            $results[] = 'ALTER TABLE ' . $tablename . ' DROP CONSTRAINT ' . $check->checkconstraint;
+        if ($drop_check = $this->getDropEnumSQL($xmldb_table, $xmldb_field)) {
+            $results = array_merge($results, $drop_check);
         }
-    /// Build the standard alter table drop
+
+    /// Build the standard alter table drop column
         $results[] = 'ALTER TABLE ' . $tablename . ' DROP COLUMN ' . $fieldname;
 
         return $results;
