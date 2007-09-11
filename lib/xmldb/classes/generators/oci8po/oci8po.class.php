@@ -451,9 +451,16 @@ class XMLDBoci8po extends XMLDBgenerator {
      * (usually invoked from getModifyEnumSQL()
      */         
     function getDropEnumSQL($xmldb_table, $xmldb_field) {
-    /// All we have to do is to drop the check constraint
-        return array('ALTER TABLE ' . $this->getTableName($xmldb_table) . 
-                     ' DROP CONSTRAINT ' . $this->getNameForObject($xmldb_table->getName(), $xmldb_field->getName(), 'ck'));
+    /// Let's introspect to know the real name of the check constraint
+        if ($check_constraints = $this->getCheckConstraintsFromDB($xmldb_table, $xmldb_field)) {
+            $check_constraint = array_shift($check_constraints); /// Get the 1st (should be only one)
+            $constraint_name = strtolower($check_constraint->name); /// Extract the REAL name
+        /// All we have to do is to drop the check constraint
+            return array('ALTER TABLE ' . $this->getTableName($xmldb_table) . 
+                     ' DROP CONSTRAINT ' . $constraint_name);
+        } else { /// Constraint not found. Nothing to do
+            return array();
+        }
     }   
 
     /**
