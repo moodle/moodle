@@ -1,7 +1,6 @@
 <?php  //$Id$
 
 require_once($CFG->libdir.'/formslib.php');
-require_once($CFG->libdir.'/form/selectgroups.php');
 
 class question_import_form extends moodleform {
 
