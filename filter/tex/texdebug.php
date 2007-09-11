@@ -254,6 +254,8 @@
         $gif = "$latex->temp_dir/$md5.gif";
 
         // put the expression as a file into the temp area
+        $expression = html_entity_decode( $expression );
+        $output .= "<p>Processing TeX expression:</p><pre>$expression</pre>\n";
         $doc = $latex->construct_latex_document( $expression );
         $fh = fopen( $tex, 'w' );
         fputs( $fh, $doc );

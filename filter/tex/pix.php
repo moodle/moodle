@@ -56,7 +56,8 @@
             $latex = new latex();
             $density = $CFG->filter_tex_density;
             $background = $CFG->filter_tex_latexbackground;
-            $latex_path = $latex->render( $texcache->rawtext, $md5, 12, $density, $background );
+            $texexp = html_entity_decode( $texcache->rawtext );
+            $latex_path = $latex->render( $texexp, $md5, 12, $density, $background );
             if ($latex_path) {    
                 copy( $latex_path, $pathname );
                 $latex->clean_up( $md5 );
