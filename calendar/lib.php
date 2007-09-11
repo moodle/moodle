@@ -164,7 +164,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             }
         }
     }
-    
+
     // This is either a genius idea or an idiot idea: in order to not complicate things, we use this rule: if, after
     // possibly removing SITEID from $courses, there is only one course left, then clicking on a day in the month
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
@@ -1580,7 +1580,7 @@ function calendar_get_allowed_types(&$allowed) {
         $allowed->courses = array($course->id => 1);
 
         if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-            $allowed->groups = (boolean)groups_get_all_groups($SESSION->cal_course_referer);
+            $allowed->groups = groups_get_all_groups($SESSION->cal_course_referer);
         }
     }
 }
