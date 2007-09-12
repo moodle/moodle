@@ -99,10 +99,18 @@
                 $cron_function = $mod->name."_cron";
                 if (function_exists($cron_function)) {
                     mtrace("Processing module function $cron_function ...", '');
+                    if (!empty($PERF->dbqueries)) {
+                        $pre_dbqueries = $PERF->dbqueries;
+                        $pre_time      = microtime(1);
+                    }
                     if ($cron_function()) {
                         if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
                             mtrace("Error: could not update timestamp for $mod->fullname");
                         }
+                    }
+                    if (isset($pre_dbqueries)) {
+                        mtrace("... used " . ($PERF->dbqueries - $pre_dbqueries) . " dbqueries");
+                        mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
                     mtrace("done.");
                 }
