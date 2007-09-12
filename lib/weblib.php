@@ -2655,7 +2655,7 @@ function print_footer($course=NULL, $usercourse=NULL, $return=false) {
     $performanceinfo = '';
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
         $perf = get_performance_info();
-        if (defined('MDL_PERFTOLOG')) {
+        if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
             error_log("PERF: " . $perf['txt']);
         }
         if (defined('MDL_PERFTOFOOT') || debugging() || $CFG->perfdebug > 7) {
@@ -5469,7 +5469,7 @@ function redirect($url, $message='', $delay=-1) {
 
     $performanceinfo = '';
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
-        if (defined('MDL_PERFTOLOG')) {
+        if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
             $perf = get_performance_info();
             error_log("PERF: " . $perf['txt']);
         }

@@ -6791,6 +6791,12 @@ function moodle_request_shutdown() {
             @apache_child_terminate();
         }
     }
+    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+        if (defined('MDL_PERFTOLOG')) {
+            $perf = get_performance_info();
+            error_log("PERF: " . $perf['txt']);
+        }
+    }
 }
 
 /**
