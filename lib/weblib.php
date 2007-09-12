@@ -5151,6 +5151,14 @@ function redirect($url, $message='', $delay=-1, $adminroot = '') {
     $url = html_entity_decode($encodedurl);
     $surl = addslashes($url);
 
+    $performanceinfo = '';
+    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+        if (defined('MDL_PERFTOLOG')) {
+            $perf = get_performance_info();
+            error_log("PERF: " . $perf['txt']);
+        }
+    }
+
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
 
