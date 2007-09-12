@@ -1107,6 +1107,49 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
 }
 
 /**
+ * Ensure all courses have a valid course category
+ * useful if a category has been removed manually
+ **/
+function fix_coursecategory_orphans() {
+
+    global $CFG;
+
+    // Note: the handling of sortorder here is arguably
+    // open to race conditions. Hard to fix here, unlikely
+    // to hit anyone in production.
+
+    $sql = "SELECT c.id, c.category, c.shortname
+            FROM {$CFG->prefix}course c
+            LEFT OUTER JOIN {$CFG->prefix}course_categories cc ON c.category=cc.id
+            WHERE cc.id IS NULL AND c.id != " . SITEID;
+
+    $rs = get_recordset_sql($sql);
+
+    if ($rs->RecordCount()){ // we have some orphans
+
+        // the "default" category is the lowest numbered...
+        $default   = get_field_sql("SELECT MIN(id) 
+                                    FROM {$CFG->prefix}course_categories");
+        $sortorder = get_field_sql("SELECT MAX(sortorder) 
+                                    FROM {$CFG->prefix}course 
+                                    WHERE category=$default");
+
+
+        begin_sql();
+        $tx = true;
+        while ($tx && $course = rs_fetch_next_record($rs)) {
+            $tx = $tx && set_field('course', 'category',  $default,     'id', $course->id);
+            $tx = $tx && set_field('course', 'sortorder', ++$sortorder, 'id', $course->id);
+        }
+        if ($tx) {
+            commit_sql();
+        } else {
+            rollback_sql();
+        }
+    }
+}
+
+/**
  * List of remote courses that a user has access to via MNET.
  * Works only on the IDP
  *

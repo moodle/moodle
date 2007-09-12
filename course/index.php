@@ -264,24 +264,10 @@
         }
     }
 
-/// Find the default category (the one with the lowest ID)
-    $categories = get_categories();
-    $default = 99999;
-    foreach ($categories as $category) {
-        if ($category->id < $default) {
-            $default = $category->id;
-        }
-    }
-
 /// Find any orphan courses that don't yet have a valid category and set to default
-    if ($courses = get_courses(NULL,NULL,'c.id, c.category, c.sortorder, c.visible')) {
-        foreach ($courses as $course) {
-            if ($course->category and !isset($categories[$course->category])) {
-                set_field('course', 'category', $default, 'id', $course->id);
-            }
-        }
-    }
-    
+    fix_coursecategory_orphans();
+
+/// Should be a no-op 99% of the cases
     fix_course_sortorder();
 
 /// Print form for creating new categories
