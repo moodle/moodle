@@ -960,6 +960,9 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
         // special, optimized case where all we need is to shift
         if ( $mustshift && !$safe && !$hasgap) {
             $shift = $n + $catgap - $min;
+            if ($shift < $count) {
+                $shift = $count + $catgap;
+            }
             // UPDATE course SET sortorder=sortorder+$shift
             execute_sql("UPDATE {$CFG->prefix}course
                          SET sortorder=sortorder+$shift
@@ -979,13 +982,24 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
 
             $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');
             begin_sql();
+            $tx = true; // transaction sanity
             foreach ($courses as $course) {
-                if ($course->sortorder != $n ) { // save db traffic
-                    set_field('course', 'sortorder', $n, 'id', $course->id);
+                if ($tx && $course->sortorder != $n ) { // save db traffic
+                    $tx = $tx && set_field('course', 'sortorder', $n,
+                                           'id', $course->id);
                 }
                 $n++;
             }
-            commit_sql();
+            if ($tx) {
+                commit_sql();
+            } else {
+                rollback_sql();
+                if (!$safe) {
+                    // if we failed when called with !safe, try
+                    // to recover calling self with safe=true
+                    return fix_course_sortorder($categoryid, $n, true, $depth, $path);
+                }
+            }
         }
     }
     set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
