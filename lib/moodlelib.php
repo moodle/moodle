@@ -2554,6 +2554,7 @@ function create_guest_record() {
 
     global $CFG;
 
+    $guest = new stdClass();
     $guest->auth        = 'manual';
     $guest->username    = 'guest';
     $guest->password    = hash_internal_user_password('guest');
