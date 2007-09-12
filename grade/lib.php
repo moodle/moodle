@@ -2684,7 +2684,7 @@ function grade_category_select($id_selected = 0) {
     else {
         foreach($categories as $category) {
             if ($category->name == UNCATEGORISED) {
-                $category->name = get_string('uncategorised', 'grades');
+                $category->name = get_string(UNCATEGORISED, 'grades'); 
             }
             if ($category->id == $id_selected) {
                 echo  '<option value="'.$category->id.'" selected="selected">'. format_string($category->name) .'</option>';
