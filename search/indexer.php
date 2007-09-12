@@ -93,9 +93,15 @@ else {
 
 $index = new Zend_Search_Lucene($index_path, true);
 
+/*
+OBSOLETE REGENERATION - DB installs with search block by now
 if (!$dbcontrol->checkDB()) {
     search_pexit("Database error. Please check settings/files.");
 }
+*/
+// New regeneration
+mtrace("Deleting old index entries.");
+delete_records('search_documents');
 
 //begin timer
 search_stopwatch();

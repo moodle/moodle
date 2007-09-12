@@ -169,7 +169,7 @@ class IndexDBControl {
 
     /**
     * does the table exist?
-    *
+    * OBSOLETE
     */
     public function checkTableExists() {
         global $CFG, $db;
@@ -186,7 +186,7 @@ class IndexDBControl {
 
     /**
     * is our database setup valid?
-    *
+    * OBSOLETE - Database is installed at install and should not be dropped out
     */
     public function checkDB() {
         global $CFG, $db;
