@@ -103,19 +103,22 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
     {
         return '<span>' . parent::toHtml() . '</span>';
     }
+
     /**
-     * Slightly different container template when frozen. Don't want to use a label tag
-     * with a for attribute in that case for the element label but instead use a div.
-     * Templates are defined in renderer constructor.
-     *
-     * @return string
+     * Returns the disabled field. Accessibility: the return "[ ]" from parent
+     * class is not acceptable for screenreader users, and we DO want a label.
+     * @return    string
      */
-    function getElementTemplateType(){
-        if ($this->_flagFrozen){
-            return 'static';
+    function getFrozenHtml()
+    {
+        //$this->_generateId();
+        $output = '<input type="checkbox" disabled="disabled" id="'.$this->getAttribute('id').'" ';
+        if ($this->getChecked()) {
+            $output .= 'checked="checked" />'.$this->_getPersistantData();
         } else {
-            return 'default';
+            $output .= '/>';
         }
-    }
+        return $output;
+    } //end func getFrozenHtml
 }
 ?>
