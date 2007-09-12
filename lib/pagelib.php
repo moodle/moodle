@@ -350,7 +350,7 @@ class page_course extends page_base {
         if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
             return true;
         }
-        return has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $this->id));
+        return editcourseallowed($this->id);
     }
 
     // Is the user actually editing this course page or "sticky page" right now?

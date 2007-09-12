@@ -4049,32 +4049,9 @@ function print_editor_config($editorhidebuttons='', $return=false) {
  * @return string
  */
 function update_course_icon($courseid) {
-
     global $CFG, $USER;
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-
-    $capcheck = false;
-
-    if (has_capability('moodle/course:manageactivities', $coursecontext) ||
-        has_capability('moodle/site:manageblocks', $coursecontext)) {
-        $capcheck = true;
-    } else {
-        // loop through all child context, see if user has moodle/course:manageactivities or moodle/site:manageblocks
-        if ($children = get_child_contexts($coursecontext)) {
-            foreach ($children as $child) {
-                $childcontext = get_record('context', 'id', $child);
-                if (has_capability('moodle/course:manageactivities', $childcontext) ||
-                    has_capability('moodle/site:manageblocks', $childcontext)) {
-                    $capcheck = true;
-                    break;
-                }
-            }
-        }
-    }
-
-
-    if ($capcheck) {
+    if (editcourseallowed($courseid)) {
         if (!empty($USER->editing)) {
             $string = get_string('turneditingoff');
             $edit = '0';
