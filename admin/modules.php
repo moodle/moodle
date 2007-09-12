@@ -33,29 +33,45 @@
 
     print_heading($stractivities);
 
-    $coursesaffected = false;
-
-
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $hide)) {
             error("Module doesn't exist!");
         }
-        set_field("modules", "visible", "0", "id", $module->id);                               // Hide main module
-        set_field('course_modules', 'visibleold', '1', 'visible' ,'1', 'module', $module->id); // Remember the previous visible state so we can toggle this back if the module is unhidden.
-        set_field('course_modules', 'visibleold', '0', 'visible' ,'0', 'module', $module->id);
-        set_field("course_modules", "visible", "0", "module", $module->id);                    // Hide all related activity modules
-        $coursesaffected = true;
+        set_field("modules", "visible", "0", "id", $module->id); // Hide main module
+        // Remember the visibility status in visibleold
+        // and hide...
+        $sql = "UPDATE {$CFG->prefix}course_modules
+                SET visibleold=visible,
+                    visible=0
+                WHERE  module={$module->id}";
+        execute_sql($sql, false);
+        // clear the course modinfo cache for courses
+        // where we just deleted something
+        $sql = "UPDATE {$CFG->prefix}course
+                SET modinfo=''
+                WHERE id IN (SELECT DISTINCT course
+                             FROM {$CFG->prefix}course_modules
+                             WHERE visibleold=1 AND module={$module->id})";
+        execute_sql($sql, false);
     }
 
     if (!empty($show) and confirm_sesskey()) {
         if (!$module = get_record("modules", "name", $show)) {
             error("Module doesn't exist!");
         }
-        set_field("modules", "visible", "1", "id", $module->id);                               // Show main module
-        set_field('course_modules', 'visible', '1', 'visibleold', '1', 'module', $module->id); // Get the previous saved visible state for the course module.
-        $coursesaffected = true;
+        set_field("modules", "visible", "1", "id", $module->id); // Show main module
+        set_field('course_modules', 'visible', '1', 'visibleold',
+                  '1', 'module', $module->id); // Get the previous saved visible state for the course module.
+        // clear the course modinfo cache for courses
+        // where we just made something visible
+        $sql = "UPDATE {$CFG->prefix}course
+                SET modinfo=''
+                WHERE id IN (SELECT DISTINCT course
+                             FROM {$CFG->prefix}course_modules
+                             WHERE visible=1 AND module={$module->id})";
+        execute_sql($sql, false);
     }
 
     if (!empty($delete) and confirm_sesskey()) {
@@ -87,6 +103,15 @@
                     }
                 }
             }
+
+            // clear course.modinfo for courses
+            // that used this module...
+            $sql = "UPDATE {$CFG->prefix}course
+                    SET modinfo=''
+                    WHERE id IN (SELECT DISTINCT course
+                                 FROM {$CFG->prefix}course_modules
+                                 WHERE module={$module->id})";
+            execute_sql($sql, false);
 
             // Now delete all the course module records
             if (!delete_records("course_modules", "module", $module->id)) {
@@ -131,19 +156,11 @@
             // remove entent handlers and dequeue pending events
             events_uninstall('mod/'.$module->name);
 
-            // rebuild_course_cache();  // Because things have changed
-            $coursesaffected = true;
-
             $a->module = $strmodulename;
             $a->directory = "$CFG->dirroot/mod/$delete";
             notice(get_string("moduledeletefiles", "", $a), "modules.php");
         }
     }
-
-    if ($coursesaffected) {
-        rebuild_course_cache();  // Because things have changed
-    }
-
 
 /// Get and sort the existing modules
 
