@@ -2246,7 +2246,7 @@ function grade_view_all_grades($view_by_student) { // if mode=='grade' then we a
                 $row .= '<td align="right">'.$grades_by_student[$student]['student_data']['percent'].'%</td>';
             }
             if ($preferences->show_weighted) {
-                $row .= '<td align=right>'.$grades_by_student[$student]['student_data']['weighted'].'%</td>';
+                $row .= '<td align="right">'.$grades_by_student[$student]['student_data']['weighted'].'%</td>'; 
             }
             if ($preferences->show_letters) {
                 if ($preferences->use_weighted_for_letter == 1) {
