@@ -225,7 +225,7 @@ global $HTTPSPAGEREQUIRED;
 
 
 /// For now, only needed under apache (and probably unstable in other contexts)
-    if (function_exists('apache_child_terminate')) {
+    if (function_exists('register_shutdown_function')) {
         register_shutdown_function('moodle_request_shutdown');
     }
 
