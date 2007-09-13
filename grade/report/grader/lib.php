@@ -254,8 +254,17 @@ class grade_report_grader extends grade_report {
         } else {
             // default sort
             // get users sorted by lastname
-            $this->users = get_role_users(@implode(',', $CFG->gradebookroles), $this->context, false,
-                                'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder,
+
+            // If lastname or firstname is given as sortitemid, add the other name (firstname or lastname respectively) as second sort param
+            $sort2 = '';
+            if ($this->sortitemid == 'lastname') {
+                $sort2 = ', u.firstname ' . $this->sortorder;
+            } elseif ($this->sortitemid == 'firstname') {
+                $sort2 = ', u.lastname ' . $this->sortorder;
+            }
+
+            $this->users = get_role_users($this->gradebookroles, $this->context, false,
+                                'u.id, u.firstname, u.lastname', 'u.'.$this->sortitemid .' '. $this->sortorder . $sort2,
                                 false, $this->page * $this->get_pref('studentsperpage'), $this->get_pref('studentsperpage'),
                                 $this->currentgroup);
             // need to cut users down by groups
