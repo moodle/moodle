@@ -485,7 +485,16 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
+.grade-report-grader .gradestable tr.groupavg td.cell {
+	font-weight: bold;
+	color: #006400;
+}
 
+.grade-report-grader .gradestable tr.avg td.cell {
+	font-weight: bold;
+	color: #00008B;
+	
+}
 /***
  *** Login
  ***/

@@ -348,7 +348,13 @@ class grade_report_grader extends grade_report {
         }
 
         $html .= $this->print_toggle('averages', true);
-        $html .= $this->print_toggle('groups', true);
+
+        if (has_capability('moodle/grade:viewall', $this->context)
+         and has_capability('moodle/site:accessallgroups', $this->context)
+         and $course_has_groups = true) { // TODO replace that last condition with proper check
+            $html .= $this->print_toggle('groups', true);
+        }
+
         $html .= $this->print_toggle('ranges', true);
         if (!empty($CFG->enableoutcomes)) {
             $html .= $this->print_toggle('nooutcomes', true);
@@ -787,14 +793,16 @@ class grade_report_grader extends grade_report {
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection = $this->get_pref('meanselection');
         $avghtml = '';
+        $avgcssclass = 'avg';
 
         if ($grouponly) {
             $straverage = get_string('groupavg', 'grades');
             $showaverages = $this->currentgroup && $this->get_pref('showgroups');
             $groupsql = $this->groupsql;
             $groupwheresql = $this->groupwheresql;
+            $avgcssclass = 'groupavg';
         } else {
-            $straverage = get_string('average', 'grades');
+            $straverage = get_string('completeaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
             $groupsql = null;
             $groupwheresql = null;
@@ -827,7 +835,7 @@ class grade_report_grader extends grade_report {
                 }
             }
 
-            $avghtml = '<tr class="r'.$this->rowcount++.'"><th class="header c0" scope="row">'.$straverage.'</th>';
+            $avghtml = '<tr class="' . $avgcssclass . ' r'.$this->rowcount++.'"><th class="header c0" scope="row">'.$straverage.'</th>';
 
             $columncount=1;
             foreach ($this->items as $item) {

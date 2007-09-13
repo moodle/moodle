@@ -57,6 +57,7 @@ $string['categorytotal'] = 'Category total';
 $string['changesitedefaults'] = 'Change site defaults';
 $string['choosecategory'] = 'Select Category';
 $string['compact'] = 'Compact';
+$string['completeaverage'] = 'Complete average';
 $string['configaggregationposition'] = 'The position of the aggregation column in the grader report table, in reference to the real grades.';
 $string['configaggregationview'] = 'Each category can be displayed in three ways: Full mode (aggregated column and grade item columns), the aggregated column only, or the grade items alone.';
 $string['configaveragesdecimalpoints'] = 'The number of decimal points to display for each average (group or whole), below a column of grades. This can be overriden per grading item.';

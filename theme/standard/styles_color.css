@@ -721,6 +721,13 @@ body#grade-index .grades .r1 {
   background-color: #dddddd;
 }
 
+.grade-report-grader .gradestable tr.avg td.cell {
+	background-color: #efefff;
+}
+
+.grade-report-grader .gradestable tr.groupavg td.cell {
+	background-color: #efffef;
+}
 /***
  *** Login
  ***/
