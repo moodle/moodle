@@ -387,6 +387,10 @@ global $HTTPSPAGEREQUIRED;
 
     @ini_set('arg_separator.output', '&amp;');
 
+/// Work around for a PHP bug   see MDL-11237
+  
+    @ini_set('pcre.backtrack_limit', 20971520);  // 20 MB 
+
 /// Location of standard files
 
     $CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
