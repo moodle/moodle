@@ -152,18 +152,23 @@
     mtrace('Removing expired enrolments ...', '');     // See MDL-8785
     $timenow = time();
     $somefound = false;
+    // The preferred way saves memory, dmllib.php
     // find courses where limited enrolment is enabled
-    if($limitedcourses = get_records_select('course', 'enrolperiod > 0')) {
-        foreach($limitedcourses as $course) {
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            if ($oldenrolments = get_records_select('role_assignments', 'timeend > 0 AND timeend < ' . $timenow . ' AND contextid = ' . $context->id)) {
-                foreach ($oldenrolments as $oldenrolment) {
-                    role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
-                    $somefound = true;
-                }
-            }
-        }
+    global $CFG;
+    $rs_enrol = get_recordset_sql("SELECT ra.roleid, ra.userid, ra.contextid
+        FROM {$CFG->prefix}course c
+        INNER JOIN {$CFG->prefix}context cx ON cx.instanceid = c.id
+        INNER JOIN {$CFG->prefix}role_assignments ra ON ra.contextid = cx.id
+        WHERE cx.contextlevel = '".CONTEXT_COURSE."'
+        AND ra.timeend > 0
+        AND ra.timeend < '$timenow'
+        AND c.enrolperiod > 0
+        ");
+    while ($oldenrolment = rs_fetch_next_record($rs_enrol)) {
+        role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
+        $somefound = true;
     }
+    rs_close($rs_enrol);
     if($somefound) {
         mtrace('Done');
     } else {
