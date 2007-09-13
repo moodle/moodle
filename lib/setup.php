@@ -601,11 +601,13 @@ global $HTTPSPAGEREQUIRED;
             if (!empty($_SERVER['HTTP_USER_AGENT'])) {
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
                     $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) {
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
                     $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
                     $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
+                    $USER = guest_user();
+                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {  // MSN Search
                     $USER = guest_user();
                 }
             }
