@@ -631,19 +631,22 @@ function scorm_parse($scorm) {
     
     if ($scorm->reference[0] == '#') {
         $reference = $CFG->repository.substr($scorm->reference,1);
+        require_once($repositoryconfigfile);
     } else {
-        $reference = $scorm->dir.'/'.$scorm->id;
+        if (!scorm_external_link($scorm->reference) && (basename($scorm->reference) == 'imsmanifest.xml')) {
+            $referencedir = dirname($scorm->reference)=='.'?'':dirname($scorm->reference);
+            $reference = $CFG->dataroot.'/'.$scorm->course.'/'.$referencedir;
+        } else {
+            $reference = $scorm->dir.'/'.$scorm->id;
+        }
     }
+
     // Parse scorm manifest
     if ($scorm->pkgtype == 'AICC') {
         require_once('datamodels/aicclib.php');
         $scorm->launch = scorm_parse_aicc($reference, $scorm->id);
     } else {
         require_once('datamodels/scormlib.php');
-        if ($scorm->reference[0] == '#') {
-            require_once($repositoryconfigfile);
-        }
-
         $scorm->launch = scorm_parse_scorm($reference,$scorm->id);
     }
     return $scorm->launch;
@@ -774,6 +777,7 @@ function scorm_validate($data) {
                     case '.xml':
                         if (basename($localreference) == 'imsmanifest.xml') {
                             $validation = scorm_validate_manifest($localreference);
+                            $validation->pkgtype = 'SCORM';
                         } else {
                             $validation->errors['reference'] = get_string('nomanifest','scorm');
                             $validation->result = false;
@@ -944,6 +948,7 @@ function scorm_check_package($data) {
             } else {
                 if (($ext == '.xml') && (!$externalpackage)) {
                     $validation->datadir = dirname($referencefield);
+                    $validation->datadir = $validation->datadir=='.'?'':$validation->datadir;
                 } else {
                     $validation->datadir = substr($tempdir,strlen($scormdir));
                 }
