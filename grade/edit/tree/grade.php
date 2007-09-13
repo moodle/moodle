@@ -130,6 +130,7 @@ if ($mform->is_cancelled()) {
 // form processing
 } else if ($data = $mform->get_data(false)) {
     $old_grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true); //might not exist yet
+    $old_grade_text = new grade_grade_text(array('gradeid' => $old_grade_grade->id), true);
 
     // fix no grade for scales
     if (!isset($data->finalgrade) or $data->finalgrade == $data->oldgrade) {
@@ -143,13 +144,13 @@ if ($mform->is_cancelled()) {
     }
 
     if (!isset($data->feedback)) {
-        $data->feedback       = $old_grade_grade->feedback;
-        $data->feedbackformat = $old_grade_grade->feedbackformat;
+        $data->feedback       = $old_grade_text->feedback;
+        $data->feedbackformat = $old_grade_text->feedbackformat;
     }
     // update final grade or feedback
     $grade_item->update_final_grade($data->userid, $data->finalgrade, NULL, 'editgrade', $data->feedback, $data->feedbackformat);
 
-    $grade_grade = grade_grade::fetch(array('userid'=>$data->userid, 'itemid'=>$grade_item->id));
+    $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
     $grade_grade->grade_item =& $grade_item; // no db fetching
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
