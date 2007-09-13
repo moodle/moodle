@@ -68,7 +68,10 @@ class quiz_report extends quiz_default_report {
         }
 
         if ($attemptselection != QUIZ_ALLATTEMPTS) {
-            $sql = 'SELECT qa.userid '.$limit.'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '. 'WHERE ( qa.quiz = '.$quiz->id.') '.$group;
+            $sql = 'SELECT qa.userid '.$limit.
+                    'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
+                    'WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0 '.
+                    $group;
             $usermax = get_records_sql_menu($sql);
         }
 
@@ -82,7 +85,7 @@ class quiz_report extends quiz_default_report {
         }
 
         $sql = 'SELECT  qa.* FROM '.$CFG->prefix.'quiz_attempts qa, '.$CFG->prefix.'user u '.$groupmembers.
-                 'WHERE u.id = qa.userid AND qa.quiz = '.$quiz->id.' AND ( qa.sumgrades >= '.$scorelimit.' ) '.$groupwhere;
+                 'WHERE u.id = qa.userid AND qa.quiz = '.$quiz->id.' AND qa.preview = 0 AND ( qa.sumgrades >= '.$scorelimit.' ) '.$groupwhere;
 
         // ^^^^^^ es posible seleccionar aqu� TODOS los quizzes, como quiere Jussi,
         // pero habr�a que llevar la cuenta ed cada quiz para restaura las preguntas (quizquestions, states)
@@ -91,7 +94,7 @@ class quiz_report extends quiz_default_report {
         $attempts = get_records_sql($sql);
 
         if(empty($attempts)) {
-            ($strnoattempts);
+            print_heading(get_string('nothingtodisplay'));
             $this->print_options_form($quiz, $cm, $attemptselection, $lowmarklimit, $pagesize);
             return true;
         }
