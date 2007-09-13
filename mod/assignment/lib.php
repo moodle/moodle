@@ -796,7 +796,8 @@ class assignment_base {
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment,
-                          s.timemodified, s.timemarked ';
+                          s.timemodified, s.timemarked,
+                          COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
@@ -1121,7 +1122,8 @@ class assignment_base {
 
         $select = 'SELECT u.id, u.firstname, u.lastname, u.picture,
                           s.id AS submissionid, s.grade, s.submissioncomment,
-                          s.timemodified, s.timemarked ';
+                          s.timemodified, s.timemarked,
+                          COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
