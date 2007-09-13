@@ -279,7 +279,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 }
 
                 /// Determine style
-                if ($options->feedback && !empty($response)) {
+                if ($options->feedback && $response != '') {
                     $style = 'class = "'.question_get_feedback_class($chosenanswer->fraction).'"';
                     $feedbackimg = question_get_feedback_image($chosenanswer->fraction);
                 } else {
