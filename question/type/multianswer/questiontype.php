@@ -700,7 +700,8 @@ function qtype_multianswer_extract_question($text) {
                 $wrapped->fraction[] = '0';
             }
             if (isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])) {
-                $wrapped->feedback[] = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK], ENT_QUOTES, 'UTF-8');
+                $feedback = html_entity_decode($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK], ENT_QUOTES, 'UTF-8');
+                $wrapped->feedback[] = str_replace('\}', '}', $feedback);
             } else {
                 $wrapped->feedback[] = '';
             }
