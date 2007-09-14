@@ -163,6 +163,7 @@ $string['gradeexceptions'] = 'Grade Exceptions';
 $string['gradeexceptionshelp'] = 'Grade Exceptions Help';
 $string['gradehelp'] = 'Grade Help';
 $string['gradeitem'] = 'Grade item';
+$string['gradeitemislocked'] = 'This activity is locked in the gradebook. If you regrade it, the grades held internally by this activity will be different from the ones in the gradebook, the latter which will remain unchanged. Are you sure you want to proceed with the regrading?';
 $string['gradeitemlocked'] = 'Grading locked';
 $string['gradeitemsinc'] = 'Grade items to be included';
 $string['gradeitemaddusers'] = 'Exclude from Grading';

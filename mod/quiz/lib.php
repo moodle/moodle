@@ -17,11 +17,11 @@ require_once($CFG->libdir.'/questionlib.php');
 /**#@+
  * The different review options are stored in the bits of $quiz->review
  * These constants help to extract the options
- * 
+ *
  * This is more of a mess than you might think necessary, because originally
  * it was though that 3x6 bits were enough, but then they ran out. PHP integers
  * are only reliably 32 bits signed, so the simplest solution was then to
- * add 4x3 more bits. 
+ * add 4x3 more bits.
  */
 /**
  * The first 6 + 4 bits refer to the time immediately after the attempt
@@ -561,7 +561,7 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 /**
  * Pre-process the quiz options form data, making any necessary adjustments.
  * Called by add/update instance in this file, and the save code in admin/module.php.
- * 
+ *
  * @param object $quiz The variables set on the form.
  */
 function quiz_process_options(&$quiz) {
@@ -598,7 +598,7 @@ function quiz_process_options(&$quiz) {
                 $quiz->feedbacktext[$i] = trim($quiz->feedbacktext[$i]);
             }
         }
-    
+
         // Check the boundary value is a number or a percentage, and in range.
         $i = 0;
         while (!empty($quiz->feedbackboundaries[$i])) {
@@ -623,7 +623,7 @@ function quiz_process_options(&$quiz) {
             $i += 1;
         }
         $numboundaries = $i;
-    
+
         // Check there is nothing in the remaining unused fields.
         for ($i = $numboundaries; $i < count($quiz->feedbackboundaries); $i += 1) {
             if (!empty($quiz->feedbackboundaries[$i]) && trim($quiz->feedbackboundaries[$i]) != '') {
@@ -846,7 +846,7 @@ function quiz_question_list_instances($questionid) {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
- * @param $course The course id of the course the user is thinking of resetting. 
+ * @param $course The course id of the course the user is thinking of resetting.
  */
 function quiz_reset_course_form($course) {
     echo '<p>';
@@ -859,19 +859,19 @@ function quiz_reset_course_form($course) {
  * quiz attempts for course $data->courseid, if $data->reset_quiz_attempts is
  * set and true.
  * @param $data the data submitted from the reset course forum.
- * @param $showfeedback whether to output progress information as the reset 
+ * @param $showfeedback whether to output progress information as the reset
  *      progresses.
  */
 function quiz_delete_userdata($data, $showfeedback=true) {
     global $CFG;
-    
+
     if (empty($data->reset_quiz_attempts)) {
         return;
     }
-    
+
     $conditiononquizids = 'quiz IN (SELECT id FROM ' .
             $CFG->prefix . 'quiz q WHERE q.course = ' . $data->courseid . ')';
-    
+
     $attemptids = get_records_select('quiz_attempts', $conditiononquizids, '', 'id, uniqueid');
     if ($attemptids) {
         if ($showfeedback) {
@@ -900,18 +900,18 @@ function quiz_delete_userdata($data, $showfeedback=true) {
 /**
  * Checks whether the current user is allowed to view a file uploaded in a quiz.
  * Teachers can view any from their courses, students can only view their own.
- * 
+ *
  * @param int $attemptid int attempt id
  * @param int $questionid int question id
- * @return boolean to indicate access granted or denied  
+ * @return boolean to indicate access granted or denied
  */
 function quiz_check_file_access($attemptid, $questionid) {
     global $USER;
-    
+
     $attempt = get_record("quiz_attempts", 'id', $attemptid);
     $quiz = get_record("quiz", 'id', $attempt->quiz);
     $context = get_context_instance(CONTEXT_COURSE, $quiz->course);
-    
+
     // access granted if the current user submitted this file
     if ($attempt->userid == $USER->id) {
         return true;
@@ -919,8 +919,8 @@ function quiz_check_file_access($attemptid, $questionid) {
     } else if (has_capability('mod/quiz:viewreports', $context) || has_capability('mod/quiz:grade', $context)) {
         return true;
     }
-    
-    // otherwise, this user does not have permission    
+
+    // otherwise, this user does not have permission
     return false;
 }
 ?>

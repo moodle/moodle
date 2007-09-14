@@ -98,6 +98,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
     }
 
 /// Create or update the grade_item if needed
+
     if (!$grade_item) {
         if ($itemdetails) {
             $itemdetails = (array)$itemdetails;
@@ -127,8 +128,14 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     } else {
         if ($grade_item->is_locked()) {
-            debugging('Grading item is locked!');
-            return GRADE_UPDATE_ITEM_LOCKED;
+            $confirm_regrade = optional_param('confirm_regrade', 0, PARAM_INT);
+            if (!$confirm_regrade) {
+                $message = get_string('gradeitemislocked', 'grades', $grade_item->itemname);
+                $back_link = '';
+                $regrade_link = qualified_me() . '&amp;confirm_regrade=1';
+                notice_yesno($message, $regrade_link, $back_link);
+                return GRADE_UPDATE_ITEM_LOCKED;
+            }
         }
 
         if ($itemdetails) {
