@@ -802,7 +802,7 @@ class grade_report_grader extends grade_report {
             $groupwheresql = $this->groupwheresql;
             $avgcssclass = 'groupavg';
         } else {
-            $straverage = get_string('completeaverage', 'grades');
+            $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
             $groupsql = null;
             $groupwheresql = null;
