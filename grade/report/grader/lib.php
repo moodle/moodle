@@ -591,6 +591,8 @@ class grade_report_grader extends grade_report {
             $scales_list = substr($scales_list, 0, -1);
             $scales_array = get_records_list('scale', 'id', $scales_list);
         }
+        
+        $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         foreach ($this->users as $userid => $user) {
             $columncount = 0;
@@ -618,6 +620,16 @@ class grade_report_grader extends grade_report {
                     $gradeval = null;
                     $grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$item->id), false);
                     $grade->feedback = '';
+                }
+
+                // MDL-11274
+                // Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
+                if ($grade->is_hidden() && !$canviewhidden) {
+                    if (isset($grade->finalgrade)) {
+                        $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';                  } else {
+                        $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
+                    }
+                    continue; 
                 }
 
                 $grade->courseid = $this->courseid;
