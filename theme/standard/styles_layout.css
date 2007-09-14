@@ -2257,6 +2257,10 @@ body#doc-contents ul {
   text-align: center;
 }
 
+.grade-report-grader #siteconfiglink {
+  text-align: right;
+}
+
 /***
  *** Login
  ***/

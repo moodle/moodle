@@ -74,16 +74,16 @@ print_header_simple($strgrades.': '.$strgraderreport . ': ' . $strgradepreferenc
 /// Print the plugin selector at the top
 print_grade_plugin_selector($course->id, 'report', 'grader');
 
+// Add tabs
+$currenttab = 'preferences';
+include('tabs.php');
+
 // If USER has admin capability, print a link to the site config page for this report
 if (has_capability('moodle/site:config')) {
     echo '<div id="siteconfiglink"><a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereportgrader">';
     echo get_string('changesitedefaults', 'grades');
     echo "</a></div>\n";
 }
-
-// Add tabs
-$currenttab = 'preferences';
-include('tabs.php');
 
 print_simple_box_start("center");
 
