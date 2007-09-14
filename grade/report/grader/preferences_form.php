@@ -66,6 +66,7 @@ class grader_report_preferences_form extends moodleform {
                                          'showactivityicons' => $checkbox_default);
 
         $preferences['prefrows'] = array(
+                    'shownumberofgrades'  => $checkbox_default,
                     'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
                                                       GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
                                                       GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),

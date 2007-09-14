@@ -791,7 +791,9 @@ class grade_report_grader extends grade_report {
 
         $averagesdisplaytype   = $this->get_pref('averagesdisplaytype');
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
-        $meanselection = $this->get_pref('meanselection');
+        $meanselection         = $this->get_pref('meanselection');
+        $shownumberofgrades    = $this->get_pref('shownumberofgrades');
+
         $avghtml = '';
         $avgcssclass = 'avg';
 
@@ -923,7 +925,13 @@ class grade_report_grader extends grade_report {
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
                     }
 
-                    $avghtml .= '<td class="cell c' . $columncount++.'">'.$gradehtml.'</td>';
+                    $numberofgrades = '';
+
+                    if ($shownumberofgrades) {
+                        $numberofgrades = " ($mean_count)";
+                    }
+
+                    $avghtml .= '<td class="cell c' . $columncount++.'">'.$gradehtml.$numberofgrades.'</td>';
                 }
             }
             $avghtml .= '</tr>';
