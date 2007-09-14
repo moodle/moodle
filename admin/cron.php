@@ -150,13 +150,19 @@
 
     mtrace('Removing expired enrolments ...', '');     // See MDL-8785
     $timenow = time();
-    if ($oldenrolments = get_records_select('role_assignments', "timeend > 0 AND timeend < '$timenow'")) {
-        mtrace(count($oldenrolments).' to delete');
-        foreach ($oldenrolments as $oldenrolment) {
-            if (role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid)) {
-                mtrace("Deleted expired role assignment $oldenrolment->roleid for user $oldenrolment->userid from context $oldenrolment->contextid");
-            }
-        }
+    $somefound = false;
+    //The preferred way saves memory, dmllib.php
+    $rs_enrol = get_recordset_select('role_assignments',
+                                     'timeend > 0 AND timeend < '.$timenow,
+                                     $sort='',
+                                     'roleid, userid, contextid');
+    mtrace($rs_enrol->RecordCount().' to delete');
+    while ($oldenrolment = rs_fetch_next_record($rs_enrol)) {
+        role_unassign($oldenrolment->roleid, $oldenrolment->userid, 0, $oldenrolment->contextid);
+        $somefound = true;
+    }
+    rs_close($rs_enrol);
+    if($somefound) {
         mtrace('Done');
     } else {
         mtrace('none found');
