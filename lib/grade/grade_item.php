@@ -1146,6 +1146,16 @@ class grade_item extends grade_object {
                 return array();
             }
 
+            // If global aggregateoutcomes is set, override category value
+            if ($CFG->grade_aggregateoutcomes != -1) {
+                $grade_category->aggregateoutcomes = $CFG->grade_aggregateoutcomes;
+            }
+
+            // If global aggregatesubcats is set, override category value
+            if ($CFG->grade_aggregatesubcats != -1) {
+                $grade_category->aggregatesubcats = $CFG->grade_aggregatesubcats;
+            }
+
             if (empty($CFG->enableoutcomes) or $grade_category->aggregateoutcomes) {
                 $outcomes_sql = "";
             } else {
@@ -1153,7 +1163,7 @@ class grade_item extends grade_object {
             }
 
             if ($grade_category->aggregatesubcats) {
-                // return all children excluding category items                
+                // return all children excluding category items
                 $sql = "SELECT gi.id
                           FROM {$CFG->prefix}grade_items gi
                          WHERE (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
@@ -1169,9 +1179,9 @@ class grade_item extends grade_object {
                          WHERE gi.categoryid = {$grade_category->id}
                                AND (gi.gradetype = ".GRADE_TYPE_VALUE." OR gi.gradetype = ".GRADE_TYPE_SCALE.")
                                $outcomes_sql
-    
+
                         UNION
-    
+
                         SELECT gi.id
                           FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}grade_categories gc
                          WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id

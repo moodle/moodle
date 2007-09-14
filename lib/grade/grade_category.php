@@ -432,6 +432,7 @@ class grade_category extends grade_object {
      * internal function for category grades aggregation
      */
     function aggregate_grades($userid, $items, $grade_values, $oldgrade, $excluded) {
+        global $CFG;
         if (empty($userid)) {
             //ignore first call
             return;
@@ -486,6 +487,11 @@ class grade_category extends grade_object {
             }
 
             $grade_values[$itemid] = grade_grade::standardise_score($v, $items[$itemid]->grademin, $items[$itemid]->grademax, 0, 1);
+        }
+
+        // If global aggregateonlygraded is set, override category value
+        if ($CFG->grade_aggregateonlygraded != -1) {
+            $this->aggregateonlygraded = $CFG->grade_aggregateonlygraded;
         }
 
         // use min grade if grade missing for these types
@@ -619,6 +625,17 @@ class grade_category extends grade_object {
      * @return array Limited grades.
      */
     function apply_limit_rules(&$grade_values) {
+        global $CFG;
+
+        // If global keephigh and/or droplow are set, override category variable
+        if ($CFG->grade_keephigh != -1) {
+            $this->keephigh = $CFG->grade_keephigh;
+        }
+
+        if ($CFG->grade_droplow != -1) {
+            $this->droplow = $CFG->grade_droplow;
+        }
+
         arsort($grade_values, SORT_NUMERIC);
         if (!empty($this->droplow)) {
             for ($i = 0; $i < $this->droplow; $i++) {

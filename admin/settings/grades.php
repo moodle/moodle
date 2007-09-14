@@ -33,14 +33,14 @@ $options = array(-1 => $strnoforce,
                  GRADE_AGGREGATE_MODE            =>get_string('aggregatemode', 'grades'),
                  GRADE_AGGREGATE_WEIGHTED_MEAN   =>get_string('aggregateweightedmean', 'grades'),
                  GRADE_AGGREGATE_EXTRACREDIT_MEAN=>get_string('aggregateextracreditmean', 'grades'));
-$temp->add(new admin_setting_configselect('aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), -1, $options));
+$temp->add(new admin_setting_configselect('grade_aggregation', get_string('aggregation', 'grades'), get_string('aggregationhelp', 'grades'), -1, $options));
 
 $options = array(-1 => $strnoforce, 0 => get_string('forceoff', 'grades'), 1 => get_string('forceon', 'grades'));
-$temp->add(new admin_setting_configselect('aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
+$temp->add(new admin_setting_configselect('grade_aggregateonlygraded', get_string('aggregateonlygraded', 'grades'),
             get_string('aggregateonlygradedhelp', 'grades'), -1, $options));
-$temp->add(new admin_setting_configselect('aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
+$temp->add(new admin_setting_configselect('grade_aggregateoutcomes', get_string('aggregateoutcomes', 'grades'),
             get_string('aggregateoutcomeshelp', 'grades'), -1, $options));
-$temp->add(new admin_setting_configselect('aggregatesubcats', get_string('aggregatesubcats', 'grades'),
+$temp->add(new admin_setting_configselect('grade_aggregatesubcats', get_string('aggregatesubcats', 'grades'),
             get_string('aggregatesubcatshelp', 'grades'), -1, $options));
 
 $options = array(-1 => $strnoforce, 0 => get_string('none'));
@@ -48,9 +48,9 @@ for ($i=1; $i<=20; $i++) {
     $options[$i] = $i;
 }
 
-$temp->add(new admin_setting_configselect('keephigh', get_string('keephigh', 'grades'),
+$temp->add(new admin_setting_configselect('grade_keephigh', get_string('keephigh', 'grades'),
             get_string('keephighhelp', 'grades'), -1, $options));
-$temp->add(new admin_setting_configselect('droplow', get_string('droplow', 'grades'),
+$temp->add(new admin_setting_configselect('grade_droplow', get_string('droplow', 'grades'),
             get_string('droplowhelp', 'grades'), -1, $options));
 
 $ADMIN->add('grades', $temp);
