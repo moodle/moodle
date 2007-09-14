@@ -50,8 +50,8 @@
 ?>
 
 function updategrade_item() {
-    getElementById('form1').grade_itemid.value = getElementById('form2').grade_items.value;
-    getElementById('form3').grade_itemid.value = getElementById('form2').grade_items.value;
+    document.getElementById('form1').grade_itemid.value = document.getElementById('form2').grade_items.value;
+    document.getElementById('form3').grade_itemid.value = document.getElementById('form2').grade_items.value;
 }
 
 
@@ -61,11 +61,11 @@ function updateMembers(selectgrade_item) {
     username = grade_item.username;
     userid = grade_item.userid;
 
-    getElementById('form3')['members[]'].length = username.length;
+    document.getElementById('form3')['members[]'].length = username.length;
 
     for (i=0;i<username.length;i++) {
-        getElementById('form3')['members[]'].options[i].value = userid[i];
-        getElementById('form3')['members[]'].options[i].text  = username[i];
+        document.getElementById('form3')['members[]'].options[i].value = userid[i];
+        document.getElementById('form3')['members[]'].options[i].text  = username[i];
     }
 
     eval('grade_item_inc=grade_item_inc'+selectgrade_item.value); 
@@ -73,11 +73,11 @@ function updateMembers(selectgrade_item) {
     username = grade_item_inc.username;
     userid = grade_item_inc.userid;
 
-    getElementById('form1')['nonmembers[]'].length = username.length;
+    document.getElementById('form1')['nonmembers[]'].length = username.length;
 
     for (i=0;i<username.length;i++) {
-        getElementById('form1')['nonmembers[]'].options[i].value = userid[i];
-        getElementById('form1')['nonmembers[]'].options[i].text  = username[i];
+        document.getElementById('form1')['nonmembers[]'].options[i].value = userid[i];
+        document.getElementById('form1')['nonmembers[]'].options[i].text  = username[i];
     }
 
     updategrade_item();
