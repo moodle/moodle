@@ -76,7 +76,7 @@ function setup_enrolments(&$user) {
                     error_log("[ENROL_LDAP] User $user->username enrolled to a nonexistant course $course_ext_id \n");
                 }
             } else { // the course object exists before we call...
-                if ($course_obj->visible==0 && $user->{$type}[$course_obj->id] == 'ldap') {
+                if ($course_obj->visible==0) {
                     // non-visible courses don't show up in the enrolled 
                     // array, so we should skip them -- 
                     continue;
