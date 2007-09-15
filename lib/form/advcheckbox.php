@@ -89,5 +89,22 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
         }
     } // end func _generateId
 
+    /**
+     * Returns the disabled field. Accessibility: the return "[ ]" from parent
+     * class is not acceptable for screenreader users, and we DO want a label.
+     * @return    string
+     */
+    function getFrozenHtml()
+    {
+        //$this->_generateId();
+        $output = '<input type="checkbox" disabled="disabled" id="'.$this->getAttribute('id').'" ';
+        if ($this->getChecked()) {
+            $output .= 'checked="checked" />'.$this->_getPersistantData();
+        } else {
+            $output .= '/>';
+        }
+        return $output;
+    } //end func getFrozenHtml
+
 }
 ?>
