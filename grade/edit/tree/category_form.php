@@ -73,7 +73,7 @@ class edit_category_form extends moodleform {
         }
 
         if ($CFG->grade_droplow == -1) {
-            $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $options);
+            $mform->addElement('select', 'droplow', get_string('droplow', 'grades'), $this->keepdrop_options);
             $mform->setHelpButton('droplow', array(false, get_string('droplow', 'grades'),
                               false, true, false, get_string('droplowhelp', 'grades')));
             $mform->disabledIf('droplow', 'keephigh', 'noteq', 0);
