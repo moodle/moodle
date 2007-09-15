@@ -84,21 +84,44 @@ class edit_scale_form extends moodleform {
 
 /// perform extra validation before submission
     function validation($data){
+        global $CFG, $COURSE;
 
-        global $CFG;
-
-        $errors= array();
+        $errors = array();
 
         // we can not allow 2 scales with the same exact scale as this creates
         // problems for backup/restore
-        $courseid = empty($data['courseid'])?0:$data['courseid'];
-        if (count_records('scale', 'courseid', $courseid, 'scale', $data['scale'])) {
-            $errors['scale'] = get_string('duplicatescale', 'grades');
+
+        $old = grade_scale::fetch(array('id'=>$data['id']));
+
+        if (array_key_exists('standard', $data)) {
+            if (empty($data['standard'])) {
+                $courseid = $COURSE->id;
+            } else {
+                $courseid = 0;
+            }
+
+        } else {
+            $courseid = $old->courseid;
         }
 
-        $options = explode(',', $data['scale']);
-        if (count($options) < 2) {
-            $errors['scale'] = get_string('error');
+        if (array_key_exists('scale', $data)) {
+            $count = count_records('scale', 'courseid', $courseid, 'scale', $data['scale']);
+
+            if (empty($old->id) or $old->courseid != $courseid) {
+                if ($count) {
+                    $errors['scale'] = get_string('duplicatescale', 'grades');
+                }
+
+            } else if ($old->scale != $data['scale']) {
+                if ($count) {
+                    $errors['scale'] = get_string('duplicatescale', 'grades');
+                }
+            }
+
+            $options = explode(',', $data['scale']);
+            if (count($options) < 2) {
+                $errors['scale'] = get_string('error');
+            }
         }
 
         if (0 == count($errors)){

@@ -33,7 +33,7 @@ if ($id) {
         }
         $scale_rec->standard = 1;
         $scale_rec->courseid = $courseid;
-        require_login();
+        require_login($courseid);
         require_capability('moodle/course:managescales', $systemcontext);
     }
 
