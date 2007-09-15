@@ -878,7 +878,7 @@ class assignment_base {
 
         if (!empty($CFG->enableoutcomes) and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid)) {
             foreach($outcomes_data as $n=>$data) {
-                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.format_string($data->name).'</label> ';
+                echo '<div class="outcome"><label for="menuoutcome_'.$n.'">'.$data->name.'</label> ';
                 $options = make_grades_menu(-$data->scaleid);
                 if ($data->locked) {
                     $options[0] = get_string('nooutcome', 'grades');
@@ -1239,7 +1239,7 @@ class assignment_base {
                 if ($uses_outcomes and $outcomes_data = grade_get_outcomes($this->course->id, 'mod', 'assignment', $this->assignment->id, $auser->id)) {
 
                     foreach($outcomes_data as $n=>$data) {
-                        $outcomes .= '<div class="outcome"><label>'.format_string($data->name).'</label>';
+                        $outcomes .= '<div class="outcome"><label>'.$data->name.'</label>';
                         $options = make_grades_menu(-$data->scaleid);
 
                         if ($data->locked or !$quickgrade) {
