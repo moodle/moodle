@@ -36,7 +36,7 @@ class user_editadvanced_form extends moodleform {
         $mform->setType('newpassword', PARAM_RAW);
         //TODO: add missing help - empty means no change
 
-        $mform->addElement('checkbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
+        $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         //TODO: add missing help - user will be forced to change password
 
         /// shared fields
