@@ -48,7 +48,7 @@
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
     }
 
-/// And this directory must exist to allow Typo to cache conversion 
+/// And this directory must exist to allow Typo to cache conversion
 /// tables when using internal functions
     make_upload_directory('temp/typo3temp/cs');
 
@@ -83,7 +83,7 @@ function textlib_get_instance () {
  * utf-8 text become mandatory a pool of safe functions under this encoding
  * become necessary. The name of the methods is exactly the
  * same than their PHP originals.
- * 
+ *
  * A big part of this class acts as a wrapper over the Typo3 charset library,
  * really a cool group of utilities to handle texts and encoding conversion.
  *
@@ -126,7 +126,7 @@ class textlib {
     }
 
     /**
-     * Multibyte safe substr() function, uses mbstring if available. 
+     * Multibyte safe substr() function, uses mbstring if available.
      */
     function substr($text, $start, $len=null, $charset='utf-8') {
     /// Normalize charset
@@ -141,7 +141,7 @@ class textlib {
     }
 
     /**
-     * Multibyte safe strlen() function, uses mbstring if available. 
+     * Multibyte safe strlen() function, uses mbstring if available.
      */
     function strlen($text, $charset='utf-8') {
     /// Normalize charset
@@ -156,7 +156,7 @@ class textlib {
     }
 
     /**
-     * Multibyte safe strtolower() function, uses mbstring if available. 
+     * Multibyte safe strtolower() function, uses mbstring if available.
      */
     function strtolower($text, $charset='utf-8') {
     /// Normalize charset
@@ -171,7 +171,7 @@ class textlib {
     }
 
     /**
-     * Multibyte safe strtoupper() function, uses mbstring if available. 
+     * Multibyte safe strtoupper() function, uses mbstring if available.
      */
     function strtoupper($text, $charset='utf-8') {
     /// Normalize charset
@@ -186,7 +186,7 @@ class textlib {
     }
 
     /**
-     * UTF-8 ONLY safe strpos() function, uses mbstring if available. 
+     * UTF-8 ONLY safe strpos() function, uses mbstring if available.
      */
     function strpos($haystack,$needle,$offset=0) {
     /// Call Typo3 utf8_strpos() function. It will do all the work
@@ -194,7 +194,7 @@ class textlib {
     }
 
     /**
-     * UTF-8 ONLY safe strrpos() function, uses mbstring if available. 
+     * UTF-8 ONLY safe strrpos() function, uses mbstring if available.
      */
     function strrpos($haystack,$needle) {
     /// Call Typo3 utf8_strrpos() function. It will do all the work
@@ -253,7 +253,7 @@ class textlib {
                         $encchunk = base64_encode($chunk);
                         if (strlen($encchunk) > $length) {
                             // find first 11 chars - each char in 4 bytes - worst case scenario
-                            preg_match('/^(([\x00-\x7f])|([\x81-\xfe][\x40-\x7e])|([\x81-\xfe][\x80-\xfe])|([\x81-\xfe][\x30-\x39]..)){1,11}/m', $text, $matches);                            
+                            preg_match('/^(([\x00-\x7f])|([\x81-\xfe][\x40-\x7e])|([\x81-\xfe][\x80-\xfe])|([\x81-\xfe][\x30-\x39]..)){1,11}/m', $text, $matches);
                             $chunk = $matches[0];
                             $encchunk = base64_encode($chunk);
                         }
@@ -264,7 +264,7 @@ class textlib {
                     }
                 }
                 $encoded = trim($encoded);
-                return $encoded; 
+                return $encoded;
             } else {
                 return false;
             }
@@ -274,12 +274,12 @@ class textlib {
         $magic = $avglength = floor(3 * $length * $ratio / 4);
     /// basic infinite loop protection
         $maxiterations = strlen($text)*2;
-        $iteration = 0; 
+        $iteration = 0;
     /// Iterate over the string in magic chunks
         for ($i=0; $i <= $multilength; $i+=$magic) {
             if ($iteration++ > $maxiterations) {
-                return false; // probably infinite loop 
-            } 
+                return false; // probably infinite loop
+            }
             $magic = $avglength;
             $offset = 0;
         /// Ensure the chunk fits in length, reduding magic if necessary
@@ -293,7 +293,7 @@ class textlib {
             if ($chunk)
                 $encoded .= ' '.$start.$chunk.$end.$linefeed;
         }
-    /// Strip the first space and the last linefeed 
+    /// Strip the first space and the last linefeed
         $encoded = substr($encoded, 1, -strlen($linefeed));
 
         return $encoded;
@@ -304,7 +304,7 @@ class textlib {
      * Original from laurynas dot butkus at gmail at:
      * http://php.net/manual/en/function.html-entity-decode.php#75153
      * with some custom mods to provide more functionality
-     * 
+     *
      * @param    string    $str      input string
      * @param    boolean   $htmlent  convert also html entities (defaults to true)
      *
@@ -369,10 +369,10 @@ class textlib {
         }
         return $str;
     }
-    
+
     /**
      * Returns encoding options for select boxes, utf-8 and platform encoding first
-     * @return array encodings     
+     * @return array encodings
      */
     function get_encodings() {
         $encodings = array();
@@ -383,7 +383,7 @@ class textlib {
         }
         $nixenc = strtoupper(get_string('oldcharset'));
         $encodings[$nixenc] = $nixenc;
-        
+
         foreach ($this->typo3cs->synonyms as $enc) {
             $enc = strtoupper($enc);
             $encodings[$enc] = $enc;
@@ -392,9 +392,9 @@ class textlib {
     }
 
     /**
-     * Returns the utf8 string corresponding to the unicode value 
+     * Returns the utf8 string corresponding to the unicode value
      * (from php.net, courtesy - romans@void.lv)
-     * 
+     *
      * @param  int    $num one unicode value
      * @return string the UTF-8 char corresponding to the unicode value
      */
@@ -412,6 +412,41 @@ class textlib {
             return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
         }
         return '';
+    }
+
+    /**
+     * Makes first letter of each word capital - words must be separated by spaces.
+     * Use with care, this function does not work properly in many locales!!!
+     * @param string $text
+     * @return string
+     */
+    function strtotitle($text) {
+        if (empty($text)) {
+            return $text;
+        }
+
+        if (function_exists('mb_convert_case')) {
+            return mb_convert_case($text, MB_CASE_TITLE,"UTF-8");
+        }
+
+        $text = $this->strtolower($text);
+        $words = explode(' ', $text);
+        foreach ($words as $i=>$word) {
+            $length = $this->strlen($word);
+            if (!$length) {
+                continue;
+
+            } else if ($length == 1) {
+                $words[$i] = $this->strtoupper($word);
+
+            } else {
+                $letter = $this->substr($word, 0, 1);
+                $letter = $this->strtoupper($letter);
+                $rest   = $this->substr($word, 1);
+                $words[$i] = $letter.$rest;
+            }
+        }
+        return implode(' ', $words);
     }
 }
 ?>

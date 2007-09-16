@@ -1,6 +1,4 @@
 <?php
-
-require_once($CFG->libdir.'/textlib.class.php');
     
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
 define('MAX_TAG_LENGTH',50);
@@ -223,7 +221,8 @@ function tag_display_name($tag_object){
 
     if( empty($CFG->keeptagnamecase) ) {
         //this is the normalized tag name
-        return mb_convert_case($tag_object->name, MB_CASE_TITLE,"UTF-8");
+        $textlib = new textlib();
+        return $textlib->strtotitle($tag_object->name);
     }
     else {
         //original casing of the tag name
