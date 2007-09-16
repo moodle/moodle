@@ -256,6 +256,11 @@ define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
+/**
+ * Tag constanst
+ */
+define('TAG_MAX_LENGTH', 50);
+
 
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
@@ -555,7 +560,10 @@ function clean_param($param, $type) {
             $param = preg_replace("/[\\x{80}-\\x{bf}\\x{d7}\\x{f7}]/u", '', $param);
             //cleanup the spaces
             $param = preg_replace('/ +/', ' ', $param);
-            return trim($param);
+            $param = trim($param);
+            $textlib = new textlib();
+            return $textlib->substr($param, 0, TAG_MAX_LENGTH);
+            
 
         case PARAM_TAGLIST:
             $tags = explode(',', $param);

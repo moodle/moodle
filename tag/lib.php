@@ -1,7 +1,6 @@
 <?php
     
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
-define('MAX_TAG_LENGTH',50);
 
 /**
  * Creates tags
@@ -956,7 +955,7 @@ function tag_instance_table_cleanup() {
 
 
 /**
- * Function that normalizes a tag name
+ * Function that normalizes a list of tag names
  * 
  * Ex: tag_normalize('bANAana')   -> returns 'banana'
  *        tag_normalize('lots    of    spaces') -> returns 'lots of spaces'
@@ -969,40 +968,13 @@ function tag_instance_table_cleanup() {
  */
 
 function tag_normalize($tag_names_csv, $lowercase=true) {
+    $tag_names_csv = clean_param($tag_names_csv, PARAM_TAGLIST);
 
-    $textlib = textlib_get_instance();
-    
-    $tags = explode(',', $tag_names_csv);
-    
-    if (sizeof($tags) > 1) {
-
-        foreach ($tags as $key => $tag) {
-            $tags[$key] = tag_normalize($tag);
-        }
-
-        return implode(',' , $tags);
-
+    if ($lowercase){
+        $tag_names_csv = moodle_strtolower($tag_names_csv);
     }
 
-    // only one tag was passed
-    else {
-
-        if ($lowercase){
-            $value = moodle_strtolower($tag_names_csv);
-        }
-        else {
-            $value = $tag_names_csv;
-        }
-
-        //$value = preg_replace('|[^\w ]|i', '', strtolower(trim($tag_names_csv)));
-        $value = preg_replace('|[\,\!\@\#\$\%\^\&\*\(\)\-\+\=\~\`\\"\'\_.\[\]\{\}\:\;\?\´\^\\\/\<\>\|]|i', '', trim($value));
-
-        //removes excess white spaces
-        $value = preg_replace('/\s\s+/', ' ', $value);
-
-        return $textlib->substr($value,0,MAX_TAG_LENGTH);
-    }
-
+    return $tag_names_csv;
 }
 
 function tag_flag_inappropriate($tag_names_or_ids_csv){
