@@ -121,9 +121,10 @@ function tag_exists($tag_name_or_id) {
 
     if (is_numeric($tag_name_or_id)) {
         return record_exists('tag', 'id', $tag_name_or_id);
-    }
-    elseif (is_string($tag_name_or_id)) {
-        return record_exists('tag', 'name', $tag_name_or_id);
+
+    } else {
+        // normalised tag names are always lowercase only
+        return record_exists('tag', 'name', moodle_strtolower($tag_name_or_id));
     }
 }
 
@@ -157,11 +158,12 @@ function tags_id($tag_names_csv) {
     $normalized_tag_names_csv = tag_normalize($tag_names_csv);
     $tag_names_csv_with_apos = "'" . str_replace(',', "','", $normalized_tag_names_csv ) . "'";
 
-    $tag_objects = get_records_list('tag','name', $tag_names_csv_with_apos, "" , "name, id" );
-
     $tags_ids = array();
-    foreach ($tag_objects as $tag) {
-        $tags_ids[$tag->name] = $tag->id;
+
+    if ($tag_objects = get_records_list('tag','name', $tag_names_csv_with_apos, "" , "name, id" )) {
+        foreach ($tag_objects as $tag) {
+            $tags_ids[$tag->name] = $tag->id;
+        }
     }
 
     return $tags_ids;
@@ -1543,160 +1545,6 @@ function print_tag_cloud($tagcloud, $shuffle=true, $max_size=180, $min_size=80, 
         echo $output;
     }
 
-}
-
-function print_tag_management_list($perpage='100') {
-
-    global $CFG, $USER;
-    require_once($CFG->libdir.'/tablelib.php');
-
-    //setup table
-
-    $tablecolumns = array('id','name', 'fullname', 'count', 'flag', 'timemodified', 'rawname', 'tagtype', '');
-    $tableheaders = array(  get_string('id' , 'tag'),
-    get_string('name' , 'tag'),
-    get_string('owner','tag'),
-    get_string('count','tag'),
-    get_string('flag','tag'),
-    get_string('timemodified','tag'),
-    get_string('newname', 'tag'),
-    get_string('tagtype', 'tag'),
-    get_string('select', 'tag')
-    );
-
-    $table = new flexible_table('tag-management-list-'.$USER->id);
-
-    $baseurl = $CFG->wwwroot.'/tag/manage.php';
-
-    $table->define_columns($tablecolumns);
-    $table->define_headers($tableheaders);
-    $table->define_baseurl($baseurl);
-
-    $table->sortable(true, 'flag', SORT_DESC);
-
-    $table->set_attribute('cellspacing', '0');
-    $table->set_attribute('id', 'tag-management-list');
-    $table->set_attribute('class', 'generaltable generalbox');
-
-    $table->set_control_variables(array(
-    TABLE_VAR_SORT    => 'ssort',
-    TABLE_VAR_HIDE    => 'shide',
-    TABLE_VAR_SHOW    => 'sshow',
-    TABLE_VAR_IFIRST  => 'sifirst',
-    TABLE_VAR_ILAST   => 'silast',
-    TABLE_VAR_PAGE    => 'spage'
-    ));
-
-    $table->setup();
-
-    if ($table->get_sql_sort()) {
-        $sort = ' ORDER BY '.$table->get_sql_sort();
-    } else {
-        $sort = '';
-    }
-
-    if ($table->get_sql_where()) {
-        $where = 'WHERE '.$table->get_sql_where();
-    } else {
-        $where = '';
-    }
-
-    $query = "
-        SELECT 
-            tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname
-        FROM 
-            {$CFG->prefix}tag_instance ti
-        RIGHT JOIN 
-            {$CFG->prefix}tag tg 
-        ON 
-            tg.id = ti.tagid
-        LEFT JOIN
-            {$CFG->prefix}user u
-        ON
-            tg.userid = u.id
-        {$where}
-        GROUP BY 
-            tg.id 
-        {$sort}
-        ";
-
-
-    $totalcount = count_records_sql("SELECT COUNT(DISTINCT(tg.id))
-                                     FROM {$CFG->prefix}tag tg LEFT JOIN {$CFG->prefix}user u ON u.id = tg.userid
-                                     $where");
-
-    $table->initialbars(true); // always initial bars
-    $table->pagesize($perpage, $totalcount);
-
-    echo '<form id="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';
-
-    //retrieve tags from DB
-    if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get_page_size())) {
-
-        $taglist = array_values($tagrecords);
-
-        //print_tag_cloud(array_values(get_records_sql($query)), false);
-
-        //populate table with data
-        foreach ($taglist as $tag ){
-
-            $id             =   $tag->id;
-            $name           =   '<a href="'.$CFG->wwwroot.'/tag/index.php?id='.$tag->id.'">'. tag_display_name($tag) .'</a>';
-            $owner          =   '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$tag->owner.'">' . fullname($tag) . '</a>';
-            $count          =   $tag->count;
-            $flag           =   $tag->flag;
-            $timemodified   =   format_time(time() - $tag->timemodified);
-            $checkbox       =   '<input type="checkbox" name="tagschecked[]" value="'.$tag->id.'" />';
-            $text           =   '<input type="text" name="newname['.$tag->id.']" />';
-
-            // get all the possible tag types from db
-            $tagtypes = array();
-            if ($ptypes = get_records_sql("SELECT DISTINCT(tagtype), id FROM {$CFG->prefix}tag")) {
-                foreach ($ptypes as $ptype) {
-                    $tagtypes[$ptype->tagtype] = $ptype->tagtype;
-                }
-            }
-            // default types
-            $tagtypes['default']='default';
-            $tagtypes['official']='official';
-
-            $tagtype        =   choose_from_menu ($tagtypes, 'tagtypes['.$tag->id.']', $tag->tagtype, '', '', '0', true);
-
-            //if the tag if flagged, highlight it
-            if ($tag->flag > 0) {
-                $id = '<span class="flagged-tag">' . $id . '</span>';
-                $name = '<span class="flagged-tag">' . $name . '</span>';
-                $owner = '<span class="flagged-tag">' . $owner . '</span>';
-                $count = '<span class="flagged-tag">' . $count . '</span>';
-                $flag = '<span class="flagged-tag">' . $flag . '</span>';
-                $timemodified = '<span class="flagged-tag">' . $timemodified . '</span>';
-                $tagtype = '<span class="flagged-tag">'. $tagtype. '</span>';
-            }
-
-            $data = array($id, $name , $owner ,$count ,$flag, $timemodified, $text, $tagtype, $checkbox);
-
-            $table->add_data($data);
-        }
-
-
-        echo '<input type="button" onclick="checkall()" value="'.get_string('selectall').'" /> ';
-        echo '<input type="button" onclick="checknone()" value="'.get_string('deselectall').'" /> ';
-        echo '<br/><br/>';
-        echo '<select id="menuformaction" name="action">
-                    <option value="" selected="selected">'. get_string('withselectedtags', 'tag') .'</option>
-                    <option value="reset">'. get_string('resetflag', 'tag') .'</option>
-                    <option value="delete">'. get_string('delete', 'tag') .'</option>
-                    <option value="changetype">'. get_string('changetype', 'tag') .'</option>
-                    <option value="changename">'. get_string('changename', 'tag') .'</option>
-                </select>';
-
-        echo '<button id="tag-management-submit" type="submit">'. get_string('ok') .'</button>';
-
-    }
-
-    $table->print_html();
-
-    echo '</form>';
 }
 
 ?>
