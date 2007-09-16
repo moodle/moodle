@@ -115,6 +115,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 <form id="form1" method="post" action="backup.php">
 <table cellpadding="5" style="margin-left:auto;margin-right:auto;">
 <?php
+/// Acummulator for hidden options and proper XHTML output
+    $hidden_options = '';
     //Now, check modules and info and show posibilities
     if ($allmods = get_records("modules") ) {
         //Print option to select/deselect everything with 1 click.
@@ -189,8 +191,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         }
         //Line
         echo "<tr><td colspan=\"4\"><hr /></td></tr>\n";
-        
-        if (empty($to)) {
+
+        if (empty($to) && !empty($course->metacourse)) {
             //Now print the Metacourse tr
             echo "<tr>";
             echo "<td align=\"right\" colspan=\"2\"><b>";
@@ -202,7 +204,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</td></tr>";
         }
         else {
-            echo '<input type="hidden" name="backup_metacourse" value="0" />';
+            $hidden_options .= '<input type="hidden" name="backup_metacourse" value="0" />';
         }
 
         if (empty($to)) {
@@ -218,7 +220,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</td></tr>";
         }
         else {
-            echo '<input type="hidden" name="backup_users" value="0" />';
+            $hidden_options .= '<input type="hidden" name="backup_users" value="0" />';
         }
         
         if (empty($to)) {
@@ -233,7 +235,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</td></tr>";
         }
         else {
-            echo '<input type="hidden" name="backup_logs" value="0" />';
+            $hidden_options .= '<input type="hidden" name="backup_logs" value="0" />';
         }
  
         if (empty($to)) {
@@ -248,7 +250,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</td></tr>";
         }
         else {
-            echo '<input type="hidden" name="backup_user_files" value="0" />';
+            $hidden_options .= '<input type="hidden" name="backup_user_files" value="0" />';
         }
         //Now print the Course Files tr
         echo "<tr>";
@@ -272,7 +274,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "</td></tr>";
         }
         else {
-            echo '<input type="hidden" name="backup_messages" value="0" />';
+            $hidden_options .= '<input type="hidden" name="backup_messages" value="0" />';
         }
     }
 
@@ -318,6 +320,10 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     //the temp-directory name and records in backup temp tables
 ?>
 </table>
+<?php
+/// Print captured hidden options, now that we have closed the table
+    echo $hidden_options;
+?>
 
 <div style="text-align:center;margin-left:auto;margin-right:auto">
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
