@@ -64,6 +64,7 @@ function useredit_shared_definition(&$mform) {
 
     $strrequired = get_string('required');
 
+    $nameordercheck = new object();
     $nameordercheck->firstname = 'a';
     $nameordercheck->lastname  = 'b';
     if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
