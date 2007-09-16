@@ -24,9 +24,6 @@
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
 
-    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
-
     // Guest can not edit
     if (isguestuser()) {
         print_error('guestnoeditprofile');
@@ -45,13 +42,16 @@
     // User interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
-        $user->interests = tag_names_csv(get_item_tags('user',$userid));
+        $user->interests = tag_names_csv(get_item_tags('user', $user->id));
     }
 
     // remote users cannot be edited
     if (is_mnet_remote_user($user)) {
         redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
     }
+
+    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
     // check access control
     if ($user->id == $USER->id) {
