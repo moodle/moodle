@@ -197,7 +197,7 @@ $string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  4.1.0.</p
 <p>Musíte obnoviť PHP alebo presunúť na hostiteľský počítač s novou verziou PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Predchádzajúci';
-$string['remotedownloadnotallowed'] = 'Nahrávanie komponentov na server nie je povolené (direktíva allow_url_fopen je v stave \'vypnuté\').<br /><br />Musíte súbor stiahnuť <a href=\"$a->url\">$a->url</a> ručne, skopírovat ho na serveri do umiestnenia \"$a->dest\" a tam ho dekomprimovať.';
+$string['remotedownloadnotallowed'] = 'Nahrávanie komponentov na server nie je povolené (direktíva allow_url_fopen je v stave \'vypnuté\').<br /><br />Musíte súbor stiahnuť <a href=\"$a->url\">$a->url</a> ručne, skopírovať ho na serveri do umiestnenia \"$a->dest\" a tam ho dekomprimovať.';
 $string['report'] = 'Záznamy';
 $string['restricted'] = 'Obmedzený';
 $string['safemode'] = 'Bezpečný mód';
