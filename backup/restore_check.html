@@ -20,10 +20,18 @@
         $currentcourseshortname = $course_header->course_shortname; //"store_ShortName";
         $course_header->course_shortname =  stripslashes_safe($form1->shortname);  //"update_ShortName";
         $course_header->course_fullname =   stripslashes_safe($form1->fullname);   //"update_FullName";
-        $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
-        $currentcoursestartdate = $course_header->course_startdate;
-        $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
-        $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
+    /// Roll dates only if the backup course has a start date
+    /// (some formats like main page, social..., haven't it and rolling dates
+    /// from 0 produces crazy dates. MDL-10125
+        if ($course_header->course_startdate) {
+            $form1->startdate = make_timestamp($form1->startyear, $form1->startmonth, $form1->startday);
+            $currentcoursestartdate = $course_header->course_startdate;
+            $coursestartdatedateoffset = $form1->startdate - $currentcoursestartdate;
+            $restore->course_startdateoffset = $coursestartdatedateoffset; //change to restore
+        } else { // don't roll if the course hasn't start date
+            $coursestartdatedateoffset = 0;
+            $restore->course_startdateoffset = 0;
+        }
     }
 
     ///Enforce SESSION->course_header rewrite (PHP 4.x needed because assigns are by value) MDL-8298
