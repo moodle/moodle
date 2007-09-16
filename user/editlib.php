@@ -223,8 +223,9 @@ function useredit_shared_definition(&$mform) {
 
     if( !empty($CFG->usetags)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
-        $mform->addElement('static', 'helptextinterests', '' , get_string('enteryourinterests'));
-        $mform->addElement('textarea', 'interests', get_string('interests'), 'cols="45" rows="3"');
+        $mform->addElement('textarea', 'interests', get_string('interestslist'), 'cols="45" rows="3"');
+        $mform->setHelpButton('interests', array(false, get_string('helpinterestslist'),
+                          false, true, false, get_string('helpinterestslist')));
     }
     
     /// Moodle optional fields
