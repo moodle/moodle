@@ -14,6 +14,9 @@
 #mod-glossary-report .generalbox .teacher,
 #mod-assignment-submissions table.submissions th,
 #mod-assignment-submissions table.submissions td,
+#mod-assignment-submissions .feedback .content,
+#mod-assignment-submissions .feedback .topic,
+#mod-assignment-submissions .feedback .picture,
 form.mform fieldset.hidden,
 form.mform fieldset.hidden fieldset.fgroup,
 ul.tabrow1 li a:link,
@@ -198,6 +201,8 @@ h2.main,
 table.files th,
 .tabrow0 ul,
 legend,
+#mod-assignment-submissions table.submissions th,
+#mod-assignment-submissions .feedback tr,
 #footer-bar {
     border-top:1px solid #FFCC99;
     border-left:1px solid #FFCC99;
