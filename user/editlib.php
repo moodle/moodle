@@ -54,8 +54,7 @@ function useredit_update_trackforums($user, $usernew) {
     }
 }
 
-function useredit_update_interests($user, $cvs_tag_names)
-{
+function useredit_update_interests($user, $cvs_tag_names) {
     update_item_tags('user', $user->id, $cvs_tag_names);
 }
 
