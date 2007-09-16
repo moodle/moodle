@@ -59,9 +59,9 @@ class block_tags extends block_base {
 
         /// Get a list of tags
 
-        include($CFG->dirroot.'/tag/lib.php');
+        require_once($CFG->dirroot.'/tag/lib.php');
 
-        $this->content->text = print_tag_cloud(popular_tags_count($this->config->numberoftags), false, 170,70, true);
+        $this->content->text = print_tag_cloud(popular_tags_count($this->config->numberoftags), false, 170, 70, true);
 
         return $this->content;
     }

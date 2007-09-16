@@ -7,7 +7,7 @@
     require_once($CFG->libdir .'/pagelib.php');
     require_once($CFG->dirroot .'/blog/rsslib.php');
     require_once($CFG->dirroot .'/blog/blogpage.php');
-    include_once($CFG->dirroot.'/tag/lib.php');
+    require_once($CFG->dirroot.'/tag/lib.php');
 
     /**
      * Definition of blogcourse page type (blog page with course id present).
