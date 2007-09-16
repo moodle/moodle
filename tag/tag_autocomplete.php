@@ -1,19 +1,20 @@
 <?php // $Id$
 
+require_once('../config.php');
 require_once('lib.php');
 
-if( empty($CFG->usetags)) {
+require_login();
+
+if (empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-$query    = optional_param('query',     0,      PARAM_TEXT);  
-$query    = tag_normalize($query);
+$query = optional_param('query', '', PARAM_TAG);  
 
-$similar_tags = similar_tags($query);
-
-$count = 0;
-foreach ($similar_tags as $tag){
-    echo tag_display_name($tag) . "\t" . $tag->id . "\n";
+if ($similar_tags = similar_tags($query)) {
+    foreach ($similar_tags as $tag){
+        echo tag_display_name($tag) . "\t" . $tag->id . "\n";
+    }
 }
 
 ?>

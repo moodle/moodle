@@ -5,22 +5,25 @@ require_once('lib.php');
 require_once('edit_form.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
 
+require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_autocomplete'));
+
 require_login();
 
-if( empty($CFG->usetags)) {
+if (empty($CFG->usetags)) {
     error(get_string('tagsaredisabled', 'tag'));
 }
 
-$tagid    = required_param('id', PARAM_INT);   // user id
-$tag      = tag_by_id($tagid);
-$tagname  = tag_display_name($tag);
+$tagid   = required_param('id', PARAM_INT);   // user id
+
+$tag     = tag_by_id($tagid);
+$tagname = tag_display_name($tag);
 
 //Editing a tag requires moodle/tag:edit capability
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/tag:edit', $systemcontext);
 
 // set the relatedtags field of the $tag object that will be passed to the form
-$tag->relatedtags = tag_names_csv( get_item_tags('tag',$tagid) );
+$tag->relatedtags = tag_names_csv(get_item_tags('tag',$tagid));
 
 $tagform = new tag_edit_form();
 $tagform->set_data($tag);
@@ -52,12 +55,7 @@ print_heading($tagname, '', 2);
 
 $tagform->display();
 
-
-echo require_js('yui_dom-event');
-echo require_js('yui_connection');
-echo require_js('yui_animation');
-echo require_js('yui_autocomplete');
-
+if (ajaxenabled()) {
 ?>
 
 <script type="text/javascript">
@@ -77,7 +75,7 @@ myAutoComp.allowBrowserAutocomplete = false;
 </script>
 
 <?php
-
+}
 print_footer();
 
 ?>

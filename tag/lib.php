@@ -737,21 +737,13 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
  * @return mixed an array of objects, or false if no records were found or an error occured.
  */
 function similar_tags($text, $limitfrom='' , $limitnum='' ) {
-
     global $CFG;
 
-    $text = tag_normalize($text);
+    $text = moodle_strtolower($text);
 
-    $query = "
-        SELECT 
-            tg.id, tg.name, tg.rawname
-        FROM
-            {$CFG->prefix}tag tg
-        WHERE
-            tg.name
-        LIKE
-            '{$text}%'
-        ";
+    $query = "SELECT tg.id, tg.name, tg.rawname
+                FROM {$CFG->prefix}tag tg
+               WHERE tg.name LIKE '{$text}%'";
 
     return get_records_sql($query, $limitfrom , $limitnum);
 }
