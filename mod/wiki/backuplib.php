@@ -172,7 +172,7 @@
         return $status;
     }
     
-    function backup_wiki_files_instance($bf,$preferences,$instancid) {
+    function backup_wiki_files_instance($bf,$preferences,$instanceid) {
 
         global $CFG;
         
