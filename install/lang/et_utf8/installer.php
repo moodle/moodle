@@ -12,10 +12,10 @@
 $string['admindirerror'] = 'Valitud administreerimiskataloog on vale';
 $string['admindirname'] = 'Administreerimiskataloog';
 $string['caution'] = 'Hoiatus';
-$string['closewindow'] = 'Sule aken';
+$string['closewindow']='Sule aken';
 $string['configfilenotwritten'] = 'Installeerimisskript ei suutnud automaatselt tekitada config.php faili, mis sisaldaks sinu valitud seadistusi. Põhjus võib olla selles, et sinu Moodle kataloog ei ole kirjutatav. Sa võid käsitsi kopeerida järgneva koodi config.php nimelisse faili, mis asub Moodle juurkataloogis.';
 $string['configfilewritten'] = 'config.php on edukalt loodud';
-$string['continue'] = 'Jätka';
+$string['continue']='Jätka';
 $string['database'] = 'Andmebaas';
 $string['dataroot'] = 'Andmete kataloog';
 $string['datarooterror'] = 'Sinu määratud andmete kataloogi ei suudetud leida ega luua. Paranda tee või loo ise käsitsi see kataloog.';
@@ -27,7 +27,7 @@ $string['dbtype'] = 'Tüüp';
 $string['dirroot'] = 'Moodle kataloog';
 $string['dirrooterror'] = 'Moodle kataloogi seadistus näib olevat vigane -  me ei suuda sealt leida Moodle installatsiooni. Allpool olev väärtus on nullitud.';
 $string['download'] = 'Lae alla';
-$string['error'] = 'Viga';
+$string['error']='Viga';
 $string['fail'] = 'Fail';
 $string['fileuploads'] = 'Failide üleslaadimine';
 $string['fileuploadserror'] = 'See peaks olema sisse lülitatud';
@@ -40,10 +40,11 @@ $string['gdversionhelp'] = '<p>Sinu serveril ei paista GD installeeritud olevat.
 <p>GD lisamiseks PHP\'le Unixi operatsioonisüsteemis tuleb kompileerida PHP-d, kasutates --with-gd parameetrit.</p>
 
 <p>Windowsis saad sa tavaliselt muuta php.ini faili ja kommenteerida sisse libdg.dll\'le vastava rea.</p>';
-$string['help'] = 'Abi';
-$string['info'] = 'Informatsioon';
+$string['help']='Abi';
+$string['info']='Informatsioon';
 $string['installation'] = 'Installeerimine';
-$string['language'] = 'Keel';
+$string['invalidmd5']='Vigane md5';
+$string['language']='Keel';
 $string['magicquotesruntime'] = 'Magic Quotes talitlusaeg';
 $string['magicquotesruntimeerror'] = 'See peaks olema välja lülitatud';
 $string['memorylimit'] = 'Mälu limiit';
@@ -61,29 +62,33 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 <li>Mõnedes PHP serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab seda rida:<p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
 </ol>';
-$string['moodledocslink'] = 'Moodle dokumendid käesoleva lehe kohta';
+$string['moodledocslink']='Moodle dokumendid käesoleva lehe kohta';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP ei ole MySQL laiendiga õigesti konfigureeritud, seega ei saa ta MySQL\'ga suhelda. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
-$string['name'] = 'Nimi';
-$string['next'] = 'Järgmine';
-$string['ok'] = 'OK';
+$string['name']='Nimi';
+$string['next']='Järgmine';
+$string['ok']='OK';
 $string['pass'] = 'Korras';
-$string['password'] = 'Salasõna';
+$string['password']='Salasõna';
+$string['php50restricted']='PHP 5.0.x omab mitmeid probleeme. Palun uuenda 5.1.x või lase tagasi 4.3.x or 4.4.x PHP versioonile';
 $string['phpversion'] = 'PHP versioon';
 $string['phpversionerror'] = 'PHP versioon peab olema vähemalt 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
 <p>Sinu jooksev versioon on $a</p>
 <p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
-$string['previous'] = 'Eelmine';
-$string['report'] = 'Ülevaade';
+$string['previous']='Eelmine';
+$string['report']='Ülevaade';
 $string['safemode'] = 'Ohutu reiim';
 $string['safemodeerror'] = 'Moodle\'il võib ohutus reiimis komplikatsioone tekkida';
+$string['serverchecks']='Serveri kontrollid';
 $string['sessionautostart'] = 'Sessioonide automaatne algatamine';
 $string['sessionautostarterror'] = 'See peaks olema välja lülitatud';
-$string['status'] = 'Staatus';
+$string['status']='Staatus';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Eesti';
-$string['user'] = 'Kasutaja';
+$string['user']='Kasutaja';
+$string['wrongdestpath']='Vale sihtkoha rada.';
+$string['wrongzipfilename']='Vale ZIP failinimi.';
 $string['wwwroot'] = 'Veebiaadress';
 $string['wwwrooterror'] = 'Veebiaadress näib vigane - Moodle installatsiooni ei paista seal olevat.';
 ?>
