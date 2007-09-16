@@ -235,9 +235,19 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo"</td></tr>";
         echo "<tr valign=\"top\"> ";
         echo "<td align=\"right\"> ";
-        print_string("startdate"); 
-        echo ":</td><td>"; 
-        print_date_selector("startday", "startmonth", "startyear", $form1->startdate);
+        print_string("startdate");
+        echo ":</td><td>";
+    /// Show the roll dates option only if the backup course has a start date
+    /// (some formats like main page, social..., haven't it and rolling dates
+    /// from 0 produces crazy dates. MDL-10125
+        if ($form1->startdate) {
+            print_date_selector("startday", "startmonth", "startyear", $form1->startdate);
+        } else {
+            print_string('notavailable');
+            echo '<input type="hidden" name="startyear" value="0" />';
+            echo '<input type="hidden" name="startmonth" value="0" />';
+            echo '<input type="hidden" name="startday" value="0" />';
+        }
         helpbutton("coursestartdate", get_string("startdate"));
         echo "</td></tr>";
     }
