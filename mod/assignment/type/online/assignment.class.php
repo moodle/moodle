@@ -201,20 +201,12 @@ class assignment_online extends assignment_base {
         ///Stolen code from file.php
 
         print_simple_box_start('center', '', '', 0, 'generalbox', 'wordcount');
-        echo '<table>';
-        //if ($assignment->timedue) {
-        //    echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
-        //    echo '    <td class="c1">'.userdate($assignment->timedue).'</td></tr>';
-        //}
-        echo '<tr>';//<td class="c0">'.get_string('lastedited').':</td>';
-        echo '    <td class="c1">';//.userdate($submission->timemodified);
-        /// Decide what to count
-            if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
-                echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')</td></tr>';
-            } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
-                echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')</td></tr>';
-            }
-        echo '</table>';
+    /// Decide what to count
+        if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_WORDS) {
+            echo ' ('.get_string('numwords', '', count_words(format_text($submission->data1, $submission->data2))).')';
+        } else if ($CFG->assignment_itemstocount == ASSIGNMENT_COUNT_LETTERS) {
+            echo ' ('.get_string('numletters', '', count_letters(format_text($submission->data1, $submission->data2))).')';
+        }
         print_simple_box_end();
         print_simple_box(format_text($submission->data1, $submission->data2), 'center', '100%');
 
