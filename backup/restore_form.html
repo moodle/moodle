@@ -103,6 +103,10 @@
         }
     }
 
+    if (!isset($course_header->category->id)) {
+        $course_header->category->id = 0;
+    }
+
     if(!isset($form1->startdate)) {
         $form1->startdate = $course_header->course_startdate; //$course_header->course_startdate;
     }
