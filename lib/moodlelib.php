@@ -149,6 +149,16 @@ define('PARAM_TEXT',  0x0009);
 define('PARAM_FILE',     0x0010);
 
 /**
+ * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international alphanumeric with spaces
+ */
+define('PARAM_TAG',   0x0011);
+
+/**
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
+ */
+define('PARAM_TAGLIST',   0x0012);
+
+/**
  * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  * note: the leading slash is not removed, window drive letter is not allowed
  */
@@ -485,6 +495,7 @@ function clean_param($param, $type) {
                 }
             }
             return $param;
+
         case PARAM_PEM:
             $param = trim($param);
             // PEM formatted strings may contain letters/numbers and the symbols
@@ -503,6 +514,7 @@ function clean_param($param, $type) {
                 }
             }
             return '';
+
         case PARAM_BASE64:
             if (!empty($param)) {
                 // PEM formatted strings may contain letters/numbers and the symbols
@@ -532,6 +544,34 @@ function clean_param($param, $type) {
             } else {
                 return '';
             }
+
+        case PARAM_TAG:
+            //first fix whitespace
+            $param = preg_replace('/\s+/', ' ', $param);
+            //remove blacklisted ASCII ranges of chars - security FIRST - keep only ascii letters, numnbers and spaces
+            //the result should be safe to be used directly in html and SQL
+            $param = preg_replace("/[\\000-\\x1f\\x21-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\x7f]/", '', $param);
+            //now remove some unicode ranges we do not want
+            $param = preg_replace("/[\\x{80}-\\x{bf}\\x{d7}\\x{f7}]/u", '', $param);
+            //cleanup the spaces
+            $param = preg_replace('/ +/', ' ', $param);
+            return trim($param);
+
+        case PARAM_TAGLIST:
+            $tags = explode(',', $param);
+            $result = array();
+            foreach ($tags as $tag) {
+                $res = clean_param($tag, PARAM_TAG);
+                if ($res != '') {
+                    $result[] = $res;
+                }
+            }
+            if ($result) {
+                return implode(',', $result);
+            } else {
+                return '';
+            }
+
         default:                 // throw error, switched parameters in optional_param or another serious problem
             error("Unknown parameter type: $type");
     }
