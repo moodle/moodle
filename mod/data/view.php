@@ -191,7 +191,7 @@
         $paging = NULL;
     }
 
-    $textlib = new textlib();
+    $textlib = textlib_get_instance();
     if ($textlib->strlen($search) < 2) {
         $search = '';
     }

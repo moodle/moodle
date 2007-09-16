@@ -70,7 +70,7 @@
 ///                 its capabilities so, don't forget to make the conversion
 ///                 from every wrapper function!
 
-function textlib_get_instance () {
+function textlib_get_instance() {
     static $instance;
     if (!is_object($instance)) {
         $instance = new textlib();

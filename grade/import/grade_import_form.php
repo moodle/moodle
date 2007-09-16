@@ -13,7 +13,7 @@ class grade_import_form extends moodleform {
         $mform->addElement('file', 'userfile', get_string('file'));
         $mform->setType('userfile', PARAM_FILE);
         $mform->addRule('userfile', null, 'required');
-        $textlib = new textlib();
+        $textlib = textlib_get_instance();
         $encodings = $textlib->get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
 

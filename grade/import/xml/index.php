@@ -49,7 +49,7 @@ if ( $formdata = $mform->get_data()) {
     $text = my_file_get_contents($filename);
 
     // trim utf-8 bom
-    $textlib = new textlib();
+    $textlib = textlib_get_instance();
     // converts to propert unicode
     $text = $textlib->convert($text, $formdata->encoding);
     $text = $textlib->trim_utf8_bom($text);

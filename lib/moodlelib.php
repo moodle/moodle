@@ -561,7 +561,7 @@ function clean_param($param, $type) {
             //cleanup the spaces
             $param = preg_replace('/ +/', ' ', $param);
             $param = trim($param);
-            $textlib = new textlib();
+            $textlib = textlib_get_instance();
             return $textlib->substr($param, 0, TAG_MAX_LENGTH);
             
 
@@ -3081,7 +3081,7 @@ function check_password_policy($password, &$errmsg) {
         return true;
     }
 
-    $textlib = new textlib();
+    $textlib = textlib_get_instance();
     $errmsg = '';
     if ($textlib->strlen($password) < $CFG->minpasswordlength) {
         $errmsg = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);

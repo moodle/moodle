@@ -333,7 +333,7 @@ if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
     $text = my_file_get_contents($filename);
     // trim utf-8 bom
-    $textlib = new textlib();
+    $textlib = textlib_get_instance();
     /// normalize line endings and do the encoding conversion
     $text = $textlib->convert($text, $formdata->encoding);
     $text = $textlib->trim_utf8_bom($text);

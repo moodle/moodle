@@ -220,7 +220,7 @@ function tag_display_name($tag_object){
 
     if( empty($CFG->keeptagnamecase) ) {
         //this is the normalized tag name
-        $textlib = new textlib();
+        $textlib = textlib_get_instance();
         return $textlib->strtotitle($tag_object->name);
     }
     else {
