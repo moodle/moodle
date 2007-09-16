@@ -562,8 +562,9 @@ function clean_param($param, $type) {
             $param = preg_replace('/ +/', ' ', $param);
             $param = trim($param);
             $textlib = textlib_get_instance();
-            return $textlib->substr($param, 0, TAG_MAX_LENGTH);
-            
+            $param = $textlib->substr($param, 0, TAG_MAX_LENGTH);
+            //numeric tags not allowed
+            return is_numeric($param) ? '' : $param;
 
         case PARAM_TAGLIST:
             $tags = explode(',', $param);
