@@ -44,9 +44,9 @@ function note_list($courseid=0, $userid=0, $state = '', $author = 0, $order='las
         $selects[] = 'usermodified=' . $author;
     }
     if($state) {
-        $selects[] = 'publishstate="' . $state . '"';
+        $selects[] = "publishstate='$state'";
     }
-    $selects[] = 'module="notes"';
+    $selects[] = "module='notes'";
     $select = implode(' AND ', $selects);
     $fields = 'id,courseid,userid,content,format,created,lastmodified,usermodified,publishstate';
     // retrieve data
@@ -62,11 +62,11 @@ function note_list($courseid=0, $userid=0, $state = '', $author = 0, $order='las
  */
 function note_load($note_id) {
     $fields = 'id,courseid,userid,content,format,created,lastmodified,usermodified,publishstate';
-    return get_record_select('post', 'id=' . $note_id . ' AND module="notes"', $fields);
+    return get_record_select('post', "id=$note_id AND module='notes'", $fields);
 }
 
 /**
- * Saves a note object. The note object is passed by reference and its fields (i.e. id) 
+ * Saves a note object. The note object is passed by reference and its fields (i.e. id)
  * might change during the save.
  *
  * @param note   $note object to save
@@ -109,7 +109,7 @@ function note_save(&$note) {
  * @return boolean true if the object was deleted; false otherwise
  */
 function note_delete($noteid) {
-    return delete_records_select('post', 'id=' . $noteid . ' AND module="notes"');
+    return delete_records_select('post', "id=$noteid AND module='notes'");
 }
 
 /**
@@ -164,7 +164,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     $authoring->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$author->id.'&amp;course='.$note->courseid.'">'.fullname($author).'</a>';
     $authoring->date = userdate($note->lastmodified);
 
-    echo '<div class="notepost '. $note->publishstate . 'notepost' . 
+    echo '<div class="notepost '. $note->publishstate . 'notepost' .
         ($note->usermodified == $USER->id ? ' ownnotepost' : '')  .
         '" id="note-'. $note->id .'">';
 
@@ -174,22 +174,22 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
         echo '<div class="user">';
         print_user_picture($user->id, $note->courseid, $user->picture);
         echo fullname($user) . '</div>';
-        echo '<div class="info">' . 
-            get_string('bynameondate', 'notes', $authoring) . 
+        echo '<div class="info">' .
+            get_string('bynameondate', 'notes', $authoring) .
             ' (' . get_string('created', 'notes') . ': ' . userdate($note->created) . ')</div>';
         echo '</div>';
     }
-    
+
     // print note content
     if($detail & NOTES_SHOW_BODY) {
         echo '<div class="content">';
         echo format_text($note->content, $note->format);
         echo '</div>';
     }
-    
+
     // print note options (e.g. delete, edit)
     if($detail & NOTES_SHOW_FOOT) {
-        if (has_capability('moodle/notes:manage', $sitecontext) && $note->publishstate == NOTES_STATE_SITE || 
+        if (has_capability('moodle/notes:manage', $sitecontext) && $note->publishstate == NOTES_STATE_SITE ||
             has_capability('moodle/notes:manage', $context) && ($note->publishstate == NOTES_STATE_PUBLIC || $note->usermodified == $USER->id)) {
             echo '<div class="footer"><p>';
             echo '<a href="'.$CFG->wwwroot.'/notes/edit.php?note='.$note->id. '">'. get_string('edit') .'</a> | ';
