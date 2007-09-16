@@ -29,6 +29,8 @@ print_header_simple(get_string('managetags', 'tag'), '', $navigation);
 $notice = tag_name_from_string(implode($tagschecked, ', '));
 $notice = str_replace(',', ', ', $notice);
 
+$err_notice = '';
+
 switch($action) {
 
     case 'delete':
@@ -68,7 +70,6 @@ switch($action) {
         $existing_tags = tags_id( $normalized_new_names_csv );
         
         //notice to warn that names already exist
-        $err_notice = '';
         foreach ($existing_tags as $name => $tag){
             $err_notice .= $name . ', ';
         }
@@ -96,8 +97,12 @@ switch($action) {
 
 echo '<br/>';
 
-notify($err_notice, 'red');
-notify($notice , 'green');
+if ($err_notice) {
+    notify($err_notice, 'red');
+}
+if ($notice) {
+    notify($notice , 'green');
+}
 
 print_tag_management_list();
 
