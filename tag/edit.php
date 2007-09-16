@@ -3,7 +3,6 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
-require_once($CFG->dirroot.'/lib/weblib.php');
 
 require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_autocomplete'));
 
@@ -25,14 +24,24 @@ require_capability('moodle/tag:edit', $systemcontext);
 // set the relatedtags field of the $tag object that will be passed to the form
 $tag->relatedtags = tag_names_csv(get_item_tags('tag',$tagid));
 
+if (can_use_html_editor()) {
+    $options = new object();
+    $options->smiley = false;
+    $options->filter = false;
+
+    // convert and remove any XSS
+    $tag->description       = format_text($tag->description, $tag->descriptionformat, $options);
+    $tag->descriptionformat = FORMAT_HTML;
+}
+
 $tagform = new tag_edit_form();
 $tagform->set_data($tag);
 
 // if new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
-    
+
     $tagnew->timemodified = time();
-    
+
     if (!update_record('tag', $tagnew)) {
         error('Error updating tag record');
     }

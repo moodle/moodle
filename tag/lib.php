@@ -1,15 +1,15 @@
 <?php
-    
+
 define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
 
 /**
  * Creates tags
 
  * Ex: tag_create('A VeRY   cOoL    Tag, Another NICE tag')
- * will create the following normalized {@link tag_normalize()} entries in tags table: 
- *  'a very cool tag'  
+ * will create the following normalized {@link tag_normalize()} entries in tags table:
+ *  'a very cool tag'
  *  'another nice tag'
- * 
+ *
  * @param string $tag_names_csv CSV tag names (can be unnormalized) to be created.
  * @param string $tag_type type of tag to be created ("default" is the default value).
  * @return an array of tags ids, indexed by their normalized names
@@ -17,7 +17,7 @@ define('DEFAULT_TAG_TABLE_FIELDS', 'id, tagtype, name, rawname, flag');
 function tag_create($tag_names_csv, $tag_type="default") {
     global $USER;
     $textlib = textlib_get_instance();
-    
+
     $tags = explode(",", $tag_names_csv );
 
     $tag_object = new StdClass;
@@ -59,14 +59,14 @@ function tag_create($tag_names_csv, $tag_type="default") {
 
 /**
  * Deletes tags
- * 
+ *
  * Ex 1: tag_delete('a very cool tag, another nice tag')
  * Will delete the tags with names 'a very cool tag' and 'another nice tag' from the 'tags' table, if they exist!
  *
  * Ex 2: tag_delete('computers, 123, 143, algorithms')
  *  Will delete tags with names 'computers' and 'algorithms' and tags with ids 123 and 143.
- * 
- * 
+ *
+ *
  * @param string $tag_names_or_ids_csv **normalized** tag names or ids of the tags to be deleted.
  */
 
@@ -74,7 +74,7 @@ function tag_delete($tag_names_or_ids_csv) {
 
     //covert all names to ids
     $tag_ids_csv = tag_id_from_string($tag_names_or_ids_csv);
-    
+
     //put apostrophes
     $tag_ids_csv_with_apos = "'" . str_replace(',', "','", $tag_ids_csv) . "'";
 
@@ -82,7 +82,7 @@ function tag_delete($tag_names_or_ids_csv) {
     // delete_records_select('tag_instance',"tagid IN ($tag_ids_csv_with_apos)");
     // Luiz: (in near future) tag instances should be cascade deleted by RDMS referential integrity constraints, when moodle implements it
     // For now, tag_instance orphans should be removed using tag_instance_table_cleanup()
-    
+
     $return1 = delete_records_select('tag',"name IN ($tag_ids_csv_with_apos)");
     $return2 = delete_records_select('tag',"id IN ($tag_ids_csv_with_apos)");
 
@@ -95,9 +95,9 @@ function tag_delete($tag_names_or_ids_csv) {
  *
  * @param string $tag_types_csv (optional, default value is "default". If '*' is passed, tags of any type will be returned).
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return 
+ * @param string $fields a comma separated list of fields to return
  *   (optional, by default 'id, tagtype, name, rawname, flag'). The first field will be used as key for the
- *   array so must be a unique field such as 'id'. 
+ *   array so must be a unique field such as 'id'.
  */
 function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields=DEFAULT_TAG_TABLE_FIELDS) {
 
@@ -115,7 +115,7 @@ function get_all_tags($tag_types_csv="default", $sort='name ASC', $fields=DEFAUL
  *
  * @param string $tag_name_or_id **normalized** tag name, or an id.
  * @return true if exists or false otherwise
- * 
+ *
  */
 function tag_exists($tag_name_or_id) {
 
@@ -147,9 +147,9 @@ function tag_id($tag_name) {
 
 /**
  * Function that returns the ids of tags
- * 
+ *
  * Ex: tags_id('computers, algorithms')
- * 
+ *
  * @param String $tag_names_csv comma separated **normalized** tag names.
  * @return Array array with the tags ids, indexed by their **normalized** names
  */
@@ -211,8 +211,8 @@ function tags_name($tag_ids_csv) {
 }
 
 /**
- * Function that returns the name of a tag for display. 
- * 
+ * Function that returns the name of a tag for display.
+ *
  * @param mixed $tag_object
  * @return string
  */
@@ -256,21 +256,21 @@ function tag_by_name($tag_name) {
 
 /**
  * In a comma separated string of ids or names of tags, replaces all tag names with their correspoding ids
- * 
- * Ex: 
+ *
+ * Ex:
  *  Suppose the DB contains only the following entries in the tags table:
- *      id    name 
+ *      id    name
  *      10    moodle
  *      12    science
  *      22    education
- * 
+ *
  * tag_id_from_string('moodle, 12, education, programming, 33, 11')
  *    will return '10,12,22,,33,11'
- *      
+ *
  * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
- * 
+ *
  * @param string $tag_names_or_ids_csv comma separated **normalized** names or ids of tags
- * @return int comma separated ids of the tags 
+ * @return int comma separated ids of the tags
  */
 function tag_id_from_string($tag_names_or_ids_csv) {
 
@@ -296,21 +296,21 @@ function tag_id_from_string($tag_names_or_ids_csv) {
 
 /**
  * In a comma separated string of ids or names of tags, replaces all tag ids with their correspoding names
- * 
- * Ex: 
+ *
+ * Ex:
  *  Suppose the DB contains only the following entries in the tags table:
- *      id    name 
+ *      id    name
  *      10    moodle
  *      12    science
  *      22    education
- * 
+ *
  *  tag_name_from_string('mOOdle, 10, HiStOrY, 17, 22')
  *     will return the string 'mOOdle,moodle,HiStOrY,,education'
- * 
+ *
  * This is a helper function used by functions of this API to process function arguments ($tag_name_or_id)
- * 
+ *
  * @param string $tag_names_or_ids_csv comma separated names or ids of tags
- * @return int comma separated names of the tags 
+ * @return int comma separated names of the tags
  */
 function tag_name_from_string($tag_names_or_ids_csv) {
 
@@ -352,14 +352,14 @@ function is_tag_name_valid($name){
 
 /**
  * Associates a tag with an item
- * 
+ *
  * Ex 1: tag_an_item('user', '1', 'hisTOrY, RELIGIONS, roman' )
  *  This will tag an user whose id is 1 with "history", "religions", "roman"
  *   If the tag names passed do not exist, they will get created.
- * 
+ *
  * Ex 2: tag_an_item('user', '1', 'hisTory, 12, 11, roman')
  *   This will tag an user whose id is 1 with 'history', 'roman' and with tags of ids 12 and 11
- * 
+ *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item to be tagged
  * @param string $tag_names_or_ids_csv comma separated tag names (can be unormalized) or ids of existing tags
@@ -428,17 +428,17 @@ function tag_an_item($item_type, $item_id, $tag_names_or_ids_csv, $tag_type="def
 
 /**
  * Updates the tags associated with an item
- * 
+ *
  * Ex 1:
  *  Suppose user 1 is tagged only with "algorithms", "computers" and "software"
  *  By calling update_item_tags('user', 1, 'algorithms, software, mathematics')
  *  User 1 will now be tagged only with "algorithms", "software" and "mathematics"
- * 
+ *
  * Ex 2:
  *   update_item_tags('user', '1', 'algorithms, 12, 13')
  *   User 1 will now be tagged only with "algorithms", and with tags of ids 12 and 13
- * 
- * 
+ *
+ *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item to be tagged
  * @param string $tag_names_or_ids_csv comma separated tag names (can be unormalized) or ids of existing tags
@@ -480,11 +480,11 @@ function update_item_tags($item_type, $item_id, $tag_names_or_ids_csv, $tag_type
 
 /**
  * Removes the association of an item with a tag
- * 
+ *
  * Ex: untag_an_item('user', '1', 'history, 11, roman' )
  *  The user with id 1 will no longer be tagged with 'history', 'roman' and the tag of id 11
  *   Calling  untag_an_item('user','1')  will remove all tags associated with user 1.
- *    
+ *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item to be untagged
  * @param string $tag_names_or_ids_csv comma separated tag **normalized** names or ids of existing tags (optional, if none is given, all tags of the item will be removed)
@@ -513,9 +513,9 @@ function untag_an_item($item_type, $item_id, $tag_names_or_ids_csv='') {
 
 /**
  * Function that gets the tags that are associated with an item
- * 
+ *
  * Ex: get_item_tags('user', '1')
- * 
+ *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $item_id id of the item beeing queried
  * @param string $sort an order to sort the results in, a valid SQL ORDER BY parameter (default is 'ti.ordering ASC')
@@ -545,13 +545,13 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
     $query = "
         SELECT
             {$fields}
-        FROM 
+        FROM
             {$CFG->prefix}tag_instance ti
         INNER JOIN
             {$CFG->prefix}tag tg
         ON
             tg.id = ti.tagid
-        WHERE 
+        WHERE
             ti.itemtype = '{$item_type}' AND
             ti.itemid = '{$item_id}'
             $tagwhere
@@ -566,15 +566,15 @@ function get_item_tags($item_type, $item_id, $sort='ti.ordering ASC', $fields=DE
 
 /**
  * Function that returns the items of a certain type associated with a certain tag
- * 
+ *
  * Ex 1: get_items_tagged_with('user', 'banana')
  * Ex 2: get_items_tagged_with('user', '11')
- * 
+ *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
  * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
  *      (to avoid field name ambiguity in the query, use the identifier "it" Ex: 'it.name ASC' )
- * @param string $fields a comma separated list of fields to return 
+ * @param string $fields a comma separated list of fields to return
  *   (optional, by default all fields are returned). The first field will be used as key for the
  *   array so must be a unique field such as 'id'. )
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
@@ -598,15 +598,15 @@ function get_items_tagged_with($item_type, $tag_name_or_id, $sort='', $fields='*
     $query = "
         SELECT
             {$fields}
-        FROM 
+        FROM
             {$CFG->prefix}{$item_type} it
         INNER JOIN
             {$CFG->prefix}tag_instance tt
         ON
             it.id = tt.itemid
-        WHERE 
+        WHERE
             tt.itemtype = '{$item_type}' AND
-            tt.tagid = '{$tag_id}' 
+            tt.tagid = '{$tag_id}'
         {$sort}
         ";
 
@@ -619,7 +619,7 @@ function get_items_tagged_with($item_type, $tag_name_or_id, $sort='', $fields='*
  * Returns the number of items tagged with a tag
  *
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @param string $item_type name of the table where the item is stored. Ex: 'user' (optional, if none is set any 
+ * @param string $item_type name of the table where the item is stored. Ex: 'user' (optional, if none is set any
  *                                                                                             type will be counted)
  * @return int the count. If an error occurrs, 0 is returned.
  */
@@ -633,9 +633,9 @@ function count_items_tagged_with($tag_name_or_id, $item_type='') {
         $query = "
             SELECT
             COUNT(*) AS count
-            FROM 
+            FROM
                 {$CFG->prefix}tag_instance tt
-            WHERE 
+            WHERE
                 tagid = {$tag_id}";
     }
     else
@@ -643,15 +643,15 @@ function count_items_tagged_with($tag_name_or_id, $item_type='') {
         $query = "
             SELECT
             COUNT(*) AS count
-            FROM 
+            FROM
                 {$CFG->prefix}{$item_type} it
             INNER JOIN
                 {$CFG->prefix}tag_instance tt
             ON
                 it.id = tt.itemid
-            WHERE 
+            WHERE
                 tt.itemtype = '{$item_type}' AND
-                tt.tagid = '{$tag_id}' ";        
+                tt.tagid = '{$tag_id}' ";
     }
 
 
@@ -693,26 +693,26 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
 
     if ($ordered) {
         $query = "
-            SELECT 
-                tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count 
-            FROM 
+            SELECT
+                tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count
+            FROM
                 {$CFG->prefix}tag tg
-            LEFT JOIN 
+            LEFT JOIN
                 {$CFG->prefix}tag_instance ti
-            ON 
+            ON
                 tg.id = ti.tagid
-            WHERE 
+            WHERE
                 tg.name
             LIKE
-                '%{$text}%'            
-            GROUP BY 
-                tg.id 
-            ORDER BY 
-                count 
+                '%{$text}%'
+            GROUP BY
+                tg.id
+            ORDER BY
+                count
             DESC";
     } else {
         $query = "
-            SELECT 
+            SELECT
                 tg.id, tg.name, tg.rawname
             FROM
                 {$CFG->prefix}tag tg
@@ -720,7 +720,7 @@ function search_tags($text, $ordered=true, $limitfrom='' , $limitnum='' ) {
                 tg.name
             LIKE
                 '%{$text}%'
-            ";        
+            ";
     }
 
 
@@ -750,11 +750,11 @@ function similar_tags($text, $limitfrom='' , $limitnum='' ) {
 
 /**
  * Returns tags related to a tag
- * 
- * Related tags of a tag come from two sources: 
+ *
+ * Related tags of a tag come from two sources:
  *   - manually added related tags, which are tag_instance entries for that tag
  *   - correlated tags, which are a calculated
- * 
+ *
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
  * @return mixed an array of tag objects
@@ -801,7 +801,7 @@ function correlated_tags($tag_name_or_id) {
 
 /**
  * Recalculates tag correlations of all the tags associated with an item
- * This function could be called whenever the tags associations with an item changes 
+ * This function could be called whenever the tags associations with an item changes
  *  ( for example when tag_an_item() or untag_an_item() is called )
  *
  * @param string $item_type name of the table where the item is stored. Ex: 'user'
@@ -822,11 +822,11 @@ function update_tag_correlations($item_type, $item_id) {
  *
  * Two tags are correlated if they appear together a lot.
  * Ex.: Users tagged with "computers" will probably also be tagged with "algorithms".
- * 
- * The rationale for the 'tag_correlation' table is performance. 
- * It works as a cache for a potentially heavy load query done at the 'tag_instance' table. 
- * So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table. 
- *   
+ *
+ * The rationale for the 'tag_correlation' table is performance.
+ * It works as a cache for a potentially heavy load query done at the 'tag_instance' table.
+ * So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table.
+ *
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
  * @param number $min_correlation cutoff percentage (optional, default is 0.25)
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
@@ -835,7 +835,7 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum
 
     global $CFG;
     $textlib = textlib_get_instance();
-    
+
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     // query that counts how many times any tag appears together in items
@@ -843,17 +843,17 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum
     $query =
     "    SELECT
             tb.tagid , COUNT(*) nr
-         FROM 
-             {$CFG->prefix}tag_instance ta 
-         INNER JOIN 
-             {$CFG->prefix}tag_instance tb 
-         ON 
+         FROM
+             {$CFG->prefix}tag_instance ta
+         INNER JOIN
+             {$CFG->prefix}tag_instance tb
+         ON
              ta.itemid = tb.itemid
-         WHERE 
+         WHERE
              ta.tagid = {$tag_id}
-         GROUP BY 
-             tb.tagid  
-         ORDER BY 
+         GROUP BY
+             tb.tagid
+         ORDER BY
              nr DESC";
 
     $tag_correlations = get_records_sql($query, 0, $limitnum);
@@ -888,7 +888,7 @@ function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum
 }
 
 /**
- * This function cleans up the 'tag_instance' table 
+ * This function cleans up the 'tag_instance' table
  * It removes orphans in 'tag_instances' table
  *
  */
@@ -914,14 +914,14 @@ function tag_instance_table_cleanup() {
         $query = "
             {$CFG->prefix}tag_instance.id
         IN
-            ( SELECT sq1.id 
-              FROM 
-                    (SELECT sq2.* 
+            ( SELECT sq1.id
+              FROM
+                    (SELECT sq2.*
                      FROM {$CFG->prefix}tag_instance sq2
                      LEFT JOIN {$CFG->prefix}{$type->itemtype} item
-                     ON sq2.itemid = item.id 
-                     WHERE item.id IS NULL 
-                     AND sq2.itemtype = '{$type->itemtype}') 
+                     ON sq2.itemid = item.id
+                     WHERE item.id IS NULL
+                     AND sq2.itemtype = '{$type->itemtype}')
               sq1
             ) ";
 
@@ -933,15 +933,15 @@ function tag_instance_table_cleanup() {
     $query = "
            {$CFG->prefix}tag_instance.id
         IN
-           (SELECT sq1.id 
-            FROM 
-                (SELECT sq2.* 
+           (SELECT sq1.id
+            FROM
+                (SELECT sq2.*
                  FROM {$CFG->prefix}tag_instance sq2
                  LEFT JOIN {$CFG->prefix}tag tg
-                 ON sq2.tagid = tg.id 
-                 WHERE tg.id IS NULL ) 
+                 ON sq2.tagid = tg.id
+                 WHERE tg.id IS NULL )
              sq1
-        )    
+        )
         ";
 
     delete_records_select('tag_instance', $query);
@@ -950,13 +950,13 @@ function tag_instance_table_cleanup() {
 
 /**
  * Function that normalizes a list of tag names
- * 
+ *
  * Ex: tag_normalize('bANAana')   -> returns 'banana'
  *        tag_normalize('lots    of    spaces') -> returns 'lots of spaces'
  *        tag_normalize('%!%!% non alpha numeric %!%!%') -> returns 'non alpha numeric'
- *        tag_normalize('tag one,   TAG TWO, TAG three, and anotheR tag') 
- *                         -> returns 'tag one,tag two,tag three,and another tag' 
- *                     
+ *        tag_normalize('tag one,   TAG TWO, TAG three, and anotheR tag')
+ *                         -> returns 'tag one,tag two,tag three,and another tag'
+ *
  * @param string $tag_names_csv unnormalized CSV tag names
  * @return string **normalized** CSV tag names
  */
@@ -1000,11 +1000,11 @@ function tag_flag_reset($tag_names_or_ids_csv){
     $query = "
         UPDATE
             {$CFG->prefix}tag tg
-        SET 
+        SET
             tg.flag = 0,
             tg.timemodified = {$timemodified}
         WHERE
-            tg.id 
+            tg.id
         IN
             ({$tag_ids_csv_with_apos})
         ";
@@ -1013,7 +1013,7 @@ function tag_flag_reset($tag_names_or_ids_csv){
 }
 
 /**
- * Function that updates tags names. 
+ * Function that updates tags names.
  * Updates only if the new name suggested for a tag doesn´t exist already.
  *
  * @param Array $tags_names_changed array of new tag names indexed by tag ids.
@@ -1084,8 +1084,8 @@ function tag_links_csv($tag_objects) {
 /**
  * Function that returns comma separated names of the tags passed
  * Example of string that might be returned: 'history, wars, greek history'
- * 
- * @param array $tag_objects 
+ *
+ * @param array $tag_objects
  * @return string CSV tag names
  */
 
@@ -1117,18 +1117,18 @@ function popular_tags_count($nr_of_tags=20, $tag_type = 'default') {
     global $CFG;
 
     $query = "
-        SELECT 
-            tg.rawname, tg.id, tg.name, COUNT(ti.id) AS count, tg.flag 
-        FROM 
-            {$CFG->prefix}tag_instance ti 
-        INNER JOIN 
-            {$CFG->prefix}tag tg 
-        ON 
+        SELECT
+            tg.rawname, tg.id, tg.name, COUNT(ti.id) AS count, tg.flag
+        FROM
+            {$CFG->prefix}tag_instance ti
+        INNER JOIN
+            {$CFG->prefix}tag tg
+        ON
             tg.id = ti.tagid
-        GROUP BY 
-            tagid 
-        ORDER BY 
-            count 
+        GROUP BY
+            tagid
+        ORDER BY
+            count
         DESC
         ";
 
@@ -1222,19 +1222,19 @@ function print_tag_description_box($tag_object, $return=false) {
     $content = !empty($tag_object->description) || $related_tags;
 
     $output = '';
- 
+
     if ($content) {
         $output .= print_box_start('generalbox', 'tag-description',true);
     }
 
     if (!empty($tag_object->description)) {
-        $options = new object;
-        $options->para=false;
-        $output .= format_text($tag_object->description, $tag_object->descriptionformat, $options );
+        $options = new object();
+        $options->para = false;
+        $output .= format_text($tag_object->description, $tag_object->descriptionformat, $options);
     }
 
     if ($related_tags) {
-        $output .= '<br/><br/><b>'.get_string('relatedtags','tag').': </b>' . tag_links_csv($related_tags);
+        $output .= '<br /><br /><strong>'.get_string('relatedtags','tag').': </strong>' . tag_links_csv($related_tags);
     }
 
     if ($content) {
@@ -1312,7 +1312,7 @@ function print_user_box($user, $return=false) {
 
     global $CFG;
     $textlib = textlib_get_instance();
-    
+
     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
 
     $profilelink = '';
