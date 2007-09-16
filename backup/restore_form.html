@@ -99,6 +99,10 @@
         }
     }
 
+    if (!isset($course_header->category->id)) {
+        $course_header->category->id = 0;
+    }
+
     if(!isset($form1->startdate)) {
         $form1->startdate = $course_header->course_startdate; //$course_header->course_startdate;    
     }
@@ -276,6 +280,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</tr>";
         echo "<tr><td colspan=\"4\"><hr /></td></tr>";
         $currentrow = 0;
+        $nonrestmod = '';
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
