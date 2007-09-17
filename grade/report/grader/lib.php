@@ -931,7 +931,7 @@ class grade_report_grader extends grade_report {
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
                         $gradeval = grade_to_percentage($rawvalue, $item->grademin, $item->grademax);
-                        $gradehtml = number_format(format_float($gradeval, $decimalpoints), $decimalpoints) . '%';
+                        $gradehtml = format_float($gradeval, $decimalpoints). '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
                         $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
