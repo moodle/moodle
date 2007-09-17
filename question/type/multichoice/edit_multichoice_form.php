@@ -42,8 +42,7 @@ class question_edit_multichoice_form extends question_edit_form {
         } else {
             $countanswers = 0;
         }
-        $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                            QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
+        $repeatsatstart = max(5, QUESTION_NUMANS_START, $countanswers + QUESTION_NUMANS_ADD);
         $repeatedoptions = array();
         $repeatedoptions['fraction']['default'] = 0;
         $mform->setType('answer', PARAM_RAW);
