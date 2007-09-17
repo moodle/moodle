@@ -5,11 +5,17 @@
 <div class="article">
 <p>This section expands upon the basic information given in  the section titled 'Enhancing Text With Markdown' to give those with special requirements the information needed to make the most of Markdown. If you don't recognise, or don't need, the formatting listed below then you should feel free to skip this section and return to it as and when needed.</p>
 
+<p>(Even more) Advanced options are available. See the <a href="#further">Further Reading</a>
+section.</p>
+
 <ul>
 
 <li><a href="#linebreaks">Line Breaks</a></li>
 <li><a href="#hr">Horizontal Rules</a></li>
 <li><a href="#image_links">Linked Images</a></li>
+<li><a href="#tables">Tables</a></li>
+<li><a href="#definition">Definition Lists</a></li>
+<li><a href="#footnotes">Footnotes</a></li>
 <li><a href="#embedded">Embedding HTML</a></li>
 <li><a href="#preformatted">Pre-formatted Code</a></li>
 <li><a href="#special_char">Using Special Characters</a></li>
@@ -82,6 +88,81 @@ For promis'd joy!  </p>
 
 <p>An example of where this technique might be handy is in linking small 'thumbnail' images to downloads of the larger photos.</p>
 
+<h2><a id="tables">Tables</a></h2>
+
+<p>You can create simple HTML tables with Markdown. Here is an example:</p>
+
+<pre>
+Name    |   Age
+--------|------
+Fred    |   29
+Jim     |   47
+Harry   |   32
+</pre>
+
+<table>
+<thead>
+<tr>
+  <th>Name</th>
+  <th>Age</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Fred</td>
+  <td>29</td>
+
+</tr>
+<tr>
+  <td>Jim</td>
+  <td>47</td>
+</tr>
+<tr>
+  <td>Harry</td>
+  <td>32</td>
+</tr>
+
+</tbody>
+</table>
+
+<p>You can apply normal formatting to the cell contents. Columns can be left or right aligned by adding a colon the left or the right of the horizontal bar (see additional instructions).</p>
+
+<h2><a id="definition">Definition Lists</a></h2>
+
+<p>Definition lists consist of terms followed by their definitions. Rather like a dictionary. A simple example is as follows:</p>
+
+<pre>
+Moodle
+:   A well-known online learning platform
+
+PHP
+:   A scripting language.
+    Mostly used for developing interactive web applications.
+</pre>
+
+<dl>
+<dt>Moodle</dt>
+<dd>A well-known online learning platform</dd>
+
+<dt>PHP</dt>
+<dd>A scripting language.
+Mostly used for developing interactive web applications.</dd>
+</dl>
+
+<h2><a id="footnotes">Footnotes</a></h2>
+
+<p>A footnote has two elements. A marker in the text which will become a superscript number and a footnote
+definition that will appear at the end of the document. Here is a simple example:</p>
+
+<pre>
+Read about it in my book.[^1]
+
+[^1]: All about my book.
+</pre>
+
+<p>You can place the footnote definitions anywhere you like. They will be listed in the order that they are
+linked to in the text. You cannot make more than  one link to the same footnote.</p>
+
 <h2><a id="embedded">Embedding HTML</a></h2>
 
 <p>If you are already proficient in HTML then there may be occasions when Markdown does not allow you as much control as you are used to. Luckily Markdown is designed for this eventuality and allows you to embed HTML directly within Markdown formatted text.</p>
@@ -137,4 +218,6 @@ For promis'd joy!  </p>
 <h2><a id="further">Further Reading</a></h2>
 
 <p>The Markdown system is not unique to Moodle, it is used in an ever increasing number of web publishing tools. You can find out more about it at <a href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a></p>
+
+<p>Moodle uses a version of Markdown with additional features known as "Markdown Extra". Further information can be found at <a href="http://www.michelf.com/projects/php-markdown/extra/">http://www.michelf.com/projects/php-markdown/extra/ </a>.</p>
 </div></div>
