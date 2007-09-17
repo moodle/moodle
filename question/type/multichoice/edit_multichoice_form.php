@@ -55,8 +55,7 @@ class question_edit_multichoice_form extends question_edit_form {
             $countanswers = 0;
         }
         if ($this->question->formoptions->repeatelements){
-            $repeatsatstart = (QUESTION_NUMANS_START > ($countanswers + QUESTION_NUMANS_ADD))?
-                                QUESTION_NUMANS_START : ($countanswers + QUESTION_NUMANS_ADD);
+            $repeatsatstart = max(5, QUESTION_NUMANS_START, $countanswers + QUESTION_NUMANS_ADD);
         } else {
             $repeatsatstart = $countanswers;
         }
