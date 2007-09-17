@@ -20,13 +20,13 @@
     $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
     $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
     $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
-    $popup          = optional_param('popup', false, PARAM_ALPHA);    // If set then starts a new popup window
+    $popup          = optional_param('popup', false, PARAM_ALPHANUM);    // If set then starts a new popup window
 
 /// Popup a window if required and quit (usually from external links).
     if ($popup) {
         print_header();
         echo '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
-        redirect("$CFG->wwwroot/");
+        redirect("$CFG->wwwroot/", '', 0);
         exit;
     }
 
