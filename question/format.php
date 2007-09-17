@@ -559,16 +559,25 @@ class qformat_default {
             $expout .= $this->writequestion( $question ) . "\n";
         }
 
+        // continue path for following error checks
+        $course = $this->course;
+        $continuepath = "$CFG->wwwroot/question/export.php?courseid=$course->id"; 
+
+        // did we actually process anything
+        if ($count==0) {
+            print_error( 'noquestions','quiz',$continuepath );        
+        }
+
         // final pre-process on exported data
         $expout = $this->presave_process( $expout );
        
         // write file
         $filepath = $path."/".$this->filename . $this->export_file_extension();
         if (!$fh=fopen($filepath,"w")) {
-            error( get_string('cannotopen','quiz',$filepath) );
+            print_error( 'cannotopen','quiz',$continuepath,$filepath );
         }
         if (!fwrite($fh, $expout, strlen($expout) )) {
-            error( get_string('cannotwrite','quiz',$filepath) );
+            print_error( 'cannotwrite','quiz',$continuepath,$filepath );
         }
         fclose($fh);
         return true;
