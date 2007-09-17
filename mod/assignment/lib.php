@@ -623,6 +623,10 @@ class assignment_base {
 
                     if ($updatedb){
                         if ($newsubmission) {
+                        /// assignment_submissions->data1  and assignment_submissions->data2 are not null (and
+                        /// text columns haven't a default, so we must provide it before insert. MDL-11268
+                            $submission->data1 = '';
+                            $submission->data2 = '';
                             if (!insert_record('assignment_submissions', $submission)) {
                                 return false;
                             }
@@ -630,7 +634,7 @@ class assignment_base {
                             if (!update_record('assignment_submissions', $submission)) {
                                 return false;
                             }
-                        }            
+                        }
                         //add to log only if updating
                         add_to_log($this->course->id, 'assignment', 'update grades', 
                                    'submissions.php?id='.$this->assignment->id.'&user='.$submission->userid, 
