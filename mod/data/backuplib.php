@@ -1,4 +1,4 @@
-<?php
+<?php //Id:$
 
 //This php script contains all the stuff to backup/restore data mod
 
