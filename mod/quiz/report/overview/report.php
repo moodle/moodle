@@ -23,6 +23,8 @@ class quiz_report extends quiz_default_report {
         $strtimeformat = get_string('strftimedatetime');
         $strreviewquestion = get_string('reviewresponse', 'quiz');
 
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
         // Only print headers if not asked to download data
         if (!$download = optional_param('download', NULL)) {
             $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="overview");
@@ -33,11 +35,12 @@ class quiz_report extends quiz_default_report {
 
         switch($action) {
             case 'delete': // Some attempts need to be deleted
+                require_capability('mod/quiz:deleteattempts', $context);
                 $attemptids = optional_param('attemptid', array(), PARAM_INT);
 
                 foreach($attemptids as $attemptid) {
+                    add_to_log($course->id, 'quiz', 'delete attempt', 'report.php?id=' . $cm->id, $attemptid, $cm->id);
                     quiz_delete_attempt($attemptid, $quiz);
-                    quiz_update_grades($quiz, $USER->id);
                 }
             break;
         }
@@ -497,14 +500,19 @@ class quiz_report extends quiz_default_report {
                 // Print table
                 $table->print_html();
 
+                // Prepare list of available options.
+                $options = array();
+                if (has_capability('mod/quiz:deleteattempts', $context)) {
+                    $options['delete'] = get_string('delete');
+                }
+
                 // Print "Select all" etc.
-                if (!empty($attempts)) {
+                if (!empty($attempts) && !empty($options)) {
                     echo '<table id="commands">';
                     echo '<tr><td>';
                     echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectall', 'quiz').'</a> / ';
                     echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.get_string('selectnone', 'quiz').'</a> ';
                     echo '&nbsp;&nbsp;';
-                    $options = array('delete' => get_string('delete'));
                     echo choose_from_menu($options, 'action', '', get_string('withselected', 'quiz'), 'if(this.selectedIndex > 0) submitFormById(\'attemptsform\');', '', true);
                     echo '<noscript id="noscriptmenuaction" style="display: inline;"><div>';
                     echo '<input type="submit" value="'.get_string('go').'" /></div></noscript>';

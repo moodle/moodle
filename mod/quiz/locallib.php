@@ -144,6 +144,8 @@ function quiz_delete_attempt($attempt, $quiz) {
     } else {
         quiz_save_best_grade($quiz, $userid);
     }
+
+    quiz_update_grades($quiz, $userid);
 }
 
 /// Functions to do with quiz layout and pages ////////////////////////////////
