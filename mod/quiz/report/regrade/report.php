@@ -11,6 +11,13 @@ class quiz_report extends quiz_default_report {
         // Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");
 
+        // Check permissions
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if (!has_capability('mod/quiz:grade', $context)) {
+            notify(get_string('regradenotallowed', 'quiz'));
+            return true;
+        }
+
         // Fetch all attempts
         if (!$attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = 0")) {
             print_heading(get_string('noattempts', 'quiz'));

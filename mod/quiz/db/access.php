@@ -54,7 +54,7 @@ $mod_quiz_capabilities = array(
         )
     ),
 
-    // Manually grade and comment on student attempts at a question.
+    // Manually grade and comment on student attempts at a question, and regrade quizzes.
     'mod/quiz:grade' => array(
 
         'captype' => 'write',

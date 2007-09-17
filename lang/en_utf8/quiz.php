@@ -408,6 +408,7 @@ $string['regrade'] = 'Regrade all attempts';
 $string['regradecomplete'] = 'All attempts have been regraded';
 $string['regradecount'] = '$a->changed out of $a->attempt grades were changed';
 $string['regradedisplayexplanation'] = 'Attempts that change during regrading are displayed as hyperlinks to the question review window';
+$string['regradenotallowed'] = 'You do not have permission to regrade this quiz';
 $string['regradingquestion'] = 'Regrading \"$a\".';
 $string['regradingquiz'] = 'Regrading Quiz \"$a\"';
 $string['relative'] = 'Relative';
