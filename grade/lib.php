@@ -967,7 +967,7 @@ class grade_tree {
         global $CFG;
 
         if (!has_capability('moodle/grade:manage', $this->context)) {
-            if ($element['type'] == 'grade' and has_capability('moodle/grade:override', $this->context)) {
+            if ($element['type'] == 'grade' and has_capability('moodle/grade:edit', $this->context)) {
                 // oki - let them override grade
             } else {
                 return '';

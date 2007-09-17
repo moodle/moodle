@@ -17,7 +17,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (!has_capability('moodle/grade:manage', $context)) {
-    require_capability('moodle/grade:override', $context);
+    require_capability('moodle/grade:edit', $context);
 }
 
 // default return url
@@ -191,7 +191,7 @@ if ($mform->is_cancelled()) {
         $grade_grade->set_excluded($data->excluded);
     }
 
-    if (isset($data->overridden) and has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:override', $context)) {
+    if (isset($data->overridden) and has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:edit', $context)) {
         // ignore overridden flag when changing final grade
         if ($old_grade_grade->finalgrade == $grade_grade->finalgrade) {
             $grade_grade->set_overridden($data->overridden);

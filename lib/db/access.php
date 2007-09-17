@@ -518,7 +518,7 @@ $moodle_capabilities = array(
             'coursecreator' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW            
+            'admin' => CAP_ALLOW
         )
     ),
 
@@ -740,26 +740,26 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/user:editownprofile' => array(      
+    'moodle/user:editownprofile' => array(
 
-        'captype' => 'write',     
-        'contextlevel' => CONTEXT_SYSTEM,      
-        'legacy' => array(   
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
             'guest' => CAP_PROHIBIT,
             'user' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )    
+        )
     ),
 
-    'moodle/user:changeownpassword' => array(      
+    'moodle/user:changeownpassword' => array(
 
-        'captype' => 'write',     
-        'contextlevel' => CONTEXT_SYSTEM,      
-        'legacy' => array(   
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
             'guest' => CAP_PROHIBIT,
             'user' => CAP_ALLOW,
             'admin' => CAP_ALLOW
-        )    
+        )
     ),
 
     // The next 3 might make no sense for some roles, e.g teacher, etc.
@@ -807,8 +807,8 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         )
-    ),    
-    
+    ),
+
     //new in moodle 1.9
     'moodle/question:add' => array(
         'riskbitmask' => RISK_SPAM,
@@ -828,7 +828,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:editall' => array(
         'riskbitmask' => RISK_SPAM,
@@ -838,7 +838,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:viewmine' => array(
         'captype' => 'read',
@@ -847,7 +847,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:viewall' => array(
         'captype' => 'read',
@@ -856,7 +856,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:usemine' => array(
         'captype' => 'read',
@@ -865,7 +865,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:useall' => array(
         'captype' => 'read',
@@ -874,8 +874,8 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
-    ),    
+        'clonepermissionsfrom' =>  'moodle/question:manage'
+    ),
     'moodle/question:movemine' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -883,7 +883,7 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:moveall' => array(
         'captype' => 'write',
@@ -892,10 +892,10 @@ $moodle_capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'admin' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/question:manage' 
+        'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     //END new in moodle 1.9
-    
+
     // Configure the installed question types.
     'moodle/question:config' => array(
 
@@ -1031,6 +1031,17 @@ $moodle_capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:managegrades'
     ),
 
+    'moodle/grade:edit' => array(
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
     'moodle/grade:manageoutcomes' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'write',
@@ -1061,15 +1072,6 @@ $moodle_capabilities = array(
     ),
 
     'moodle/grade:unlock' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
-            'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/grade:override' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -1124,7 +1126,7 @@ $moodle_capabilities = array(
             'user' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/tag:edit' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -1133,7 +1135,7 @@ $moodle_capabilities = array(
             'user' => CAP_ALLOW
         )
     ),
-    
+
     'moodle/tag:editblocks' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

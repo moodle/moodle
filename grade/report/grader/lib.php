@@ -121,7 +121,7 @@ class grade_report_grader extends grade_report {
      */
     function process_data($data) {
 
-        if (!has_capability('moodle/grade:override', $this->context)) {
+        if (!has_capability('moodle/grade:edit', $this->context)) {
             return false;
         }
 
@@ -591,7 +591,7 @@ class grade_report_grader extends grade_report {
             $scales_list = substr($scales_list, 0, -1);
             $scales_array = get_records_list('scale', 'id', $scales_list);
         }
-        
+
         $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         foreach ($this->users as $userid => $user) {
@@ -629,7 +629,7 @@ class grade_report_grader extends grade_report {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">'.userdate($grade->timecreated,get_string('strftimedatetimeshort')).'</td>';                  } else {
                         $studentshtml .= '<td class="cell c'.$columncount++.'">-</td>';
                     }
-                    continue; 
+                    continue;
                 }
 
                 $grade->courseid = $this->courseid;
@@ -820,6 +820,10 @@ class grade_report_grader extends grade_report {
             $showaverages = $this->get_pref('showaverages');
             $groupsql = null;
             $groupwheresql = null;
+        }
+
+        if ($shownumberofgrades) {
+            $straverage .= ' (' . get_string('submissions', 'grades') . ') ';
         }
 
         $totalcount = $this->get_numusers($grouponly);
@@ -1024,16 +1028,19 @@ class grade_report_grader extends grade_report {
         $show_hide_icon        = '';
         $lock_unlock_icon      = '';
 
-        if ($this->get_pref('showcalculations')) {
-            $edit_calculation_icon = $this->gtree->get_calculation_icon($element, $this->gpr);
-        }
+        if (has_capability('moodle/grade:manage', $this->context)) {
 
-        if ($this->get_pref('showeyecons')) {
-           $show_hide_icon = $this->gtree->get_hiding_icon($element, $this->gpr);
-        }
+            if ($this->get_pref('showcalculations')) {
+                $edit_calculation_icon = $this->gtree->get_calculation_icon($element, $this->gpr);
+            }
 
-        if ($this->get_pref('showlocks')) {
-            $lock_unlock_icon = $this->gtree->get_locking_icon($element, $this->gpr);
+            if ($this->get_pref('showeyecons')) {
+               $show_hide_icon = $this->gtree->get_hiding_icon($element, $this->gpr);
+            }
+
+            if ($this->get_pref('showlocks')) {
+                $lock_unlock_icon = $this->gtree->get_locking_icon($element, $this->gpr);
+            }
         }
 
         return '<div class="grade_icons">'.$edit_icon.$edit_calculation_icon.$show_hide_icon.$lock_unlock_icon.'</div>';

@@ -44,6 +44,7 @@ $string['course:viewhiddenuserfields'] = 'View hidden user fields';
 $string['course:viewparticipants'] = 'View participants';
 $string['course:viewscales'] = 'View scales';
 $string['course:visibility'] = 'Hide/show courses';
+$string['grade:edit'] = 'Edit grades';
 $string['grade:export'] = 'Export grades';
 $string['grade:hide'] = 'Hide/unhide grades or items';
 $string['grade:import'] = 'Import grades';

@@ -73,7 +73,7 @@ if (!isset($USER->gradeediting)) {
     $USER->gradeediting = array();
 }
 
-if (has_capability('moodle/grade:override', $context)) {
+if (has_capability('moodle/grade:edit', $context)) {
     if (!isset($USER->gradeediting[$course->id])) {
         $USER->gradeediting[$course->id] = 0;
     }

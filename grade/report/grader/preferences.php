@@ -38,7 +38,7 @@ if (!$course = get_record('course', 'id', $courseid)) {
 require_login($course->id);
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-require_capability('moodle/grade:manage', $context);
+require_capability('gradereport/grader:view', $context);
 
 // If data submitted, then process and store.
 if ($data = data_submitted()) {
