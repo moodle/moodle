@@ -508,10 +508,6 @@ class qformat_default {
         $questions = get_questions_category( $this->category, true );
 
         notify( get_string('exportingquestions','quiz') );
-        if (!count($questions)) {
-            notify( get_string('noquestions','quiz') );
-            return false;
-        }
         $count = 0;
 
         // results are first written into string (and then to a file)
