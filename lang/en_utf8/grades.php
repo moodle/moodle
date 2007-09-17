@@ -380,6 +380,7 @@ $string['statslink'] = 'Stats';
 $string['student'] = 'Student';
 $string['studentsperpage'] = 'Students per page';
 $string['subcategory'] = 'Normal Category';
+$string['submissions'] = 'Submissions';
 $string['synclegacygrades'] = 'Synchronise legacy grades';
 $string['topcategory'] = 'Super Category';
 $string['total'] = 'Total';
