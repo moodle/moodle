@@ -745,7 +745,7 @@ class grade_report_grader extends grade_report {
                         if ($grade->feedbackformat == 1) {
                             $overlib = "return overlib('" . s(ltrim($grade->feedback)) . "', FULLHTML);";
                         } else {
-                            $overlib = "return overlib('" . ($grade->feedback) . "', CAPTION, '$strfeedback');";
+                            $overlib = "return overlib('" . s($grade->feedback) . "', CAPTION, '$strfeedback');";
                         }
 
                         $studentshtml .= '<span onmouseover="' . $overlib . '" onmouseout="return nd();">';
