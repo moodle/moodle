@@ -387,6 +387,39 @@ function data_check_backup_mods($course,$user_data=false,$backup_unique_code,$in
 
 }
 
+/**
+ * Returns a content encoded to support interactivities linking. Every module
+ * should have its own. They are called automatically from the backup procedure.
+ *
+ * @param string $content content to be encoded
+ * @param object $preferences backup preferences in use
+ * @return string the content encoded
+ */
+function data_encode_content_links ($content,$preferences) {
+
+    global $CFG;
+
+    $base = preg_quote($CFG->wwwroot,"/");
+
+/// Link to one "record" of the database
+    $search="/(".$base."\/mod\/data\/view.php\?d\=)([0-9]+)\&rid\=([0-9]+)/";
+    $result= preg_replace($search,'$@DATAVIEWRECORD*$2*$3@$',$content);
+
+/// Link to the list of databases
+    $search="/(".$base."\/mod\/data\/index.php\?id\=)([0-9]+)/";
+    $result= preg_replace($search,'$@DATAINDEX*$2@$',$result);
+
+/// Link to database view by moduleid
+    $search="/(".$base."\/mod\/data\/view.php\?id\=)([0-9]+)/";
+    $result= preg_replace($search,'$@DATAVIEWBYID*$2@$',$result);
+
+/// Link to database view by databaseid
+    $search="/(".$base."\/mod\/data\/view.php\?d\=)([0-9]+)/";
+    $result= preg_replace($search,'$@DATAVIEWBYD*$2@$',$result);
+
+    return $result;
+}
+
 function data_ids($course) {
     // stub function, return number of modules
     return 1;
