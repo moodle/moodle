@@ -924,17 +924,17 @@ class grade_report_grader extends grade_report {
                         $gradehtml = $scale_object->get_nearest_item($scaleval);
                         $rawvalue = $scaleval;
                     } else {
+                        $rawgradeval = $sum/$mean_count;
                         $gradeval = format_float($sum/$mean_count, $decimalpoints);
                         $gradehtml = $gradeval;
-                        $rawvalue = $gradeval;
                     }
 
                     if ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                        $gradeval = grade_to_percentage($rawvalue, $item->grademin, $item->grademax);
+                        $gradeval = grade_to_percentage($rawgradeval, $item->grademin, $item->grademax);
                         $gradehtml = format_float($gradeval, $decimalpoints). '%';
                     } elseif ($displaytype == GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER) {
                         $letters = grade_report::get_grade_letters();
-                        $gradehtml = grade_grade::get_letter($letters, $gradeval, $item->grademin, $item->grademax);
+                        $gradehtml = grade_grade::get_letter($letters, $rawgradeval, $item->grademin, $item->grademax);
                     }
 
                     $numberofgrades = '';
