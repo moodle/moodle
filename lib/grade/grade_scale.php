@@ -237,6 +237,7 @@ class grade_scale extends grade_object {
 
                     } else if (function_exists($old_function_name)) {
                         $legacy_mods = true;
+                        debugging('Please notify the developer of module "'.$mod->name.'" that new function module_scale_used_anywhere() should be implemented.', DEBUG_DEVELOPER);
                         break;
                     }
                 }
