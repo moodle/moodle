@@ -199,6 +199,12 @@ class grade_item extends grade_object {
     var $sortorder = 0;
 
     /**
+     * Display type of the grades (Real, Percentage, Letter, or default).
+     * @var int $display
+     */
+    var $display = null;
+
+    /**
      * 0 if visible, 1 always hidden or date not visible until
      * @var int $hidden
      */

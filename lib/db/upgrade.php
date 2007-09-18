@@ -1434,8 +1434,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
         $table->addKeyInfo('courseid-outcomeid', XMLDB_KEY_UNIQUE, array('courseid', 'outcomeid'));
     /// Launch create table for grade_outcomes_courses
-        $result = $result && create_table($table);        
-    
+        $result = $result && create_table($table);
+
     }
 
 
@@ -1736,12 +1736,12 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Define field ordering to be added to tag_instance table
         $table = new XMLDBTable('tag_instance');
         $field = new XMLDBField('ordering');
-        
+
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'itemid');
 
     /// Launch add field rawname
         $result = $result && add_field($table, $field);
-    }    
+    }
 
     if ($result && $oldversion < 2007082700) {
 
@@ -1753,10 +1753,10 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add field timemodified
         $result = $result && add_field($table, $field);
     }
-    
+
     /// migrate all tags table to tag
     if ($result && $oldversion < 2007082701) {
-        require_once($CFG->dirroot.'/tag/lib.php');  
+        require_once($CFG->dirroot.'/tag/lib.php');
         $tagrefs = array(); // $tagrefs[$oldtagid] = $newtagid
         if ($tags = get_records('tags')) {
             foreach ($tags as $oldtag) {
@@ -1783,7 +1783,7 @@ function xmldb_main_upgrade($oldversion=0) {
                 }
             }
         }
-        
+
         // fetch all the tag instances and migrate them as well
         if ($blogtags = get_records('blog_tag_instance')) {
             foreach ($blogtags as $blogtag) {
@@ -1798,7 +1798,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('blog_tag_instance');
         drop_table($table);
     }
-    
+
     /// MDL-11015, MDL-11016
     if ($result && $oldversion < 2007082800) {
 
@@ -1809,7 +1809,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of type for field userid
         $result = $result && change_field_type($table, $field);
-        
+
     /// Changing type of field descriptionformat on table tag to int
         $table = new XMLDBTable('tag');
         $field = new XMLDBField('descriptionformat');
@@ -1817,7 +1817,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of type for field descriptionformat
         $result = $result && change_field_type($table, $field);
-        
+
     /// Define key userid (foreign) to be added to tag
         $table = new XMLDBTable('tag');
         $key = new XMLDBKey('userid');
@@ -1825,7 +1825,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add key userid
         $result = $result && add_key($table, $key);
-        
+
     /// Define index tagiditem (unique) to be dropped form tag_instance
         $table = new XMLDBTable('tag_instance');
         $index = new XMLDBIndex('tagiditem');
@@ -1833,7 +1833,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch drop index tagiditem
         $result = $result && drop_index($table, $index);
-        
+
     /// Changing type of field tagid on table tag_instance to int
         $table = new XMLDBTable('tag_instance');
         $field = new XMLDBField('tagid');
@@ -1841,14 +1841,14 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of type for field tagid
         $result = $result && change_field_type($table, $field);
-        
+
     /// Define key tagid (foreign) to be added to tag_instance
         $table = new XMLDBTable('tag_instance');
         $key = new XMLDBKey('tagid');
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('tagid'), 'tag', array('id'));
 
      /// Launch add key tagid
-        $result = $result && add_key($table, $key);       
+        $result = $result && add_key($table, $key);
 
     /// Changing sign of field itemid on table tag_instance to unsigned
         $table = new XMLDBTable('tag_instance');
@@ -1857,15 +1857,15 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of sign for field itemid
         $result = $result && change_field_unsigned($table, $field);
-        
+
     /// Changing sign of field ordering on table tag_instance to unsigned
         $table = new XMLDBTable('tag_instance');
         $field = new XMLDBField('ordering');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'itemid');
 
     /// Launch change of sign for field ordering
-        $result = $result && change_field_unsigned($table, $field);        
-        
+        $result = $result && change_field_unsigned($table, $field);
+
     /// Define index itemtype-itemid-tagid (unique) to be added to tag_instance
         $table = new XMLDBTable('tag_instance');
         $index = new XMLDBIndex('itemtype-itemid-tagid');
@@ -1873,15 +1873,15 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add index itemtype-itemid-tagid
         $result = $result && add_index($table, $index);
-        
+
     /// Define index tagid (unique) to be dropped form tag_correlation
         $table = new XMLDBTable('tag_correlation');
         $index = new XMLDBIndex('tagid');
         $index->setAttributes(XMLDB_INDEX_UNIQUE, array('tagid'));
 
     /// Launch drop index tagid
-        $result = $result && drop_index($table, $index);        
-        
+        $result = $result && drop_index($table, $index);
+
     /// Changing type of field tagid on table tag_correlation to int
         $table = new XMLDBTable('tag_correlation');
         $field = new XMLDBField('tagid');
@@ -1889,8 +1889,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch change of type for field tagid
         $result = $result && change_field_type($table, $field);
-        
-        
+
+
     /// Define key tagid (foreign) to be added to tag_correlation
         $table = new XMLDBTable('tag_correlation');
         $key = new XMLDBKey('tagid');
@@ -1898,8 +1898,8 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add key tagid
         $result = $result && add_key($table, $key);
-        
-    } 
+
+    }
 
 
     if ($result && $oldversion < 2007082801) {
@@ -2062,6 +2062,35 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Launch add index idnumber-courseid
         $result = $result && add_index($table, $index);
 
+    }
+
+    if ($result && $oldversion < 2007091800) {
+
+    /// Define field display to be added to grade_items
+        $table = new XMLDBTable('grade_items');
+        $field = new XMLDBField('display');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '-1', 'sortorder');
+
+    /// Launch add field display
+        $result = $result && add_field($table, $field);
+    }
+
+    if ($result && $oldversion < 2007091800) {
+
+    /// Define table grade_letters to be created
+        $table = new XMLDBTable('grade_letters');
+
+    /// Adding fields to table grade_letters
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('lowerboundary', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('letter', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table grade_letters
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Launch create table for grade_letters
+        $result = $result && create_table($table);
     }
 
 

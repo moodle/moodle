@@ -171,7 +171,7 @@ class grade_category_test extends grade_test {
 
         $id = $grade_category->insert_course_category($this->courseid);
         $this->assertNotNull($id);
-        $this->assertEqual('course grade category', $grade_category->fullname);
+        $this->assertEqual('Course grade category', $grade_category->fullname);
         $this->assertEqual(GRADE_AGGREGATE_MEAN, $grade_category->aggregate);
         $this->assertEqual("/$id/", $grade_category->path);
         $this->assertEqual(1, $grade_category->depth);

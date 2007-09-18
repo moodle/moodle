@@ -65,6 +65,7 @@ class grade_test extends UnitTestCase {
     var $grade_outcomes = array();
     var $scale = array();
 
+    var $activities = array();
     var $courseid = 1;
     var $userid = 1;
 
@@ -74,7 +75,15 @@ class grade_test extends UnitTestCase {
      * Override $CFG->prefix while these tests run.
      */
     function setUp() {
+        // Set global category settings to -1 (not force)
         global $CFG;
+        $CFG->grade_droplow = -1;
+        $CFG->grade_keephigh = -1;
+        $CFG->grade_aggregation = -1;
+        $CFG->grade_aggregateonlygraded = -1;
+        $CFG->grade_aggregateoutcomes = -1;
+        $CFG->grade_aggregatesubcats = -1;
+
         $CFG->old_prefix = $CFG->prefix;
         $CFG->prefix .= 'unittest_';
         if (!$this->prepare_test_tables()) {
@@ -93,6 +102,69 @@ class grade_test extends UnitTestCase {
 
     function prepare_test_tables() {
         $result = true;
+
+        /// Define table course_modules to be created
+        $table = new XMLDBTable('course_modules');
+
+        if (!table_exists($table)) {
+            /// Adding fields to table course_modules
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('module', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('section', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('idnumber', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('added', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('score', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('indent', XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+            $table->addFieldInfo('visibleold', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+            $table->addFieldInfo('groupmode', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('groupingid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('groupmembersonly', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+
+            /// Adding keys to table course_modules
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+            $table->addKeyInfo('groupingid', XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
+
+            /// Adding indexes to table course_modules
+            $table->addIndexInfo('visible', XMLDB_INDEX_NOTUNIQUE, array('visible'));
+            $table->addIndexInfo('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+            $table->addIndexInfo('module', XMLDB_INDEX_NOTUNIQUE, array('module'));
+            $table->addIndexInfo('instance', XMLDB_INDEX_NOTUNIQUE, array('instance'));
+            $table->addIndexInfo('idnumber-course', XMLDB_INDEX_NOTUNIQUE, array('idnumber', 'course'));
+
+            /// Launch create table for course_modules
+            $result = $result && create_table($table, true, false);
+        } else {
+            delete_records($table->name);
+        }
+
+        /// Define table modules to be created
+        $table = new XMLDBTable('modules');
+
+        if (!table_exists($table)) {
+
+            /// Adding fields to table modules
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('version', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('cron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('lastcron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('search', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('visible', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, null, '1');
+
+            /// Adding keys to table modules
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+            /// Adding indexes to table modules
+            $table->addIndexInfo('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
+
+            /// Launch create table for modules
+            $result = $result && create_table($table, true, false);
+        } else {
+            delete_records($table->name);
+        }
 
         /// Define table grade_items to be created
         $table = new XMLDBTable('grade_items');
@@ -288,6 +360,50 @@ class grade_test extends UnitTestCase {
             delete_records($table->name);
         }
 
+        /// Define table quiz to be created
+        $table = new XMLDBTable('quiz');
+
+        if ($result && !table_exists($table)) {
+            /// Adding fields to table quiz
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('intro', XMLDB_TYPE_TEXT, 'small', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('timeopen', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timeclose', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('optionflags', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('penaltyscheme', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('attempts', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('attemptonlast', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('grademethod', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '1');
+            $table->addFieldInfo('decimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '2');
+            $table->addFieldInfo('review', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('questionsperpage', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('shufflequestions', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('shuffleanswers', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('questions', XMLDB_TYPE_TEXT, 'small', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('sumgrades', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('timelimit', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('password', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('subnet', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('popup', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('delay1', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+            $table->addFieldInfo('delay2', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+
+            /// Adding keys to table quiz
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+            /// Adding indexes to table quiz
+            $table->addIndexInfo('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+
+            /// Launch create table for quiz
+            $result = $result && create_table($table, true, false);
+        } else {
+            delete_records($table->name);
+        }
 
         return $result;
     }
@@ -726,6 +842,106 @@ class grade_test extends UnitTestCase {
             update_record('grade_categories', $grade_category);
             $this->grade_categories[3] = $grade_category;
         }
+    }
+
+    /**
+     * Load module entries in modules table\
+     */
+    function load_modules() {
+        $module = new stdClass();
+        $module->name = 'assignment';
+        if ($module->id = insert_record('modules', $module)) {
+            $this->modules[0] = $module;
+        }
+
+        $module = new stdClass();
+        $module->name = 'quiz';
+        if ($module->id = insert_record('modules', $module)) {
+            $this->modules[1] = $module;
+        }
+
+        $module = new stdClass();
+        $module->name = 'forum';
+        if ($module->id = insert_record('modules', $module)) {
+            $this->modules[2] = $module;
+        }
+    }
+
+    /**
+     * Load module instance entries in course_modules table
+     */
+    function load_course_modules() {
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 1;
+        $quiz->instance = 2;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 2;
+        $quiz->instance = 1;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 2;
+        $quiz->instance = 5;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 3;
+        $quiz->instance = 3;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 3;
+        $quiz->instance = 7;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+
+        $course_module = new stdClass();
+        $course_module->course = $this->courseid;
+        $quiz->module = 3;
+        $quiz->instance = 9;
+        if ($course_module->id = insert_record('course_modules', $course_module)) {
+            $this->course_module[0] = $course_module;
+        }
+    }
+
+    /**
+     * Load test quiz data into the database
+     */
+    function load_quiz_activities() {
+        $quiz = new stdClass();
+        $quiz->course = $this->courseid;
+        $quiz->name = 'test quiz';
+        $quiz->intro = 'let us quiz you!';
+        $quiz->questions = '1,2';
+        if ($quiz->id = insert_record('quiz', $quiz)) {
+            $this->activities[0] = $quiz;
+        }
+
+        $quiz = new stdClass();
+        $quiz->course = $this->courseid;
+        $quiz->name = 'test quiz 2';
+        $quiz->intro = 'let us quiz you again!';
+        $quiz->questions = '1,3';
+        if ($quiz->id = insert_record('quiz', $quiz)) {
+            $this->activities[1] = $quiz;
+        }
+
     }
 
     /**
