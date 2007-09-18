@@ -333,7 +333,7 @@ class quiz_report extends quiz_default_report {
                     $qclass = 'partialcorrect';
                 }
                 $response->credit = '<span class="'.$qclass.'">('.format_float($q['credits'][$aid],2).') </span>';
-                $response->text = '<span class="'.$qclass.'">'.format_text("$resp", FORMAT_MOODLE, $format_options, $quiz->course).' </span>';
+                $response->text = '<span class="'.$qclass.'">'.format_text($resp, FORMAT_MOODLE, $format_options, $quiz->course).' </span>';
                 $count = $q['rcounts'][$aid].'/'.$q['count'];
                 $response->rcount = $count;
                 $response->rpercent =  '('.format_float($q['rcounts'][$aid]/$q['count']*100,0).'%)';

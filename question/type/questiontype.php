@@ -179,7 +179,7 @@ class default_questiontype {
         }
 
         if (empty($question->name)) {
-            $question->name = substr(strip_tags($question->questiontext), 0, 15);
+            $question->name = shorten_text($question->questiontext, 15);
             if (empty($question->name)) {
                 $question->name = '-';
             }
@@ -509,8 +509,7 @@ class default_questiontype {
        // change length to truncate responses here if you want
        $lmax = 40;
        if (!empty($state->responses)) {
-              $responses[] = (strlen($state->responses['']) > $lmax) ?
-               substr($state->responses[''], 0, $lmax).'...' : $state->responses[''];
+           $responses[] = shorten_text(stripslashes($state->responses['']), 45);
        } else {
            $responses[] = '';
        }
