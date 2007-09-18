@@ -323,6 +323,7 @@ $string['prefgeneral'] = 'General';
 $string['prefletters'] = 'Grade letters and boundaries';
 $string['prefrows'] = 'Special rows';
 $string['prefshow'] = 'Show/hide toggles';
+$string['previewrows'] = 'Preview rows';
 $string['publishing'] = 'Publishing';
 $string['quickfeedback'] = 'Quick Feedback';
 $string['quickgrading'] = 'Quick Grading';
