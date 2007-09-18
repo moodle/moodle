@@ -48,7 +48,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         //hack prefix to objectclass
         if (empty($this->config->objectclass)) {        // Can't send empty filter
             $this->config->objectclass='objectClass=*';
-        } else if (strpos($this->config->objectclass, 'objectClass=') !== 0) {
+        } else if (stripos($this->config->objectclass, 'objectClass=') !== 0) {
             $this->config->objectclass = 'objectClass='.$this->config->objectclass;
         }
 
