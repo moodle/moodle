@@ -1180,8 +1180,10 @@ function auth_ldap_init () {
         }
     }   
     //hack prefix to objectclass
-    if ('objectClass=' != substr($CFG->ldap_objectclass, 0, 12)) {
-       $CFG->ldap_objectclass = 'objectClass='.$CFG->ldap_objectclass;
+    if (empty($CFG->ldap_objectclass)) {        // Can't send empty filter
+        $CFG->ldap_objectclass = 'objectClass=*';
+    } else if (stripos($CFG->ldap_objectclass, 'objectClass=') !== 0) {
+        $CFG->ldap_objectclass = 'objectClass='.$CFG->ldap_objectclass;
     }
    
     //all chages go in $CFG , no need to return value
