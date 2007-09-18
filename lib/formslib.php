@@ -1602,8 +1602,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{help}', '', $html);
 
         }
-
-        $this->_templates[$element->getName()] = $html;
+        if (!isset($this->_templates[$element->getName()])) {
+            $this->_templates[$element->getName()] = $html;
+        }
 
         parent::renderElement($element, $required, $error);
     }
