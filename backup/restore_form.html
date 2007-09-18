@@ -516,6 +516,7 @@ $info = restore_read_xml_info($xml_file);
 // fix for MDL-9068, front page course is just a normal course
 $siterolesarray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "shortname");
 $siterolesnamearray = get_assignable_roles (get_context_instance(CONTEXT_COURSE, $course->id), "name");
+$allroles = get_records('role');
 
 echo ('<table width="100%" class="restore-form-instances">');
 echo ('<tr><td align="right" style="width:50%"><b>'.get_string('sourcerole').'</b></td><td align="left" style="width:50%"><b>'.get_string('targetrole').'</b></td></tr>');
@@ -570,20 +571,33 @@ if ($info->backup_moodle_version < 2006092801) {
         }
 
         foreach ($roles->roles as $roleid=>$role) {
+         
+            $mappableroles = $siteroleschoicearray;
+         
             echo ('<tr><td align="right">');
             echo $role->name." (".($role->shortname).")";
             echo ('</td><td align="left">');
 
-            // see if any short name match
-            $matchrole = 0;
-            foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
-                if ($siteroleshortname == $role->shortname) {
-                    $matchrole = $siteroleid;
-                    break;
+            /// first, we see if any exact role definition is found
+            /// if found, that is the only option of restoring to
+            
+            if ($samerole = restore_samerole($roleid, $role)) {
+                $matchrole = $samerole->id;
+                // if an exact role is found, it does not matter whether this user can assign this role or not,
+                // this will be presented as a valid option regardless
+                $mappableroles[$samerole->id] = $allroles[$samerole->id]->name." (". $allroles[$samerole->id]->shortname.")";
+            } else {
+                // no exact role found, let's try to match shortname
+                // this is useful in situations where basic roles differ slightly in definition
+                $matchrole = 0;
+                foreach ($siterolesarray as $siteroleid=>$siteroleshortname) {
+                    if ($siteroleshortname == $role->shortname) {
+                        $matchrole = $siteroleid;
+                        break;
+                    }
                 }
             }
-
-            choose_from_menu ($siteroleschoicearray, "roles_".$roleid, $matchrole, 'new role', '', '0');
+            choose_from_menu ($mappableroles, "roles_".$roleid, $matchrole, 'new role', '', '0');
             echo ('</td></tr>');
         }
     }
@@ -603,3 +617,59 @@ echo ('</table>'); // end of role mappings table
 </div>
 </div>
 </form>
+
+<?php
+
+/* 
+ * If there is a role with exactly the same definition, we pull it out from db
+ */
+function restore_samerole($roleid, $role) {
+    global $CFG;
+    
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    // first let's use the id
+
+    if ($trole = get_records_sql("SELECT roleid,capability,permission
+                                   FROM {$CFG->prefix}role_capabilities
+                                   WHERE roleid = $roleid")) {
+        
+        if (restore_is_samerole($trole, $role)) {
+            $firstcap = array_shift($trole);
+            return get_record('role', 'id', $firstcap->roleid); 
+        } 
+    }   
+    
+    // unfortunately then we have to loop all roles with the same number of capabiltiies
+    if ($proles = get_records_sql("SELECT roleid, roleid
+                                   FROM {$CFG->prefix}role_capabilities
+                                   GROUP BY roleid
+                                   HAVING COUNT(capability) = ".count($role->capabilities))) {                    
+        foreach ($proles as $proleid=>$proleobj) {
+            if ($prole = get_records('role_capabilities', 'roleid', $proleid)) {
+                if (restore_is_samerole($prole, $role)) {
+                    return get_record('role', 'id', $proleid); 
+                }
+            }       
+        }                               
+    }
+ 
+    return false;
+}
+
+/* 
+ * rolea from db, roleb from xml
+ */
+function restore_is_samerole($rolea, $roleb) {
+  
+    if (count($rolea) != count($roleb->capabilities)) {
+        return false; 
+    }
+    
+    foreach ($rolea as $cap) {
+        if ($cap->permission != $roleb->capabilities[$cap->capability]->permission) {
+            return false; 
+        }     
+    }
+    return true;
+}
+?>
