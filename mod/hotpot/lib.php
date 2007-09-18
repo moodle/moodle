@@ -1217,6 +1217,17 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
     return $report;
 }
 
+/**
+ * Checks if scale is being used by any instance of hotpot
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any hotpot
+ */
+function hotpot_scale_used_anywhere($scaleid) {
+ return false;
+}
+
 //////////////////////////////////////////////////////////
 /// Any other hotpot functions go here.
 /// Each of them must have a name that starts with hotpot

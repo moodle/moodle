@@ -18,7 +18,7 @@ class edit_scale_form extends moodleform {
         $mform->setHelpButton('standard', array(false, get_string('scalestandard'),
                 false, true, false, get_string('scalestandardhelp', 'grades')));
 
-        $mform->addElement('static', 'activities', get_string('activities'));
+        $mform->addElement('static', 'used', get_string('used'));
 
         $mform->addElement('textarea', 'scale', get_string('scale'), array('cols'=>50, 'rows'=>2));
         $mform->setHelpButton('scale', array('scales', get_string('scale')));
@@ -55,9 +55,9 @@ class edit_scale_form extends moodleform {
 
         if ($id = $mform->getElementValue('id')) {
             $scale = grade_scale::fetch(array('id'=>$id));
-            $count = $scale->get_item_uses_count();
+            $used = $scale->is_used();
 
-            if ($count) {
+            if ($used) {
                 $mform->hardFreeze('scale');
             }
 
@@ -67,15 +67,16 @@ class edit_scale_form extends moodleform {
             } else if (empty($scale->courseid) and !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
                 $mform->hardFreeze('standard');
 
-            } else if ($count and !empty($scale->courseid)) {
+            } else if ($used and !empty($scale->courseid)) {
                 $mform->hardFreeze('standard');
             }
 
-            $activities_el =& $mform->getElement('activities');
-            $activities_el->setValue(get_string('usedinnplaces', '', $count));
+            $usedstr = $scale->is_used() ? get_string('yes') : get_string('no');
+            $used_el =& $mform->getElement('used');
+            $used_el->setValue($usedstr);
 
         } else {
-            $mform->removeElement('activities');
+            $mform->removeElement('used');
             if (empty($courseid) or !has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
                 $mform->hardFreeze('standard');
             }

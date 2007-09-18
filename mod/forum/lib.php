@@ -1272,6 +1272,21 @@ function forum_scale_used ($forumid,$scaleid) {
     return $return;
 }
 
+/**
+ * Checks if scale is being used by any instance of forum
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any forum
+ */
+function forum_scale_used_anywhere($scaleid) {
+    if ($scaleid and record_exists('forum', 'scale', -$scaleid)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**

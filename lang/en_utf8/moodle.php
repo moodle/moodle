@@ -1489,6 +1489,7 @@ $string['uploadrenamedcollision'] = 'File was renamed from $a->oldname to $a->ne
 $string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit set by the server';
 $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
+$string['used'] = 'Used';
 $string['usedinnplaces'] = 'Used in $a places';
 $string['usemessageform'] = 'or use the form below to send a message to the selected students';
 $string['user'] = 'User';

@@ -307,6 +307,21 @@ function journal_scale_used ($journalid,$scaleid) {
     return $return;
 }
 
+/**
+ * Checks if scale is being used by any instance of journal
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any journal
+ */
+function journal_scale_used_anywhere($scaleid) {
+    if ($scaleid and record_exists('journal', 'assessed', -$scaleid)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // SQL FUNCTIONS ///////////////////////////////////////////////////////////////////
 
 function journal_get_users_done($journal) {

@@ -444,6 +444,21 @@ function glossary_scale_used ($glossaryid,$scaleid) {
     return $return;
 }
 
+/**
+ * Checks if scale is being used by any instance of glossary
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any glossary
+ */
+function glossary_scale_used_anywhere($scaleid) {
+    if ($scaleid and record_exists('glossary', 'scale', -$scaleid)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other glossary functions go here.  Each of them must have a name that
 /// starts with glossary_

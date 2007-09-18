@@ -200,43 +200,64 @@ class grade_scale extends grade_object {
      * @return boolean
      */
     function can_delete() {
-        $count = $this->get_item_uses_count();
-        return empty($count);
+        return !$this->is_used();
     }
 
     /**
-     * Returns the number of places where scale is used - activities, grade items, outcomes, etc.
-     * @return int
+     * Returns if scale used anywhere - activities, grade items, outcomes, etc.
+     * @return bool
      */
-    function get_item_uses_count() {
+    function is_used() {
         global $CFG;
 
-//TODO: fix me - this methods does some duplicate counting in grade items and activities
-        $count = 0;
-        if (!empty($this->courseid)) {
-            if ($scales_uses = course_scale_used($this->courseid,$this->id)) {
-                $count += count($scales_uses);
-            }
-        } else {
-            $courses = array();
-            if ($scales_uses = site_scale_used($this->id,$courses)) {
-                $count += count($scales_uses);
-            }
-        }
-
-        // count grade items
+        // count grade items excluding the 
         $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_items WHERE scaleid = {$this->id} AND outcomeid IS NULL";
-        if ($scales_uses = count_records_sql($sql)) {
-            $count += $scales_uses;
+        if (count_records_sql($sql)) {
+            return true;
         }
 
         // count outcomes
         $sql = "SELECT COUNT(id) FROM {$CFG->prefix}grade_outcomes WHERE scaleid = {$this->id}";
-        if ($scales_uses = count_records_sql($sql)) {
-            $count += $scales_uses;
+        if (count_records_sql($sql)) {
+            return true;
         }
 
-        return $count;
+        $legacy_mods = false;
+        if ($mods = get_records('modules', 'visible', 1)) {
+            foreach ($mods as $mod) {
+                //Check cm->name/lib.php exists
+                if (file_exists($CFG->dirroot.'/mod/'.$mod->name.'/lib.php')) {
+                    include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
+                    $function_name = $mod->name.'_scale_used_anywhere';
+                    $old_function_name = $mod->name.'_scale_used';
+                    if (function_exists($function_name)) {
+                        if ($function_name($this->id)) {
+                            return true;
+                        }
+
+                    } else if (function_exists($old_function_name)) {
+                        $legacy_mods = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // some mods are missing the new xxx_scale_used_anywhere() - use the really slow old way
+        if ($legacy_mods) {
+            if (!empty($this->courseid)) {
+                if (course_scale_used($this->courseid,$this->id)) {
+                    return true;
+                }
+            } else {
+                $courses = array();
+                if (site_scale_used($this->id,$courses)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
 ?>

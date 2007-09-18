@@ -140,6 +140,17 @@ function lams_scale_used ($lamsid,$scaleid) {
   return $return;
 }
 
+/**
+ * Checks if scale is being used by any instance of lams
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any lams
+ */
+function lams_scale_used_anywhere($scaleid) {
+ return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lams functions go here.  Each of them must have a name that
 /// starts with lams_

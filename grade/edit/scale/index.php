@@ -37,7 +37,7 @@ $strname           = get_string('name');
 $strdelete         = get_string('delete');
 $stredit           = get_string('edit');
 $srtcreatenewscale = get_string('scalescustomcreate');
-$stritems          = get_string('items', 'grades');
+$strused           = get_string('used');
 $stredit           = get_string('edit');
 
 switch ($action) {
@@ -82,20 +82,20 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
         $line = array();
         $line[] = format_string($scale->name).'<div class="scale_options">'.str_replace(",",", ",$scale->scale).'</div>';
 
-        $scales_uses = $scale->get_item_uses_count();
-        $line[] = $scales_uses;
+        $used = $scale->is_used();
+        $line[] = $used ? get_string('yes') : get_string('no');
 
         $buttons = "";
         $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$scale->id\"><img".
                     " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
-        if (empty($scales_uses)) {
+        if (!$used) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
         $data[] = $line;
     }
-    $table->head  = array($strscale, $stritems, $stredit);
+    $table->head  = array($strscale, $strused, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
     $table->width = '90%';
@@ -110,22 +110,22 @@ if ($scales = grade_scale::fetch_all_global()) {
         $line = array();
         $line[] = format_string($scale->name).'<div class="scale_options">'.str_replace(",",", ",$scale->scale).'</div>';
 
-        $scales_uses = $scale->get_item_uses_count();
-        $line[] = $scales_uses;
+        $used = $scale->is_used();
+        $line[] = $used ? get_string('yes') : get_string('no');
 
         $buttons = "";
         if (has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
             $buttons .= "<a title=\"$stredit\" href=\"edit.php?courseid=$courseid&amp;id=$scale->id\"><img".
                         " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
         }
-        if (empty($scales_uses) and has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
+        if (!$used and has_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM))) {
             $buttons .= "<a title=\"$strdelete\" href=\"index.php?id=$courseid&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
                         " src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
         }
         $line[] = $buttons;
         $data[] = $line;
     }
-    $table->head  = array($strscale, $stritems, $stredit);
+    $table->head  = array($strscale, $strused, $stredit);
     $table->size  = array('70%', '20%', '10%');
     $table->align = array('left', 'center', 'center');
     $table->width = '90%';

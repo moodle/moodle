@@ -2234,7 +2234,7 @@ function assignment_get_participants($assignmentid) {
  * @param $scaleid int
  * @return boolean True if the scale is used by the assignment
  */
-function assignment_scale_used ($assignmentid, $scaleid) {
+function assignment_scale_used($assignmentid, $scaleid) {
 
     $return = false;
 
@@ -2245,6 +2245,21 @@ function assignment_scale_used ($assignmentid, $scaleid) {
     }
 
     return $return;
+}
+
+/**
+ * Checks if scale is being used by any instance of assignment
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any assignment
+ */
+function assignment_scale_used_anywhere($scaleid) {
+    if ($scaleid and record_exists('assignment', 'grade', -$scaleid)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
