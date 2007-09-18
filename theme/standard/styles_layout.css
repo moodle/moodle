@@ -2261,6 +2261,13 @@ body#doc-contents ul {
   text-align: right;
 }
 
+.gradeexportlink {
+  padding: 2em;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /***
  *** Login
  ***/
