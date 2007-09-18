@@ -78,6 +78,8 @@ if ($currenttab != 'update') {
 
             require_login($course);
 
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // for role names later
+
             $fullmodulename      = get_string("modulename", $module->name);
             $streditinga         = get_string("editinga", "moodle", $fullmodulename);
             $strmodulenameplural = get_string("modulenameplural", $module->name);
@@ -125,6 +127,7 @@ if ($currenttab != 'update') {
                                     $navlinks[0] = array('name' => $course->shortname,
                                                         'link' => "$CFG->wwwroot/course/view.php?id=$course->id",
                                                         'type' => 'misc');
+                                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // for role names later
                                 }
                                 $navigation = build_navigation($navlinks);
                                 print_header("$straction: $blockname", $course->fullname, $navigation);

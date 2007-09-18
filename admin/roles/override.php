@@ -28,6 +28,9 @@
         if (!$course = get_record('course', 'id', $courseid)) {
             error('Bad course ID');
         }
+
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
     } else {
         $course = clone($SITE);
         $courseid = SITEID;
@@ -148,6 +151,18 @@
         $tabsmode = 'override';
         include_once('tabs.php');
     }
+
+/// Rename some of the role names if needed
+    if (isset($coursecontext)) {
+        if ($aliasnames = get_records('role_names', 'contextid', $coursecontext->id)) {
+            foreach ($aliasnames as $alias) {
+                if (isset($overridableroles[$alias->roleid])) {
+                    $overridableroles[$alias->roleid] = $alias->text.' ('.$overridableroles[$alias->roleid].')';
+                }
+            }
+        }
+    }
+
 
     print_heading_with_help(get_string('overrides', 'role'), 'overrides');
 
