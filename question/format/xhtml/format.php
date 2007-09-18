@@ -20,7 +20,7 @@ function writequestion( $question ) {
     // question reflects database fields for general question and specific to type
 
     // if a category switch, just ignore
-    if ($question-qtype=='category') {
+    if ($question->qtype=='category') {
         return '';
     }
 
