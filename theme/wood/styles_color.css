@@ -251,6 +251,7 @@ legend,
 .block_calendar_month .filters table,
 #calendar .maincalendar .minicalendar,
 #calendar .sidecalendar .minicalendar,
+.message-discussion-noframes #messages,
 .block_calendar_month .minicalendar,
 #calendar .maincalendar .eventlist .event,
 #calendar .maincalendar,
@@ -373,10 +374,12 @@ form.mform fieldset,
 table .flexible .r1,
 #mod-survey-view table tr.r1,
 #calendar .maincalendar .eventlist .event .description,
+#message-messages,
 .glossarypost .entry,
 .glossarycomment .entry,
 .glossarypost .entrylowersection {
-    background-color:white;
+    background: none;
+    background-color: white;
     border:none;
 }
 
@@ -402,4 +405,3 @@ table .flexible .r1,
     border-right:1px solid #330000;
     border-collapse: separate;
 }
-
