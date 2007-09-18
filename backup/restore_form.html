@@ -12,6 +12,8 @@
       error( 'course_header object missing from session' );
     }
 
+    $restore_gradebook_history =  optional_param('restore_gradebook_history', 1, PARAM_INT);
+
     //Check that we have all we need
     //backup_unique_code
     $backup_unique_code = required_param( 'backup_unique_code' );
@@ -468,7 +470,17 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<input type=\"hidden\" name=\"restore_site_files\" value=\"0\" />";
         }
         echo "</td></tr>";
-
+        
+        // do you want grade histories to be restored?
+        echo "<tr>";
+        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo get_string ('gradebookhistories', 'grades').":";
+        echo "</b></td><td colspan=\"2\">";
+        $gradebook_history_options[0] = get_string("no");
+        $gradebook_history_options[1] = get_string("yes");
+        choose_from_menu($gradebook_history_options, "restore_gradebook_history", $restore_gradebook_history, "");
+        echo "</td></tr>";  
+        
         //Now print the Messages tr
         echo "<tr>";
         echo "<td align=\"right\" colspan=\"2\"><b>";
@@ -487,6 +499,8 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
             echo "<input type=\"hidden\" name=\"restore_messages\" value=\"0\" />";
         }
         echo "</td></tr>";
+        
+      
     }
 ?>
 </table>

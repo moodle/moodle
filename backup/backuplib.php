@@ -1513,6 +1513,9 @@
                 fwrite ($bf,full_tag("HIDDEN",5,false,$grade_item->hidden));
                 fwrite ($bf,full_tag("LOCKED",5,false,$grade_item->locked));
                 fwrite ($bf,full_tag("LOCKTIME",5,false,$grade_item->locktime));
+                fwrite ($bf,full_tag("NEEDSUPDATE",5,false,$grade_item->needsupdate));
+                fwrite ($bf,full_tag("TIMECREATED",5,false,$grade_item->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",5,false,$grade_item->timemodified));
 
                 // back up the other stuff here
                 // mod grades should only be backed up if selected

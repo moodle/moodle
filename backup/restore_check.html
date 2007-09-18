@@ -92,9 +92,11 @@
         $restore_course_files = required_param('restore_course_files');
         //restore_site_files
         $restore_site_files = required_param('restore_site_files');
+        //restore_gradebook_history
+        $restore_gradebook_history = required_param('restore_gradebook_history');
         //restore_messages
         $restore_messages = required_param('restore_messages');
-
+        
         //Check we've selected a course to restore to
         $course_id = optional_param('course_id', 0, PARAM_INT);
 
@@ -129,6 +131,7 @@
         $restore->course_files=$restore_course_files;
         $restore->site_files=$restore_site_files;
         $restore->messages=$restore_messages;
+        $restore->restore_gradebook_history=$restore_gradebook_history;
         $restore->course_id=$course_id;
         //add new vars to restore object
         $restore->course_startdateoffset = $coursestartdatedateoffset;

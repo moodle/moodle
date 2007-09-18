@@ -1564,7 +1564,7 @@
                             $dbrec->grademin = backup_todb($info['GRADE_ITEM']['#']['GRADEMIN']['0']['#']);
                             /// needs to be restored first
 
-                            if ($info['GRADE_ITEM']['#']['SCALEID']['0']['#']) {
+                            if (backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#'])) {
                                 $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($info['GRADE_ITEM']['#']['SCALEID']['0']['#']));
                                 $dbrec->scaleid = $scale->new_id;
                             }
@@ -1578,6 +1578,9 @@
                             $dbrec->hidden = backup_todb($info['GRADE_ITEM']['#']['HIDDEN']['0']['#']);
                             $dbrec->locked = backup_todb($info['GRADE_ITEM']['#']['LOCKED']['0']['#']);
                             $dbrec->locktime = backup_todb($info['GRADE_ITEM']['#']['LOCKTIME']['0']['#']);
+                            $dbrec->needsupdate = backup_todb($info['GRADE_ITEM']['#']['NEEDSUPDATE']['0']['#']);
+                            $dbrec->timecreated = backup_todb($info['GRADE_ITEM']['#']['TIMECREATED']['0']['#']);
+                            $dbrec->timemodified = backup_todb($info['GRADE_ITEM']['#']['TIMEMODIFIED']['0']['#']);
 
                             // get the current sortorder, add 1 to it and use that
                             if ($lastitem = get_record_sql("SELECT sortorder, id FROM {$CFG->prefix}grade_items
@@ -1622,7 +1625,7 @@
                                     $grade->rawgrademax = backup_todb($ite_info['#']['RAWGRADEMAX']['0']['#']);
                                     $grade->rawgrademin = backup_todb($ite_info['#']['RAWGRADEMIN']['0']['#']);
                                     // need to find scaleid
-                                    if ($ite_info['#']['RAWSCALEID']['0']['#']) {
+                                    if (backup_todb($ite_info['#']['RAWSCALEID']['0']['#'])) {
                                         $scale = backup_getid($restore->backup_unique_code,"scale",backup_todb($ite_info['#']['RAWSCALEID']['0']['#']));
                                         $grade->rawscaleid = $scale->new_id;
                                     }
@@ -1696,7 +1699,7 @@
         }
 
         // process histories
-        if ($gchcount && $continue && !isset($SESSION->restore->importing)) {
+        if ($gchcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradecategoryhistory','grades').'</li>';
             }
@@ -1789,7 +1792,7 @@
         }
 
         // process histories
-        if ($gghcount && $continue && !isset($SESSION->restore->importing)) {
+        if ($gghcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradegradeshistory','grades').'</li>';
             }
@@ -1870,7 +1873,7 @@
 
         // process histories
 
-        if ($ggthcount && $continue && !isset($SESSION->restore->importing)) {
+        if ($ggthcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradegradestexthistory','grades').'</li>';
             }
@@ -1944,7 +1947,7 @@
         }
 
         // process histories
-        if ($gihcount && $continue && !isset($SESSION->restore->importing)) {
+        if ($gihcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeitemshistory','grades').'</li>';
             }
@@ -2083,7 +2086,7 @@
         }
 
         // process histories
-        if ($gohcount && $continue && !isset($SESSION->restore->importing)) {
+        if ($gohcount && $continue && !isset($SESSION->restore->importing) && $restore->restore_gradebook_history) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeoutcomeshistory','grades').'</li>';
             }
