@@ -545,11 +545,11 @@ class moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
             $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-    		$mform->closeHeaderBefore('buttonar');
+            $mform->closeHeaderBefore('buttonar');
         } else {
             //no group needed
             $mform->addElement('submit', 'submitbutton', $submitlabel);
-    		$mform->closeHeaderBefore('submitbutton');
+            $mform->closeHeaderBefore('submitbutton');
         }
     }
 }
@@ -1133,7 +1133,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
     frm.elements[\''.$elementName.'\'].focus();
   }
 ';
-  
+
             // Fix for bug displaying errors for elements in a group
             //unset($element);
             //$element =& $this->getElement($elementName);
@@ -1151,7 +1151,7 @@ function validate_' . $this->_formName . '(frm) {
      return true;
   }
   var ret = true;
-    
+
   var frm = document.getElementById(\''. $this->_attributes['id'] .'\')
   var first_focus = false;
 ' . $validateJS . ';
@@ -1506,7 +1506,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         }
 
-        $this->_templates[$element->getName()] = $html;
+        if (!isset($this->_templates[$element->getName()])) {
+            $this->_templates[$element->getName()] = $html;
+        }
 
         parent::renderElement($element, $required, $error);
     }
