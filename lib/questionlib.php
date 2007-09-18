@@ -1661,6 +1661,44 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
 }
 
 /**
+* Gets the default category in the most specific context.
+* If no categories exist yet then default ones are created in all contexts.
+*
+* @param array $contexts  The context objects for this context and all parent contexts.
+* @return object The default category - the category in the course context
+*/
+function question_make_default_categories($contexts) {
+    $toreturn = null;
+    // If it already exists, just return it.
+    foreach ($contexts as $key => $context) {
+        if (!$categoryrs = get_recordset_select("question_categories", "contextid = '{$context->id}'", 'sortorder, name', '*', '', 1)) {
+            error('error getting category record');
+        } else {
+            if (!$category = rs_fetch_record($categoryrs)){
+                // Otherwise, we need to make one
+                $category = new stdClass;
+                $contextname = print_context_name($context, false, true);
+                $category->name = addslashes(get_string('defaultfor', 'question', $contextname));
+                $category->info = addslashes(get_string('defaultinfofor', 'question', $contextname));
+                $category->contextid = $context->id;
+                $category->parent = 0;
+                $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
+                $category->stamp = make_unique_id_code();
+                if (!$category->id = insert_record('question_categories', $category)) {
+                    error('Error creating a default category for context '.print_context_name($context));
+                }
+            }
+        }
+        if ($context->contextlevel == CONTEXT_COURSE){
+            $toreturn = clone($category);
+        }
+    }
+
+
+    return $toreturn;
+}
+
+/**
  * Get all the category objects, including a count of the number of questions in that category,
  * for all the categories in the lists $contexts.
  *
