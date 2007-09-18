@@ -87,6 +87,10 @@
 
     echo '</td></tr></table>';
 
+    if (!empty($THEME->customcorners)) {
+        print_custom_corners_end(false, 'content');
+    }
+
     echo '</div></div></body></html>'; // Close possible theme tables off
 
 ?>

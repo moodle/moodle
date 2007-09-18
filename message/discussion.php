@@ -37,7 +37,7 @@
      </head>
      <frameset rows="110,*,0,220">
        <noframes><body><?php
-           echo '<a href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'<a/>';
+           echo '<a href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a>';
        ?></body></noframes>
 
        <frame src="user.php?id=<?php p($user->id)?>&amp;frame=user"     name="user"
