@@ -53,11 +53,13 @@ $mform = new grade_export_form(null, array('includeseparator'=>true, 'publishing
 if ($data = $mform->get_data()) {
     $export = new grade_export_txt($course, groups_get_course_group($course));
 
-    // print the grades on screen for feedbacks
+    // print the grades on screen for feedback
+
     $export->process_form($data);
-    $export->display_preview();
     $export->print_continue();
-    die;
+    $export->display_preview();
+    print_footer($course);
+    exit;
 }
 
 groups_print_course_menu($course, 'index.php?id='.$id);

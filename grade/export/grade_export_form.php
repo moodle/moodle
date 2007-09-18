@@ -23,7 +23,7 @@ class grade_export_form extends moodleform {
         $mform->setDefault('export_feedback', 0);
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
-        $mform->addElement('select', 'previewrows', 'Preview rows', $options); // TODO: localize
+        $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options); 
 
         if (!empty($features['includeseparator'])) {
             $radio = array();

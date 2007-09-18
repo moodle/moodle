@@ -220,6 +220,9 @@ class grade_export {
      * Prints preview of exported grades on screen as a feedback mechanism
      */
     function display_preview() {
+
+        print_heading(get_string('previewrows', 'grades'));
+
         echo '<table>';
         echo '<tr>';
         echo '<th>'.get_string("firstname")."</th>".
@@ -284,7 +287,6 @@ class grade_export {
     /**
      * Either prints a "Export" box, which will redirect the user to the download page,
      * or prints the URL for the published data.
-     * @note exit() at the end of the method
      * @return void
      */
     function print_continue() {
@@ -292,9 +294,13 @@ class grade_export {
 
         $params = $this->get_export_params();
 
-        // this button should trigger a download prompt
-        if (!$this->userkey) {
-            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', $params, get_string('export', 'grades'));
+
+        print_heading(get_string('export', 'grades'));
+
+        echo '<div class="gradeexportlink">';
+        if (!$this->userkey) {      // this button should trigger a download prompt
+            print_single_button($CFG->wwwroot.'/grade/export/'.$this->plugin.'/export.php', 
+                                $params, get_string('download', 'admin'));
 
         } else {
             $paramstr = '';
@@ -306,12 +312,9 @@ class grade_export {
 
             $link = $CFG->wwwroot.'/grade/export/'.$this->plugin.'/dump.php'.$paramstr.'&amp;key='.$this->userkey;
 
-            echo '<p>';
-            echo '<a href="'.$link.'">'.$link.'</a>';
-            echo '</p>';
-            print_footer();
+            echo get_string('download', 'admin').': <a href="'.$link.'">'.$link.'</a>';
         }
-        exit();
+        echo '</div>';
     }
 }
 

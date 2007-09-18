@@ -55,9 +55,10 @@ if ($data = $mform->get_data()) {
 
     // print the grades on screen for feedbacks
     $export->process_form($data);
-    $export->display_preview();
     $export->print_continue();
-    die;
+    $export->display_preview();
+    print_footer($course);
+    exit;
 }
 
 groups_print_course_menu($course, 'index.php?id='.$id);
