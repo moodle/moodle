@@ -187,7 +187,8 @@
     if (!empty($move) and ($moveto>=0) and confirm_sesskey()) {
         if ($tempcat = get_record('course_categories', 'id', $move)) {
             if ($tempcat->parent != $moveto) {
-                if (! set_field('course_categories', 'parent', $moveto, 'id', $tempcat->id)) {
+                $newp = get_record('course_categories', 'id', $moveto);
+                if (! move_category($tempcat, $newp)) {
                     notify('Could not update that category!');
                 } else {
                     rebuild_context_rel(get_context_instance(CONTEXT_COURSECAT, $move));
