@@ -4473,11 +4473,11 @@ function build_context_path($force=false) {
     $sql = "UPDATE {$CFG->prefix}context
               SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
             WHERE contextlevel=".CONTEXT_COURSECAT."
-                  AND instanceid IN
-               (SELECT id
-                  FROM {$CFG->prefix}course_categories
-                 WHERE depth=1
-                       $emptyclause)";
+                   AND EXISTS (SELECT 'x'
+                                 FROM {$CFG->prefix}course_categories cc
+                                WHERE cc.id = {$CFG->prefix}context.instanceid
+                                      AND cc.depth=1)
+                   $emptyclause";
     execute_sql($sql, $force);
 
     execute_sql($udelsql, $force);
@@ -4553,18 +4553,21 @@ function build_context_path($force=false) {
     $sql = "UPDATE {$CFG->prefix}context
                SET depth=2, path=".sql_concat("'$base/'", 'id')."
              WHERE contextlevel=".CONTEXT_BLOCK."
-                   AND instanceid IN (SELECT id
-                                        FROM {$CFG->prefix}block_instance bi
-                                       WHERE bi.pagetype!='course-view')
-                  $emptyclause ";
+                   AND EXISTS (SELECT 'x'
+                                 FROM {$CFG->prefix}block_instance bi
+                                WHERE bi.id = {$CFG->prefix}context.instanceid
+                                      AND bi.pagetype!='course-view')
+                   $emptyclause ";
     execute_sql($sql, $force);
 
     // User
     $sql = "UPDATE {$CFG->prefix}context
                SET depth=2, path=".sql_concat("'$base/'", 'id')."
              WHERE contextlevel=".CONTEXT_USER."
-                   AND instanceid IN (SELECT id FROM {$CFG->prefix}user)
-                  $emptyclause ";
+                   AND EXISTS (SELECT 'x'
+                                 FROM {$CFG->prefix}user u
+                                WHERE u.id = {$CFG->prefix}context.instanceid) 
+                   $emptyclause ";
     execute_sql($sql, $force);
 
     // Personal TODO
