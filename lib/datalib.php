@@ -1771,46 +1771,71 @@ function print_object($object) {
     echo '<pre class="notifytiny">' . htmlspecialchars(print_r($object,true)) . '</pre>';
 }
 
+/*
+ * Check whether a course is visible through its parents
+ * path. 
+ *
+ * Notes:
+ *
+ * - All we need from the course is ->category. _However_
+ *   if the course object has a categorypath property,
+ *   we'll save a dbquery
+ *
+ * - If we return false, you'll still need to check if
+ *   the user can has the 'moodle/category:visibility'
+ *   capability...
+ *
+ * - Will generate 2 DB calls. 
+ *
+ * - It does have a small local cache, however...
+ *
+ * - Do NOT call this over many courses as it'll generate
+ *   DB traffic. Instead, see what get_my_courses() does.
+ *
+ * @param mixed $object A course object
+ * @return bool
+ */
 function course_parent_visible($course = null) {
     global $CFG;
+    //return true;
+    static $mycache;
 
-    if (empty($course)) {
+    if (!is_object($course)) {
         return true;
     }
     if (!empty($CFG->allowvisiblecoursesinhiddencategories)) {
         return true;
     }
-    return category_parent_visible($course->category);
-}
 
-function category_parent_visible($parent = 0) {
-
-    static $visible;
-
-    if (!$parent) {
-        return true;
-    }
-
-    if (empty($visible)) {
-        $visible = array(); // initialize
-    }
-
-    if (array_key_exists($parent,$visible)) {
-        return $visible[$parent];
-    }
-
-    $category = get_record('course_categories', 'id', $parent);
-    $list = explode('/', preg_replace('/^\/(.*)$/', '$1', $category->path));
-    $list[] = $parent;
-    $parents = get_records_list('course_categories', 'id', implode(',', $list), 'depth DESC');
-    $v = true;
-    foreach ($parents as $p) {
-        if (!$p->visible) {
-            $v = false;
+    if (!isset($mycache)) {
+        $mycache = array();
+    } else {
+        // cast to force assoc array
+        $k = (string)$course->category; 
+        if (isset($mycache[$k])) {
+            return $mycache[$k];
         }
     }
-    $visible[$parent] = $v; // now cache it
-    return $v;
+
+    if (isset($course->categorypath)) {
+        $path = $course->categorypath;
+    } else {
+        $path = get_field('course_categories', 'path', 
+                          'id', $course->category);
+    }
+    $catids = substr($path,1); // strip leading slash
+    $catids = str_replace('/',',',$catids);
+
+    $sql = "SELECT MIN(visible)
+            FROM {$CFG->prefix}course_categories
+            WHERE id IN ($catids)";
+    $vis = get_field_sql($sql);
+
+    // cast to force assoc array
+    $k = (string)$course->category;
+    $mycache[$k] = $vis;
+
+    return $vis;
 }
 
 /**
