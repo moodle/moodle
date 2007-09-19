@@ -3737,7 +3737,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
             // we need firstname, lastname, imagealt, can't escape...
             $needrec = true;
         } else {
-            $userobj = new StdObj; // fake it to save DB traffic
+            $userobj = new StdClass; // fake it to save DB traffic
             $userobj->id = $user;
             $userobj->picture = $picture;
             $user = $userobj;
