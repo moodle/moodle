@@ -196,7 +196,7 @@ class quiz_report extends quiz_default_report {
 
         // set up table
         $tablecolumns = array('picture', 'fullname', 'timefinish', 'grade');
-        $tableheaders = array('', get_string('fullname'), get_string("completedon", "quiz"), '');
+        $tableheaders = array('', get_string('name'), get_string("completedon", "quiz"), '');
 
         $table = new flexible_table('mod-quiz-report-grading');
 
