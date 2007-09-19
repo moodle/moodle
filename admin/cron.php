@@ -293,6 +293,13 @@
             tag_cron();
         }
         
+        // Accesslib stuff
+        cleanup_contexts();
+        cleanup_dirty_contexts();
+        // If you suspect that the context paths are somehow corrupt
+        // replace the line below with: build_context_path(true); 
+        build_context_path();
+
     } // End of occasional clean-up tasks
 
 
@@ -367,10 +374,6 @@
         }
         unset($authplugin);
     }
-
-    // Accesslib stuff
-    cleanup_contexts();
-    cleanup_dirty_contexts();
 
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
