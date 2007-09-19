@@ -4058,58 +4058,67 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
 /**
  * gets all the users assigned this role in this context or higher
- * @param int roleid
+ * @param int roleid (can also be an array of ints!)
  * @param int contextid
  * @param bool parent if true, get list of users assigned in higher context too
+ * @param string fields - fields from user (u.) , role assignment (ra) or role (r.)
+ * @param string sort  - sort from user (u.) , role assignment (ra) or role (r.)
+ * @param bool gethidden - whether to fetch hidden enrolments too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC, u.firstname ASC', $view=false, $limitfrom='', $limitnum='', $group='') {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $gethidden=true) {
     global $CFG;
 
     if (empty($fields)) {
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
                   'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
-                  'u.emailstop, u.lang, u.timezone';
+                  'u.emailstop, u.lang, u.timezone, r.name as rolename';
     }
 
     // whether this assignment is hidden
-    $hiddensql = ($view && !has_capability('moodle/role:viewhiddenassigns', $context))? ' AND r.hidden = 0 ':'';
+    $hiddensql = $gethidden ? '': ' AND ra.hidden = 0 ';
+
+    $parentcontexts = '';
     if ($parent) {
-        if ($contexts = get_parent_contexts($context)) {
-            $parentcontexts = ' OR r.contextid IN ('.implode(',', $contexts).')';
-        } else {
-            $parentcontexts = '';
+        $parentcontexts = substr($context->path, 1); // kill leading slash
+        $parentcontexts = str_replace('/', ',', $parentcontexts);
+        if ($parentcontexts !== '') {
+            $parentcontexts = ' OR ra.contextid IN ('.$parentcontexts.' )';
         }
-    } else {
-        $parentcontexts = '';
     }
 
-    if ($roleid) {
-        $roleselect = "AND r.roleid = $roleid";
+    if (is_array($roleid)) {
+        $roleselect = ' AND ra.roleid IN (' . join(',',$roleid) .')';
+    } elseif (is_int($roleid)) {
+        $roleselect = "AND ra.roleid = $roleid";
     } else {
         $roleselect = '';
     }
 
     if ($group) {
-        $groupsql = "{$CFG->prefix}groups_members gm, ";
-        $groupwheresql = " AND gm.userid = u.id AND gm.groupid = $group ";
+        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm
+                          ON gm.userid = u.id";
+        $groupselect = " AND gm.groupid = $group ";
     } else {
-        $groupsql = '';
-        $groupwheresql = '';
+        $groupjoin   = '';
+        $groupselect = '';
     }
 
-    $SQL = "SELECT $fields
-            FROM {$CFG->prefix}role_assignments r,
-                 $groupsql
-                 {$CFG->prefix}user u
-            WHERE (r.contextid = $context->id $parentcontexts)
-                 $groupwheresql
-            AND u.id = r.userid $roleselect
+    $SQL = "SELECT $fields, ra.roleid
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}user u
+              ON u.id = ra.userid
+            JOIN {$CFG->prefix}role r
+              ON ra.roleid = r.id
+            $groupjoin
+            WHERE (ra.contextid = $context->id $parentcontexts)
+            $roleselect
+            $groupselect
             $hiddensql
             ORDER BY $sort
             ";                  // join now so that we can just use fullname() later
-    return get_records_sql($SQL, $limitfrom, $limitnum);
+    return get_records_sql($SQL);
 }
 
 /**
