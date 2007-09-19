@@ -851,6 +851,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             $fields = array_map('trim', $fields);
             $fields = array_unique(array_merge($basefields, $fields));
         }
+    } elseif (is_array($fields)) {
+        $fields = array_unique(array_merge($basefields, $fields)); 
     } else {
         $fields = $basefields;
     }
