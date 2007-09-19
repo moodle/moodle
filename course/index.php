@@ -195,8 +195,6 @@
                 $newp = get_record('course_categories', 'id', $moveto);
                 if (! move_category($tempcat, $newp)) {
                     notify('Could not update that category!');
-                } else {
-                    rebuild_context_rel(get_context_instance(CONTEXT_COURSECAT, $move));
                 }
             }
         }
