@@ -757,7 +757,7 @@ function similar_tags($text, $limitfrom='' , $limitnum='' ) {
  *
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
- * @return mixed an array of tag objects
+ * @return array an array of tag objects
  */
 
 function related_tags($tag_name_or_id, $limitnum=10) {
@@ -765,18 +765,16 @@ function related_tags($tag_name_or_id, $limitnum=10) {
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     //gets the manually added related tags
-    $manual_related_tags = get_item_tags('tag',$tag_id, 'ti.ordering ASC',DEFAULT_TAG_TABLE_FIELDS);
-    if ($manual_related_tags == false) $manual_related_tags = array();
+    if (!$manual_related_tags = get_item_tags('tag', $tag_id, 'ti.ordering ASC', DEFAULT_TAG_TABLE_FIELDS)) {
+        $manual_related_tags = array();
+    }
 
     //gets the correlated tags
     $automatic_related_tags = correlated_tags($tag_id);
-    if ($automatic_related_tags == false) $automatic_related_tags = array();
 
-    $related_tags = array_merge($manual_related_tags,$automatic_related_tags);
+    $related_tags = array_merge($manual_related_tags, $automatic_related_tags);
 
-    return array_slice( object_array_unique($related_tags) , 0 , $limitnum  );
-
-
+    return array_slice(object_array_unique($related_tags), 0 , $limitnum);
 }
 
 /**
@@ -784,19 +782,25 @@ function related_tags($tag_name_or_id, $limitnum=10) {
  * The correlated tags are retrieved from the tag_correlation table, which is a caching table.
  *
  * @param string $tag_name_or_id is a single **normalized** tag name or the id of a tag
- * @return mixed an array of tag objects
+ * @return array an array of tag objects, or empty array if none
  */
 function correlated_tags($tag_name_or_id) {
 
     $tag_id = tag_id_from_string($tag_name_or_id);
 
-    if (!$tag_correlation = get_record('tag_correlation','tagid',$tag_id)) {
+    if (!$tag_correlation = get_record('tag_correlation', 'tagid', $tag_id)) {
         return array();
     }
 
-    $tags_id_csv_with_apos = stripcslashes($tag_correlation->correlatedtags);
+    if (empty($tag_correlation->correlatedtags)) {
+        return array();
+    }
 
-    return get_records_select('tag', "id IN ({$tags_id_csv_with_apos})", '', DEFAULT_TAG_TABLE_FIELDS);
+    if (!$result = get_records_select('tag', "id IN ({$tag_correlation->correlatedtags})", '', DEFAULT_TAG_TABLE_FIELDS)) {
+        return array();
+    }
+
+    return $result;
 }
 
 /**
@@ -832,59 +836,44 @@ function update_tag_correlations($item_type, $item_id) {
  * @param int $limitnum return a subset comprising this many records (optional, default is 10)
  */
 function cache_correlated_tags($tag_name_or_id, $min_correlation=0.25, $limitnum=10) {
-
     global $CFG;
-    $textlib = textlib_get_instance();
 
     $tag_id = tag_id_from_string($tag_name_or_id);
 
     // query that counts how many times any tag appears together in items
     // with the tag passed as argument ($tag_id)
-    $query =
-    "    SELECT
-            tb.tagid , COUNT(*) nr
-         FROM
-             {$CFG->prefix}tag_instance ta
-         INNER JOIN
-             {$CFG->prefix}tag_instance tb
-         ON
-             ta.itemid = tb.itemid
-         WHERE
-             ta.tagid = {$tag_id}
-         GROUP BY
-             tb.tagid
-         ORDER BY
-             nr DESC";
+    $query = "SELECT tb.tagid , COUNT(*) nr
+                FROM {$CFG->prefix}tag_instance ta
+                     INNER JOIN {$CFG->prefix}tag_instance tb ON ta.itemid = tb.itemid
+               WHERE ta.tagid = {$tag_id}
+            GROUP BY tb.tagid
+            ORDER BY nr DESC";
 
-    $tag_correlations = get_records_sql($query, 0, $limitnum);
+    $correlated = array();
 
-    $tags_id_csv_with_apos = "'";
-    $cutoff = $tag_correlations[$tag_id]->nr * $min_correlation;
+    if ($tag_correlations = get_records_sql($query, 0, $limitnum)) {
+        $cutoff = $tag_correlations[$tag_id]->nr * $min_correlation;
 
-    foreach($tag_correlations as $correlation) {
-        if($correlation->nr >= $cutoff && $correlation->tagid != $tag_id ){
-            $tags_id_csv_with_apos .= $correlation->tagid."','";
+        foreach($tag_correlations as $correlation) {
+            if($correlation->nr >= $cutoff && $correlation->tagid != $tag_id ){
+                $correlated[] = $correlation->tagid;
+            }
         }
     }
-    $tags_id_csv_with_apos = $textlib->substr($tags_id_csv_with_apos,0,-2);
 
+    $correlated = implode(',', $correlated);
 
     //saves correlation info in the caching table
+    if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag_id)) {
+        $tag_correlation_obj->correlatedtags = $correlated;
+        update_record('tag_correlation', $tag_correlation_obj);
 
-    $tag_correlation_obj = get_record('tag_correlation','tagid',$tag_id);
-
-    if ($tag_correlation_obj) {
-        $tag_correlation_obj->correlatedtags = addslashes($tags_id_csv_with_apos);
-        update_record('tag_correlation',$tag_correlation_obj);
+    } else {
+        $tag_correlation_obj = new object();
+        $tag_correlation_obj->tagid          = $tag_id;
+        $tag_correlation_obj->correlatedtags = $correlated;
+        insert_record('tag_correlation', $tag_correlation_obj);
     }
-    else {
-        $tag_correlation_obj = new StdClass;
-        $tag_correlation_obj->tagid = $tag_id;
-        $tag_correlation_obj->correlatedtags = addslashes($tags_id_csv_with_apos);
-        insert_record('tag_correlation',$tag_correlation_obj);
-    }
-
-
 }
 
 /**
