@@ -508,16 +508,19 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
     // pull out all course matching the cat
     $visiblecourses = array();
-    if (!($courses = get_records_sql("SELECT $fields
-                                FROM {$CFG->prefix}course c
-                                $categoryselect
-                                ORDER BY $sort"))) {
+    if (!($rs = get_recordset_sql("SELECT $fields,
+                                          ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                                   FROM {$CFG->prefix}course c
+                                   JOIN {$CFG->prefix}context ctx
+                                     ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                                   $categoryselect
+                                   ORDER BY $sort"))) {
         return $visiblecourses;
     }
     $totalcount = 0;
 
     if (!$limitnum) {
-        $limitnum = count($courses);
+        $limitnum = $rs->RecordCount();
     }
 
     if (!$limitfrom) {
@@ -525,23 +528,25 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     }
 
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
-    foreach ($courses as $course) {
-        if ($course->visible <= 0) {
-            // for hidden courses, require visibility check
-            if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if ($rs->RecordCount()) {
+        while ($course = rs_fetch_next_record($rs)) {
+            $course = make_context_subobj($course);
+            if ($course->visible <= 0) {
+                // for hidden courses, require visibility check
+                if (has_capability('moodle/course:viewhiddencourses', $course->context)) {
+                    $totalcount++;
+                    if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
+                        $visiblecourses [] = $course;
+                    }
+                }
+            } else {
                 $totalcount++;
                 if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
                     $visiblecourses [] = $course;
                 }
             }
-        } else {
-            $totalcount++;
-            if ($totalcount > $limitfrom && count($visiblecourses) < $limitnum) {
-                $visiblecourses [] = $course;
-            }
         }
     }
-
     return $visiblecourses;
 
 /**

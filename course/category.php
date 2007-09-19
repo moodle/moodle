@@ -353,8 +353,11 @@
         }
 
         foreach ($courses as $acourse) {
-
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
+            if (isset($acourse->context)) {
+                $coursecontext = $acourse->context;
+            } else {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
+            }
 
             $count++;
             $up = ($count > 1 || !$atfirstpage);
