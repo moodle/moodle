@@ -108,7 +108,7 @@ class quiz_report extends quiz_default_report {
 
         // Define table columns
         $tablecolumns = array('checkbox', 'picture', 'fullname', 'timestart', 'timefinish', 'duration');
-        $tableheaders = array(NULL, '', get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted','quiz'), get_string('attemptduration', 'quiz'));
+        $tableheaders = array(NULL, '', get_string('name'), get_string('startedon', 'quiz'), get_string('timecompleted','quiz'), get_string('attemptduration', 'quiz'));
 
         if ($quiz->grade and $quiz->sumgrades) {
             $tablecolumns[] = 'sumgrades';
@@ -205,7 +205,7 @@ class quiz_report extends quiz_default_report {
             $formatg->set_align('center');
             // Here starts workshhet headers
 
-            $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
+            $headers = array(get_string('name'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
 
             if ($quiz->grade and $quiz->sumgrades) {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
@@ -257,7 +257,7 @@ class quiz_report extends quiz_default_report {
             $formatg->set_align('center');
             // Here starts workshhet headers
 
-            $headers = array(get_string('fullname'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
+            $headers = array(get_string('name'), get_string('startedon', 'quiz'), get_string('timecompleted', 'quiz'), get_string('attemptduration', 'quiz'));
 
             if ($quiz->grade and $quiz->sumgrades) {
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
@@ -285,7 +285,7 @@ class quiz_report extends quiz_default_report {
             header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
             header("Pragma: public");
 
-            $headers = get_string('fullname')."\t".get_string('startedon', 'quiz')."\t".get_string('timecompleted', 'quiz')."\t".get_string('attemptduration', 'quiz');
+            $headers = get_string('name')."\t".get_string('startedon', 'quiz')."\t".get_string('timecompleted', 'quiz')."\t".get_string('attemptduration', 'quiz');
 
             if ($quiz->grade and $quiz->sumgrades) {
                 $headers .= "\t".get_string('grade', 'quiz')."/".$quiz->grade;
