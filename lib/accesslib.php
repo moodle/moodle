@@ -1985,50 +1985,56 @@ function create_context($contextlevel, $instanceid) {
 
     // Define $context->path based on the parent
     // context. In other words... Who is your daddy?
-    $basepath = '/' . SYSCONTEXTID;
+    $basepath  = '/' . SYSCONTEXTID;
+    $basedepth = 1;
 
     switch ($contextlevel) {
         case CONTEXT_COURSECAT:
-            $sql = "SELECT ctx.path 
+            $sql = "SELECT ctx.path, ctx.depth 
                     FROM {$CFG->prefix}context           ctx
                     JOIN {$CFG->prefix}course_categories cc
                       ON (cc.parent=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
                     WHERE cc.id={$instanceid}";
-            if ($path = get_field_sql($sql)) {
-                $basepath = $path;
+            if ($p = get_record_sql($sql)) {
+                $basepath  = $p->path;
+                $basedepth = $p->depth;
             }
             break;
 
         case CONTEXT_COURSE:
-            $sql = "SELECT ctx.path 
+            $sql = "SELECT ctx.path, ctx.depth
                     FROM {$CFG->prefix}context           ctx
                     JOIN {$CFG->prefix}course            c
                       ON (c.category=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
                     WHERE c.id={$instanceid} AND c.id !=" . SITEID;
-            if ($path = get_field_sql($sql)) {
-                $basepath = $path;
+            if ($p = get_record_sql($sql)) {
+                $basepath  = $p->path;
+                $basedepth = $p->depth;
             }
             break;
 
         case CONTEXT_MODULE:
-            $sql = "SELECT ctx.path
+            $sql = "SELECT ctx.path, ctx.depth
                     FROM {$CFG->prefix}context           ctx
                     JOIN {$CFG->prefix}course_modules    cm
                       ON (cm.course=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE cm.id={$instanceid}";
-            $path = get_field_sql($sql);
-            $basepath = $path;
+            $p = get_record_sql($sql);
+            $basepath  = $p->path;
+            $basedepth = $p->depth;
             break;
 
         case CONTEXT_BLOCK:
             // Only non-pinned & course-page based
-            $sql = "SELECT ctx.path
+            $sql = "SELECT ctx.path, ctx.depth
                     FROM {$CFG->prefix}context           ctx
                     JOIN {$CFG->prefix}block_instance    bi
                       ON (bi.pageid=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE bi.id={$instanceid} AND bi.pagetype='course-view'";
-            $path = get_field_sql($sql);
-            $basepath = $path;
+            if ($p = get_record_sql($sql)) {
+                $basepath  = $p->path;
+                $basedepth = $p->depth;
+            }
             break;
         case CONTEXT_USER:
             // default to basepath
@@ -2037,6 +2043,8 @@ function create_context($contextlevel, $instanceid) {
             // default to basepath
             break;
     }
+
+    $context->depth = $basedepth+1;
 
     if ($id = insert_record('context',$context)) {
         // can't set the path till we know the id!
