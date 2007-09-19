@@ -79,6 +79,25 @@ class edit_item_form extends moodleform {
         $mform->setHelpButton('aggregationcoef', array(false, get_string('aggregationcoef', 'grades'),
                 false, true, false, get_string('aggregationcoefhelp', 'grades')));
 
+        // Determine default value for gradedisplaytype (site or course)
+        $course_gradedisplaytype = get_field('grade_items', 'display', 'courseid', $COURSE->id, 'itemtype', 'course');
+        $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
+        $default_gradedisplaytype = $course_gradedisplaytype;
+
+        if ($course_gradedisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT) {
+            $default_gradedisplaytype = $site_gradedisplaytype;
+        }
+
+        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
+                         GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
+                         GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
+                         GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
+        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades')
+               . ': ' . $options[$default_gradedisplaytype] . ')';
+        $mform->addElement('select', 'display', $label, $options);
+        $mform->setHelpButton('display', array(false, get_string('gradedisplaytype', 'grades'),
+                              false, true, false, get_string("configgradedisplaytype", 'grades')));
+
         /// hiding
         /// advcheckbox is not compatible with disabledIf !!
         $mform->addElement('checkbox', 'hidden', get_string('hidden', 'grades'));
@@ -97,16 +116,6 @@ class edit_item_form extends moodleform {
 
         // user preferences
         $mform->addElement('header', 'general', get_string('userpreferences', 'grades'));
-        $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'),
-                          GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                          GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                          GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
-        $label = get_string('gradedisplaytype', 'grades') . ' (' . get_string('default', 'grades')
-               . ': ' . $options[$CFG->grade_report_gradedisplaytype] . ')';
-        $mform->addElement('select', 'pref_gradedisplaytype', $label, $options);
-        $mform->setHelpButton('pref_gradedisplaytype', array(false, get_string('gradedisplaytype', 'grades'),
-                              false, true, false, get_string("configgradedisplaytype", 'grades')));
-        $mform->setDefault('pref_gradedisplaytype', GRADE_REPORT_PREFERENCE_DEFAULT);
 
         $options = array(GRADE_REPORT_PREFERENCE_DEFAULT => get_string('default', 'grades'), 0, 1, 2, 3, 4, 5);
         $label = get_string('decimalpoints', 'grades') . ' (' . get_string('default', 'grades')
@@ -144,6 +153,8 @@ class edit_item_form extends moodleform {
 
         if ($id = $mform->getElementValue('id')) {
             $grade_item = grade_item::fetch(array('id'=>$id));
+
+            $mform->setDefault('display', $grade_item->display);
 
             if (!$grade_item->is_raw_used()) {
                 $mform->removeElement('plusfactor');
