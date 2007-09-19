@@ -1814,13 +1814,17 @@ function print_course($course) {
         $coursemanagerroles = split(',', $managerroles);
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
         $rusers = get_role_users($coursemanagerroles, $context, 
-                                 true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden) ;
-        foreach ($rusers as $teacher) {
-            $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
-            $namesarray[] = format_string($teacher->rolename).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>'; 
+                                 true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
+        if (is_array($rusers) && count($rusers)) {
+            $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+            foreach ($rusers as $teacher) {
+                $fullname = fullname($teacher, $canviewfullnames); 
+                $namesarray[] = format_string($teacher->rolename) 
+                    . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
+                    . $fullname . '</a>'; 
+            }
         }
-        
+
         if (!empty($namesarray)) {
             echo "<ul class=\"teachers\">\n<li>";
             echo implode('</li><li>', $namesarray);
