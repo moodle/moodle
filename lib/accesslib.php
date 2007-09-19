@@ -1596,6 +1596,7 @@ function reload_all_capabilities() {
     }
 
     unset($USER->access);
+    unset($USER->mycourses);
     
     load_all_capabilities();
 
