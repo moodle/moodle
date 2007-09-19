@@ -3831,20 +3831,46 @@ function allow_assign($sroleid, $troleid) {
 /**
  * Gets a list of roles that this user can assign in this context
  * @param object $context
+ * @param string $field
  * @return array
  */
 function get_assignable_roles ($context, $field="name") {
 
-    $options = array();
+    global $CFG;
 
-    if ($roles = get_all_roles()) {
-        foreach ($roles as $role) {
-            if (user_can_assign($context, $role->id)) {
-                $options[$role->id] = strip_tags(format_string($role->{$field}, true));
-            }
+    // this users RAs
+    $ras = get_user_roles($context);
+    $roleids = array();
+    foreach ($ras as $ra) {
+        $roleids[] = $ra->roleid;
+    }
+    unset($ra);
+
+    if (count($roleids)===0) {
+        return array();
+    }
+
+    $roleids = implode(',',$roleids);
+
+    // The subselect scopes the DISTINCT down to
+    // the role ids - a DISTINCT over the whole of
+    // the role table is much more expensive on some DBs
+    $sql = "SELECT r.id, r.$field
+            FROM {$CFG->prefix}role r
+            JOIN ( SELECT DISTINCT allowassign as allowedrole 
+                   FROM  {$CFG->prefix}role_allow_assign raa
+                   WHERE raa.roleid IN ($roleids) ) ar
+              ON r.id=ar.allowedrole
+            ORDER BY sortorder ASC";
+
+    $rs = get_recordset_sql($sql);
+    $roles = array();
+    if ($rs->RecordCount()) {
+        while ($r = rs_fetch_next_record($rs)) {
+            $roles[$r->id] = $r->{$field};
         }
     }
-    return $options;
+    return $roles;
 }
 
 /**
