@@ -1264,23 +1264,26 @@ function get_user_access_sitewide($userid) {
         }
     }
     $clauses = join(" OR ", $clauses);
-    $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
-            FROM {$CFG->prefix}role_capabilities rc
-            JOIN {$CFG->prefix}context ctx
-              ON rc.contextid=ctx.id
-            WHERE $clauses
-            ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+    if ($clauses !== '') {
+        $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
+                FROM {$CFG->prefix}role_capabilities rc
+                JOIN {$CFG->prefix}context ctx
+                  ON rc.contextid=ctx.id
+                WHERE $clauses
+                ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
 
-    $rs = get_recordset_sql($sql);
+        $rs = get_recordset_sql($sql);
+        unset($clauses);
 
-    if ($rs->RecordCount()) {
-        while ($rd = rs_fetch_next_record($rs)) {
-            $k = "{$rd->path}:{$rd->roleid}";
-            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+        if ($rs->RecordCount()) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$rd->roleid}";
+                $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+            unset($rd);
         }
-        unset($rd);
+        rs_close($rs);
     }
-    rs_close($rs);
 
     //
     // Overrides for the role assignments IN SUBCONTEXTS
