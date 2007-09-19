@@ -4732,6 +4732,49 @@ function build_context_path() {
 }
 
 /**
+ * Update the path field of the context and
+ * all the dependent subcontexts that follow
+ * the move. 
+ *
+ * The most important thing here is to be as
+ * DB efficient as possible. This op can have a
+ * massive impact in the DB.
+ *
+ * @param obj current   context obj
+ * @param obj newparent new parent obj
+ *
+ */
+function context_moved($context, $newparent) {
+    global $CFG;
+
+    $frompath = $context->path;
+    $newpath  = $newparent->path . '/' . $context->id;
+
+    $setdepth = '';
+    if ($newparent->depth +1 != $context->depth) {
+        $setdepth = ", depth= depth + " . ($context->depth - $newparent->depth +1);
+    }
+    $sql = "UPDATE {$CFG->prefix}context 
+            SET path='$newpath'
+                $setdepth
+            WHERE path='$frompath'";
+    error_log($sql);
+    execute_sql($sql,false);
+
+    $len = strlen($frompath);
+    $sql = "UPDATE {$CFG->prefix}context
+            SET path = '$newpath' || SUBSTR(path, {$len} +1)
+                $setdepth
+            WHERE path LIKE '{$frompath}/%'";
+    error_log($sql);
+    execute_sql($sql,false);
+
+    mark_context_dirty($frompath);
+    mark_context_dirty($newpath);
+}
+
+
+/**
  * Turn the ctx* fields in an objectlike record
  * into a context subobject. This allows
  * us to SELECT from major tables JOINing with 
