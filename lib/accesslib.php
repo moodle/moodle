@@ -520,6 +520,37 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
     }
 
 }
+
+function aggr_roles_fromsess($context, $sess) {
+
+    $path = $context->path;
+
+    // build $contexts as a list of "paths" of the current
+    // contexts and parents with the order top-to-bottom
+    $contexts = array($path);
+    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
+        $path = $matches[1];
+        array_unshift($contexts, $path);
+    }
+    // Add a "default" context for the "default role"
+    array_unshift($contexts,"$path:def");
+
+    $cc = count($contexts);
+
+    $roles = array();
+    // From the bottom up...
+    for ($n=$cc-1;$n>=0;$n--) {
+        $ctxp = $contexts[$n];
+        if (isset($sess['ra'][$ctxp])) {
+            // Found a role assignment
+            $roleid = $sess['ra'][$ctxp];
+            $roles[] = $roleid;
+        }
+    }
+
+    return array_unique($roles);
+}
+
 /**
  * This function checks for a capability assertion being true.  If it isn't
  * then the page is terminated neatly with a standard error message
@@ -1042,6 +1073,7 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
             return false;
         }
         unset($USER->capabilities);           // We don't want possible older capabilites hanging around
+        unset($USER->access);
 
         if ($checkenrolments) {               // Call "enrol" system to ensure that we have the correct picture
             check_enrolment_plugins($USER);
@@ -1396,9 +1428,13 @@ function get_user_access_sitewide($userid) {
             WHERE ra.userid = $userid AND ctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY ctx.depth, ctx.path";
     $rs = get_recordset_sql($sql);
-    // parent paths & roles we need to walk up
-    // this array will bulk up quite a bit with dups
+    //
+    // raparents collects paths & roles we need to walk up
+    // the parenthood to build the rdef
+    //
+    // the array will bulk up a bit with dups
     // which we'll later clear up
+    //
     $raparents = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
@@ -1481,8 +1517,6 @@ function get_user_access_sitewide($userid) {
     }
     rs_close($rs);
 
-    // TODO: compact capsets?
-
     return $acc;
 }
 
@@ -1499,18 +1533,24 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
 
     global $CFG;
 
-    /* Get in 3 cheap DB queries...
+
+
+    /* Get the additional RAs and relevant rolecaps
      * - role assignments - with role_caps
      * - relevant role caps
      *   - above this user's RAs
      *   - below this user's RAs - limited to course level
      */
 
+    // Roles already in use in this context
+    $knownroles = array();
     if (is_null($acc)) {
         $acc           = array(); // named list
         $acc['ra']     = array();
         $acc['rdef']   = array();
         $acc['loaded'] = array();
+    } else {
+        $knownroles = aggr_roles_fromsess($context, $acc);
     }
 
     $base = "/" . SYSCONTEXTID;
@@ -1560,10 +1600,18 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
             ORDER BY ctx.depth, ctx.path";
     $rs = get_recordset_sql($sql);
 
-    // parent paths & roles we need to walk up
-    // this array will bulk up quite a bit with dups
+    //
+    // raparent collects paths & roles we need to walk up
+    //
+    // Here we only collect "different" role assignments
+    // that - if found - we have to walk up the parenthood
+    // to build the rdef.
+    //
+    // raparents array might have a few duplicates
     // which we'll later clear up
+    //
     $raparents = array();
+    $newroles  = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
             $acc['ra'][$ra->path] = $ra->roleid;
@@ -1571,23 +1619,29 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
                 $k = "{$ra->path}:{$ra->roleid}";
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
             }
-            $parentids = explode('/', $ra->path);
-            array_pop($parentids); array_shift($parentids);
-            if (isset($raparents[$ra->roleid])) {
-                $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
-            } else {
-                $raparents[$ra->roleid] = $parentids;
+            if (!in_array($ra->roleid, $knownroles)) {
+                $newroles[] = $ra->roleid;
+                $parentids = explode('/', $ra->path);
+                array_pop($parentids); array_shift($parentids);
+                if (isset($raparents[$ra->roleid])) {
+                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
+                } else {
+                    $raparents[$ra->roleid] = $parentids;
+                }
             }
         }
+        $newroles = array_unique($newroles);
     }
     rs_close($rs);
 
+    //
     // Walk up the tree to grab all the roledefs
     // of interest to our user...
     // NOTE: we use a series of IN clauses here - which
     // might explode on huge sites with very convoluted nesting of
     // categories... - extremely unlikely that the number of categories
     // and roletypes is so large that we hit the limits of IN()
+    //
     if (count($raparents)) {
         $clauses = array();
         foreach ($raparents as $roleid=>$contexts) {
@@ -1616,24 +1670,21 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     }
 
     //
-    // Overrides for the role assignments IN SUBCONTEXTS
+    // Overrides for the relevant roles IN SUBCONTEXTS
     //
-    // NOTE that the JOIN w sctx is with 3-way triangulation to
-    // catch overrides to the applicable role in any subcontext, based
-    // on the path field of the parent.
+    // NOTE that we use IN() but the number of roles is
+    // very limited.
     //
-    $sql = "SELECT sctx.path, ra.roleid,
-                   ctx.path AS parentpath,
-                   rco.capability, rco.permission
-            FROM {$CFG->prefix}role_assignments ra
-            JOIN {$CFG->prefix}context ctx
-              ON ra.contextid=ctx.id
-            JOIN {$CFG->prefix}context sctx
-              ON (sctx.path LIKE ctx.path||'/%')
-            JOIN {$CFG->prefix}role_capabilities rco
-              ON (rco.roleid=ra.roleid AND rco.contextid=sctx.id)
-            WHERE ra.userid = $userid  AND
-            ORDER BY sctx.depth, sctx.path, ra.roleid";
+    $roleids = sql_intarray_to_in(array_merge($newroles, $knownroles));
+    $sql = "SELECT ctx.path, rc.roleid,
+                   rc.capability, rc.permission
+            FROM {$CFG->prefix}context ctx
+            JOIN {$CFG->prefix}role_capabilities rc
+              ON rc.contextid=ctx.id
+            WHERE ctx.path LIKE '{$targetpath}/%'
+                  AND rc.roleid IN ($roleids)
+            ORDER BY ctx.depth, ctx.path, rc.roleid";
+    $rs = get_recordset_sql($sql);
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
