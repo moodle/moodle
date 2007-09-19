@@ -1820,7 +1820,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                     $strloggedinasguest = get_string('loggedinasguest');
                     print_header_simple('', '',
                             build_navigation(array(array('name' => $strloggedinasguest, 'link' => null, 'type' => 'misc'))));
-                    if (empty($USER->switchrole[$context->id])) {  // Normal guest
+                    if (empty($USER->access['rsw'][$context->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     } else {
                         notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));

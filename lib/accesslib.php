@@ -51,7 +51,7 @@
  *
  * accessdata ($ad) is a multidimensional array, holding
  * role assignments (RAs), role-capabilities-perm sets 
- * (Role Defs) and a list of courses we have loaded
+ * (role defs) and a list of courses we have loaded
  * data for.
  *
  * Things are keyed on "contextpaths" (the path field of 
@@ -1602,24 +1602,6 @@ function load_all_capabilities() {
                 unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
             }
 
-        }
-
-        // handle role switching in courses
-        if (!empty($USER->switchrole)) {
-            foreach ($USER->switchrole as $contextid => $roleid) {
-                $context = get_context_instance_by_id($contextid);
-
-                // first prune context and any child contexts
-                $children = array_keys(get_child_contexts($context));
-                foreach ($children as $childid) {
-                    unset($USER->capabilities[$childid]);
-                }
-                unset($USER->capabilities[$contextid]);
-
-                // now merge all switched role caps in context and bellow
-                $swithccaps = get_role_context_caps($roleid, $context);
-                $USER->capabilities = merge_role_caps($USER->capabilities, $swithccaps);
-            }
         }
 
         if (isset($USER->capabilities)) {
