@@ -422,20 +422,19 @@
 
             unset($newstrings['currentfile']);
 
+            $packstring = array();
+            $saveinto = $langdir;
             if ($uselocal) {
-                include($trfilepath);
-                if (isset($string)) {
-                    $packstring = $string;
-                } else {
-                    $packstring = array();
+                if(file_exists($trfilepath)) {
+                    include($trfilepath);
+                    if (isset($string)) {
+                        $packstring = $string;
+                    }
+                    unset($string);
                 }
-                unset($string);
                 $saveinto = $locallangdir;
-            } else {
-                $packstring = array();
-                $saveinto = $langdir;
             }
-
+             
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
                 notify(get_string("changessaved")." ($saveinto/$currentfile)", "green");
             } else {
