@@ -4954,6 +4954,8 @@ function get_roles_on_exact_context($context) {
  *   (hint, use get_assignable_roles())
  * - that the requested role is NOT $CFG->defaultuserroleid
  *
+ * To "unswitch" pass 0 as the roleid.
+ *
  * This function *will* modify $USER->access - beware
  * 
  * @param integer $roleid
@@ -4985,6 +4987,14 @@ function role_switch($roleid, $context) {
     //
     // To un-switch just unset($USER->access['rsw'][$path])
     // 
+
+    if ($roleid == 0) {
+        unset($USER->access['rsw'][$context->path]);
+        if (empty($USER->access['rsw'])) {
+            unset($USER->access['rsw']);
+        }
+        return true;
+    }
 
     // Add the switch RA
     if (!isset($USER->access['rsw'])) {
