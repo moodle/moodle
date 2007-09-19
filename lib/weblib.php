@@ -3097,9 +3097,9 @@ function user_login_string($course=NULL, $user=NULL) {
         if (isset($user->username) && $user->username == 'guest') {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a $CFG->frametarget href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
-        } else if (!empty($user->switchrole[$context->id])) {
+        } else if (!empty($user->access['rsw'][$context->path])) {
             $rolename = '';
-            if ($role = get_record('role', 'id', $user->switchrole[$context->id])) {
+            if ($role = get_record('role', 'id', $user->access['rsw'][$context->path])) {
                 $rolename = ': '.format_string($role->name);
             }
             $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
@@ -4485,7 +4485,7 @@ function switchroles_form($courseid) {
         return '';
     }
 
-    if (!empty($USER->switchrole[$context->id])){  // Just a button to return to normal
+    if (!empty($user->access['rsw'][$context->path])){  // Just a button to return to normal
         $options = array();
         $options['id'] = $courseid;
         $options['sesskey'] = sesskey();
