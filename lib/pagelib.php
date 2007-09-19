@@ -344,6 +344,14 @@ class page_course extends page_base {
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
             error('Cannot fully initialize page: invalid course id '. $this->id);
         }
+
+        $this->context = get_context_instance(CONTEXT_COURSE, $this->id);
+
+        // Preload - ensures that the context cache is populated
+        // in one DB query...
+        $this->childcontexts = get_child_contexts($this->context);
+
+        // Mark we're done
         $this->full_init_done = true;
     }
 
@@ -352,13 +360,40 @@ class page_course extends page_base {
     // Can user edit the course page or "sticky page"?
     // This is also about editting of blocks BUT mainly activities in course page layout, see
     // update_course_icon() has very similar checks - it must use the same capabilities
+    //
+    // this is a _very_ expensive check - so cache it during execution
+    //
     function user_allowed_editing() {
-        global $USER;
 
-        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM)) && defined('ADMIN_STICKYBLOCKS')) {
+        $this->init_full();
+
+        if (isset($this->_user_allowed_editing)) {
+            return $this->_user_allowed_editing;
+        }
+
+        if (has_capability('moodle/site:manageblocks', get_context_instance(CONTEXT_SYSTEM))
+            && defined('ADMIN_STICKYBLOCKS')) {
+            $this->_user_allowed_editing = true;
             return true;
         }
-        return editcourseallowed($this->id);
+        if (has_capability('moodle/course:manageactivities', $this->context)) {
+            $this->_user_allowed_editing = true;
+            return true;
+        }
+
+        // Exhaustive (and expensive!) checks to see if the user
+        // has editing abilities to a specific module/block/group...
+        // This code would benefit from the ability to check specifically
+        // for overrides.
+        foreach ($this->childcontexts as $cc) {
+            if (($cc->contextlevel == CONTEXT_MODULE &&
+                 has_capability('moodle/course:manageactivities', $cc)) ||
+                ($cc->contextlevel == CONTEXT_BLOCK &&
+                 has_capability('moodle/site:manageblocks', $cc))) {
+                $this->_user_allowed_editing = true;
+                return true;
+            }
+        }
     }
 
     // Is the user actually editing this course page or "sticky page" right now?
@@ -395,7 +430,10 @@ class page_course extends page_base {
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
-        $buttons = switchroles_form($this->courserecord->id) . update_course_icon($this->courserecord->id );
+        $buttons = switchroles_form($this->courserecord->id);
+        if ($this->user_allowed_editing()) {
+            $buttons .= update_course_icon($this->courserecord->id );
+        }
         $buttons = empty($morenavlinks) ? $buttons : '&nbsp;';
 
         print_header($title, $this->courserecord->fullname, $navigation,
