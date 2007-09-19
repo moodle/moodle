@@ -44,6 +44,9 @@
                 error("An error occurred while trying to unenrol that person.");
             }
 
+            // force accessinfo refresh for users visiting this context...
+            mark_context_dirty($context->path);
+
             add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $userid);
             redirect($CFG->wwwroot.'/user/index.php?id='.$course->id);
 

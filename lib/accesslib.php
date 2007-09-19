@@ -2734,6 +2734,9 @@ function enrol_into_course($course, $user, $enrol) {
             return false;
         }
 
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($context->path);
+
         email_welcome_message_to_user($course, $user);
 
         add_to_log($course->id, 'course', 'enrol', 'view.php?id='.$course->id, $user->id);

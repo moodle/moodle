@@ -2240,15 +2240,22 @@ function sync_metacourse($course) {
     $success = true;
 
     // Make the unassignments, if they are not managers.
+    $unchanged = true;
     foreach ($unassignments as $unassignment) {
         if (!in_array($unassignment->userid, $managers)) {
             $success = role_unassign($unassignment->roleid, $unassignment->userid, 0, $context->id) && $success;
+            $unchanged = false;
         }
     }
 
     // Make the assignments.
     foreach ($assignments as $assignment) {
         $success = role_assign($assignment->roleid, $assignment->userid, 0, $context->id) && $success;
+        $unchanged = false;
+    }
+    if (!$unchanged) {
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($context->path);
     }
 
     return $success;
@@ -3400,16 +3407,16 @@ function reset_course_userdata($data, $showfeedback=true) {
     }
 
     // Delete other stuff
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $data->courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
 
     if (!empty($data->reset_students) or !empty($data->reset_teachers)) {
-        $teachers     = array_keys(get_users_by_capability($coursecontext, 'moodle/course:update'));
-        $participants = array_keys(get_users_by_capability($coursecontext, 'moodle/course:view'));
+        $teachers     = array_keys(get_users_by_capability($context, 'moodle/course:update'));
+        $participants = array_keys(get_users_by_capability($context, 'moodle/course:view'));
         $students     = array_diff($participants, $teachers);
 
         if (!empty($data->reset_students)) {
             foreach ($students as $studentid) {
-                role_unassign(0, $studentid, 0, $coursecontext->id);
+                role_unassign(0, $studentid, 0, $context->id);
             }
             if ($showfeedback) {
                 notify($strdeleted .' '.get_string('students'), 'notifysuccess');
@@ -3421,7 +3428,7 @@ function reset_course_userdata($data, $showfeedback=true) {
 
         if (!empty($data->reset_teachers)) {
             foreach ($teachers as $teacherid) {
-                role_unassign(0, $teacherid, 0, $coursecontext->id);
+                role_unassign(0, $teacherid, 0, $context->id);
             }
             if ($showfeedback) {
                 notify($strdeleted .' '.get_string('teachers'), 'notifysuccess');
@@ -3454,9 +3461,12 @@ function reset_course_userdata($data, $showfeedback=true) {
         }
     }
 
-    // deletes all role assignments, and local override, these have no courseid in table and needs separate process
-    $context = get_context_instance(CONTEXT_COURSE, $data->courseid);
+    // deletes all role assignments, and local override,
+    // these have no courseid in table and needs separate process
     delete_records('role_capabilities', 'contextid', $context->id);
+
+    // force accessinfo refresh for users visiting this context...
+    mark_context_dirty($context->path);
 
     return $result;
 }
