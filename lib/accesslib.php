@@ -1396,17 +1396,6 @@ function load_all_capabilities() {
 
         }
 
-        // when in "course login as" - load only course capabilitites (it may not always work as expected)
-        if (!empty($USER->realuser) and $USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
-            $children = array_keys(get_child_contexts($USER->loginascontext));
-            $children[] = $USER->loginascontext->id;
-            foreach ($USER->capabilities as $conid => $caps) {
-                if (!in_array($conid, $children)) {
-                    unset($USER->capabilities[$conid]);
-                }
-            }
-        }
-
         // handle role switching in courses
         if (!empty($USER->switchrole)) {
             foreach ($USER->switchrole as $contextid => $roleid) {

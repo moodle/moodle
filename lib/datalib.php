@@ -648,14 +648,22 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // worthwhile...) and we may hit SQL parser limits
     // because we use IN()
     //
-    if ($userid === $USER->id 
-        && isset($USER->mycourses) 
-        && is_string($USER->mycourses)) {
-        if ($USER->mycourses === '') {
-            // empty str means: user has no courses
-            // ... so do the easy thing...
-            return array();
-        } else {
+    if ($userid === $USER->id) {
+        if (isset($USER->loginascontext)) {
+            // list _only_ this course
+            // anything else is asking for trouble...
+            $courseids = $USER->loginascontext->instanceid;
+        } elseif (isset($USER->mycourses) 
+                  && is_string($USER->mycourses)) {
+            if ($USER->mycourses === '') {
+                // empty str means: user has no courses
+                // ... so do the easy thing...
+                return array();
+            } else {
+                $courseids = $USER->mycourses;
+            }
+        }
+        if (isset($courseids)) {
             // The data massaging here MUST be kept in sync with 
             // get_user_courses_bycap() so we return
             // the same...
@@ -666,7 +674,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                     FROM {$CFG->prefix}course c
                     JOIN {$CFG->prefix}context ctx 
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                    WHERE c.id IN ({$USER->mycourses})
+                    WHERE c.id IN ($courseids)
                     ORDER BY $sort";
             $rs = get_recordset_sql($sql);
             $courses = array();
