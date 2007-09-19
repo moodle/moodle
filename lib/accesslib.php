@@ -1272,8 +1272,6 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     // but the cost of re-fetching is minimal so we don't care.
     // ... for now!
     //
-    $targetpath;
-    $targetlevel;
     if ($context->contextlevel === CONTEXT_COURSE) {
         $targetpath  = $context->path;
         $targetlevel = $context->contextlevel;
