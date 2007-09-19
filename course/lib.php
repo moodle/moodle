@@ -2757,11 +2757,14 @@ function update_course($data) {
         unset($data->restrictmodules);
     }
 
+    $movecat = false;
     $oldcourse = get_record('course', 'id', $data->id); // should not fail, already tested above
     if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $oldcourse->category))
       or !has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $data->category))) {
         // can not move to new category, keep the old one
         unset($data->category);
+    } elseif ($oldcourse->category != $data->category) {
+        $movecat = true;
     }
 
     // Update with the new data
@@ -2773,6 +2776,12 @@ function update_course($data) {
 
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
             update_restricted_mods($course, $allowedmods);
+        }
+
+        if ($movecat) {
+            $context   = get_context_instance(CONTEXT_COURSE, $course->id);
+            $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+            context_moved($context, $newparent);
         }
 
         fix_course_sortorder();
