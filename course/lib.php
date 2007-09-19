@@ -1812,17 +1812,13 @@ function print_course($course) {
     /// first find all roles that are supposed to be displayed
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);
-        $roles = get_records_select( 'role', '', 'sortorder' );
-        foreach ($roles as $role) {
-            if (in_array( $role->id, $coursemanagerroles )) {
-                if ($users = get_role_users($role->id, $context, true, '', 'u.lastname ASC', true)) {
-                    foreach ($users as $teacher) {
-                        $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
-                        $namesarray[] = role_get_name($role, $context).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
-                                    $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>';
-                    }
-                }          
-            }
+        $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
+        $rusers = get_role_users($coursemanagerroles, $context, 
+                                 true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden) ;
+        foreach ($rusers as $teacher) {
+            $fullname = fullname($teacher, has_capability('moodle/site:viewfullnames', $context)); 
+            $namesarray[] = format_string($teacher->rolename).': <a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                $teacher->id.'&amp;course='.SITEID.'">'.$fullname.'</a>'; 
         }
         
         if (!empty($namesarray)) {
