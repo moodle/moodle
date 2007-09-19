@@ -370,6 +370,7 @@
 
     // Accesslib stuff
     cleanup_contexts();
+    cleanup_dirty_contexts();
 
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
