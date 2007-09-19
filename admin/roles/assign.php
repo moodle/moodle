@@ -332,19 +332,19 @@
                         }
                     }
                 }
-            
+
                 if ($validroleids) {
                     $roleids =  '('.implode(',', $validroleids).')';
             
                     $select = " SELECT u.id, u.firstname, u.lastname, u.email";
+                    $countselect = "SELECT COUNT(u.id)";
                     $from   = " FROM {$CFG->prefix}user u
                                 INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                                 INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
                     $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
                                 AND u.deleted = 0
-                                AND ra.roleid in $roleids
-                                $selectsql
-                                AND u.id NOT IN (
+                                AND ra.roleid in $roleids";
+                    $excsql = " AND u.id NOT IN (
                                     SELECT u.id
                                     FROM {$CFG->prefix}role_assignments r,
                                     {$CFG->prefix}user u
@@ -353,8 +353,10 @@
                                     AND r.roleid = $roleid
                                     $selectsql)";
             
-                    $availableusers = get_recordset_sql($select . $from . $where);         
+                    $availableusers = get_recordset_sql($select . $from . $where . $selectsql . $excsql);         
                 }
+                
+                $usercount =  count_records_sql($countselect . $from . $where) - count($contextusers);
             }
 
         } else { 
@@ -380,6 +382,7 @@
                                                     AND r.roleid = '.$roleid.'
                                                     '.$selectsql.')
                                                 ORDER BY lastname ASC, firstname ASC');
+            $usercount = count_records_select('user', $select) - count($contextusers);
    
         }
 
