@@ -565,14 +565,38 @@ function path_inaccessdata($path, $ad) {
  * The main feature of here is being FAST and with no
  * side effects. 
  *
- * TODO:
+ * Notes:
  *
- * - Support for multi-enrol
+ * Switch Roles exits early
+ * -----------------------
+ * cap checks within a switchrole need to exit early
+ * in our bottom up processing so they don't "see" that
+ * there are real RAs that can do all sorts of things.
+ *
+ * "Guest default role" exception
+ * ------------------------------
+ *
+ * See MDL-7513 and $ignoreguest below for details.
+ *
+ * The rule is that
+ *
+ *    IF we are being asked about moodle/legacy:guest
+ *                             OR moodle/course:view
+ *    FOR a real, logged-in user
+ *    AND we reached the top of the path in ra and rdef
+ *    AND that role has moodle/legacy:guest === 1...
+ *    THEN we act as if we hadn't seen it.
+ *
+ *
+ * To Do:
+ *
  * - Document how it works
  * - Rewrite in ASM :-)
  *
  */
 function has_cap_fad($capability, $context, $ad, $doanything) {
+
+    global $CFG;
 
     $path = $context->path;
 
@@ -583,18 +607,29 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
         $path = $matches[1];
         array_unshift($contexts, $path);
     }
-    // Add a "default" context for the "default role"
-    array_unshift($contexts,"$path:def");
+
+    $ignoreguest = false;
+    if (isset($ad['dr'])
+        && ($capability    == 'moodle/course:view'
+            || $capability == 'moodle/legacy:guest')) {
+        // At the base, ignore rdefs where moodle/legacy:guest
+        // is set
+        $ignoreguest = $ad['dr'];
+    }
+
 
     $cc = count($contexts);
 
     $can = false;
 
+    //
+    // role-switches loop
+    //
     if (isset($ad['rsw'])) {
         // check for isset() is fast 
         // empty() is slow...
         if (empty($ad['rsw'])) {
-            unset($ad['rsw']); // keep things fast
+            unset($ad['rsw']); // keep things fast and unambiguous
             break;
         }
         // From the bottom up...
@@ -636,7 +671,10 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
         }
     }
 
-    // From the bottom up... for non-switchers...
+    //
+    // Main loop for normal RAs
+    // From the bottom up...
+    //
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
         if (isset($ad['ra'][$ctxp])) {
@@ -649,6 +687,15 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
                 // from the bottom up...
                 for ($m=$cc-1;$m>=0;$m--) {
                     $capctxp = $contexts[$m];
+                    // ignore some guest caps
+                    // at base ra and rdef
+                    if ($ignoreguest == $roleid
+                        && $n === 0
+                        && $m === 0
+                        && isset($ad['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'])
+                        && $ad['rdef']["{$capctxp}:$roleid"]['moodle/legacy:guest'] > 0) {
+                            continue;
+                    }
                     if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
                         $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
                         if ($perm === CAP_PROHIBIT) {
@@ -1551,19 +1598,16 @@ function load_user_accessdata($userid) {
     $ad = get_user_access_sitewide($userid);
     get_role_access($CFG->defaultuserroleid, $ad);
         
-    // provide "default" enrolment
+    //
+    // provide "default role" (set 'dr'!)
+    //
     $base = '/'.SYSCONTEXTID;
-    $ad['ra']["$base:def"] = array($CFG->defaultuserroleid);
-
-    // guest role mangling - TODO: fix!
-    if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
-        if (isset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
-            unset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
-        }
-        if (isset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
-            unset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
-        }
+    if (!isset($ad['ra'][$base])) {
+        $ad['ra'][$base] = array($CFG->defaultuserroleid);
+    } else {
+        array_push($ad['ra'][$base], $CFG->defaultuserroleid);
     }
+    $ad['dr'] = $CFG->defaultuserroleid;
 
     $ACCESS[$userid] = $ad;
     return true;
