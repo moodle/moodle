@@ -417,10 +417,13 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         $clean = false;
     }
     if (!$clean) {
-        // TODO: reload all capabilities but
-        // preserve loginas, roleswitches, etc
+        // reload all capabilities - preserving loginas, roleswitches, etc
+        // and then cleanup any marks of dirtyness... at least from our short
+        // term memory! :-)
+        reload_all_capabilities();
+        $DIRTYCONTEXTS = array();
+        $clean = true;
     }
-
     
     // divulge how many times we are called
     //// error_log("has_capability: id:{$context->id} path:{$context->path} userid:$userid cap:$capability");
@@ -1502,6 +1505,7 @@ function load_user_accessdata($userid) {
     $ACCESS[$userid] = $access;
     return true;
 }
+
 /**
  *  A convenience function to completely load all the capabilities 
  *  for the current user.   This is what gets called from login, for example.
@@ -1570,6 +1574,37 @@ function load_all_capabilities() {
     $USER->access['time'] = time();
 }
 
+/**
+ * A convenience function to completely reload all the capabilities 
+ * for the current user when roles have been updated in a relevant
+ * context -- but PRESERVING switchroles and loginas. 
+ *
+ * That is - completely transparent to the user.
+ * 
+ * Note: rewrites $USER->access completely.
+ *
+ */
+function reload_all_capabilities() {
+    global $USER,$CFG;
+
+    error_log("reloading");
+    // copy switchroles
+    $sw = array();
+    if (isset($USER->access['rsw'])) {
+        $sw = $USER->access['rsw'];
+        error_log(print_r($sw,1));
+    }
+
+    unset($USER->access);
+    
+    load_all_capabilities();
+
+    foreach ($sw as $path => $roleid) {
+        $context = get_record('context', 'path', $path);
+        role_switch($roleid, $context);
+    }
+
+}
 
 /**
  * Check all the login enrolment information for the given user object
@@ -4298,6 +4333,11 @@ function role_switch($roleid, $context) {
     // To un-switch just unset($USER->access['rsw'][$path])
     // 
 
+    // Add the switch RA
+    if (!isset($USER->access['rsw'])) {
+        $USER->access['rsw'] = array();
+    }
+
     if ($roleid == 0) {
         unset($USER->access['rsw'][$context->path]);
         if (empty($USER->access['rsw'])) {
@@ -4306,10 +4346,6 @@ function role_switch($roleid, $context) {
         return true;
     }
 
-    // Add the switch RA
-    if (!isset($USER->access['rsw'])) {
-        $USER->access['rsw'] = array();
-    }
     $USER->access['rsw'][$context->path]=$roleid;
     
     // Load roledefs
