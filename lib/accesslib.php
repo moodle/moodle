@@ -363,7 +363,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             return has_cap_fad($capability, $context,
                                $USER->access, $doanything);
         }
-        // Load it as needed
+        // Load accessdata for below-the-course contexts
         if (!path_inaccessdata($context->path,$USER->access)) {
             error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
             // $bt = debug_backtrace();
@@ -381,6 +381,19 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     }
     if (!isset($ACCESS[$userid])) {
         load_user_accessdata($userid);
+    }
+    if ($context->contextlevel <= CONTEXT_COURSE) {
+        // Course and above are always preloaded
+        return has_cap_fad($capability, $context,
+                           $ACCESS[$userid], $doanything);
+    }
+    // Load accessdata for below-the-course contexts as needed
+    if (!path_inaccessdata($context->path,$ACCESS[$userid])) {
+        error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
+        // $bt = debug_backtrace();
+        // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
+        $ACCESS[$userid] = get_user_access_bycontext($userid, $context,
+                                                         $ACCESS[$userid]);
     }
     return has_cap_fad($capability, $context,
                        $ACCESS[$userid], $doanything);
