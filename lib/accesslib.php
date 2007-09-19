@@ -1586,7 +1586,7 @@ function load_all_capabilities() {
         // Load the rdefs
         $USER->access = get_role_access($guest->id);
         // Put the ghost enrolment in place...
-        $USER->access['ra'][$base] = $guest->id;
+        $USER->access['ra'][$base] = array($guest->id);
 
     } else if (isloggedin()) {
 
