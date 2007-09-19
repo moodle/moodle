@@ -1170,6 +1170,145 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
     }
 }
 
+/**
+ * It will return 2 arrays showing role assignments
+ * all relevant role capabilities for the user at
+ * site/metacourse/course_category/course levels
+ *
+ * We do _not_ delve deeper than courses because the number of
+ * overrides at the module/block levels is HUGE.
+ *
+ * [ra]   => [/path/] = roleid
+ * [rdef] => [/path/:roleid][capability]=permission
+ *
+ * @param $userid integer - the id of the user
+ *
+ */
+function get_user_sitewide_access($userid) {
+
+    global $CFG;
+
+    // this flag has not been set!
+    // (not clean install, or upgraded successfully to 1.7 and up)
+    if (empty($CFG->rolesactive)) {
+        return false;
+    }
+
+    /* Get in 3 cheap DB queries...
+     * - role assignments - with role_caps
+     * - relevant role caps
+     *   - above this user's RAs
+     *   - below this user's RAs - limited to course level
+     */
+
+    $sw = array(); // named list
+    $sw['ra'] = array();
+    $sw['rdef'] = array();
+
+    $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
+    $base = "/$sitectx";
+
+    //
+    // Role assignments - and any rolecaps directly linked
+    // because it's cheap to read rolecaps here over many
+    // RAs
+    //
+    $sql = "SELECT ctx.path, ra.roleid, rc.capability, rc.permission
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}context ctx
+               ON ra.contextid=ctx.id
+            LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
+               ON (rc.roleid=ra.roleid AND rc.contextid=ra.contextid)
+            WHERE ra.userid = $userid AND ctx.contextlevel <= ".CONTEXT_COURSE."
+            ORDER BY ctx.depth, ctx.path";
+    $rs = get_recordset_sql($sql);
+    // parent paths & roles we need to walk up
+    // this array will bulk up quite a bit with dups
+    // which we'll later clear up
+    $raparents = array();
+    if ($rs->RecordCount()) {
+        while ($ra = rs_fetch_next_record($rs)) {
+            $sw['ra'][$ra->path] = $ra->roleid;
+            if (!empty($ra->capability)) {
+                $k = "{$ra->path}:{$ra->roleid}";
+                $sw['rdef'][$k][$ra->capability] = $ra->permission;
+            }
+            $parentids = explode('/', $ra->path);
+            array_pop($parentids); array_shift($parentids);
+            if (isset($raparents[$ra->roleid])) {
+                $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
+            } else {
+                $raparents[$ra->roleid] = $parentids;
+            }
+        }
+    }
+    rs_close($rs);
+
+    // Walk up the tree to grab all the roledefs
+    // of interest to our user...
+    // NOTE: we use a series of IN clauses here - which
+    // might explode on huge sites with very convoluted nesting of
+    // categories... - extremely unlikely that the number of categories
+    // and roletypes is so large that we hit the limits of IN()
+    $clauses = array();
+    foreach ($raparents as $roleid=>$contexts) {
+        $contexts = sql_intarray_to_in(array_unique($contexts));
+        if ($contexts ==! '') {
+            $clauses[] = "(roleid=$roleid AND contextid IN ($contexts))";
+        }
+    }
+    $clauses = join(" OR ", $clauses);
+    $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
+            FROM {$CFG->prefix}role_capabilities rc
+            JOIN {$CFG->prefix}context ctx
+              ON rc.contextid=ctx.id
+            WHERE $clauses
+            ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+
+    $rs = get_recordset_sql($sql);
+
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $sw['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+    }
+    rs_close($rs);
+
+    //
+    // Overrides for the role assignments IN SUBCONTEXTS
+    // (though we still do _not_ go below the course level.
+    //
+    // NOTE that the JOIN w sctx is with 3-way triangulation to
+    // catch overrides to the applicable role in any subcontext, based
+    // on the path field of the parent.
+    //
+    $sql = "SELECT sctx.path, ra.roleid,
+                   ctx.path AS parentpath,
+                   rco.capability, rco.permission
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}context ctx
+              ON ra.contextid=ctx.id
+            JOIN {$CFG->prefix}context sctx
+              ON (sctx.path LIKE ctx.path||'/%')
+            JOIN {$CFG->prefix}role_capabilities rco
+              ON (rco.roleid=ra.roleid AND rco.contextid=sctx.id)
+            WHERE ra.userid = $userid
+                  AND sctx.contextlevel <= ".CONTEXT_COURSE."
+            ORDER BY sctx.depth, sctx.path, $ra.roleid";
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $sw['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+    }
+    rs_close($rs);
+
+    // TODO: compact capsets?
+
+    return $sw;
+}
+
 
 /**
  *  A convenience function to completely load all the capabilities
