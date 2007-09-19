@@ -45,7 +45,7 @@ class mnet_environment {
                     $this->ip_address = $_SERVER['SERVER_ADDR'];
                 }
 
-                if ($existingrecord = get_record('mnet_host', 'ip_address', $this->ipaddress)) {
+                if ($existingrecord = get_record('mnet_host', 'ip_address', $this->ip_address)) {
                     $this->id = $existingrecord->id;
                 } else {  // make a new one
                     $this->id       = insert_record('mnet_host', $this, true);
