@@ -368,8 +368,8 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
     echo $paging;
 
     if ($caneditall || $canmoveall || $canuseall){
-        echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
-         ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>';
+        echo '<a href="javascript:select_all_in(\'TABLE\',null,\'categoryquestions\');">'.$strselectall.'</a> /'.
+         ' <a href="javascript:deselect_all_in(\'TABLE\',null,\'categoryquestions\');">'.$strselectnone.'</a>';
         echo '<br />';
         echo '<strong>&nbsp;'.get_string('withselected', 'quiz').':</strong><br />';
 
