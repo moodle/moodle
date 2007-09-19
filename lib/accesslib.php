@@ -23,20 +23,82 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
- /**
-  * Capability session information format
-  * 2 x 2 array
-  * [context][capability]
-  * where context is the context id of the table 'context'
-  * and capability is a string defining the capability
-  * e.g.
-  *
-  * [Capabilities] => [26][mod/forum:viewpost] = 1
-  *                   [26][mod/forum:startdiscussion] = -8990
-  *                   [26][mod/forum:editallpost] = -1
-  *                   [273][moodle:blahblah] = 1
-  *                   [273][moodle:blahblahblah] = 2
-  */
+/**
+ * Public API vs internals 
+ * -----------------------
+ * 
+ * General users probably only care about
+ *
+ * - get_context_instance() 
+ * - has_capability()
+ * - get_user_courses_bycap()
+ * - get_context_users_bycap() 
+ * - more?
+ *
+ * Advanced use
+ * - $ACCESS global
+ * - has_cap_fad()
+ * - more?
+ *
+ * accessdata
+ * ----------
+ *
+ * Access control data is held in the "accessdata" array
+ * which - for the logged-in user, will be in $USER->access
+ * 
+ * For other users can be generated and passed around (but see
+ * the $ACCESS global).
+ *
+ * accessdata ($ad) is a multidimensional array, holding
+ * role assignments (RAs), role-capabilities-perm sets 
+ * (Role Defs) and a list of courses we have loaded
+ * data for.
+ *
+ * Things are keyed on "contextpaths" (the path field of 
+ * the context table) for fast walking up/down the tree.
+ * 
+ * $ad[ra][$contextpath]= array($roleid)
+ *        [$contextpath]= array($roleid)
+ *        [$contextpath]= array($roleid) 
+ *
+ * Role definitions are stored like this
+ * (no cap merge is done - so it's compact)
+ *
+ * $ad[rdef][$contextpath:$roleid][mod/forum:viewpost] = 1
+ *                                [mod/forum:editallpost] = -1
+ *                                [mod/forum:startdiscussion] = -1000
+ *
+ * See how has_cap_fad() walks up/down the tree.
+ *
+ * Normally - specially for the logged-in user, we only load
+ * rdef and ra down to the course level, but not below. This
+ * keeps accessdata small and compact. Below-the-course ra/rdef
+ * are loaded as needed. We keep track of which courses we
+ * have loaded ra/rdef in 
+ *
+ * $ad[loaded] = array($contextpath, $contextpath) 
+ *
+ * Stale accessdata
+ * ----------------
+ *
+ * For the logged-in user, accessdata is long-lived.
+ *
+ * On each pageload we load $DIRTYPATHS which lists
+ * context paths affected by changes. Any check at-or-below
+ * a dirty context will trigger a transparent reload of accessdata.
+ * 
+ * Changes at the sytem level will force the reload for everyone.
+ *
+ * Default role caps
+ * -----------------
+ * The default role assignment is not in the DB, so we 
+ * add it manually to accessdata. 
+ *
+ * This means that functions that work directly off the
+ * DB need to ensure that the default role caps
+ * are dealt with appropriately. 
+ *
+ */
 
 require_once $CFG->dirroot.'/lib/blocklib.php';
 
