@@ -249,6 +249,13 @@ global $HTTPSPAGEREQUIRED;
         $COURSE->id = 1;
     }
 
+    $sysctxid = get_field('context', 'id',
+                          'contextlevel', CONTEXT_SYSTEM);
+if (!empty($syscontextid)) {
+        define('SYSCONTEXTID', $syscontextid);
+    } else {
+        define('SYSCONTEXTID', 1);
+    }
 
 /// Set error reporting back to normal
     if ($originaldatabasedebug == -1) {
