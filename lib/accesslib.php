@@ -29,20 +29,49 @@
  * 
  * General users probably only care about
  *
- * - get_context_instance() 
+ * Context handling
+ * - get_context_instance()
+ * - get_context_instance_by_id()
+ * - get_parent_contexts()
+ * - get_child_contexts()
+ * 
+ * Whether the user can do something...
  * - has_capability()
  * - require_capability()
+ * - require_login() (from moodlelib)
+ *
+ * What courses has this user access to?
  * - get_user_courses_bycap()
+ *
+ * What users can do X in this course or context?
  * - get_context_users_bycap()
- * - get_parent_contexts()
+ * - get_context_users_byrole()
+ * 
+ * Enrol/unenrol
  * - enrol_into_course()
  * - role_assign()/role_unassign()
- * - more?
+ * 
  *
  * Advanced use
+ * - load_all_capabilities()
+ * - reload_all_capabilities()
  * - $ACCESS global
  * - has_cap_fad()
- * - more?
+ * - is_siteadmin()
+ * - get_user_access_sitewide()
+ * - get_user_access_bycontext()
+ * - get_role_access_bycontext()
+ *
+ * Name conventions
+ * ----------------
+ * 
+ * - $ad means accessdata (see below for more...)
+ *
+ * - function names ending in _fad() mean "from accessdata"
+ *   meaning that the answer will be read from the data in $ad
+ *   without touching the DB
+ *
+ * - "ctx" means context
  *
  * accessdata
  * ----------
