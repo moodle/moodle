@@ -259,10 +259,10 @@
             break;
             case 'right':
     // The right column
-    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || editcourseallowed(SITEID)) {
+    if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $editing || $PAGE->user_allowed_editing()) {
         echo '<td style="width: '.$preferred_width_right.'px;" id="right-column">';
         if (!empty($THEME->customcorners)) print_custom_corners_start();
-        if (editcourseallowed(SITEID)) {
+        if ($PAGE->user_allowed_editing()) {
             echo '<div style="text-align:center">'.update_course_icon($SITE->id).'</div>';
             echo '<br />';
         }
