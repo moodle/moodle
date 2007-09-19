@@ -646,10 +646,17 @@ if (!empty($syscontextid)) {
 
 /// Apache log intergration. In apache conf file one can use ${MOODULEUSER}n in
 /// LogFormat to get the current logged in username in moodle.
-    if ($USER && function_exists('apache_note') && !empty($CFG->apacheloguser)) {
-        $apachelog_username = clean_filename($USER->username);
-        $apachelog_name = clean_filename($USER->firstname. " ".$USER->lastname);
+    if ($USER && function_exists('apache_note')
+        && !empty($CFG->apacheloguser) && isset($user->username)) {
         $apachelog_userid = $USER->id;
+        $apachelog_username = clean_filename($USER->username);
+        $apachelog_name = '';
+        if (isset($USER->firstname)) {
+            // We can assume both will be set
+            // - even if to empty.
+            $apachelog_name = clean_filename($USER->firstname . " " .
+                                             $USER->lastname);
+        }
         if (isset($USER->realuser)) {
             if ($realuser = get_record('user', 'id', $USER->realuser)) {
                 $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
