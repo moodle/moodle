@@ -2320,46 +2320,6 @@ function cleanup_contexts() {
 }
 
 /**
- * Validate that object with instanceid really exists in given context level.
- *
- * return if instanceid object exists
- */
-function validate_context($contextlevel, $instanceid) {
-    switch ($contextlevel) {
-
-        case CONTEXT_SYSTEM:
-            return ($instanceid == 0);
-
-        case CONTEXT_PERSONAL:
-            return (boolean)count_records('user', 'id', $instanceid);
-
-        case CONTEXT_USER:
-            return (boolean)count_records('user', 'id', $instanceid);
-
-        case CONTEXT_COURSECAT:
-            if ($instanceid == 0) {
-                return true; // site course category
-            }
-            return (boolean)count_records('course_categories', 'id', $instanceid);
-
-        case CONTEXT_COURSE:
-            return (boolean)count_records('course', 'id', $instanceid);
-
-        case CONTEXT_GROUP:
-            return groups_group_exists($instanceid);
-
-        case CONTEXT_MODULE:
-            return (boolean)count_records('course_modules', 'id', $instanceid);
-
-        case CONTEXT_BLOCK:
-            return (boolean)count_records('block_instance', 'id', $instanceid);
-
-        default:
-            return false;
-    }
-}
-
-/**
  * Get the context instance as an object. This function will create the
  * context instance if it does not exist yet.
  * @param integer $level The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
