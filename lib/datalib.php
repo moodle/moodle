@@ -805,8 +805,6 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     }
 
-    $selectsql = $CFG->prefix .'course WHERE ('. $fullnamesearch .' OR '. $summarysearch .') AND category > \'0\'';
-
     $sql = "SELECT c.*,
                    ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
             FROM {$CFG->prefix}course c
