@@ -1101,6 +1101,7 @@ function get_user_access_sitewide($userid) {
     // which we'll later clear up
     //
     $raparents = array();
+    $lastseen  = '';
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
             // RAs leafs are arrays to support multi
@@ -1108,19 +1109,27 @@ function get_user_access_sitewide($userid) {
             if (!isset($acc['ra'][$ra->path])) {
                 $acc['ra'][$ra->path] = array();
             }
-            array_push($acc['ra'][$ra->path], $ra->roleid);
+            // only add if is not a repeat caused
+            // by capability join...
+            // (this check is cheaper than in_array())
+            if ($lastseen !== $ra->path.':'.$ra->roleid) {
+                $lastseen = $ra->path.':'.$ra->roleid;
+                array_push($acc['ra'][$ra->path], $ra->roleid);
+                $parentids = explode('/', $ra->path);
+                array_shift($parentids); // drop empty leading "context"
+                array_pop($parentids);   // drop _this_ context
+
+                if (isset($raparents[$ra->roleid])) {
+                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid],
+                                                          $parentids);
+                } else {
+                    $raparents[$ra->roleid] = $parentids;
+                }
+            }
+            // Always add the roleded
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
-            }
-            $parentids = explode('/', $ra->path);
-            array_shift($parentids); // drop empty leading "context"
-            array_pop($parentids);   // drop _this_ context
-
-            if (isset($raparents[$ra->roleid])) {
-                $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
-            } else {
-                $raparents[$ra->roleid] = $parentids;
             }
         }
         unset($ra);
@@ -1284,25 +1293,32 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     //
     $raparents = array();
     $newroles  = array();
+    $lastseen  = '';
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            if (!isset($acc['ra'][$ra->path])) {
-                $acc['ra'][$ra->path] = array();
+            if ($lastseen !== $ra->path.':'.$ra->roleid) {
+                // only add if is not a repeat caused
+                // by capability join...
+                // (this check is cheaper than in_array())
+                $lastseen = $ra->path.':'.$ra->roleid;
+                if (!isset($acc['ra'][$ra->path])) {
+                    $acc['ra'][$ra->path] = array();
+                }
+                array_push($acc['ra'][$ra->path], $ra->roleid);
+                if (!in_array($ra->roleid, $knownroles)) {
+                    $newroles[] = $ra->roleid;
+                    $parentids = explode('/', $ra->path);
+                    array_pop($parentids); array_shift($parentids);
+                    if (isset($raparents[$ra->roleid])) {
+                        $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
+                    } else {
+                        $raparents[$ra->roleid] = $parentids;
+                    }
+                }
             }
-            array_push($acc['ra'][$ra->path], $ra->roleid);
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
-            }
-            if (!in_array($ra->roleid, $knownroles)) {
-                $newroles[] = $ra->roleid;
-                $parentids = explode('/', $ra->path);
-                array_pop($parentids); array_shift($parentids);
-                if (isset($raparents[$ra->roleid])) {
-                    $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
-                } else {
-                    $raparents[$ra->roleid] = $parentids;
-                }
             }
         }
         $newroles = array_unique($newroles);
