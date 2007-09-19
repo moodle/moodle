@@ -90,6 +90,18 @@ class get_db_directories extends XMLDBAction {
             }
         }
 
+    /// Now, assignment submodules (mod/assignment/type/xxx/db)
+        if ($plugins = get_list_of_plugins('mod/assignment/type')) {
+            foreach ($plugins as $plugin) {
+                $dbdir = new stdClass;
+                $dbdir->path = $CFG->dirroot . '/mod/assignment/type/' . $plugin . '/db';
+                if (!isset($XMLDB->dbdirs[$dbdir->path])) {
+                    $XMLDB->dbdirs[$dbdir->path] = $dbdir;
+                }
+                $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
+            }
+        }
+
     /// Now, question types (question/type/xxx/db)
         if ($plugins = get_list_of_plugins('question/type')) {
             foreach ($plugins as $plugin) {
