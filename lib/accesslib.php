@@ -425,9 +425,9 @@ function is_siteadmin($userid) {
               ON (ra.roleid=rc.roleid AND rc.contextid=ctx.id)
             WHERE ctx.contextlevel=10
               AND rc.capability IN ('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything')       
-              AND u.id={$USER->id}";
+              AND u.id={$userid}";
 
-    $isadmin = (get_field_sql($sql) == 0);
+    $isadmin = (get_field_sql($sql) > 0);
     return $isadmin;
 }
 
