@@ -2358,40 +2358,18 @@ function isguestuser($user=NULL) {
  * Determines if the currently logged in user is in editing mode.
  * Note: originally this function had $userid parameter - it was not usable anyway
  *
- * @uses $USER
- * @param int $courseid The id of the course being tested
+ * @uses $USER, $PAGE
  * @return bool
  */
-function isediting($courseid) {
-    global $USER;
+function isediting() {
+    global $USER, $PAGE;
 
     if (empty($USER->editing)) {
         return false;
-
-    } else {
-        return editcourseallowed($courseid);
+    } elseif (is_object($PAGE) && method_exists($PAGE,'user_allowed_editing')) {
+        return $PAGE->user_allowed_editing();
     }
-}
-
-/**
- * Verifies if user allowed to edit something in the course page.
- * @param int $courseid The id of the course being tested
- * @return bool
- */
-function editcourseallowed($courseid) {
-    global $USER;
-
-    // cache the result per course, it is automatically reset when using switchrole or loginas
-    if (!array_key_exists('courseeditallowed', $USER)) {
-        $USER->courseeditallowed = array();
-    }
-
-    if (!array_key_exists($courseid, $USER->courseeditallowed)) {
-        $USER->courseeditallowed[$courseid] = has_capability_including_child_contexts(get_context_instance(CONTEXT_COURSE, $courseid),
-                                            array('moodle/site:manageblocks', 'moodle/course:manageactivities'));
-    }
-
-    return $USER->courseeditallowed[$courseid];
+    return true;//false;
 }
 
 /**
