@@ -4578,7 +4578,7 @@ function get_dirty_contexts($time) {
     $sql = "SELECT name, value 
             FROM {$CFG->prefix}config_plugins
             WHERE plugin='accesslib/dirtycontexts'
-                  AND CAST(value AS DECIMAL) > $time";
+                  AND value > ($time - 2)";
     if ($ctx = get_records_sql($sql)) {
         return $ctx;
     }
