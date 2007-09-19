@@ -399,6 +399,38 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
                        $ACCESS[$userid], $doanything);
 }
 
+/*
+ * Uses 1 DB query to answer whether a user is an admin at the sitelevel.
+ * It depends on DB schema >=1.7 but does not depend on the new datastructures
+ * in v1.9 (context.path, or $USER->access)
+ *
+ * Will return true if the userid has any of
+ *  - moodle/site:config
+ *  - moodle/legacy:admin
+ *  - moodle/site:doanything
+ *
+ * @param   int  $userid
+ * @returns bool $isadmin
+ */
+function is_siteadmin($userid) {
+    global $CFG;
+
+    $sql = "SELECT COUNT(u.id)
+            FROM mdl_user u
+            JOIN mdl_role_assignments ra
+              ON ra.userid=u.id
+            JOIN mdl_context ctx 
+              ON ctx.id=ra.contextid
+            JOIN mdl_role_capabilities rc
+              ON (ra.roleid=rc.roleid AND rc.contextid=ctx.id)
+            WHERE ctx.contextlevel=10
+              AND rc.capability IN ('moodle/site:config', 'moodle/legacy:admin', 'moodle/site:doanything')       
+              AND u.id={$USER->id}";
+
+    $isadmin = (get_field_sql($sql) == 0);
+    return $isadmin;
+}
+
 function get_course_from_path ($path) {
     // assume that nothing is more than 1 course deep
     if (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
