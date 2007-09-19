@@ -393,7 +393,7 @@
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
 
-    $userlist = get_records_sql($select.$from.$where.$wheresearch.$sort,
+    $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
             $table->get_page_start(),  $table->get_page_size());
 
     /// If there are multiple Roles in the course, then show a drop down menu for switching
@@ -515,7 +515,7 @@
             }
 
             if ($matchcount > 0) {
-                foreach ($userlist as $user) {
+                while ($user = rs_fetch_next_record($userlist)) {
                     $user = make_context_subobj($user);
                     print_user($user, $course, $bulkoperations);
                 }
@@ -530,8 +530,8 @@
         $timeformat = get_string('strftimedate');
 
 
-        if (!empty($userlist))  {
-            foreach ($userlist as $user) {
+        if ($userlist->RecordCount() > 0)  {
+            while ($user = rs_fetch_next_record($userlist)) {
                 $user = make_context_subobj($user);
                 if ($user->hidden) {
                 // if the assignment is hidden, display icon
