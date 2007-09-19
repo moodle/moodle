@@ -783,6 +783,11 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
     }
     $coursefields = 'c.' .join(',c.', $fields);
 
+    $sort = trim($sort);
+    if ($sort !== '') {
+        $sort = "ORDER BY $sort";
+    }
+
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
     if (has_cap_fad($cap, $sysctx, $ad, $doanything)) {
         //
@@ -798,7 +803,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
                   ON c.category=cc.id
                 JOIN {$CFG->prefix}context ctx 
                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                ORDER BY $sort ";
+                $sort ";
         $rs = get_recordset_sql($sql);
     } else {
         //
@@ -856,7 +861,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
                 WHERE    ra.id IS NOT NULL
                       OR rc.id IS NOT NULL
                       $catclause
-                ORDER BY $sort ";
+                $sort ";
         $rs = get_recordset_sql($sql);
     }
     $courses = array();
