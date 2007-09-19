@@ -921,6 +921,124 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     return $users;
 }
 
+/*
+ * Draft - use for the course participants list page 
+ *
+ * Uses 2 fast DB queries
+ *
+ * TODO:
+ * - automagically exclude roles that can-doanything sitewide (See callers)
+ *   - perhaps also allow sitewide do-anything via flag
+ * - implement additional where clauses
+ * - sorting
+ * - get course participants list to use it!
+ *
+ * returns a users array, both sorted _and_ keyed
+ * on id (as get_my_courses() does)
+ *
+ * as a bonus, every user record comes with its own
+ * personal context, as our callers need it straight away
+ * {save 1 dbquery per user! yay!}
+ *
+ */
+function get_context_users_bycap ($context, $capability='moodle/course:view', $fields=NULL, $where=NULL, $sort=NULL, $limit=0) {
+    global $CFG;
+
+    // Plan
+    // 
+    // - Get all the *interesting* roles -- those that
+    //   have some rolecap entry in our ctx.path contexts
+    //
+    // - Get all RAs for any of those roles in any of our 
+    //   interesting contexts, with userid & perm data
+    //   in a nice (per user?) order
+    // 
+    // - Walk the resultset, computing the permissions
+    //   - actually - this is all a SQL subselect
+    // 
+    // - Fetch user records against the subselect
+    //
+
+    // Slim base fields, let callers ask for what they need...
+    $basefields = array('id', 'username');
+
+    if (!is_null($fields)) {
+        $fields = array_merge($basefields, $fields);
+        $fields = array_unique($fields);
+    } else {
+        $fields = $basefields;
+    }
+    $userfields = 'u.' .join(',u.', $fields);
+
+    $contexts = substr($context->path, 1); // kill leading slash
+    $contexts = str_replace('/', ',', $contexts);
+
+    $roles = array();
+    $sql = "SELECT DISTINCT rc.roleid
+            FROM {$CFG->prefix}role_capabilities rc
+            WHERE rc.capability = '$capability'
+                  AND rc.contextid IN ($contexts)";
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($u = rs_fetch_next_record($rs)) {
+            $roles[] = $u->roleid;
+        }
+    }
+    rs_close($rs);
+    $roles = join(',', $roles);
+
+    //
+    // User permissions subselect SQL
+    //
+    // - the open join condition to
+    //   role_capabilities
+    //
+    // - because both rc and ra entries are
+    //   _at or above_ our context, we don't care
+    //   about their depth, we just need to sum them
+    // 
+    $sql = "SELECT ra.userid, SUM(rc.permission) AS permission
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}role_capabilities rc
+              ON (ra.roleid = rc.roleid AND rc.contextid IN ($contexts))
+            WHERE     ra.contextid  IN ($contexts)
+                  AND ra.roleid IN ($roles)
+            GROUP BY ra.userid";
+
+    // Get users
+    $sql = "SELECT $userfields,
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+            FROM {$CFG->prefix}user u
+            JOIN {$CFG->prefix}context ctx 
+              ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
+            JOIN ($sql) up
+              ON u.id = up.userid
+            WHERE up.permission > 0 AND u.username != 'guest'";
+
+    $rs = get_recordset_sql($sql);
+    
+    $users = array();
+    $cc = 0; // keep count
+    if ($rs->RecordCount()) {
+        while ($u = rs_fetch_next_record($rs)) {
+            // build the context obj
+            $ctx = new StdClass;
+            $ctx->id           = $u->ctxid;    unset($u->ctxid);
+            $ctx->path         = $u->ctxpath;  unset($u->ctxpath);
+            $ctx->depth        = $u->ctxdepth; unset($u->ctxdepth);
+            $ctx->instanceid   = $u->id;
+            $ctx->contextlevel = CONTEXT_USER;
+            $u->context = $ctx;
+            $users[] = $u;
+            if ($limit > 0 && $cc++ > $limit) {
+                break;
+            }
+        }
+    }
+    rs_close($rs);
+    return $users;
+}
+
 /**
  * It will return a nested array showing role assignments
  * all relevant role capabilities for the user at
