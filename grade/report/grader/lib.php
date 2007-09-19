@@ -727,7 +727,7 @@ class grade_report_grader extends grade_report {
 
                 } else {
                     // Percentage format if specified by user (check each item for a set preference)
-                    $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                    $gradedisplaytype = $item->get_displaytype();
 
                     $percentsign = '';
                     $grademin = $item->grademin;
@@ -897,8 +897,10 @@ class grade_report_grader extends grade_report {
                 }
 
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
+
                 // Determine which display type to use for this average
-                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                $gradedisplaytype = $item->get_displaytype();
+
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;
                 } elseif ($averagesdisplaytype == GRADE_REPORT_PREFERENCE_INHERIT) { // Inherit specific column or general preference
@@ -974,7 +976,7 @@ class grade_report_grader extends grade_report {
 
                 $decimalpoints = $this->get_pref('decimalpoints', $item->id);
                 // Determine which display type to use for this range
-                $gradedisplaytype = $this->get_pref('gradedisplaytype', $item->id);
+                $gradedisplaytype = $item->get_displaytype();
 
                 if ($USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL;

@@ -74,7 +74,7 @@ class edit_grade_display_form extends moodleform {
                 $mform->addElement('text', $gradelettername, $gradeletterstring);
                 $mform->setHelpButton($gradelettername, array(false, $gradeletterstring, false, true, false, $gradeletterhelp));
                 $mform->setDefault($gradelettername, $letter);
-                $mform->setType($gradelettername, PARAM_ALPHANUM);
+                $mform->setType($gradelettername, PARAM_RAW);
                 $mform->disabledIf($gradelettername, 'override');
 
                 $mform->addElement('select', $gradeboundaryname, $gradeboundarystring, $percentages);

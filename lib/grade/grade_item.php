@@ -1685,5 +1685,24 @@ class grade_item extends grade_object {
             return true;
         }
     }
+
+    /**
+     * Returns the value of the display type. It can be set at 3 levels: grade_item, course and site. The lowest level overrides the higher ones.
+     * @return int Display type
+     */
+    function get_displaytype() {
+        global $CFG;
+        $course_gradedisplaytype = get_field('grade_items', 'display', 'courseid', $this->courseid, 'itemtype', 'course');
+        $site_gradedisplaytype = $CFG->grade_report_gradedisplaytype;
+        $default_gradedisplaytype = $this->display;
+
+        if ($this->display == GRADE_REPORT_PREFERENCE_DEFAULT) {
+            $default_gradedisplaytype = $course_gradedisplaytype;
+            if ($course_gradedisplaytype == GRADE_REPORT_PREFERENCE_DEFAULT) {
+                $default_gradedisplaytype = $site_gradedisplaytype;
+            }
+        }
+        return $default_gradedisplaytype;
+    }
 }
 ?>

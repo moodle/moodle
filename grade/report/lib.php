@@ -118,7 +118,7 @@ class grade_report {
         } else {
             $this->course = get_record('course', 'id', $this->courseid);
         }
-        
+
         $this->gpr       = $gpr;
         $this->context   = $context;
         $this->page      = $page;
@@ -245,16 +245,27 @@ class grade_report {
     }
 
     /**
-     * Fetches and returns an array of grade letters indexed by their grade boundaries, as stored in preferences.
+     * Fetches and returns an array of grade letters indexed by their grade boundaries, as stored in course item settings or site preferences.
      * @return array
      */
     function get_grade_letters() {
+        global $COURSE;
         $letters = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $boundary = grade_report::get_pref('gradeboundary' . $i);
-            $letter = grade_report::get_pref('gradeletter' . $i);
-            if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
-                $letters[$boundary] = $letter;
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+
+        if ($records = get_records('grade_letters', 'contextid', $context->id)) {
+            foreach ($records as $record) {
+                if (!is_null($record->lowerboundary) && !empty($record->letter)) {
+                    $letters[$record->lowerboundary] = $record->letter;
+                }
+            }
+        } else {
+            for ($i = 1; $i <= 10; $i++) {
+                $boundary = grade_report::get_pref('gradeboundary' . $i);
+                $letter = grade_report::get_pref('gradeletter' . $i);
+                if (!is_null($boundary) && $boundary != -1 && !empty($letter)) {
+                    $letters[$boundary] = $letter;
+                }
             }
         }
         return $letters;
@@ -328,7 +339,7 @@ class grade_report {
             }
 
             $coursemodule = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->course->id);
-            
+
             $dir = $CFG->dirroot . "/mod/$itemmodule/";
             $url = $CFG->wwwroot . "/mod/$itemmodule/";
 
@@ -339,12 +350,12 @@ class grade_report {
             }
 
             $url .= "?id=$coursemodule->id";
-            
+
             // MDL-11274, Hide grades in the grader report if the current grader doesn't have 'moodle/grade:viewhidden'
             if (has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $coursemodule->course))) {
                 return '<a href="' . $url . '">' . $modulename . '</a>';
             } else {
-                return $modulename; 
+                return $modulename;
             }
         }
 
