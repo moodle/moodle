@@ -1883,7 +1883,7 @@ function print_my_moodle() {
         error("It shouldn't be possible to see My Moodle without being logged in.");
     }
 
-    $courses  = get_my_courses($USER->id);
+    $courses  = get_my_courses($USER->id, 'visible DESC,sortorder ASC', array('summary'));
     $rhosts   = array();
     $rcourses = array();
     if (!empty($CFG->mnet_dispatcher_mode) && $CFG->mnet_dispatcher_mode==='strict') {
