@@ -35,6 +35,8 @@
  * - get_user_courses_bycap()
  * - get_context_users_bycap()
  * - get_parent_contexts()
+ * - enrol_into_course()
+ * - role_assign()/role_unassign()
  * - more?
  *
  * Advanced use
@@ -3506,25 +3508,6 @@ function get_related_contexts_string($context) {
         return (' ='.$context->id);
     }
 }
-
-
-/**
- * This function gets the capability of a role in a given context.
- * It is needed when printing override forms.
- * @param int $contextid
- * @param string $capability
- * @param array $capabilities - array loaded using role_context_capabilities
- * @return int (allow, prevent, prohibit, inherit)
- */
-function get_role_context_capability($contextid, $capability, $capabilities) {
-    if (isset($capabilities[$contextid][$capability])) {
-        return $capabilities[$contextid][$capability];
-    }
-    else {
-        return false;
-    }
-}
-
 
 /**
  * Returns the human-readable, translated version of the capability.
