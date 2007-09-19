@@ -281,7 +281,7 @@
     /// Get all existing participants in this context.
         // Why is this not done with get_users???
 
-        if (!$contextusers = get_role_users($roleid, $context, false, 'u.id, u.firstname, u.lastname, u.email, r.hidden')) {
+        if (!$contextusers = get_role_users($roleid, $context, false, 'u.id, u.firstname, u.lastname, u.email, ra.hidden')) {
             $contextusers = array();
         }
 
