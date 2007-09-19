@@ -587,10 +587,22 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
 
 /**
- * List of courses that a user has access to view. Note that for admins,
- * this usually includes every course on the system.
+ * Convenience function - lists courses that a user has access to view. 
  *
- * Notes (inherited from get_user_courses_bycap()):
+ * For admins and others with access to "every" course in the system, we should
+ * try to get courses with explicit RAs.
+ *
+ * NOTE: this function is heavily geared towards the perspective of the user
+ *       passed in $userid. So it will hide courses that the user cannot see 
+ *       (for any reason) even if called from cron or from another $USER's
+ *       perspective.
+ *       
+ *       If you really want to know what courses are assigned to the user,
+ *       without any hiding or scheming, call the lower-level 
+ *       get_user_courses_bycap().
+ *
+ *
+ * Notes inherited from get_user_courses_bycap():
  *
  * - $fields is an array of fieldnames to ADD
  *   so name the fields you really need, which will
@@ -644,8 +656,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // NOTE! it's a _string_ because
     // - it's all we'll ever use
     // - it serialises much more compact than an array
-    //   this a BIG concern here - cost of serialise
-    //   and unserialise is HUGE if the session grows
+    //   this a big concern here - cost of serialise
+    //   and unserialise gets huge as the session grows
     //
     // If the courses are too many - it won't be set
     // for large numbers of courses, caching in the session
@@ -676,8 +688,11 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             // (but here we don't need to check has_cap)
             $coursefields = 'c.' .join(',c.', $fields);
             $sql = "SELECT $coursefields,
-                           ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                           ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                           cc.path AS categorypath
                     FROM {$CFG->prefix}course c
+                    JOIN {$CFG->prefix}course_categories cc
+                      ON c.category=cc.id
                     JOIN {$CFG->prefix}context ctx 
                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                     WHERE c.id IN ($courseids)
@@ -713,6 +728,28 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                                       $doanything, $sort, $fields,
                                       $limit);
 
+    $cats = NULL;
+    // If we have to walk category visibility
+    // to eval course visibility, get the categories
+    if (empty($CFG->allowvisiblecoursesinhiddencategories)) {
+        $sql = "SELECT cc.id, cc.path, cc.visible,
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course_categories cc
+            JOIN {$CFG->prefix}context ctx 
+              ON (cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
+                ORDER BY id";
+        $rs = get_recordset_sql($sql);
+        $cats = array();
+        if ($rs->RecordCount()) {
+            while ($cc = rs_fetch_next_record($rs)) {
+                // build the context obj
+                $cc = make_context_subobj($cc);
+                $cats[$cc->id] = $cc;
+            }
+        }
+        unset($cc);
+        rs_close($rs);
+    }
     //
     // Strangely, get_my_courses() is expected to return the
     // array keyed on id, which messes up the sorting
@@ -721,13 +758,83 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     $kcourses = array();
     $cc = count($courses);
     $cacheids = NULL;
+    $vcatpaths = array();
     if ($userid === $USER->id && $cc < 500) {
         $cacheids = array();
     }
     for ($n=0; $n<$cc; $n++) {
-        $kcourses[$courses[$n]->id] = $courses[$n];
-        if (is_array($cacheids)) {
-            $cacheids[] = $courses[$n]->id;
+
+        //
+        // Check whether the user can _actually_ see them
+        // Easy if $CFG->allowvisiblecoursesinhiddencategories
+        // is set, and we don't have to care about categories.
+        // Lots of work otherwise... (all in mem though!)
+        //
+        $cansee = false;        
+        if (is_null($cats)) { // easy rules!
+            if ($courses[$n]->visible == true) {
+                $cansee = true;
+            } elseif (has_capability('moodle/course:viewhiddencourses',
+                                     $courses[$n]->context, $userid)) {
+                $cansee = true;
+            }
+        } else {
+            //
+            // Is the cat visible?
+            // we have to assume it _is_ visible
+            // so we can shortcut when we find a hidden one
+            //
+            $viscat = true;
+            $cpath = $courses[$n]->categorypath;
+            if (isset($vcatpaths[$cpath])) {
+                $viscat = $vcatpaths[$cpath];
+            } else {
+                $cpath = substr($cpath,1); // kill leading slash
+                $cpath = explode('/',$cpath);
+                $ccct  = count($cpath);
+                for ($m=0;$m<$ccct;$m++) {
+                    $ccid = $cpath[$m];
+                    if ($cats[$ccid]->visible==false) {
+                        $viscat = false;
+                        break;
+                    }
+                }
+                $vcatpaths[$courses[$n]->categorypath] = $viscat;
+            }
+
+            //
+            // Perhaps it's actually visible to this user
+            // check moodle/category:visibility
+            // 
+            // The name isn't obvious, but the description says
+            // "See hidden categories" so the user shall see...
+            //
+            if ($viscat === false) {
+                $catctx = $cats[ $courses[$n]->category ]->context;
+                if (has_capability('moodle/category:visibility',
+                                   $catctx, $userid)) {
+                    $vcatpaths[$courses[$n]->categorypath] = true;
+                    $viscat = true;
+                }
+            }
+
+            //
+            // Decision matrix
+            //
+            if ($viscat === true) {
+                if ($courses[$n]->visible == true) {
+                    $cansee = true;
+                } elseif (has_capability('moodle/course:viewhiddencourses',
+                                        $courses[$n]->context, $userid)) {
+                    $cansee = true;
+                }
+            }
+        }
+        if ($cansee === true) {
+            $kcourses[$courses[$n]->id] = $courses[$n];
+            if (is_array($cacheids)) {
+                $cacheids[] = $courses[$n]->id;
+            }
         }
     }
     if (is_array($cacheids)) {
