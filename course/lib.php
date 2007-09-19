@@ -1757,18 +1757,23 @@ function print_courses($category, $hidesitecourse = false) {
 
     global $CFG;
 
-    if (empty($category)) {
+    if (!is_object($category) && $category==0) {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
-        if ($categories != null and count($categories) == 1) {
+        if (is_array($categories) && count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency,c.enrol,c.guest');
+            $courses    = get_courses_wmanagers($category->id, 
+                                                'c.sortorder ASC', 
+                                                array('password','summary','currency'));
         } else {
-            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency,c.enrol,c.guest');
+            $courses    = get_courses_wmanagers('all', 
+                                                'c.sortorder ASC', 
+                                                array('password','summary','currency'));
         }
         unset($categories);
     } else {
-        $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.category,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency,c.enrol,c.guest');
+        $courses    = get_courses_wmanagers($category->id, 
+                                            'c.sortorder ASC', 
+                                            array('password','summary','currency'));
     }
 
     if ($courses) {
@@ -1776,7 +1781,10 @@ function print_courses($category, $hidesitecourse = false) {
             if ($hidesitecourse and ($course->id == SITEID)) {
                 continue;
             }
-            print_course($course);
+            if ($course->visible == 1
+                || has_capability('moodle/course:viewhidden',$course->context)) {
+                print_course($course);
+            }
         }
     } else {
         print_heading(get_string("nocoursesyet"));
@@ -1799,7 +1807,11 @@ function print_course($course) {
 
     global $CFG, $USER;
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    if (isset($course->context)) {
+        $context = $course->context;
+    } else {
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    }
 
     $linkcss = $course->visible ? '' : ' class="dimmed" ';
 
@@ -1810,18 +1822,35 @@ function print_course($course) {
          format_string($course->fullname).'</a></div>';   
     
     /// first find all roles that are supposed to be displayed
-    if ($managerroles = get_config('', 'coursemanager')) {
+    
+    if ($managerroles = !empty($CFG->coursemanager)) {
         $coursemanagerroles = split(',', $managerroles);
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
-        $rusers = get_role_users($coursemanagerroles, $context, 
-                                 true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
-        if (is_array($rusers) && count($rusers)) {
-            $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-            foreach ($rusers as $teacher) {
-                $fullname = fullname($teacher, $canviewfullnames); 
-                $namesarray[] = format_string($teacher->rolename) 
-                    . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
-                    . $fullname . '</a>'; 
+        $namesarray = array();
+        if (isset($course->managers)) {
+            if (count($course->managers)) {
+                $rusers = $course->managers;
+                $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+                foreach ($rusers as $ra) {
+                    if ($ra->hidden == 0 || $canseehidden) {
+                        $fullname = fullname($ra->user, $canviewfullnames); 
+                        $namesarray[] = format_string($ra->rolename) 
+                            . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
+                            . $fullname . '</a>'; 
+                    }
+                }
+            }
+        } else {
+            $rusers = get_role_users($coursemanagerroles, $context, 
+                                     true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
+            if (is_array($rusers) && count($rusers)) {
+                $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+                foreach ($rusers as $teacher) {
+                    $fullname = fullname($teacher, $canviewfullnames); 
+                    $namesarray[] = format_string($teacher->rolename) 
+                        . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
+                        . $fullname . '</a>'; 
+                }
             }
         }
 
