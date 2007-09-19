@@ -813,7 +813,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
     } else {
         $fields = $basefields;
     }
-    $coursefields = 'c.' .join(',c.', $fields);
+    $coursefields = 'c.' .implode(',c.', $fields);
 
     $sort = trim($sort);
     if ($sort !== '') {
@@ -865,7 +865,7 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
             for ($n=0;$n<$cc;$n++) {
                 $catpaths[$n] = "ctx.path LIKE '{$catpaths[$n]}/%'";
             }
-            $catclause = 'OR (' . join(' OR ', $catpaths) .')';
+            $catclause = 'OR (' . implode(' OR ', $catpaths) .')';
         }
         unset($catpaths);
 
@@ -945,7 +945,7 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     } else {
         $fields = $basefields;
     }
-    $userfields = 'u.' .join(',u.', $fields);
+    $userfields = 'u.' .implode(',u.', $fields);
 
     $contexts = substr($context->path, 1); // kill leading slash
     $contexts = str_replace('/', ',', $contexts);
@@ -1026,7 +1026,7 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
     } else {
         $fields = $basefields;
     }
-    $userfields = 'u.' .join(',u.', $fields);
+    $userfields = 'u.' .implode(',u.', $fields);
 
     $contexts = substr($context->path, 1); // kill leading slash
     $contexts = str_replace('/', ',', $contexts);
@@ -1043,7 +1043,7 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
         }
     }
     rs_close($rs);
-    $roles = join(',', $roles);
+    $roles = implode(',', $roles);
 
     //
     // User permissions subselect SQL
@@ -1197,12 +1197,12 @@ function get_user_access_sitewide($userid) {
     // and roletypes is so large that we hit the limits of IN()
     $clauses = array();
     foreach ($raparents as $roleid=>$contexts) {
-        $contexts = sql_intarray_to_in(array_unique($contexts));
+        $contexts = implode(',', array_unique($contexts));
         if ($contexts ==! '') {
             $clauses[] = "(roleid=$roleid AND contextid IN ($contexts))";
         }
     }
-    $clauses = join(" OR ", $clauses);
+    $clauses = implode(" OR ", $clauses);
     if ($clauses !== '') {
         $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
                 FROM {$CFG->prefix}role_capabilities rc
@@ -1392,12 +1392,12 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     if (count($raparents)) {
         $clauses = array();
         foreach ($raparents as $roleid=>$contexts) {
-            $contexts = sql_intarray_to_in(array_unique($contexts));
+            $contexts = implode(',', array_unique($contexts));
             if ($contexts ==! '') {
                 $clauses[] = "(roleid=$roleid AND contextid IN ($contexts))";
             }
         }
-        $clauses = join(" OR ", $clauses);
+        $clauses = implode(" OR ", $clauses);
         $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
                 FROM {$CFG->prefix}role_capabilities rc
                 JOIN {$CFG->prefix}context ctx
@@ -1422,7 +1422,7 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     // NOTE that we use IN() but the number of roles is
     // very limited.
     //
-    $roleids = sql_intarray_to_in(array_merge($newroles, $knownroles));
+    $roleids = implode(',', array_merge($newroles, $knownroles));
     $sql = "SELECT ctx.path, rc.roleid,
                    rc.capability, rc.permission
             FROM {$CFG->prefix}context ctx
@@ -4098,7 +4098,7 @@ function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.l
     }
 
     if (is_array($roleid)) {
-        $roleselect = ' AND ra.roleid IN (' . join(',',$roleid) .')';
+        $roleselect = ' AND ra.roleid IN (' . implode(',',$roleid) .')';
     } elseif (is_int($roleid)) {
         $roleselect = "AND ra.roleid = $roleid";
     } else {
