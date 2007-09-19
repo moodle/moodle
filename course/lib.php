@@ -1752,7 +1752,7 @@ function print_category_info($category, $depth, $files = false) {
 }
 
 
-function print_courses($category, $hidesitecourse = false) {
+function print_courses($category) {
 /// Category is 0 (for all courses) or an object
 
     global $CFG;
@@ -1778,9 +1778,6 @@ function print_courses($category, $hidesitecourse = false) {
 
     if ($courses) {
         foreach ($courses as $course) {
-            if ($hidesitecourse and ($course->id == SITEID)) {
-                continue;
-            }
             if ($course->visible == 1
                 || has_capability('moodle/course:viewhidden',$course->context)) {
                 print_course($course);
