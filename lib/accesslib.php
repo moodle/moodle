@@ -4978,7 +4978,10 @@ function mark_context_dirty($path) {
 
     // only if it is a non-empty string
     if (is_string($path) && $path !== '') {
-        set_config($path, time(), 'accesslib/dirtycontexts');
+        // The timestamp is 2s in the past to cover for
+        // - race conditions within the 1s granularity
+        // - very small clock offsets in clusters (use ntpd!)
+        set_config($path, time()-2, 'accesslib/dirtycontexts');
     }
 }
 
