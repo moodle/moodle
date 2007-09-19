@@ -483,6 +483,15 @@ function path_inaccessdata($path, $ad) {
  * course you'll have techer+defaultloggedinuser.
  * We try to mimic that in switchrole.
  *
+ * Local-most role definition and role-assignment wins
+ * ---------------------------------------------------
+ * So if the local context has said 'allow', it wins
+ * over a high-level context that says 'deny'.
+ * This is applied when walking rdefs, and RAs.
+ * Only at the same context the values are SUM()med.
+ *
+ * The exception is CAP_PROHIBIT.
+ *
  * "Guest default role" exception
  * ------------------------------
  *
@@ -530,7 +539,7 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
 
     $cc = count($contexts);
 
-    $can = false;
+    $can = 0;
 
     //
     // role-switches loop
@@ -557,10 +566,13 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
                         $capctxp = $contexts[$m];
                         if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
                             $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
-                            if ($perm === CAP_PROHIBIT) {
-                                return false;
-                            } else {
-                                $can += $perm;
+                            // The most local permission (first to set) wins
+                            // the only exception is CAP_PROHIBIT
+                            if ($can === 0) {
+                                $can = $perm;
+                            } elseif ($perm == CAP_PROHIBIT) {
+                                $can = $perm;
+                                break;
                             }
                         }
                     }
@@ -595,8 +607,10 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
             // Found role assignments on this leaf
             $ras = $ad['ra'][$ctxp];
             $rc  = count($ras);
+            $ctxcan = 0;
             for ($rn=0;$rn<$rc;$rn++) {
-                $roleid = $ras[$rn];
+                $roleid  = $ras[$rn];
+                $rolecan = 0;
                 // Walk the path for capabilities
                 // from the bottom up...
                 for ($m=$cc-1;$m>=0;$m--) {
@@ -612,13 +626,28 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
                     }
                     if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
                         $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
-                        if ($perm === CAP_PROHIBIT) {
-                            return false;
-                        } else {
-                            $can += $perm;
+                        // The most local permission (first to set) wins
+                        // the only exception is CAP_PROHIBIT
+                        if ($rolecan === 0) {
+                            $rolecan = $perm;
+                        } elseif ($perm == CAP_PROHIBIT) {
+                            $rolecan = $perm;
+                            break;
                         }
                     }
                 }
+                // Permissions at the same
+                // ctxlevel are added together
+                $ctxcan += $rolecan;
+            }
+            // The most local RAs with a defined
+            // permission ($ctxcan) win, except
+            // for CAP_PROHIBIT
+            if ($can === 0) {
+                $can = $ctxcan;
+            } elseif ($ctxcan == CAP_PROHIBIT) {
+                $can = $ctxcan;
+                break;
             }
         }
     }
@@ -628,7 +657,7 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
             // didn't find it as an explicit cap,
             // but maybe the user candoanything in this context...
             return has_cap_fad('moodle/site:doanything', $context,
-                                    $ad, false);
+                               $ad, false);
         } else {
             return false;
         }
