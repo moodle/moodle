@@ -141,56 +141,71 @@ function merge_role_caps($caps, $mergecaps) {
 }
 
 /**
- * Loads the capabilities for the default guest role to the current user in a
+ * Gets the access for the default guest role to the current user in a
  * specific context.
- * @return object
+ * @return array
  */
-function load_guest_role($return=false) {
-    global $USER;
+function get_role_access($roleid, $acc=NULL) {
 
-    static $guestrole = false;
+    global $CFG;
 
-    if ($guestrole === false) {
-        if (!$guestrole = get_guest_role()) {
-            return false;
+    /* Get it in 1 cheap DB query...
+     * - relevant role caps at the root and down
+     *   to the course level - but not below
+     */
+    if (is_null($acc)) {
+        $acc           = array(); // named list
+        $acc['ra']     = array();
+        $acc['rdef']   = array();
+        $acc['loaded'] = array();
+    }
+
+    $base = '/' . SYSCONTEXTID;
+
+    //
+    // Overrides for the role IN ANY CONTEXTS
+    // down to COURSE - not below -
+    //
+    $sql = "SELECT ctx.path,
+                   rc.capability, rc.permission
+            FROM {$CFG->prefix}context ctx
+            JOIN {$CFG->prefix}role_capabilities rc
+              ON rc.contextid=ctx.id
+            WHERE rc.roleid = {$roleid}
+                  AND ctx.contextlevel <= ".CONTEXT_COURSE."
+            ORDER BY ctx.depth, ctx.path";
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$roleid}";
+            $acc['rdef'][$k][$rd->capability] = $rd->permission;
         }
+        unset($rd);
     }
+    rs_close($rs);
 
-    if ($return) {
-        return get_role_caps($guestrole->id);
-    } else {
-        has_capability('clearcache');
-        $USER->capabilities = get_role_caps($guestrole->id);
-        return true;
-    }
+    return $acc;
 }
 
 /**
- * Load default not logged in role capabilities when user is not logged in
+ * Get the id for the not-logged-in role - or set it up if needed
  * @return bool
  */
-function load_notloggedin_role($return=false) {
+function get_notloggedin_roleid($return=false) {
     global $CFG, $USER;
-
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-        return false;
-    }
 
     if (empty($CFG->notloggedinroleid)) {    // Let's set the default to the guest role
         if ($role = get_guest_role()) {
             set_config('notloggedinroleid', $role->id);
+            return $role->id;
         } else {
             return false;
         }
+    } else {
+        return $CFG->notloggedinroleid;
     }
 
-    if ($return) {
-        return get_role_caps($CFG->notloggedinroleid);
-    } else {
-        has_capability('clearcache');
-        $USER->capabilities = get_role_caps($CFG->notloggedinroleid);
-        return true;
-    }
+    return (get_record('role','id', $CFG->notloggedinas));
 }
 
 /**
@@ -380,6 +395,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         array_shift($contexts);
     }
 
+    if ($USER->id === 0 && !isset($USER->access)) {
+        load_all_capabilities();
+    }
+
     if ($USER->id === $userid) {
         //
         // For the logged in user, we have $USER->access
@@ -460,6 +479,9 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
         $path = $matches[1];
         array_unshift($contexts, $path);
     }
+    // Add a "default" context for the "default role"
+    array_unshift($contexts,"$path:def");
+
     $cc = count($contexts);
 
     $can = false;
@@ -1633,25 +1655,39 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
  *  for the current user.   This is what gets called from login, for example.
  */
 function load_all_capabilities() {
-    global $USER;
-
-    //caching - helps user switching in cron
-    static $defcaps = false;
+    global $USER,$CFG;
 
     unset($USER->mycourses);        // Reset a cache used by get_my_courses
 
+    static $defcaps;
+
+    $base = '/'.SYSCONTEXTID;
+
     if (isguestuser()) {
-        load_guest_role();          // All non-guest users get this by default
+        $guest = get_guest_role();
+
+        // Load the rdefs
+        $USER->access = get_role_access($guest->id);
+        // Put the ghost enrolment in place...
+        $USER->access['ra'][$base] = $guest->id;
 
     } else if (isloggedin()) {
-        if ($defcaps === false) {
-            $defcaps = load_defaultuser_role(true);
+
+        $USER->access = get_user_access_sitewide($USER->id);
+        $USER->access = get_role_access($CFG->defaultuserroleid, $USER->access);
+        // define a "default" enrolment
+        $USER->access['ra']["$base:def"] = $CFG->defaultuserroleid;
+        if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
+            if (isset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
+                unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
+            }
+            if (isset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
+                unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
+            }
+
         }
 
-        //load_user_capability();
-        $USER->access=get_user_access_sitewide($USER->id);
-
-        // when in "course login as" - load only course caqpabilitites (it may not always work as expected)
+        // when in "course login as" - load only course capabilitites (it may not always work as expected)
         if (!empty($USER->realuser) and $USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
             $children = array_keys(get_child_contexts($USER->loginascontext));
             $children[] = $USER->loginascontext->id;
@@ -1687,7 +1723,10 @@ function load_all_capabilities() {
         }
 
     } else {
-        load_notloggedin_role();
+        if ($roleid = get_notloggedin_roleid()) {
+            $USER->access = get_role_access(get_notloggedin_roleid());
+            $USER->access['ra']["$base:def"] = $roleid;
+        }
     }
 }
 
