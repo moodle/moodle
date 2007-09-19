@@ -3378,7 +3378,7 @@ function get_parent_contexts($context) {
     }
 
     $parentcontexts = substr($context->path, 1); // kill leading slash
-    $parentcontexts = explode(',', $parentcontexts);
+    $parentcontexts = explode('/', $parentcontexts);
     array_pop($parentcontexts); // and remove its own id
 
     return array_reverse($parentcontexts);
