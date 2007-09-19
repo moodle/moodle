@@ -15,8 +15,9 @@
     $moveto   = optional_param('moveto',-1,PARAM_INT);
     $moveup   = optional_param('moveup',0,PARAM_INT);
     $movedown = optional_param('movedown',0,PARAM_INT);
-
-    $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
+    
+    $sysctx  = get_context_instance(CONTEXT_SYSTEM);
+    $context = $sysctx;
 
     if (!$site = get_site()) {
         error('Site isn\'t defined!');
@@ -26,7 +27,7 @@
         require_login();
     }
 
-    if (has_capability('moodle/category:update', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
+    if (has_capability('moodle/category:update', $sysctx)) {
         if ($categoryedit !== -1) {
             $USER->categoryediting = $categoryedit;
         }
@@ -91,16 +92,16 @@
             print_box_end();
         }
 
-        /// I am not sure this context in the next has_capability call is correct.
-        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID)) and $CFG->enablecourserequests) {  // Print link to request a new course
+        /// I am not sure this context in the next has_capability call is correct. 
+        if (isloggedin() and !isguest() and !has_capability('moodle/course:create', $sysctx) and $CFG->enablecourserequests) {  // Print link to request a new course
             print_single_button('request.php', NULL, get_string('courserequest'), 'get');
         }
-        if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM, SITEID))) {       // Print link to create a new course
+        if (has_capability('moodle/course:create', $sysctx)) {       // Print link to create a new course
         /// Get the 1st available category
             $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
-        if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
+        if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
             print_single_button('pending.php',NULL, get_string('coursespending'),'get');
         }
         print_footer();
@@ -111,7 +112,7 @@
 
 /// Print headings
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/site:config', $sysctx)) {
         require_once($CFG->libdir.'/adminlib.php');
         admin_externalpage_setup('coursemgmt');
         admin_externalpage_print_header();
@@ -164,7 +165,11 @@
                              "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
                              "index.php?sesskey=$USER->sesskey");
 
-                print_footer();
+                if (has_capability('moodle/site:config', $sysctx)) {
+                    admin_externalpage_print_footer($adminroot);
+                } else {
+                    print_footer();  
+                }
                 exit();
             }
         }
@@ -235,6 +240,7 @@
                     }
                     $swapcategory = $category;
                 }
+                unset($category);
             }
         }
         if (!empty($movedown)) {
@@ -251,6 +257,7 @@
                         $choosenext = true;
                     }
                 }
+                unset($category);
             }
         }
         if ($swapcategory and $movecategory) {        // Renumber everything for robustness
@@ -266,6 +273,7 @@
                     notify('Could not update that category!');
                 }
             }
+            unset($category);
         }
     }
 
@@ -309,11 +317,13 @@
     /// Print link to create a new course
     if (has_capability('moodle/course:create', $context)) {
         unset($options);
-        $options['category'] = $category->id;
-        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        if (!empty($category->id)) {
+            $options['category'] = $category->id;
+            print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        }
     }
 
-    if (has_capability('moodle/site:approvecourse', get_context_instance(CONTEXT_SYSTEM, SITEID))  and !empty($CFG->enablecourserequests)) {
+    if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
         print_single_button('pending.php',NULL, get_string('coursespending'), 'get');
     }
     // admin page does not allow custom buttons in the navigation bar
@@ -321,8 +331,11 @@
     echo update_categories_button();
     echo '</div></div>';
 
-    print_footer();
-
+    if (has_capability('moodle/site:config', $sysctx)) {
+        admin_externalpage_print_footer($adminroot);
+    } else {
+        print_footer();
+    }
 
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
@@ -342,7 +355,9 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
     if ($category) {
 
-        $context  = get_context_instance(CONTEXT_COURSECAT, $category->id);
+        if (!isset($category->context)) {
+            $category->context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+        }
 
         echo '<tr><td align="left" class="name">';
         for ($i=0; $i<$depth;$i++) {
@@ -358,12 +373,12 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
 
         echo '<td class="icons">';    /// Print little icons
 
-        if (has_capability('moodle/category:delete', $context)) {
+        if (has_capability('moodle/category:delete', $category->context)) {
             echo '<a title="'.$str->delete.'" href="index.php?delete='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                  ' src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.$str->delete.'" /></a> ';
         }
 
-        if (has_capability('moodle/category:visibility', $context)) {
+        if (has_capability('moodle/category:visibility', $category->context)) {
             if (!empty($category->visible)) {
                 echo '<a title="'.$str->hide.'" href="index.php?hide='.$category->id.'&amp;sesskey='.sesskey().'"><img'.
                      ' src="'.$CFG->pixpath.'/t/hide.gif" class="iconsmall" alt="'.$str->hide.'" /></a> ';
