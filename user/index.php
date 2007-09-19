@@ -321,12 +321,23 @@
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt, COALESCE(ul.timeaccess, 0) AS lastaccess, r.hidden '; // s.lastaccess
+    $select = 'SELECT u.id, u.username, u.firstname, u.lastname,
+                      u.email, u.city, u.country, u.picture,
+                      u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt,
+                      COALESCE(ul.timeaccess, 0) AS lastaccess,
+                      r.hidden,
+                      ctx.id AS ctxid, ctx.path AS ctxpath,
+                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel ';
+
     $select .= $course->enrolperiod?', r.timeend ':'';
 
-    $from   = "FROM {$CFG->prefix}user u INNER JOIN
-    {$CFG->prefix}role_assignments r on u.id=r.userid LEFT OUTER JOIN
-    {$CFG->prefix}user_lastaccess ul on (r.userid=ul.userid and ul.courseid = $course->id)";
+    $from   = "FROM {$CFG->prefix}user u
+               JOIN {$CFG->prefix}context ctx
+                 ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
+               JOIN {$CFG->prefix}role_assignments r
+                 ON u.id=r.userid
+               LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul
+                 ON (r.userid=ul.userid and ul.courseid = $course->id) ";
 
     $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
 
@@ -505,6 +516,7 @@
 
             if ($matchcount > 0) {
                 foreach ($userlist as $user) {
+                    $user = make_context_subobj($user);
                     print_user($user, $course, $bulkoperations);
                 }
 
@@ -520,6 +532,7 @@
 
         if (!empty($userlist))  {
             foreach ($userlist as $user) {
+                $user = make_context_subobj($user);
                 if ($user->hidden) {
                 // if the assignment is hidden, display icon
                     $hidden = "<img src=\"{$CFG->pixpath}/t/hide.gif\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
@@ -545,7 +558,11 @@
                     }
                 }
 
-                $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                if (!isset($user->context)) {
+                    $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+                } else {
+                    $usercontext = $user->context;
+                }
 
                 if ($piclink = ($USER->id == $user->id || has_capability('moodle/user:viewdetails', $context) ||has_capability('moodle/user:viewdetails', $context))) {
                     $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></strong>';
