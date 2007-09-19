@@ -512,6 +512,7 @@
 
 /// Set up the admin user
     if (empty($CFG->rolesactive)) {
+        build_context_path();
         create_admin_user();
     }
 
