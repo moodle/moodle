@@ -472,6 +472,21 @@ function access_insess($path, $sess) {
     return false;
 }
 
+/*
+ * Walk the accessinfo array and return true/false.
+ * Deals with prohibits, roleswitching, aggregating
+ * capabilities, etc.
+ *
+ * The main feature of here is being FAST and with no
+ * side effects. 
+ *
+ * TODO:
+ *
+ * - Support for multi-enrol
+ * - Document how it works
+ * - Rewrite in ASM :-)
+ *
+ */
 function has_cap_fromsess($capability, $context, $sess, $doanything) {
 
     $path = $context->path;
@@ -489,7 +504,54 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
     $cc = count($contexts);
 
     $can = false;
-    // From the bottom up...
+
+    if (isset($sess['rsw'])) {
+        // check for isset() is fast 
+        // empty() is slow...
+        if (empty($sess['rsw'])) {
+            unset($sess['rsw']); // keep things fast
+            break;
+        }
+        // From the bottom up...
+        for ($n=$cc-1;$n>=0;$n--) {
+            $ctxp = $contexts[$n];
+            if (isset($sess['rsw'][$ctxp])) {
+                // Found a switchrole assignment
+                $roleid = $sess['rsw'][$ctxp];
+                // Walk the path for capabilities
+                // from the bottom up...
+                for ($m=$cc-1;$m>=0;$m--) {
+                    $capctxp = $contexts[$m];
+                    if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
+                        $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
+                        if ($perm === CAP_PROHIBIT) {
+                            return false;
+                        } else {
+                            $can += $perm;
+                        }
+                    }
+                }
+                // As we are dealing with a switchrole,
+                // we return _here_, do _not_ walk up 
+                // the hierarchy any further
+                if ($can < 1) {
+                    if ($doanything) {
+                        // didn't find it as an explicit cap,
+                        // but maybe the user candoanything in this context...
+                        return has_cap_fromsess('moodle/site:doanything', $context,
+                                                $sess, false);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+                
+            }
+        }
+    }
+
+    // From the bottom up... for non-switchers...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
         if (isset($sess['ra'][$ctxp])) {
@@ -515,7 +577,8 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
         if ($doanything) {
             // didn't find it as an explicit cap,
             // but maybe the user candoanything in this context...
-            return has_cap_fromsess('moodle/site:doanything', $context, $sess, false);
+            return has_cap_fromsess('moodle/site:doanything', $context, 
+                                    $sess, false);
         } else {
             return false;
         }
