@@ -203,8 +203,9 @@ function merge_role_caps($caps, $mergecaps) {
 }
 
 /**
- * Gets the access for the default guest role to the current user in a
- * specific context.
+ * Gets the accessdata for role "sitewide" 
+ * (system down to course)
+ *
  * @return array
  */
 function get_role_access($roleid, $acc=NULL) {
@@ -1695,6 +1696,69 @@ function reload_all_capabilities() {
     }
 
 }
+
+/*
+ * Adds a temp role to an accessdata array.
+ *
+ * Useful for the "temporary guest" access
+ * we grant to logged-in users.
+ *
+ * Note - assumes a course context!
+ *
+ */
+function load_temp_role($context, $roleid, $ad) {
+
+    global $CFG;
+
+    //
+    // Load rdefs for the role in -
+    // - this context
+    // - all the parents
+    // - and below - IOWs overrides...
+    //
+    
+    // turn the path into a list of context ids
+    $contexts = substr($context->path, 1); // kill leading slash
+    $contexts = str_replace('/', ',', $contexts);
+
+    $sql = "SELECT ctx.path,
+                   rc.capability, rc.permission
+            FROM {$CFG->prefix}context ctx
+            JOIN {$CFG->prefix}role_capabilities rc
+              ON rc.contextid=ctx.id
+            WHERE (ctx.id IN ($contexts)
+                   OR ctx.path LIKE '{$context->path}/%')
+                  AND rc.roleid = {$roleid}
+            ORDER BY ctx.depth, ctx.path";
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$roleid}";
+            $ad['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+    }
+    rs_close($rs);
+
+    //
+    // Say we loaded everything for the course context
+    // - which we just did - if the user gets a proper
+    // RA in this session, this data will need to be reloaded,
+    // but that is handled by the complete accessdata reload
+    //
+    array_push($ad['loaded'], $context->path);
+
+    //
+    // Add the ghost RA
+    //
+    if (isset($ad['ra'][$context->path])) {
+        array_push($ad['ra'][$context->path], $roleid);
+    } else {
+        $ad['ra'][$context->path] = array($roleid);
+    }
+
+    return $ad;
+}
+
 
 /**
  * Check all the login enrolment information for the given user object
