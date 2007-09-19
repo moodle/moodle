@@ -2635,13 +2635,40 @@ function move_courses ($courseids, $categoryid) {
                     if (!update_record('course', $course)) {
                         notify("An error occurred - course not moved!");
                     }
-                    // parents changed (course category)
-                    // rebuild this context and all children
-                    rebuild_context_rel(get_context_instance(CONTEXT_COURSE, $course->id));
+
+                    $context   = get_context_instance(CONTEXT_COURSE, $course->id);
+                    $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+                    context_moved($context, $newparent);
                 }
             }
             fix_course_sortorder();
         }
+    return true;
+}
+
+/***
+ *** Efficiently moves a category - NOTE that this can have
+ *** a huge impact access-control-wise...
+ ***
+ ***
+ **/
+function move_category ($category, $newparentcat) {
+
+    global $CFG;
+
+    if (!set_field('course_categories', 'parent', $newparentcat->id, 'id', $category->id)) {
+        return false;
+    }
+
+    $context   = get_context_instance(CONTEXT_COURSECAT, $category->id);
+    $newparent = get_context_instance(CONTEXT_COURSECAT, $newparentcat->id);
+    context_moved($context, $newparent);
+
+    // The most effective thing would be to find the common parent, 
+    // until then, do it sitewide...
+    fix_course_sortorder();
+    
+
     return true;
 }
 
