@@ -791,37 +791,58 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
         }
 
         if (substr($searchterm,0,1) == '+') {
-            $searchterm = substr($searchterm,1);
-            $summarysearch .= " summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $fullnamesearch .= " fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm      = substr($searchterm,1);
+            $summarysearch  .= " c.summary $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $fullnamesearch .= " c.fullname $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else if (substr($searchterm,0,1) == "-") {
-            $searchterm = substr($searchterm,1);
-            $summarysearch .= " summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
-            $fullnamesearch .= " fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm      = substr($searchterm,1);
+            $summarysearch  .= " c.summary $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $fullnamesearch .= " c.fullname $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
         } else {
-            $summarysearch .= ' summary '. $LIKE .' \'%'. $searchterm .'%\' ';
-            $fullnamesearch .= ' fullname '. $LIKE .' \'%'. $searchterm .'%\' ';
+            $summarysearch  .= ' c.summary '. $LIKE .' \'%'. $searchterm .'%\' ';
+            $fullnamesearch .= ' c.fullname '. $LIKE .' \'%'. $searchterm .'%\' ';
         }
 
     }
 
     $selectsql = $CFG->prefix .'course WHERE ('. $fullnamesearch .' OR '. $summarysearch .') AND category > \'0\'';
 
-    $totalcount = count_records_sql('SELECT COUNT(*) FROM '. $selectsql);
+    $sql = "SELECT c.*,
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+            FROM {$CFG->prefix}course c
+            JOIN {$CFG->prefix}context ctx
+             ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+            WHERE ( $fullnamesearch OR  $summarysearch ) 
+                  AND category > 0
+            ORDER BY " . $sort;
 
-    $courses = get_records_sql('SELECT * FROM '. $selectsql .' ORDER BY '. $sort, $page, $recordsperpage);
+    $courses = array();
 
-    if ($courses) {  /// Remove unavailable courses from the list
-        foreach ($courses as $key => $course) {
-            if (!$course->visible) {
-                if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                    unset($courses[$key]);
-                    $totalcount--;
+    if ($rs = get_recordset_sql($sql)) {
+        
+
+        // Tiki pagination
+        $limitfrom = $page * $recordsperpage;
+        $limitto   = $limitfrom + $recordsperpage;
+        $c = 0; // counts how many visible courses we've seen
+
+        while ($course = rs_fetch_next_record($rs)) {
+            $course = make_context_subobj($course);
+            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $course->context)) {
+                // Don't exit this loop till the end
+                // we need to count all the visible courses
+                // to update $totalcount
+                if ($c >= $limitfrom && $c < $limitto) {
+                    $courses[] = $course;
                 }
+                $c++;
             }
         }
     }
 
+    // our caller expects 2 bits of data - our return
+    // array, and an updated $totalcount
+    $totalcount = $c;
     return $courses;
 }
 
