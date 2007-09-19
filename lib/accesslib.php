@@ -32,7 +32,8 @@
  * - get_context_instance() 
  * - has_capability()
  * - get_user_courses_bycap()
- * - get_context_users_bycap() 
+ * - get_context_users_bycap()
+ * - get_parent_contexts()
  * - more?
  *
  * Advanced use
@@ -3577,100 +3578,21 @@ function role_context_capabilities($roleid, $context, $cap='') {
  * Recursive function which, given a context, find all parent context ids,
  * and return the array in reverse order, i.e. parent first, then grand
  * parent, etc.
+ *
  * @param object $context
  * @return array()
  */
 function get_parent_contexts($context) {
 
-    static $pcontexts; // cache
-    if (isset($pcontexts[$context->id])) {
-        return ($pcontexts[$context->id]);
+    if ($context->path == '') {
+        return array();
     }
 
-    switch ($context->contextlevel) {
+    $parentcontexts = substr($context->path, 1); // kill leading slash
+    $parentcontexts = explode(',', $parentcontexts);
+    array_pop($parentcontexts); // and remove its own id
 
-        case CONTEXT_SYSTEM: // no parent
-            return array();
-        break;
-
-        case CONTEXT_PERSONAL:
-            if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
-                return array();
-            } else {
-                $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
-                return $res;
-            }
-        break;
-
-        case CONTEXT_USER:
-            if (!$parent = get_context_instance(CONTEXT_SYSTEM)) {
-                return array();
-            } else {
-                $res = array($parent->id);
-                $pcontexts[$context->id] = $res;
-                return $res;
-            }
-        break;
-
-        case CONTEXT_COURSECAT: // Coursecat -> coursecat or site
-        case CONTEXT_COURSE: // 1 to 1 to course cat
-            $parents = get_parent_cats($context);
-            $parents = array_reverse($parents);
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            return $pcontexts[$context->id] = array_merge($parents, array($systemcontext->id));
-        break;
-
-        case CONTEXT_GROUP: // 1 to 1 to course
-            if (! $group = groups_get_group($context->instanceid)) {
-                return array();
-            }
-            if ($parent = get_context_instance(CONTEXT_COURSE, $group->courseid)) {
-                $res = array_merge(array($parent->id), get_parent_contexts($parent));
-                $pcontexts[$context->id] = $res;
-                return $res;
-            } else {
-                return array();
-            }
-        break;
-
-        case CONTEXT_MODULE: // 1 to 1 to course
-            if (!$cm = get_record('course_modules','id',$context->instanceid)) {
-                return array();
-            }
-            if ($parent = get_context_instance(CONTEXT_COURSE, $cm->course)) {
-                $res = array_merge(array($parent->id), get_parent_contexts($parent));
-                $pcontexts[$context->id] = $res;
-                return $res;
-            } else {
-                return array();
-            }
-        break;
-
-        case CONTEXT_BLOCK: // not necessarily 1 to 1 to course
-            if (!$block = get_record('block_instance','id',$context->instanceid)) {
-                return array();
-            }
-            // fix for MDL-9656, block parents are not necessarily courses
-            if ($block->pagetype == 'course-view') {
-                $parent = get_context_instance(CONTEXT_COURSE, $block->pageid);
-            } else {
-                $parent = get_context_instance(CONTEXT_SYSTEM);
-            }
-
-            if ($parent) {
-                $res = array_merge(array($parent->id), get_parent_contexts($parent));
-                $pcontexts[$context->id] = $res;
-                return $res;
-            } else {
-                return array();
-            }
-        break;
-
-        default:
-            error('This is an unknown context (' . $context->contextlevel . ') in get_parent_contexts!');
-        return false;
-    }
+    return array_reverse($parentcontexts);
 }
 
 
