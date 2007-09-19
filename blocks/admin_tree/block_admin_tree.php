@@ -22,7 +22,7 @@ class block_admin_tree extends block_base {
     }
 
     function applicable_formats() {
-        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        if ($this->has_admin_caps()) {
             return array('site' => true, 'admin' => true);
         } else {
             return array('site' => true);
@@ -98,15 +98,15 @@ class block_admin_tree extends block_base {
 
     function get_content() {
 
-        global $CFG, $ADMIN;
-
-        if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            $this->content = '';
-            return '';
-        }
+        global $CFG;
 
         if ($this->content !== NULL) {
             return $this->content;
+        }
+
+        if (!($this->has_admin_caps())) {
+            $this->content = '';
+            return '';
         }
 
         require_once($CFG->libdir.'/adminlib.php');
@@ -212,6 +212,24 @@ class block_admin_tree extends block_base {
 
         return $this->content;
 
+    }
+
+    /* Return true
+     * if $USER has any caps that mean we should
+     * display this block...
+     */
+    function has_admin_caps() {
+
+        $sysctx = get_context_instance(CONTEXT_SYSTEM);
+
+        return (has_capability('moodle/site:config',          $sysctx)
+                || has_capability('moodle/site:langeditmaster',  $sysctx)
+                || has_capability('moodle/site:langeditlocal',   $sysctx)
+                || has_capability('moodle/site:manageblocks',    $sysctx)
+                || has_capability('moodle/user:delete',          $sysctx)
+                || has_capability('moodle/user:update',          $sysctx)
+                || has_capability('moodle/user:create',          $sysctx)
+                || has_capability('moodle/site:readallmessages', $sysctx));
     }
 }
 
