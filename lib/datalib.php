@@ -594,7 +594,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * - the course records have $c->context which is a fully
  *   valid context object. Saves you a query per course!
  *
- * @uses $USER
+ * @uses $CFG,$USER
  * @param int $userid The user of interest
  * @param string $sort the sortorder in the course table
  * @param array $fields - names of _additional_ fields to return (also accepts a string)
@@ -604,7 +604,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
 
-    global $USER;
+    global $CFG,$USER;
 
     // Guest's do not have any courses
     $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
@@ -612,32 +612,126 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
         return(array());
     }
 
+    $basefields = array('id', 'category', 'sortorder',
+                        'shortname', 'fullname', 'idnumber',
+                        'teacher', 'teachers', 'student', 'students',
+                        'guest', 'startdate', 'visible',
+                        'newsitems',  'cost', 'enrol',
+                        'groupmode', 'groupmodeforce');
+
     if (!is_null($fields) && is_string($fields)) {
         if (empty($fields)) {
-            $fields = NULL;
+            $fields = $basefields;
         } else {
             // turn the fields from a string to an array that 
             // get_user_courses_bycap() will like...
-            $fields  = explode(',',$fields);
-            $fields  = array_map('trim', $fields);
+            $fields = explode(',',$fields);
+            $fields = array_map('trim', $fields);
+            $fields = array_unique(array_merge($basefields, $fields));
+        }
+    } else {
+        $fields = $basefields;
+    }
+
+    //
+    // Logged-in user - Check cached courses
+    //
+    // NOTE! it's a _string_ because
+    // - it's all we'll ever use
+    // - it serialises much more compact than an array
+    //   this a BIG concern here - cost of serialise
+    //   and unserialise is HUGE if the session grows
+    //
+    // If the courses are too many - it won't be set
+    // for large numbers of courses, caching in the session
+    // has marginal benefits (costs too much, not
+    // worthwhile...) and we may hit SQL parser limits
+    // because we use IN()
+    //
+    if ($userid === $USER->id 
+        && isset($USER->mycourses) 
+        && is_string($USER->mycourses)) {
+        if ($USER->mycourses === '') {
+            // empty str means: user has no courses
+            // ... so do the easy thing...
+            return array();
+        } else {
+            // The data massaging here MUST be kept in sync with 
+            // get_user_courses_bycap() so we return
+            // the same...
+            // (but here we don't need to check has_cap)
+            $coursefields = 'c.' .join(',c.', $fields);
+            $sql = "SELECT $coursefields,
+                           ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                    FROM {$CFG->prefix}course c
+                    JOIN {$CFG->prefix}context ctx 
+                      ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                    WHERE c.id IN ({$USER->mycourses})
+                    ORDER BY $sort";
+            $rs = get_recordset_sql($sql);
+            $courses = array();
+            $cc = 0; // keep count
+            if ($rs->RecordCount()) {
+                while ($c = rs_fetch_next_record($rs)) {
+                    // build the context obj
+                    $ctx = new StdClass;
+                    $ctx->id           = $c->ctxid;    unset($c->ctxid);
+                    $ctx->path         = $c->ctxpath;  unset($c->ctxpath);
+                    $ctx->depth        = $c->ctxdepth; unset($c->ctxdepth);
+                    $ctx->instanceid   = $c->id;
+                    $ctx->contextlevel = CONTEXT_COURSE;
+                    $c->context = $ctx;
+                    $courses[$c->id] = $c;
+                    if ($limit > 0 && $cc++ > $limit) {
+                        break;
+                    }
+                }
+            }
+            rs_close($rs);
+            return $courses;
         }
     }
 
+    // Non-cached - get accessinfo
     if ($userid === $USER->id && isset($USER->access)) {
         $accessinfo = $USER->access;
     } else {
         $accessinfo = get_user_access_sitewide($userid);
     }
+
+    
     $courses = get_user_courses_bycap($userid, 'moodle/course:view', $accessinfo,
                                       $doanything, $sort, $fields,
                                       $limit);
-    // strangely, get_my_courses() is expected to return the
+
+    //
+    // Strangely, get_my_courses() is expected to return the
     // array keyed on id, which messes up the sorting
+    // So do that, and also cache the ids in the session if appropriate
+    //
     $kcourses = array();
     $cc = count($courses);
+    $cacheids = NULL;
+    if ($userid === $USER->id && $cc < 500) {
+        $cacheids = array();
+    }
     for ($n=0; $n<$cc; $n++) {
         $kcourses[$courses[$n]->id] = $courses[$n];
+        if (is_array($cacheids)) {
+            $cacheids[] = $courses[$n]->id;
+        }
     }
+    if (is_array($cacheids)) {
+        // Only happens
+        // - for the logged in user
+        // - below the threshold (500)
+        // empty string is _valid_
+        $USER->mycourses = join(',',$cacheids);
+    } elseif ($userid === $USER->id && isset($USER->mycourses)) {
+        // cheap sanity check
+        unset($USER->mycourses);
+    }
+
     return $kcourses;
 }
 

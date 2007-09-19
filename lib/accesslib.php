@@ -683,11 +683,8 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
 
     global $CFG;
 
-    // Note! id is added later to ensure it's first
-    $basefields = array('id', 'category', 'sortorder', 
-                       'shortname', 'fullname', 'idnumber',
-                       'teacher', 'teachers', 'student', 'students', 
-                       'guest', 'startdate', 'visible');
+    // Slim base fields, let callers ask for what they need...
+    $basefields = array('id', 'sortorder', 'shortname', 'idnumber');
 
     if (!is_null($fields)) {
         if (!is_array($fields)) {
@@ -712,8 +709,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
                 FROM {$CFG->prefix}course c
                 JOIN {$CFG->prefix}context ctx 
                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                ORDER BY $sort;
-                ";
+                ORDER BY $sort ";
         $rs = get_recordset_sql($sql);
     } else {
         //
@@ -768,8 +764,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
                 WHERE    ra.id IS NOT NULL
                       OR rc.id IS NOT NULL
                       $catclause
-                ORDER BY $sort;
-                ";
+                ORDER BY $sort ";
         $rs = get_recordset_sql($sql);
     }
     $courses = array();
