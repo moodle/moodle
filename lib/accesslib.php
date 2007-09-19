@@ -399,6 +399,10 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         load_all_capabilities();
     }
 
+    
+    // divulge how many times we are called
+    //// error_log("has_capability: id:{$context->id} path:{$context->path} userid:$userid cap:$capability");
+
     if ($USER->id === $userid) {
         //
         // For the logged in user, we have $USER->access
