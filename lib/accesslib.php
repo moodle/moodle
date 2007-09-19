@@ -637,8 +637,8 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
 
 /*
  * Get an array of courses (with magic extra bits)
- * where the access sess data shows that the cap
- * requested is available.
+ * where the access sess data and in DB enrolments show
+ * that the cap requested is available.
  *
  * The main use is for get_my_courses().
  *
@@ -651,10 +651,24 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  * - the course records have $c->context which is a fully
  *   valid context object. Saves you a query per course!
  *
- * - current implementation is _extremely_ stupid but
- *   works fast enough. We can surely do much MUCH better
- *   for the common cases, and leave the brute-force to
- *   "not-easy-to-narrow-down" cases.
+ * - current implementation is split in -
+ *
+ *   - if the user has the cap systemwide, stupidly
+ *     grab *every* course for a capcheck. This eats
+ *     a TON of bandwidth, specially on large sites 
+ *     with separate DBs...
+ *
+ *   - otherwise, fetch "likely" courses with a wide net
+ *     that should get us _cheaply_ at least the courses we need, and some
+ *     we won't - we get courses that...
+ *      - are in a category where user has the cap
+ *      - or where use has a role-assignment (any kind)
+ *      - or where the course has an override on for this cap
+ *
+ *   - walk the courses recordset checking the caps oneach one
+ *     the checks are all in memory and quite fast
+ *     (though we could implement a specialised variant of the
+ *     has_cap_fromsess() code to speed it up)
  *
  * @param string $capability - name of the capability
  * @param array  $sess - access session array
@@ -665,7 +679,7 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  * @return array $courses - ordered array of course objects - see notes above
  *
  */
-function get_courses_bycap_fromsess($cap, $sess, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
+function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
 
     global $CFG;
 
@@ -684,19 +698,77 @@ function get_courses_bycap_fromsess($cap, $sess, $doanything, $sort='c.sortorder
     } else {
         $fields = $basefields;
     }
-
     $coursefields = 'c.' .join(',c.', $fields);
-    
-    $sql = "SELECT $coursefields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
-            FROM {$CFG->prefix}course c
-            JOIN {$CFG->prefix}context ctx 
-              ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-            ORDER BY $sort;
-           ";
+
+    $sysctx = get_context_instance(CONTEXT_SYSTEM);
+    if (has_cap_fromsess($cap, $sysctx, $sess, $doanything)) {
+        //
+        // Apparently the user has the cap sitewide, so walk *every* course
+        // (the cap checks are moderately fast, but this moves massive bandwidth w the db)
+        // Yuck.
+        //
+        $sql = "SELECT $coursefields,
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course c
+                JOIN {$CFG->prefix}context ctx 
+                  ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                ORDER BY $sort;
+                ";
+        $rs = get_recordset_sql($sql);
+    } else {
+        //
+        // narrow down where we have the caps to a few contexts
+        // this will be a combination of
+        // - categories where we have the rights
+        // - courses    where we have an explicit enrolment OR that have an override
+        // 
+        $sql = "SELECT ctx.*
+                FROM   {$CFG->prefix}context ctx
+                WHERE  ctx.contextlevel=".CONTEXT_COURSECAT."
+                ORDER BY ctx.depth";
+        $rs = get_recordset_sql($sql);
+        $catpaths = array();
+        if ($rs->RecordCount()) {
+            while ($catctx = rs_fetch_next_record($rs)) {
+                if ($catctx->path != '' 
+                    && has_cap_fromsess($cap, $catctx, $sess, $doanything)) {
+                    $catpaths[] = $catctx->path;
+                }
+            }
+        }
+        rs_close($rs);
+        $catclause = '';
+        if (count($catpaths)) {
+            $cc = count($catpaths);
+            for ($n=0;$n<$cc;$n++) {
+                $catpaths[$n] = "ctx.path LIKE '{$catpaths[$n]}/%'";
+            }
+            $catclause = 'OR (' . join(' OR ', $catpaths) .')';
+        }
+        unset($catpaths);
+        //
+        // Note here that we *have* to have the compound clauses
+        // in the LEFT OUTER JOIN condition for them to return NULL
+        // appropriately and narrow things down...
+        //
+        $sql = "SELECT $coursefields,
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course c
+                JOIN {$CFG->prefix}context ctx 
+                  ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                LEFT OUTER JOIN {$CFG->prefix}role_assignments ra
+                  ON (ra.contextid=ctx.id AND ra.userid=$userid)
+                LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
+                  ON (rc.contextid=ctx.id AND rc.capability='$cap')
+                WHERE    ra.id IS NOT NULL
+                      OR rc.id IS NOT NULL
+                      $catclause
+                ORDER BY $sort;
+                ";
+        $rs = get_recordset_sql($sql);
+    }
     $courses = array();
     $cc = 0; // keep count
-    $rs = get_recordset_sql($sql);
     if ($rs->RecordCount()) {
         while ($c = rs_fetch_next_record($rs)) {
             // build the context obj

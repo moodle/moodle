@@ -585,7 +585,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * List of courses that a user has access to view. Note that for admins,
  * this usually includes every course on the system.
  *
- * Notes (inherited from get_courses_bycap_fromsess()):
+ * Notes (inherited from get_user_courses_bycap()):
  *
  * - $fields is an array of fieldnames to ADD
  *   so name the fields you really need, which will
@@ -617,7 +617,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             $fields = NULL;
         } else {
             // turn the fields from a string to an array that 
-            // get_courses_bycap_fromsess() will like...
+            // get_user_courses_bycap() will like...
             $fields  = explode(',',$fields);
             $fields  = array_map('trim', $fields);
         }
@@ -628,9 +628,9 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     } else {
         $accessinfo = get_user_access_sitewide($userid);
     }
-    $courses = get_courses_bycap_fromsess('moodle/course:view', $accessinfo,
-                                          $doanything, $sort, $fields,
-                                          $limit);
+    $courses = get_user_courses_bycap($userid, 'moodle/course:view', $accessinfo,
+                                      $doanything, $sort, $fields,
+                                      $limit);
     // strangely, get_my_courses() is expected to return the
     // array keyed on id, which messes up the sorting
     $kcourses = array();
