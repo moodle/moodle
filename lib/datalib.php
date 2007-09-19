@@ -765,7 +765,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     for ($n=0; $n<$cc; $n++) {
 
         //
-        // Check whether the user can _actually_ see them
+        // Check whether $USER (not $userid) can _actually_ see them
         // Easy if $CFG->allowvisiblecoursesinhiddencategories
         // is set, and we don't have to care about categories.
         // Lots of work otherwise... (all in mem though!)
@@ -775,7 +775,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             if ($courses[$n]->visible == true) {
                 $cansee = true;
             } elseif (has_capability('moodle/course:viewhiddencourses',
-                                     $courses[$n]->context, $userid)) {
+                                     $courses[$n]->context, $USER->id)) {
                 $cansee = true;
             }
         } else {
@@ -803,7 +803,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             }
 
             //
-            // Perhaps it's actually visible to this user
+            // Perhaps it's actually visible to $USER
             // check moodle/category:visibility
             // 
             // The name isn't obvious, but the description says
@@ -812,7 +812,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             if ($viscat === false) {
                 $catctx = $cats[ $courses[$n]->category ]->context;
                 if (has_capability('moodle/category:visibility',
-                                   $catctx, $userid)) {
+                                   $catctx, $USER->id)) {
                     $vcatpaths[$courses[$n]->categorypath] = true;
                     $viscat = true;
                 }
@@ -825,7 +825,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
                 if ($courses[$n]->visible == true) {
                     $cansee = true;
                 } elseif (has_capability('moodle/course:viewhiddencourses',
-                                        $courses[$n]->context, $userid)) {
+                                        $courses[$n]->context, $USER->id)) {
                     $cansee = true;
                 }
             }
