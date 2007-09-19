@@ -421,6 +421,22 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         load_all_capabilities();
     }
 
+    if (FULLME === 'cron' && !isset($USER->access)) {
+        //
+        // In cron, some modules setup a 'fake' $USER,
+        // ensure we load the appropriate accessdata.
+        // Also: set $DIRTYCONTEXTS to empty
+        // 
+        if (!isset($ACCESS)) {
+            $ACCESS = array();
+        }
+        if (!isset($ACCESS[$userid])) {
+            load_user_accessdata($userid);
+        }
+        $USER->access = $ACCESS[$userid];
+        $DIRTYCONTEXTS = array();
+    }
+
     // Careful check for staleness...
     $clean = true;
     if (!isset($DIRTYCONTEXTS)) {
