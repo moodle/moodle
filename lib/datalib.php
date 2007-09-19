@@ -1507,24 +1507,24 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     }
 
 /// Store lastaccess times for the current user, do not use in cron and other commandline scripts
-
+/// only update the lastaccess/timeaccess fields only once every 60s
     if (!empty($USER->id) && ($userid == $USER->id) && !defined('FULLME')) {
         $db->Execute('UPDATE '. $CFG->prefix .'user
                          SET lastip=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
-                       WHERE id = \''. $userid .'\' ');
+                       WHERE id = \''. $userid .'\' AND '.$timenow.' - lastaccess > 60');
         if ($courseid != SITEID && !empty($courseid)) {
             if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
 
-            if ($record = get_record('user_lastaccess', 'userid', $userid, 'courseid', $courseid)) {
-                $record->timeaccess = $timenow;
-                return update_record('user_lastaccess', $record);
+            if ($ulid = get_field('user_lastaccess', 'id', 'userid', $userid, 'courseid', $courseid)) {
+                $db->Execute("UPDATE {$CFG->prefix}user_lastaccess
+                              SET timeaccess=$timenow
+                              WHERE id = $ulid AND $timenow - timeaccess > 60");
             } else {
-                $record = new object;
-                $record->userid = $userid;
-                $record->courseid = $courseid;
-                $record->timeaccess = $timenow;
-                return insert_record('user_lastaccess', $record);
+                $db->Execute("INSERT INTO {$CFG->prefix}user_lastaccess
+                              ('userid', 'courseid', 'timeaccess')
+                              VALUES ($userid, $courseid, $timenow)");
             }
+            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
         }
     }
 }
