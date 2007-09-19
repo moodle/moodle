@@ -515,7 +515,8 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     // pull out all course matching the cat
     $visiblecourses = array();
     if (!($rs = get_recordset_sql("SELECT $fields,
-                                          ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                                          ctx.id AS ctxid, ctx.path AS ctxpath,
+                                          ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
                                    FROM {$CFG->prefix}course c
                                    JOIN {$CFG->prefix}context ctx
                                      ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
@@ -667,7 +668,8 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
 
     // pull out all courses matching the cat
     $sql = "SELECT $coursefields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}course c
             JOIN {$CFG->prefix}context ctx
                  ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
@@ -906,7 +908,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             // (but here we don't need to check has_cap)
             $coursefields = 'c.' .join(',c.', $fields);
             $sql = "SELECT $coursefields,
-                           ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                           ctx.id AS ctxid, ctx.path AS ctxpath,
+                           ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel,
                            cc.path AS categorypath
                     FROM {$CFG->prefix}course c
                     JOIN {$CFG->prefix}course_categories cc
@@ -951,7 +954,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // to eval course visibility, get the categories
     if (empty($CFG->allowvisiblecoursesinhiddencategories)) {
         $sql = "SELECT cc.id, cc.path, cc.visible,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth as ctxdepth, ctx.contextlevel AS ctxlevel
                 FROM {$CFG->prefix}course_categories cc
             JOIN {$CFG->prefix}context ctx 
               ON (cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT.")
@@ -1131,7 +1135,8 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     }
 
     $sql = "SELECT c.*,
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}course c
             JOIN {$CFG->prefix}context ctx
              ON (c.id = ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
@@ -1198,7 +1203,8 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 
     if ($parent === 'none') {
         $sql = "SELECT cc.*,
-                      ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                      ctx.id AS ctxid, ctx.path AS ctxpath,
+                      ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
                 FROM {$CFG->prefix}course_categories cc
                 JOIN {$CFG->prefix}context ctx
                   ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
@@ -1206,7 +1212,8 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     } elseif ($shallow) {
         $parent = (int)$parent;
         $sql = "SELECT cc.*,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
                 FROM {$CFG->prefix}course_categories cc
                 JOIN {$CFG->prefix}context ctx
                   ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
@@ -1215,7 +1222,8 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     } else {
         $parent = (int)$parent;
         $sql = "SELECT cc.*,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
                 FROM {$CFG->prefix}course_categories cc
                 JOIN {$CFG->prefix}context ctx
                   ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."

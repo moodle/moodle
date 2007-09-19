@@ -825,7 +825,8 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
         // Yuck.
         //
         $sql = "SELECT $coursefields,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
                        cc.path AS categorypath
                 FROM {$CFG->prefix}course c
                 JOIN {$CFG->prefix}course_categories cc
@@ -876,7 +877,8 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
         // appropriately and narrow things down...
         //
         $sql = "SELECT $coursefields,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                       ctx.id AS ctxid, ctx.path AS ctxpath,
+                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
                        cc.path AS categorypath
                 FROM {$CFG->prefix}course c
                 JOIN {$CFG->prefix}course_categories cc
@@ -948,7 +950,8 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     $contexts = str_replace('/', ',', $contexts);
 
     $sql = "SELECT $userfields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}user u
             JOIN {$CFG->prefix}context ctx 
               ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
@@ -1062,7 +1065,8 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
 
     // Get users
     $sql = "SELECT $userfields,
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                   ctx.id AS ctxid, ctx.path AS ctxpath,
+                   ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel
             FROM {$CFG->prefix}user u
             JOIN {$CFG->prefix}context ctx 
               ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
@@ -4542,8 +4546,9 @@ function make_context_subobj($rec) {
     $ctx->id           = $rec->ctxid;    unset($rec->ctxid);
     $ctx->path         = $rec->ctxpath;  unset($rec->ctxpath);
     $ctx->depth        = $rec->ctxdepth; unset($rec->ctxdepth);
+    $ctx->contextlevel = $rec->ctxlevel; unset($rec->ctxlevel);
     $ctx->instanceid   = $rec->id;
-    $ctx->contextlevel = CONTEXT_COURSE;
+
     $rec->context = $ctx;
     return $rec;
 }
