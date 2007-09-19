@@ -1237,8 +1237,12 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
         $path  = $path . '/' . $categoryid;
         $depth = $depth + 1;
 
-        set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);
-        set_field('course_categories', 'depth', $depth, 'id', $categoryid);
+        if ($cat->path !== $path) {
+            set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);
+        }
+        if ($cat->depth != $depth) {
+            set_field('course_categories', 'depth', $depth, 'id', $categoryid);
+        }
     }
 
     // get some basic info about courses in the category
