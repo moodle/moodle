@@ -2372,14 +2372,12 @@ function get_context_instance($contextlevel=NULL, $instance=0) {
     global $context_cache, $context_cache_id, $CONTEXT;
     static $allowed_contexts = array(CONTEXT_SYSTEM, CONTEXT_PERSONAL, CONTEXT_USER, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_GROUP, CONTEXT_MODULE, CONTEXT_BLOCK);
 
-    // Yu: Separating site and site course context - removed CONTEXT_COURSE override when SITEID
-
-    // fix for MDL-9016
-    if ($contextlevel == 'clearcache') {
-        // Clear ALL cache
-        $context_cache = array();
-        $context_cache_id = array();
-        $CONTEXT = '';
+    if ($contextlevel === 'clearcache') {
+        // TODO: Remove for v2.0
+        // No longer needed, but we'll catch it to avoid erroring out on custom code. 
+        // This used to be a fix for MDL-9016 
+        // "Restoring into existing course, deleting first 
+        //  deletes context and doesn't recreate it"
         return false;
     }
 
