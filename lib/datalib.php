@@ -1763,7 +1763,7 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
 
     if ($includeinvisible) {
         $invisible = -1;
-    } else if (has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
+    } else if (has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id), $userid)) {
         // Usually hide non-visible instances from students
         $invisible = -1;
     } else {
