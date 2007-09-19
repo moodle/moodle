@@ -2435,15 +2435,6 @@ function delete_role($roleid) {
 
         delete_records('role_capabilities', 'roleid', $roleid);
 
-        // MDL-10679, delete from context_rel if this role holds the last override in these contexts
-        if ($contexts) {
-            foreach ($contexts as $context) {
-                if (!record_exists('role_capabilities', 'contextid', $context->contextid)) {
-                    delete_records('context_rel', 'c1', $context->contextid);
-                }
-            }
-        }
-
         delete_records('role_allow_assign', 'roleid', $roleid);
         delete_records('role_allow_assign', 'allowassign', $roleid);
         delete_records('role_allow_override', 'roleid', $roleid);
@@ -2497,12 +2488,9 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         return update_record('role_capabilities', $cap);
     } else {
         $c = get_record('context', 'id', $contextid);
-        /// MDL-10679 insert context rel here
-        insert_context_rel ($c);
         return insert_record('role_capabilities', $cap);
     }
 }
-
 
 /**
  * Unassign a capability from a role.
@@ -2516,16 +2504,7 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
         // delete from context rel, if this is the last override in this context
         $status = delete_records('role_capabilities', 'capability', $capability,
                 'roleid', $roleid, 'contextid', $contextid);
-
-        // MDL-10679, if this is no more overrides for this context
-        // delete entries from context where this context is a child
-        if (!record_exists('role_capabilities', 'contextid', $contextid)) {
-            delete_records('context_rel', 'c1', $contextid);
-        }
-
     } else {
-        // There is no need to delete from context_rel here because
-        // this is only used for legacy, for now
         $status = delete_records('role_capabilities', 'capability', $capability,
                 'roleid', $roleid);
     }
