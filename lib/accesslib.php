@@ -2665,9 +2665,6 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
                 }
             }
         }
-
-    /// Make sure they have an entry in user_lastaccess for courses they can access
-    //    role_add_lastaccess_entries($userid, $context);
     }
 
     /// now handle metacourse role assignments if in course context
@@ -2805,73 +2802,6 @@ function enrol_into_course($course, $user, $enrol) {
 
     return false;
 }
-
-/**
- * Add last access times to user_lastaccess as required
- * @param $userid
- * @param $context
- * @return boolean - success or failure
- */
-function role_add_lastaccess_entries($userid, $context) {
-
-    global $USER, $CFG;
-
-    if (empty($context->contextlevel)) {
-        return false;
-    }
-
-    $lastaccess = new object;        // Reusable object below
-    $lastaccess->userid = $userid;
-    $lastaccess->timeaccess = 0;
-
-    switch ($context->contextlevel) {
-
-        case CONTEXT_SYSTEM:   // For the whole site
-             if ($courses = get_record('course')) {
-                 foreach ($courses as $course) {
-                     $lastaccess->courseid = $course->id;
-                     role_set_lastaccess($lastaccess);
-                 }
-             }
-             break;
-
-        case CONTEXT_CATEGORY:   // For a whole category
-             if ($courses = get_record('course', 'category', $context->instanceid)) {
-                 foreach ($courses as $course) {
-                     $lastaccess->courseid = $course->id;
-                     role_set_lastaccess($lastaccess);
-                 }
-             }
-             if ($categories = get_record('course_categories', 'parent', $context->instanceid)) {
-                 foreach ($categories as $category) {
-                     $subcontext = get_context_instance(CONTEXT_CATEGORY, $category->id);
-                     role_add_lastaccess_entries($userid, $subcontext);
-                 }
-             }
-             break;
-
-
-        case CONTEXT_COURSE:   // For a whole course
-             if ($course = get_record('course', 'id', $context->instanceid)) {
-                 $lastaccess->courseid = $course->id;
-                 role_set_lastaccess($lastaccess);
-             }
-             break;
-    }
-}
-
-/**
- * Delete last access times from user_lastaccess as required
- * @param $userid
- * @param $context
- * @return boolean - success or failure
- */
-function role_remove_lastaccess_entries($userid, $context) {
-
-    global $USER, $CFG;
-
-}
-
 
 /**
  * Loads the capability definitions for the component (from file). If no
