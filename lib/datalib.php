@@ -624,15 +624,21 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     }
 
     if ($userid === $USER->id && isset($USER->access)) {
-        return get_courses_bycap_fromsess('moodle/course:view', $USER->access,
-                                          $doanything, $sort, $fields,
-                                          $limit);
+        $accessinfo = $USER->access;
     } else {
         $accessinfo = get_user_access_sitewide($userid);
-        return get_courses_bycap_fromsess('moodle/course:view', $accessinfo,
+    }
+    $courses = get_courses_bycap_fromsess('moodle/course:view', $accessinfo,
                                           $doanything, $sort, $fields,
                                           $limit);
+    // strangely, get_my_courses() is expected to return the
+    // array keyed on id, which messes up the sorting
+    $kcourses = array();
+    $cc = count($courses);
+    for ($n=0; $n<$cc; $n++) {
+        $kcourses[$courses[$n]->id] = $courses[$n];
     }
+    return $kcourses;
 }
 
 /**

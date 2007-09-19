@@ -1796,8 +1796,6 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
 function load_all_capabilities() {
     global $USER,$CFG;
 
-    unset($USER->mycourses);        // Reset a cache used by get_my_courses
-
     static $defcaps;
 
     $base = '/'.SYSCONTEXTID;
