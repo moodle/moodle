@@ -1158,25 +1158,67 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
 
 /**
- * Returns a sorted list of categories
+ * Returns a sorted list of categories. Each category object has a context
+ * property that is a context object.
+ * 
+ * When asking for $parent='none' it will return all the categories, regardless
+ * of depth. Wheen asking for a specific parent, the default is to return
+ * a "shallow" resultset. Pass false to $shallow and it will return all
+ * the child categories as well. 
+ * 
  *
  * @param string $parent The parent category if any
  * @param string $sort the sortorder
+ * @param bool   $shallow - set to false to get the children too
  * @return array of categories
  */
-function get_categories($parent='none', $sort='sortorder ASC') {
+function get_categories($parent='none', $sort=NULL, $shallow=true) {
+    global $CFG;
+
+    if ($sort === NULL) {
+        $sort = 'ORDER BY cc.sortorder ASC';
+    } elseif ($sort ==='') {
+        // leave it as empty
+    } else {
+        $sort = "ORDER BY $sort";
+    }
 
     if ($parent === 'none') {
-        $categories = get_records('course_categories', '', '', $sort);
+        $sql = "SELECT cc.*,
+                      ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course_categories cc
+                JOIN {$CFG->prefix}context ctx
+                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                $sort";
+    } elseif ($shallow) {
+        $parent = (int)$parent;
+        $sql = "SELECT cc.*,
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course_categories cc
+                JOIN {$CFG->prefix}context ctx
+                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                WHERE cc.parent=$parent
+                $sort";
     } else {
-        $categories = get_records('course_categories', 'parent', $parent, $sort);
+        $parent = (int)$parent;
+        $sql = "SELECT cc.*,
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                FROM {$CFG->prefix}course_categories cc
+                JOIN {$CFG->prefix}context ctx
+                  ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
+                JOIN {$CFG->prefix}course_categories ccp
+                     ON (cc.path LIKE ccp.path||'%')
+                WHERE ccp.id=$parent
+                $sort";
     }
-    if ($categories) {  /// Remove unavailable categories from the list
-        foreach ($categories as $key => $category) {
-            if (!$category->visible) {
-                if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id))) {
-                    unset($categories[$key]);
-                }
+    $categories = array();
+
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($cat = rs_fetch_next_record($rs)) {
+            $cat = make_context_subobj($cat);
+            if ($cat->visible || has_capability('moodle/course:create',$cat->context)) {
+                $categories[$cat->id] = $cat;
             }
         }
     }
