@@ -4403,6 +4403,21 @@ function component_level_changed($cap, $comp, $contextlevel) {
  */
 function build_context_path($force=false) {
     global $CFG;
+    require_once($CFG->libdir.'/ddllib.php');
+
+/// Define table context_temp to be created
+    $table = new XMLDBTable('context_temp');
+
+/// Adding fields to table context_temp
+    $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('path', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+    $table->addFieldInfo('depth', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+/// Adding keys to table context_temp
+    $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+/// Launch create table for context_temp
+    $temptable = create_temp_table($table, !$force, $force);
 
     // Site
     $sitectx = get_record('context', 'contextlevel', CONTEXT_SYSTEM);
@@ -4435,89 +4450,114 @@ function build_context_path($force=false) {
     if ($force) {
         $emptyclause = '';
     }
+
+    $upathsql = "UPDATE {$CFG->prefix}context c
+                    SET path = COALESCE((SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id), c.path)";
+
+    $udepthsql = "UPDATE {$CFG->prefix}context c
+                     SET depth = COALESCE((SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id), c.depth)";
+
+/*
+ * TODO: following code complains: Can't reopen table: 'ct' when using temporary teables, why? 
+    $upathsql = "UPDATE {$CFG->prefix}context c
+                    SET path = (SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id)
+                  WHERE id IN (SELECT ctx.id FROM {$CFG->prefix}$temptable ctx)";
+
+    $udepthsql = "UPDATE {$CFG->prefix}context c
+                     SET depth = (SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id)
+                   WHERE id IN (SELECT ct.id FROM {$CFG->prefix}$temptable ct)";
+*/
+    $udelsql = "TRUNCATE {$CFG->prefix}$temptable";
+
     // Top level categories
     $sql = "UPDATE {$CFG->prefix}context
               SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
             WHERE contextlevel=".CONTEXT_COURSECAT."
                   AND instanceid IN
                (SELECT id
-                FROM {$CFG->prefix}course_categories
-                WHERE depth=1 $emptyclause )";
+                  FROM {$CFG->prefix}course_categories
+                 WHERE depth=1
+                       $emptyclause)";
     execute_sql($sql, $force);
+
+    execute_sql($udelsql, $force);
 
     // Deeper categories - one query per depthlevel
     $maxdepth = get_field_sql("SELECT MAX(depth)
                                FROM {$CFG->prefix}course_categories");
     for ($n=2;$n<=$maxdepth;$n++) {
-        $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=$n+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
-                FROM (SELECT c.id AS instanceid, pctx.path AS ppath
-                      FROM {$CFG->prefix}course_categories c
-                      JOIN {$CFG->prefix}context pctx
-                        ON (c.parent=pctx.instanceid
-                            AND pctx.contextlevel=".CONTEXT_COURSECAT.")
-                      WHERE c.depth=$n) it
-                WHERE contextlevel=".CONTEXT_COURSECAT."
-                      AND {$CFG->prefix}context.instanceid=it.instanceid
-                      $emptyclause ";
+        $sql = "INSERT INTO {$CFG->prefix}$temptable
+
+                SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", $n+1
+                  FROM {$CFG->prefix}context ctx
+                  JOIN {$CFG->prefix}course_categories c ON (ctx.instanceid = c.id AND c.depth=$n)
+                  JOIN {$CFG->prefix}context pctx ON (c.parent=pctx.instanceid
+                                                      AND pctx.contextlevel=".CONTEXT_COURSECAT.")
+                 WHERE ctx.contextlevel=".CONTEXT_COURSECAT."
+                       $emptyclause";
         execute_sql($sql, $force);
     }
 
+    execute_sql($upathsql, $force);
+    execute_sql($udepthsql, $force);
+    execute_sql($udelsql, $force);
+
     // Courses -- except sitecourse
-    $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
-                FROM (SELECT c.id AS instanceid, pctx.path AS ppath,
-                             pctx.depth as pdepth
-                      FROM {$CFG->prefix}course c
-                      JOIN {$CFG->prefix}context pctx
-                        ON (c.category=pctx.instanceid
-                            AND pctx.contextlevel=".CONTEXT_COURSECAT.")
-                      WHERE c.id != ".SITEID.") it
-                WHERE contextlevel=".CONTEXT_COURSE."
-                      AND {$CFG->prefix}context.instanceid=it.instanceid
-                      $emptyclause ";
-        execute_sql($sql, $force);
+    $sql = "INSERT INTO {$CFG->prefix}$temptable
+
+            SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+              FROM {$CFG->prefix}context ctx
+              JOIN {$CFG->prefix}course c ON (ctx.instanceid = c.id)
+              JOIN {$CFG->prefix}context pctx ON (c.category=pctx.instanceid
+                                                  AND pctx.contextlevel=".CONTEXT_COURSECAT.")
+             WHERE ctx.contextlevel=".CONTEXT_COURSE." AND c.id != ".SITEID."
+                   $emptyclause";
+    execute_sql($sql, $force);
+
+    execute_sql($upathsql, $force);
+    execute_sql($udepthsql, $force);
+    execute_sql($udelsql, $force);
 
     // Module instances
-    $sql = "UPDATE {$CFG->prefix}context
-                  SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
-            FROM (SELECT cm.id AS instanceid, pctx.path AS ppath,
-                         pctx.depth as pdepth
-                  FROM {$CFG->prefix}course_modules cm
-                  JOIN {$CFG->prefix}context pctx
-                    ON (cm.course=pctx.instanceid
-                        AND pctx.contextlevel=".CONTEXT_COURSE.")
-                  ) it
-            WHERE contextlevel=".CONTEXT_MODULE."
-                  AND {$CFG->prefix}context.instanceid=it.instanceid
-                  $emptyclause ";
-        execute_sql($sql, $force);
+    $sql = "INSERT INTO {$CFG->prefix}$temptable
+
+            SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+              FROM {$CFG->prefix}context ctx
+              JOIN {$CFG->prefix}course_modules cm ON (ctx.instanceid = cm.id)
+              JOIN {$CFG->prefix}context pctx ON (cm.course=pctx.instanceid
+                                                  AND pctx.contextlevel=".CONTEXT_COURSE.")
+             WHERE ctx.contextlevel=".CONTEXT_MODULE."
+                   $emptyclause";
+    execute_sql($sql, $force);
+
+    execute_sql($upathsql, $force);
+    execute_sql($udepthsql, $force);
+    execute_sql($udelsql, $force);
 
     // Blocks - non-pinned course-view only
-    $sql = "UPDATE {$CFG->prefix}context
-              SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
-            FROM (SELECT bi.id AS instanceid, pctx.path AS ppath,
-                         pctx.depth as pdepth
-                  FROM {$CFG->prefix}block_instance bi
-                  JOIN {$CFG->prefix}context pctx
-                    ON (bi.pageid=pctx.instanceid
-                        AND bi.pagetype='course-view'
-                        AND pctx.contextlevel=".CONTEXT_COURSE.")
-                  ) it
-            WHERE contextlevel=".CONTEXT_BLOCK."
-                  AND {$CFG->prefix}context.instanceid=it.instanceid
-                  $emptyclause ";
+    $sql = "INSERT INTO {$CFG->prefix}$temptable
+
+            SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
+              FROM {$CFG->prefix}context ctx
+              JOIN {$CFG->prefix}block_instance bi ON (ctx.instanceid = bi.id
+                                                       AND bi.pagetype='course-view')
+              JOIN {$CFG->prefix}context pctx ON (bi.pageid=pctx.instanceid
+                                                  AND pctx.contextlevel=".CONTEXT_COURSE.")
+             WHERE ctx.contextlevel=".CONTEXT_BLOCK."
+                   $emptyclause";
     execute_sql($sql, $force);
+
+    execute_sql($upathsql, $force);
+    execute_sql($udepthsql, $force);
+    execute_sql($udelsql, $force);
 
     // Blocks - others
     $sql = "UPDATE {$CFG->prefix}context
-              SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
-            FROM (SELECT bi.id AS instanceid
-                  FROM {$CFG->prefix}block_instance bi
-                        WHERE bi.pagetype != 'course-view'
-                  ) AS it
+              SET depth=2, path=".sql_concat("'$base/'", 'id')."
             WHERE contextlevel=".CONTEXT_BLOCK."
-                  AND {$CFG->prefix}context.instanceid=it.instanceid
+                  AND instanceid IN (SELECT id
+                                       FROM {$CFG->prefix}block_instance bi
+                                      WHERE bi.pagetype!='course-view')
                   $emptyclause ";
     execute_sql($sql, $force);
 
@@ -4526,12 +4566,13 @@ function build_context_path($force=false) {
               SET depth=2, path=".sql_concat("'$base/'", 'id')."
             WHERE contextlevel=".CONTEXT_USER."
                   AND instanceid IN (SELECT id
-                                     FROM {$CFG->prefix}user)
+                                       FROM {$CFG->prefix}user)
                   $emptyclause ";
     execute_sql($sql, $force);
 
     // Personal TODO
 
+    //TODO: fix group contexts
 }
 
 /**
