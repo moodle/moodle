@@ -358,10 +358,10 @@ class quiz_report extends quiz_default_report {
 
         echo '<form method="post" action="report.php">'.
             '<input type="hidden" name="mode" value="grading" />'.
-            '<input type="hidden" name="q" value="'.$quiz->id.'">'.
+            '<input type="hidden" name="q" value="'.$quiz->id.'" />'.
             '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
             '<input type="hidden" name="action" value="viewquestion" />'.
-            '<input type="hidden" name="questionid" value="'.$question->id.'">';
+            '<input type="hidden" name="questionid" value="'.$question->id.'" />';
 
         foreach ($attempts as $attempt) {
 
