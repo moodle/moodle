@@ -25,11 +25,6 @@ class grader_report_preferences_form extends moodleform {
         $stryes                 = get_string('yes');
         $strno                  = get_string('no');
 
-        $percentages = array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                             GRADE_REPORT_PREFERENCE_UNUSED => get_string('unused', 'grades'));
-        for ($i=100; $i > -1; $i--) {
-            $percentages[$i] = "$i%";
-        }
 
         $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default', 0 => $strno, 1 => $stryes);
 
@@ -45,10 +40,6 @@ class grader_report_preferences_form extends moodleform {
                                                          GRADE_REPORT_AGGREGATION_VIEW_FULL => get_string('fullmode', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_AGGREGATES_ONLY => get_string('aggregatesonly', 'grades'),
                                                          GRADE_REPORT_AGGREGATION_VIEW_GRADES_ONLY => get_string('gradesonly', 'grades')),
-                          'gradedisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                         GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
-                                                         GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
-                                                         GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
                           'meanselection'       => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
                                                          GRADE_REPORT_MEAN_ALL => get_string('meanall', 'grades'),
                                                          GRADE_REPORT_MEAN_GRADED => get_string('meangraded', 'grades')));
@@ -61,13 +52,11 @@ class grader_report_preferences_form extends moodleform {
                                              'showlocks'         => $checkbox_default);
 
             $preferences['prefrows'] = array(
-                        'averagesdisplaytype'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                        'averagesdisplaytype'    => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT => 'default',
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
-                        'rangesdisplaytype'      => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
-                                                          GRADE_REPORT_PREFERENCE_INHERIT => $strinherit,
+                        'rangesdisplaytype'      => array(GRADE_REPORT_GRADE_DISPLAY_TYPE_DEFAULT => 'default',
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_REAL => get_string('real', 'grades'),
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                                                           GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades')),
@@ -76,11 +65,6 @@ class grader_report_preferences_form extends moodleform {
                         'rangesdecimalpoints'    => array(GRADE_REPORT_PREFERENCE_DEFAULT => 'default',
                                                           GRADE_REPORT_PREFERENCE_INHERIT => $strinherit, 0, 1, 2, 3, 4, 5));
 
-
-            for ($i = 1; $i <= 10; $i++) {
-                $preferences['prefletters']['gradeletter' . $i] = 'text';
-                $preferences['prefletters']['gradeboundary' . $i] = $percentages;
-            }
         }
 
         // quickgrading and quickfeedback are conditional on grade:edit capability
