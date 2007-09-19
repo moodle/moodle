@@ -301,20 +301,87 @@
             $selectsql = ""; 
         }
 
-        /// MDL-11111 do not include user already assigned this role in this context as available users
-        /// so that the number of available users is right and we save time looping later
-        $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
-                                             FROM '.$CFG->prefix.'user
-                                             WHERE '.$select.'
-                                               AND id NOT IN (
-                                                 SELECT u.id
-                                                 FROM '.$CFG->prefix.'role_assignments r,
-                                                      '.$CFG->prefix.'user u
-                                                       WHERE r.contextid = '.$contextid.'
-                                                       AND u.id = r.userid 
-                                                       AND r.roleid = '.$roleid.'
-                                                       '.$selectsql.')
-                                             ORDER BY lastname ASC, firstname ASC');
+        if ($context->contextlevel > CONTEXT_COURSE) { // mod or block (or group?)
+
+            /************************************************************************
+             *                                                                      *
+             * context level is above or equal course context level                 *
+             * in this case we pull out all users matching search criteria (if any) *
+             *                                                                      *
+             * MDL-11324                                                            *
+             * a mini get_users_by_capability() call here, this is done instead of  *
+             * get_users_by_capability() because                                    *
+             * 1) get_users_by_capability() does not deal with searching by name    *
+             * 2) exceptions array can be potentially large for large courses       *
+             * 3) get_recordset_sql() is more efficient                             *
+             *                                                                      *
+             ************************************************************************/
+        
+            if ($possibleroles = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context)) {
+  
+                $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, get_context_instance(CONTEXT_SYSTEM));
+
+                $validroleids = array();
+                foreach ($possibleroles as $possiblerole) {
+                    if (isset($doanythingroles[$possiblerole->id])) {  // We don't want these included
+                            continue;
+                    }
+                    if ($caps = role_context_capabilities($possiblerole->id, $context, 'moodle/course:view')) { // resolved list
+                        if (isset($caps['moodle/course:view']) && $caps['moodle/course:view'] > 0) { // resolved capability > 0
+                            $validroleids[] = $possiblerole->id;
+                        }
+                    }
+                }
+            
+                if ($validroleids) {
+                    $roleids =  '('.implode(',', $validroleids).')';
+            
+                    $select = " SELECT u.id, u.firstname, u.lastname, u.email";
+                    $from   = " FROM {$CFG->prefix}user u
+                                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
+                    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
+                                AND u.deleted = 0
+                                AND ra.roleid in $roleids
+                                $selectsql
+                                AND u.id NOT IN (
+                                    SELECT u.id
+                                    FROM {$CFG->prefix}role_assignments r,
+                                    {$CFG->prefix}user u
+                                    WHERE r.contextid = $contextid
+                                    AND u.id = r.userid 
+                                    AND r.roleid = $roleid
+                                    $selectsql)";
+            
+                    $availableusers = get_recordset_sql($select . $from . $where);         
+                }
+            }
+
+        } else { 
+         
+            /************************************************************************
+             *                                                                      *
+             * context level is above or equal course context level                 *
+             * in this case we pull out all users matching search criteria (if any) *
+             *                                                                      *
+             ************************************************************************/
+            
+            /// MDL-11111 do not include user already assigned this role in this context as available users
+            /// so that the number of available users is right and we save time looping later
+            $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
+                                                FROM '.$CFG->prefix.'user
+                                                WHERE '.$select.'
+                                                AND id NOT IN (
+                                                    SELECT u.id
+                                                    FROM '.$CFG->prefix.'role_assignments r,
+                                                    '.$CFG->prefix.'user u
+                                                    WHERE r.contextid = '.$contextid.'
+                                                    AND u.id = r.userid 
+                                                    AND r.roleid = '.$roleid.'
+                                                    '.$selectsql.')
+                                                ORDER BY lastname ASC, firstname ASC');
+   
+        }
 
         echo '<div style="text-align:center">'.$strcurrentcontext.': '.print_context_name($context).'<br/>';
         $assignableroles = array('0'=>get_string('listallroles', 'role').'...') + $assignableroles;
