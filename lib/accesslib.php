@@ -2248,6 +2248,7 @@ function create_system_context() {
 function delete_context($contextlevel, $instanceid) {
     if ($context = get_context_instance($contextlevel, $instanceid)) {
         delete_records('context_rel', 'c2', $context->id); // might not be a parent
+        mark_context_dirty($context->path);
         return delete_records('context', 'id', $context->id) &&
                delete_records('role_assignments', 'contextid', $context->id) &&
                delete_records('role_capabilities', 'contextid', $context->id) &&
