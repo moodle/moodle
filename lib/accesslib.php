@@ -4295,6 +4295,106 @@ function component_level_changed($cap, $comp, $contextlevel) {
     }
 
     return ($cap->component != $comp || $cap->contextlevel != $contextlevel);
+}
+
+/**
+ * Populate context.path and context.depth
+ */
+function build_context_path() {
+    global $CFG;
+
+    // Site
+    $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
+    $base = "/$sitectx";
+    set_field('context', 'path',  $base, 'id', $sitectx);
+    set_field('context', 'depth', 1,     'id', $sitectx);
+
+    // Sitecourse
+    $ctxid = get_field('context', 'id','contextlevel', CONTEXT_COURSE,
+                       'instanceid', SITEID);
+    set_field('context', 'path',  "$base/$ctxid", 'id', $ctxid);
+    set_field('context', 'depth', 2,              'id', $ctxid);
+
+    // Top level categories
+    $sql = "UPDATE {$CFG->prefix}context
+              SET depth=2, path='$base/' || id
+            WHERE contextlevel=".CONTEXT_COURSECAT."
+                  AND instanceid IN
+               (SELECT id
+                FROM {$CFG->prefix}course_categories
+                WHERE depth=1)";
+    execute_sql($sql, false);
+
+    // Deeper categories - one query per depthlevel
+    $maxdepth = get_field_sql("SELECT MAX(depth)
+                               FROM {$CFG->prefix}course_categories");
+    for ($n=2;$n<=$maxdepth;$n++) {
+        $sql = "UPDATE {$CFG->prefix}context
+                  SET depth=$n+1, path=it.ppath || '/' || id
+                FROM (SELECT c.id AS instanceid, pctx.path AS ppath
+                      FROM {$CFG->prefix}course_categories c
+                      JOIN {$CFG->prefix}context pctx
+                        ON (c.parent=pctx.instanceid
+                            AND pctx.contextlevel=".CONTEXT_COURSECAT.")
+                      WHERE c.depth=$n) it
+                WHERE contextlevel=".CONTEXT_COURSECAT."
+                      AND {$CFG->prefix}context.instanceid=it.instanceid";
+        execute_sql($sql, false);
+    }
+
+    // Courses -- except sitecourse
+    $sql = "UPDATE {$CFG->prefix}context
+                  SET depth=it.pdepth+1, path=it.ppath || '/' || id
+                FROM (SELECT c.id AS instanceid, pctx.path AS ppath,
+                             pctx.depth as pdepth
+                      FROM {$CFG->prefix}course c
+                      JOIN {$CFG->prefix}context pctx
+                        ON (c.category=pctx.instanceid
+                            AND pctx.contextlevel=".CONTEXT_COURSECAT.")
+                      WHERE c.id != ".SITEID.") it
+                WHERE contextlevel=".CONTEXT_COURSE."
+                      AND {$CFG->prefix}context.instanceid=it.instanceid";
+        execute_sql($sql, false);
+
+    // Module instances
+    $sql = "UPDATE {$CFG->prefix}context
+                  SET depth=it.pdepth+1, path=it.ppath || '/' || id
+            FROM (SELECT cm.id AS instanceid, pctx.path AS ppath,
+                         pctx.depth as pdepth
+                  FROM {$CFG->prefix}course_modules cm
+                  JOIN {$CFG->prefix}context pctx
+                    ON (cm.course=pctx.instanceid
+                        AND pctx.contextlevel=".CONTEXT_COURSE.")
+                  ) it
+            WHERE contextlevel=".CONTEXT_MODULE."
+                  AND {$CFG->prefix}context.instanceid=it.instanceid";
+        execute_sql($sql, false);
+
+    // Blocks - non-pinned only
+    $sql = "UPDATE {$CFG->prefix}context
+              SET depth=it.pdepth+1, path=it.ppath || '/' || id
+            FROM (SELECT bi.id AS instanceid, pctx.path AS ppath,
+                         pctx.depth as pdepth
+                  FROM {$CFG->prefix}block_instance bi
+                  JOIN {$CFG->prefix}context pctx
+                    ON (bi.pageid=pctx.instanceid
+                        AND bi.pagetype='course-view'
+                        AND pctx.contextlevel=".CONTEXT_COURSE.")
+                  ) it
+            WHERE contextlevel=".CONTEXT_BLOCK."
+                  AND {$CFG->prefix}context.instanceid=it.instanceid";
+    execute_sql($sql, false);
+
+    // User
+    $sql = "UPDATE {$CFG->prefix}context
+              SET depth=2, path='$base/' || id
+            WHERE contextlevel=".CONTEXT_USER."
+                  AND instanceid IN
+               (SELECT id
+                FROM {$CFG->prefix}user)";
+    execute_sql($sql, false);
+
+    // Personal TODO
 
 }
 
