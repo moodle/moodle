@@ -1750,7 +1750,7 @@ function get_user_access_sitewide($userid) {
 
 /**
  * It add to the access ctrl array the data
- * needed for a given context
+ * needed by a user for a given context
  *
  * @param $userid  integer - the id of the user
  * @param $context context obj - needs path!
@@ -1930,7 +1930,73 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
 }
 
 /**
- *  A convenience function to completely load all the capabilities
+ * It add to the access ctrl array the data
+ * needed by a role for a given context.
+ *
+ * The data is added in the rdef key.
+ *
+ * This role-centric function is useful for role_switching
+ * and to get an overview of what a role gets under a
+ * given context and below...
+ *
+ * @param $roleid  integer - the id of the user
+ * @param $context context obj - needs path!
+ * @param $acc     access array
+ *
+ */
+function get_role_access_bycontext($roleid, $context, $acc=NULL) {
+
+    global $CFG;
+
+    /* Get the relevant rolecaps into rdef
+     * - relevant role caps
+     *   - at ctx and above
+     *   - below this ctx
+     */
+
+    if (is_null($acc)) {
+        $acc           = array(); // named list
+        $acc['ra']     = array();
+        $acc['rdef']   = array();
+        $acc['loaded'] = array();
+    }
+    
+    $contexts = substr($context->path, 1); // kill leading slash
+    $contexts = str_replace('/', ',', $contexts);
+
+    //
+    // Walk up and down the tree to grab all the roledefs
+    // of interest to our role...
+    //
+    // NOTE: we use an IN clauses here - which
+    // might explode on huge sites with very convoluted nesting of
+    // categories... - extremely unlikely that the number of nested
+    // categories is so large that we hit the limits of IN()
+    //
+    $sql = "SELECT ctx.path, rc.capability, rc.permission
+            FROM {$CFG->prefix}role_capabilities rc
+            JOIN {$CFG->prefix}context ctx
+              ON rc.contextid=ctx.id
+            WHERE rc.roleid=$roleid AND
+                  ( ctx.id IN ($contexts) OR 
+                    ctx.path LIKE '{$context->path}/%' )
+            ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$roleid}";
+            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+    }
+    rs_close($rs);
+
+    return $acc;
+}
+
+
+/**
+ *  A convenience function to completely load all the capabilities 
  *  for the current user.   This is what gets called from login, for example.
  */
 function load_all_capabilities() {
@@ -4817,9 +4883,16 @@ function get_roles_on_exact_context($context) {
 
 /**
  * Switches the current user to another role for the current session and only
- * in the given context.  If roleid is not valid (eg 0) or the current user
- * doesn't have permissions to be switching roles then the user's session
- * is compltely reset to have their normal roles.
+ * in the given context.
+ *
+ * The caller *must* check
+ * - that this op is allowed
+ * - that the requested role can be assigned in this ctx
+ *   (hint, use get_assignable_roles())
+ * - that the requested role is NOT $CFG->defaultuserroleid
+ *
+ * This function *will* modify $USER->access - beware
+ * 
  * @param integer $roleid
  * @param object $context
  * @return bool
@@ -4827,41 +4900,47 @@ function get_roles_on_exact_context($context) {
 function role_switch($roleid, $context) {
     global $USER, $CFG;
 
-/// If we can't use this or are already using it or no role was specified then bail completely and reset
-    if (empty($roleid) || !has_capability('moodle/role:switchroles', $context)
-        || !empty($USER->switchrole[$context->id])  || !confirm_sesskey()) {
+    //
+    // Plan of action
+    //
+    // - Add the ghost RA to $USER->access
+    //   as $USER->access['rsw'][$path] = $roleid
+    //
+    // - Make sure $USER->access['rdef'] has the roledefs
+    //   it needs to honour the switcheroo
+    //
+    // Roledefs will get loaded "deep" here - down to the last child
+    // context. Note that
+    //
+    // - When visiting subcontexts, our selective accessinfo loading
+    //   will still work fine - though those ra/rdefs will be ignored
+    //   appropriately while the switch is in place
+    // 
+    // - If a switcheroo happens at a category with tons of courses 
+    //   (that have many overrides for switched-to role), the session
+    //   will get... quite large. Sometimes you just can't win.
+    //
+    // To un-switch just unset($USER->access['rsw'][$path])
+    // 
 
-        unset($USER->switchrole[$context->id]);  // Delete old capabilities
-        unset($USER->courseeditallowed);               // drop cache for course edit button
-        load_all_capabilities();   //reload user caps
-        return true;
+    // Add the switch RA
+    if (!isset($USER->access['rsw'])) {
+        $USER->access['rsw'] = array();
     }
+    $USER->access['rsw'][$context->path]=$roleid;
+    
+    // Load roledefs
+    $USER->access = get_role_access_bycontext($roleid, $context,
+                                              $USER->access);
 
-/// We're allowed to switch but can we switch to the specified role?  Use assignable roles to check.
-    if (!$roles = get_assignable_roles($context)) {
-        return false;
-    }
-
-/// unset default user role - it would not work anyway
-    unset($roles[$CFG->defaultuserroleid]);
-
-    if (empty($roles[$roleid])) {   /// We can't switch to this particular role
-        return false;
-    }
-
-/// We have a valid roleid that this user can switch to, so let's set up the session
-
-    $USER->switchrole[$context->id] = $roleid;     // So we know later what state we are in
-    unset($USER->courseeditallowed);                     // drop cache for course edit button
-
-    load_all_capabilities();   //reload switched role caps
-
-/// Add some permissions we are really going to always need, even if the role doesn't have them!
+    /* DO WE NEED THIS AT ALL???
+    // Add some permissions we are really going 
+    // to always need, even if the role doesn't have them!
 
     $USER->capabilities[$context->id]['moodle/course:view'] = CAP_ALLOW;
+    */
 
     return true;
-
 }
 
 
