@@ -4759,8 +4759,8 @@ function context_moved($context, $newparent) {
     $newpath  = $newparent->path . '/' . $context->id;
 
     $setdepth = '';
-    if ($newparent->depth +1 != $context->depth) {
-        $setdepth = ", depth= depth + " . ($context->depth - $newparent->depth +1);
+    if (($newparent->depth +1) != $context->depth) {
+        $setdepth = ", depth= depth + ({$newparent->depth} - {$context->depth}) + 1";
     }
     $sql = "UPDATE {$CFG->prefix}context 
             SET path='$newpath'
