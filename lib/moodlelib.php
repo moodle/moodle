@@ -1698,8 +1698,8 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
 
 /// check whether the user should be changing password (but only if it is REALLY them)
-    $userauth = get_auth_plugin($USER->auth);
     if (get_user_preferences('auth_forcepasswordchange') && empty($USER->realuser)) {
+        $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password()) {
             $SESSION->wantsurl = $FULLME;
             if ($changeurl = $userauth->change_password_url()) {
@@ -1743,8 +1743,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         }
     }
 
+    // Fetch the system context, we are going to use it a lot.
+    $sysctx = get_context_instance(CONTEXT_SYSTEM);
+
 /// If the site is currently under maintenance, then print a message
-    if (!has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
+    if (!has_capability('moodle/site:config', $sysctx)) {
         if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
             print_maintenance_message();
             exit;
@@ -1758,21 +1761,24 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         }
     }
 
+    // Fetch the course context, and prefetch its child contexts
+    if (!isset($COURSE->context)) {
+        if ( ! $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id) ) {
+            print_error('nocontext');        
+        }
+    }
     if ($COURSE->id == SITEID) {
-/// We can eliminate hidden site activities straight away
-        if (!empty($cm) && !$cm->visible and !has_capability('moodle/course:viewhiddenactivities',
-                                                      get_context_instance(CONTEXT_SYSTEM))) {
+        /// Eliminate hidden site activities straight away
+        if (!empty($cm) && !$cm->visible 
+            && !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
         return;
 
     } else {
-/// Check if the user can be in a particular course
-        if (!$context = get_context_instance(CONTEXT_COURSE, $COURSE->id)) {
-            print_error('nocontext');
-        }
 
-        if (empty($USER->access['rsw'][$context->path])) {
+        /// Check if the user can be in a particular course
+        if (empty($USER->access['rsw'][$COURSE->context->path])) {
             //
             // Spaghetti logic construct
             // 
@@ -1783,9 +1789,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
             // It's carefully ordered so we run the cheap checks first, and the
             // more costly checks last...
             //
-            if (! (($COURSE->visible || has_capability('moodle/course:viewhiddencourses', 
-                                                       get_context_instance(CONTEXT_COURSE, 
-                                                                            $COURSE->id)))
+            if (! (($COURSE->visible || has_capability('moodle/course:viewhiddencourses', $COURSE->context))
                    && (course_parent_visible($COURSE)) || has_capability('moodle/course:viewhiddencourses', 
                                                                         get_context_instance(CONTEXT_COURSECAT,
                                                                                              $COURSE->category)))) {
@@ -1796,20 +1800,20 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
         
     /// Non-guests who don't currently have access, check if they can be allowed in as a guest
 
-        if ($USER->username != 'guest' and !has_capability('moodle/course:view', $context)) {
+        if ($USER->username != 'guest' and !has_capability('moodle/course:view', $COURSE->context)) {
             if ($COURSE->guest == 1) {
                  // Temporarily assign them guest role for this context, if it fails later user is asked to enrol
-                 $USER->access = load_temp_role($context, $CFG->guestroleid, $USER->access);
+                 $USER->access = load_temp_role($COURSE->context, $CFG->guestroleid, $USER->access);
             }
         }
 
     /// If the user is a guest then treat them according to the course policy about guests
 
-        if (has_capability('moodle/legacy:guest', $context, NULL, false)) {
+        if (has_capability('moodle/legacy:guest', $COURSE->context, NULL, false)) {
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
-                case 1:    /// Guests always allowed
-                    if (!has_capability('moodle/course:view', $context)) {    // Prohibited by capability
+                case 1:    /// Guests always allowed 
+                    if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
                         print_header_simple();
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     }
@@ -1833,7 +1837,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
                     $strloggedinasguest = get_string('loggedinasguest');
                     print_header_simple('', '',
                             build_navigation(array(array('name' => $strloggedinasguest, 'link' => null, 'type' => 'misc'))));
-                    if (empty($USER->access['rsw'][$context->path])) {  // Normal guest
+                    if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
                     } else {
                         notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
@@ -1846,9 +1850,9 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
     /// For non-guests, check if they have course view access
 
-        } else if (has_capability('moodle/course:view', $context)) {
+        } else if (has_capability('moodle/course:view', $COURSE->context)) {
             if (!empty($USER->realuser)) {   // Make sure the REAL person can also access this course
-                if (!has_capability('moodle/course:view', $context, $USER->realuser)) {
+                if (!has_capability('moodle/course:view', $COURSE->context, $USER->realuser)) {
                     print_header_simple();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
@@ -1856,7 +1860,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null) {
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) { 
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // User is allowed to see this course
