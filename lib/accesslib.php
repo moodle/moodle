@@ -819,6 +819,9 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  * - the course records have $c->context which is a fully
  *   valid context object. Saves you a query per course!
  *
+ * - the course records have $c->categorypath to make
+ *   category lookups cheap
+ *
  * - current implementation is split in -
  *
  *   - if the user has the cap systemwide, stupidly
@@ -870,8 +873,11 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
         // Yuck.
         //
         $sql = "SELECT $coursefields,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                       cc.path AS categorypath
                 FROM {$CFG->prefix}course c
+                JOIN {$CFG->prefix}course_categories cc
+                  ON c.category=cc.id
                 JOIN {$CFG->prefix}context ctx 
                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                 ORDER BY $sort ";
@@ -918,8 +924,11 @@ function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortor
         // appropriately and narrow things down...
         //
         $sql = "SELECT $coursefields,
-                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+                       ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth,
+                       cc.path AS categorypath
                 FROM {$CFG->prefix}course c
+                JOIN {$CFG->prefix}course_categories cc
+                  ON c.category=cc.id
                 JOIN {$CFG->prefix}context ctx 
                   ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
                 LEFT OUTER JOIN {$CFG->prefix}role_assignments ra
