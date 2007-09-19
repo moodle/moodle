@@ -167,42 +167,6 @@ function get_role_context_caps($roleid, $context) {
     return $result;
 }
 
-function get_role_caps($roleid) {
-    $result = array();
-    if ($capabilities = get_records_select('role_capabilities',"roleid = $roleid")) {
-        foreach ($capabilities as $cap) {
-            if (!array_key_exists($cap->contextid, $result)) {
-                $result[$cap->contextid] = array();
-            }
-            $result[$cap->contextid][$cap->capability] = $cap->permission;
-        }
-    }
-    return $result;
-}
-
-function merge_role_caps($caps, $mergecaps) {
-    if (empty($mergecaps)) {
-        return $caps;
-    }
-
-    if (empty($caps)) {
-        return $mergecaps;
-    }
-
-    foreach ($mergecaps as $contextid=>$capabilities) {
-        if (!array_key_exists($contextid, $caps)) {
-            $caps[$contextid] = array();
-        }
-        foreach ($capabilities as $capability=>$permission) {
-            if (!array_key_exists($capability, $caps[$contextid])) {
-                $caps[$contextid][$capability] = 0;
-            }
-            $caps[$contextid][$capability] += $permission;
-        }
-    }
-    return $caps;
-}
-
 /**
  * Gets the accessdata for role "sitewide" 
  * (system down to course)
