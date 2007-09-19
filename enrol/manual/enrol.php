@@ -80,6 +80,8 @@ function print_entry($course) {
             if (!enrol_into_course($course, $USER, 'manual')) {
                 print_error('couldnotassignrole');
             }
+            // force a refresh of mycourses
+            unset($USER->mycourses);
 
             if (!empty($SESSION->wantsurl)) {
                 $destination = $SESSION->wantsurl;
@@ -152,6 +154,8 @@ function check_entry($form, $course) {
 
         } else {  /// Update or add new enrolment
             if (enrol_into_course($course, $USER, 'manual')) {
+                // force a refresh of mycourses
+                unset($USER->mycourses);
                 if ($groupid !== false) {
                     if (!groups_add_member($groupid, $USER->id)) {
                         print_error('couldnotassigngroup');

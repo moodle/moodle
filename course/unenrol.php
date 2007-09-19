@@ -58,6 +58,8 @@
 
             // force accessinfo refresh for users visiting this context...
             mark_context_dirty($context->path);
+            // force a refresh of mycourses
+            unset($USER->mycourses);
             add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $USER->id);
 
             redirect($CFG->wwwroot);
