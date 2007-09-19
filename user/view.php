@@ -323,9 +323,16 @@
         $shown=0;
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
-            if ($mycourse->visible and $mycourse->category) {
+            if ($mycourse->category) {
                 if ($mycourse->id != $course->id){
-                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">"
+                    $class = '';
+                    if ($mycourse->visible == 0) {
+                        // get_my_courses will filter courses $USER cannot see
+                        // if we get one with visible 0 it just means it's hidden
+                        // ... but not from $USER
+                        $class = 'class="dimmed"';
+                    }
+                    $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
                         . format_string($mycourse->fullname) . "</a>, ";
                 }
                 else {
