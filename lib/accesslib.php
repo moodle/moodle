@@ -533,6 +533,13 @@ function path_inaccessdata($path, $ad) {
  * in our bottom up processing so they don't "see" that
  * there are real RAs that can do all sorts of things.
  *
+ * Switch Role merges with default role
+ * ------------------------------------
+ * If you are a teacher in course X, you have at least
+ * teacher-in-X + defaultloggedinuser-sitewide. So in the
+ * course you'll have techer+defaultloggedinuser.
+ * We try to mimic that in switchrole.
+ *
  * "Guest default role" exception
  * ------------------------------
  *
@@ -597,17 +604,21 @@ function has_cap_fad($capability, $context, $ad, $doanything) {
             $ctxp = $contexts[$n];
             if (isset($ad['rsw'][$ctxp])) {
                 // Found a switchrole assignment
-                $roleid = $ad['rsw'][$ctxp];
-                // Walk the path for capabilities
-                // from the bottom up...
-                for ($m=$cc-1;$m>=0;$m--) {
-                    $capctxp = $contexts[$m];
-                    if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
-                        if ($perm === CAP_PROHIBIT) {
-                            return false;
-                        } else {
-                            $can += $perm;
+                // check for that role _plus_ the default user role
+                $ras = array($ad['rsw'][$ctxp],$CFG->defaultuserroleid);
+                for ($rn=0;$rn<2;$rn++) {
+                    $roleid = $ras[$rn];
+                    // Walk the path for capabilities
+                    // from the bottom up...
+                    for ($m=$cc-1;$m>=0;$m--) {
+                        $capctxp = $contexts[$m];
+                        if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
+                            $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
+                            if ($perm === CAP_PROHIBIT) {
+                                return false;
+                            } else {
+                                $can += $perm;
+                            }
                         }
                     }
                 }
