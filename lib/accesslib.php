@@ -4443,13 +4443,7 @@ function build_context_path($force=false) {
                                     'instanceid', SITEID);
     }
 
-    $emptyclause = " AND path=''";
-    if ($CFG->dbtype==='oci8po') { // DIRTYHACK - everybody loves Oracle ;-)
-        $emptyclause = " AND path=' '";
-    }
-    if ($force) {
-        $emptyclause = '';
-    }
+    $emptyclause = " AND (depth IS NULL OR depth=0) ";
 
     // TODO: following could be improved with WHERE + $emptyclause, but there should be a better way
     $upathsql = "UPDATE {$CFG->prefix}context
