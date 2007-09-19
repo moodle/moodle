@@ -4443,7 +4443,7 @@ function build_context_path($force=false) {
                (SELECT id
                 FROM {$CFG->prefix}course_categories
                 WHERE depth=1 $emptyclause )";
-    execute_sql($sql);
+    execute_sql($sql, $force);
 
     // Deeper categories - one query per depthlevel
     $maxdepth = get_field_sql("SELECT MAX(depth)
@@ -4460,7 +4460,7 @@ function build_context_path($force=false) {
                 WHERE contextlevel=".CONTEXT_COURSECAT."
                       AND {$CFG->prefix}context.instanceid=it.instanceid
                       $emptyclause ";
-        execute_sql($sql);
+        execute_sql($sql, $force);
     }
 
     // Courses -- except sitecourse
@@ -4476,7 +4476,7 @@ function build_context_path($force=false) {
                 WHERE contextlevel=".CONTEXT_COURSE."
                       AND {$CFG->prefix}context.instanceid=it.instanceid
                       $emptyclause ";
-        execute_sql($sql);
+        execute_sql($sql, $force);
 
     // Module instances
     $sql = "UPDATE {$CFG->prefix}context
@@ -4491,7 +4491,7 @@ function build_context_path($force=false) {
             WHERE contextlevel=".CONTEXT_MODULE."
                   AND {$CFG->prefix}context.instanceid=it.instanceid
                   $emptyclause ";
-        execute_sql($sql);
+        execute_sql($sql, $force);
 
     // Blocks - non-pinned course-view only
     $sql = "UPDATE {$CFG->prefix}context
@@ -4507,7 +4507,7 @@ function build_context_path($force=false) {
             WHERE contextlevel=".CONTEXT_BLOCK."
                   AND {$CFG->prefix}context.instanceid=it.instanceid
                   $emptyclause ";
-    execute_sql($sql);
+    execute_sql($sql, $force);
 
     // Blocks - others
     $sql = "UPDATE {$CFG->prefix}context
@@ -4519,7 +4519,7 @@ function build_context_path($force=false) {
             WHERE contextlevel=".CONTEXT_BLOCK."
                   AND {$CFG->prefix}context.instanceid=it.instanceid
                   $emptyclause ";
-    execute_sql($sql);
+    execute_sql($sql, $force);
 
     // User
     $sql = "UPDATE {$CFG->prefix}context
@@ -4528,7 +4528,7 @@ function build_context_path($force=false) {
                   AND instanceid IN (SELECT id
                                      FROM {$CFG->prefix}user)
                   $emptyclause ";
-    execute_sql($sql);
+    execute_sql($sql, $force);
 
     // Personal TODO
 
