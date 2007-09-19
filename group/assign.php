@@ -95,6 +95,7 @@ if ($currentmembers) {
             $potentialmemberscount++;
         }
         natcasesort($nonmembers);
+    }
 } else {
     $currentmembersoptions .= '<option>&nbsp;</option>';
 }
