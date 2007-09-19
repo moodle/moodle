@@ -2170,21 +2170,5 @@ function get_creatable_categories() {
     return $creatablecats;
 }
 
-/**
- * Turn an array of ints into a string usable in an IN sql clause...
- *
- **/
-function sql_intarray_to_in($array) {
-
-    $na = array();
-    $c = count($array);
-    for ($n=0;$n<$c;$n++) {
-        if (isset($array[$n]) && is_int($array[$n])) {
-            $na[] = $array[$n];
-        }
-    }
-    return join(',',$array);
-}
-
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
