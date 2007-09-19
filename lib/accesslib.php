@@ -363,7 +363,7 @@ function get_parent_cats($context) {
 
 
 function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
-    global $USER, $CONTEXT, $CFG;
+    global $USER, $CONTEXT, $ACCESS, $CFG;
 
     /// Make sure we know the current context
     if (empty($context)) {              // Use default CONTEXT if none specified
@@ -425,22 +425,19 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             $USER->access = get_user_access_bycontext($USER->id, $context,
                                                       $USER->access);
         }
-        return has_cap_fromsess($capability, $context, $USER->access, $doanything);
+        return has_cap_fromsess($capability, $context, 
+                                $USER->access, $doanything);
 
 
     }
-    error_log("not implemented $userid $capability {$context->contextlevel} {$context->path} ");
-    return has_capability_old($capability, $context, $userid, $doanything);
-    /*
-    if ($context->contextlevel === CONTEXT_COURSE) {
-        if (in_array($context->id, $USER->access_courses)) {
-        }
-        return
-            }
-    if () {
+    if (!isset($ACCESS)) {
+        $ACCESS = array();
     }
-
-    return false;*/
+    if (!isset($ACCESS[$userid])) {
+        load_user_accessdata($userid);
+    }
+    return has_cap_fromsess($capability, $context, 
+                            $ACCESS[$userid], $doanything);
 }
 
 function get_course_from_path ($path) {
@@ -2069,7 +2066,44 @@ function get_role_access_bycontext($roleid, $context, $acc=NULL) {
     return $acc;
 }
 
+/*
+ * Load accessdata for a user
+ * into the $ACCESS global
+ *
+ * Used by has_capability() - but feel free
+ * to call it if you are about to run a BIG 
+ * cron run across a bazillion users.
+ *
+ * TODO: share rdef tree to save mem
+ *
+ */ 
+function load_user_accessdata($userid) {
+    global $ACCESS,$CFG;
 
+    if (!isset($ACCESS)) {
+        $ACCESS = array();
+    }
+
+    $access = get_user_access_sitewide($userid);
+    get_role_access($CFG->defaultuserroleid, $access);
+        
+    // provide "default" enrolment
+    $base = '/'.SYSCONTEXTID;
+    $access['ra']["$base:def"] = array($CFG->defaultuserroleid);
+
+    // guest role mangling - TODO: fix!
+    if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
+        if (isset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
+            unset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
+        }
+        if (isset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
+            unset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
+        }
+    }
+
+    $ACCESS[$userid] = $access;
+    return true;
+}
 /**
  *  A convenience function to completely load all the capabilities 
  *  for the current user.   This is what gets called from login, for example.
