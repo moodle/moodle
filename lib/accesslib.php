@@ -4766,7 +4766,6 @@ function context_moved($context, $newparent) {
             SET path='$newpath'
                 $setdepth
             WHERE path='$frompath'";
-    error_log($sql);
     execute_sql($sql,false);
 
     $len = strlen($frompath);
@@ -4774,7 +4773,6 @@ function context_moved($context, $newparent) {
             SET path = '$newpath' || SUBSTR(path, {$len} +1)
                 $setdepth
             WHERE path LIKE '{$frompath}/%'";
-    error_log($sql);
     execute_sql($sql,false);
 
     mark_context_dirty($frompath);
