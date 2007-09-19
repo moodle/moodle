@@ -321,7 +321,7 @@
     } else {
         $selectrole = " ";
     }
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, COALESCE(ul.timeaccess, 0) AS lastaccess, r.hidden '; // s.lastaccess
+    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.email, u.city, u.country, u.picture, u.lang, u.timezone, u.emailstop, u.maildisplay, u.imagealt, COALESCE(ul.timeaccess, 0) AS lastaccess, r.hidden '; // s.lastaccess
     $select .= $course->enrolperiod?', r.timeend ':'';
 
     $from   = "FROM {$CFG->prefix}user u INNER JOIN
@@ -554,7 +554,7 @@
                 }
 
                 $data = array (
-                        print_user_picture($user->id, $course->id, $user->picture, false, true, $piclink),
+                        print_user_picture($user, $course->id, $user->picture, false, true, $piclink),
                         $profilelink);
 
                 if (!isset($hiddenfields['city'])) {
