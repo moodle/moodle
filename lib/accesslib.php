@@ -1964,34 +1964,29 @@ function islegacy($capabilityname) {
 
 /**
  * Create a new context record for use by all roles-related stuff
+ * assumes that the caller has done the homework.
+ *
  * @param $level
  * @param $instanceid
  *
  * @return object newly created context (or existing one with a debug warning)
  */
 function create_context($contextlevel, $instanceid) {
-    if (!$context = get_record('context','contextlevel',$contextlevel,'instanceid',$instanceid)) {
-        if (!validate_context($contextlevel, $instanceid)) {
-            debugging('Error: Invalid context creation request for level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
-            return NULL;
-        }
-        if ($contextlevel == CONTEXT_SYSTEM) {
-            return create_system_context();
+    if ($contextlevel == CONTEXT_SYSTEM) {
+        return create_system_context();
+    }
 
-        }
-        $context = new object();
-        $context->contextlevel = $contextlevel;
-        $context->instanceid = $instanceid;
-        if ($id = insert_record('context',$context)) {
-            $c = get_record('context','id',$id);
-            return $c;
-        } else {
-            debugging('Error: could not insert new context level "'.s($contextlevel).'", instance "'.s($instanceid).'".');
-            return NULL;
-        }
+    $context = new object();
+    $context->contextlevel = $contextlevel;
+    $context->instanceid = $instanceid;
+    if ($id = insert_record('context',$context)) {
+        $c = get_record('context','id',$id);
+        return $c;
     } else {
-        debugging('Warning: Context id "'.s($context->id).'" not created, because it already exists.');
-        return $context;
+        debugging('Error: could not insert new context level "'.
+                  s($contextlevel).'", instance "'.
+                  s($instanceid).'".');
+        return NULL;
     }
 }
 
