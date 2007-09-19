@@ -1342,6 +1342,7 @@ function question_print_comment_box($question, $state, $attempt, $url) {
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
 
     // Update the comment and save it in the database
+    $comment = trim($comment);
     $state->manualcomment = $comment;
     if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
         error("Cannot save comment");
@@ -1357,11 +1358,11 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     }
 
     // Update the state if either the score has changed, or this is the first
-    // manual grade event.
+    // manual grade event and there is actually a grade of comment to process.
     // We don't need to store the modified state in the database, we just need
     // to set the $state->changed flag.
     if (abs($state->last_graded->grade - $grade) > 0.002 ||
-            $state->last_graded->event != QUESTION_EVENTMANUALGRADE) {
+            ($state->last_graded->event != QUESTION_EVENTMANUALGRADE && ($grade > 0.002 || $comment != ''))) {
 
         // We want to update existing state (rather than creating new one) if it
         // was itself created by a manual grading event.
