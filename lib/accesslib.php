@@ -347,7 +347,113 @@ function get_parent_cats($context) {
 }
 
 
+function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
+    global $USER, $CONTEXT, $CFG;
 
+    /// Make sure we know the current context
+    if (empty($context)) {              // Use default CONTEXT if none specified
+        if (empty($CONTEXT)) {
+            return false;
+        } else {
+            $context = $CONTEXT;
+        }
+    }
+
+    if (is_null($userid) || $userid===0) {
+        $userid = $USER->id;
+    }
+
+    $contexts = array();
+    if ($context->path === '') {
+        $contexts(SITECONTEXTID, $context->id);
+    } else {
+        $contexts = explode('/', $context->path);
+        array_shift($contexts);
+    }
+
+    if ($USER->id === $userid) {
+        if ($context->contextlevel <= CONTEXT_COURSE) {
+            // Course and above are always preloaded
+            return has_cap_fromsess($capability, $context, $USER->access, $doanything);
+        }
+        ///$coursepath = get_course_from_path($context->path);
+        /// if ($USER->access) {
+        /// $USER->access['courses'] = get_course_access($context, $userid);
+
+    }
+    error_log("not implemented $userid $capability {$context->contextlevel} {$context->path} ");
+    return has_capability_old($capability, $context, $userid, $doanything);
+    /*
+    if ($context->contextlevel === CONTEXT_COURSE) {
+        if (in_array($context->id, $USER->access_courses)) {
+        }
+        return
+            }
+    if () {
+    }
+
+    return false;*/
+}
+
+function get_course_from_path ($path) {
+    // assume that nothing is more than 1 course deep
+    if (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
+        return $matches[1];
+    }
+    return false;
+}
+
+function has_cap_fromsess($capability, $context, $sess, $doanything) {
+
+    $path = $context->path;
+
+    // build $contexts as a list of "paths" of the current
+    // contexts and parents with the order top-to-bottom
+    $contexts = array($path);
+    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
+        $path = $matches[1];
+        array_unshift($contexts, $path);
+    }
+    $cc = count($contexts);
+
+    $can = false;
+    // From the bottom up...
+    for ($n=$cc-1;$n>=0;$n--) {
+        $ctxp = $contexts[$n];
+        if (isset($USER->access['ra'][$ctxp])) {
+            // Found a role assignment
+            $roleid = $sess['ra'][$ctxp];
+            error_log("found ra $roleid for $ctxp");
+            // Walk the path for capabilities
+            // from the bottom up...
+            for ($m=$cc-1;$m>=0;$m--) {
+                $capctxp = $contexts[$m];
+                if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
+                    $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
+                    error_log("found rc for $roleid for $ctxp in {$capctxp}:$roleid $capability $perm");
+                    if ($perm === CAP_PROHIBIT) {
+                        return false;
+                    } else {
+                        $can += $perm;
+                    }
+                }
+            }
+        }
+    }
+
+    if ($can < 1) {
+        if ($doanything) {
+            // didn't find it as an explicit cap,
+            // but maybe the user candoanything in this context...
+            return has_cap_fromsess('moodle/site:doanything', $context, $sess, false);
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
+
+}
 /**
  * This function checks for a capability assertion being true.  If it isn't
  * then the page is terminated neatly with a standard error message
@@ -439,7 +545,7 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  * @param bool $doanything - if false, ignore do anything
  * @return bool
  */
-function has_capability($capability, $context=NULL, $userid=NULL, $doanything=true) {
+function has_capability_old($capability, $context=NULL, $userid=NULL, $doanything=true) {
 
     global $USER, $CONTEXT, $CFG;
 
@@ -1331,6 +1437,7 @@ function load_all_capabilities() {
         }
 
         load_user_capability();
+        $USER->access=get_user_sitewide_access($USER->id);
 
         // when in "course login as" - load only course caqpabilitites (it may not always work as expected)
         if (!empty($USER->realuser) and $USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
