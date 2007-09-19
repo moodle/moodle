@@ -72,6 +72,28 @@ if ($currentmembers) {
         $currentmembersoptions .= '<option value="'.$group->id.'.">'.format_string($group->name).'</option>';
         $currentmemberscount ++;
     }
+
+    // Get course managers so they can be hilited in the list
+    if ($managerroles = get_config('', 'coursemanager')) {
+        $coursemanagerroles = split(',', $managerroles);
+        foreach ($coursemanagerroles as $roleid) {
+            $role = get_record('role','id',$roleid);
+            $managers = get_role_users($roleid, $context, true, 'u.id', 'u.id ASC', true);
+        }
+    }
+    
+    if ($potentialmembers != false) {
+        // Put the groupings into a hash and sorts them
+        foreach ($potentialmembers as $user) {
+            if(!empty($managers[$user->id])) {
+                $nonmembers[$user->id] = '#'.$user->firstname.' '.$user->lastname;
+            }
+            else {
+                $nonmembers[$user->id] = $user->firstname.' '.$user->lastname;
+            }
+            $potentialmemberscount++;
+        }
+        natcasesort($nonmembers);
 } else {
     $currentmembersoptions .= '<option>&nbsp;</option>';
 }

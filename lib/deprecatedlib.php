@@ -765,7 +765,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
  * @return object
  * @todo Finish documenting this function
  */
-function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='') {
+function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='', $fields='u.*, ul.timeaccess as lastaccess') {
     global $CFG;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -790,7 +790,7 @@ function get_course_users($courseid, $sort='ul.timeaccess DESC', $exceptions='',
             }
         }
     }
-    return get_users_by_capability($context, 'moodle/course:view', 'u.*, ul.timeaccess as lastaccess', $sort, '','','',$exceptions, false);
+    return get_users_by_capability($context, 'moodle/course:view', $fields, $sort, '','','',$exceptions, false);
 
 }
 
