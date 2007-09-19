@@ -467,10 +467,13 @@
 
             $cat = new Object();
             $cat->name = get_string('miscellaneous');
-            if (insert_record('course_categories', $cat)) {
-                  redirect('index.php');
+            if ($cat->id = insert_record('course_categories', $cat)) {
+                $cat->context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+                 mark_context_dirty('/'.SYSCONTEXTID);
+
+                redirect('index.php');
             } else {
-                 error("Serious Error! Could not set up a default course category!");
+                error("Serious Error! Could not set up a default course category!");
             }
         } else {
             error("Serious Error! Could not set up the site!");

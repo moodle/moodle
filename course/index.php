@@ -53,9 +53,11 @@
             $newcategory->name = stripslashes_safe($form->addcategory);
             $newcategory->description = $form->description;
             $newcategory->sortorder = 999;
-            if (!insert_record('course_categories', $newcategory)) {
+            if (!$newcategory->id = insert_record('course_categories', $newcategory)) {
                 notify("Could not insert the new category '" . format_string($newcategory->name) . "'");
             } else {
+                $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
+                mark_context_dirty($newcategory->context->path);
                 notify(get_string('categoryadded', '', format_string($newcategory->name)));
             }
         }
@@ -180,6 +182,8 @@
         if (!$tempcat->id = insert_record('course_categories', $tempcat)) {
             error('Serious error: Could not create a default category!');
         }
+        $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
+        mark_context_dirty('/'.SYSCONTEXTID);
     }
 
 
