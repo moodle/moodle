@@ -440,18 +440,19 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         //
         if ($context->contextlevel <= CONTEXT_COURSE) {
             // Course and above are always preloaded
-            return has_cap_fromsess($capability, $context, $USER->access, $doanything);
+            return has_cap_fad($capability, $context,
+                               $USER->access, $doanything);
         }
         // Load it as needed
-        if (!access_insess($context->path,$USER->access)) {
+        if (!path_inaccessdata($context->path,$USER->access)) {
             error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
             // $bt = debug_backtrace();
             // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
             $USER->access = get_user_access_bycontext($USER->id, $context,
                                                       $USER->access);
         }
-        return has_cap_fromsess($capability, $context, 
-                                $USER->access, $doanything);
+        return has_cap_fad($capability, $context,
+                           $USER->access, $doanything);
 
 
     }
@@ -461,8 +462,8 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
     if (!isset($ACCESS[$userid])) {
         load_user_accessdata($userid);
     }
-    return has_cap_fromsess($capability, $context, 
-                            $ACCESS[$userid], $doanything);
+    return has_cap_fad($capability, $context,
+                       $ACCESS[$userid], $doanything);
 }
 
 function get_course_from_path ($path) {
@@ -473,11 +474,11 @@ function get_course_from_path ($path) {
     return false;
 }
 
-function access_insess($path, $sess) {
+function path_inaccessdata($path, $ad) {
 
     // assume that contexts hang from sys or from a course
     // this will only work well with stuff that hangs from a course
-    if (in_array($path, $sess['loaded'], true)) {
+    if (in_array($path, $ad['loaded'], true)) {
             error_log("found it!");
         return true;
     }
@@ -487,7 +488,7 @@ function access_insess($path, $sess) {
         if ($path === $base) {
             return false;
         }
-        if (in_array($path, $sess['loaded'], true)) {
+        if (in_array($path, $ad['loaded'], true)) {
             return true;
         }
     }
@@ -495,7 +496,7 @@ function access_insess($path, $sess) {
 }
 
 /*
- * Walk the accessinfo array and return true/false.
+ * Walk the accessdata array and return true/false.
  * Deals with prohibits, roleswitching, aggregating
  * capabilities, etc.
  *
@@ -509,7 +510,7 @@ function access_insess($path, $sess) {
  * - Rewrite in ASM :-)
  *
  */
-function has_cap_fromsess($capability, $context, $sess, $doanything) {
+function has_cap_fad($capability, $context, $ad, $doanything) {
 
     $path = $context->path;
 
@@ -527,25 +528,25 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
 
     $can = false;
 
-    if (isset($sess['rsw'])) {
+    if (isset($ad['rsw'])) {
         // check for isset() is fast 
         // empty() is slow...
-        if (empty($sess['rsw'])) {
-            unset($sess['rsw']); // keep things fast
+        if (empty($ad['rsw'])) {
+            unset($ad['rsw']); // keep things fast
             break;
         }
         // From the bottom up...
         for ($n=$cc-1;$n>=0;$n--) {
             $ctxp = $contexts[$n];
-            if (isset($sess['rsw'][$ctxp])) {
+            if (isset($ad['rsw'][$ctxp])) {
                 // Found a switchrole assignment
-                $roleid = $sess['rsw'][$ctxp];
+                $roleid = $ad['rsw'][$ctxp];
                 // Walk the path for capabilities
                 // from the bottom up...
                 for ($m=$cc-1;$m>=0;$m--) {
                     $capctxp = $contexts[$m];
-                    if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
+                    if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
+                        $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
                         if ($perm === CAP_PROHIBIT) {
                             return false;
                         } else {
@@ -560,8 +561,8 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
                     if ($doanything) {
                         // didn't find it as an explicit cap,
                         // but maybe the user candoanything in this context...
-                        return has_cap_fromsess('moodle/site:doanything', $context,
-                                                $sess, false);
+                        return has_cap_fad('moodle/site:doanything', $context,
+                                                $ad, false);
                     } else {
                         return false;
                     }
@@ -576,9 +577,9 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
     // From the bottom up... for non-switchers...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($sess['ra'][$ctxp])) {
+        if (isset($ad['ra'][$ctxp])) {
             // Found role assignments on this leaf
-            $ras = $sess['ra'][$ctxp];
+            $ras = $ad['ra'][$ctxp];
             $rc  = count($ras);
             for ($rn=0;$rn<$rc;$rn++) {
                 $roleid = $ras[$rn];
@@ -586,8 +587,8 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
                 // from the bottom up...
                 for ($m=$cc-1;$m>=0;$m--) {
                     $capctxp = $contexts[$m];
-                    if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
-                        $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
+                    if (isset($ad['rdef']["{$capctxp}:$roleid"][$capability])) {
+                        $perm = $ad['rdef']["{$capctxp}:$roleid"][$capability];
                         if ($perm === CAP_PROHIBIT) {
                             return false;
                         } else {
@@ -603,8 +604,8 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
         if ($doanything) {
             // didn't find it as an explicit cap,
             // but maybe the user candoanything in this context...
-            return has_cap_fromsess('moodle/site:doanything', $context, 
-                                    $sess, false);
+            return has_cap_fad('moodle/site:doanything', $context,
+                                    $ad, false);
         } else {
             return false;
         }
@@ -614,7 +615,7 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
 
 }
 
-function aggr_roles_fromsess($context, $sess) {
+function aggr_roles_fad($context, $ad) {
 
     $path = $context->path;
 
@@ -634,9 +635,9 @@ function aggr_roles_fromsess($context, $sess) {
     // From the bottom up...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($sess['ra'][$ctxp]) && count($sess['ra'][$ctxp])) {
+        if (isset($ad['ra'][$ctxp]) && count($ad['ra'][$ctxp])) {
             // Found assignments on this leaf
-            $addroles = $sess['ra'][$ctxp];
+            $addroles = $ad['ra'][$ctxp];
             $roles    = array_merge($roles, $addroles);
         }
     }
@@ -726,7 +727,7 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
 
 /*
  * Get an array of courses (with magic extra bits)
- * where the access sess data and in DB enrolments show
+ * where the accessdata and in DB enrolments show
  * that the cap requested is available.
  *
  * The main use is for get_my_courses().
@@ -757,10 +758,10 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  *   - walk the courses recordset checking the caps oneach one
  *     the checks are all in memory and quite fast
  *     (though we could implement a specialised variant of the
- *     has_cap_fromsess() code to speed it up)
+ *     has_cap_fad() code to speed it up)
  *
  * @param string $capability - name of the capability
- * @param array  $sess - access session array
+ * @param array  $accessdata - access session array
  * @param bool   $doanything - if false, ignore do anything
  * @param string $sort - sorting fields - prefix each fieldname with "c."
  * @param array  $fields - additional fields you are interested in...
@@ -768,7 +769,7 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
  * @return array $courses - ordered array of course objects - see notes above
  *
  */
-function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
+function get_user_courses_bycap($userid, $cap, $ad, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
 
     global $CFG;
 
@@ -784,7 +785,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
     $coursefields = 'c.' .join(',c.', $fields);
 
     $sysctx = get_context_instance(CONTEXT_SYSTEM);
-    if (has_cap_fromsess($cap, $sysctx, $sess, $doanything)) {
+    if (has_cap_fad($cap, $sysctx, $ad, $doanything)) {
         //
         // Apparently the user has the cap sitewide, so walk *every* course
         // (the cap checks are moderately fast, but this moves massive bandwidth w the db)
@@ -813,7 +814,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
         if ($rs->RecordCount()) {
             while ($catctx = rs_fetch_next_record($rs)) {
                 if ($catctx->path != '' 
-                    && has_cap_fromsess($cap, $catctx, $sess, $doanything)) {
+                    && has_cap_fad($cap, $catctx, $ad, $doanything)) {
                     $catpaths[] = $catctx->path;
                 }
             }
@@ -860,7 +861,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
             // build the context obj
             $c = make_context_subobj($c);
 
-            if (has_cap_fromsess($cap, $c->context, $sess, $doanything)) {
+            if (has_cap_fad($cap, $c->context, $ad, $doanything)) {
                 $courses[] = $c;
                 if ($limit > 0 && $cc++ > $limit) {
                     break;
@@ -1241,7 +1242,7 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
         $acc['rdef']   = array();
         $acc['loaded'] = array();
     } else {
-        $knownroles = aggr_roles_fromsess($context, $acc);
+        $knownroles = aggr_roles_fad($context, $acc);
     }
 
     $base = "/" . SYSCONTEXTID;
@@ -1485,24 +1486,24 @@ function load_user_accessdata($userid) {
         $ACCESS = array();
     }
 
-    $access = get_user_access_sitewide($userid);
-    get_role_access($CFG->defaultuserroleid, $access);
+    $ad = get_user_access_sitewide($userid);
+    get_role_access($CFG->defaultuserroleid, $ad);
         
     // provide "default" enrolment
     $base = '/'.SYSCONTEXTID;
-    $access['ra']["$base:def"] = array($CFG->defaultuserroleid);
+    $ad['ra']["$base:def"] = array($CFG->defaultuserroleid);
 
     // guest role mangling - TODO: fix!
     if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
-        if (isset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
-            unset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
+        if (isset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
+            unset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
         }
-        if (isset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
-            unset($access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
+        if (isset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
+            unset($ad['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
         }
     }
 
-    $ACCESS[$userid] = $access;
+    $ACCESS[$userid] = $ad;
     return true;
 }
 
@@ -2800,7 +2801,7 @@ function enrol_into_course($course, $user, $enrol) {
             return false;
         }
 
-        // force accessinfo refresh for users visiting this context...
+        // force accessdata refresh for users visiting this context...
         mark_context_dirty($context->path);
 
         email_welcome_message_to_user($course, $user);
@@ -4391,7 +4392,7 @@ function role_switch($roleid, $context) {
     // Roledefs will get loaded "deep" here - down to the last child
     // context. Note that
     //
-    // - When visiting subcontexts, our selective accessinfo loading
+    // - When visiting subcontexts, our selective accessdata loading
     //   will still work fine - though those ra/rdefs will be ignored
     //   appropriately while the switch is in place
     // 
