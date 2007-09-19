@@ -1780,11 +1780,11 @@ function create_system_context() {
     }
 }
 /**
- * Create a new context record for use by all roles-related stuff
+ * Remove a context record and any dependent entries
  * @param $level
  * @param $instanceid
  *
- * @return true if properly deleted
+ * @return bool properly deleted
  */
 function delete_context($contextlevel, $instanceid) {
     if ($context = get_context_instance($contextlevel, $instanceid)) {
@@ -1793,6 +1793,74 @@ function delete_context($contextlevel, $instanceid) {
                delete_records('role_assignments', 'contextid', $context->id) &&
                delete_records('role_capabilities', 'contextid', $context->id) &&
                delete_records('context_rel', 'c1', $context->id);
+    }
+    return true;
+}
+
+/**
+ * Remove stale context records
+ *
+ * @return bool
+ */
+function cleanup_contexts() {
+    global $CFG;
+
+    $sql = "  SELECT " . CONTEXT_COURSECAT . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}course_categories AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_COURSECAT . "
+            UNION
+              SELECT " . CONTEXT_COURSE . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}course AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_COURSE . "
+            UNION
+              SELECT " . CONTEXT_MODULE . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}course_modules AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_MODULE . "
+            UNION
+              SELECT " . CONTEXT_USER . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}user AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_USER . "
+            UNION
+              SELECT " . CONTEXT_BLOCK . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}block_instance AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_BLOCK . "
+            UNION
+              SELECT " . CONTEXT_GROUP . " AS level,
+                     c.instanceid AS instanceid
+              FROM {$CFG->prefix}context c
+              LEFT OUTER JOIN {$CFG->prefix}groups AS t
+                ON c.instanceid = t.id
+              WHERE t.id IS NULL AND c.contextlevel = " . CONTEXT_GROUP . "
+           ";
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        begin_sql();
+        $tx = true;
+        while ($tx && $ctx = rs_fetch_next_record($rs)) {
+            $tx = $tx && delete_context($ctx->level, $ctx->instanceid);
+        }
+        rs_close($rs);
+        if ($tx) {
+            commit_sql();
+            return true;
+        }
+        rollback_sql();
+        return false;
     }
     return true;
 }

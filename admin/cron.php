@@ -368,6 +368,9 @@
         unset($authplugin);
     }
 
+    // Accesslib stuff
+    cleanup_contexts();
+
     if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
 
         // check we're not before our runtime
