@@ -1558,7 +1558,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// MDL-10679, context_rel clean up
     if ($result && $oldversion < 2007080200) {
         delete_records('context_rel');
-        build_context_rel();
+        /// /deprecated and gone / build_context_rel();
     }
 
     if ($result && $oldversion < 2007080202) {
