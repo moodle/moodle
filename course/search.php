@@ -163,8 +163,8 @@
         $totalcount = count($courses);
     }
     else {
-        $courses = get_courses_search($searchterms, "fullname ASC",
-            $page*$perpage, $perpage, $totalcount);
+        $courses = get_courses_search($searchterms, "fullname ASC", 
+            $page, $perpage, $totalcount);
     }
 
     $searchform = print_course_search($search, true, "navbar");
@@ -219,9 +219,14 @@
             echo "<th scope=\"col\">$strcategory</th>\n";
             echo "<th scope=\"col\">$strselect</th>\n";
             echo "<th scope=\"col\">$stredit</th></tr>\n";
-            foreach ($courses as $course) {
 
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            foreach ($courses as $course) {    		    
+                
+                if (isset($course->context)) {
+                    $coursecontext = $course->context;
+                } else {
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                }
 
                 $course->fullname = highlight("$search", $course->fullname);
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
