@@ -43,9 +43,15 @@ function addslashes_object( $dataobject ) {
 function get_admin () {
 
     global $CFG;
+    static $myadmin;
+
+    if (isset($myadmin)) {
+        return $myadmin;
+    }
 
     if ( $admins = get_admins() ) {
         foreach ($admins as $admin) {
+            $myadmin = $admin;
             return $admin;   // ie the first one
         }
     } else {
