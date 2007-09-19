@@ -1277,21 +1277,21 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
      */
 
     // Roles already in use in this context
-    $knownroles = array();
     if (is_null($acc)) {
         $acc           = array(); // named list
         $acc['ra']     = array();
         $acc['rdef']   = array();
         $acc['loaded'] = array();
-    } else {
-        $knownroles = aggr_roles_fad($context, $acc);
     }
 
     $base = "/" . SYSCONTEXTID;
 
-    // Determine the course context we'll go
-    // after, though we are usually called
-    // with a lower ctx. We have 3 easy cases
+    //
+    // Replace $context with the target context we will
+    // load. Normally, this will be a course context, but
+    // may be a different top-level context.
+    //
+    // We have 3 cases
     //
     // - Course
     // - BLOCK/PERSON/USER/COURSE(sitecourse) hanging from SYSTEM
@@ -1299,134 +1299,80 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     //
     // For course contexts, we _already_ have the RAs
     // but the cost of re-fetching is minimal so we don't care.
-    // ... for now!
     //
-    if ($context->contextlevel === CONTEXT_COURSE) {
-        $targetpath  = $context->path;
-        $targetlevel = $context->contextlevel;
-    } elseif ($context->path === "$base/{$context->id}") {
-        $targetpath  = $context->path;
-        $targetlevel = $context->contextlevel;
-    } else {
+    if ($context->contextlevel !== CONTEXT_COURSE 
+        && $context->path !== "$base/{$context->id}") {
+        // Case BLOCK/MODULE/GROUP hanging from a course
         // Assumption: the course _must_ be our parent
         // If we ever see stuff nested further this needs to
         // change to do 1 query over the exploded path to
         // find out which one is the course
-        $targetpath  = get_course_from_path($context->path);
-        $targetlevel = CONTEXT_COURSE;
+        $targetid    = array_pop(explode('/',get_course_from_path($context->path)));
+        $context = get_context_instance_by_id($targetid);
+                                 
     }
 
     //
-    // Role assignments in the context and below - and any rolecaps directly linked
-    // because it's cheap to read rolecaps here over many
-    // RAs
+    // Role assignments in the context and below
     //
-    $sql = "SELECT ctx.path, ra.roleid, rc.capability, rc.permission
+    $sql = "SELECT ctx.path, ra.roleid
             FROM {$CFG->prefix}role_assignments ra
             JOIN {$CFG->prefix}context ctx
                ON ra.contextid=ctx.id
-            LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
-               ON (rc.roleid=ra.roleid AND rc.contextid=ra.contextid)
             WHERE ra.userid = $userid
-                  AND (ctx.path = '$targetpath' OR ctx.path LIKE '{$targetpath}/%')
+                  AND (ctx.path = '{$context->path}' OR ctx.path LIKE '{$context->path}/%')
             ORDER BY ctx.depth, ctx.path";
     $rs = get_recordset_sql($sql);
 
+    // 
+    // Read in the RAs
     //
-    // raparent collects paths & roles we need to walk up
-    //
-    // Here we only collect "different" role assignments
-    // that - if found - we have to walk up the parenthood
-    // to build the rdef.
-    //
-    // raparents array might have a few duplicates
-    // which we'll later clear up
-    //
-    $raparents = array();
-    $newroles  = array();
-    $lastseen  = '';
+    $localroles = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            if ($lastseen !== $ra->path.':'.$ra->roleid) {
-                // only add if is not a repeat caused
-                // by capability join...
-                // (this check is cheaper than in_array())
-                $lastseen = $ra->path.':'.$ra->roleid;
-                if (!isset($acc['ra'][$ra->path])) {
-                    $acc['ra'][$ra->path] = array();
-                }
-                array_push($acc['ra'][$ra->path], $ra->roleid);
-                if (!in_array($ra->roleid, $knownroles)) {
-                    $newroles[] = $ra->roleid;
-                    $parentids = explode('/', $ra->path);
-                    array_pop($parentids); array_shift($parentids);
-                    if (isset($raparents[$ra->roleid])) {
-                        $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
-                    } else {
-                        $raparents[$ra->roleid] = $parentids;
-                    }
-                }
+            if (!isset($acc['ra'][$ra->path])) {
+                $acc['ra'][$ra->path] = array();
             }
-            if (!empty($ra->capability)) {
-                $k = "{$ra->path}:{$ra->roleid}";
-                $acc['rdef'][$k][$ra->capability] = $ra->permission;
-            }
+            array_push($acc['ra'][$ra->path], $ra->roleid);
+            array_push($localroles,           $ra->roleid);
         }
-        $newroles = array_unique($newroles);
     }
     rs_close($rs);
 
     //
-    // Walk up the tree to grab all the roledefs
+    // Walk up and down the tree to grab all the roledefs
     // of interest to our user...
-    // NOTE: we use a series of IN clauses here - which
-    // might explode on huge sites with very convoluted nesting of
-    // categories... - extremely unlikely that the number of categories
-    // and roletypes is so large that we hit the limits of IN()
     //
-    if (count($raparents)) {
-        $clauses = array();
-        foreach ($raparents as $roleid=>$contexts) {
-            $contexts = implode(',', array_unique($contexts));
-            if ($contexts ==! '') {
-                $clauses[] = "(roleid=$roleid AND contextid IN ($contexts))";
-            }
-        }
-        $clauses = implode(" OR ", $clauses);
-        $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
-                FROM {$CFG->prefix}role_capabilities rc
-                JOIN {$CFG->prefix}context ctx
-                  ON rc.contextid=ctx.id
-                WHERE $clauses
-                ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+    // NOTES
+    // - we use IN() but the number of roles is very limited.
+    //
+    $courseroles    = aggr_roles_fad($context, $acc);
 
-        $rs = get_recordset_sql($sql);
-
-        if ($rs->RecordCount()) {
-            while ($rd = rs_fetch_next_record($rs)) {
-                $k = "{$rd->path}:{$rd->roleid}";
-                $acc['rdef'][$k][$rd->capability] = $rd->permission;
-            }
-        }
-        rs_close($rs);
+    // Do we have any interesting "local" roles?
+    $localroles = array_diff($localroles,$courseroles); // only "new" local roles
+    $wherelocalroles='';
+    if (count($localroles)) {
+        // Role defs for local roles in 'higher' contexts...
+        $contexts = substr($context->path, 1); // kill leading slash
+        $contexts = str_replace('/', ',', $contexts);
+        $localroleids = implode(',',$localroles);
+        $wherelocalroles="OR (rc.roleid IN ({$localroleids}) 
+                              AND ctx.id IN ($contexts))" ;
     }
 
-    //
-    // Overrides for the relevant roles IN SUBCONTEXTS
-    //
-    // NOTE that we use IN() but the number of roles is
-    // very limited.
-    //
-    $roleids = implode(',', array_merge($newroles, $knownroles));
-    $sql = "SELECT ctx.path, rc.roleid,
-                   rc.capability, rc.permission
-            FROM {$CFG->prefix}context ctx
-            JOIN {$CFG->prefix}role_capabilities rc
-              ON rc.contextid=ctx.id
-            WHERE ctx.path LIKE '{$targetpath}/%'
-                  AND rc.roleid IN ($roleids)
-            ORDER BY ctx.depth, ctx.path, rc.roleid";
+    // We will want overrides for all of them
+    $roleids  = implode(',',array_merge($courseroles,$localroles));
+    $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
+            FROM {$CFG->prefix}role_capabilities rc
+            JOIN {$CFG->prefix}context ctx
+             ON rc.contextid=ctx.id
+            WHERE (rc.roleid IN ($roleids)
+                    AND (ctx.id={$context->id} OR ctx.path LIKE '{$context->path}/%'))
+                    $wherelocalroles
+            ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+
     $rs = get_recordset_sql($sql);
+
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
@@ -1437,8 +1383,8 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
 
     // TODO: compact capsets?
 
-    error_log("loaded $targetpath");
-    $acc['loaded'][] = $targetpath;
+    error_log("loaded {$context->path}");
+    $acc['loaded'][] = $context->path;
 
     return $acc;
 }
