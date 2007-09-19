@@ -59,6 +59,12 @@
         @require_logout();
         redirect("$CFG->wwwroot/$CFG->admin/");
     }
+    // Trigger 1.9 accesslib upgrade?
+    if ((int)$CFG->version < 2007090700 
+        && isset($USER->id) 
+        && is_siteadmin($USER->id)) { // this test is expensive, but is only triggered during the upgrade
+        redirect("$CFG->wwwroot/$CFG->admin/");
+    }
 
     if ($CFG->forcelogin) {
         require_login();
