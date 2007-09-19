@@ -54,6 +54,9 @@
             if (! role_unassign(0, $USER->id, 0, $context->id)) {
                 error("An error occurred while trying to unenrol you.");
             }
+
+            // force accessinfo refresh for users visiting this context...
+            mark_context_dirty($context->path);
             add_to_log($course->id, 'course', 'unenrol', "view.php?id=$course->id", $USER->id);
 
             redirect($CFG->wwwroot);
