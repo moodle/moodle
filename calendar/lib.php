@@ -1314,10 +1314,19 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
             foreach($groupcourses as $courseid) {
 
+                if (!isset($courseeventsfrom[$courseid]->context)) { // SHOULD be set MDL-11221
+                    $courseeventsfrom[$courseid]->context = get_context_instance(CONTEXT_COURSE, $courseid);
+                }
+
                 // If the user is an editing teacher in there,
-                if(!empty($USER->id) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $courseid))) {
+                if (!empty($USER->id) && has_capability('moodle/calendar:manageentries', $courseeventsfrom[$courseid]->context)) {
                     // If this course has groups, show events from all of them
                     if(is_int($groupeventsfrom)) {
+                        if (is_object($courseeventsfrom[$courseid])) { // SHOULD be set MDL-11221
+                            $courserecord = $courseeventsfrom[$courseid];
+                        } else {
+                            $courserecord = get_record('course', 'id', $courseid);
+                        } 
                         $courserecord = get_record('course', 'id', $courseid);
                         if ($courserecord->groupmode != NOGROUPS || !$courserecord->groupmodeforce) {
                             $groupids[] = $courseid;
