@@ -649,7 +649,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
     // because we use IN()
     //
     if ($userid === $USER->id) {
-        if (isset($USER->loginascontext)) {
+        if (isset($USER->loginascontext) 
+            && $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             // list _only_ this course
             // anything else is asking for trouble...
             $courseids = $USER->loginascontext->instanceid;
