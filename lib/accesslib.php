@@ -4975,8 +4975,11 @@ function get_dirty_contexts($time) {
  *
  */
 function mark_context_dirty($path) {
-    // Trivial (for now?)
-    set_config($path, time(), 'accesslib/dirtycontexts');
+
+    // only if it is a non-empty string
+    if (is_string($path) && $path !== '') {
+        set_config($path, time(), 'accesslib/dirtycontexts');
+    }
 }
 
 /*
