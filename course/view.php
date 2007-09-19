@@ -43,15 +43,24 @@
         print_error('nocontext');
     }
 
-    if ($switchrole == 0) {  // Remove any switched roles before checking login
+    // Remove any switched roles before checking login
+    if ($switchrole == 0 && confirm_sesskey()) {
         role_switch($switchrole, $context);
     }
 
     require_login($course->id);
 
-    if ($switchrole > 0) {
-        role_switch($switchrole, $context);
-        require_login($course->id);   // Double check that this role is allowed here
+    // Switchrole - sanity check in cost-order...
+    if ($switchrole > 0 && confirm_sesskey() &&
+        has_capability('moodle/role:switchroles', $context)) {
+        // is this role assignable in this context?
+        // inquiring minds want to know...
+        $aroles = get_assignable_roles($context);
+        if (is_array($aroles) && isset($aroles[$switchrole])) {
+            role_switch($switchrole, $context);
+            // Double check that this role is allowed here
+            require_login($course->id);
+        }
     }
 
     //If course is hosted on an external server, redirect to corresponding
