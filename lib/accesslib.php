@@ -555,18 +555,22 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
         if (isset($sess['ra'][$ctxp])) {
-            // Found a role assignment
-            $roleid = $sess['ra'][$ctxp];
-            // Walk the path for capabilities
-            // from the bottom up...
-            for ($m=$cc-1;$m>=0;$m--) {
-                $capctxp = $contexts[$m];
-                if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
-                    $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
-                    if ($perm === CAP_PROHIBIT) {
-                        return false;
-                    } else {
-                        $can += $perm;
+            // Found role assignments on this leaf
+            $ras = $sess['ra'][$ctxp];
+            $rc  = count($ras);
+            for ($rn=0;$rn<$rc;$rn++) {
+                $roleid = $ras[$rn];
+                // Walk the path for capabilities
+                // from the bottom up...
+                for ($m=$cc-1;$m>=0;$m--) {
+                    $capctxp = $contexts[$m];
+                    if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
+                        $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
+                        if ($perm === CAP_PROHIBIT) {
+                            return false;
+                        } else {
+                            $can += $perm;
+                        }
                     }
                 }
             }
@@ -608,10 +612,10 @@ function aggr_roles_fromsess($context, $sess) {
     // From the bottom up...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($sess['ra'][$ctxp])) {
-            // Found a role assignment
-            $roleid = $sess['ra'][$ctxp];
-            $roles[] = $roleid;
+        if (isset($sess['ra'][$ctxp]) && count($sess['ra'][$ctxp])) {
+            // Found assignments on this leaf
+            $addroles = $sess['ra'][$ctxp];
+            $roles    = array_merge($roles, $addroles);
         }
     }
 
@@ -1671,7 +1675,7 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
  * We do _not_ delve deeper than courses because the number of
  * overrides at the module/block levels is HUGE.
  *
- * [ra]   => [/path/] = roleid
+ * [ra]   => [/path/] = array(roleid, roleid)
  * [rdef] => [/path/:roleid][capability]=permission
  * [loaded] => array('/path', '/path')
  *
@@ -1727,7 +1731,12 @@ function get_user_access_sitewide($userid) {
     $raparents = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            $acc['ra'][$ra->path] = $ra->roleid;
+            // RAs leafs are arrays to support multi
+            // role assignments...
+            if (!isset($acc['ra'][$ra->path])) {
+                $acc['ra'][$ra->path] = array();
+            }
+            array_push($acc['ra'][$ra->path], $ra->roleid);
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
@@ -1905,7 +1914,10 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     $newroles  = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            $acc['ra'][$ra->path] = $ra->roleid;
+            if (!isset($acc['ra'][$ra->path])) {
+                $acc['ra'][$ra->path] = array();
+            }
+            array_push($acc['ra'][$ra->path], $ra->roleid);
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
                 $acc['rdef'][$k][$ra->capability] = $ra->permission;
@@ -2082,7 +2094,7 @@ function load_all_capabilities() {
         $USER->access = get_user_access_sitewide($USER->id);
         $USER->access = get_role_access($CFG->defaultuserroleid, $USER->access);
         // define a "default" enrolment
-        $USER->access['ra']["$base:def"] = $CFG->defaultuserroleid;
+        $USER->access['ra']["$base:def"] = array($CFG->defaultuserroleid);
         if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
             if (isset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
                 unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
@@ -2131,7 +2143,7 @@ function load_all_capabilities() {
     } else {
         if ($roleid = get_notloggedin_roleid()) {
             $USER->access = get_role_access(get_notloggedin_roleid());
-            $USER->access['ra']["$base:def"] = $roleid;
+            $USER->access['ra']["$base:def"] = array($roleid);
         }
     }
 }
