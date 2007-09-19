@@ -85,7 +85,7 @@ class quiz_report extends quiz_default_report {
                     quiz_save_best_grade($quiz, $attempt->userid);
                 }
             }
-            notify(get_string('changessaved', 'quiz'));
+            notify(get_string('changessaved', 'quiz'), 'notifysuccess');
         }
 
         // our 3 different views
