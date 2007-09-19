@@ -155,7 +155,7 @@
     }
 
     print_heading_with_help($txt->exportquestions, 'export', 'quiz');
-    print_simple_box_start('center');
+    print_box_start('generalbox boxwidthnormal boxaligncenter');
 ?>
 
     <form enctype="multipart/form-data" method="post" action="export.php">
@@ -198,7 +198,7 @@
     </form>
     <?php
 
-    print_simple_box_end();
+    print_box_end();
     print_footer($course);
 ?>
 

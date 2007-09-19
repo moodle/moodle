@@ -216,7 +216,7 @@
         <fieldset class="invisiblefieldset" style="display: block;">
             <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
             <input type="hidden" name="courseid" value="<?php echo $localcourseid ?>" />
-            <?php print_simple_box_start("center"); ?>
+            <?php print_box_start('generalbox boxwidthnormal boxaligncenter'); ?>
             <table cellpadding="5">
                 <tr>
                     <td align="right"><?php echo $txt->category; ?>:</td>
@@ -243,9 +243,9 @@
                 </tr>
             </table>
             <?php
-            print_simple_box_end();
+            print_box_end();
 
-            print_simple_box_start('center'); ?>
+            print_box_start('generalbox boxwidthnormal boxaligncenter'); ?>
             <?php echo $txt->importfileupload; ?>
             <table cellpadding="5">
                 <tr>
@@ -259,9 +259,9 @@
                 </tr>
             </table>
             <?php
-            print_simple_box_end();
+            print_box_end();
 
-            print_simple_box_start('center'); ?>
+            print_box_start('generalbox boxwidthnormal boxaligncenter'); ?>
             <?php echo $txt->importfilearea; ?>
             <table cellpadding="5">
                 <tr>
@@ -277,7 +277,7 @@
                 </tr>
             </table>
             <?php 
-            print_simple_box_end(); ?>
+            print_box_end(); ?>
         </fieldset>
     </form>
 
