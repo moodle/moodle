@@ -1776,9 +1776,9 @@ function print_courses($category, $hidesitecourse = false) {
                                             array('password','summary','currency'));
     }
 
-    if ($courses) {
+    if (count($courses) > 0) {
         foreach ($courses as $course) {
-            if ($hidesitecourse and ($course->id == SITEID)) {
+            if ($hidesitecourse) {
                 continue;
             }
             if ($course->visible == 1
