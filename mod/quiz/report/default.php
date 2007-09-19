@@ -37,7 +37,7 @@ class quiz_default_report {
     /// Print the tabs    
         $currenttab = 'reports';
         $mode = $reportmode;
-        include('tabs.php');
+        require($CFG->dirroot . '/mod/quiz/tabs.php');
     }
 }
 
