@@ -100,6 +100,10 @@
                 role_assign($CFG->creatornewroleid, $USER->id, 0, $context->id);
             }
 
+            // ensure we can use the course right after creating it
+            // this means trigger a reload of accessinfo...
+            mark_context_dirty($context->path);
+
             if ($data->metacourse and has_capability('moodle/course:managemetacourse', $context)) {
                 // Redirect users with metacourse capability to student import
                 redirect($CFG->wwwroot."/course/importstudents.php?id=$course->id");
