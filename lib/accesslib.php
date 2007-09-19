@@ -358,27 +358,52 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
             $context = $CONTEXT;
         }
     }
+    if (empty($CONTEXT)) {
+        $CONTEXT = $context;
+    }
 
     if (is_null($userid) || $userid===0) {
         $userid = $USER->id;
     }
 
+    //error_log(print_r($context,1));
     $contexts = array();
-    if ($context->path === '') {
-        $contexts(SITECONTEXTID, $context->id);
+    if (empty($context->path)) {
+        $contexts[] = SYSCONTEXTID;
+        $context->path = '/' . SYSCONTEXTID;
+        if (isset($context->id) && $context->id ==! SYSCONTEXTID) {
+            $contexts[] = $context->id;
+            $context->path .= '/' . $context->id;
+        }
     } else {
         $contexts = explode('/', $context->path);
         array_shift($contexts);
     }
 
     if ($USER->id === $userid) {
+        //
+        // For the logged in user, we have $USER->access
+        // which will have all RAs and caps preloaded for
+        // course and above contexts.
+        //
+        // Contexts below courses && contexts that do not
+        // hang from courses are loaded into $USER->access
+        // on demand, and listed in $USER->access[loaded]
+        //
         if ($context->contextlevel <= CONTEXT_COURSE) {
             // Course and above are always preloaded
             return has_cap_fromsess($capability, $context, $USER->access, $doanything);
         }
-        ///$coursepath = get_course_from_path($context->path);
-        /// if ($USER->access) {
-        /// $USER->access['courses'] = get_course_access($context, $userid);
+        // Load it as needed
+        if (!access_insess($context->path,$USER->access)) {
+            error_log("loading access for context {$context->path} for $capability at {$context->contextlevel} {$context->id}");
+            // $bt = debug_backtrace();
+            // error_log("bt {$bt[0]['file']} {$bt[0]['line']}");
+            $USER->access = get_user_access_bycontext($USER->id, $context,
+                                                      $USER->access);
+        }
+        return has_cap_fromsess($capability, $context, $USER->access, $doanything);
+
 
     }
     error_log("not implemented $userid $capability {$context->contextlevel} {$context->path} ");
@@ -403,6 +428,27 @@ function get_course_from_path ($path) {
     return false;
 }
 
+function access_insess($path, $sess) {
+
+    // assume that contexts hang from sys or from a course
+    // this will only work well with stuff that hangs from a course
+    if (in_array($path, $sess['loaded'], true)) {
+            error_log("found it!");
+        return true;
+    }
+    $base = '/' . SYSCONTEXTID;
+    while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
+        $path = $matches[1];
+        if ($path === $base) {
+            return false;
+        }
+        if (in_array($path, $sess['loaded'], true)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function has_cap_fromsess($capability, $context, $sess, $doanything) {
 
     $path = $context->path;
@@ -420,17 +466,15 @@ function has_cap_fromsess($capability, $context, $sess, $doanything) {
     // From the bottom up...
     for ($n=$cc-1;$n>=0;$n--) {
         $ctxp = $contexts[$n];
-        if (isset($USER->access['ra'][$ctxp])) {
+        if (isset($sess['ra'][$ctxp])) {
             // Found a role assignment
             $roleid = $sess['ra'][$ctxp];
-            error_log("found ra $roleid for $ctxp");
             // Walk the path for capabilities
             // from the bottom up...
             for ($m=$cc-1;$m>=0;$m--) {
                 $capctxp = $contexts[$m];
                 if (isset($sess['rdef']["{$capctxp}:$roleid"][$capability])) {
                     $perm = $sess['rdef']["{$capctxp}:$roleid"][$capability];
-                    error_log("found rc for $roleid for $ctxp in {$capctxp}:$roleid $capability $perm");
                     if ($perm === CAP_PROHIBIT) {
                         return false;
                     } else {
@@ -1277,7 +1321,7 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
 }
 
 /**
- * It will return 2 arrays showing role assignments
+ * It will return a nested array showing role assignments
  * all relevant role capabilities for the user at
  * site/metacourse/course_category/course levels
  *
@@ -1286,11 +1330,12 @@ function load_user_capability($capability='', $context=NULL, $userid=NULL, $chec
  *
  * [ra]   => [/path/] = roleid
  * [rdef] => [/path/:roleid][capability]=permission
+ * [loaded] => array('/path', '/path')
  *
  * @param $userid integer - the id of the user
  *
  */
-function get_user_sitewide_access($userid) {
+function get_user_access_sitewide($userid) {
 
     global $CFG;
 
@@ -1307,9 +1352,10 @@ function get_user_sitewide_access($userid) {
      *   - below this user's RAs - limited to course level
      */
 
-    $sw = array(); // named list
-    $sw['ra'] = array();
-    $sw['rdef'] = array();
+    $acc           = array(); // named list
+    $acc['ra']     = array();
+    $acc['rdef']   = array();
+    $acc['loaded'] = array();
 
     $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
     $base = "/$sitectx";
@@ -1334,10 +1380,10 @@ function get_user_sitewide_access($userid) {
     $raparents = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            $sw['ra'][$ra->path] = $ra->roleid;
+            $acc['ra'][$ra->path] = $ra->roleid;
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
-                $sw['rdef'][$k][$ra->capability] = $ra->permission;
+                $acc['rdef'][$k][$ra->capability] = $ra->permission;
             }
             $parentids = explode('/', $ra->path);
             array_pop($parentids); array_shift($parentids);
@@ -1347,6 +1393,7 @@ function get_user_sitewide_access($userid) {
                 $raparents[$ra->roleid] = $parentids;
             }
         }
+        unset($ra);
     }
     rs_close($rs);
 
@@ -1376,8 +1423,9 @@ function get_user_sitewide_access($userid) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $sw['rdef'][$k][$rd->capability] = $rd->permission;
+            $acc['rdef'][$k][$rd->capability] = $rd->permission;
         }
+        unset($rd);
     }
     rs_close($rs);
 
@@ -1401,20 +1449,184 @@ function get_user_sitewide_access($userid) {
               ON (rco.roleid=ra.roleid AND rco.contextid=sctx.id)
             WHERE ra.userid = $userid
                   AND sctx.contextlevel <= ".CONTEXT_COURSE."
-            ORDER BY sctx.depth, sctx.path, $ra.roleid";
+            ORDER BY sctx.depth, sctx.path, ra.roleid";
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $sw['rdef'][$k][$rd->capability] = $rd->permission;
+            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+        }
+        unset($rd);
+    }
+    rs_close($rs);
+
+    // TODO: compact capsets?
+
+    return $acc;
+}
+
+/**
+ * It add to the access ctrl array the data
+ * needed for a given context
+ *
+ * @param $userid  integer - the id of the user
+ * @param $context context obj - needs path!
+ * @param $acc     access array
+ *
+ */
+function get_user_access_bycontext($userid, $context, $acc=NULL) {
+
+    global $CFG;
+
+    /* Get in 3 cheap DB queries...
+     * - role assignments - with role_caps
+     * - relevant role caps
+     *   - above this user's RAs
+     *   - below this user's RAs - limited to course level
+     */
+
+    if (is_null($acc)) {
+        $acc           = array(); // named list
+        $acc['ra']     = array();
+        $acc['rdef']   = array();
+        $acc['loaded'] = array();
+    }
+
+    $base = "/" . SYSCONTEXTID;
+
+    // Determine the course context we'll go
+    // after, though we are usually called
+    // with a lower ctx. We have 3 easy cases
+    //
+    // - Course
+    // - BLOCK/PERSON/USER/COURSE(sitecourse) hanging from SYSTEM
+    // - BLOCK/MODULE/GROUP hanging from a course
+    //
+    // For course contexts, we _already_ have the RAs
+    // but the cost of re-fetching is minimal so we don't care.
+    // ... for now!
+    //
+    $targetpath;
+    $targetlevel;
+    if ($context->contextlevel === CONTEXT_COURSE) {
+        $targetpath  = $context->path;
+        $targetlevel = $context->contextlevel;
+    } elseif ($context->path === "$base/{$context->id}") {
+        $targetpath  = $context->path;
+        $targetlevel = $context->contextlevel;
+    } else {
+        // Assumption: the course _must_ be our parent
+        // If we ever see stuff nested further this needs to
+        // change to do 1 query over the exploded path to
+        // find out which one is the course
+        $targetpath  = get_course_from_path($context->path);
+        $targetlevel = CONTEXT_COURSE;
+    }
+
+    //
+    // Role assignments in the context and below - and any rolecaps directly linked
+    // because it's cheap to read rolecaps here over many
+    // RAs
+    //
+    $sql = "SELECT ctx.path, ra.roleid, rc.capability, rc.permission
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}context ctx
+               ON ra.contextid=ctx.id
+            LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
+               ON (rc.roleid=ra.roleid AND rc.contextid=ra.contextid)
+            WHERE ra.userid = $userid
+                  AND (ctx.path = '$targetpath' OR ctx.path LIKE '{$targetpath}/%')
+            ORDER BY ctx.depth, ctx.path";
+    $rs = get_recordset_sql($sql);
+
+    // parent paths & roles we need to walk up
+    // this array will bulk up quite a bit with dups
+    // which we'll later clear up
+    $raparents = array();
+    if ($rs->RecordCount()) {
+        while ($ra = rs_fetch_next_record($rs)) {
+            $acc['ra'][$ra->path] = $ra->roleid;
+            if (!empty($ra->capability)) {
+                $k = "{$ra->path}:{$ra->roleid}";
+                $acc['rdef'][$k][$ra->capability] = $ra->permission;
+            }
+            $parentids = explode('/', $ra->path);
+            array_pop($parentids); array_shift($parentids);
+            if (isset($raparents[$ra->roleid])) {
+                $raparents[$ra->roleid] = array_merge($raparents[$ra->roleid], $parentids);
+            } else {
+                $raparents[$ra->roleid] = $parentids;
+            }
+        }
+    }
+    rs_close($rs);
+
+    // Walk up the tree to grab all the roledefs
+    // of interest to our user...
+    // NOTE: we use a series of IN clauses here - which
+    // might explode on huge sites with very convoluted nesting of
+    // categories... - extremely unlikely that the number of categories
+    // and roletypes is so large that we hit the limits of IN()
+    if (count($raparents)) {
+        $clauses = array();
+        foreach ($raparents as $roleid=>$contexts) {
+            $contexts = sql_intarray_to_in(array_unique($contexts));
+            if ($contexts ==! '') {
+                $clauses[] = "(roleid=$roleid AND contextid IN ($contexts))";
+            }
+        }
+        $clauses = join(" OR ", $clauses);
+        $sql = "SELECT ctx.path, rc.roleid, rc.capability, rc.permission
+                FROM {$CFG->prefix}role_capabilities rc
+                JOIN {$CFG->prefix}context ctx
+                  ON rc.contextid=ctx.id
+                WHERE $clauses
+                ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
+
+        $rs = get_recordset_sql($sql);
+
+        if ($rs->RecordCount()) {
+            while ($rd = rs_fetch_next_record($rs)) {
+                $k = "{$rd->path}:{$rd->roleid}";
+                $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            }
+        }
+        rs_close($rs);
+    }
+
+    //
+    // Overrides for the role assignments IN SUBCONTEXTS
+    //
+    // NOTE that the JOIN w sctx is with 3-way triangulation to
+    // catch overrides to the applicable role in any subcontext, based
+    // on the path field of the parent.
+    //
+    $sql = "SELECT sctx.path, ra.roleid,
+                   ctx.path AS parentpath,
+                   rco.capability, rco.permission
+            FROM {$CFG->prefix}role_assignments ra
+            JOIN {$CFG->prefix}context ctx
+              ON ra.contextid=ctx.id
+            JOIN {$CFG->prefix}context sctx
+              ON (sctx.path LIKE ctx.path||'/%')
+            JOIN {$CFG->prefix}role_capabilities rco
+              ON (rco.roleid=ra.roleid AND rco.contextid=sctx.id)
+            WHERE ra.userid = $userid  AND
+            ORDER BY sctx.depth, sctx.path, ra.roleid";
+    if ($rs->RecordCount()) {
+        while ($rd = rs_fetch_next_record($rs)) {
+            $k = "{$rd->path}:{$rd->roleid}";
+            $acc['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
 
     // TODO: compact capsets?
 
-    return $sw;
-}
+    error_log("loaded $targetpath");
+    $acc['loaded'][] = $targetpath;
 
+    return $acc;
+}
 
 /**
  *  A convenience function to completely load all the capabilities
@@ -1436,8 +1648,8 @@ function load_all_capabilities() {
             $defcaps = load_defaultuser_role(true);
         }
 
-        load_user_capability();
-        $USER->access=get_user_sitewide_access($USER->id);
+        //load_user_capability();
+        $USER->access=get_user_access_sitewide($USER->id);
 
         // when in "course login as" - load only course caqpabilitites (it may not always work as expected)
         if (!empty($USER->realuser) and $USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
