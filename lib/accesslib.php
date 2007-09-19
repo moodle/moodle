@@ -4451,6 +4451,7 @@ function build_context_path($force=false) {
         $emptyclause = '';
     }
 
+    // TODO: following could be improved with WHERE + $emptyclause, but there should be a better way
     $upathsql = "UPDATE {$CFG->prefix}context
                     SET path = COALESCE((SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id), {$CFG->prefix}context.path)";
 
