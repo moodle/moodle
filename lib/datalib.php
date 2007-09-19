@@ -660,9 +660,9 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         $sortstatement = "ORDER BY $sort";
     }
 
-    $where = '';
+    $where = 'WHERE c.id != ' . SITEID;
     if ($categoryclause !== ''){
-        $where = "WHERE $categoryclause";
+        $where = "$where AND $categoryclause";
     }
 
     // pull out all courses matching the cat
