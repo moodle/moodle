@@ -1242,6 +1242,8 @@ function get_user_access_sitewide($userid) {
             WHERE ra.userid = $userid
                   AND sctx.contextlevel <= ".CONTEXT_COURSE."
             ORDER BY sctx.depth, sctx.path, ra.roleid";
+
+    $rs = get_recordset_sql($sql);
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
