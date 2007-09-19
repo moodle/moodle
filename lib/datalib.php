@@ -1207,7 +1207,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
                 JOIN {$CFG->prefix}context ctx
                   ON cc.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSECAT."
                 JOIN {$CFG->prefix}course_categories ccp
-                     ON (cc.path LIKE ccp.path||'%')
+                     ON (cc.path LIKE ".sql_concat('ccp.path',"'%'").")
                 WHERE ccp.id=$parent
                 $sort";
     }
