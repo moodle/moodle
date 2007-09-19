@@ -833,13 +833,8 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
     if ($rs->RecordCount()) {
         while ($c = rs_fetch_next_record($rs)) {
             // build the context obj
-            $ctx = new StdClass;
-            $ctx->id           = $c->ctxid;    unset($c->ctxid);
-            $ctx->path         = $c->ctxpath;  unset($c->ctxpath);
-            $ctx->depth        = $c->ctxdepth; unset($c->ctxdepth);
-            $ctx->instanceid   = $c->id;
-            $ctx->contextlevel = CONTEXT_COURSE;
-            $c->context = $ctx;
+            $c = make_context_subobj($c);
+
             if (has_cap_fromsess($cap, $ctx, $sess, $doanything)) {
                 $courses[] = $c;
                 if ($limit > 0 && $cc++ > $limit) {
@@ -904,13 +899,8 @@ function get_context_users_byrole ($context, $roleid, $fields=NULL, $where=NULL,
     if ($rs->RecordCount()) {
         while ($u = rs_fetch_next_record($rs)) {
             // build the context obj
-            $ctx = new StdClass;
-            $ctx->id           = $u->ctxid;    unset($u->ctxid);
-            $ctx->path         = $u->ctxpath;  unset($u->ctxpath);
-            $ctx->depth        = $u->ctxdepth; unset($u->ctxdepth);
-            $ctx->instanceid   = $u->id;
-            $ctx->contextlevel = CONTEXT_USER;
-            $u->context = $ctx;
+            $u = make_context_subobj($u);
+
             $users[] = $u;
             if ($limit > 0 && $cc++ > $limit) {
                 break;
@@ -1022,13 +1012,8 @@ function get_context_users_bycap ($context, $capability='moodle/course:view', $f
     if ($rs->RecordCount()) {
         while ($u = rs_fetch_next_record($rs)) {
             // build the context obj
-            $ctx = new StdClass;
-            $ctx->id           = $u->ctxid;    unset($u->ctxid);
-            $ctx->path         = $u->ctxpath;  unset($u->ctxpath);
-            $ctx->depth        = $u->ctxdepth; unset($u->ctxdepth);
-            $ctx->instanceid   = $u->id;
-            $ctx->contextlevel = CONTEXT_USER;
-            $u->context = $ctx;
+            $u = make_context_subobj($u);
+
             $users[] = $u;
             if ($limit > 0 && $cc++ > $limit) {
                 break;
@@ -4615,6 +4600,24 @@ function build_context_path() {
 
     // Personal TODO
 
+}
+
+/**
+ * Turn the ctx* fields in an objectlike record
+ * into a context subobject. This allows
+ * us to SELECT from major tables JOINing with 
+ * context at no cost, saving a ton of context
+ * lookups...
+ */
+function make_context_subobj($rec) {
+    $ctx = new StdClass;
+    $ctx->id           = $rec->ctxid;    unset($rec->ctxid);
+    $ctx->path         = $rec->ctxpath;  unset($rec->ctxpath);
+    $ctx->depth        = $rec->ctxdepth; unset($rec->ctxdepth);
+    $ctx->instanceid   = $rec->id;
+    $ctx->contextlevel = CONTEXT_COURSE;
+    $rec->context = $ctx;
+    return $rec;
 }
 
 ?>

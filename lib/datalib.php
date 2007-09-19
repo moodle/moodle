@@ -683,13 +683,8 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NUL
             if ($rs->RecordCount()) {
                 while ($c = rs_fetch_next_record($rs)) {
                     // build the context obj
-                    $ctx = new StdClass;
-                    $ctx->id           = $c->ctxid;    unset($c->ctxid);
-                    $ctx->path         = $c->ctxpath;  unset($c->ctxpath);
-                    $ctx->depth        = $c->ctxdepth; unset($c->ctxdepth);
-                    $ctx->instanceid   = $c->id;
-                    $ctx->contextlevel = CONTEXT_COURSE;
-                    $c->context = $ctx;
+                    $c = make_context_subobj($c);
+
                     $courses[$c->id] = $c;
                     if ($limit > 0 && $cc++ > $limit) {
                         break;
