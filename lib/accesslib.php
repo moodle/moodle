@@ -421,7 +421,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
         load_all_capabilities();
     }
 
-    if (FULLME === 'cron' && !isset($USER->access)) {
+    if (defined('FULLME') && FULLME === 'cron' && !isset($USER->access)) {
         //
         // In cron, some modules setup a 'fake' $USER,
         // ensure we load the appropriate accessdata.
