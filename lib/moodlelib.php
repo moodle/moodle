@@ -786,6 +786,9 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
         // no pernament storage for not-logged-in user and guest
 
     } else if ($preference = get_record('user_preferences', 'userid', $userid, 'name', addslashes($name))) {
+        if ($preference->value === $value) {
+            return true;
+        }
         if (!set_field('user_preferences', 'value', addslashes((string)$value), 'id', $preference->id)) {
             $return = false;
         }
