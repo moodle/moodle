@@ -4451,11 +4451,11 @@ function build_context_path($force=false) {
         $emptyclause = '';
     }
 
-    $upathsql = "UPDATE {$CFG->prefix}context c
-                    SET path = COALESCE((SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id), c.path)";
+    $upathsql = "UPDATE {$CFG->prefix}context
+                    SET path = COALESCE((SELECT ct.path FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id), {$CFG->prefix}context.path)";
 
-    $udepthsql = "UPDATE {$CFG->prefix}context c
-                     SET depth = COALESCE((SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE c.id=ct.id), c.depth)";
+    $udepthsql = "UPDATE {$CFG->prefix}context
+                     SET depth = COALESCE((SELECT ct.depth FROM {$CFG->prefix}$temptable ct WHERE {$CFG->prefix}context.id=ct.id), {$CFG->prefix}context.depth)";
 
 /*
  * TODO: following code complains: Can't reopen table: 'ct' when using temporary teables, why? 
