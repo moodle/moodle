@@ -736,8 +736,6 @@ function aggr_roles_fad($context, $ad) {
         $path = $matches[1];
         array_unshift($contexts, $path);
     }
-    // Add a "default" context for the "default role"
-    array_unshift($contexts,"$path:def");
 
     $cc = count($contexts);
 
@@ -1595,14 +1593,14 @@ function load_user_accessdata($userid) {
     if (!isset($ACCESS)) {
         $ACCESS = array();
     }
+    $base = '/'.SYSCONTEXTID;
 
     $ad = get_user_access_sitewide($userid);
-    get_role_access($CFG->defaultuserroleid, $ad);
         
     //
-    // provide "default role" (set 'dr'!)
+    // provide "default role" & set 'dr'
     //
-    $base = '/'.SYSCONTEXTID;
+    $ad = get_role_access($CFG->defaultuserroleid, $ad);
     if (!isset($ad['ra'][$base])) {
         $ad['ra'][$base] = array($CFG->defaultuserroleid);
     } else {
@@ -1633,32 +1631,29 @@ function load_all_capabilities() {
         // Put the ghost enrolment in place...
         $USER->access['ra'][$base] = array($guest->id);
 
+
     } else if (isloggedin()) {
 
-        $USER->access = get_user_access_sitewide($USER->id);
-        $USER->access = get_role_access($CFG->defaultuserroleid, $USER->access);
-        // define a "default" enrolment
-        $USER->access['ra']["$base:def"] = array($CFG->defaultuserroleid);
-        if ($CFG->defaultuserroleid === $CFG->guestroleid ) {
-            if (isset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest'])) {
-                unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/legacy:guest']);
-            }
-            if (isset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view'])) {
-                unset($USER->access['rdef']["$base:{$CFG->guestroleid}"]['moodle/course:view']);
-            }
 
-        }
+        $ad = get_user_access_sitewide($USER->id);
 
-        if (isset($USER->capabilities)) {
-            $USER->capabilities = merge_role_caps($USER->capabilities, $defcaps);
+        //
+        // provide "default role" & set 'dr'
+        //
+        $ad = get_role_access($CFG->defaultuserroleid, $ad);
+        if (!isset($ad['ra'][$base])) {
+            $ad['ra'][$base] = array($CFG->defaultuserroleid);
         } else {
-            $USER->capabilities = $defcaps;
+            array_push($ad['ra'][$base], $CFG->defaultuserroleid);
         }
+        $ad['dr'] = $CFG->defaultuserroleid;
+
+        $USER->access = $ad;
 
     } else {
         if ($roleid = get_notloggedin_roleid()) {
-            $USER->access = get_role_access(get_notloggedin_roleid());
-            $USER->access['ra']["$base:def"] = array($roleid);
+            $USER->access = get_role_access($roleid);
+            $USER->access['ra'][$base] = array($roleid);
         }
     }
     $USER->access['time'] = time();
