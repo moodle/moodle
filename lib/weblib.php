@@ -3370,7 +3370,18 @@ function build_navigation($extranavlinks) {
             continue;
         }
         // Check the link type to see if this link should appear in the trail
-        $cap = has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $COURSE->id));
+        //
+        // NOTE: we should move capchecks _out_ to the callers. build_navigation() is
+        // called from many places -- install & upgrade for example -- where we cannot
+        // count on the roles infrastructure to be defined.
+        //
+        $cap = 0;
+        if (!empty($COURSE->id) && $COURSE->id != SITEID) {
+            if (!isset($COURSE->context)) {
+                $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+            }
+            $cap = has_capability('moodle/course:manageactivities', $COURSE->context);
+        }
         $hidetype_is2 = $CFG->hideactivitytypenavlink == 2;
         $hidetype_is1 = $CFG->hideactivitytypenavlink == 1;
 
