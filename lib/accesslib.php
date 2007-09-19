@@ -89,7 +89,7 @@ function get_role_context_caps($roleid, $context) {
     }
 
     // now go through the contexts bellow given context
-    $searchcontexts = get_child_contexts($context);
+    $searchcontexts = array_keys(get_child_contexts($context));
     foreach ($searchcontexts as $cid) {
         if ($capabilities = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $cid")) {
             foreach ($capabilities as $cap) {
@@ -1195,7 +1195,7 @@ function load_all_capabilities() {
 
         // when in "course login as" - load only course caqpabilitites (it may not always work as expected)
         if (!empty($USER->realuser) and $USER->loginascontext->contextlevel != CONTEXT_SYSTEM) {
-            $children = get_child_contexts($USER->loginascontext);
+            $children = array_keys(get_child_contexts($USER->loginascontext));
             $children[] = $USER->loginascontext->id;
             foreach ($USER->capabilities as $conid => $caps) {
                 if (!in_array($conid, $children)) {
@@ -1210,7 +1210,7 @@ function load_all_capabilities() {
                 $context = get_context_instance_by_id($contextid);
 
                 // first prune context and any child contexts
-                $children = get_child_contexts($context);
+                $children = array_keys(get_child_contexts($context));
                 foreach ($children as $childid) {
                     unset($USER->capabilities[$childid]);
                 }
@@ -3220,13 +3220,27 @@ function get_parent_contexts($context) {
 
 /**
  * Recursive function which, given a context, find all its children context ids.
+ *
+ * When called for a course context, it will return the modules and blocks
+ * displayed in the course page.
+ *
+ * For course category contexts it will return categories and courses. It will
+ * NOT recurse into courses - if you want to do that, call it on the returned
+ * courses.
+ *
+ * Note: if a "deep" recurse is needed, it can be done very cheaply on the SQL
+ * side. Ask MartinL how ;-)
+ *
  * @param object $context.
- * @return array of children context ids.
+ * @return array of child records
  */
 function get_child_contexts($context) {
 
-    global $CFG;
-    $children = array();
+    global $CFG, $context_cache;
+
+    // We *MUST* populate the context_cache as the callers
+    // will probably ask for the full record anyway soon after
+    // soon after calling us ;-)
 
     switch ($context->contextlevel) {
 
@@ -3246,72 +3260,59 @@ function get_child_contexts($context) {
         break;
 
         case CONTEXT_COURSE:
-            // Find all block instances for the course.
-            $page = new page_course;
-            $page->id = $context->instanceid;
-            $page->type = 'course-view';
-            if ($blocks = blocks_get_by_page_pinned($page)) {
-                foreach ($blocks['l'] as $leftblock) {
-                    if ($child = get_context_instance(CONTEXT_BLOCK, $leftblock->id)) {
-                        array_push($children, $child->id);
-                    }
+            // Find
+            // - module instances - easy
+            // - groups
+            // - blocks assigned to the course-view page explicitly - easy
+            // - blocks pinned (note! we get all of them here, regardless of vis)
+            $sql = " SELECT ctx.*
+                     FROM {$CFG->prefix}context ctx
+                     WHERE ctx.path LIKE '{$context->path}/%'
+                           AND ctx.contextlevel IN (".CONTEXT_MODULE.",".CONTEXT_BLOCK.")
+                    UNION
+                     SELECT ctx.*
+                     FROM {$CFG->prefix}context ctx
+                     JOIN {$CFG->prefix}groups  g
+                       ON (ctx.instanceid=g.id AND ctx.contextlevel=".CONTEXT_GROUP.")
+                     WHERE g.courseid={$context->instanceid}
+                    UNION
+                     SELECT ctx.*
+                     FROM {$CFG->prefix}context ctx
+                     JOIN {$CFG->prefix}block_pinned  b
+                       ON (ctx.instanceid=b.blockid AND ctx.contextlevel=".CONTEXT_BLOCK.")
+                     WHERE b.pagetype='course-view'
+            ";
+            $rs  = get_recordset_sql($sql);
+            $records = array();
+            if ($rs->RecordCount()) {
+                while ($rec = rs_fetch_next_record($rs)) {
+                    $records[$rec->id] = $rec;
+                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
                 }
-                foreach ($blocks['r'] as $rightblock) {
-                    if ($child = get_context_instance(CONTEXT_BLOCK, $rightblock->id)) {
-                        array_push($children, $child->id);
-                    }
-                }
-            }
-            // Find all module instances for the course.
-            if ($modules = get_records('course_modules', 'course', $context->instanceid, '', 'id')) {
-                foreach ($modules as $module) {
-                    if ($child = get_context_instance(CONTEXT_MODULE, $module->id)) {
-                        array_push($children, $child->id);
-                    }
-                }
-            }
-            // Find all group instances for the course.
-            if ($groups = get_records('groups', 'courseid', $context->instanceid, '', 'id')) {
-                foreach ($groups as $group) {
-                    if ($child = get_context_instance(CONTEXT_GROUP, $group->id)) {
-                        array_push($children, $child->id);
-                    }
-                }
-            }
-            return $children;
+             }
+            rs_close($rs);
+            return $records;
         break;
 
         case CONTEXT_COURSECAT:
-            // We need to get the contexts for:
-            //   1) The subcategories of the given category
-            //   2) The courses in the given category and all its subcategories
-            //   3) All the child contexts for these courses
-
-            $categories = get_all_subcategories($context->instanceid);
-
-            // Add the contexts for all the subcategories.
-            foreach ($categories as $catid) {
-                if ($catci = get_context_instance(CONTEXT_COURSECAT, $catid)) {
-                    array_push($children, $catci->id);
+            // Find
+            // - categories
+            // - courses
+            $sql = " SELECT ctx.*
+                     FROM {$CFG->prefix}context ctx
+                     WHERE ctx.path LIKE '{$context->path}/%'
+                           AND ctx.contextlevel IN (".CONTEXT_COURSECAT.",".CONTEXT_COURSE.")
+            ";
+            $rs  = get_recordset_sql($sql);
+            $records = array();
+            if ($rs->RecordCount()) {
+                while ($rec = rs_fetch_next_record($rs)) {
+                    $records[$rec->id] = $rec;
+                    $context_cache[$rec->contextlevel][$rec->instanceid] = $rec;
                 }
             }
-
-            // Add the parent category as well so we can find the contexts
-            // for its courses.
-            array_unshift($categories, $context->instanceid);
-
-            foreach ($categories as $catid) {
-                // Find all courses for the category.
-                if ($courses = get_records('course', 'category', $catid, '', 'id')) {
-                    foreach ($courses as $course) {
-                        if ($courseci = get_context_instance(CONTEXT_COURSE, $course->id)) {
-                            array_push($children, $courseci->id);
-                            $children = array_merge($children, get_child_contexts($courseci));
-                        }
-                    }
-                }
-            }
-            return $children;
+            rs_close($rs);
+            return $records;
         break;
 
         case CONTEXT_USER:
@@ -3325,16 +3326,13 @@ function get_child_contexts($context) {
         break;
 
         case CONTEXT_SYSTEM:
-            // Just get all the contexts except for CONTEXT_SYSTEM level.
-            $sql = 'SELECT c.id '.
+            // Just get all the contexts except for CONTEXT_SYSTEM level
+            // and hope we don't OOM in the process - don't cache
+            $sql = 'SELECT c.*'.
                      'FROM '.$CFG->prefix.'context AS c '.
                     'WHERE contextlevel != '.CONTEXT_SYSTEM;
 
-            $contexts = get_records_sql($sql);
-            foreach ($contexts as $cid) {
-                array_push($children, $cid->id);
-            }
-            return $children;
+            return get_records_sql($sql);
         break;
 
         default:
