@@ -6871,6 +6871,25 @@ function moodle_request_shutdown() {
             $perf = get_performance_info();
             error_log("PERF: " . $perf['txt']);
         }
+        if (defined('MDL_PERFINC')) {
+            $inc = get_included_files();
+            $ts  = 0;
+            foreach($inc as $f) {
+                if (preg_match(':^/:', $f)) {
+                    $fs  =  filesize($f);
+                    $ts  += $fs;
+                    $hfs =  display_size($fs);
+                    error_log(substr($f,strlen($CFG->dirroot)) . " size: $fs ($hfs)"
+                              , NULL, NULL, 0);
+                } else {
+                    error_log($f , NULL, NULL, 0);
+                }
+            }
+            if ($ts > 0 ) {
+                $hts = display_size($ts);
+                error_log("Total size of files included: $ts ($hts)");
+            }
+        }
     }
 }
 
