@@ -362,7 +362,10 @@ class enrolment_plugin_mnet {
         // Are we a *real* user or the shady MNET Daemon?
         // require_capability('moodle/role:assign', $context, NULL, false);
 
-        if (! role_unassign(0, $userrecord->id, 0, $context->id)) {
+        if (role_unassign(0, $userrecord->id, 0, $context->id)) {
+            // force accessinfo refresh for users visiting this context...
+            mark_context_dirty($context->path);
+        } else {
             error("An error occurred while trying to unenrol that person.");
         }
 
