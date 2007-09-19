@@ -4491,7 +4491,7 @@ function build_context_path($force=false) {
                 SELECT ctx.id, ".sql_concat('pctx.path', "'/'", 'ctx.id').", $n+1
                   FROM {$CFG->prefix}context ctx
                   JOIN {$CFG->prefix}course_categories c ON ctx.instanceid=c.id
-                  JOIN {$CFG->prefix}context pctx ON c.parent=pctx.instanceid                                                      )
+                  JOIN {$CFG->prefix}context pctx ON c.parent=pctx.instanceid
                  WHERE ctx.contextlevel=".CONTEXT_COURSECAT."
                        AND pctx.contextlevel=".CONTEXT_COURSECAT."
                        AND c.depth=$n
