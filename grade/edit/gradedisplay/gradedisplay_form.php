@@ -20,7 +20,7 @@ class edit_grade_display_form extends moodleform {
                                    GRADE_REPORT_GRADE_DISPLAY_TYPE_LETTER => get_string('letter', 'grades'));
         $mform->addElement('select', 'gradedisplaytype', get_string('coursegradedisplaytype', 'grades'), $gradedisplaytypes);
         $mform->setHelpButton('gradedisplaytype', array(false, get_string('coursegradedisplaytype', 'grades'),
-                false, true, false, get_string('coursegradedisplaytypehelp', 'grades')));
+                false, true, false, get_string('configcoursegradedisplaytype', 'grades')));
         $mform->setDefault('gradedisplaytype', $coursegradedisplaytype);
         $mform->setType($coursegradedisplaytype, PARAM_INT);
 
@@ -84,7 +84,8 @@ class edit_grade_display_form extends moodleform {
                 $mform->disabledIf($gradeboundaryname, 'override');
             }
 
-            $mform->addElement('submit', 'action', get_string('addelement', 'grades'));
+            $mform->addElement('submit', 'addgradeletter', get_string('addgradeletter', 'grades'));
+            $mform->disabledIf('addgradeletter', 'override');
         }
 
         // hidden params

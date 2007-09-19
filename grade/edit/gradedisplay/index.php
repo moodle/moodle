@@ -7,8 +7,8 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php';
 require_once 'gradedisplay_form.php';
 
-$courseid = optional_param('id', 0, PARAM_INT);
-$action   = optional_param('action', '', PARAM_ALPHA);
+$courseid   = optional_param('id', 0, PARAM_INT);
+$addgradeletter = optional_param('addgradeletter', null, PARAM_ALPHANUM);
 
 /// Make sure they can even access this course
 if ($courseid) {
@@ -23,18 +23,13 @@ if ($courseid) {
     admin_externalpage_setup('scales');
 }
 
-$straddelement = get_string('addelement', 'grades');
-switch ($action) {
-    case $straddelement:
-        // Insert a record in the grade_letters table, with 0 as lower boundary and  ' - ' as letter
-        $record = new stdClass();
-        $record->contextid = $context->id;
-        $record->letter = '-';
-        $record->lowerboundary = 0;
-        insert_record('grade_letters', $record);
-        break;
-    default:
-        break;
+if (!empty($addgradeletter)) {
+    // Insert a record in the grade_letters table, with 0 as lower boundary and  ' - ' as letter
+    $record = new stdClass();
+    $record->contextid = $context->id;
+    $record->letter = 'A';
+    $record->lowerboundary = 0;
+    insert_record('grade_letters', $record);
 }
 
 $course_has_letters = get_field('grade_letters', 'contextid', 'contextid', $context->id);
@@ -43,7 +38,7 @@ $course_has_letters = get_field('grade_letters', 'contextid', 'contextid', $cont
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'gradedisplay', 'courseid'=>$courseid));
 $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/edit/gradedisplay/index.php?id='.$course->id);
 
-$mform = new edit_grade_display_form(null, array('gpr'=>$gpr, 'course_has_letters' => $course_has_letters, 'action' => $action));
+$mform = new edit_grade_display_form(null, array('gpr'=>$gpr, 'course_has_letters' => $course_has_letters));
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
@@ -96,15 +91,14 @@ if ($mform->is_cancelled()) {
                 }
             }
         }
-    } else {
-
     }
-
-    redirect($returnurl, get_string('coursegradedisplayupdated', 'grades'));
+    if (!isset($data->addgradeletter)) {
+        redirect($returnurl, get_string('coursegradedisplayupdated', 'grades'));
+    }
 }
 
 $strgrades = get_string('grades');
-$pagename = get_string('gradedisplay');
+$pagename = get_string('gradedisplay', 'grades');
 
 $navigation = grade_build_nav(__FILE__, $pagename, array('courseid' => $courseid));
 
@@ -113,31 +107,6 @@ $strdelete         = get_string('delete');
 $stredit           = get_string('edit');
 $strused           = get_string('used');
 $stredit           = get_string('edit');
-
-switch ($action) {
-    case 'delete':
-        if (!confirm_sesskey()) {
-            break;
-        }
-        $scaleid = required_param('scaleid', PARAM_INT);
-        if (!$scale = grade_scale::fetch(array('id'=>$scaleid))) {
-            break;
-        }
-
-        if (empty($scale->courseid)) {
-            require_capability('moodle/course:managescales', get_context_instance(CONTEXT_SYSTEM));
-        } else if ($scale->courseid != $courseid) {
-            error('Incorrect courseid!');
-        }
-
-        if (!$scale->can_delete()) {
-            break;
-        }
-
-        //TODO: add confirmation
-        $scale->delete();
-        break;
-}
 
 if ($courseid) {
     /// Print header
