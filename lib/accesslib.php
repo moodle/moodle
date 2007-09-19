@@ -635,6 +635,90 @@ function has_capability_including_child_contexts($context, $capabilitynames) {
     return false;
 }
 
+/*
+ * Get an array of courses (with magic extra bits)
+ * where the access sess data shows that the cap
+ * requested is available.
+ *
+ * The main use is for get_my_courses().
+ *
+ * Notes
+ *
+ * - $fields is an array of fieldnames to ADD
+ *   so name the fields you really need, which will
+ *   be added and uniq'd
+ *
+ * - the course records have $c->context which is a fully
+ *   valid context object. Saves you a query per course!
+ *
+ * - current implementation is _extremely_ stupid but
+ *   works fast enough. We can surely do much MUCH better
+ *   for the common cases, and leave the brute-force to
+ *   "not-easy-to-narrow-down" cases.
+ *
+ * @param string $capability - name of the capability
+ * @param array  $sess - access session array
+ * @param bool   $doanything - if false, ignore do anything
+ * @param string $sort - sorting fields - prefix each fieldname with "c."
+ * @param array  $fields - additional fields you are interested in...
+ * @param int    $limit  - set if you want to limit the number of courses
+ * @return array $courses - ordered array of course objects - see notes above
+ *
+ */
+function get_courses_bycap_fromsess($cap, $sess, $doanything, $sort='c.sortorder ASC', $fields=NULL, $limit=0) {
+
+    global $CFG;
+
+    // Note! id is added later to ensure it's first
+    $basefields = array('id', 'category', 'sortorder', 
+                       'shortname', 'fullname', 'idnumber',
+                       'teacher', 'teachers', 'student', 'students', 
+                       'guest', 'startdate', 'visible');
+
+    if (!is_null($fields)) {
+        if (!is_array($fields)) {
+            error_log(print_r($fields,1));
+        }
+        $fields = array_merge($basefields, $fields);
+        $fields = array_unique($fields);
+    } else {
+        $fields = $basefields;
+    }
+
+    $coursefields = 'c.' .join(',c.', $fields);
+    
+    $sql = "SELECT $coursefields,
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth as ctxdepth
+            FROM {$CFG->prefix}course c
+            JOIN {$CFG->prefix}context ctx 
+              ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+            ORDER BY $sort;
+           ";
+    $courses = array();
+    $cc = 0; // keep count
+    $rs = get_recordset_sql($sql);
+    if ($rs->RecordCount()) {
+        while ($c = rs_fetch_next_record($rs)) {
+            // build the context obj
+            $ctx = new StdClass;
+            $ctx->id           = $c->ctxid;    unset($c->ctxid);
+            $ctx->path         = $c->ctxpath;  unset($c->ctxpath);
+            $ctx->depth        = $c->ctxdepth; unset($c->ctxdepth);
+            $ctx->instanceid   = $c->id;
+            $ctx->contextlevel = CONTEXT_COURSE;
+            $c->context = $ctx;
+            if (has_cap_fromsess($cap, $ctx, $sess, $doanything)) {
+                $courses[] = $c;
+                if ($limit > 0 && $cc++ > $limit) {
+                    break;
+                }
+            }
+        }
+    }
+    rs_close($rs);
+    return $courses;
+}
+
 /**
  * This function returns whether the current user has the capability of performing a function
  * For example, we can do has_capability('mod/forum:replypost',$context) in forum
