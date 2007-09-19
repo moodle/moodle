@@ -112,6 +112,10 @@
                 }
             }
         }
+
+        // force accessinfo refresh for users visiting this context...
+        mark_context_dirty($context->path);
+
         redirect($baseurl);
     }
 

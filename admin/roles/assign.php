@@ -225,6 +225,8 @@
                     }
                 }
             }
+            // force accessinfo refresh for users visiting this context...
+            mark_context_dirty($context->path);
 
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
 
@@ -259,6 +261,8 @@
                     }
                 }
             }
+            // force accessinfo refresh for users visiting this context...
+            mark_context_dirty($context->path);
 
         } else if ($showall) {
             $searchtext = '';
