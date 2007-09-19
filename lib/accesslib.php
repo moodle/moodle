@@ -4464,7 +4464,7 @@ function build_context_path($force=false) {
                   $emptyclause ";
         execute_sql($sql, false);
 
-    // Blocks - non-pinned only
+    // Blocks - non-pinned course-view only
     $sql = "UPDATE {$CFG->prefix}context
               SET depth=it.pdepth+1, path=" . sql_concat('it.ppath', "'/'", 'id') . "
             FROM (SELECT bi.id AS instanceid, pctx.path AS ppath,
@@ -4475,6 +4475,18 @@ function build_context_path($force=false) {
                         AND bi.pagetype='course-view'
                         AND pctx.contextlevel=".CONTEXT_COURSE.")
                   ) it
+            WHERE contextlevel=".CONTEXT_BLOCK."
+                  AND {$CFG->prefix}context.instanceid=it.instanceid
+                  $emptyclause ";
+    execute_sql($sql, false);
+
+    // Blocks - others
+    $sql = "UPDATE {$CFG->prefix}context
+              SET depth=2, path=" . sql_concat("'$base/'", 'id') . "
+            FROM (SELECT bi.id AS instanceid
+                  FROM {$CFG->prefix}block_instance bi
+                        WHERE bi.pagetype != 'course-view'
+                  ) AS it
             WHERE contextlevel=".CONTEXT_BLOCK."
                   AND {$CFG->prefix}context.instanceid=it.instanceid
                   $emptyclause ";
