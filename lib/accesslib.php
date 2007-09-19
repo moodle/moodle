@@ -327,7 +327,7 @@ function has_capability($capability, $context=NULL, $userid=NULL, $doanything=tr
 
         // Check basepath only once, when
         // we load the dirty contexts...
-        if (isset($DIRTYCONTEXTS->{$basepath})) {
+        if (isset($DIRTYCONTEXTS[$basepath])) {
             // sitewide change, dirty
             $clean = false;
         }
@@ -4596,7 +4596,7 @@ function is_contextpath_clean($path, $dirty) {
     }
 
     // is _this_ context dirty?
-    if (isset($dirty->{$path})) {
+    if (isset($dirty[$path])) {
         return false;
     }
     while (preg_match('!^(/.+)/\d+$!', $path, $matches)) {
@@ -4606,7 +4606,7 @@ function is_contextpath_clean($path, $dirty) {
             // assume caller did it already
             return true;
         }
-        if (isset($dirty->{$path})) {
+        if (isset($dirty[$path])) {
             return false;
         }
     }    
