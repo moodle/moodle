@@ -721,38 +721,6 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
     }
 }
 
-/**
- * Cheks if current user has allowed permission for any of submitted capabilities
- * in given or child contexts.
- * @param object $context - a context object (record from context table)
- * @param array $capabilitynames array of strings, capability names
- * @return boolean
- */
-function has_capability_including_child_contexts($context, $capabilitynames) {
-    global $USER;
-
-    foreach ($capabilitynames as $capname) {
-        if (has_capability($capname, $context)) {
-            return true;
-        }
-    }
-
-    if ($children = get_child_contexts($context)) {
-        foreach ($capabilitynames as $capname) {
-            foreach ($children as $child) {
-                if (isset($USER->capabilities[$child][$capname]) and $USER->capabilities[$child][$capname] > 0) {
-                    // extra check for inherited prevent and prohibit
-                    if (has_capability($capname, get_context_instance_by_id($child), $USER->id, false)) {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
 /*
  * Get an array of courses (with magic extra bits)
  * where the accessdata and in DB enrolments show
