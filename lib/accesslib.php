@@ -176,7 +176,7 @@ function get_role_context_caps($roleid, $context) {
  *
  * @return array
  */
-function get_role_access($roleid, $acc=NULL) {
+function get_role_access($roleid, $ad=NULL) {
 
     global $CFG;
 
@@ -184,11 +184,11 @@ function get_role_access($roleid, $acc=NULL) {
      * - relevant role caps at the root and down
      *   to the course level - but not below
      */
-    if (is_null($acc)) {
-        $acc           = array(); // named list
-        $acc['ra']     = array();
-        $acc['rdef']   = array();
-        $acc['loaded'] = array();
+    if (is_null($ad)) {
+        $ad           = array(); // named list
+        $ad['ra']     = array();
+        $ad['rdef']   = array();
+        $ad['loaded'] = array();
     }
 
     $base = '/' . SYSCONTEXTID;
@@ -209,13 +209,13 @@ function get_role_access($roleid, $acc=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$roleid}";
-            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            $ad['rdef'][$k][$rd->capability] = $rd->permission;
         }
         unset($rd);
     }
     rs_close($rs);
 
-    return $acc;
+    return $ad;
 }
 
 /**
@@ -789,7 +789,7 @@ function require_capability($capability, $context=NULL, $userid=NULL, $doanythin
  *     has_cap_fad() code to speed it up)
  *
  * @param string $capability - name of the capability
- * @param array  $accessdata - access session array
+ * @param array  $ad         - accessdata session array
  * @param bool   $doanything - if false, ignore do anything
  * @param string $sort - sorting fields - prefix each fieldname with "c."
  * @param array  $fields - additional fields you are interested in...
@@ -1125,10 +1125,10 @@ function get_user_access_sitewide($userid) {
      *   - below this user's RAs - limited to course level
      */
 
-    $acc           = array(); // named list
-    $acc['ra']     = array();
-    $acc['rdef']   = array();
-    $acc['loaded'] = array();
+    $ad           = array(); // named list
+    $ad['ra']     = array();
+    $ad['rdef']   = array();
+    $ad['loaded'] = array();
 
     $sitectx = get_field('context', 'id','contextlevel', CONTEXT_SYSTEM);
     $base = "/$sitectx";
@@ -1160,15 +1160,15 @@ function get_user_access_sitewide($userid) {
         while ($ra = rs_fetch_next_record($rs)) {
             // RAs leafs are arrays to support multi
             // role assignments...
-            if (!isset($acc['ra'][$ra->path])) {
-                $acc['ra'][$ra->path] = array();
+            if (!isset($ad['ra'][$ra->path])) {
+                $ad['ra'][$ra->path] = array();
             }
             // only add if is not a repeat caused
             // by capability join...
             // (this check is cheaper than in_array())
             if ($lastseen !== $ra->path.':'.$ra->roleid) {
                 $lastseen = $ra->path.':'.$ra->roleid;
-                array_push($acc['ra'][$ra->path], $ra->roleid);
+                array_push($ad['ra'][$ra->path], $ra->roleid);
                 $parentids = explode('/', $ra->path);
                 array_shift($parentids); // drop empty leading "context"
                 array_pop($parentids);   // drop _this_ context
@@ -1183,7 +1183,7 @@ function get_user_access_sitewide($userid) {
             // Always add the roleded
             if (!empty($ra->capability)) {
                 $k = "{$ra->path}:{$ra->roleid}";
-                $acc['rdef'][$k][$ra->capability] = $ra->permission;
+                $ad['rdef'][$k][$ra->capability] = $ra->permission;
             }
         }
         unset($ra);
@@ -1218,7 +1218,7 @@ function get_user_access_sitewide($userid) {
         if ($rs->RecordCount()) {
             while ($rd = rs_fetch_next_record($rs)) {
                 $k = "{$rd->path}:{$rd->roleid}";
-                $acc['rdef'][$k][$rd->capability] = $rd->permission;
+                $ad['rdef'][$k][$rd->capability] = $rd->permission;
             }
             unset($rd);
         }
@@ -1251,13 +1251,13 @@ function get_user_access_sitewide($userid) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            $ad['rdef'][$k][$rd->capability] = $rd->permission;
         }
         unset($rd);
     }
     rs_close($rs);
 
-    return $acc;
+    return $ad;
 }
 
 /**
@@ -1266,10 +1266,10 @@ function get_user_access_sitewide($userid) {
  *
  * @param $userid  integer - the id of the user
  * @param $context context obj - needs path!
- * @param $acc     access array
+ * @param $ad      accessdata array
  *
  */
-function get_user_access_bycontext($userid, $context, $acc=NULL) {
+function get_user_access_bycontext($userid, $context, $ad=NULL) {
 
     global $CFG;
 
@@ -1283,11 +1283,11 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
      */
 
     // Roles already in use in this context
-    if (is_null($acc)) {
-        $acc           = array(); // named list
-        $acc['ra']     = array();
-        $acc['rdef']   = array();
-        $acc['loaded'] = array();
+    if (is_null($ad)) {
+        $ad           = array(); // named list
+        $ad['ra']     = array();
+        $ad['rdef']   = array();
+        $ad['loaded'] = array();
     }
 
     $base = "/" . SYSCONTEXTID;
@@ -1336,10 +1336,10 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     $localroles = array();
     if ($rs->RecordCount()) {
         while ($ra = rs_fetch_next_record($rs)) {
-            if (!isset($acc['ra'][$ra->path])) {
-                $acc['ra'][$ra->path] = array();
+            if (!isset($ad['ra'][$ra->path])) {
+                $ad['ra'][$ra->path] = array();
             }
-            array_push($acc['ra'][$ra->path], $ra->roleid);
+            array_push($ad['ra'][$ra->path], $ra->roleid);
             array_push($localroles,           $ra->roleid);
         }
     }
@@ -1352,7 +1352,7 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     // NOTES
     // - we use IN() but the number of roles is very limited.
     //
-    $courseroles    = aggr_roles_fad($context, $acc);
+    $courseroles    = aggr_roles_fad($context, $ad);
 
     // Do we have any interesting "local" roles?
     $localroles = array_diff($localroles,$courseroles); // only "new" local roles
@@ -1382,7 +1382,7 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$rd->roleid}";
-            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            $ad['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
@@ -1390,9 +1390,9 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
     // TODO: compact capsets?
 
     error_log("loaded {$context->path}");
-    $acc['loaded'][] = $context->path;
+    $ad['loaded'][] = $context->path;
 
-    return $acc;
+    return $ad;
 }
 
 /**
@@ -1407,10 +1407,10 @@ function get_user_access_bycontext($userid, $context, $acc=NULL) {
  *
  * @param $roleid  integer - the id of the user
  * @param $context context obj - needs path!
- * @param $acc     access array
+ * @param $ad      accessdata array
  *
  */
-function get_role_access_bycontext($roleid, $context, $acc=NULL) {
+function get_role_access_bycontext($roleid, $context, $ad=NULL) {
 
     global $CFG;
 
@@ -1420,11 +1420,11 @@ function get_role_access_bycontext($roleid, $context, $acc=NULL) {
      *   - below this ctx
      */
 
-    if (is_null($acc)) {
-        $acc           = array(); // named list
-        $acc['ra']     = array();
-        $acc['rdef']   = array();
-        $acc['loaded'] = array();
+    if (is_null($ad)) {
+        $ad           = array(); // named list
+        $ad['ra']     = array();
+        $ad['rdef']   = array();
+        $ad['loaded'] = array();
     }
     
     $contexts = substr($context->path, 1); // kill leading slash
@@ -1452,12 +1452,12 @@ function get_role_access_bycontext($roleid, $context, $acc=NULL) {
     if ($rs->RecordCount()) {
         while ($rd = rs_fetch_next_record($rs)) {
             $k = "{$rd->path}:{$roleid}";
-            $acc['rdef'][$k][$rd->capability] = $rd->permission;
+            $ad['rdef'][$k][$rd->capability] = $rd->permission;
         }
     }
     rs_close($rs);
 
-    return $acc;
+    return $ad;
 }
 
 /*
