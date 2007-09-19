@@ -3382,8 +3382,8 @@ function get_parent_contexts($context) {
  * NOT recurse into courses - if you want to do that, call it on the returned
  * courses.
  *
- * Note: if a "deep" recurse is needed, it can be done very cheaply on the SQL
- * side. Ask MartinL how ;-)
+ * If called on a course context it _will_ populate the cache with the appropriate
+ * contexts ;-)
  *
  * @param object $context.
  * @return array of child records
