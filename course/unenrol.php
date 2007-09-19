@@ -34,8 +34,9 @@
         require_capability('moodle/role:unassignself', $context, NULL, false);
     }
 
-    if (!empty($USER->switchrole[$context->id])) {
-        print_error('cantunenrollinthisrole', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
+    if (!empty($USER->access['rsw'][$context->path])) {
+        print_error('cantunenrollinthisrole', '',
+                    $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
     if ($confirm and confirm_sesskey()) {
