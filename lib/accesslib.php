@@ -272,47 +272,6 @@ function get_notloggedin_roleid($return=false) {
 }
 
 /**
- * Load default logged in role capabilities for all logged in users
- * @return bool
- */
-function load_defaultuser_role($return=false) {
-    global $CFG, $USER;
-
-    if (!$sitecontext = get_context_instance(CONTEXT_SYSTEM)) {
-        return false;
-    }
-
-    if (empty($CFG->defaultuserroleid)) {    // Let's set the default to the guest role
-        if ($role = get_guest_role()) {
-            set_config('defaultuserroleid', $role->id);
-        } else {
-            return false;
-        }
-    }
-
-    $capabilities = get_role_caps($CFG->defaultuserroleid);
-
-    // fix the guest user heritage:
-    // If the default role is a guest role, then don't copy legacy:guest,
-    // otherwise this user could get confused with a REAL guest. Also don't copy
-    // course:view, which is a hack that's necessary because guest roles are
-    // not really handled properly (see MDL-7513)
-    if (!empty($capabilities[$sitecontext->id]['moodle/legacy:guest'])) {
-        unset($capabilities[$sitecontext->id]['moodle/legacy:guest']);
-        unset($capabilities[$sitecontext->id]['moodle/course:view']);
-    }
-
-    if ($return) {
-        return $capabilities;
-    } else {
-        has_capability('clearcache');
-        $USER->capabilities = $capabilities;
-        return true;
-    }
-}
-
-
-/**
  * Get the default guest role
  * @return object role
  */
