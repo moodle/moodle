@@ -31,6 +31,7 @@
  *
  * - get_context_instance() 
  * - has_capability()
+ * - require_capability()
  * - get_user_courses_bycap()
  * - get_context_users_bycap()
  * - get_parent_contexts()
@@ -619,8 +620,15 @@ function aggr_roles_fad($context, $ad) {
 }
 
 /**
- * This function checks for a capability assertion being true.  If it isn't
- * then the page is terminated neatly with a standard error message
+ * This is an easy to use function, combining has_capability() with require_course_login().
+ * And will call those where needed.
+ * 
+ * It checks for a capability assertion being true.  If it isn't
+ * then the page is terminated neatly with a standard error message.
+ *
+ * If the user is not logged in, or is using 'guest' access or other special "users,
+ * it provides a logon prompt.
+ *
  * @param string $capability - name of the capability
  * @param object $context - a context object (record from context table)
  * @param integer $userid - a userid number
