@@ -857,7 +857,7 @@ function get_user_courses_bycap($userid, $cap, $sess, $doanything, $sort='c.sort
             // build the context obj
             $c = make_context_subobj($c);
 
-            if (has_cap_fromsess($cap, $ctx, $sess, $doanything)) {
+            if (has_cap_fromsess($cap, $c->context, $sess, $doanything)) {
                 $courses[] = $c;
                 if ($limit > 0 && $cc++ > $limit) {
                     break;
