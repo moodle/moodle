@@ -4586,7 +4586,7 @@ function get_dirty_contexts($time) {
     $sql = "SELECT name, value 
             FROM {$CFG->prefix}config_plugins
             WHERE plugin='accesslib/dirtycontexts'
-                  AND CAST(value AS integer) > $time";
+                  AND CAST(value AS DECIMAL) > $time";
     if ($ctx = get_records_sql($sql)) {
         return $ctx;
     }
@@ -4620,7 +4620,7 @@ function cleanup_dirty_contexts() {
     global $CFG;
     
     $sql = "plugin='accesslib/dirtycontexts' AND
-                  CAST(value to integer) < " . time() - $CFG->sessiontimeout;
+                  CAST(value AS DECIMAL) < " . time() - $CFG->sessiontimeout;
     delete_records_select('config_plugins', $sql);
 }
 
