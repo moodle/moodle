@@ -858,6 +858,9 @@ function quiz_reset_course_form($course) {
  * Actual implementation of the rest coures functionality, delete all the
  * quiz attempts for course $data->courseid, if $data->reset_quiz_attempts is
  * set and true.
+ *
+ * Also, move the quiz open and close dates, if the course start date is changing.
+ *
  * @param $data the data submitted from the reset course forum.
  * @param $showfeedback whether to output progress information as the reset
  *      progresses.
@@ -865,35 +868,64 @@ function quiz_reset_course_form($course) {
 function quiz_delete_userdata($data, $showfeedback=true) {
     global $CFG;
 
-    if (empty($data->reset_quiz_attempts)) {
-        return;
-    }
-
-    $conditiononquizids = 'quiz IN (SELECT id FROM ' .
-            $CFG->prefix . 'quiz q WHERE q.course = ' . $data->courseid . ')';
-
-    $attemptids = get_records_select('quiz_attempts', $conditiononquizids, '', 'id, uniqueid');
-    if ($attemptids) {
-        if ($showfeedback) {
-            echo '<div class="notifysuccess">', get_string('deletingquestionattempts', 'quiz');
-            $divider = ': ';
-        }
-        foreach ($attemptids as $attemptid) {
-            delete_attempt($attemptid->uniqueid);
+    /// Delete attempts.
+    if (!empty($data->reset_quiz_attempts)) {
+        $conditiononquizids = 'quiz IN (SELECT id FROM ' .
+                $CFG->prefix . 'quiz q WHERE q.course = ' . $data->courseid . ')';
+    
+        $attemptids = get_records_select('quiz_attempts', $conditiononquizids, '', 'id, uniqueid');
+        if ($attemptids) {
             if ($showfeedback) {
-                echo $divider, $attemptid->uniqueid;
-                $divider = ', ';
+                echo '<div class="notifysuccess">', get_string('deletingquestionattempts', 'quiz');
+                $divider = ': ';
+            }
+            foreach ($attemptids as $attemptid) {
+                delete_attempt($attemptid->uniqueid);
+                if ($showfeedback) {
+                    echo $divider, $attemptid->uniqueid;
+                    $divider = ', ';
+                }
+            }
+            if ($showfeedback) {
+                echo "</div><br />\n";
             }
         }
-        if ($showfeedback) {
-            echo "</div><br />\n";
+        if (delete_records_select('quiz_grades', $conditiononquizids) && $showfeedback) {
+            notify(get_string('gradesdeleted','quiz'), 'notifysuccess');
+        }
+        if (delete_records_select('quiz_attempts', $conditiononquizids) && $showfeedback) {
+            notify(get_string('attemptsdeleted','quiz'), 'notifysuccess');
         }
     }
-    if (delete_records_select('quiz_grades', $conditiononquizids) && $showfeedback) {
-        notify(get_string('gradesdeleted','quiz'), 'notifysuccess');
-    }
-    if (delete_records_select('quiz_attempts', $conditiononquizids) && $showfeedback) {
-        notify(get_string('attemptsdeleted','quiz'), 'notifysuccess');
+
+    /// Update open and close dates
+    if (!empty($data->reset_start_date)) {
+        /// Work out offset.
+        $olddate = get_field('course', 'startdate', 'id', $data->courseid);
+        $olddate = usergetmidnight($olddate); // time part of $olddate should be zero
+        $newdate = make_timestamp($data->startyear, $data->startmonth, $data->startday);
+        $interval = $newdate - $olddate;
+        
+        /// Apply it to quizzes with an open or close date.
+        $success = true;
+        begin_sql();
+        $success = $success && execute_sql(
+                "UPDATE {$CFG->prefix}quiz
+                    SET timeopen = timeopen + $interval
+                    WHERE course = {$data->courseid} AND timeopen <> 0", false);
+        $success = $success && execute_sql(
+                "UPDATE {$CFG->prefix}quiz
+                    SET timeclose = timeclose + $interval
+                    WHERE course = {$data->courseid} AND timeclose <> 0", false);
+
+        if ($success) {
+            commit_sql();
+            if ($showfeedback) {
+                notify(get_string('openclosedatesupdated', 'quiz'), 'notifysuccess');
+            }
+        } else {
+            rollback_sql();
+        }
     }
 }
 
